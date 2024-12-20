@@ -259,6 +259,9 @@ const getSchemaComponentsProperties = ({
             primaryPhoneCountryCode: {
               type: 'string',
             },
+            primaryPhoneCallingCode: {
+              type: 'string',
+            },
             primaryPhoneNumber: {
               type: 'string',
             },

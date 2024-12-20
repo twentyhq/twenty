@@ -144,7 +144,7 @@ export const MultiRecordSelect = ({
         {dropdownPlacement?.includes('end') && (
           <>
             {isDefined(onCreate) && (
-              <DropdownMenuItemsContainer>
+              <DropdownMenuItemsContainer scrollable={false}>
                 {createNewButton}
               </DropdownMenuItemsContainer>
             )}
@@ -181,7 +181,7 @@ export const MultiRecordSelect = ({
               <DropdownMenuSeparator />
             )}
             {isDefined(onCreate) && (
-              <DropdownMenuItemsContainer withoutScrollWrapper>
+              <DropdownMenuItemsContainer scrollable={false}>
                 {createNewButton}
               </DropdownMenuItemsContainer>
             )}

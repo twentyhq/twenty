@@ -19,6 +19,7 @@ export type ContextProviderName =
   | 'test'
   | 'showPageActivityContainer'
   | 'navigationDrawer'
+  | 'aggregateFooterCell'
   | 'modalContent';
 
 const createScrollWrapperContext = (id: string) =>
@@ -52,6 +53,8 @@ export const ShowPageActivityContainerScrollWrapperContext =
 export const NavigationDrawerScrollWrapperContext =
   createScrollWrapperContext('navigationDrawer');
 export const TestScrollWrapperContext = createScrollWrapperContext('test');
+export const AggregateFooterCellScrollWrapperContext =
+  createScrollWrapperContext('aggregateFooterCell');
 export const ModalContentScrollWrapperContext =
   createScrollWrapperContext('modalContent');
 
@@ -85,6 +88,8 @@ export const getContextByProviderName = (
       return ShowPageActivityContainerScrollWrapperContext;
     case 'navigationDrawer':
       return NavigationDrawerScrollWrapperContext;
+    case 'aggregateFooterCell':
+      return AggregateFooterCellScrollWrapperContext;
     case 'modalContent':
       return ModalContentScrollWrapperContext;
     default:

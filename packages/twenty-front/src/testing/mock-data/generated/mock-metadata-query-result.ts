@@ -19461,7 +19461,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "defaultValue": {
                                             "additionalPhones": null,
                                             "primaryPhoneNumber": "''",
-                                            "primaryPhoneCountryCode": "''"
+                                            "primaryPhoneCountryCode": "''",
+                                            "primaryPhoneCallingCode": "''"
                                         },
                                         "options": null,
                                         "isLabelSyncedWithName": false,
@@ -19740,7 +19741,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             {
                                                 "additionalPhones": {},
                                                 "primaryPhoneNumber": "",
-                                                "primaryPhoneCountryCode": ""
+                                                "primaryPhoneCountryCode": "",
+                                                "primaryPhoneCallingCode": ""
                                             }
                                         ],
                                         "options": null,
