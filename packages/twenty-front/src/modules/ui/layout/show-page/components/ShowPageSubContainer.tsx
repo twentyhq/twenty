@@ -9,6 +9,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageTabListFromUrlOptionalEffect } from '@/ui/layout/show-page/components/ShowPageTabListFromUrlOptionalEffect';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -64,9 +65,9 @@ export const ShowPageSubContainer = ({
   isInRightDrawer = false,
   isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
-  const { activeTabId } = useTabList(
-    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`,
-  );
+  const tabListComponentId = `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`;
+
+  const { activeTabId } = useTabList(tabListComponentId);
 
   const isMobile = useIsMobile();
 
@@ -125,10 +126,15 @@ export const ShowPageSubContainer = ({
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
+          <ShowPageTabListFromUrlOptionalEffect
+            isInRightDrawer={isInRightDrawer}
+            componentInstanceId={tabListComponentId}
+            tabListIds={tabs.map((tab) => tab.id)}
+          />
           <TabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
-            tabListInstanceId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`}
+            tabListInstanceId={tabListComponentId}
             tabs={tabs}
           />
         </StyledTabListContainer>
