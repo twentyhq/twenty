@@ -61,6 +61,8 @@ export const useHandleRecordGroupField = ({
             (option) =>
               !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
           )
+          // Alphabetically sort the options by default
+          .sort((a, b) => a.value.localeCompare(b.value))
           .map(
             (option, index) =>
               ({

@@ -142,7 +142,9 @@ export const ConfirmationModal = ({
               </Section>
             )}
             <StyledCenteredButton
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+              }}
               variant="secondary"
               title="Cancel"
               fullWidth

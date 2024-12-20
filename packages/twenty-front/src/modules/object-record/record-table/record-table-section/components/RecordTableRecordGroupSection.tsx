@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback } from 'react';
-import { IconChevronUp, isDefined, Tag } from 'twenty-ui';
+import { IconChevronDown, isDefined, Tag } from 'twenty-ui';
 
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -83,13 +83,13 @@ export const RecordTableRecordGroupSection = () => {
       <td aria-hidden />
       <StyledChevronContainer>
         <motion.span
-          animate={{ rotate: isRecordGroupTableSectionToggled ? 180 : 0 }}
+          animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{ duration: theme.animation.duration.normal }}
           style={{
             display: 'inline-block',
           }}
         >
-          <IconChevronUp size={theme.icon.size.md} />
+          <IconChevronDown size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
       <StyledRecordGroupSection>

@@ -11,6 +11,7 @@ type Params<V extends string> = {
 export const getSettingsPagePath = <Path extends SettingsPath>(
   path: Path,
   params?: Params<Path>,
+  searchParams?: Record<string, string>,
 ) => {
   let resultPath = `/settings/${path}`;
 
@@ -24,6 +25,12 @@ export const getSettingsPagePath = <Path extends SettingsPath>(
 
   if (isDefined(params?.id)) {
     resultPath = `${resultPath}/${params?.id}`;
+  }
+
+  if (isDefined(searchParams)) {
+    const searchParamsString = new URLSearchParams(searchParams).toString();
+
+    resultPath = `${resultPath}?${searchParamsString}`;
   }
 
   return resultPath;

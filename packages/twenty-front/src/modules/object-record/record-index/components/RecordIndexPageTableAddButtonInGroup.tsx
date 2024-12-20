@@ -1,5 +1,5 @@
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -10,7 +10,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordIndexPageTableAddButtonInGroup = () => {
@@ -18,8 +20,9 @@ export const RecordIndexPageTableAddButtonInGroup = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    ViewType.Table,
   );
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
