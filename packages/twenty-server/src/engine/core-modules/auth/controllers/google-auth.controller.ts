@@ -99,6 +99,7 @@ export class GoogleAuthController {
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        workspace.id,
       );
 
       return res.redirect(

@@ -183,7 +183,10 @@ export class SSOAuthController {
 
     return {
       identityProvider,
-      loginToken: await this.loginTokenService.generateLoginToken(user.email),
+      loginToken: await this.loginTokenService.generateLoginToken(
+        user.email,
+        identityProvider.workspace.id,
+      ),
     };
   }
 }

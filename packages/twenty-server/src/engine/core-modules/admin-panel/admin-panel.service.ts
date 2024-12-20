@@ -57,6 +57,7 @@ export class AdminPanelService {
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      user.workspaces[0].workspace.id,
     );
 
     return {

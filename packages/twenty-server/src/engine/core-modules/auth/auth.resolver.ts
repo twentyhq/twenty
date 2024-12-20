@@ -113,6 +113,7 @@ export class AuthResolver {
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
     return { loginToken };
@@ -134,6 +135,7 @@ export class AuthResolver {
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
     return {
@@ -190,9 +192,15 @@ export class AuthResolver {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const { sub: email } = await this.loginTokenService.verifyLoginToken(
-      verifyInput.loginToken,
-    );
+    const { sub: email, workspaceId } =
+      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
+
+    if (workspaceId !== workspace.id) {
+      throw new AuthException(
+        'Token is not valid for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     return await this.authService.verify(email, workspace.id);
   }
