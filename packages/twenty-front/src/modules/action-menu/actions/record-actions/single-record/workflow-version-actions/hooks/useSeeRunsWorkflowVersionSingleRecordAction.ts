@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeExecutionsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useSeeRunsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 

@@ -1,4 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
@@ -39,12 +40,12 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
           value={{
             isInRightDrawer: false,
             onActionStartedCallback: (action) => {
-              if (action.key === 'delete-multiple-records') {
+              if (action.key === MultipleRecordsActionKeys.DELETE) {
                 setIsLoadMoreLocked(true);
               }
             },
             onActionExecutedCallback: (action) => {
-              if (action.key === 'delete-multiple-records') {
+              if (action.key === MultipleRecordsActionKeys.DELETE) {
                 setIsLoadMoreLocked(false);
               }
             },

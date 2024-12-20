@@ -2,6 +2,7 @@ import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { IconDatabaseExport } from 'twenty-ui';
 
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -33,7 +34,7 @@ export const useExportViewNoSelectionRecordAction = ({
     addActionMenuEntry({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.Global,
-      key: 'export-view-no-selection',
+      key: NoSelectionRecordActionKeys.EXPORT_VIEW,
       position,
       label: displayedExportProgress(progress),
       Icon: IconDatabaseExport,

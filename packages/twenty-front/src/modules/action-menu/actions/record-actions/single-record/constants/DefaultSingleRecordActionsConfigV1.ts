@@ -1,6 +1,7 @@
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
@@ -19,7 +20,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'add-to-favorites-single-record',
+    key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: 'Add to favorites',
     position: 0,
     Icon: IconHeart,
@@ -32,7 +33,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'remove-from-favorites-single-record',
+    key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: 'Remove from favorites',
     position: 1,
     Icon: IconHeartOff,
@@ -45,7 +46,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
   deleteSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'delete-single-record',
+    key: SingleRecordActionKeys.DELETE,
     label: 'Delete',
     position: 2,
     Icon: IconTrash,

@@ -1,5 +1,6 @@
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { useActivateDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateDraftWorkflowSingleRecordAction';
 import { useActivateLastPublishedVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateLastPublishedVersionWorkflowSingleRecordAction';
 import { useDeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowSingleRecordAction';
@@ -8,6 +9,7 @@ import { useSeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/act
 import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeRunsWorkflowSingleRecordAction';
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
 import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
+import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
@@ -33,7 +35,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   }
 > = {
   activateWorkflowDraftSingleRecord: {
-    key: 'activate-workflow-draft-single-record',
+    key: WorkflowSingleRecordActionKeys.ACTIVATE_DRAFT,
     label: 'Activate Draft',
     shortLabel: 'Activate Draft',
     isPinned: true,
@@ -48,7 +50,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useActivateDraftWorkflowSingleRecordAction,
   },
   activateWorkflowLastPublishedVersionSingleRecord: {
-    key: 'activate-workflow-last-published-version-single-record',
+    key: WorkflowSingleRecordActionKeys.ACTIVATE_LAST_PUBLISHED,
     label: 'Activate last published version',
     shortLabel: 'Activate last version',
     isPinned: true,
@@ -63,7 +65,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useActivateLastPublishedVersionWorkflowSingleRecordAction,
   },
   deactivateWorkflowSingleRecord: {
-    key: 'deactivate-workflow-single-record',
+    key: WorkflowSingleRecordActionKeys.DEACTIVATE,
     label: 'Deactivate Workflow',
     shortLabel: 'Deactivate',
     isPinned: true,
@@ -78,7 +80,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useDeactivateWorkflowSingleRecordAction,
   },
   discardWorkflowDraftSingleRecord: {
-    key: 'discard-workflow-draft-single-record',
+    key: WorkflowSingleRecordActionKeys.DISCARD_DRAFT,
     label: 'Discard Draft',
     shortLabel: 'Discard Draft',
     isPinned: true,
@@ -93,7 +95,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useDiscardDraftWorkflowSingleRecordAction,
   },
   seeWorkflowActiveVersionSingleRecord: {
-    key: 'see-workflow-active-version-single-record',
+    key: WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION,
     label: 'See active version',
     shortLabel: 'See active version',
     isPinned: false,
@@ -108,7 +110,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useSeeActiveVersionWorkflowSingleRecordAction,
   },
   seeWorkflowRunsSingleRecord: {
-    key: 'see-workflow-runs-single-record',
+    key: WorkflowSingleRecordActionKeys.SEE_RUNS,
     label: 'See runs',
     shortLabel: 'See runs',
     isPinned: false,
@@ -123,7 +125,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useSeeRunsWorkflowSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
-    key: 'see-workflow-versions-history-single-record',
+    key: WorkflowSingleRecordActionKeys.SEE_VERSIONS,
     label: 'See versions history',
     shortLabel: 'See versions',
     isPinned: false,
@@ -138,7 +140,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     actionHook: useSeeVersionsWorkflowSingleRecordAction,
   },
   testWorkflowSingleRecord: {
-    key: 'test-workflow-single-record',
+    key: WorkflowSingleRecordActionKeys.TEST,
     label: 'Test Workflow',
     shortLabel: 'Test',
     isPinned: true,
@@ -155,7 +157,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-previous-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous workflow',
     shortLabel: '',
     position: 9,
@@ -166,7 +168,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-next-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next workflow',
     shortLabel: '',
     position: 10,
