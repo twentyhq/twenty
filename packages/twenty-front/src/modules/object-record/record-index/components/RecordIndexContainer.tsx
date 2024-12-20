@@ -230,6 +230,7 @@ export const RecordIndexContainer = () => {
               objectNamePlural={objectNamePlural}
               viewBarId={recordIndexId}
             />
+            <RecordIndexTableContainerEffect />
           </SpreadsheetImportProvider>
           <RecordIndexFiltersToContextStoreEffect />
           {recordIndexViewType === ViewType.Table && (
@@ -255,7 +256,9 @@ export const RecordIndexContainer = () => {
               <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
             </StyledContainerWithPadding>
           )}
-          {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
+          {!isPageHeaderV2Enabled && (
+            <RecordIndexActionMenu indexId={recordIndexId} />
+          )}
         </RecordFieldValueSelectorContextProvider>
       </StyledContainer>
     </>
