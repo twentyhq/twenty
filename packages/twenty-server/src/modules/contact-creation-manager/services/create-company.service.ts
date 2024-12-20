@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
+import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared';
 import { DeepPartial, EntityManager, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -25,7 +26,7 @@ export class CreateCompanyService {
 
   constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
     this.httpService = axios.create({
-      baseURL: 'https://twenty-companies.com',
+      baseURL: TWENTY_COMPANIES_BASE_URL,
     });
   }
 

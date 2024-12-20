@@ -27,7 +27,8 @@
     "paths": {
       "src/*": ["packages/twenty-server/src/*"],
       "test/*": ["packages/twenty-server/test/*"],
-      "twenty-emails": ["packages/twenty-emails/dist"]
+      "twenty-emails": ["packages/twenty-emails/dist"],
+      "twenty-shared": ["packages/twenty-shared/dist"]
     }
   },
   "ts-node": {

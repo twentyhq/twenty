@@ -25,6 +25,10 @@
       "path": "../packages/twenty-emails"
     },
     {
+      "name": "packages/twenty-shared",
+      "path": "../packages/twenty-shared"
+    },
+    {
       "name": "packages/twenty-server",
       "path": "../packages/twenty-server"
     },
