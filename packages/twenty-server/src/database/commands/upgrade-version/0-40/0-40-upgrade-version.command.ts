@@ -38,6 +38,12 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
       'Running command to upgrade to 0.40: must start with phone calling code otherwise SyncMetadata will fail',
     );
 
+    await this.recordPositionBackfillCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
     await this.phoneCallingCodeCreateColumnCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
@@ -45,12 +51,6 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.phoneCallingCodeMigrateDataCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
-      workspaceIds,
-    );
-
-    await this.recordPositionBackfillCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
