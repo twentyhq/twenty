@@ -82,7 +82,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
       'Running command to add calling code and change country code with default one',
     );
 
-    this.logger.log(`Part 1 - Workspace`);
+    this.logger.verbose(`Part 1 - Workspace`);
 
     let workspaceIterator = 1;
 
@@ -91,7 +91,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
         `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
       );
 
-      this.logger.log(
+      this.logger.verbose(
         `P1 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
       );
 
@@ -109,13 +109,13 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
             isDefined(phoneFieldMetadata?.name) &&
             isDefined(phoneFieldMetadata.object)
           ) {
-            this.logger.log(
+            this.logger.verbose(
               `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${phoneFieldMetadata.object.nameSingular || 'not found'}`,
             );
 
             if (!phoneFieldMetadata.object?.nameSingular) continue;
 
-            this.logger.log(
+            this.logger.verbose(
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
             );
             if (!options.dryRun) {
@@ -148,7 +148,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
           }
         }
 
-        this.logger.log(
+        this.logger.verbose(
           `P1 Step 1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
         );
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -159,20 +159,20 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
           workspaceId,
         );
 
-        this.logger.log(
+        this.logger.verbose(
           `P1 Step 2 - Migrations for callingCode must be first. Now can use twentyORMGlobalManager to update countryCode`,
         );
 
-        this.logger.log(
+        this.logger.verbose(
           `P1 Step 3 (same time) - update CountryCode to letters: +33 => FR || +1 => US (if mulitple, first one)`,
         );
 
-        this.logger.log(
+        this.logger.verbose(
           `P1 Step 4 (same time) - update all additioanl phones to add a country code following the same logic`,
         );
 
         for (const phoneFieldMetadata of phonesFieldMetadata) {
-          this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
+          this.logger.verbose(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
           if (
             isDefined(phoneFieldMetadata) &&
             isDefined(phoneFieldMetadata.name)
@@ -226,12 +226,12 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
           }
         }
       } catch (error) {
-        console.log(`Error in workspace ${workspaceId} : ${error}`);
+        this.logger.log(`Error in workspace ${workspaceId} : ${error}`);
       }
       workspaceIterator++;
     }
 
-    this.logger.log(`
+    this.logger.verbose(`
       
       Part 2 - FieldMetadata`);
 
@@ -241,7 +241,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
         `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
       );
 
-      this.logger.log(
+      this.logger.verbose(
         `P2 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
       );
 
@@ -293,7 +293,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
           }
         }
       } catch (error) {
-        console.log(`Error in workspace ${workspaceId} : ${error}`);
+        this.logger.log(`Error in workspace ${workspaceId} : ${error}`);
       }
       workspaceIterator++;
     }
