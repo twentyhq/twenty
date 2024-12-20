@@ -8,14 +8,11 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
-import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
-import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -23,43 +20,31 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { isDefined } from '~/utils/isDefined';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
 
-type RichTextEditorProps = {
+type ActivityRichTextEditorProps = {
   activityId: string;
-  fillTitleFromBody: boolean;
   activityObjectNameSingular:
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
 };
 
-export const RichTextEditor = ({
+export const ActivityRichTextEditor = ({
   activityId,
-  fillTitleFromBody,
   activityObjectNameSingular,
-}: RichTextEditorProps) => {
+}: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
 
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
-
-  const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
-    activityTitleHasBeenSetFamilyState({
-      activityId: activityId,
-    }),
-  );
-
-  const [activityBody, setActivityBody] = useRecoilState(
-    activityBodyFamilyState({
-      activityId: activityId,
-    }),
-  );
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
@@ -85,33 +70,6 @@ export const RichTextEditor = ({
       });
     }
   }, 300);
-
-  const persistTitleAndBodyDebounced = useDebouncedCallback(
-    (newTitle: string, newBody: string) => {
-      if (isDefined(activity)) {
-        upsertActivity({
-          activity,
-          input: {
-            title: newTitle,
-            body: newBody,
-          },
-        });
-
-        setActivityTitleHasBeenSet(true);
-      }
-    },
-    200,
-  );
-
-  const updateTitleAndBody = useCallback(
-    (newStringifiedBody: string) => {
-      const blockBody = JSON.parse(newStringifiedBody);
-      const newTitleFromBody = blockBody[0]?.content?.[0]?.text;
-
-      persistTitleAndBodyDebounced(newTitleFromBody, newStringifiedBody);
-    },
-    [persistTitleAndBodyDebounced],
-  );
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
     canCreateActivityState,
@@ -156,24 +114,13 @@ export const RichTextEditor = ({
         setCanCreateActivity(true);
       }
 
-      if (!activityTitleHasBeenSet && fillTitleFromBody) {
-        updateTitleAndBody(activityBody);
-      } else {
-        persistBodyDebounced(prepareBody(activityBody));
-      }
+      persistBodyDebounced(prepareBody(activityBody));
     },
-    [
-      fillTitleFromBody,
-      persistBodyDebounced,
-      activityTitleHasBeenSet,
-      updateTitleAndBody,
-      setCanCreateActivity,
-      canCreateActivity,
-    ],
+    [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
   );
 
   const handleBodyChange = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       (newStringifiedBody: string) => {
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
@@ -195,79 +142,28 @@ export const RichTextEditor = ({
           objectMetadataItem: objectMetadataItemActivity,
         });
 
-        const activityTitleHasBeenSet = snapshot
-          .getLoadable(
-            activityTitleHasBeenSetFamilyState({
-              activityId: activityId,
-            }),
-          )
-          .getValue();
-
-        const blockBody = JSON.parse(newStringifiedBody);
-        const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
-
-        if (!activityTitleHasBeenSet && fillTitleFromBody) {
-          set(recordStoreFamilyState(activityId), (oldActivity) => {
-            return {
-              ...oldActivity,
-              id: activityId,
-              title: newTitleFromBody,
-              __typename: 'Activity',
-            };
-          });
-
-          modifyRecordFromCache({
-            recordId: activityId,
-            fieldModifiers: {
-              title: () => {
-                return newTitleFromBody;
-              },
-            },
-            cache,
-            objectMetadataItem: objectMetadataItemActivity,
-          });
-        }
-
         handlePersistBody(newStringifiedBody);
       },
-    [
-      activityId,
-      cache,
-      objectMetadataItemActivity,
-      fillTitleFromBody,
-      handlePersistBody,
-    ],
+    [activityId, cache, objectMetadataItemActivity, handlePersistBody],
   );
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
-  // See https://github.com/twentyhq/twenty/issues/6724 for explanation
-  const setActivityBodyDebouncedToAvoidDragBug = useDebouncedCallback(
-    setActivityBody,
-    100,
-  );
-
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
-
-    setActivityBodyDebouncedToAvoidDragBug(newStringifiedBody);
 
     handleBodyChangeDebounced(newStringifiedBody);
   };
 
   const initialBody = useMemo(() => {
-    if (isNonEmptyString(activityBody) && activityBody !== '{}') {
-      return JSON.parse(activityBody);
-    } else if (
+    if (
       isDefined(activity) &&
       isNonEmptyString(activity.body) &&
       activity?.body !== '{}'
     ) {
       return JSON.parse(activity.body);
-    } else {
-      return undefined;
     }
-  }, [activity, activityBody]);
+  }, [activity]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachementAbsoluteURL } = await handleUploadAttachment(file);
@@ -367,11 +263,17 @@ export const RichTextEditor = ({
   };
 
   return (
-    <BlockEditor
-      onFocus={handleBlockEditorFocus}
-      onBlur={handlerBlockEditorBlur}
-      onChange={handleEditorChange}
-      editor={editor}
-    />
+    <>
+      <ActivityRichTextEditorChangeOnActivityIdEffect
+        editor={editor}
+        activityId={activityId}
+      />
+      <BlockEditor
+        onFocus={handleBlockEditorFocus}
+        onBlur={handlerBlockEditorBlur}
+        onChange={handleEditorChange}
+        editor={editor}
+      />
+    </>
   );
 };
