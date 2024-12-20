@@ -48,7 +48,10 @@ export class GraphqlQueryOrderFieldParser {
             Object.assign(acc, compositeOrder);
           } else {
             acc[`"${objectNameSingular}"."${key}"`] =
-              this.convertOrderByToFindOptionsOrder(value, isForwardPagination);
+              this.convertOrderByToFindOptionsOrder(
+                value as OrderByDirection,
+                isForwardPagination,
+              );
           }
         });
 

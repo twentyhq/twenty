@@ -70,6 +70,7 @@ type CommandGroupConfig = {
     key?: string;
     firstHotKey?: string;
     secondHotKey?: string;
+    shouldCloseCommandMenuOnClick?: boolean;
   };
 };
 
@@ -253,6 +254,7 @@ export const CommandMenu = () => {
         id,
         label: `${firstName} ${lastName}`,
         to: `object/person/${id}`,
+        shouldCloseCommandMenuOnClick: true,
       })),
     [people],
   );
@@ -263,6 +265,7 @@ export const CommandMenu = () => {
         id,
         label: name ?? '',
         to: `object/company/${id}`,
+        shouldCloseCommandMenuOnClick: true,
       })),
     [companies],
   );
@@ -273,6 +276,7 @@ export const CommandMenu = () => {
         id,
         label: name ?? '',
         to: `object/opportunity/${id}`,
+        shouldCloseCommandMenuOnClick: true,
       })),
     [opportunities],
   );
@@ -284,6 +288,7 @@ export const CommandMenu = () => {
         label: note.title ?? '',
         to: '',
         onCommandClick: () => openActivityRightDrawer(note.id),
+        shouldCloseCommandMenuOnClick: true,
       })),
     [notes, openActivityRightDrawer],
   );
@@ -295,6 +300,7 @@ export const CommandMenu = () => {
         label: task.title ?? '',
         to: '',
         onCommandClick: () => openActivityRightDrawer(task.id),
+        shouldCloseCommandMenuOnClick: true,
       })),
     [tasks, openActivityRightDrawer],
   );
@@ -307,6 +313,7 @@ export const CommandMenu = () => {
           id: objectRecord.record.id,
           label: objectRecord.recordIdentifier.name,
           to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
+          shouldCloseCommandMenuOnClick: true,
         })),
       );
     });
@@ -488,6 +495,7 @@ export const CommandMenu = () => {
         onClick: command.onCommandClick,
         firstHotKey: command.firstHotKey,
         secondHotKey: command.secondHotKey,
+        shouldCloseCommandMenuOnClick: command.shouldCloseCommandMenuOnClick,
       }),
     },
     {
@@ -501,6 +509,7 @@ export const CommandMenu = () => {
         onClick: command.onCommandClick,
         firstHotKey: command.firstHotKey,
         secondHotKey: command.secondHotKey,
+        shouldCloseCommandMenuOnClick: command.shouldCloseCommandMenuOnClick,
       }),
     },
     {
@@ -520,6 +529,7 @@ export const CommandMenu = () => {
         ),
         firstHotKey: person.firstHotKey,
         secondHotKey: person.secondHotKey,
+        shouldCloseCommandMenuOnClick: true,
       }),
     },
     {
@@ -540,6 +550,7 @@ export const CommandMenu = () => {
         ),
         firstHotKey: company.firstHotKey,
         secondHotKey: company.secondHotKey,
+        shouldCloseCommandMenuOnClick: true,
       }),
     },
     {
@@ -557,6 +568,7 @@ export const CommandMenu = () => {
             placeholder={opportunity.name ?? ''}
           />
         ),
+        shouldCloseCommandMenuOnClick: true,
       }),
     },
     {
@@ -567,6 +579,7 @@ export const CommandMenu = () => {
         Icon: IconNotes,
         label: note.title ?? '',
         onClick: () => openActivityRightDrawer(note.id),
+        shouldCloseCommandMenuOnClick: true,
       }),
     },
     {
@@ -577,6 +590,7 @@ export const CommandMenu = () => {
         Icon: IconCheckbox,
         label: task.title ?? '',
         onClick: () => openActivityRightDrawer(task.id),
+        shouldCloseCommandMenuOnClick: true,
       }),
     },
     ...Object.entries(customObjectRecordsMap).map(
@@ -596,6 +610,7 @@ export const CommandMenu = () => {
               placeholder={objectRecord.recordIdentifier.name ?? ''}
             />
           ),
+          shouldCloseCommandMenuOnClick: true,
         }),
       }),
     ),
@@ -627,8 +642,17 @@ export const CommandMenu = () => {
                     ].find((cmd) => cmd.id === itemId);
 
                     if (isDefined(command)) {
-                      const { to, onCommandClick } = command;
-                      onItemClick(onCommandClick, to);
+                      const {
+                        to,
+                        onCommandClick,
+                        shouldCloseCommandMenuOnClick,
+                      } = command;
+
+                      onItemClick({
+                        shouldCloseCommandMenuOnClick,
+                        onClick: onCommandClick,
+                        to,
+                      });
                     }
                   }}
                 >
@@ -745,6 +769,9 @@ export const CommandMenu = () => {
                               secondHotKey={
                                 workflowRunGlobalCommand.secondHotKey
                               }
+                              shouldCloseCommandMenuOnClick={
+                                workflowRunGlobalCommand.shouldCloseCommandMenuOnClick
+                              }
                             />
                           </SelectableItem>
                         ),
@@ -765,6 +792,7 @@ export const CommandMenu = () => {
                             key,
                             firstHotKey,
                             secondHotKey,
+                            shouldCloseCommandMenuOnClick,
                           } = renderItem(item);
                           return (
                             <SelectableItem itemId={id} key={id}>
@@ -777,6 +805,9 @@ export const CommandMenu = () => {
                                 onClick={onClick}
                                 firstHotKey={firstHotKey}
                                 secondHotKey={secondHotKey}
+                                shouldCloseCommandMenuOnClick={
+                                  shouldCloseCommandMenuOnClick
+                                }
                               />
                             </SelectableItem>
                           );

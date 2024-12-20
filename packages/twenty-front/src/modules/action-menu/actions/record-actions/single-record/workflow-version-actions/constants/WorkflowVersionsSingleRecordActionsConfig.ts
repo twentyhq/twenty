@@ -1,8 +1,10 @@
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
-import { useSeeExecutionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeExecutionsWorkflowVersionSingleRecordAction';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeRunsWorkflowVersionSingleRecordAction';
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
+import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
 import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
@@ -25,7 +27,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   }
 > = {
   useAsDraftWorkflowVersionSingleRecord: {
-    key: 'use-as-draft-workflow-version-single-record',
+    key: WorkflowVersionSingleRecordActionKeys.USE_AS_DRAFT,
     label: 'Use as draft',
     position: 1,
     isPinned: true,
@@ -38,9 +40,9 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     ],
     actionHook: useUseAsDraftWorkflowVersionSingleRecordAction,
   },
-  seeWorkflowExecutionsSingleRecord: {
-    key: 'see-workflow-executions-single-record',
-    label: 'See executions',
+  seeWorkflowRunsSingleRecord: {
+    key: WorkflowVersionSingleRecordActionKeys.SEE_RUNS,
+    label: 'See runs',
     position: 2,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
@@ -49,10 +51,10 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
       ActionAvailableOn.SHOW_PAGE,
       ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useSeeExecutionsWorkflowVersionSingleRecordAction,
+    actionHook: useSeeRunsWorkflowVersionSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
-    key: 'see-workflow-versions-history-single-record',
+    key: WorkflowVersionSingleRecordActionKeys.SEE_VERSIONS,
     label: 'See versions history',
     position: 3,
     type: ActionMenuEntryType.Standard,
@@ -67,7 +69,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-previous-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous version',
     shortLabel: '',
     position: 9,
@@ -78,7 +80,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-next-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next version',
     shortLabel: '',
     position: 10,

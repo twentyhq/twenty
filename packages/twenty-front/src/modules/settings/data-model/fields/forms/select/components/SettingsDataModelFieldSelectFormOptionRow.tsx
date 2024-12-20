@@ -8,7 +8,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 import {
   ColorSample,
   IconCheck,
@@ -21,7 +20,6 @@ import {
   MenuItem,
   MenuItemSelectColor,
 } from 'twenty-ui';
-import { v4 } from 'uuid';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
@@ -81,17 +79,14 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
 
-  const dropdownIds = useMemo(() => {
-    const baseScopeId = `select-field-option-row-${v4()}`;
-    return {
-      color: `${baseScopeId}-color`,
-      actions: `${baseScopeId}-actions`,
-    };
-  }, []);
+  const SELECT_COLOR_DROPDOWN_ID = 'select-color-dropdown';
+  const SELECT_ACTIONS_DROPDOWN_ID = 'select-actions-dropdown';
 
-  const { closeDropdown: closeColorDropdown } = useDropdown(dropdownIds.color);
+  const { closeDropdown: closeColorDropdown } = useDropdown(
+    SELECT_COLOR_DROPDOWN_ID,
+  );
   const { closeDropdown: closeActionsDropdown } = useDropdown(
-    dropdownIds.actions,
+    SELECT_ACTIONS_DROPDOWN_ID,
   );
 
   const handleInputEnter = () => {
@@ -120,28 +115,26 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         />
       </AdvancedSettingsWrapper>
       <Dropdown
-        dropdownId={dropdownIds.color}
+        dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
         dropdownHotkeyScope={{
-          scope: dropdownIds.color,
+          scope: SELECT_COLOR_DROPDOWN_ID,
         }}
         clickableComponent={<StyledColorSample colorName={option.color} />}
         dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer>
-              {MAIN_COLOR_NAMES.map((colorName) => (
-                <MenuItemSelectColor
-                  key={colorName}
-                  onClick={() => {
-                    onChange({ ...option, color: colorName });
-                    closeColorDropdown();
-                  }}
-                  color={colorName}
-                  selected={colorName === option.color}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <DropdownMenuItemsContainer>
+            {MAIN_COLOR_NAMES.map((colorName) => (
+              <MenuItemSelectColor
+                key={colorName}
+                onClick={() => {
+                  onChange({ ...option, color: colorName });
+                  closeColorDropdown();
+                }}
+                color={colorName}
+                selected={colorName === option.color}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
         }
       />
       <StyledOptionInput
@@ -165,10 +158,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         autoSelectOnMount={isNewRow}
       />
       <Dropdown
-        dropdownId={dropdownIds.actions}
+        dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
         dropdownHotkeyScope={{
-          scope: dropdownIds.actions,
+          scope: SELECT_ACTIONS_DROPDOWN_ID,
         }}
         clickableComponent={
           <StyledLightIconButton accent="tertiary" Icon={IconDotsVertical} />

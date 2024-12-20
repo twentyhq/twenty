@@ -183,6 +183,9 @@ const StyledSpacer = styled.span`
 const StyledIcon = styled.div`
   flex-shrink: 0;
   flex-grow: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -208,7 +211,6 @@ const visibleStateStyles = css`
 
 const StyledRightOptionsVisbility = styled.div<{
   isMobile: boolean;
-  active: boolean;
 }>`
   display: block;
   opacity: 0;
@@ -221,7 +223,7 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile, active }) => (isMobile || active) && visibleStateStyles}
+  ${({ isMobile }) => isMobile && visibleStateStyles}
 
   .navigation-drawer-item:hover & {
     ${visibleStateStyles}
@@ -343,10 +345,7 @@ export const NavigationDrawerItem = ({
                   e.preventDefault();
                 }}
               >
-                <StyledRightOptionsVisbility
-                  isMobile={isMobile}
-                  active={active || false}
-                >
+                <StyledRightOptionsVisbility isMobile={isMobile}>
                   {rightOptions}
                 </StyledRightOptionsVisbility>
               </StyledRightOptionsContainer>
