@@ -1,5 +1,5 @@
 {
-  "name": "@twenty/twenty-shared",
+  "name": "twenty-shared",
   "version": "0.40.0-canary",
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
