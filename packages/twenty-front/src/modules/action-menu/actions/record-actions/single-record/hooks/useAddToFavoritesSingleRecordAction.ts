@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
+import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';

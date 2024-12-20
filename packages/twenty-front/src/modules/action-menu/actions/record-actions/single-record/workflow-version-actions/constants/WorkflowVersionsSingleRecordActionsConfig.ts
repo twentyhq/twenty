@@ -5,8 +5,8 @@ import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actio
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
-import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
+import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
