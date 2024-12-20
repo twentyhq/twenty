@@ -24,6 +24,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
@@ -36,6 +37,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     onContentChange,
     resetContent,
   } = useOptionsDropdown();
+
+  const { currentViewWithCombinedFiltersAndSorts: currentView } =
+    useGetCurrentView();
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
@@ -90,7 +94,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         Group by
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        {isViewGroupEnabled && (
+        {isViewGroupEnabled && currentView?.key !== 'INDEX' && (
           <>
             <MenuItem
               onClick={() => onContentChange('recordGroupFields')}

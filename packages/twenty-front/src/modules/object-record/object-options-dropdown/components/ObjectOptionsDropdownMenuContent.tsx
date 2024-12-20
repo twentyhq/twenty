@@ -118,19 +118,20 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {(viewType === ViewType.Kanban || isViewGroupEnabled) && (
-          <MenuItem
-            onClick={() =>
-              isDefined(recordGroupFieldMetadata)
-                ? onContentChange('recordGroups')
-                : onContentChange('recordGroupFields')
-            }
-            LeftIcon={IconLayoutList}
-            text="Group by"
-            contextualText={recordGroupFieldMetadata?.label}
-            hasSubMenu
-          />
-        )}
+        {(viewType === ViewType.Kanban || isViewGroupEnabled) &&
+          currentView?.key !== 'INDEX' && (
+            <MenuItem
+              onClick={() =>
+                isDefined(recordGroupFieldMetadata)
+                  ? onContentChange('recordGroups')
+                  : onContentChange('recordGroupFields')
+              }
+              LeftIcon={IconLayoutList}
+              text="Group by"
+              contextualText={recordGroupFieldMetadata?.label}
+              hasSubMenu
+            />
+          )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
