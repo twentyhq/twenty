@@ -211,7 +211,6 @@ const visibleStateStyles = css`
 
 const StyledRightOptionsVisbility = styled.div<{
   isMobile: boolean;
-  active: boolean;
 }>`
   display: block;
   opacity: 0;
@@ -224,7 +223,7 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile, active }) => (isMobile || active) && visibleStateStyles}
+  ${({ isMobile }) => isMobile && visibleStateStyles}
 
   .navigation-drawer-item:hover & {
     ${visibleStateStyles}
@@ -346,10 +345,7 @@ export const NavigationDrawerItem = ({
                   e.preventDefault();
                 }}
               >
-                <StyledRightOptionsVisbility
-                  isMobile={isMobile}
-                  active={active || false}
-                >
+                <StyledRightOptionsVisbility isMobile={isMobile}>
                   {rightOptions}
                 </StyledRightOptionsVisbility>
               </StyledRightOptionsContainer>
