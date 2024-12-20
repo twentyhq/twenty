@@ -1,9 +1,11 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -75,6 +77,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
+  const { toggleCommandMenu } = useCommandMenu();
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
@@ -96,10 +99,17 @@ export const DefaultLayout = () => {
               <ActionMenuComponentInstanceContext.Provider
                 value={{ instanceId: 'command-menu' }}
               >
-                <RecordActionMenuEntriesSetter />
-                {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
-                <ActionMenuConfirmationModals />
-                <CommandMenu />
+                <ActionMenuContext.Provider
+                  value={{
+                    isInRightDrawer: false,
+                    onActionExecutedCallback: toggleCommandMenu,
+                  }}
+                >
+                  <RecordActionMenuEntriesSetter />
+                  {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+                  <ActionMenuConfirmationModals />
+                  <CommandMenu />
+                </ActionMenuContext.Provider>
               </ActionMenuComponentInstanceContext.Provider>
             </ContextStoreComponentInstanceContext.Provider>
             <KeyboardShortcutMenu />

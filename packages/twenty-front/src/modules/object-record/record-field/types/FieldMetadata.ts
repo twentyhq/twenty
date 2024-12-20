@@ -265,10 +265,15 @@ export type FieldActorValue = {
 
 export type FieldArrayValue = string[];
 
-export type PhoneRecord = { number: string; callingCode: string };
+export type PhoneRecord = {
+  number: string;
+  callingCode: string;
+  countryCode: string;
+};
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };

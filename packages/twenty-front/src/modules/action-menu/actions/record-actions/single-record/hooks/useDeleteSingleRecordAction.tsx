@@ -1,12 +1,15 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
+import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
@@ -21,6 +24,8 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
     const { deleteOneRecord } = useDeleteOneRecord({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
+
+    const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
     const { sortedFavorites: favorites } = useFavorites();
     const { deleteFavorite } = useDeleteFavorite();
@@ -49,10 +54,10 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
-    const { isInRightDrawer, onActionExecutedCallback } =
-      useContext(ActionMenuContext);
+    const { isInRightDrawer } = useContext(ActionMenuContext);
 
-    const shouldBeRegistered = !isRemoteObject;
+    const shouldBeRegistered =
+      !isRemoteObject && isNull(selectedRecord?.deletedAt);
 
     const onClick = () => {
       if (!shouldBeRegistered) {
@@ -75,7 +80,6 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
           }
           onConfirmClick={() => {
             handleDeleteClick();
-            onActionExecutedCallback?.();
             if (isInRightDrawer) {
               closeRightDrawer();
             }

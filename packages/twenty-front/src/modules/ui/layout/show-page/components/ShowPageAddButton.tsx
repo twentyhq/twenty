@@ -19,7 +19,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Dropdown } from '../../dropdown/components/Dropdown';
-import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
 const StyledContainer = styled.div`
   z-index: 1;
@@ -93,22 +92,20 @@ export const ShowPageAddButton = ({
           )
         }
         dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                onClick={() => handleSelect(CoreObjectNameSingular.Note)}
-                accent="default"
-                LeftIcon={IconNotes}
-                text="Note"
-              />
-              <MenuItem
-                onClick={() => handleSelect(CoreObjectNameSingular.Task)}
-                accent="default"
-                LeftIcon={IconCheckbox}
-                text="Task"
-              />
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              onClick={() => handleSelect(CoreObjectNameSingular.Note)}
+              accent="default"
+              LeftIcon={IconNotes}
+              text="Note"
+            />
+            <MenuItem
+              onClick={() => handleSelect(CoreObjectNameSingular.Task)}
+              accent="default"
+              LeftIcon={IconCheckbox}
+              text="Task"
+            />
+          </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{
           scope: PageHotkeyScope.ShowPage,

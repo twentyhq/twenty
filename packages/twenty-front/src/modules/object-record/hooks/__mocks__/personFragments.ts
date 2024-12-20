@@ -30,6 +30,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       position
@@ -37,6 +38,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference
@@ -229,6 +231,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       pointOfContactForOpportunities {
@@ -305,6 +308,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference

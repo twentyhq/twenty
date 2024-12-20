@@ -198,6 +198,7 @@ phone
 {
   primaryPhoneNumber
   primaryPhoneCountryCode
+  primaryPhoneCallingCode
 }
 linkedinLink
 {
