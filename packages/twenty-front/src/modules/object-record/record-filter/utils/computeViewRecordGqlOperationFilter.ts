@@ -327,11 +327,20 @@ const computeFilterRecordGqlOperationFilter = (
           case ViewFilterOperand.IsNot: {
             if (recordIds.length === 0) return;
             return {
-              not: {
-                [correspondingField.name + 'Id']: {
-                  in: recordIds,
-                } as RelationFilter,
-              },
+              or: [
+                {
+                  not: {
+                    [correspondingField.name + 'Id']: {
+                      in: recordIds,
+                    } as RelationFilter,
+                  },
+                },
+                {
+                  [correspondingField.name + 'Id']: {
+                    is: 'NULL',
+                  } as RelationFilter,
+                },
+              ],
             };
           }
           default:
