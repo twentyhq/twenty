@@ -2,9 +2,9 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
+import { useComputeContextStoreFilters } from '@/context-store/hooks/useComputeContextStoreFilters';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -70,6 +70,8 @@ export const useExportFetchRecords = ({
   const contextStoreFilters = useRecoilComponentValueV2(
     contextStoreFiltersComponentState,
   );
+
+  const { computeContextStoreFilters } = useComputeContextStoreFilters();
 
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
