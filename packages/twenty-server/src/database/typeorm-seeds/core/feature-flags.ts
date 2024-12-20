@@ -85,7 +85,6 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
-
       {
         key: FeatureFlagKey.IsPageHeaderV2Enabled,
         workspaceId: workspaceId,

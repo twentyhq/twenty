@@ -43,7 +43,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   if (
     (!favorites || favorites.length === 0) &&
     !isFavoriteFolderCreating &&
-    !favoritesByFolder.length
+    (!favoritesByFolder || favoritesByFolder.length === 0)
   ) {
     return null;
   }
