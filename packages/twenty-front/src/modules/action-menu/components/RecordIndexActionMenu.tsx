@@ -8,11 +8,13 @@ import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordInde
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsMobile } from 'twenty-ui';
 
-export const RecordIndexActionMenu = () => {
+export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
@@ -25,13 +27,27 @@ export const RecordIndexActionMenu = () => {
 
   const isMobile = useIsMobile();
 
+  const setIsLoadMoreLocked = useSetRecoilComponentStateV2(
+    isRecordIndexLoadMoreLockedComponentState,
+    indexId,
+  );
+
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: false,
-            onActionExecutedCallback: () => {},
+            onActionStartedCallback: (action) => {
+              if (action.key === 'delete-multiple-records') {
+                setIsLoadMoreLocked(true);
+              }
+            },
+            onActionExecutedCallback: (action) => {
+              if (action.key === 'delete-multiple-records') {
+                setIsLoadMoreLocked(false);
+              }
+            },
           }}
         >
           {isPageHeaderV2Enabled ? (
