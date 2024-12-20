@@ -7,13 +7,13 @@ import { SummaryCard } from '@/object-record/record-show/components/SummaryCard'
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;

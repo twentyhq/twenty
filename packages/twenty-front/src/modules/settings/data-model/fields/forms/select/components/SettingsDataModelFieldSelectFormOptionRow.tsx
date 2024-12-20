@@ -127,21 +127,19 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }}
         clickableComponent={<StyledColorSample colorName={option.color} />}
         dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer>
-              {MAIN_COLOR_NAMES.map((colorName) => (
-                <MenuItemSelectColor
-                  key={colorName}
-                  onClick={() => {
-                    onChange({ ...option, color: colorName });
-                    closeColorDropdown();
-                  }}
-                  color={colorName}
-                  selected={colorName === option.color}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <DropdownMenuItemsContainer>
+            {MAIN_COLOR_NAMES.map((colorName) => (
+              <MenuItemSelectColor
+                key={colorName}
+                onClick={() => {
+                  onChange({ ...option, color: colorName });
+                  closeColorDropdown();
+                }}
+                color={colorName}
+                selected={colorName === option.color}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
         }
       />
       <StyledOptionInput

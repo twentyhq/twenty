@@ -98,7 +98,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
         <>
-          <DropdownMenuItemsContainer withoutScrollWrapper>
+          <DropdownMenuItemsContainer scrollable={false}>
             <MenuItem
               onClick={() => onContentChange('viewSettings')}
               LeftIcon={IconLayout}
@@ -109,7 +109,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
           <DropdownMenuSeparator />
         </>
       )}
-      <DropdownMenuItemsContainer withoutScrollWrapper>
+      <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('fields')}
           LeftIcon={IconTag}

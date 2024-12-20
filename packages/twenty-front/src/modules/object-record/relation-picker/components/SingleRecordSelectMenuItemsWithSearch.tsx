@@ -69,7 +69,7 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     <>
       {dropdownPlacement?.includes('end') && (
         <>
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             {createNewButton}
           </DropdownMenuItemsContainer>
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
@@ -117,7 +117,7 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
             <DropdownMenuSeparator />
           )}
           {isDefined(onCreate) && (
-            <DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>
           )}
