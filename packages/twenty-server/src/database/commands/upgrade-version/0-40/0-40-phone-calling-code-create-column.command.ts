@@ -84,7 +84,8 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
 
         for (const phoneFieldMetadata of phonesFieldMetadata) {
           if (
-            isDefined(phoneFieldMetadata?.name && phoneFieldMetadata.object)
+            isDefined(phoneFieldMetadata?.name) &&
+            isDefined(phoneFieldMetadata.object)
           ) {
             this.logger.verbose(
               `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${phoneFieldMetadata.object.nameSingular || 'not found'}`,
