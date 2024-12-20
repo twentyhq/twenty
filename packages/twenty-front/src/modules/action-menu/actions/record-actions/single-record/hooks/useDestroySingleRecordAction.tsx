@@ -61,7 +61,6 @@ export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetad
           }
           onConfirmClick={async () => {
             await handleDeleteClick();
-            onActionExecutedCallback?.({ key: 'destroy-single-record' });
             if (isInRightDrawer) {
               closeRightDrawer();
             }
