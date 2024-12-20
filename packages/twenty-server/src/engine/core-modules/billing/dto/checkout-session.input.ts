@@ -12,13 +12,13 @@ export class CheckoutSessionInput {
   @IsNotEmpty()
   recurringInterval: Stripe.Price.Recurring.Interval;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @IsString()
-  @IsOptional()
-  successUrlPath?: string;
+  @IsNotEmpty()
+  successUrlPath: string;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, { defaultValue: true })
   @IsBoolean()
   @IsOptional()
-  requirePaymentMethod?: boolean;
+  requirePaymentMethod: boolean;
 }
