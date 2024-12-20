@@ -46,6 +46,7 @@ import {
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -77,8 +78,11 @@ export class UserResolver {
     @OriginHeader() origin: string,
   ): Promise<User> {
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
-      (await this.domainManagerService.getDefaultWorkspace());
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     await this.userService.hasUserAccessToWorkspaceOrThrow(
       userId,
@@ -233,8 +237,11 @@ export class UserResolver {
     @OriginHeader() origin: string,
   ): Promise<OnboardingStatus> {
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
-      (await this.domainManagerService.getDefaultWorkspace());
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }

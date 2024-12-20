@@ -22,7 +22,6 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-output';
 import {
   AuthProviders,
   PublicWorkspaceDataOutput,
@@ -74,7 +73,7 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => ActivateWorkspaceOutput)
+  @Mutation(() => Workspace)
   @UseGuards(UserAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
@@ -82,17 +81,13 @@ export class WorkspaceResolver {
     @OriginHeader() origin: string,
   ) {
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
-      (await this.domainManagerService.getDefaultWorkspace());
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
-    return {
-      workspace: await this.workspaceService.activateWorkspace(
-        user,
-        workspace,
-        data,
-      ),
-      loginToken: await this.loginTokenService.generateLoginToken(user.email),
-    };
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
   @Mutation(() => Workspace)
@@ -192,7 +187,9 @@ export class WorkspaceResolver {
   @Query(() => PublicWorkspaceDataOutput)
   async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
     workspaceValidator.assertIsDefinedOrThrow(
       workspace,

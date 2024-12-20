@@ -147,11 +147,10 @@ export class SignInUpService {
       });
     }
 
-    const workspace = targetWorkspaceSubdomain
-      ? await this.workspaceRepository.findOne({
-          where: { subdomain: targetWorkspaceSubdomain },
-        })
-      : await this.domainManagerService.getDefaultWorkspace();
+    const workspace =
+      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
+        targetWorkspaceSubdomain,
+      );
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 

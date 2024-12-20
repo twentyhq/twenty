@@ -37,6 +37,8 @@ import {
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -98,7 +100,9 @@ export class AuthResolver {
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
     if (!workspace) {
       throw new AuthException(
@@ -115,12 +119,12 @@ export class AuthResolver {
   }
 
   @UseGuards(CaptchaGuard)
-  @Mutation(() => LoginToken)
+  @Mutation(() => SignUpOutput)
   async signUp(
     @Args() signUpInput: SignUpInput,
     @OriginHeader() origin: string,
-  ): Promise<LoginToken> {
-    const { user } = await this.authService.signInUp({
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
       targetWorkspaceSubdomain:
         this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
@@ -132,7 +136,13 @@ export class AuthResolver {
       user.email,
     );
 
-    return { loginToken };
+    return {
+      loginToken,
+      workspaceVerifyUrl: this.authService.computeRedirectURI(
+        loginToken.token,
+        workspace.subdomain,
+      ),
+    };
   }
 
   // @Mutation(() => ExchangeAuthCode)
@@ -174,8 +184,11 @@ export class AuthResolver {
     @OriginHeader() origin: string,
   ): Promise<AuthTokens> {
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
-      (await this.domainManagerService.getDefaultWorkspace());
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const { sub: email } = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,

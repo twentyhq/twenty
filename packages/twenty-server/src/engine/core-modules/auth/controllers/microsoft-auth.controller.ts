@@ -86,7 +86,7 @@ export class MicrosoftAuthController {
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
           workspace.subdomain,
         ),

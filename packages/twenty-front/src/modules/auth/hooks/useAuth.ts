@@ -4,6 +4,7 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
+  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
@@ -63,6 +64,7 @@ export const useAuth = () => {
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
@@ -184,85 +186,12 @@ export const useAuth = () => {
 
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      const currentUserResult = await getCurrentUser();
-
-      const user = currentUserResult.data?.currentUser;
-
-      if (!user) {
-        throw new Error('No current user result');
-      }
-
-      let workspaceMember = null;
-
-      setCurrentUser(user);
-
-      if (isDefined(user.workspaceMembers)) {
-        const workspaceMembers = user.workspaceMembers.map(
-          (workspaceMember) => ({
-            ...workspaceMember,
-            colorScheme: workspaceMember.colorScheme as ColorScheme,
-            locale: workspaceMember.locale ?? 'en',
-          }),
-        );
-
-        setCurrentWorkspaceMembers(workspaceMembers);
-      }
-
-      if (isDefined(user.workspaceMember)) {
-        workspaceMember = {
-          ...user.workspaceMember,
-          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-          locale: user.workspaceMember?.locale ?? 'en',
-        };
-
-        setCurrentWorkspaceMember(workspaceMember);
-
-        // TODO: factorize with UserProviderEffect
-        setDateTimeFormat({
-          timeZone:
-            workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
-              ? workspaceMember.timeZone
-              : detectTimeZone(),
-          dateFormat: isDefined(user.workspaceMember.dateFormat)
-            ? getDateFormatFromWorkspaceDateFormat(
-                user.workspaceMember.dateFormat,
-              )
-            : DateFormat[detectDateFormat()],
-          timeFormat: isDefined(user.workspaceMember.timeFormat)
-            ? getTimeFormatFromWorkspaceTimeFormat(
-                user.workspaceMember.timeFormat,
-              )
-            : TimeFormat[detectTimeFormat()],
-        });
-      }
-
-      const workspace = user.currentWorkspace ?? null;
-
-      setCurrentWorkspace(workspace);
-
-      if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
-        setLastAuthenticateWorkspaceDomain({
-          workspaceId: workspace.id,
-          subdomain: workspace.subdomain,
-        });
-      }
-
-      if (isDefined(user.workspaces)) {
-        const validWorkspaces = user.workspaces
-          .filter(
-            ({ workspace }) => workspace !== null && workspace !== undefined,
-          )
-          .map((validWorkspace) => validWorkspace.workspace)
-          .filter(isDefined);
-
-        setWorkspaces(validWorkspaces);
-      }
-      setIsAppWaitingForFreshObjectMetadataState(true);
+      const { user, workspaceMember, workspace } = await loadCurrentUser();
 
       return {
-        user: user,
-        workspaceMember: user.workspaceMember,
-        workspace: user.currentWorkspace,
+        user,
+        workspaceMember,
+        workspace,
         tokens: verifyResult.data?.verify.tokens,
       };
     },
@@ -310,6 +239,98 @@ export const useAuth = () => {
     await clearSession();
   }, [clearSession]);
 
+  const loadCurrentUser = useCallback(async () => {
+    const currentUserResult = await getCurrentUser();
+
+    const user = currentUserResult.data?.currentUser;
+
+    if (!user) {
+      throw new Error('No current user result');
+    }
+
+    let workspaceMember = null;
+
+    setCurrentUser(user);
+
+    if (isDefined(user.workspaceMembers)) {
+      const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
+        ...workspaceMember,
+        colorScheme: workspaceMember.colorScheme as ColorScheme,
+        locale: workspaceMember.locale ?? 'en',
+      }));
+
+      setCurrentWorkspaceMembers(workspaceMembers);
+    }
+
+    if (isDefined(user.workspaceMember)) {
+      workspaceMember = {
+        ...user.workspaceMember,
+        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        locale: user.workspaceMember?.locale ?? 'en',
+      };
+
+      setCurrentWorkspaceMember(workspaceMember);
+
+      // TODO: factorize with UserProviderEffect
+      setDateTimeFormat({
+        timeZone:
+          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+            ? workspaceMember.timeZone
+            : detectTimeZone(),
+        dateFormat: isDefined(user.workspaceMember.dateFormat)
+          ? getDateFormatFromWorkspaceDateFormat(
+              user.workspaceMember.dateFormat,
+            )
+          : DateFormat[detectDateFormat()],
+        timeFormat: isDefined(user.workspaceMember.timeFormat)
+          ? getTimeFormatFromWorkspaceTimeFormat(
+              user.workspaceMember.timeFormat,
+            )
+          : TimeFormat[detectTimeFormat()],
+      });
+    }
+
+    const workspace = user.currentWorkspace ?? null;
+
+    setCurrentWorkspace(workspace);
+
+    if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
+      setLastAuthenticateWorkspaceDomain({
+        workspaceId: workspace.id,
+        subdomain: workspace.subdomain,
+      });
+    }
+
+    if (isDefined(user.workspaces)) {
+      const validWorkspaces = user.workspaces
+        .filter(
+          ({ workspace }) => workspace !== null && workspace !== undefined,
+        )
+        .map((validWorkspace) => validWorkspace.workspace)
+        .filter(isDefined);
+
+      setWorkspaces(validWorkspaces);
+    }
+    setIsAppWaitingForFreshObjectMetadataState(true);
+
+    return {
+      user,
+      workspaceMember,
+      workspace,
+    };
+  }, [
+    getCurrentUser,
+    isOnAWorkspaceSubdomain,
+    setCurrentUser,
+    setCurrentWorkspace,
+    setCurrentWorkspaceMember,
+    setCurrentWorkspaceMembers,
+    setDateTimeFormat,
+    setIsAppWaitingForFreshObjectMetadataState,
+    setLastAuthenticateWorkspaceDomain,
+    setWorkspaces,
+  ]);
+
   const handleCredentialsSignUp = useCallback(
     async (
       email: string,
@@ -338,6 +359,10 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      if (isMultiWorkspaceEnabled) {
+        return redirect(signUpResult.data?.signUp.workspaceVerifyUrl);
+      }
+
       const { user, workspace, workspaceMember } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
@@ -346,7 +371,13 @@ export const useAuth = () => {
 
       return { user, workspaceMember, workspace };
     },
-    [setIsVerifyPendingState, signUp, handleVerify],
+    [
+      setIsVerifyPendingState,
+      signUp,
+      isMultiWorkspaceEnabled,
+      handleVerify,
+      redirect,
+    ],
   );
 
   const buildRedirectUrl = useCallback(
@@ -367,7 +398,7 @@ export const useAuth = () => {
           params.workspacePersonalInviteToken,
         );
       }
-      console.log('>>>>>>>>>>>>>>', workspaceSubdomain);
+
       if (isDefined(workspaceSubdomain)) {
         url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
       }
@@ -400,6 +431,8 @@ export const useAuth = () => {
   return {
     challenge: handleChallenge,
     verify: handleVerify,
+
+    loadCurrentUser,
 
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
     clearSession,

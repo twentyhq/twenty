@@ -41,7 +41,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -57,7 +56,6 @@ export class AuthService {
     private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly userService: UserService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
@@ -415,7 +413,7 @@ export class AuthService {
     return workspace;
   }
 
-  async computeRedirectURI(loginToken: string, subdomain?: string) {
+  computeRedirectURI(loginToken: string, subdomain?: string) {
     const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',

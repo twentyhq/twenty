@@ -18,6 +18,7 @@ export const SIGN_UP = gql`
       loginToken {
         ...AuthTokenFragment
       }
+      workspaceVerifyUrl
     }
   }
 `;
