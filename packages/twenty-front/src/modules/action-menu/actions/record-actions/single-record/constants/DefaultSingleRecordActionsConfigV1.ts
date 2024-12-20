@@ -2,8 +2,8 @@ import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/recor
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
+import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
