@@ -26,7 +26,6 @@ const commonFieldPropertiesToIgnore = [
   'gate',
   'asExpression',
   'generatedType',
-  'defaultValue',
   'isLabelSyncedWithName',
 ];
 

@@ -4,6 +4,7 @@ import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actio
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
@@ -29,7 +30,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'add-to-favorites-single-record',
+    key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: 'Add to favorites',
     shortLabel: 'Add to favorites',
     position: 0,
@@ -44,7 +45,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'remove-from-favorites-single-record',
+    key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: 'Remove from favorites',
     shortLabel: 'Remove from favorites',
     isPinned: true,
@@ -59,7 +60,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   deleteSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'delete-single-record',
+    key: SingleRecordActionKeys.DELETE,
     label: 'Delete record',
     shortLabel: 'Delete',
     position: 2,
@@ -75,7 +76,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'destroy-single-record',
+    key: SingleRecordActionKeys.DESTROY,
     label: 'Permanently destroy record',
     shortLabel: 'Destroy',
     position: 3,
@@ -91,7 +92,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-previous-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous record',
     shortLabel: '',
     position: 4,
@@ -103,7 +104,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: 'navigate-to-next-record',
+    key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next record',
     shortLabel: '',
     position: 5,

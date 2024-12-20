@@ -9,7 +9,7 @@ import { RecordPositionBackfillService } from 'src/engine/api/graphql/workspace-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Command({
-  name: 'migrate-0.40:backfill-record-position',
+  name: 'upgrade-0.40:record-position-backfill',
   description: 'Backfill record position',
 })
 export class RecordPositionBackfillCommand extends ActiveWorkspacesCommandRunner {
@@ -27,10 +27,16 @@ export class RecordPositionBackfillCommand extends ActiveWorkspacesCommandRunner
     workspaceIds: string[],
   ): Promise<void> {
     for (const workspaceId of workspaceIds) {
-      await this.recordPositionBackfillService.backfill(
-        workspaceId,
-        options.dryRun ?? false,
-      );
+      try {
+        await this.recordPositionBackfillService.backfill(
+          workspaceId,
+          options.dryRun ?? false,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Error backfilling record position for workspace ${workspaceId}: ${error}`,
+        );
+      }
     }
   }
 }

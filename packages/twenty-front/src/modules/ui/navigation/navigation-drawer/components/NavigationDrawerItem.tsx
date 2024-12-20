@@ -183,6 +183,9 @@ const StyledSpacer = styled.span`
 const StyledIcon = styled.div`
   flex-shrink: 0;
   flex-grow: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 

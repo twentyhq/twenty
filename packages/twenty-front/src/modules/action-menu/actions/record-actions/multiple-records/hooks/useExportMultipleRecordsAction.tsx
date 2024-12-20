@@ -2,6 +2,7 @@ import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { IconDatabaseExport } from 'twenty-ui';
 
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -33,7 +34,7 @@ export const useExportMultipleRecordsAction = ({
     addActionMenuEntry({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
-      key: 'export-multiple-records',
+      key: MultipleRecordsActionKeys.EXPORT,
       position,
       label: displayedExportProgress(progress),
       shortLabel: 'Export',
