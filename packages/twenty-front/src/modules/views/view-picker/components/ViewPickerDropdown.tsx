@@ -22,7 +22,6 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownLabelAdornments = styled.span`
@@ -51,9 +50,6 @@ const StyledViewName = styled.span`
 
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
-  const isFavoriteFolderEnabled = useIsFeatureEnabled(
-    'IS_FAVORITE_FOLDER_ENABLED',
-  );
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -110,9 +106,7 @@ export const ViewPickerDropdown = () => {
           case 'list':
             return <ViewPickerListContent />;
           case 'favorite-folders-picker':
-            return (
-              isFavoriteFolderEnabled && <ViewPickerFavoriteFoldersDropdown />
-            );
+            return <ViewPickerFavoriteFoldersDropdown />;
           case 'create-empty':
           case 'create-from-current':
             return (
