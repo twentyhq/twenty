@@ -1,18 +1,17 @@
-import { Button, IconPlus } from 'twenty-ui';
+import { IconButton, IconPlus } from 'twenty-ui';
 
 type PageAddButtonProps = {
-  onClick?: () => void;
+  onClick: () => void;
 };
 
 export const PageAddButton = ({ onClick }: PageAddButtonProps) => (
-  <Button
+  <IconButton
     Icon={IconPlus}
     dataTestId="add-button"
-    size="small"
+    size="medium"
     variant="secondary"
     accent="default"
-    title="New record"
     onClick={onClick}
-    ariaLabel="New record"
+    ariaLabel="Add"
   />
 );

@@ -129,6 +129,24 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
+          {hasPaginationButtons && (
+            <>
+              <IconButton
+                Icon={IconChevronUp}
+                size="small"
+                variant="secondary"
+                disabled={!hasPreviousRecord}
+                onClick={() => navigateToPreviousRecord?.()}
+              />
+              <IconButton
+                Icon={IconChevronDown}
+                size="small"
+                variant="secondary"
+                disabled={!hasNextRecord}
+                onClick={() => navigateToNextRecord?.()}
+              />
+            </>
+          )}
           {Icon && <Icon size={theme.icon.size.md} />}
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
@@ -141,28 +159,7 @@ export const PageHeader = ({
           )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
-
-      <StyledPageActionContainer>
-        {hasPaginationButtons && (
-          <>
-            <IconButton
-              Icon={IconChevronUp}
-              size="small"
-              variant="secondary"
-              disabled={!hasPreviousRecord}
-              onClick={() => navigateToPreviousRecord?.()}
-            />
-            <IconButton
-              Icon={IconChevronDown}
-              size="small"
-              variant="secondary"
-              disabled={!hasNextRecord}
-              onClick={() => navigateToNextRecord?.()}
-            />
-          </>
-        )}
-        {children}
-      </StyledPageActionContainer>
+      <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>
   );
 };

@@ -9,12 +9,7 @@ import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import {
-  Nullable,
-  getImageAbsoluteURI,
-  isDefined,
-  stringToHslColor,
-} from '@ui/utilities';
+import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -87,7 +82,7 @@ export const Avatar = ({
   );
 
   const avatarImageURI = useMemo(
-    () => (isDefined(avatarUrl) ? getImageAbsoluteURI(avatarUrl) : null),
+    () => getImageAbsoluteURI(avatarUrl),
     [avatarUrl],
   );
 

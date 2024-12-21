@@ -1,14 +1,14 @@
 import { getImageAbsoluteURI } from '../getImageAbsoluteURI';
 
 describe('getImageAbsoluteURI', () => {
-  it('should return absolute url if the imageUrl is an absolute url', () => {
-    const imageUrl = 'https://XXX';
+  it('should return null if imageUrl is null', () => {
+    const imageUrl = null;
     const result = getImageAbsoluteURI(imageUrl);
-    expect(result).toBe(imageUrl);
+    expect(result).toBeNull();
   });
 
-  it('should return absolute url if the imageUrl is an absolute unsecure url', () => {
-    const imageUrl = 'http://XXX';
+  it('should return absolute url if the imageUrl is an absolute url', () => {
+    const imageUrl = 'https://XXX';
     const result = getImageAbsoluteURI(imageUrl);
     expect(result).toBe(imageUrl);
   });

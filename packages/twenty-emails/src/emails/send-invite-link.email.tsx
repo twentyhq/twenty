@@ -20,7 +20,7 @@ type SendInviteLinkEmailProps = {
     firstName: string;
     lastName: string;
   };
-  serverUrl: string;
+  serverUrl?: string;
 };
 
 export const SendInviteLinkEmail = ({
@@ -29,9 +29,7 @@ export const SendInviteLinkEmail = ({
   sender,
   serverUrl,
 }: SendInviteLinkEmailProps) => {
-  const workspaceLogo = workspace.logo
-    ? getImageAbsoluteURI(workspace.logo, serverUrl)
-    : null;
+  const workspaceLogo = getImageAbsoluteURI(workspace.logo, serverUrl);
 
   return (
     <BaseEmail width={333}>

@@ -30,7 +30,6 @@ export type ButtonProps = {
   target?: string;
   dataTestId?: string;
   shortcut?: string;
-  ariaLabel?: string;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -392,7 +391,6 @@ export const Button = ({
   target,
   dataTestId,
   shortcut,
-  ariaLabel,
 }: ButtonProps) => {
   const theme = useTheme();
 
@@ -413,7 +411,6 @@ export const Button = ({
       as={to ? Link : 'button'}
       target={target}
       data-testid={dataTestId}
-      aria-label={ariaLabel}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
