@@ -13,20 +13,36 @@ import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/state
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { css } from '@emotion/react';
 import 'overlayscrollbars/overlayscrollbars.css';
 
-const StyledScrollWrapper = styled.div`
+const StyledScrollWrapper = styled.div<{
+  scrollbarVariant: 'with-padding' | 'no-padding';
+}>`
   display: flex;
   height: 100%;
   width: 100%;
-
-  .os-scrollbar-handle {
-    background-color: ${({ theme }) => theme.border.color.medium};
-  }
   .os-scrollbar {
-    padding: 0px;
-    --os-size: 6px;
+    transition:
+      opacity 300ms,
+      visibility 300ms,
+      top 300ms,
+      right 300ms,
+      bottom 300ms,
+      left 300ms;
   }
+  .os-scrollbar-handle {
+    background-color: ${({ theme }) => theme.border.color.strong};
+  }
+
+  ${({ scrollbarVariant }) =>
+    scrollbarVariant === 'no-padding' &&
+    css`
+      .os-scrollbar {
+        --os-size: 6px;
+        padding: 0px;
+      }
+    `}
 `;
 
 const StyledInnerContainer = styled.div`
@@ -40,6 +56,7 @@ export type ScrollWrapperProps = {
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
   componentInstanceId: string;
+  scrollbarVariant?: 'with-padding' | 'no-padding';
 };
 
 export const ScrollWrapper = ({
@@ -49,6 +66,7 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
+  scrollbarVariant = 'with-padding',
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -76,7 +94,7 @@ export const ScrollWrapper = ({
 
   const [initialize, instance] = useOverlayScrollbars({
     options: {
-      scrollbars: { autoHide: 'scroll' },
+      scrollbars: { autoHide: 'scroll', autoHideDelay: 500 },
       overflow: {
         x: defaultEnableXScroll ? undefined : 'hidden',
         y: defaultEnableYScroll ? undefined : 'hidden',
@@ -107,7 +125,11 @@ export const ScrollWrapper = ({
           id: contextProviderName,
         }}
       >
-        <StyledScrollWrapper ref={scrollableRef} className={className}>
+        <StyledScrollWrapper
+          ref={scrollableRef}
+          className={className}
+          scrollbarVariant={scrollbarVariant}
+        >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>
       </Context.Provider>

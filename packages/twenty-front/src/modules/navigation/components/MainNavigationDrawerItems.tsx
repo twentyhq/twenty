@@ -63,6 +63,7 @@ export const MainNavigationDrawerItems = () => {
         contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
+        scrollbarVariant="no-padding"
       >
         <StyledInnerContainer>
           <NavigationDrawerOpenedSection />
