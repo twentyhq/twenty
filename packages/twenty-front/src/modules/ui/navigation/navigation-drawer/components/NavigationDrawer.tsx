@@ -10,6 +10,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
@@ -43,7 +44,7 @@ const StyledContainer = styled.div<{
         ? theme.spacing(3, 8)
         : theme.spacing(3, 8, 4, 0)
       : theme.spacing(3, 2, 4)};
-
+  padding-right: 0px;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
     padding-left: 20px;
@@ -123,7 +124,7 @@ export const NavigationDrawer = ({
         <StyledItemsContainer isSettings={isSettingsDrawer}>
           {children}
         </StyledItemsContainer>
-        {footer}
+        <NavigationDrawerSection>{footer}</NavigationDrawerSection>
       </StyledContainer>
     </StyledAnimatedContainer>
   );
