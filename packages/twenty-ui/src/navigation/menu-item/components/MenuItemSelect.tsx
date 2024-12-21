@@ -40,6 +40,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
   selected: boolean;
+  needIconCheck?: boolean;
   text: string;
   className?: string;
   onClick?: () => void;
@@ -52,6 +53,7 @@ export const MenuItemSelect = ({
   LeftIcon,
   text,
   selected,
+  needIconCheck = true,
   className,
   onClick,
   disabled,
@@ -69,7 +71,7 @@ export const MenuItemSelect = ({
       hovered={hovered}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
       {hasSubMenu && (
         <IconChevronRight
           size={theme.icon.size.sm}

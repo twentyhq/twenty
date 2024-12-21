@@ -60,13 +60,14 @@ export const SettingsDataModelFieldCurrencyForm = ({
             description="Choose the default currency that will apply"
           >
             <Select<string>
-              dropdownWidth={'auto'}
+              dropdownWidth={220}
               value={value}
               onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-default-value-select-currency"
               options={OPTIONS}
               selectSizeVariant="small"
+              withSearchInput={true}
             />
           </SettingsOptionCardContentSelect>
         )}

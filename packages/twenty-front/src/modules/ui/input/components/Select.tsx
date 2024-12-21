@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconComponent, MenuItem } from 'twenty-ui';
+import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -43,6 +43,7 @@ export type SelectProps<Value extends SelectValue> = {
   options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
+  needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
 };
 
@@ -73,6 +74,7 @@ export const Select = <Value extends SelectValue>({
   options,
   value,
   withSearchInput,
+  needIconCheck,
   callToActionButton,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
@@ -148,10 +150,12 @@ export const Select = <Value extends SelectValue>({
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
-                    <MenuItem
+                    <MenuItemSelect
                       key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
+                      selected={selectedOption.value === option.value}
+                      needIconCheck={needIconCheck}
                       onClick={() => {
                         onChange?.(option.value);
                         onBlur?.();

@@ -44,6 +44,7 @@ export const SettingsDataModelFieldBooleanForm = ({
             onChange={onChange}
             dropdownId="object-field-default-value-select-boolean"
             dropdownWidth={120}
+            needIconCheck={false}
             options={[
               {
                 value: true,
