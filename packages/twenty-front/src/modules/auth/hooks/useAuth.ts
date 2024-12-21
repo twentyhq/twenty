@@ -4,6 +4,7 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
+  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
@@ -23,6 +24,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
+  useGetCurrentUserLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -48,6 +50,8 @@ import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/h
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { AppPath } from '@/types/AppPath';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useAuth = () => {
@@ -62,15 +66,19 @@ export const useAuth = () => {
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
   const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
@@ -165,6 +173,98 @@ export const useAuth = () => {
     [challenge],
   );
 
+  const loadCurrentUser = useCallback(async () => {
+    const currentUserResult = await getCurrentUser();
+
+    const user = currentUserResult.data?.currentUser;
+
+    if (!user) {
+      throw new Error('No current user result');
+    }
+
+    let workspaceMember = null;
+
+    setCurrentUser(user);
+
+    if (isDefined(user.workspaceMembers)) {
+      const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
+        ...workspaceMember,
+        colorScheme: workspaceMember.colorScheme as ColorScheme,
+        locale: workspaceMember.locale ?? 'en',
+      }));
+
+      setCurrentWorkspaceMembers(workspaceMembers);
+    }
+
+    if (isDefined(user.workspaceMember)) {
+      workspaceMember = {
+        ...user.workspaceMember,
+        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        locale: user.workspaceMember?.locale ?? 'en',
+      };
+
+      setCurrentWorkspaceMember(workspaceMember);
+
+      // TODO: factorize with UserProviderEffect
+      setDateTimeFormat({
+        timeZone:
+          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+            ? workspaceMember.timeZone
+            : detectTimeZone(),
+        dateFormat: isDefined(user.workspaceMember.dateFormat)
+          ? getDateFormatFromWorkspaceDateFormat(
+              user.workspaceMember.dateFormat,
+            )
+          : DateFormat[detectDateFormat()],
+        timeFormat: isDefined(user.workspaceMember.timeFormat)
+          ? getTimeFormatFromWorkspaceTimeFormat(
+              user.workspaceMember.timeFormat,
+            )
+          : TimeFormat[detectTimeFormat()],
+      });
+    }
+
+    const workspace = user.currentWorkspace ?? null;
+
+    setCurrentWorkspace(workspace);
+
+    if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
+      setLastAuthenticateWorkspaceDomain({
+        workspaceId: workspace.id,
+        subdomain: workspace.subdomain,
+      });
+    }
+
+    if (isDefined(user.workspaces)) {
+      const validWorkspaces = user.workspaces
+        .filter(
+          ({ workspace }) => workspace !== null && workspace !== undefined,
+        )
+        .map((validWorkspace) => validWorkspace.workspace)
+        .filter(isDefined);
+
+      setWorkspaces(validWorkspaces);
+    }
+    setIsAppWaitingForFreshObjectMetadataState(true);
+
+    return {
+      user,
+      workspaceMember,
+      workspace,
+    };
+  }, [
+    getCurrentUser,
+    isOnAWorkspaceSubdomain,
+    setCurrentUser,
+    setCurrentWorkspace,
+    setCurrentWorkspaceMember,
+    setCurrentWorkspaceMembers,
+    setDateTimeFormat,
+    setIsAppWaitingForFreshObjectMetadataState,
+    setLastAuthenticateWorkspaceDomain,
+    setWorkspaces,
+  ]);
+
   const handleVerify = useCallback(
     async (loginToken: string) => {
       const verifyResult = await verify({
@@ -181,74 +281,7 @@ export const useAuth = () => {
 
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      const user = verifyResult.data?.verify.user;
-
-      let workspaceMember = null;
-
-      setCurrentUser(user);
-
-      if (isDefined(user.workspaceMembers)) {
-        const workspaceMembers = user.workspaceMembers.map(
-          (workspaceMember) => ({
-            ...workspaceMember,
-            colorScheme: workspaceMember.colorScheme as ColorScheme,
-            locale: workspaceMember.locale ?? 'en',
-          }),
-        );
-
-        setCurrentWorkspaceMembers(workspaceMembers);
-      }
-
-      if (isDefined(user.workspaceMember)) {
-        workspaceMember = {
-          ...user.workspaceMember,
-          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-          locale: user.workspaceMember?.locale ?? 'en',
-        };
-
-        setCurrentWorkspaceMember(workspaceMember);
-
-        // TODO: factorize with UserProviderEffect
-        setDateTimeFormat({
-          timeZone:
-            workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
-              ? workspaceMember.timeZone
-              : detectTimeZone(),
-          dateFormat: isDefined(user.workspaceMember.dateFormat)
-            ? getDateFormatFromWorkspaceDateFormat(
-                user.workspaceMember.dateFormat,
-              )
-            : DateFormat[detectDateFormat()],
-          timeFormat: isDefined(user.workspaceMember.timeFormat)
-            ? getTimeFormatFromWorkspaceTimeFormat(
-                user.workspaceMember.timeFormat,
-              )
-            : TimeFormat[detectTimeFormat()],
-        });
-      }
-
-      const workspace = user.defaultWorkspace ?? null;
-
-      setCurrentWorkspace(workspace);
-
-      if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
-        setLastAuthenticateWorkspaceDomain({
-          workspaceId: workspace.id,
-          subdomain: workspace.subdomain,
-        });
-      }
-
-      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
-        const validWorkspaces = verifyResult.data?.verify.user.workspaces
-          .filter(
-            ({ workspace }) => workspace !== null && workspace !== undefined,
-          )
-          .map((validWorkspace) => validWorkspace.workspace)
-          .filter(isDefined);
-
-        setWorkspaces(validWorkspaces);
-      }
-      setIsAppWaitingForFreshObjectMetadataState(true);
+      const { user, workspaceMember, workspace } = await loadCurrentUser();
 
       return {
         user,
@@ -257,19 +290,7 @@ export const useAuth = () => {
         tokens: verifyResult.data?.verify.tokens,
       };
     },
-    [
-      verify,
-      setTokenPair,
-      setCurrentUser,
-      setCurrentWorkspace,
-      isOnAWorkspaceSubdomain,
-      setIsAppWaitingForFreshObjectMetadataState,
-      setCurrentWorkspaceMembers,
-      setCurrentWorkspaceMember,
-      setDateTimeFormat,
-      setLastAuthenticateWorkspaceDomain,
-      setWorkspaces,
-    ],
+    [verify, setTokenPair, loadCurrentUser],
   );
 
   const handleCrendentialsSignIn = useCallback(
@@ -328,6 +349,16 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      if (isMultiWorkspaceEnabled) {
+        return redirectToWorkspaceDomain(
+          signUpResult.data.signUp.workspace.subdomain,
+          AppPath.Verify,
+          {
+            loginToken: signUpResult.data.signUp.loginToken.token,
+          },
+        );
+      }
+
       const { user, workspace, workspaceMember } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
@@ -336,7 +367,13 @@ export const useAuth = () => {
 
       return { user, workspaceMember, workspace };
     },
-    [setIsVerifyPendingState, signUp, handleVerify],
+    [
+      setIsVerifyPendingState,
+      signUp,
+      isMultiWorkspaceEnabled,
+      handleVerify,
+      redirectToWorkspaceDomain,
+    ],
   );
 
   const buildRedirectUrl = useCallback(
@@ -357,6 +394,7 @@ export const useAuth = () => {
           params.workspacePersonalInviteToken,
         );
       }
+
       if (isDefined(workspaceSubdomain)) {
         url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
       }
@@ -389,6 +427,8 @@ export const useAuth = () => {
   return {
     challenge: handleChallenge,
     verify: handleVerify,
+
+    loadCurrentUser,
 
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
     clearSession,

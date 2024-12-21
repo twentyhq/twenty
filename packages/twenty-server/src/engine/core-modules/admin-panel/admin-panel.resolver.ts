@@ -6,49 +6,41 @@ import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/imper
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
+import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
   constructor(private adminService: AdminPanelService) {}
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  @Mutation(() => Verify)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @Mutation(() => ImpersonateOutput)
   async impersonate(
-    @Args() impersonateInput: ImpersonateInput,
-    @AuthUser() user: User,
-  ): Promise<Verify> {
-    return await this.adminService.impersonate(impersonateInput.userId, user);
+    @Args() { workspaceId, userId }: ImpersonateInput,
+  ): Promise<ImpersonateOutput> {
+    return await this.adminService.impersonate(userId, workspaceId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Mutation(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
-    @AuthUser() user: User,
   ): Promise<UserLookup> {
-    return await this.adminService.userLookup(
-      userLookupInput.userIdentifier,
-      user,
-    );
+    return await this.adminService.userLookup(userLookupInput.userIdentifier);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Mutation(() => Boolean)
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
-    @AuthUser() user: User,
   ): Promise<boolean> {
     await this.adminService.updateWorkspaceFeatureFlags(
       updateFlagInput.workspaceId,
       updateFlagInput.featureFlag,
-      user,
       updateFlagInput.value,
     );
 

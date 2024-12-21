@@ -13,7 +13,7 @@ import { AuthResolver } from './auth.resolver';
 
 import { ApiKeyService } from './services/api-key.service';
 import { AuthService } from './services/auth.service';
-import { OAuthService } from './services/oauth.service';
+// import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { SwitchWorkspaceService } from './services/switch-workspace.service';
 import { LoginTokenService } from './token/services/login-token.service';
@@ -80,10 +80,10 @@ describe('AuthResolver', () => {
           provide: TransientTokenService,
           useValue: {},
         },
-        {
-          provide: OAuthService,
-          useValue: {},
-        },
+        // {
+        //   provide: OAuthService,
+        //   useValue: {},
+        // },
       ],
     })
       .overrideGuard(CaptchaGuard)

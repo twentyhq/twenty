@@ -86,7 +86,7 @@ export class SSOAuthController {
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
           identityProvider.workspace.subdomain,
         ),
@@ -113,7 +113,7 @@ export class SSOAuthController {
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
           identityProvider.workspace.subdomain,
         ),
@@ -183,7 +183,10 @@ export class SSOAuthController {
 
     return {
       identityProvider,
-      loginToken: await this.loginTokenService.generateLoginToken(user.email),
+      loginToken: await this.loginTokenService.generateLoginToken(
+        user.email,
+        identityProvider.workspace.id,
+      ),
     };
   }
 }

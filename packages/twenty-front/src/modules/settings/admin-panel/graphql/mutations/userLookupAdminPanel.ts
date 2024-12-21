@@ -14,6 +14,7 @@ export const USER_LOOKUP_ADMIN_PANEL = gql`
         name
         logo
         totalUsers
+        allowImpersonation
         users {
           id
           email

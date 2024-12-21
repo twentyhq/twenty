@@ -49,7 +49,7 @@ export const results = {
         avatarUrl: 'avatarUrl',
         locale: 'locale',
       },
-      defaultWorkspace: {
+      currentWorkspace: {
         id: 'id',
         displayName: 'displayName',
         logo: 'logo',

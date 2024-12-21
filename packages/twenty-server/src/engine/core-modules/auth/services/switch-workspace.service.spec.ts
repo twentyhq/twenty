@@ -46,12 +46,6 @@ describe('SwitchWorkspaceService', () => {
           },
         },
         {
-          provide: UserService,
-          useValue: {
-            saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
-          },
-        },
-        {
           provide: EnvironmentService,
           useValue: {
             get: jest.fn(),
@@ -189,46 +183,6 @@ describe('SwitchWorkspaceService', () => {
         displayName: expect.any(String),
         authProviders: expect.any(Object),
       });
-    });
-  });
-
-  describe('generateSwitchWorkspaceToken', () => {
-    it('should generate and return auth tokens', async () => {
-      const mockUser = { id: 'user-id' };
-      const mockWorkspace = { id: 'workspace-id' };
-      const mockAccessToken = { token: 'access-token', expiresAt: new Date() };
-      const mockRefreshToken = 'refresh-token';
-
-      jest.spyOn(userRepository, 'save').mockResolvedValue({} as User);
-      jest
-        .spyOn(accessTokenService, 'generateAccessToken')
-        .mockResolvedValue(mockAccessToken);
-      jest
-        .spyOn(refreshTokenService, 'generateRefreshToken')
-        .mockResolvedValue(mockRefreshToken as any);
-
-      const result = await service.generateSwitchWorkspaceToken(
-        mockUser as User,
-        mockWorkspace as Workspace,
-      );
-
-      expect(result).toEqual({
-        tokens: {
-          accessToken: mockAccessToken,
-          refreshToken: mockRefreshToken,
-        },
-      });
-      expect(
-        userService.saveDefaultWorkspaceIfUserHasAccessOrThrow,
-      ).toHaveBeenCalledWith(mockUser.id, mockWorkspace.id);
-      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspace.id,
-      );
-      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspace.id,
-      );
     });
   });
 });

@@ -71,8 +71,9 @@ export class GoogleAuthController {
 
       if (
         this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN')
+        (targetWorkspaceSubdomain ===
+          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
+          !targetWorkspaceSubdomain)
       ) {
         const workspaceWithGoogleAuthActive =
           await this.workspaceRepository.findOne({
@@ -84,7 +85,7 @@ export class GoogleAuthController {
                 },
               },
             },
-            relations: ['userWorkspaces', 'userWorkspaces.user'],
+            relations: ['workspaceUsers', 'workspaceUsers.user'],
           });
 
         if (workspaceWithGoogleAuthActive) {
@@ -93,16 +94,18 @@ export class GoogleAuthController {
         }
       }
 
-      const user = await this.authService.signInUp(signInUpParams);
+      const { user, workspace } =
+        await this.authService.signInUp(signInUpParams);
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        workspace.id,
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
-          user.defaultWorkspace.subdomain,
+          workspace.subdomain,
         ),
       );
     } catch (err) {

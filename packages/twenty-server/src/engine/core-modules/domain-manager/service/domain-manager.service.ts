@@ -117,6 +117,14 @@ export class DomainManagerService {
     return subdomain;
   };
 
+  async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
+    return subdomain
+      ? await this.workspaceRepository.findOne({
+          where: { subdomain },
+        })
+      : await this.getDefaultWorkspace();
+  }
+
   isDefaultSubdomain(subdomain: string) {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
@@ -137,7 +145,7 @@ export class DomainManagerService {
     return url.toString();
   }
 
-  async getDefaultWorkspace() {
+  private async getDefaultWorkspace() {
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspaces = await this.workspaceRepository.find({
         order: {
@@ -147,7 +155,6 @@ export class DomainManagerService {
       });
 
       if (workspaces.length > 1) {
-        // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
         Logger.warn(
           `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
         );
@@ -161,7 +168,7 @@ export class DomainManagerService {
     );
   }
 
-  async getWorkspaceByOrigin(origin: string) {
+  async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
     try {
       if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
         return this.getDefaultWorkspace();
@@ -171,12 +178,10 @@ export class DomainManagerService {
 
       if (!isDefined(subdomain)) return;
 
-      const workspace = await this.workspaceRepository.findOne({
+      return await this.workspaceRepository.findOne({
         where: { subdomain },
         relations: ['workspaceSSOIdentityProviders'],
       });
-
-      return workspace;
     } catch (e) {
       throw new WorkspaceException(
         'Workspace not found',

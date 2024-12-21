@@ -12,4 +12,5 @@ export type WorkspaceInfo = {
     lastName?: string | null;
   }[];
   featureFlags: FeatureFlag[];
+  allowImpersonation: boolean;
 };

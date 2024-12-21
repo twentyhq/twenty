@@ -24,7 +24,7 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
-    defaultWorkspace {
+    currentWorkspace {
       id
       displayName
       logo

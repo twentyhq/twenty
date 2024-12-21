@@ -1,10 +1,6 @@
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -22,11 +18,13 @@ import {
   H1TitleFontColor,
   H2Title,
   IconSearch,
+  IconUser,
   isDefined,
   Section,
   Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -66,8 +64,16 @@ const StyledContentContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
-export const SettingsAdminFeatureFlags = () => {
+export const SettingsAdminContent = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
+  const [userId, setUserId] = useState('');
+
+  const {
+    handleImpersonate,
+    isLoading: isImpersonateLoading,
+    error: impersonateError,
+    canImpersonate,
+  } = useImpersonate();
 
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
@@ -85,6 +91,10 @@ export const SettingsAdminFeatureFlags = () => {
     setActiveTabId('');
 
     const result = await handleUserLookup(userIdentifier);
+
+    if (isDefined(result?.user?.id) && !error) {
+      setUserId(result.user.id.trim());
+    }
 
     if (
       isDefined(result?.workspaces) &&
@@ -126,6 +136,21 @@ export const SettingsAdminFeatureFlags = () => {
           }`}
           description={'Total Users'}
         />
+        {canImpersonate && (
+          <Button
+            Icon={IconUser}
+            variant="primary"
+            accent="blue"
+            title={'Impersonate'}
+            onClick={() => handleImpersonate(userId, activeWorkspace.id)}
+            disabled={
+              isImpersonateLoading ||
+              activeWorkspace.allowImpersonation === false
+            }
+            dataTestId="impersonate-button"
+          />
+        )}
+
         <StyledTable>
           <TableRow
             gridAutoColumns="1fr 100px"
@@ -162,82 +187,69 @@ export const SettingsAdminFeatureFlags = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title="Feature Flags"
-      links={[
-        {
-          children: 'Other',
-          href: getSettingsPagePath(SettingsPath.AdminPanel),
-        },
-        {
-          children: 'Server Admin Panel',
-          href: getSettingsPagePath(SettingsPath.AdminPanel),
-        },
-        { children: 'Feature Flags' },
-      ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title="Feature Flags Management"
-            description="Look up users and manage their workspace feature flags."
-          />
+    <>
+      <Section>
+        <H2Title
+          title="Feature Flags & Impersonation"
+          description="Look up users and manage their workspace feature flags or impersonate it."
+        />
 
-          <StyledContainer>
-            <StyledLinkContainer>
-              <TextInput
-                value={userIdentifier}
-                onChange={setUserIdentifier}
-                onInputEnter={handleSearch}
-                placeholder="Enter user ID or email address"
-                fullWidth
-                disabled={isLoading}
-              />
-            </StyledLinkContainer>
-            <Button
-              Icon={IconSearch}
-              variant="primary"
-              accent="blue"
-              title="Search"
-              onClick={handleSearch}
-              disabled={!userIdentifier.trim() || isLoading}
+        <StyledContainer>
+          <StyledLinkContainer>
+            <TextInput
+              value={userIdentifier}
+              onChange={setUserIdentifier}
+              onInputEnter={handleSearch}
+              placeholder="Enter user ID or email address"
+              fullWidth
+              disabled={isLoading}
             />
-          </StyledContainer>
+          </StyledLinkContainer>
+          <Button
+            Icon={IconSearch}
+            variant="primary"
+            accent="blue"
+            title="Search"
+            onClick={handleSearch}
+            disabled={!userIdentifier.trim() || isLoading}
+          />
+        </StyledContainer>
 
-          {error && <StyledErrorSection>{error}</StyledErrorSection>}
-        </Section>
-
-        {shouldShowUserData && (
-          <Section>
-            <StyledUserInfo>
-              <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
-              <H2Title
-                title={`${userLookupResult.user.firstName || ''} ${
-                  userLookupResult.user.lastName || ''
-                }`.trim()}
-                description="User Name"
-              />
-              <H2Title
-                title={userLookupResult.user.email}
-                description="User Email"
-              />
-              <H2Title title={userLookupResult.user.id} description="User ID" />
-            </StyledUserInfo>
-
-            <H1Title title="Workspaces" fontColor={H1TitleFontColor.Primary} />
-            <StyledTabListContainer>
-              <TabList
-                tabs={tabs}
-                tabListInstanceId={SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID}
-                behaveAsLinks={false}
-              />
-            </StyledTabListContainer>
-            <StyledContentContainer>
-              {renderWorkspaceContent()}
-            </StyledContentContainer>
-          </Section>
+        {(error || impersonateError) && (
+          <StyledErrorSection>{error ?? impersonateError}</StyledErrorSection>
         )}
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+      </Section>
+
+      {shouldShowUserData && (
+        <Section>
+          <StyledUserInfo>
+            <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
+            <H2Title
+              title={`${userLookupResult.user.firstName || ''} ${
+                userLookupResult.user.lastName || ''
+              }`.trim()}
+              description="User Name"
+            />
+            <H2Title
+              title={userLookupResult.user.email}
+              description="User Email"
+            />
+            <H2Title title={userLookupResult.user.id} description="User ID" />
+          </StyledUserInfo>
+
+          <H1Title title="Workspaces" fontColor={H1TitleFontColor.Primary} />
+          <StyledTabListContainer>
+            <TabList
+              tabs={tabs}
+              tabListInstanceId={SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID}
+              behaveAsLinks={false}
+            />
+          </StyledTabListContainer>
+          <StyledContentContainer>
+            {renderWorkspaceContent()}
+          </StyledContentContainer>
+        </Section>
+      )}
+    </>
   );
 };

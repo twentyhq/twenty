@@ -19,7 +19,6 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 jest.mock('bcrypt');
 
@@ -122,12 +121,6 @@ describe('SignInUpService', () => {
             generateSubdomain: jest.fn().mockReturnValue('testSubDomain'),
           },
         },
-        {
-          provide: UserService,
-          useValue: {
-            saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -172,7 +165,6 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
@@ -248,7 +240,6 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
@@ -345,7 +336,6 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
@@ -379,7 +369,6 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: 'hash-of-validPassword123',
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
