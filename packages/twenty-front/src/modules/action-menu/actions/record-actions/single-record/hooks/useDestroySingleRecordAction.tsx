@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
+import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -34,8 +34,7 @@ export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetad
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
-    const { isInRightDrawer, onActionExecutedCallback } =
-      useContext(ActionMenuContext);
+    const { isInRightDrawer } = useContext(ActionMenuContext);
 
     const shouldBeRegistered =
       !isRemoteObject && isDefined(selectedRecord?.deletedAt);
@@ -61,7 +60,6 @@ export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetad
           }
           onConfirmClick={async () => {
             await handleDeleteClick();
-            onActionExecutedCallback?.({ key: 'destroy-single-record' });
             if (isInRightDrawer) {
               closeRightDrawer();
             }
