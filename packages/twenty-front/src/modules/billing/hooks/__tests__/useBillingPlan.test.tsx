@@ -12,12 +12,12 @@ const Wrapper = ({ children, initialUrl = '' }: any) => (
 );
 
 describe('useBillingPlan', () => {
-  it('should return FREE as default plan', () => {
+  it('should return null as default plan', () => {
     const { result } = renderHook(() => useBillingPlan(), {
       wrapper: Wrapper,
     });
 
-    expect(result.current).toBe(BillingPlanKey.FREE);
+    expect(result.current).toBe(null);
   });
 
   it('should set plan from URL parameter - FREE', () => {
@@ -57,7 +57,7 @@ describe('useBillingPlan', () => {
       ),
     });
 
-    expect(result.current).toBe(BillingPlanKey.FREE);
+    expect(result.current).toBe(null);
   });
 
   it('should handle URL without plan parameter', () => {
@@ -67,6 +67,6 @@ describe('useBillingPlan', () => {
       ),
     });
 
-    expect(result.current).toBe(BillingPlanKey.FREE);
+    expect(result.current).toBe(null);
   });
 });

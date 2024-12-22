@@ -39,7 +39,7 @@ const setupMockIsLogged = (isLogged: boolean) => {
 };
 
 jest.mock('@/billing/hooks/useBillingPlan');
-const setupMockBillingPlan = (plan: BillingPlanKey) => {
+const setupMockBillingPlan = (plan: BillingPlanKey | null) => {
   jest.mocked(useBillingPlan).mockReturnValueOnce(plan);
 };
 
@@ -291,7 +291,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockOnboardingStatus(testCase.onboardingStatus);
       setupMockSubscriptionStatus(testCase.subscriptionStatus);
       setupMockIsLogged(testCase.isLoggedIn);
-      setupMockBillingPlan(BillingPlanKey.PRO);
+      setupMockBillingPlan(null);
       expect(usePageChangeEffectNavigateLocation()).toEqual(testCase.res);
     });
   });

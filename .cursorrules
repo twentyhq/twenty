@@ -1,14 +1,23 @@
-{
+export const rules = {
   "general": {
-    "description": "Twenty is an open source CRM built with React, NestJS, and PostgreSQL",
+    "description": "Twenty is an open source CRM built with Typescript (React, NestJS).",
     "main-packages": {
-      "frontend": "packages/twenty-front - React frontend application",
-      "server": "packages/twenty-server - NestJS backend application",
-      "website": "packages/twenty-website  - Marketing website (includes some documentation)"
+      "twenty-front": "Main Frontend - React",
+      "twenty-server": "Main Backend - NestJS",
+      "twenty-website": "Marketing website (includes some documentation) - NextJS",
+      "twenty-ui": "UI library - React",
+      "twenty-shared": "Anything shared between multiple packages (e.g. utils, constants, types, etc.). Shouldn't be raw TS and not NestJS or React specific."
     },
     "development": {
       "package-manager": "yarn",
-      "monorepo-tool": "nx"
+      "monorepo-tool": "nx",
+      "database": "PostgreSQL",
+      "orm": "TypeORM",
+      "orm-schema": "core, metadata",
+      "cahce": "redis",
+      "auth": "JWT",
+      "queue": "BullMQ",
+      "storage": "S3 or local filesystem"
     },
     "common-commands": {
       "frontend": {
@@ -116,4 +125,4 @@
       "Follow proper test naming conventions"
     ]
   }
-}
+};
