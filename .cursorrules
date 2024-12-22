@@ -1,0 +1,116 @@
+{
+  "general": {
+    "description": "Twenty is an open source CRM built with React, NestJS, and PostgreSQL",
+    "main-packages": {
+      "frontend": "packages/twenty-front - React frontend application",
+      "server": "packages/twenty-server - NestJS backend application",
+      "website": "packages/twenty-website  - Marketing website (includes some documentation)"
+    },
+    "development": {
+      "package-manager": "yarn",
+      "monorepo-tool": "nx"
+    },
+    "common-commands": {
+      "frontend": {
+        "start": "npx nx start twenty-front",
+        "graphql:generate": "npx nx run twenty-front:graphql:generate",
+        "graphql:generate:metadata": "npx nx run twenty-front:graphql:generate --configuration=metadata",
+        "test": "npx nx run twenty-front:test",
+        "lint": "npx nx run twenty-front:lint"
+      },
+      "server": {
+        "start": "npx nx run twenty-server:start",
+        "database:reset": "npx nx run twenty-server:database:reset",
+        "database:reset:no-seed": "npx nx run twenty-server:database:reset --configuration=no-seed",
+        "migration:generate:core": "npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/[Name] -d src/database/typeorm/core/core.datasource.ts",
+        "migration:generate:metadata": "npx nx run twenty-server:typeorm migration:generate src/database/typeorm/metadata/migrations/[Name] -d src/database/typeorm/metadata/metadata.datasource.ts",
+        "test:unit": "npx nx run twenty-server:test:unit",
+        "test:integration": "npx nx run twenty-server:test:integration"
+      }
+    }
+  },
+  "styling": {
+    "rules": [
+      "Use @emotion/styled for styling components",
+      "Never use direct CSS classes or Tailwind",
+      "Prefix styled components with 'Styled', e.g. 'StyledContainer'",
+      "Keep styled components at the top of the file",
+      "Use Theme object for colors, spacing, and typography - never hardcode values",
+      "Never use px or rem directly, use Theme values instead",
+      "Use mq helper for media queries"
+    ]
+  },
+  "typescript": {
+    "rules": [
+      "Never use 'any' type - use proper typing",
+      "Use type instead of interface",
+      "Use string literals instead of enums (except for GraphQL generated ones)",
+      "Define interfaces for component props with 'Props' suffix",
+      "Use type inference for hooks and simple variables",
+      "Enable strict mode and noImplicitAny in tsconfig"
+    ]
+  },
+  "react": {
+    "rules": [
+      "Use functional components exclusively - no classes",
+      "Never use default exports - use named exports",
+      "Avoid useEffect when possible - prefer event handlers",
+      "Don't use React.memo or React.FC unless it's really necessary",
+      "Keep components small and focused",
+      "Use proper prop naming: onClick for callbacks, is for booleans",
+      "Always destructure props with proper typing"
+    ]
+  },
+  "stateManagement": {
+    "rules": [
+      "Use Recoil for global state management",
+      "Use Apollo Client for GraphQL and server state",
+      "Keep Recoil atoms in separate files under states/",
+      "Prefer multiple small atoms over prop drilling",
+      "Never use useRef to store state",
+      "Extract useEffect and data fetching into sibling components",
+      "Use useRecoilValue for read-only state, useRecoilState for read-write"
+    ]
+  },
+  "fileStructure": {
+    "rules": [
+      "One component per file, named same as file",
+      "Group by features in modules/ directory",
+      "Keep hooks in hooks/ directory",
+      "Keep states in states/ directory",
+      "Use types/ directory for type definitions",
+      "Follow naming: PascalCase for components, camelCase for others"
+    ]
+  },
+  "codeStyle": {
+    "rules": [
+      "Use early returns to reduce nesting",
+      "No big nested ternaries - use if statements",
+      "No elseif statements - prefer early returns",
+      "Use optional chaining (?.) instead of &&",
+      "Keep functions small and focused",
+      "Use meaningful variable names (no dummy, x, i, data)",
+      "Remove all console.logs before committing"
+    ]
+  },
+  "graphql": {
+    "rules": [
+      "Use gql tag for queries and mutations",
+      "Keep GraphQL operations in separate files",
+      "Use proper typing with codegen",
+      "Follow naming: queries getX, mutations updateX",
+      "Use fragments for reusable parts",
+      "Use generated types from GraphQL codegen"
+    ]
+  },
+  "testing": {
+    "rules": [
+      "Write tests for every feature",
+      "Use React Testing Library, not Enzyme",
+      "Test user behavior, not implementation",
+      "Mock external dependencies and Apollo calls",
+      "Use proper data-testid attributes",
+      "Follow proper test naming conventions"
+    ]
+  }
+}
