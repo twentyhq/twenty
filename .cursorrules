@@ -27,7 +27,10 @@
         "test:unit": "npx nx run twenty-server:test:unit",
         "test:integration": "npx nx run twenty-server:test:integration"
       }
-    }
+    },
+    "rules": [
+      "When being asked something, use it as an opportunity to improve the .cursorrules file with what you've learned"
+    ]
   },
   "styling": {
     "rules": [

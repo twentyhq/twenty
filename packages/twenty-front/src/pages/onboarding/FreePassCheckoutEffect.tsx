@@ -3,8 +3,8 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
-    SubscriptionInterval,
-    useCheckoutSessionMutation,
+  SubscriptionInterval,
+  useCheckoutSessionMutation,
 } from '~/generated/graphql';
 
 export const FreePassCheckoutEffect = () => {
