@@ -29,6 +29,7 @@ export const RecordShowActionMenuButtons = () => {
             />
           ) : (
             <IconButton
+              key={index}
               Icon={entry.Icon}
               size="small"
               variant="secondary"
