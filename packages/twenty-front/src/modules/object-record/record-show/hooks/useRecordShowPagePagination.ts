@@ -54,7 +54,7 @@ export const useRecordShowPagePagination = (
       recordGqlFields: { id: true },
     });
 
-  const cursorFromRequest = currentRecordsPageInfo?.endCursor;
+  const currentRecordCursorFromRequest = currentRecordsPageInfo?.endCursor;
 
   const [totalCountBefore, setTotalCountBefore] = useState<number>(0);
   const [totalCountAfter, setTotalCountAfter] = useState<number>(0);
@@ -68,10 +68,10 @@ export const useRecordShowPagePagination = (
         id: { neq: objectRecordId },
       },
       orderBy,
-      cursorFilter: isNonEmptyString(cursorFromRequest)
+      cursorFilter: isNonEmptyString(currentRecordCursorFromRequest)
         ? {
             cursorDirection: 'before',
-            cursor: cursorFromRequest,
+            cursor: currentRecordCursorFromRequest,
             limit: 1,
           }
         : undefined,
@@ -91,10 +91,10 @@ export const useRecordShowPagePagination = (
       },
       fetchPolicy: 'network-only',
       orderBy,
-      cursorFilter: cursorFromRequest
+      cursorFilter: currentRecordCursorFromRequest
         ? {
             cursorDirection: 'after',
-            cursor: cursorFromRequest,
+            cursor: currentRecordCursorFromRequest,
             limit: 1,
           }
         : undefined,
@@ -110,6 +110,9 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
+  const isFirstRecord = !loading && !isDefined(recordBefore);
+  const isLastRecord = !loading && !isDefined(recordAfter);
+
   const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
     objectNamePlural: objectMetadataItem.namePlural,
     fieldVariables: {
@@ -118,30 +121,54 @@ export const useRecordShowPagePagination = (
     },
   });
 
+  const cacheIsAvailableForNavigation =
+    !loading &&
+    (totalCountAfter > 0 || totalCountBefore > 0) &&
+    recordIdsInCache.length > 0;
+
+  const canNavigateToPreviousRecord =
+    !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
+
   const navigateToPreviousRecord = () => {
-    if (isDefined(recordBefore)) {
+    if (isFirstRecord) {
+      if (cacheIsAvailableForNavigation) {
+        const lastRecordIdFromCache =
+          recordIdsInCache[recordIdsInCache.length - 1];
+
+        navigate(
+          buildShowPageURL(
+            objectNameSingular,
+            lastRecordIdFromCache,
+            viewIdQueryParam,
+          ),
+        );
+      }
+    } else {
       navigate(
         buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
       );
     }
-    if (!loadingRecordBefore && !isDefined(recordBefore)) {
-      const firstRecordId = recordIdsInCache[recordIdsInCache.length - 1];
-      navigate(
-        buildShowPageURL(objectNameSingular, firstRecordId, viewIdQueryParam),
-      );
-    }
   };
 
+  const canNavigateToNextRecord =
+    !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
+
   const navigateToNextRecord = () => {
-    if (isDefined(recordAfter)) {
+    if (isLastRecord) {
+      if (cacheIsAvailableForNavigation) {
+        const firstRecordIdFromCache = recordIdsInCache[0];
+
+        navigate(
+          buildShowPageURL(
+            objectNameSingular,
+            firstRecordIdFromCache,
+            viewIdQueryParam,
+          ),
+        );
+      }
+    } else {
       navigate(
         buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
-      );
-    }
-    if (!loadingRecordAfter && !isDefined(recordAfter)) {
-      const lastRecordId = recordIdsInCache[0];
-      navigate(
-        buildShowPageURL(objectNameSingular, lastRecordId, viewIdQueryParam),
       );
     }
   };
@@ -175,5 +202,7 @@ export const useRecordShowPagePagination = (
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
+    canNavigateToNextRecord,
+    canNavigateToPreviousRecord,
   };
 };
