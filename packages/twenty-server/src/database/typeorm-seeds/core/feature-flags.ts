@@ -86,16 +86,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsFavoriteFolderEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsPageHeaderV2Enabled,
         workspaceId: workspaceId,
         value: true,
