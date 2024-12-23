@@ -104,9 +104,10 @@ export const SignInUpGlobalScopeForm = () => {
     <>
       <StyledContentContainer>
         {authProviders.google && <SignInUpWithGoogle />}
-
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
-        <HorizontalSeparator visible />
+        {(authProviders.google || authProviders.microsoft) && (
+          <HorizontalSeparator visible />
+        )}
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
@@ -123,7 +124,9 @@ export const SignInUpGlobalScopeForm = () => {
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }
               type="submit"
-              variant="secondary"
+              variant={
+                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+              }
               Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
               fullWidth
             />

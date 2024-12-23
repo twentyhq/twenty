@@ -1,4 +1,3 @@
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -60,10 +59,6 @@ export const TabList = ({
 
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
-      <TabListFromUrlOptionalEffect
-        componentInstanceId={tabListInstanceId}
-        tabListIds={tabs.map((tab) => tab.id)}
-      />
       <ScrollWrapper
         defaultEnableYScroll={false}
         contextProviderName="tabList"

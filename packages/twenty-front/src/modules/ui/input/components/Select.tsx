@@ -165,7 +165,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight withoutScrollWrapper>
+                <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}
