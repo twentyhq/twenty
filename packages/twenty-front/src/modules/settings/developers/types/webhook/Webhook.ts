@@ -4,5 +4,6 @@ export type Webhook = {
   description?: string;
   operation: string;
   operations: string[];
+  secret?: string;
   __typename: 'Webhook';
 };

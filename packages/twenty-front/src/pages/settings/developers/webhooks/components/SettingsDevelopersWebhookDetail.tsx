@@ -74,6 +74,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const [operations, setOperations] = useState<WebhookOperationType[]>([
     WEBHOOK_EMPTY_OPERATION,
   ]);
+  const [secret, setSecret] = useState<string>('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const { getIcon } = useIcons();
 
@@ -97,6 +98,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
           : [];
 
       setOperations(addEmptyOperationIfNecessary(baseOperations));
+      setSecret(data?.secret ?? '');
       setIsDirty(false);
     },
   });
@@ -156,6 +158,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         operation: cleanedOperations?.[0],
         operations: cleanedOperations,
         description: description,
+        secret: secret,
       },
     });
     navigate(developerPath);
@@ -296,7 +299,15 @@ export const SettingsDevelopersWebhooksDetail = () => {
             title="Secret"
             description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
           />
-          <TextInput placeholder="Secret" fullWidth />
+          <TextInput
+            placeholder="Write a secret"
+            value={secret}
+            onChange={(secret: string) => {
+              setSecret(secret);
+              setIsDirty(true);
+            }}
+            fullWidth
+          />
         </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider
