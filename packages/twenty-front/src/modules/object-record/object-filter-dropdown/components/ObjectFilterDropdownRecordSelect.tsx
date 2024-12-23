@@ -11,7 +11,6 @@ import { MultipleSelectDropdown } from '@/object-record/select/components/Multip
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
@@ -37,14 +36,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     objectFilterDropdownSearchInputState,
     selectedOperandInDropdownState,
     selectedFilterState,
-    setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIdsState,
     selectFilter,
-    emptyFilterButKeepDefinition,
   } = useFilterDropdown();
-
-  const { deleteCombinedViewFilter } =
-    useDeleteCombinedViewFilters(viewComponentId);
 
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
@@ -65,13 +59,12 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const selectedFilter = useRecoilValue(selectedFilterState);
 
-  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-    relationFilterValueSchema
-      .catch({
-        isCurrentWorkspaceMemberSelected: false,
-        selectedRecordIds: [],
-      })
-      .parse(selectedFilter?.value);
+  const { isCurrentWorkspaceMemberSelected } = relationFilterValueSchema
+    .catch({
+      isCurrentWorkspaceMemberSelected: false,
+      selectedRecordIds: [],
+    })
+    .parse(selectedFilter?.value);
 
   const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular;
