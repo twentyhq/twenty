@@ -30,7 +30,7 @@ export const ShowPageTabListFromUrlOptionalEffect = ({
     if (tabListIds.includes(hash)) {
       setActiveTabId(hash);
     }
-  }, [hash, activeTabId, setActiveTabId, tabListIds]);
+  }, [hash, activeTabId, setActiveTabId, tabListIds, isInRightDrawer]);
 
   return <></>;
 };
