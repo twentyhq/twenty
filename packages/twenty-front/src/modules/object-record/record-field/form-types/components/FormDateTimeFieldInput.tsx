@@ -69,26 +69,25 @@ type DraftValue =
       value: string;
     };
 
-type FormDateTimeFieldInputBaseProps = {
-  mode: 'date' | 'datetime';
+type FormDateTimeFieldInputProps = {
+  dateOnly?: boolean;
   label?: string;
+  placeholder?: string;
   defaultValue: string | undefined;
   onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
 };
 
-export const FormDateTimeFieldInputBase = ({
-  mode,
+export const FormDateTimeFieldInput = ({
+  dateOnly,
   label,
   defaultValue,
   onPersist,
   VariablePicker,
-}: FormDateTimeFieldInputBaseProps) => {
+}: FormDateTimeFieldInputProps) => {
   const { timeZone } = useContext(UserContext);
 
   const inputId = useId();
-
-  const placeholder = mode === 'date' ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -116,7 +115,7 @@ export const FormDateTimeFieldInputBase = ({
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
       ? parseDateToString({
           date: draftValueAsDate,
-          isDateTimeInput: mode === 'datetime',
+          isDateTimeInput: !dateOnly,
           userTimezone: timeZone,
         })
       : '',
@@ -143,6 +142,8 @@ export const FormDateTimeFieldInputBase = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
+  const placeholder = dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
+
   useListenClickOutside({
     refs: [datePickerWrapperRef],
     listenerId: 'FormDateTimeFieldInputBase',
@@ -168,7 +169,7 @@ export const FormDateTimeFieldInputBase = ({
       isDefined(newDate)
         ? parseDateToString({
             date: newDate,
-            isDateTimeInput: mode === 'datetime',
+            isDateTimeInput: !dateOnly,
             userTimezone: timeZone,
           })
         : '',
@@ -226,7 +227,7 @@ export const FormDateTimeFieldInputBase = ({
       isDefined(newDate)
         ? parseDateToString({
             date: newDate,
-            isDateTimeInput: mode === 'datetime',
+            isDateTimeInput: !dateOnly,
             userTimezone: timeZone,
           })
         : '',
@@ -262,7 +263,7 @@ export const FormDateTimeFieldInputBase = ({
 
     const parsedInputDateTime = parseStringToDate({
       dateAsString: inputDateTimeTrimmed,
-      isDateTimeInput: mode === 'datetime',
+      isDateTimeInput: !dateOnly,
       userTimezone: timeZone,
     });
 
@@ -288,7 +289,7 @@ export const FormDateTimeFieldInputBase = ({
     setInputDateTime(
       parseDateToString({
         date: validatedDate,
-        isDateTimeInput: mode === 'datetime',
+        isDateTimeInput: !dateOnly,
         userTimezone: timeZone,
       }),
     );
