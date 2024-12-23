@@ -40,14 +40,14 @@ export const WorkflowDiagramEffect = ({
           );
         }
 
-        const selectedNode = getSnapshotValue(
+        const lastCreatedStepId = getSnapshotValue(
           snapshot,
           workflowLastCreatedStepIdState,
         );
-        if (isDefined(selectedNode)) {
+        if (isDefined(lastCreatedStepId)) {
           mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
             (node) => {
-              if (node.id === selectedNode) {
+              if (node.id === lastCreatedStepId) {
                 return {
                   ...node,
                   selected: true,
