@@ -126,7 +126,9 @@ export const SignInUpGlobalScopeForm = () => {
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }
               type="submit"
-              variant="secondary"
+              variant={
+                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+              }
               Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
               fullWidth
             />
