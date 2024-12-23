@@ -75,14 +75,12 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
               objectMetadataItem,
             });
 
-          const updatedRecordIndexInRootQueryEdges =
-            rootQueryCurrentEdges.findIndex(
+          const updatedRecordFoundInRootQueryEdges = isDefined(
+            rootQueryCurrentEdges.find(
               (cachedEdge) =>
                 readField('id', cachedEdge.node) === updatedRecord.id,
-            );
-
-          const updatedRecordFoundInRootQueryEdges =
-            updatedRecordIndexInRootQueryEdges > -1;
+            ),
+          );
 
           const updatedRecordShouldBeAddedToRootQueryEdges =
             updatedRecordMatchesThisRootQueryFilter &&
@@ -105,7 +103,10 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
           }
 
           if (updatedRecordShouldBeRemovedFromRootQueryEdges) {
-            rootQueryNextEdges.splice(updatedRecordIndexInRootQueryEdges, 1);
+            rootQueryNextEdges = rootQueryNextEdges.filter(
+              (cachedEdge) =>
+                readField('id', cachedEdge.node) !== updatedRecord.id,
+            );
           }
         }
 
