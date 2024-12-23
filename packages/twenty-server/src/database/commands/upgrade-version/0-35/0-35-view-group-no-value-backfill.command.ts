@@ -13,7 +13,7 @@ import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'migrate-0.40:backfill-view-group-no-value',
+  name: 'migrate-0.35:backfill-view-group-no-value',
   description: 'Backfill view group no value',
 })
 export class ViewGroupNoValueBackfillCommand extends ActiveWorkspacesCommandRunner {

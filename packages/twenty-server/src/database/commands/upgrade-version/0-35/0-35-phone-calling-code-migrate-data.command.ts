@@ -54,7 +54,7 @@ const isCallingCode = (callingCode: string): boolean => {
 };
 
 @Command({
-  name: 'upgrade-0.40:phone-calling-code-migrate-data',
+  name: 'upgrade-0.35:phone-calling-code-migrate-data',
   description: 'Add calling code and change country code with default one',
 })
 export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandRunner {
