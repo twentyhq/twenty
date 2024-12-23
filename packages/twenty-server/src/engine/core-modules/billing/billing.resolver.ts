@@ -56,7 +56,12 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
     @Args()
-    { recurringInterval, successUrlPath, plan }: CheckoutSessionInput,
+    {
+      recurringInterval,
+      successUrlPath,
+      plan,
+      requirePaymentMethod,
+    }: CheckoutSessionInput,
   ) {
     const productPrice = await this.stripeService.getStripePrice(
       AvailableProduct.BasePlan,

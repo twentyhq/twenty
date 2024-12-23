@@ -44,10 +44,7 @@ export const useShowAuthModal = () => {
       return true;
     }
 
-    if (
-      isMatchingLocation(AppPath.PlanRequired) ||
-      isMatchingLocation(AppPath.PlanCheckout)
-    ) {
+    if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
         (onboardingStatus === OnboardingStatus.Completed &&
           !isDefined(subscriptionStatus)) ||

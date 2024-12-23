@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -17,6 +17,11 @@ export class CheckoutSessionInput {
   @IsString()
   @IsOptional()
   plan?: BillingPlanKey;
+
+  @Field(() => Boolean, { defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  requirePaymentMethod?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

@@ -3,6 +3,7 @@ import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
+import { billingCheckoutState } from '@/billing/states/billingCheckoutState';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -10,7 +11,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   ActionLink,
   CAL_LINK,
@@ -19,7 +20,6 @@ import {
   MainButton,
 } from 'twenty-ui';
 import {
-  BillingPlanKey,
   ProductPriceEntity,
   SubscriptionInterval,
   useCheckoutSessionMutation,
@@ -78,9 +78,10 @@ const benefits = [
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
 
-  const [planSelected, setPlanSelected] = useState(SubscriptionInterval.Month);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [billingCheckout, setBillingCheckout] =
+    useRecoilState(billingCheckoutState);
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -92,8 +93,13 @@ export const ChooseYourPlan = () => {
 
   const handlePlanChange = (type?: SubscriptionInterval) => {
     return () => {
-      if (isNonEmptyString(type) && planSelected !== type) {
-        setPlanSelected(type);
+      if (isNonEmptyString(type) && billingCheckout.interval !== type) {
+        setBillingCheckout({
+          plan: billingCheckout.plan,
+          interval: type,
+          requirePaymentMethod: billingCheckout.requirePaymentMethod,
+          skipPlanPage: false,
+        });
       }
     };
   };
@@ -126,9 +132,10 @@ export const ChooseYourPlan = () => {
     setIsSubmitting(true);
     const { data } = await checkoutSession({
       variables: {
-        recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
-        plan: BillingPlanKey.Pro,
+        recurringInterval: billingCheckout.interval,
+        plan: billingCheckout.plan,
+        requirePaymentMethod: billingCheckout.requirePaymentMethod,
       },
     });
     setIsSubmitting(false);
@@ -144,6 +151,10 @@ export const ChooseYourPlan = () => {
     window.location.replace(data.checkoutSession.url);
   };
 
+  if (billingCheckout.skipPlanPage) {
+    handleButtonClick();
+  }
+
   return (
     prices?.getProductPrices?.productPrices && (
       <>
@@ -154,7 +165,7 @@ export const ChooseYourPlan = () => {
         <StyledChoosePlanContainer>
           {prices.getProductPrices.productPrices.map((price, index) => (
             <CardPicker
-              checked={price.recurringInterval === planSelected}
+              checked={price.recurringInterval === billingCheckout.interval}
               handleChange={handlePlanChange(price.recurringInterval)}
               key={index}
             >

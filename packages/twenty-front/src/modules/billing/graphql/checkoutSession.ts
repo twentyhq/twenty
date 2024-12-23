@@ -5,11 +5,13 @@ export const CHECKOUT_SESSION = gql`
     $recurringInterval: SubscriptionInterval!
     $successUrlPath: String
     $plan: BillingPlanKey!
+    $requirePaymentMethod: Boolean!
   ) {
     checkoutSession(
       recurringInterval: $recurringInterval
       successUrlPath: $successUrlPath
       plan: $plan
+      requirePaymentMethod: $requirePaymentMethod
     ) {
       url
     }
