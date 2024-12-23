@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import FileType from 'file-type';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -23,17 +24,19 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -333,12 +336,17 @@ export class SignInUpService {
       }
     }
 
+    const logo = isWorkEmail(email)
+      ? `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`
+      : undefined;
+
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      logo,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);

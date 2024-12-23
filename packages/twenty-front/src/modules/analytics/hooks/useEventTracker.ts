@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { v4 } from 'uuid';
 import { useTrackMutation } from '~/generated/graphql';
 export interface EventData {
   pathname: string;
@@ -19,7 +20,7 @@ export const getSessionId = (): string => {
 };
 
 export const setSessionId = (domain?: string): void => {
-  const sessionId = getSessionId() || crypto.randomUUID();
+  const sessionId = getSessionId() || v4();
   const baseCookie = `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`;
   const cookie = domain ? baseCookie + `; domain=${domain}` : baseCookie;
 
