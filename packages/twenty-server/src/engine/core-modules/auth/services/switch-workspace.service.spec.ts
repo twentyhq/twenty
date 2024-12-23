@@ -17,9 +17,6 @@ describe('SwitchWorkspaceService', () => {
   let service: SwitchWorkspaceService;
   let userRepository: Repository<User>;
   let workspaceRepository: Repository<Workspace>;
-  let userService: UserService;
-  let accessTokenService: AccessTokenService;
-  let refreshTokenService: RefreshTokenService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,6 +48,10 @@ describe('SwitchWorkspaceService', () => {
             get: jest.fn(),
           },
         },
+        {
+          provide: UserService,
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -61,9 +62,6 @@ describe('SwitchWorkspaceService', () => {
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
-    accessTokenService = module.get<AccessTokenService>(AccessTokenService);
-    refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
-    userService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {

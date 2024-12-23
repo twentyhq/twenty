@@ -141,7 +141,10 @@ describe('SignInUpService', () => {
 
     const spy = jest
       .spyOn(service, 'signUpOnNewWorkspace')
-      .mockResolvedValueOnce({} as User);
+      .mockResolvedValueOnce({ user: {}, workspace: {} } as {
+        user: User;
+        workspace: Workspace;
+      });
 
     await service.signInUp({
       email: 'test@test.com',
