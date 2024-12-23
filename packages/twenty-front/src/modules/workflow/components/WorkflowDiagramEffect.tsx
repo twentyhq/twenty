@@ -1,5 +1,6 @@
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
+import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
@@ -37,6 +38,26 @@ export const WorkflowDiagramEffect = ({
             previousWorkflowDiagram,
             nextWorkflowDiagram,
           );
+        }
+
+        const selectedNode = getSnapshotValue(
+          snapshot,
+          workflowLastCreatedStepIdState,
+        );
+        if (isDefined(selectedNode)) {
+          mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
+            (node) => {
+              if (node.id === selectedNode) {
+                return {
+                  ...node,
+                  selected: true,
+                };
+              }
+              return node;
+            },
+          );
+
+          set(workflowLastCreatedStepIdState, undefined);
         }
 
         set(workflowDiagramState, mergedWorkflowDiagram);
