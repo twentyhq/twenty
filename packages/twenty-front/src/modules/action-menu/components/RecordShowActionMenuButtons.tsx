@@ -15,10 +15,10 @@ export const RecordShowActionMenuButtons = () => {
   return (
     <>
       {!isMobile &&
-        pinnedEntries.map((entry, index) =>
+        pinnedEntries.map((entry) =>
           entry.shortLabel ? (
             <Button
-              key={index}
+              key={entry.key}
               Icon={entry.Icon}
               size="small"
               variant="secondary"
@@ -29,6 +29,7 @@ export const RecordShowActionMenuButtons = () => {
             />
           ) : (
             <IconButton
+              key={entry.key}
               Icon={entry.Icon}
               size="small"
               variant="secondary"

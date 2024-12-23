@@ -14,6 +14,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -57,6 +58,16 @@ export const useDeleteMultipleRecordsAction = ({
     objectMetadataItem,
   );
 
+  const deletedAtFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.name === 'deletedAt',
+  );
+
+  const isDeletedFilterActive = contextStoreFilters.some(
+    (filter) =>
+      filter.fieldMetadataId === deletedAtFieldMetadata?.id &&
+      filter.operand === FilterOperand.IsNotEmpty,
+  );
+
   const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
@@ -79,6 +90,7 @@ export const useDeleteMultipleRecordsAction = ({
 
   const canDelete =
     !isRemoteObject &&
+    !isDeletedFilterActive &&
     isDefined(contextStoreNumberOfSelectedRecords) &&
     contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
     contextStoreNumberOfSelectedRecords > 0;
