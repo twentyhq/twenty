@@ -2,17 +2,17 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-type ShowPageTabListFromUrlOptionalEffectProps = {
+type TabListFromUrlOptionalEffectProps = {
   componentInstanceId: string;
   tabListIds: string[];
   isInRightDrawer: boolean;
 };
 
-export const ShowPageTabListFromUrlOptionalEffect = ({
+export const TabListFromUrlOptionalEffect = ({
   componentInstanceId,
   tabListIds,
   isInRightDrawer,
-}: ShowPageTabListFromUrlOptionalEffectProps) => {
+}: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
   const { activeTabId, setActiveTabId } = useTabList(componentInstanceId);
 
