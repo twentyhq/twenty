@@ -1,13 +1,12 @@
-import { useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { IconFolder } from 'twenty-ui';
-
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
+import { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { IconFolder } from 'twenty-ui';
 
 type FavoriteFoldersProps = {
   isNavigationSectionOpen: boolean;
