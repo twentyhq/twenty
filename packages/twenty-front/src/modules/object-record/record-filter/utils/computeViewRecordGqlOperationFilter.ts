@@ -32,7 +32,8 @@ import { FilterValueDependencies } from '@/object-record/record-filter/types/Fil
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
+import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
 import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
@@ -127,7 +128,7 @@ const computeFilterRecordGqlOperationFilter = (
       }
     case 'DATE':
     case 'DATE_TIME': {
-      const resolvedFilterValue = resolveFilterValue(filter);
+      const resolvedFilterValue = resolveDateViewFilterValue(filter);
       const now = roundToNearestMinutes(new Date());
       const date =
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
@@ -160,11 +161,8 @@ const computeFilterRecordGqlOperationFilter = (
             .object({ start: z.date(), end: z.date() })
             .safeParse(resolvedFilterValue).data;
 
-          const defaultDateRange = resolveFilterValue({
+          const defaultDateRange = resolveDateViewFilterValue({
             value: 'PAST_1_DAY',
-            definition: {
-              type: 'DATE',
-            },
             operand: ViewFilterOperand.IsRelative,
           });
 
@@ -623,9 +621,7 @@ const computeFilterRecordGqlOperationFilter = (
         );
       }
 
-      const options = resolveFilterValue(
-        filter as Filter & { definition: { type: 'MULTI_SELECT' } },
-      );
+      const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
 
@@ -672,9 +668,7 @@ const computeFilterRecordGqlOperationFilter = (
           filter.definition,
         );
       }
-      const options = resolveFilterValue(
-        filter as Filter & { definition: { type: 'SELECT' } },
-      );
+      const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
 
