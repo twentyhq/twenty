@@ -98,7 +98,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Color Scheme',
     description: 'Preferred color scheme',
     icon: 'IconColorSwatch',
-    defaultValue: "'System'",
+    defaultValue: "'Light'",
   })
   colorScheme: string;
 
