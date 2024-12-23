@@ -37,7 +37,7 @@ export const SignInUpWorkspaceScopeForm = () => {
           workspaceAuthProviders.microsoft ||
           workspaceAuthProviders.sso.length > 0) &&
         workspaceAuthProviders.password ? (
-          <HorizontalSeparator visible />
+          <HorizontalSeparator />
         ) : null}
 
         {workspaceAuthProviders.password && <SignInUpWithCredentials />}

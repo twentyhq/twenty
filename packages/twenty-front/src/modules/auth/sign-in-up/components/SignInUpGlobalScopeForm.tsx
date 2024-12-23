@@ -109,7 +109,7 @@ export const SignInUpGlobalScopeForm = () => {
         {authProviders.google && <SignInUpWithGoogle />}
 
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
-        <HorizontalSeparator visible />
+        <HorizontalSeparator />
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
