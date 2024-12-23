@@ -40,6 +40,7 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDragging?: boolean;
+  isRightOptionsDropdownOpen?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -211,6 +212,7 @@ const visibleStateStyles = css`
 
 const StyledRightOptionsVisbility = styled.div<{
   isMobile: boolean;
+  isRightOptionsDropdownOpen?: boolean;
 }>`
   display: block;
   opacity: 0;
@@ -223,7 +225,8 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile }) => isMobile && visibleStateStyles}
+  ${({ isMobile, isRightOptionsDropdownOpen }) =>
+    (isMobile || isRightOptionsDropdownOpen) && visibleStateStyles}
 
   .navigation-drawer-item:hover & {
     ${visibleStateStyles}
@@ -246,6 +249,7 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDragging,
+  isRightOptionsDropdownOpen,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -345,7 +349,12 @@ export const NavigationDrawerItem = ({
                   e.preventDefault();
                 }}
               >
-                <StyledRightOptionsVisbility isMobile={isMobile}>
+                <StyledRightOptionsVisbility
+                  isMobile={isMobile}
+                  isRightOptionsDropdownOpen={
+                    isRightOptionsDropdownOpen || false
+                  }
+                >
                   {rightOptions}
                 </StyledRightOptionsVisbility>
               </StyledRightOptionsContainer>

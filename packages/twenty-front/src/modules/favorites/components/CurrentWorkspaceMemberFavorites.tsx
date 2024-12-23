@@ -146,7 +146,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               onClick={handleToggle}
               rightOptions={rightOptions}
               className="navigation-drawer-item"
-              active={isFavoriteFolderEditDropdownOpen}
+              isRightOptionsDropdownOpen={isFavoriteFolderEditDropdownOpen}
             />
           </FavoritesDroppable>
         )}
