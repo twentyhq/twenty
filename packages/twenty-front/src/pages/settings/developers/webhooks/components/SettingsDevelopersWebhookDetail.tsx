@@ -291,6 +291,13 @@ export const SettingsDevelopersWebhooksDetail = () => {
             </StyledFilterRow>
           ))}
         </Section>
+        <Section>
+          <H2Title
+            title="Secret"
+            description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+          />
+          <TextInput placeholder="Secret" fullWidth />
+        </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider
             value={{ instanceId: `webhook-${webhookId}-analytics` }}
