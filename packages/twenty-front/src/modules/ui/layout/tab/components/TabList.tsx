@@ -1,4 +1,4 @@
-import { ShowPageTabListFromUrlOptionalEffect } from '@/ui/layout/show-page/components/ShowPageTabListFromUrlOptionalEffect';
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -62,7 +62,7 @@ export const TabList = ({
 
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
-      <ShowPageTabListFromUrlOptionalEffect
+      <TabListFromUrlOptionalEffect
         isInRightDrawer={!!isInRightDrawer}
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
