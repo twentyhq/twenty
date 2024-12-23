@@ -1,3 +1,4 @@
+import { ShowPageTabListFromUrlOptionalEffect } from '@/ui/layout/show-page/components/ShowPageTabListFromUrlOptionalEffect';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -25,6 +26,7 @@ type TabListProps = {
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
+  isInRightDrawer?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -41,6 +43,7 @@ export const TabList = ({
   tabListInstanceId,
   loading,
   behaveAsLinks = true,
+  isInRightDrawer,
   className,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
@@ -59,6 +62,11 @@ export const TabList = ({
 
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
+      <ShowPageTabListFromUrlOptionalEffect
+        isInRightDrawer={!!isInRightDrawer}
+        componentInstanceId={tabListInstanceId}
+        tabListIds={tabs.map((tab) => tab.id)}
+      />
       <ScrollWrapper
         defaultEnableYScroll={false}
         contextProviderName="tabList"
