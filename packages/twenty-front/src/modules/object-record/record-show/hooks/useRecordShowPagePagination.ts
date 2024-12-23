@@ -21,6 +21,7 @@ export const useRecordShowPagePagination = (
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
   } = useParams();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('view');
@@ -162,7 +163,7 @@ export const useRecordShowPagePagination = (
 
   const objectLabel = capitalize(objectMetadataItem.labelPlural);
 
-  const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
+  const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
 
   const viewNameWithCount = rankFoundInView
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
