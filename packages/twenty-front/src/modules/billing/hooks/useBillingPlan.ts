@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { atom, useRecoilState } from 'recoil';
-
-import { BillingPlanKey } from '@/billing/types/billing';
+import { BillingPlanKey } from '~/generated/graphql';
 
 const billingPlanState = atom<BillingPlanKey | null>({
   key: 'billingPlanState',
@@ -20,7 +19,7 @@ export const useBillingPlan = () => {
     search.includes('FreePass');
 
   if (hasFreePassParameter) {
-    setBillingPlan(BillingPlanKey.FREE);
+    setBillingPlan(BillingPlanKey.Free);
     return billingPlan;
   }
 

@@ -19,6 +19,7 @@ import {
   MainButton,
 } from 'twenty-ui';
 import {
+  BillingPlanKey,
   ProductPriceEntity,
   SubscriptionInterval,
   useCheckoutSessionMutation,
@@ -127,7 +128,7 @@ export const ChooseYourPlan = () => {
       variables: {
         recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
-        requirePaymentMethod: true,
+        plan: BillingPlanKey.Pro,
       },
     });
     setIsSubmitting(false);

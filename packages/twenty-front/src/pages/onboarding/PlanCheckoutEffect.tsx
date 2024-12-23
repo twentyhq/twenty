@@ -2,6 +2,7 @@ import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Navigate } from 'react-router-dom';
 import {
   SubscriptionInterval,
   useCheckoutSessionMutation,
@@ -12,13 +13,18 @@ export const PlanCheckoutEffect = () => {
   const [checkoutSession] = useCheckoutSessionMutation();
   const plan = useBillingPlan();
 
+  // if plan isn't defined then redirect to the plan required page
+  if (!plan) {
+    return <Navigate to={AppPath.PlanRequired} />;
+  }
+
   const createCheckoutSession = async () => {
     try {
       const { data } = await checkoutSession({
         variables: {
           recurringInterval: SubscriptionInterval.Month,
           successUrlPath: AppPath.PlanRequiredSuccess,
-          plan,
+          plan: plan,
         },
       });
 

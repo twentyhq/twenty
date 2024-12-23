@@ -1,11 +1,14 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
-import { BillingPlanKey } from '@/billing/types/billing';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+import {
+  BillingPlanKey,
+  OnboardingStatus,
+  SubscriptionStatus,
+} from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';

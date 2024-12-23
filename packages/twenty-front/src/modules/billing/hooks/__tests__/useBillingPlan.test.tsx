@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
-import { BillingPlanKey } from '@/billing/types/billing';
+import { BillingPlanKey } from '~/generated/graphql';
 
 const Wrapper = ({ children, initialUrl = '' }: any) => (
   <MemoryRouter initialEntries={[initialUrl]}>
@@ -27,7 +27,7 @@ describe('useBillingPlan', () => {
       ),
     });
 
-    expect(result.current).toBe(BillingPlanKey.FREE);
+    expect(result.current).toBe(BillingPlanKey.Free);
   });
 
   it('should set plan from URL parameter - PRO', () => {
@@ -37,7 +37,7 @@ describe('useBillingPlan', () => {
       ),
     });
 
-    expect(result.current).toBe(BillingPlanKey.PRO);
+    expect(result.current).toBe(BillingPlanKey.Pro);
   });
 
   it('should set plan from URL parameter - ENTERPRISE', () => {
@@ -47,7 +47,7 @@ describe('useBillingPlan', () => {
       ),
     });
 
-    expect(result.current).toBe(BillingPlanKey.ENTERPRISE);
+    expect(result.current).toBe(BillingPlanKey.Enterprise);
   });
 
   it('should ignore invalid plan from URL parameter', () => {

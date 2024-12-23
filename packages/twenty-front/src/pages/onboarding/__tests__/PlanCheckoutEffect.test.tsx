@@ -4,9 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { CHECKOUT_SESSION } from '@/billing/graphql/checkoutSession';
-import { BillingPlanKey } from '@/billing/types/billing';
 import { AppPath } from '@/types/AppPath';
-import { SubscriptionInterval } from '~/generated/graphql';
+import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
 import { PlanCheckoutEffect } from '../PlanCheckoutEffect';
 
 const mockEnqueueSnackBar = jest.fn();
@@ -38,7 +37,7 @@ describe('PlanCheckoutEffect', () => {
       variables: {
         recurringInterval: SubscriptionInterval.Month,
         successUrlPath: AppPath.PlanRequiredSuccess,
-        plan: BillingPlanKey.PRO,
+        plan: BillingPlanKey.Pro,
       },
     },
     result: {
@@ -56,14 +55,14 @@ describe('PlanCheckoutEffect', () => {
       variables: {
         recurringInterval: SubscriptionInterval.Month,
         successUrlPath: AppPath.PlanRequiredSuccess,
-        plan: BillingPlanKey.PRO,
+        plan: BillingPlanKey.Pro,
       },
     },
     error: new Error('Checkout session error'),
   };
 
   beforeEach(() => {
-    mockBillingPlan.mockReturnValue(BillingPlanKey.PRO);
+    mockBillingPlan.mockReturnValue(BillingPlanKey.Pro);
     mockEnqueueSnackBar.mockClear();
     mockReplace.mockClear();
   });
