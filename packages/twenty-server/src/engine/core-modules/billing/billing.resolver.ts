@@ -40,11 +40,12 @@ export class BillingResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async billingPortalSession(
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
-        user.defaultWorkspaceId,
+        workspace.id,
         returnUrlPath,
       ),
     };
