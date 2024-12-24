@@ -36,7 +36,7 @@ export const computeWebhooks = (
             'const timestamp = "1735066639761";\n' +
             'const payload = JSON.stringify({...});\n' +
             'const secret = "your-secret";\n' +
-            'const stringToSign = timestamp + payload;\n' +
+            'const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;\n' +
             'const signature = crypto.createHmac("sha256", secret)\n  .update(stringToSign)\n  .digest("hex");\n```',
           required: false,
         },

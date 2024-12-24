@@ -34,7 +34,7 @@ export class CallWebhookJob {
   ): string {
     return crypto
       .createHmac('sha256', secret)
-      .update(timestamp + JSON.stringify(payload))
+      .update(`${timestamp}:${JSON.stringify(payload)}`)
       .digest('hex');
   }
 
