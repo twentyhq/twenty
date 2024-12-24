@@ -12,7 +12,10 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { AccessTokenService } from './access-token.service';
@@ -22,6 +25,7 @@ describe('AccessTokenService', () => {
   let jwtWrapperService: JwtWrapperService;
   let environmentService: EnvironmentService;
   let userRepository: Repository<User>;
+  let workspaceRepository: Repository<Workspace>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   beforeEach(async () => {
@@ -84,6 +88,9 @@ describe('AccessTokenService', () => {
     userRepository = module.get<Repository<User>>(
       getRepositoryToken(User, 'core'),
     );
+    workspaceRepository = module.get<Repository<Workspace>>(
+      getRepositoryToken(Workspace, 'core'),
+    );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -99,14 +106,19 @@ describe('AccessTokenService', () => {
       const workspaceId = 'workspace-id';
       const mockUser = {
         id: userId,
-        defaultWorkspace: { id: workspaceId, activationStatus: 'ACTIVE' },
-        defaultWorkspaceId: workspaceId,
+      };
+      const mockWorkspace = {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        id: workspaceId,
       };
       const mockWorkspaceMember = { id: 'workspace-member-id' };
       const mockToken = 'mock-token';
 
       jest.spyOn(environmentService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace as Workspace);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({

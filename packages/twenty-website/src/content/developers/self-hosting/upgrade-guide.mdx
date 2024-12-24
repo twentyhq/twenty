@@ -7,7 +7,11 @@ image: /images/user-guide/notes/notes_header.png
 
 ## General guidelines
 
-Always make sure to back up your database before starting the upgrade process.
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it <db_container_name_or_id> pg_dumpall -U <postgres_user> > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i <db_container_name_or_id> psql -U <postgres_user>`.
+
+If you want to migrate from postgres bitnami container to postgres spilo container, you have to dump the database from the bitnami container and restore it to the spilo container using commands above.
 
 If you used Docker Compose, follow these steps:
 
@@ -55,7 +59,7 @@ The `yarn command:prod upgrade-0.34` takes care of the data migration of all wor
 
 We have updated the way we handle the frontend URL. 
 You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
-If FRONT_DOMAIN is not set, the frontend URL will fallback to `SERVER_URL`.
+If FRONT_DOMAIN is not set, the frontend URL will fall back to `SERVER_URL`.
 
 ### v0.32.0 to v0.33.0
 

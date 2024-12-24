@@ -14,14 +14,21 @@ export class LoginTokenService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async generateLoginToken(email: string): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret('LOGIN');
+  async generateLoginToken(
+    email: string,
+    workspaceId: string,
+  ): Promise<AuthToken> {
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'LOGIN',
+      workspaceId,
+    );
 
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: email,
+      workspaceId,
     };
 
     return {
@@ -33,7 +40,9 @@ export class LoginTokenService {
     };
   }
 
-  async verifyLoginToken(loginToken: string): Promise<{ sub: string }> {
+  async verifyLoginToken(
+    loginToken: string,
+  ): Promise<{ sub: string; workspaceId: string }> {
     await this.jwtWrapperService.verifyWorkspaceToken(loginToken, 'LOGIN');
 
     return this.jwtWrapperService.decode(loginToken, {
