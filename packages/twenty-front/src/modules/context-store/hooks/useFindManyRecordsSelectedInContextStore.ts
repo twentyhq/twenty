@@ -4,6 +4,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const useFindManyRecordsSelectedInContextStore = ({
@@ -30,10 +31,13 @@ export const useFindManyRecordsSelectedInContextStore = ({
     instanceId,
   );
 
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
+    filterValueDependencies,
   );
 
   const { records, loading, totalCount } = useFindManyRecords({
