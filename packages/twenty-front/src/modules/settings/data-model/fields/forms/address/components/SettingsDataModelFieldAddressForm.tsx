@@ -4,8 +4,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { addressSchema as addressFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Select } from '@/ui/input/components/Select';
-import { IconMap } from 'twenty-ui';
+import { Select, SelectOption } from '@/ui/input/components/Select';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -33,13 +33,16 @@ export const SettingsDataModelFieldAddressForm = ({
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   const countries = useCountries()
     .sort((a, b) => a.countryName.localeCompare(b.countryName))
-    .map((country) => ({
-      label: country.countryName,
-      value: country.countryName,
+    .map<SelectOption<string>>(({ countryName, Flag }) => ({
+      label: countryName,
+      value: countryName,
+      Icon: (props: IconComponentProps) =>
+        Flag({ width: props.size, height: props.size }),
     }));
   countries.unshift({
     label: 'No country',
     value: '',
+    Icon: IconCircleOff,
   });
   const defaultDefaultValue = {
     addressStreet1: "''",
@@ -69,7 +72,7 @@ export const SettingsDataModelFieldAddressForm = ({
             description="The default country for new addresses"
           >
             <Select<string>
-              dropdownWidth={'auto'}
+              dropdownWidth={220}
               disabled={disabled}
               dropdownId="selectDefaultCountry"
               value={stripSimpleQuotesFromString(defaultCountry)}
@@ -81,6 +84,7 @@ export const SettingsDataModelFieldAddressForm = ({
               }
               options={countries}
               selectSizeVariant="small"
+              withSearchInput={true}
             />
           </SettingsOptionCardContentSelect>
         );
