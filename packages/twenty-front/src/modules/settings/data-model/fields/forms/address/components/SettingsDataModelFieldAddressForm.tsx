@@ -31,19 +31,22 @@ export const SettingsDataModelFieldAddressForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
-  const countries = useCountries()
-    .sort((a, b) => a.countryName.localeCompare(b.countryName))
-    .map<SelectOption<string>>(({ countryName, Flag }) => ({
-      label: countryName,
-      value: countryName,
-      Icon: (props: IconComponentProps) =>
-        Flag({ width: props.size, height: props.size }),
-    }));
-  countries.unshift({
-    label: 'No country',
-    value: '',
-    Icon: IconCircleOff,
-  });
+  const countries = [
+    {
+      label: 'No country',
+      value: '',
+      Icon: IconCircleOff,
+    },
+    ...useCountries()
+      .sort((a, b) => a.countryName.localeCompare(b.countryName))
+      .map<SelectOption<string>>(({ countryName, Flag }) => ({
+        label: countryName,
+        value: countryName,
+        Icon: (props: IconComponentProps) =>
+          Flag({ width: props.size, height: props.size }),
+      })),
+  ];
+
   const defaultDefaultValue = {
     addressStreet1: "''",
     addressStreet2: null,
