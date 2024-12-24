@@ -1,6 +1,7 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -31,7 +32,7 @@ export enum WorkflowVersionStatus {
   ARCHIVED = 'ARCHIVED',
 }
 
-const WorkflowVersionStatusOptions = [
+const WorkflowVersionStatusOptions: FieldMetadataComplexOption[] = [
   {
     value: WorkflowVersionStatus.DRAFT,
     label: 'Draft',

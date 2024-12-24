@@ -5,6 +5,7 @@ import { RecordTableCellWrapper } from '@/object-record/record-table/record-tabl
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
   const { isSelected } = useRecordTableRowContextOrThrow();
@@ -14,6 +15,10 @@ export const RecordTableCellsVisible = () => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
+
+  if (!isNonEmptyArray(visibleTableColumns)) {
+    return null;
+  }
 
   const tableColumnsAfterFirst = visibleTableColumns.slice(1);
 

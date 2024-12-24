@@ -1,4 +1,4 @@
-import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/workspace-member';
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -32,7 +32,7 @@ const generateOpportunities = (companies) => {
   }));
 };
 
-export const opportunityPrefillDemoData = async (
+export const seedOpportunityWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
