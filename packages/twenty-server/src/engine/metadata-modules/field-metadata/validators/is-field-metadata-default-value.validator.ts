@@ -50,12 +50,6 @@ export class IsFieldMetadataDefaultValue
           where: {
             id,
           },
-          relations: [
-            'fromRelationMetadata',
-            'toRelationMetadata',
-            'object',
-            'indexFieldMetadatas',
-          ],
         });
       } catch {
         return false;
