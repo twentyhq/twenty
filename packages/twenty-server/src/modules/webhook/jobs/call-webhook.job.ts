@@ -30,12 +30,12 @@ export class CallWebhookJob {
   private generateSignature(
     payload: CallWebhookJobData,
     secret: string,
+    timestamp: string,
   ): string {
-    const hmac = crypto.createHmac('sha256', secret);
-
-    hmac.update(JSON.stringify(payload));
-
-    return hmac.digest('hex');
+    return crypto
+      .createHmac('sha256', secret)
+      .update(timestamp + JSON.stringify(payload))
+      .digest('hex');
   }
 
   @Process(CallWebhookJob.name)
@@ -62,10 +62,15 @@ export class CallWebhookJob {
       };
 
       if (secret) {
+        headers['X-Twenty-Webhook-Timestamp'] = Date.now().toString();
         headers['X-Twenty-Webhook-Signature'] = this.generateSignature(
           payloadWithoutSecret,
           secret,
+          headers['X-Twenty-Webhook-Timestamp'],
         );
+        headers['X-Twenty-Webhook-Nonce'] = crypto
+          .randomBytes(16)
+          .toString('hex');
       }
 
       const response = await this.httpService.axiosRef.post(
