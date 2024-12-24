@@ -62,7 +62,7 @@ export class CallWebhookJob {
       };
 
       if (secret) {
-        headers['X-Twenty-Signature'] = this.generateSignature(
+        headers['X-Twenty-Webhook-Signature'] = this.generateSignature(
           payloadWithoutSecret,
           secret,
         );
