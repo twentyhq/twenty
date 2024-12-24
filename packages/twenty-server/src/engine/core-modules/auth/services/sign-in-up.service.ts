@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import FileType from 'file-type';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -23,17 +24,19 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -321,8 +324,19 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
+    const user: Partial<User> = {
+      email,
+      firstName,
+      lastName,
+      canImpersonate: false,
+      passwordHash,
+    };
+
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
+
+      // if the workspace doesn't exist it means it's the first user of the workspace
+      user.canImpersonate = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
@@ -333,33 +347,33 @@ export class SignInUpService {
       }
     }
 
+    const logo = isWorkEmail(email)
+      ? `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`
+      : undefined;
+
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      logo,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    const imagePath = await this.uploadPicture(picture, workspace.id);
+    user.defaultAvatarUrl = await this.uploadPicture(picture, workspace.id);
 
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      defaultAvatarUrl: imagePath,
-      canImpersonate: false,
-      passwordHash,
+    const userCreated = this.userRepository.create({
+      ...user,
       defaultWorkspace: workspace,
     });
 
-    const user = await this.userRepository.save(userToCreate);
+    const newUser = await this.userRepository.save(userCreated);
 
-    await this.userWorkspaceService.create(user.id, workspace.id);
+    await this.userWorkspaceService.create(newUser.id, workspace.id);
 
-    await this.activateOnboardingForUser(user, workspace, {
+    await this.activateOnboardingForUser(newUser, workspace, {
       firstName,
       lastName,
     });
@@ -369,7 +383,7 @@ export class SignInUpService {
       value: true,
     });
 
-    return user;
+    return newUser;
   }
 
   async uploadPicture(

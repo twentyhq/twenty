@@ -11,7 +11,7 @@ export type FavoriteDeletionJobData = {
 };
 
 @Processor({
-  queueName: MessageQueue.favoriteQueue,
+  queueName: MessageQueue.deleteCascadeQueue,
   scope: Scope.REQUEST,
 })
 export class FavoriteDeletionJob {

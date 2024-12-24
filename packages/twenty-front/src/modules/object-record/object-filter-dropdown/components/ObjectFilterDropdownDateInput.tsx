@@ -8,10 +8,10 @@ import { InternalDatePicker } from '@/ui/input/components/internal/date/componen
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
+  resolveDateViewFilterValue,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -37,7 +37,7 @@ export const ObjectFilterDropdownDateInput = () => {
     | undefined;
 
   const initialFilterValue = selectedFilter
-    ? resolveFilterValue(selectedFilter)
+    ? resolveDateViewFilterValue(selectedFilter)
     : null;
   const [internalDate, setInternalDate] = useState<Date | null>(
     initialFilterValue instanceof Date ? initialFilterValue : null,
@@ -98,7 +98,7 @@ export const ObjectFilterDropdownDateInput = () => {
     selectedOperandInDropdown === ViewFilterOperand.IsRelative;
 
   const resolvedValue = selectedFilter
-    ? resolveFilterValue(selectedFilter)
+    ? resolveDateViewFilterValue(selectedFilter)
     : null;
 
   const relativeDate =
