@@ -17,7 +17,6 @@ export type CallWebhookJobData = {
   eventDate: Date;
   record: any;
   updatedFields?: string[];
-  secret?: string;
 };
 
 @Processor(MessageQueue.webhookQueue)
@@ -52,12 +51,21 @@ export class CallWebhookJob {
         'Content-Type': 'application/json',
       };
 
-      const { secret, ...payloadWithoutSecret } = data;
+      const {
+        record: { secret, ...recordWithoutSecret },
+        ...dataWithoutRecord
+      } = data;
+
+      const payloadWithoutSecret = {
+        ...dataWithoutRecord,
+        record: recordWithoutSecret,
+      };
 
       if (secret) {
-        const signature = this.generateSignature(payloadWithoutSecret, secret);
-
-        headers['X-Twenty-Signature'] = signature;
+        headers['X-Twenty-Signature'] = this.generateSignature(
+          payloadWithoutSecret,
+          secret,
+        );
       }
 
       const response = await this.httpService.axiosRef.post(
