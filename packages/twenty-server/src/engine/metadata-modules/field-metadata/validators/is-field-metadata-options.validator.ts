@@ -42,6 +42,12 @@ export class IsFieldMetadataOptions {
       try {
         fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
           where: { id },
+          relations: [
+            'fromRelationMetadata',
+            'toRelationMetadata',
+            'object',
+            'indexFieldMetadatas',
+          ],
         });
       } catch {
         return false;
