@@ -13,7 +13,6 @@ import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui';
 
 const StyledEmptyContainer = styled.div`
-  height: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
 `;
 
@@ -67,7 +66,7 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
           />
         ))
       ) : (
-        <StyledEmptyContainer />
+        <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
       )}
     </FavoritesDroppable>
   );

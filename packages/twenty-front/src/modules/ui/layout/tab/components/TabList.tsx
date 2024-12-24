@@ -26,6 +26,7 @@ type TabListProps = {
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
+  isInRightDrawer?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -42,6 +43,7 @@ export const TabList = ({
   tabListInstanceId,
   loading,
   behaveAsLinks = true,
+  isInRightDrawer,
   className,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
@@ -61,6 +63,7 @@ export const TabList = ({
   return (
     <TabListScope tabListScopeId={tabListInstanceId}>
       <TabListFromUrlOptionalEffect
+        isInRightDrawer={!!isInRightDrawer}
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />

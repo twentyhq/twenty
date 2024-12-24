@@ -324,8 +324,19 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
+    const user: Partial<User> = {
+      email,
+      firstName,
+      lastName,
+      canImpersonate: false,
+      passwordHash,
+    };
+
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
+
+      // if the workspace doesn't exist it means it's the first user of the workspace
+      user.canImpersonate = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
@@ -351,23 +362,18 @@ export class SignInUpService {
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    const imagePath = await this.uploadPicture(picture, workspace.id);
+    user.defaultAvatarUrl = await this.uploadPicture(picture, workspace.id);
 
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      defaultAvatarUrl: imagePath,
-      canImpersonate: false,
-      passwordHash,
+    const userCreated = this.userRepository.create({
+      ...user,
       defaultWorkspace: workspace,
     });
 
-    const user = await this.userRepository.save(userToCreate);
+    const newUser = await this.userRepository.save(userCreated);
 
-    await this.userWorkspaceService.create(user.id, workspace.id);
+    await this.userWorkspaceService.create(newUser.id, workspace.id);
 
-    await this.activateOnboardingForUser(user, workspace, {
+    await this.activateOnboardingForUser(newUser, workspace, {
       firstName,
       lastName,
     });
@@ -377,7 +383,7 @@ export class SignInUpService {
       value: true,
     });
 
-    return user;
+    return newUser;
   }
 
   async uploadPicture(
