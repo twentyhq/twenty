@@ -77,7 +77,6 @@ export const ScrollWrapper = ({
     options: {
       scrollbars: {
         autoHide: 'scroll',
-        clickScroll: true,
         autoHideDelay: 500,
       },
       overflow: {
@@ -126,7 +125,7 @@ export const ScrollWrapper = ({
         target.dataset.lastScrollLeft = target.scrollLeft.toString();
         target.dataset.lastScrollTop = target.scrollTop.toString();
 
-        requestAnimationFrame(() => handleScroll(osInstance));
+        handleScroll(osInstance);
       },
     },
   });
