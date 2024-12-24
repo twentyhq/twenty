@@ -300,6 +300,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
           />
           <TextInput
+            type="password"
             placeholder="Write a secret"
             value={secret}
             onChange={(secret: string) => {
