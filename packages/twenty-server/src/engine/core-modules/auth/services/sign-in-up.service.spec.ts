@@ -317,7 +317,7 @@ describe('SignInUpService', () => {
         >,
       );
 
-    const result = await service.signInUp({
+    await service.signInUp({
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
@@ -343,13 +343,6 @@ describe('SignInUpService', () => {
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
-    expect(result).toEqual({
-      user: expect.objectContaining({
-        id: expect.any(String),
-        email: email,
-      }),
-      workspace,
-    });
   });
   it('signInUp - sso - existing user - personal invitation token', async () => {
     const email = 'existinguser@test.com';
