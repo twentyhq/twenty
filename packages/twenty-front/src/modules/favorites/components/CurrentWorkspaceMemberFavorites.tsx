@@ -146,7 +146,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               onClick={handleToggle}
               rightOptions={rightOptions}
               className="navigation-drawer-item"
-              active={isFavoriteFolderEditDropdownOpen}
+              isRightOptionsDropdownOpen={isFavoriteFolderEditDropdownOpen}
             />
           </FavoritesDroppable>
         )}
@@ -158,9 +158,6 @@ export const CurrentWorkspaceMemberFavorites = ({
                 ref={provided.innerRef}
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...provided.droppableProps}
-                style={{
-                  marginBottom: 15,
-                }}
                 // TODO: (Drag Drop Bug) Adding bottom margin to ensure drag-to-last-position works. Need to find better solution that doesn't affect spacing.
                 // Issue: Without margin, dragging to last position triggers next folder drop area
               >

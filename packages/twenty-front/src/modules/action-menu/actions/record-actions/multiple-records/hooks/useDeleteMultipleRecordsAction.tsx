@@ -15,6 +15,7 @@ import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -52,10 +53,13 @@ export const useDeleteMultipleRecordsAction = ({
     contextStoreFiltersComponentState,
   );
 
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
+    filterValueDependencies,
   );
 
   const deletedAtFieldMetadata = objectMetadataItem.fields.find(

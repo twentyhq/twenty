@@ -25,6 +25,9 @@ class WorkspaceInfo {
   @Field(() => String)
   name: string;
 
+  @Field(() => Boolean)
+  allowImpersonation: boolean;
+
   @Field(() => String, { nullable: true })
   logo?: string;
 
