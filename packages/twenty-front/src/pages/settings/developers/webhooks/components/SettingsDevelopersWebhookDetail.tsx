@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +15,6 @@ import {
   Section,
   useIcons,
 } from 'twenty-ui';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
@@ -303,7 +303,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             placeholder="Write a secret"
             value={secret}
             onChange={(secret: string) => {
-              setSecret(secret);
+              setSecret(secret.trim());
               setIsDirty(true);
             }}
             fullWidth
