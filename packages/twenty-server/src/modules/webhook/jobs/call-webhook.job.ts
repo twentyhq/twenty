@@ -52,7 +52,7 @@ export class CallWebhookJob {
       };
 
       const {
-        record: { secret, ...recordWithoutSecret },
+        record: { secret, ...recordWithoutSecret } = {},
         ...dataWithoutRecord
       } = data;
 
