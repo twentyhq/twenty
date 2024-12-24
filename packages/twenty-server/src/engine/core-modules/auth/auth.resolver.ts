@@ -126,7 +126,7 @@ export class AuthResolver {
     const user = await this.authService.signInUp({
       ...signUpInput,
       targetWorkspaceSubdomain:
-        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
+        this.domainManagerService.getSubdomainAndHostnameByOrigin(origin),
       fromSSO: false,
       authProvider: 'password',
     });

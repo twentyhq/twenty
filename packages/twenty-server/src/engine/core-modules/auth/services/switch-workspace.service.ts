@@ -79,6 +79,7 @@ export class SwitchWorkspaceService {
     return {
       id: workspace.id,
       subdomain: workspace.subdomain,
+      hostname: workspace.hostname,
       logo: workspace.logo,
       displayName: workspace.displayName,
       authProviders: getAuthProvidersByWorkspace({

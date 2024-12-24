@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import Cloudflare from 'cloudflare';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -119,18 +119,22 @@ export class DomainManagerService {
     return url;
   }
 
-  getWorkspaceSubdomainByOrigin = (origin: string) => {
+  getSubdomainAndHostnameByOrigin = (origin: string) => {
     const { hostname: originHostname } = new URL(origin);
 
     const frontDomain = this.getFrontUrl().hostname;
 
+    const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
+
     const subdomain = originHostname.replace(`.${frontDomain}`, '');
 
-    if (this.isDefaultSubdomain(subdomain)) {
-      return;
-    }
-
-    return subdomain;
+    return {
+      subdomain:
+        isFrontdomain && !this.isDefaultSubdomain(subdomain)
+          ? subdomain
+          : undefined,
+      hostname: isFrontdomain ? undefined : originHostname,
+    };
   };
 
   isDefaultSubdomain(subdomain: string) {
@@ -179,20 +183,28 @@ export class DomainManagerService {
 
   async getWorkspaceByOrigin(origin: string) {
     try {
+      console.log('>>>>>>>>>>>>>>', origin);
+      // get workspace by hostnmae
+
       if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
         return this.getDefaultWorkspace();
       }
 
-      const subdomain = this.getWorkspaceSubdomainByOrigin(origin);
+      const { subdomain, hostname } =
+        this.getSubdomainAndHostnameByOrigin(origin);
 
-      if (!isDefined(subdomain)) return;
+      const where = isDefined(hostname)
+        ? { hostname }
+        : { subdomain, hostname: IsNull() };
 
-      const workspace = await this.workspaceRepository.findOne({
-        where: { subdomain },
+      if (!hostname && !subdomain) return;
+
+      console.log('>>>>>>>>>>>>>>', where);
+
+      return await this.workspaceRepository.findOne({
+        where,
         relations: ['workspaceSSOIdentityProviders'],
       });
-
-      return workspace;
     } catch (e) {
       throw new WorkspaceException(
         'Workspace not found',
@@ -269,7 +281,6 @@ export class DomainManagerService {
       hostname,
     });
 
-    console.log('>>>>>>>>>>>>>>', response.result);
     if (response.result.length === 0) {
       return undefined;
     }

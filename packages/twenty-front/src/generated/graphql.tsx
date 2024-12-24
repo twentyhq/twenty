@@ -214,8 +214,8 @@ export type CursorPaging = {
 export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String'];
-  ownership_verification: OwnershipVerification;
-  ownership_verification_http: OwnershipVerificationHttp;
+  ownership_verification?: Maybe<OwnershipVerification>;
+  ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
   status: Scalars['String'];
 };
 
@@ -842,6 +842,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
+  hostname: Scalars['String'];
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
@@ -866,7 +867,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
-  getHostnameDetails: CustomHostnameDetails;
+  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -1956,7 +1957,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
+export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, hostname: string, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -2190,7 +2191,7 @@ export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorks
 export type GetHostnameDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails: { __typename?: 'CustomHostnameDetails', hostname: string, status: string, ownership_verification: { __typename?: 'OwnershipVerification', name: string, type: string, value: string }, ownership_verification_http: { __typename?: 'OwnershipVerificationHttp', http_body: string, http_url: string } } };
+export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status: string, ownership_verification?: { __typename?: 'OwnershipVerification', name: string, type: string, value: string } | null, ownership_verification_http?: { __typename?: 'OwnershipVerificationHttp', http_body: string, http_url: string } | null } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -3154,6 +3155,7 @@ export const GetPublicWorkspaceDataBySubdomainDocument = gql`
     id
     logo
     displayName
+    hostname
     subdomain
     authProviders {
       sso {

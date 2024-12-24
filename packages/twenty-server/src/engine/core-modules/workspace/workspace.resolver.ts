@@ -195,6 +195,7 @@ export class WorkspaceResolver {
     const workspace =
       await this.domainManagerService.getWorkspaceByOrigin(origin);
 
+    console.log('>>>>>>>>>>>>>>', workspace);
     workspaceValidator.assertIsExist(workspace);
 
     let workspaceLogoWithToken = '';
@@ -224,6 +225,7 @@ export class WorkspaceResolver {
       logo: workspaceLogoWithToken,
       displayName: workspace.displayName,
       subdomain: workspace.subdomain,
+      hostname: workspace.hostname,
       authProviders: getAuthProvidersByWorkspace({
         workspace,
         systemEnabledProviders,
