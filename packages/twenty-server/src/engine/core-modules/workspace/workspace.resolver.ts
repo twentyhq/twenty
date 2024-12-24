@@ -41,6 +41,7 @@ import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 
 import { Workspace } from './workspace.entity';
 
@@ -179,6 +180,14 @@ export class WorkspaceResolver {
   @ResolveField(() => Boolean)
   hasValidEntrepriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
+  }
+
+  @Query(() => CustomHostnameDetails, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async getHostnameDetails(@AuthWorkspace() { hostname }: Workspace) {
+    if (!hostname) return null;
+
+    return this.domainManagerService.getCustomHostnameDetails(hostname);
   }
 
   @Query(() => PublicWorkspaceDataOutput)

@@ -50,7 +50,6 @@ export const seedWorkspaces = async (
     .into(`${schemaName}.${tableName}`, [
       'id',
       'displayName',
-      'domainName',
       'subdomain',
       'inviteHash',
       'logo',

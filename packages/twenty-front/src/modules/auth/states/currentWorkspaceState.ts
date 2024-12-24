@@ -8,6 +8,7 @@ export type CurrentWorkspace = Pick<
   | 'inviteHash'
   | 'logo'
   | 'displayName'
+  | 'hostname'
   | 'allowImpersonation'
   | 'featureFlags'
   | 'activationStatus'

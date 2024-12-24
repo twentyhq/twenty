@@ -108,6 +108,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     let customDomainRegistered = false;
 
+    if (payload.hostname === null) {
+      await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
+        workspace.hostname,
+      );
+    }
+
     if (payload.hostname && workspace.hostname !== payload.hostname) {
       await this.setCustomDomain(workspace, payload.hostname);
       customDomainRegistered = true;

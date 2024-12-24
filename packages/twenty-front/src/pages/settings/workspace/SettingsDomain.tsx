@@ -18,6 +18,7 @@ import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 
 const validationSchema = z
   .object({
@@ -45,6 +46,7 @@ const StyledDomain = styled.h2`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
 export const SettingsDomain = () => {
@@ -142,9 +144,10 @@ export const SettingsDomain = () => {
       }
     >
       <SettingsPageContainer>
+        <SettingsHostname />
         <Section>
           <H2Title
-            title="Domain"
+            title="Subdomain"
             description="Set the name of your subdomain"
           />
           {currentWorkspace?.subdomain && (
@@ -166,7 +169,10 @@ export const SettingsDomain = () => {
                     />
                     {isDefined(domainConfiguration.frontDomain) && (
                       <StyledDomain>
-                        .{domainConfiguration.frontDomain}
+                        {`.${
+                          currentWorkspace.hostname ??
+                          domainConfiguration.frontDomain
+                        }`}
                       </StyledDomain>
                     )}
                   </>

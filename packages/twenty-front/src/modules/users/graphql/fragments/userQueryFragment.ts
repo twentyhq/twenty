@@ -28,7 +28,7 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
-      domainName
+      hostname
       inviteHash
       allowImpersonation
       activationStatus
@@ -57,7 +57,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         logo
         displayName
-        domainName
+        hostname
         subdomain
       }
     }

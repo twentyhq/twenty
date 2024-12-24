@@ -269,6 +269,7 @@ export class DomainManagerService {
       hostname,
     });
 
+    console.log('>>>>>>>>>>>>>>', response.result);
     if (response.result.length === 0) {
       return undefined;
     }

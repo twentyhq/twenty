@@ -13,7 +13,7 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  domainName?: string;
+  hostname?: string;
 
   @Field({ nullable: true })
   @IsString()
