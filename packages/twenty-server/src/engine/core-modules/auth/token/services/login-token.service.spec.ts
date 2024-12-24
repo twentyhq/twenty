@@ -61,12 +61,15 @@ describe('LoginTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith('LOGIN');
+      expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
+        'LOGIN',
+        workspaceId,
+      );
       expect(environmentService.get).toHaveBeenCalledWith(
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: email },
+        { sub: email, workspaceId },
         { secret: mockSecret, expiresIn: mockExpiresIn },
       );
     });
