@@ -8,7 +8,7 @@ export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
   TIM: '20202020-1553-45c6-a028-5a9064cce07e',
 };
 
-export const workspaceMemberPrefillData = async (
+export const seedWorkspaceMemberWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
