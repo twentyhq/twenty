@@ -1,4 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useBillingCheckout } from '@/billing/hooks/useBillingCheckout';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
@@ -31,6 +32,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
+
+  useBillingCheckout();
 
   if (isMatchingOpenRoute) {
     return;

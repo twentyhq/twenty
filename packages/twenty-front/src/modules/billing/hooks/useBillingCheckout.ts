@@ -1,9 +1,17 @@
 import { billingCheckoutState } from '@/billing/states/billingCheckoutState';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+
 import { BillingPlanKey } from '~/generated/graphql';
 
-export const useBillingCheckout = () => {
+type BillingCheckout = {
+  plan: BillingPlanKey | null;
+  interval?: string;
+  requirePaymentMethod: boolean;
+  skipPlanPage: boolean;
+};
+
+export const useBillingCheckout = (): BillingCheckout => {
   const { search } = useLocation();
   const [billingCheckout, setBillingCheckout] =
     useRecoilState(billingCheckoutState);
@@ -15,28 +23,29 @@ export const useBillingCheckout = () => {
     search.includes('Free-pass') ||
     search.includes('FreePass');
 
-  if (hasFreePassParameter || search.includes('requirePaymentMethod=true')) {
-    setBillingCheckout({
-      plan: billingCheckout.plan,
-      interval: billingCheckout.interval,
+  if (
+    billingCheckout.requirePaymentMethod &&
+    (hasFreePassParameter || search.includes('requirePaymentMethod=true'))
+  ) {
+    setBillingCheckout((prev) => ({
+      ...prev,
       requirePaymentMethod: false,
       skipPlanPage: true,
-    });
+    }));
   }
 
   const planFromUrl = search.match(/[?&]plan=([^&]+)/)?.[1]?.toUpperCase();
 
   if (
-    planFromUrl !== null &&
     planFromUrl !== undefined &&
+    planFromUrl !== '' &&
     Object.values(BillingPlanKey).includes(planFromUrl as BillingPlanKey)
   ) {
-    setBillingCheckout({
+    setBillingCheckout((prev) => ({
+      ...prev,
       plan: planFromUrl as BillingPlanKey,
-      interval: billingCheckout.interval,
-      requirePaymentMethod: billingCheckout.requirePaymentMethod,
       skipPlanPage: true,
-    });
+    }));
   }
 
   return billingCheckout;
