@@ -1,5 +1,6 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -26,7 +27,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,

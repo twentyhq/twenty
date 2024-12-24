@@ -28,14 +28,18 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { FilterValueDependencies } from '@/object-record/record-filter/types/FilterValueDependencies';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
+import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
 const computeFilterRecordGqlOperationFilter = (
+  filterValueDependencies: FilterValueDependencies,
   filter: Filter,
   fields: Pick<Field, 'id' | 'name'>[],
 ): RecordGqlOperationFilter | undefined => {
@@ -124,7 +128,7 @@ const computeFilterRecordGqlOperationFilter = (
       }
     case 'DATE':
     case 'DATE_TIME': {
-      const resolvedFilterValue = resolveFilterValue(filter);
+      const resolvedFilterValue = resolveDateViewFilterValue(filter);
       const now = roundToNearestMinutes(new Date());
       const date =
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
@@ -157,11 +161,8 @@ const computeFilterRecordGqlOperationFilter = (
             .object({ start: z.date(), end: z.date() })
             .safeParse(resolvedFilterValue).data;
 
-          const defaultDateRange = resolveFilterValue({
+          const defaultDateRange = resolveDateViewFilterValue({
             value: 'PAST_1_DAY',
-            definition: {
-              type: 'DATE',
-            },
             operand: ViewFilterOperand.IsRelative,
           });
 
@@ -303,32 +304,41 @@ const computeFilterRecordGqlOperationFilter = (
       }
     case 'RELATION': {
       if (!isEmptyOperand) {
-        try {
-          JSON.parse(filter.value);
-        } catch (e) {
-          throw new Error(
-            `Cannot parse filter value for RELATION filter : "${filter.value}"`,
-          );
-        }
+        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+          relationFilterValueSchema.parse(filter.value);
 
-        const parsedRecordIds = JSON.parse(filter.value) as string[];
+        const recordIds = isCurrentWorkspaceMemberSelected
+          ? [
+              ...selectedRecordIds,
+              filterValueDependencies.currentWorkspaceMemberId,
+            ]
+          : selectedRecordIds;
 
-        if (parsedRecordIds.length === 0) return;
+        if (recordIds.length === 0) return;
         switch (filter.operand) {
           case ViewFilterOperand.Is:
             return {
               [correspondingField.name + 'Id']: {
-                in: parsedRecordIds,
+                in: recordIds,
               } as RelationFilter,
             };
           case ViewFilterOperand.IsNot: {
-            if (parsedRecordIds.length === 0) return;
+            if (recordIds.length === 0) return;
             return {
-              not: {
-                [correspondingField.name + 'Id']: {
-                  in: parsedRecordIds,
-                } as RelationFilter,
-              },
+              or: [
+                {
+                  not: {
+                    [correspondingField.name + 'Id']: {
+                      in: recordIds,
+                    } as RelationFilter,
+                  },
+                },
+                {
+                  [correspondingField.name + 'Id']: {
+                    is: 'NULL',
+                  } as RelationFilter,
+                },
+              ],
             };
           }
           default:
@@ -611,9 +621,7 @@ const computeFilterRecordGqlOperationFilter = (
         );
       }
 
-      const options = resolveFilterValue(
-        filter as Filter & { definition: { type: 'MULTI_SELECT' } },
-      );
+      const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
 
@@ -660,9 +668,7 @@ const computeFilterRecordGqlOperationFilter = (
           filter.definition,
         );
       }
-      const options = resolveFilterValue(
-        filter as Filter & { definition: { type: 'SELECT' } },
-      );
+      const options = resolveSelectViewFilterValue(filter);
 
       if (options.length === 0) return;
 
@@ -869,6 +875,7 @@ const computeFilterRecordGqlOperationFilter = (
 };
 
 const computeViewFilterGroupRecordGqlOperationFilter = (
+  filterValueDependencies: FilterValueDependencies,
   filters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
@@ -887,7 +894,13 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   );
 
   const groupRecordGqlOperationFilters = groupFilters
-    .map((filter) => computeFilterRecordGqlOperationFilter(filter, fields))
+    .map((filter) =>
+      computeFilterRecordGqlOperationFilter(
+        filterValueDependencies,
+        filter,
+        fields,
+      ),
+    )
     .filter(isDefined);
 
   const subGroupRecordGqlOperationFilters = viewFilterGroups
@@ -897,6 +910,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
     )
     .map((subViewFilterGroup) =>
       computeViewFilterGroupRecordGqlOperationFilter(
+        filterValueDependencies,
         filters,
         fields,
         viewFilterGroups,
@@ -932,6 +946,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
 };
 
 export const computeViewRecordGqlOperationFilter = (
+  filterValueDependencies: FilterValueDependencies,
   filters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
@@ -939,7 +954,11 @@ export const computeViewRecordGqlOperationFilter = (
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
     .filter((filter) => !filter.viewFilterGroupId)
     .map((regularFilter) =>
-      computeFilterRecordGqlOperationFilter(regularFilter, fields),
+      computeFilterRecordGqlOperationFilter(
+        filterValueDependencies,
+        regularFilter,
+        fields,
+      ),
     )
     .filter(isDefined);
 
@@ -949,6 +968,7 @@ export const computeViewRecordGqlOperationFilter = (
 
   const advancedRecordGqlOperationFilter =
     computeViewFilterGroupRecordGqlOperationFilter(
+      filterValueDependencies,
       filters,
       fields,
       viewFilterGroups,

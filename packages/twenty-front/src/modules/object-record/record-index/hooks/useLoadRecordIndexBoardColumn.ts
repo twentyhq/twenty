@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
@@ -43,7 +44,10 @@ export const useLoadRecordIndexBoardColumn = ({
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
 
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
     recordIndexViewFilterGroups,
