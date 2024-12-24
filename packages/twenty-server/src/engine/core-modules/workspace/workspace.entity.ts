@@ -21,10 +21,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-// This line is necessary to avoid a circular dependency issue. Need to deep dive
-// ../app-token/app-token.entity.ts > ../user/user.entity.ts > ../key-value-pair/key-value-pair.entity.ts > workspace.entity.ts
-// eslint-disable-next-line
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 export enum WorkspaceActivationStatus {
   ONGOING_CREATION = 'ONGOING_CREATION',
