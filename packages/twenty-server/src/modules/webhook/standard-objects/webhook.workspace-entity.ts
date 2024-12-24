@@ -60,4 +60,14 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   description: string;
+
+  @WorkspaceField({
+    standardId: WEBHOOK_STANDARD_FIELD_IDS.secret,
+    type: FieldMetadataType.TEXT,
+    label: 'Secret',
+    description: 'Webhook secret',
+    icon: 'IconLock',
+  })
+  @WorkspaceIsNullable()
+  secret: string;
 }
