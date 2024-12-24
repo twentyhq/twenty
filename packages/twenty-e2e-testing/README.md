@@ -25,9 +25,19 @@ npx nx test:ui twenty-e2e-testing
 npx nx test twenty-e2e-testing <filename>
 ```
 
+Example (location of the test must be specified from the root of `twenty-e2e-testing` package):
+```
+npx nx test twenty-e2e-testing tests/login.spec.ts
+```
+
 ### Runs the tests in debug mode.
 ```
 npx nx test:debug twenty-e2e-testing
+```
+
+### Show report after tests
+```
+npx nx test:report twenty-e2e-testing
 ```
 
 ## Q&A

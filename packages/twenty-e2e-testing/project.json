@@ -30,15 +30,6 @@
         ]
       }
     },
-    "test:chrome": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-e2e-testing",
-        "commands": [
-          "yarn playwright test --project=chromium"
-        ]
-      }
-    },
     "test:debug": {
       "executor": "nx:run-commands",
       "options": {
