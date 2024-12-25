@@ -1,7 +1,11 @@
 module.exports = {
   plugins: ['@stylistic'],
   extends: ['../../.eslintrc.cjs'],
-  ignorePatterns: ['src/engine/workspace-manager/demo-objects-prefill-data/**'],
+  ignorePatterns: [
+    'src/engine/workspace-manager/demo-objects-prefill-data/**',
+    'src/engine/seeder/data-seeds/**',
+    'src/engine/seeder/metadata-seeds/**',
+  ],
   overrides: [
     {
       files: ['*.ts'],

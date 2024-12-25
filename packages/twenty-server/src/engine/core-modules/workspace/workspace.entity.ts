@@ -21,7 +21,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 export enum WorkspaceActivationStatus {
   ONGOING_CREATION = 'ONGOING_CREATION',
@@ -88,9 +87,6 @@ export class Workspace {
     cascade: true,
   })
   keyValuePairs: Relation<KeyValuePair[]>;
-
-  @OneToMany(() => User, (user) => user.defaultWorkspace)
-  users: Relation<User[]>;
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
     onDelete: 'CASCADE',

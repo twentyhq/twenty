@@ -142,11 +142,10 @@ export class WorkspaceInvitationService {
     subdomain?: string;
     email: string;
   }) {
-    const workspace = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-      ? await this.workspaceRepository.findOneBy({
-          subdomain,
-        })
-      : await this.domainManagerService.getDefaultWorkspace();
+    const workspace =
+      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
+        subdomain,
+      );
 
     if (!workspace) return;
 

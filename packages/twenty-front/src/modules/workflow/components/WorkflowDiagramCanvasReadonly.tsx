@@ -16,7 +16,6 @@ export const WorkflowDiagramCanvasReadonly = ({
   return (
     <ReactFlowProvider>
       <WorkflowDiagramCanvasBase
-        key={workflowVersion.id}
         diagram={diagram}
         status={workflowVersion.status}
         nodeTypes={{
