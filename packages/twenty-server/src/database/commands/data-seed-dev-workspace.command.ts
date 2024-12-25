@@ -5,14 +5,13 @@ import { EntityManager } from 'typeorm';
 
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
-  SEED_APPLE_WORKSPACE_ID,
   SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import {
   getDevSeedCompanyCustomFields,
   getDevSeedPeopleCustomFields,
 } from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
-import { getDevSeedCustomObjects } from 'src/database/typeorm-seeds/metadata/objectsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
@@ -40,6 +39,9 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
+import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
+import { SeederService } from 'src/engine/seeder/seeder.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
@@ -66,6 +68,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly workspaceSchemaCache: CacheStorageService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly seederService: SeederService,
   ) {
     super();
   }
@@ -152,7 +155,20 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           objectMetadataMap[STANDARD_OBJECT_IDS.person],
           workspaceId,
         );
-        await this.seedCustomObjects(workspaceId, dataSourceMetadata.id);
+
+        // await this.seederService.seedCustomObjects(
+        //   dataSourceMetadata.id,
+        //   workspaceId,
+        //   PETS_METADATA_SEEDS,
+        //   PETS_DATA_SEEDS,
+        // );
+
+        await this.seederService.seedCustomObjects(
+          dataSourceMetadata.id,
+          workspaceId,
+          SURVEY_RESULTS_METADATA_SEEDS,
+          SURVEY_RESULTS_DATA_SEEDS,
+        );
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -235,6 +251,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           },
         );
       } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
         this.logger.error(error);
       }
 
@@ -290,17 +308,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         ...customField,
         isCustom: true,
       });
-    }
-  }
-
-  async seedCustomObjects(workspaceId: string, dataSourceId: string) {
-    const devSeedCustomObjects = getDevSeedCustomObjects(
-      workspaceId,
-      dataSourceId,
-    );
-
-    for (const customObject of devSeedCustomObjects) {
-      await this.objectMetadataService.createOne(customObject);
     }
   }
 }

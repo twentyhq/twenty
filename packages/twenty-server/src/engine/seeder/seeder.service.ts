@@ -141,20 +141,27 @@ export class SeederService {
       return flattenedSeed;
     });
 
+    const sqlFieldNames = [...fieldMetadataMap, 'position'];
+
+    const values = flattenedSeeds.map((flattenedSeed, index) => ({
+      ...flattenedSeed,
+      position: index,
+    }));
+
+    console.log({
+      sqlFieldNames,
+      values,
+    });
+
     await entityManager
       .createQueryBuilder()
       .insert()
-      .into(`${schemaName}._${objectMetadataAfterFieldCreation.nameSingular}`, [
-        ...fieldMetadataMap,
-        'position',
-      ])
-      .orIgnore()
-      .values(
-        flattenedSeeds.map((flattenedSeed, index) => ({
-          ...flattenedSeed,
-          position: index,
-        })),
+      .into(
+        `${schemaName}._${objectMetadataAfterFieldCreation.nameSingular}`,
+        sqlFieldNames,
       )
+      .orIgnore()
+      .values(values)
       .returning('*')
       .execute();
   }
