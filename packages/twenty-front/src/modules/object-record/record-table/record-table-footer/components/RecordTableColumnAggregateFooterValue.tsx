@@ -1,3 +1,4 @@
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -51,6 +52,7 @@ const StyledLabel = styled.div`
 const StyledValue = styled.div`
   color: ${({ theme }) => theme.color.gray60};
   flex: 1 0 0;
+  font-weight: regular;
 `;
 
 const StyledIcon = styled(IconChevronDown)`
@@ -74,6 +76,7 @@ export const RecordTableColumnAggregateFooterValue = ({
   aggregateLabel?: string;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { isDropdownOpen } = useDropdown(dropdownId);
   const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
   const theme = useTheme();
   return (
@@ -84,7 +87,10 @@ export const RecordTableColumnAggregateFooterValue = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <StyledCell>
-        {isHovered || isDefined(aggregateValue) || isFirstCell ? (
+        {isHovered ||
+        isDropdownOpen ||
+        isDefined(aggregateValue) ||
+        isFirstCell ? (
           <>
             {isDefined(aggregateValue) ? (
               <StyledValueContainer>
