@@ -1,16 +1,16 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
-import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
+import { RecordTableColumnAggregateFooterDropdownMoreOptionsContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownMoreOptionsContent';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
 
-export const AggregateDropdownContent = () => {
+export const RecordTableColumnAggregateFooterDropdownContent = () => {
   const { currentContentId } = useDropdown({
     context: RecordTableColumnAggregateFooterDropdownContext,
   });
 
   switch (currentContentId) {
-    case 'moreAggregateOperations':
-      return <RecordBoardColumnHeaderAggregateDropdownFieldsContent />;
+    case 'moreAggregateOperationOptions':
+      return <RecordTableColumnAggregateFooterDropdownMoreOptionsContent />;
     default:
       return <RecordTableColumnAggregateFooterMenuContent />;
   }

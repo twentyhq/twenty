@@ -1,14 +1,12 @@
-import { AggregateContentId } from '@/object-record/record-board/types/AggregateContentId';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { RecordTableFooterAggregateContentId } from '@/object-record/record-table/record-table-footer/types/RecordTableFooterAggregateContentId';
 import { createContext } from 'react';
 
 export type RecordTableColumnAggregateFooterDropdownContextValue = {
-  currentContentId: AggregateContentId | null;
-  onContentChange: (key: AggregateContentId) => void;
+  currentContentId: RecordTableFooterAggregateContentId | null;
+  onContentChange: (key: RecordTableFooterAggregateContentId) => void;
   resetContent: () => void;
   dropdownId: string;
-  column: ColumnDefinition<FieldMetadata>;
+  fieldMetadataId: string;
 };
 
 export const RecordTableColumnAggregateFooterDropdownContext =

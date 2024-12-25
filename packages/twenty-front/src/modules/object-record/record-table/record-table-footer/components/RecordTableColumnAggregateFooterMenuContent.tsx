@@ -1,103 +1,91 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
+import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconCheck, MenuItem } from 'twenty-ui';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
-  const { column, dropdownId } = useContext(
-    RecordTableColumnAggregateFooterDropdownContext,
-  );
+  const { fieldMetadataId, dropdownId, onContentChange, resetContent } =
+    useContext(RecordTableColumnAggregateFooterDropdownContext);
   const { closeDropdown } = useDropdown(dropdownId);
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
-
-  const currentViewField =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === column.fieldMetadataId,
-    );
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
+      resetContent();
       closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
   );
 
-  const availableAggregateOperations = useMemo(
+  const availableAggregateOperation = useMemo(
     () =>
       getAvailableAggregateOperationsForFieldMetadataType({
         fieldMetadataType: objectMetadataItem.fields.find(
-          (field) => field.id === column.fieldMetadataId,
+          (field) => field.id === fieldMetadataId,
         )?.type,
       }),
-    [column.fieldMetadataId, objectMetadataItem.fields],
+    [fieldMetadataId, objectMetadataItem.fields],
   );
 
-  const { updateViewFieldRecords } = usePersistViewFieldRecords();
-  const handleAggregationChange = (
-    aggregateOperation: AGGREGATE_OPERATIONS | null,
-  ) => {
-    if (!currentViewField) {
-      throw new Error('ViewField not found');
-    }
-    updateViewFieldRecords([
-      { ...currentViewField, aggregateOperation: aggregateOperation },
-    ]);
-  };
+  const standardAvailableAggregateOperation =
+    availableAggregateOperation.filter((aggregateOperation) =>
+      STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+    );
 
-  const viewFieldId =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === column.fieldMetadataId,
-    )?.id ?? '';
-
-  const aggregateOperationForViewField = useRecoilValue(
-    aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
+  const otherAvailableAggregateOperation = availableAggregateOperation.filter(
+    (aggregateOperation) =>
+      !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
   );
+
+  const {
+    updateViewFieldAggregateOperation,
+    currentViewFieldAggregateOperation,
+  } = useViewFieldAggregateOperation();
 
   return (
     <>
       <DropdownMenuItemsContainer>
-        {availableAggregateOperations.map((aggregation) => (
+        {standardAvailableAggregateOperation.map((aggregateOperation) => (
           <MenuItem
-            key={aggregation}
+            key={aggregateOperation}
             onClick={() => {
-              handleAggregationChange(aggregation);
+              updateViewFieldAggregateOperation(aggregateOperation);
+              resetContent();
               closeDropdown();
             }}
-            text={getAggregateOperationLabel(aggregation)}
+            text={getAggregateOperationLabel(aggregateOperation)}
             RightIcon={
-              aggregateOperationForViewField === aggregation
+              currentViewFieldAggregateOperation === aggregateOperation
                 ? IconCheck
                 : undefined
             }
           />
         ))}
-        <MenuItem
-          key={'more-options'}
-          onClick={() => {
-            handleAggregationChange(null);
-            closeDropdown();
-          }}
-          text={'More options'}
-          hasSubMenu
-        />
+        {otherAvailableAggregateOperation.length > 1 ? (
+          <MenuItem
+            key={'more-options'}
+            onClick={() => {
+              onContentChange('moreAggregateOperationOptions');
+            }}
+            text={'More options'}
+            hasSubMenu
+          />
+        ) : null}
         <MenuItem
           key={'none'}
           onClick={() => {
-            handleAggregationChange(null);
+            updateViewFieldAggregateOperation(null);
+            resetContent();
             closeDropdown();
           }}
           text={'None'}
