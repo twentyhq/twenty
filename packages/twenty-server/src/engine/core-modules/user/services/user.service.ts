@@ -136,7 +136,9 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await Promise.all(user.workspaces.map(this.deleteUserFromWorkspace));
+    await Promise.all(
+      user.workspaces.map(this.deleteUserFromWorkspace.bind(this)),
+    );
 
     return user;
   }
