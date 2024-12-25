@@ -1,4 +1,8 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import {
   GithubVersionLink,
   IconAt,
@@ -21,18 +25,16 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
@@ -117,6 +119,11 @@ export const Default: Story = {
     ),
     footer: null,
   },
+  play: async () => {
+    const canvas = within(document.body);
+
+    expect(await canvas.findByText('Workspace')).toBeInTheDocument();
+  },
 };
 
 export const Settings: Story = {
@@ -179,5 +186,10 @@ export const Settings: Story = {
       </>
     ),
     footer: <GithubVersionLink version={jsonPage.version} />,
+  },
+  play: async () => {
+    const canvas = within(document.body);
+
+    expect(await canvas.findByText('User')).toBeInTheDocument();
   },
 };
