@@ -11,7 +11,7 @@ export const OverlayContainer = styled.div<{
   width: fit-content;
 
   border-radius: ${({ theme, borderRadius }) =>
-    borderRadius === 'sm' ? theme.border.radius.sm : theme.border.radius.md};
+    theme.border.radius[borderRadius ?? 'md']};
 
   background: ${({ theme }) => theme.background.transparent.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
