@@ -1,24 +1,21 @@
-import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 export const useImpersonate = () => {
-  const { clearSession } = useAuth();
-  const { redirect } = useRedirect();
-  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const [currentUser] = useRecoilState(currentUserState);
   const [impersonate] = useImpersonateMutation();
+
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImpersonate = async (userId: string) => {
+  const handleImpersonate = async (userId: string, workspaceId: string) => {
     if (!userId.trim()) {
       setError('Please enter a user ID');
       return;
@@ -29,7 +26,7 @@ export const useImpersonate = () => {
 
     try {
       const impersonateResult = await impersonate({
-        variables: { userId },
+        variables: { userId, workspaceId },
       });
 
       if (isDefined(impersonateResult.errors)) {
@@ -40,11 +37,11 @@ export const useImpersonate = () => {
         throw new Error('No impersonate result');
       }
 
-      const { user, tokens } = impersonateResult.data.impersonate;
-      await clearSession();
-      setCurrentUser(user);
-      setTokenPair(tokens);
-      redirect(AppPath.Index);
+      const { loginToken, workspace } = impersonateResult.data.impersonate;
+
+      return redirectToWorkspaceDomain(workspace.subdomain, AppPath.Verify, {
+        loginToken: loginToken.token,
+      });
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);

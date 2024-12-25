@@ -1,5 +1,7 @@
 module.exports = {
-  schema: (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') + '/graphql',
+  schema:
+    (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +
+    '/graphql',
   documents: [
     '!./src/modules/databases/**',
     '!./src/modules/object-metadata/**',
