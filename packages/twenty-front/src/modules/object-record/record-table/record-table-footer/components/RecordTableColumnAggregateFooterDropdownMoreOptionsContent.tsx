@@ -5,12 +5,13 @@ import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tab
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, MenuItem } from 'twenty-ui';
+import { IconCheck, IconChevronLeft, MenuItem } from 'twenty-ui';
 
 export const RecordTableColumnAggregateFooterDropdownMoreOptionsContent =
   () => {
@@ -49,6 +50,9 @@ export const RecordTableColumnAggregateFooterDropdownMoreOptionsContent =
 
     return (
       <>
+        <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+          More options
+        </DropdownMenuHeader>
         <DropdownMenuItemsContainer>
           {availableAggregateOperations.map((aggregateOperation) => (
             <MenuItem
