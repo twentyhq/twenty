@@ -155,7 +155,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
-        operation: cleanedOperations?.[0],
         operations: cleanedOperations,
         description: description,
         secret: secret,
