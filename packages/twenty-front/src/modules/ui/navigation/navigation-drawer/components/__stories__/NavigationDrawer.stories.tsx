@@ -17,13 +17,22 @@ import {
   IconUsers,
 } from 'twenty-ui';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
@@ -33,8 +42,29 @@ import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,
-  decorators: [ComponentWithRouterDecorator, SnackBarDecorator],
-  parameters: { layout: 'fullscreen' },
+  decorators: [
+    ComponentWithRouterDecorator,
+    SnackBarDecorator,
+    ObjectMetadataItemsDecorator,
+    PrefetchLoadedDecorator,
+    (Story) => {
+      const setCurrentWorkspaceMember = useSetRecoilState(
+        currentWorkspaceMemberState,
+      );
+      const setObjectMetadataItems = useSetRecoilState(
+        objectMetadataItemsState,
+      );
+      useEffect(() => {
+        setObjectMetadataItems(generatedMockObjectMetadataItems);
+        setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+      }, [setObjectMetadataItems, setCurrentWorkspaceMember]);
+      return <Story />;
+    },
+  ],
+  parameters: {
+    layout: 'fullscreen',
+    msw: graphqlMocks,
+  },
   argTypes: { children: { control: false }, footer: { control: false } },
 };
 
