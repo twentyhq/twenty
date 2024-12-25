@@ -1,7 +1,7 @@
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { useRecoilValue } from 'recoil';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardPendingRecordIdByColumnComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 
 export const RecordBoardColumnNewRecord = ({
   columnId,
@@ -10,23 +10,22 @@ export const RecordBoardColumnNewRecord = ({
   columnId: string;
   position: 'first' | 'last';
 }) => {
-  const newRecord = useRecoilValue(
-    recordBoardNewRecordByColumnIdSelector({
-      familyKey: columnId,
-      scopeId: columnId,
-    }),
+  const pendingRecord = useRecoilComponentFamilyValueV2(
+    recordBoardPendingRecordIdByColumnComponentFamilyState,
+    columnId,
   );
-  const { handleCreateSuccess } = useAddNewCard();
 
   return (
     <>
-      {newRecord.isCreating && newRecord.position === position && (
-        <RecordBoardCard
-          isCreating={true}
-          onCreateSuccess={() => handleCreateSuccess(position)}
-          position={position}
-        />
-      )}
+      {pendingRecord?.recordId &&
+        pendingRecord.position === position &&
+        !pendingRecord.isOpportunity && (
+          <RecordBoardCardContext.Provider
+            value={{ recordId: pendingRecord.recordId }}
+          >
+            <RecordBoardCard />
+          </RecordBoardCardContext.Provider>
+        )}
     </>
   );
 };

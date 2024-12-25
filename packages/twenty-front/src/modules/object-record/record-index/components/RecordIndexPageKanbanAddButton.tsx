@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
+import { useCreateNewBoardRecord } from '@/object-record/record-board/hooks/useCreateNewBoardRecord';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
-import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
@@ -34,38 +33,23 @@ export const RecordIndexPageKanbanAddButton = () => {
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
-  const visibleFieldDefinitions = useRecoilComponentValueV2(
-    recordBoardVisibleFieldDefinitionsComponentSelector,
-    recordIndexId,
-  );
-
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
-
   const { closeDropdown } = useDropdown(dropdownId);
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
-  const { handleAddNewCardClick } = useAddNewCard();
+
+  const { createNewBoardRecord } = useCreateNewBoardRecord(recordIndexId);
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordGroupDefinition) => {
       const isOpportunityEnabled =
         isOpportunity && !isOpportunitiesCompanyFieldDisabled;
-      handleAddNewCardClick(
-        labelIdentifierField?.label ?? '',
-        '',
-        'first',
-        isOpportunityEnabled,
-        columnDefinition.id,
-      );
+      createNewBoardRecord(columnDefinition.id, 'first', isOpportunityEnabled);
       closeDropdown();
     },
     [
       isOpportunity,
-      handleAddNewCardClick,
+      createNewBoardRecord,
       closeDropdown,
-      labelIdentifierField,
       isOpportunitiesCompanyFieldDisabled,
     ],
   );

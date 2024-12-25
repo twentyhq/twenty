@@ -1,6 +1,8 @@
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useCreateNewBoardRecord } from '@/object-record/record-board/hooks/useCreateNewBoardRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui';
 
 const StyledNewButton = styled.button`
@@ -22,15 +24,19 @@ const StyledNewButton = styled.button`
 
 export const RecordBoardColumnNewRecordButton = ({
   columnId,
+  isOpportunity,
 }: {
   columnId: string;
+  isOpportunity: boolean;
 }) => {
   const theme = useTheme();
-
-  const { handleNewButtonClick } = useColumnNewCardActions(columnId);
+  const { recordBoardId } = useContext(RecordBoardContext);
+  const { createNewBoardRecord } = useCreateNewBoardRecord(recordBoardId);
 
   return (
-    <StyledNewButton onClick={() => handleNewButtonClick('last', false)}>
+    <StyledNewButton
+      onClick={() => createNewBoardRecord(columnId, 'last', isOpportunity)}
+    >
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

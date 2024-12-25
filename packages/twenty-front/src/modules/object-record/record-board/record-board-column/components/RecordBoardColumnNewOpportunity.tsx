@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { useCreateBoardRecordFromPending } from '@/object-record/record-board/hooks/useCreateBoardRecordFromPending';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
@@ -9,28 +8,37 @@ import { RecordPickerComponentInstanceContext } from '@/object-record/relation-p
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useContext } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
+import { RecordBoardContext } from '../../contexts/RecordBoardContext';
+import { useCreateNewBoardRecord } from '../../hooks/useCreateNewBoardRecord';
+import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../../states/recordBoardPendingRecordIdByColumnComponentFamilyState';
+
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
   position,
 }: {
   columnId: string;
-  position: 'last' | 'first';
+  position: 'first' | 'last';
 }) => {
-  const newRecord = useRecoilValue(
-    recordBoardNewRecordByColumnIdSelector({
-      familyKey: columnId,
-      scopeId: columnId,
-    }),
-  );
+  const { recordBoardId } = useContext(RecordBoardContext);
+  const { createNewBoardRecord } = useCreateNewBoardRecord(recordBoardId);
 
-  const { handleCreateSuccess, handleEntitySelect } = useAddNewCard();
+  const { createBoardRecordFromPending } =
+    useCreateBoardRecordFromPending(recordBoardId);
+
+  const pendingRecord = useRecoilComponentFamilyValueV2(
+    recordBoardPendingRecordIdByColumnComponentFamilyState,
+    columnId,
+  );
 
   const { createOneRecord: createCompany } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Company,
   });
+
   const { openRightDrawer } = useRightDrawer();
 
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
@@ -53,29 +61,33 @@ export const RecordBoardColumnNewOpportunity = ({
     openRightDrawer(RightDrawerPages.ViewRecord);
 
     if (isDefined(createdCompany)) {
-      handleEntitySelect(position, createdCompany);
+      createNewBoardRecord(columnId, position, true);
     }
   };
 
   return (
     <>
-      {newRecord.isCreating && newRecord.position === position && (
-        <OverlayContainer>
-          <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: 'relation-picker' }}
-          >
-            <SingleRecordSelect
-              onCancel={() => handleCreateSuccess(position, columnId, false)}
-              onRecordSelected={(company) =>
-                company ? handleEntitySelect(position, company) : null
-              }
-              objectNameSingular={CoreObjectNameSingular.Company}
-              selectedRecordIds={[]}
-              onCreate={createCompanyOpportunityAndOpenRightDrawer}
-            />
-          </RecordPickerComponentInstanceContext.Provider>
-        </OverlayContainer>
-      )}
+      {pendingRecord?.recordId &&
+        pendingRecord.position === position &&
+        pendingRecord.isOpportunity && (
+          <OverlayContainer>
+            <RecordPickerComponentInstanceContext.Provider
+              value={{ instanceId: 'relation-picker' }}
+            >
+              <SingleRecordSelect
+                onCancel={() => createNewBoardRecord(columnId, position, false)}
+                onRecordSelected={(company) => {
+                  if (isDefined(company)) {
+                    createBoardRecordFromPending(columnId, '', company);
+                  }
+                }}
+                objectNameSingular={CoreObjectNameSingular.Company}
+                selectedRecordIds={[]}
+                onCreate={createCompanyOpportunityAndOpenRightDrawer}
+              />
+            </RecordPickerComponentInstanceContext.Provider>
+          </OverlayContainer>
+        )}
     </>
   );
 };

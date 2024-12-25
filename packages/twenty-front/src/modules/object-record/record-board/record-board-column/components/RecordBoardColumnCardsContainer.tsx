@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
+import { DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -71,39 +71,27 @@ export const RecordBoardColumnCardsContainer = ({
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
+  const showNewOpportunityButton =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
+    !isOpportunitiesCompanyFieldDisabled;
+
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      <Draggable
-        draggableId={`new-${columnDefinition.id}-top`}
-        index={-1}
-        isDragDisabled={true}
-      >
-        {(draggableProvided) => (
-          <div
-            ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
-          >
-            {objectMetadataItem.nameSingular ===
-              CoreObjectNameSingular.Opportunity &&
-            !isOpportunitiesCompanyFieldDisabled ? (
-              <RecordBoardColumnNewOpportunity
-                columnId={columnDefinition.id}
-                position="first"
-              />
-            ) : (
-              <RecordBoardColumnNewRecord
-                columnId={columnDefinition.id}
-                position="first"
-              />
-            )}
-          </div>
-        )}
-      </Draggable>
+      {showNewOpportunityButton ? (
+        <RecordBoardColumnNewOpportunity
+          columnId={columnDefinition.id}
+          position="first"
+        />
+      ) : (
+        <RecordBoardColumnNewRecord
+          columnId={columnDefinition.id}
+          position="first"
+        />
+      )}
       {isRecordIndexBoardColumnLoading ? (
         Array.from(
           {
@@ -127,39 +115,23 @@ export const RecordBoardColumnCardsContainer = ({
         <RecordBoardColumnCardsMemo recordIds={recordIds} />
       )}
       <RecordBoardColumnFetchMoreLoader />
-      <Draggable
-        draggableId={`new-${columnDefinition.id}-bottom`}
-        index={recordIds.length}
-        isDragDisabled={true}
-      >
-        {(draggableProvided) => (
-          <div
-            ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.draggableProps}
-          >
-            {objectMetadataItem.nameSingular ===
-              CoreObjectNameSingular.Opportunity &&
-            !isOpportunitiesCompanyFieldDisabled ? (
-              <RecordBoardColumnNewOpportunity
-                columnId={columnDefinition.id}
-                position="last"
-              />
-            ) : (
-              <RecordBoardColumnNewRecord
-                columnId={columnDefinition.id}
-                position="last"
-              />
-            )}
-            <StyledNewButtonContainer>
-              <RecordBoardColumnNewRecordButton
-                columnId={columnDefinition.id}
-              />
-            </StyledNewButtonContainer>
-          </div>
-        )}
-      </Draggable>
-      {droppableProvided?.placeholder}
+      {showNewOpportunityButton ? (
+        <RecordBoardColumnNewOpportunity
+          columnId={columnDefinition.id}
+          position="last"
+        />
+      ) : (
+        <RecordBoardColumnNewRecord
+          columnId={columnDefinition.id}
+          position="last"
+        />
+      )}
+      <StyledNewButtonContainer>
+        <RecordBoardColumnNewRecordButton
+          columnId={columnDefinition.id}
+          isOpportunity={showNewOpportunityButton}
+        />
+      </StyledNewButtonContainer>
     </StyledColumnCardsContainer>
   );
 };
