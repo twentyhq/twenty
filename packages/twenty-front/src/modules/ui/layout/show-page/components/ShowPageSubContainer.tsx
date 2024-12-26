@@ -1,4 +1,5 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
+import { RecordShowRightDrawerActionMenuEffect } from '@/action-menu/components/RecordShowRightDrawerActionMenuEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
@@ -138,7 +139,12 @@ export const ShowPageSubContainer = ({
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
+          <>
+            <RecordShowRightDrawerActionMenuEffect />
+            <RightDrawerFooter
+              actions={[<RecordShowRightDrawerActionMenu />]}
+            />
+          </>
         )}
       </StyledShowPageRightContainer>
     </>
