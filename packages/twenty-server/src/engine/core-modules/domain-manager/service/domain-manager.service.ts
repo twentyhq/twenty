@@ -147,6 +147,21 @@ export class DomainManagerService {
 
   private async getDefaultWorkspace() {
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const defaultWorkspaceSubDomain =
+        this.environmentService.get('DEFAULT_SUBDOMAIN');
+
+      if (isDefined(defaultWorkspaceSubDomain)) {
+        const foundWorkspaceForDefaultSubDomain =
+          await this.workspaceRepository.findOne({
+            where: { subdomain: defaultWorkspaceSubDomain },
+            relations: ['workspaceSSOIdentityProviders'],
+          });
+
+        if (isDefined(foundWorkspaceForDefaultSubDomain)) {
+          return foundWorkspaceForDefaultSubDomain;
+        }
+      }
+
       const workspaces = await this.workspaceRepository.find({
         order: {
           createdAt: 'DESC',
