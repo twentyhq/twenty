@@ -14,7 +14,7 @@ export const useActivateLastPublishedVersionWorkflowSingleRecordAction: SingleRe
       isDefined(workflowWithCurrentVersion.currentVersion.trigger) &&
       isDefined(workflowWithCurrentVersion.lastPublishedVersionId) &&
       workflowWithCurrentVersion.lastPublishedVersionId !== '' &&
-      workflowWithCurrentVersion.currentVersion.status !== 'ACTIVE' &&
+      !workflowWithCurrentVersion.statuses?.includes('ACTIVE') &&
       isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
       workflowWithCurrentVersion.currentVersion?.steps.length !== 0;
 
