@@ -58,32 +58,34 @@ export const RecordBoardColumnHeaderAggregateDropdownMoreOptionsContent =
           More options
         </DropdownMenuHeader>
         <DropdownMenuItemsContainer>
-          {Object.entries(availableAggregations).map(
-            ([
-              availableAggregationOperation,
-              availableAggregationFieldsIdsForOperation,
-            ]) =>
-              isEmpty(availableAggregationFieldsIdsForOperation) ? (
-                <></>
-              ) : (
-                <RecordBoardColumnHeaderAggregateDropdownMenuItem
-                  key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
-                  onContentChange={() => {
-                    setAggregateOperation(
+          {Object.entries(availableAggregations)
+            .filter(([, fields]) => !isEmpty(fields))
+            .map(
+              ([
+                availableAggregationOperation,
+                availableAggregationFieldsIdsForOperation,
+              ]) =>
+                isEmpty(availableAggregationFieldsIdsForOperation) ? (
+                  <></>
+                ) : (
+                  <RecordBoardColumnHeaderAggregateDropdownMenuItem
+                    key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
+                    onContentChange={() => {
+                      setAggregateOperation(
+                        availableAggregationOperation as AGGREGATE_OPERATIONS,
+                      );
+                      setAvailableFieldsForAggregateOperation(
+                        availableAggregationFieldsIdsForOperation,
+                      );
+                      onContentChange('aggregateFields');
+                    }}
+                    text={getAggregateOperationLabel(
                       availableAggregationOperation as AGGREGATE_OPERATIONS,
-                    );
-                    setAvailableFieldsForAggregateOperation(
-                      availableAggregationFieldsIdsForOperation,
-                    );
-                    onContentChange('aggregateFields');
-                  }}
-                  text={getAggregateOperationLabel(
-                    availableAggregationOperation as AGGREGATE_OPERATIONS,
-                  )}
-                  hasSubMenu
-                />
-              ),
-          )}
+                    )}
+                    hasSubMenu
+                  />
+                ),
+            )}
         </DropdownMenuItemsContainer>
       </>
     );

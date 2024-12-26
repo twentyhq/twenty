@@ -1,8 +1,7 @@
-import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableColumnAggregateFooterAggregateOperationMenuItems } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
-import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -11,7 +10,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconChevronLeft, MenuItem } from 'twenty-ui';
+import { IconChevronLeft } from 'twenty-ui';
 
 export const RecordTableColumnAggregateFooterDropdownMoreOptionsContent =
   () => {
@@ -43,41 +42,14 @@ export const RecordTableColumnAggregateFooterDropdownMoreOptionsContent =
       [fieldMetadataId, objectMetadataItem.fields],
     );
 
-    const {
-      updateViewFieldAggregateOperation,
-      currentViewFieldAggregateOperation,
-    } = useViewFieldAggregateOperation();
-
     return (
       <>
         <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
           More options
         </DropdownMenuHeader>
         <DropdownMenuItemsContainer>
-          {availableAggregateOperations.map((aggregateOperation) => (
-            <MenuItem
-              key={aggregateOperation}
-              onClick={() => {
-                updateViewFieldAggregateOperation(aggregateOperation);
-                resetContent();
-                closeDropdown();
-              }}
-              text={getAggregateOperationLabel(aggregateOperation)}
-              RightIcon={
-                currentViewFieldAggregateOperation === aggregateOperation
-                  ? IconCheck
-                  : undefined
-              }
-            />
-          ))}
-          <MenuItem
-            key={'none'}
-            onClick={() => {
-              updateViewFieldAggregateOperation(null);
-              resetContent();
-              closeDropdown();
-            }}
-            text={'None'}
+          <RecordTableColumnAggregateFooterAggregateOperationMenuItems
+            aggregateOperations={availableAggregateOperations}
           />
         </DropdownMenuItemsContainer>
       </>
