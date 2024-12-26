@@ -110,5 +110,11 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
       label: "Extra data",
       name: "extraData",
     }, 
+    {
+      type: FieldMetadataType.RELATION,
+      
+      label: "Extra data",
+      name: "extraData",
+    }, 
   ],
 };
