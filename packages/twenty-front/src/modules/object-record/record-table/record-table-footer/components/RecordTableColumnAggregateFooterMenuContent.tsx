@@ -21,7 +21,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      resetContent();
       closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
@@ -60,7 +59,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             key={aggregateOperation}
             onClick={() => {
               updateViewFieldAggregateOperation(aggregateOperation);
-              resetContent();
               closeDropdown();
             }}
             text={getAggregateOperationLabel(aggregateOperation)}
@@ -71,7 +69,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             }
           />
         ))}
-        {otherAvailableAggregateOperation.length > 1 ? (
+        {otherAvailableAggregateOperation.length > 0 ? (
           <MenuItem
             key={'more-options'}
             onClick={() => {

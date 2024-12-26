@@ -28,13 +28,10 @@ export const useViewFieldAggregateOperation = () => {
     ]);
   };
 
-  const viewFieldId =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-    )?.id ?? '';
-
   const currentViewFieldAggregateOperation = useRecoilValue(
-    viewFieldAggregateOperationState({ viewFieldId: viewFieldId }),
+    viewFieldAggregateOperationState({
+      viewFieldId: currentViewField?.id ?? '',
+    }),
   );
 
   return {

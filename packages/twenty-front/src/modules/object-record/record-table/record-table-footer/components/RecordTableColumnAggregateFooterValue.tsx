@@ -52,7 +52,6 @@ const StyledLabel = styled.div`
 const StyledValue = styled.div`
   color: ${({ theme }) => theme.color.gray60};
   flex: 1 0 0;
-  font-weight: regular;
 `;
 
 const StyledIcon = styled(IconChevronDown)`
@@ -79,6 +78,8 @@ export const RecordTableColumnAggregateFooterValue = ({
   const { isDropdownOpen } = useDropdown(dropdownId);
   const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
   const theme = useTheme();
+  const shouldShowValue =
+    isHovered || isDropdownOpen || isDefined(aggregateValue) || isFirstCell;
   return (
     <div
       onMouseEnter={() => {
@@ -87,10 +88,7 @@ export const RecordTableColumnAggregateFooterValue = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <StyledCell>
-        {isHovered ||
-        isDropdownOpen ||
-        isDefined(aggregateValue) ||
-        isFirstCell ? (
+        {shouldShowValue ? (
           <>
             {isDefined(aggregateValue) ? (
               <StyledValueContainer>

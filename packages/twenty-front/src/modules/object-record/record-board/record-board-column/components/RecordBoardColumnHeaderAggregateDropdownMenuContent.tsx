@@ -58,7 +58,6 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
           }
         />
         <MenuItem
-          key={'more-options'}
           onClick={() => {
             onContentChange('moreAggregateOperationOptions');
           }}
