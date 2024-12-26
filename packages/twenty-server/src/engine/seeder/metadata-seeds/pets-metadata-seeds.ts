@@ -109,12 +109,6 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
       type: FieldMetadataType.RAW_JSON,
       label: "Extra data",
       name: "extraData",
-    }, 
-    {
-      type: FieldMetadataType.RELATION,
-      
-      label: "Extra data",
-      name: "extraData",
-    }, 
+    },
   ],
 };
