@@ -50,11 +50,11 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
               return fieldMetadata?.label;
             });
 
-        const columnNames = affectedColumns?.join(', ');
-
         if (!isDefined(affectedColumns)) {
           throw new UserInputError(`A duplicate entry was detected`);
         }
+
+        const columnNames = affectedColumns.join(', ');
 
         if (affectedColumns?.length === 1) {
           throw new UserInputError(
