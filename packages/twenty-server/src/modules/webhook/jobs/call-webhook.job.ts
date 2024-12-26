@@ -52,11 +52,13 @@ export class CallWebhookJob {
         'Content-Type': 'application/json',
       };
 
-      if (data.secret) {
+      const { secret, ...payloadWithoutSecret } = data;
+
+      if (secret) {
         headers['X-Twenty-Webhook-Timestamp'] = Date.now().toString();
         headers['X-Twenty-Webhook-Signature'] = this.generateSignature(
-          data,
-          data.secret,
+          payloadWithoutSecret,
+          secret,
           headers['X-Twenty-Webhook-Timestamp'],
         );
         headers['X-Twenty-Webhook-Nonce'] = crypto
@@ -66,7 +68,7 @@ export class CallWebhookJob {
 
       const response = await this.httpService.axiosRef.post(
         data.targetUrl,
-        data,
+        payloadWithoutSecret,
         { headers },
       );
 
