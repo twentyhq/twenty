@@ -1,4 +1,5 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-map';
+
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   NOTE_STANDARD_FIELD_IDS,
@@ -6,7 +7,7 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const notesAllView = (
-  objectMetadataMap: Record<string, ObjectMetadataEntity>,
+  objectMetadataMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
     name: 'All Notes',

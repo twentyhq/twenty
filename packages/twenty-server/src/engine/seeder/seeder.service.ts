@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
@@ -139,12 +140,18 @@ export class SeederService {
     const sqlFieldNames = [
       ...fieldMetadataNamesAsFlattenedSQLColumnNames,
       'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ];
 
     const sqlValues = objectRecordSeedsAsSQLFlattenedSeeds.map(
       (flattenedSeed, index) => ({
         ...flattenedSeed,
         position: index,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       }),
     );
 
