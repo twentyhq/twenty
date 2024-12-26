@@ -246,6 +246,7 @@ mutation UpdateOneFavorite(
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       position
@@ -253,6 +254,7 @@ mutation UpdateOneFavorite(
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference
@@ -532,6 +534,7 @@ export const mocks = [
               phones {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               position
@@ -539,6 +542,7 @@ export const mocks = [
               whatsapp {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               workPreference
@@ -720,7 +724,7 @@ export const mocks = [
       variables: {
         idToUpdate: '1',
         input: {
-          position: 2,
+          position: 3,
         },
       },
     },
@@ -729,7 +733,7 @@ export const mocks = [
         updateFavorite: {
           __typename: 'Favorite',
           id: favoriteId,  
-          position: 2,
+          position: 3,
         },
       },
     })),
@@ -742,7 +746,7 @@ export const mocks = [
       variables: {
         idToUpdate: '1',
         input: {
-          position: 0,
+          position: 1,
           favoriteFolderId: '2',
         },
       },
@@ -752,7 +756,7 @@ export const mocks = [
         updateFavorite: {
           __typename: 'Favorite',
           id: favoriteId,
-          position: 0,
+          position: 1,
           favoriteFolderId: '2',
         },
       },
@@ -766,7 +770,7 @@ export const mocks = [
       variables: {
         idToUpdate: '1',
         input: {
-          position: 0,
+          position: 1,
           favoriteFolderId: null,
         },
       },
@@ -776,7 +780,7 @@ export const mocks = [
         updateFavorite: {
           __typename: 'Favorite',
           id: favoriteId,
-          position: 0,
+          position: 1,
           favoriteFolderId: null,
         },
       },

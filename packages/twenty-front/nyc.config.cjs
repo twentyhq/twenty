@@ -23,6 +23,14 @@ const pagesCoverage = {
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };
 
+const performanceCoverage = {
+  branches: 35,
+  statements: 60,
+  lines: 60,
+  functions: 45,
+  exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
+};
+
 const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;
 
 module.exports =
@@ -30,4 +38,6 @@ module.exports =
     ? pagesCoverage
     : storybookStoriesFolders === 'modules'
       ? modulesCoverage
+      : storybookStoriesFolders === 'performance'
+        ? performanceCoverage
       : globalCoverage;

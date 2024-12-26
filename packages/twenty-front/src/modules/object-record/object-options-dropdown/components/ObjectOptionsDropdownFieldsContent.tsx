@@ -62,7 +62,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
         showDragGrip={true}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer withoutScrollWrapper>
+      <DropdownMenuItemsContainer scrollable={false}>
         <MenuItemNavigate
           onClick={() => onContentChange('hiddenFields')}
           LeftIcon={IconEyeOff}

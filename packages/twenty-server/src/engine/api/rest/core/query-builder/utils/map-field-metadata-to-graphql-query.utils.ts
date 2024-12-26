@@ -150,6 +150,7 @@ export const mapFieldMetadataToGraphqlQuery = (
       {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
     `;

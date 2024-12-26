@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { FilterValueDependencies } from '@/object-record/record-filter/types/FilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
@@ -14,11 +15,13 @@ export const getQueryVariablesFromView = ({
   fieldMetadataItems,
   objectMetadataItem,
   isJsonFilterEnabled,
+  filterValueDependencies,
 }: {
   view: View | null | undefined;
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   isJsonFilterEnabled: boolean;
+  filterValueDependencies: FilterValueDependencies;
 }) => {
   if (!isDefined(view)) {
     return {
@@ -39,6 +42,7 @@ export const getQueryVariablesFromView = ({
   });
 
   const filter = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     mapViewFiltersToFilters(viewFilters, filterDefinitions),
     objectMetadataItem?.fields ?? [],
     viewFilterGroups ?? [],

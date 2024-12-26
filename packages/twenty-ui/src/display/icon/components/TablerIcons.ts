@@ -244,6 +244,7 @@ export {
   IconTextWrap,
   IconTimelineEvent,
   IconTrash,
+  IconTrashX,
   IconUnlink,
   IconUpload,
   IconUser,
