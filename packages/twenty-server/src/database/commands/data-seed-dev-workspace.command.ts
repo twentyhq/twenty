@@ -39,7 +39,9 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
+import { PETS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/pets-metadata-seeds';
 import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
@@ -156,12 +158,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           workspaceId,
         );
 
-        // await this.seederService.seedCustomObjects(
-        //   dataSourceMetadata.id,
-        //   workspaceId,
-        //   PETS_METADATA_SEEDS,
-        //   PETS_DATA_SEEDS,
-        // );
+        await this.seederService.seedCustomObjects(
+          dataSourceMetadata.id,
+          workspaceId,
+          PETS_METADATA_SEEDS,
+          PETS_DATA_SEEDS,
+        );
 
         await this.seederService.seedCustomObjects(
           dataSourceMetadata.id,

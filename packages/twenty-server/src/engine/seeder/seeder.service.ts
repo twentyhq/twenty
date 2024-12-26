@@ -22,11 +22,11 @@ export class SeederService {
   public async seedCustomObjects(
     dataSourceId: string,
     workspaceId: string,
-    metadataSeeds: ObjectMetadataSeed,
-    dataSeeds: Record<string, any>[],
+    objectMetadataSeed: ObjectMetadataSeed,
+    objectRecordSeeds: Record<string, any>[],
   ): Promise<void> {
     const createdObjectMetadata = await this.objectMetadataService.createOne({
-      ...metadataSeeds,
+      ...objectMetadataSeed,
       dataSourceId,
       workspaceId,
     });
@@ -35,9 +35,9 @@ export class SeederService {
       throw new Error("Object metadata couldn't be created");
     }
 
-    for (const customField of metadataSeeds.fields) {
+    for (const fieldMetadataSeed of objectMetadataSeed.fields) {
       await this.fieldMetadataService.createOne({
-        ...customField,
+        ...fieldMetadataSeed,
         objectMetadataId: createdObjectMetadata.id,
         workspaceId,
       });
@@ -45,7 +45,7 @@ export class SeederService {
 
     const objectMetadataAfterFieldCreation =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: metadataSeeds.nameSingular },
+        where: { nameSingular: objectMetadataSeed.nameSingular },
       });
 
     if (!objectMetadataAfterFieldCreation) {
@@ -64,94 +64,89 @@ export class SeederService {
 
     const entityManager = workspaceDataSource.createEntityManager();
 
-    const filteredFields = metadataSeeds.fields.filter((field) =>
-      objectMetadataAfterFieldCreation.fields.some(
-        (f) => f.name === field.name || f.name === `name`,
-      ),
+    const filteredFieldMetadataSeeds = objectMetadataSeed.fields.filter(
+      (field) =>
+        objectMetadataAfterFieldCreation.fields.some(
+          (f) => f.name === field.name || f.name === `name`,
+        ),
     );
 
-    if (filteredFields.length === 0) {
-      throw new Error('No fields found for seeding, check metadata');
+    if (filteredFieldMetadataSeeds.length === 0) {
+      throw new Error('No fields found for seeding, check metadata file');
     }
 
-    filteredFields.unshift({
-      name: 'name',
-      type: FieldMetadataType.TEXT,
-      label: 'Name',
-    });
+    this.addAutomaticalyCreatedNameFieldToFieldMetadataSeeds(
+      filteredFieldMetadataSeeds,
+    );
 
-    const fieldMetadataMap = filteredFields
-      .map((field) => {
-        if (isCompositeFieldMetadataType(field.type)) {
-          const compositeFieldTypeDefinition = compositeTypeDefinitions.get(
-            field.type,
-          );
+    const objectRecordSeedsAsSQLFlattenedSeeds = objectRecordSeeds.map(
+      (recordSeed) => {
+        const objectRecordSeedsAsSQLFlattenedSeeds = {};
 
-          if (!isDefined(compositeFieldTypeDefinition)) {
-            throw new Error(
-              `Composite field type definition not found for ${field.type}`,
+        for (const field of filteredFieldMetadataSeeds) {
+          if (isCompositeFieldMetadataType(field.type)) {
+            const compositeFieldTypeDefinition = compositeTypeDefinitions.get(
+              field.type,
             );
-          }
 
-          const fieldNames = compositeFieldTypeDefinition.properties?.map(
-            (property) => property.name,
-          );
+            if (!isDefined(compositeFieldTypeDefinition)) {
+              throw new Error(
+                `Composite field type definition not found for ${field.type}`,
+              );
+            }
 
-          return (
-            fieldNames?.map(
-              (subFieldName: string) =>
-                `${field.name}${capitalize(subFieldName)}`,
-            ) ?? []
-          );
-        } else {
-          return field.name;
-        }
-      })
-      .flat()
-      .filter(isDefined);
+            const fieldNames = compositeFieldTypeDefinition.properties
+              ?.map((property) => property.name)
+              .filter(isDefined);
 
-    const flattenedSeeds = dataSeeds.map((seed) => {
-      const flattenedSeed = {};
+            for (const subFieldName of fieldNames) {
+              const subFieldValue = recordSeed?.[field.name]?.[subFieldName];
 
-      for (const field of filteredFields) {
-        if (isCompositeFieldMetadataType(field.type)) {
-          const compositeFieldTypeDefinition = compositeTypeDefinitions.get(
-            field.type,
-          );
+              const subFieldValueAsSQLValue =
+                this.turnCompositeSubFieldValueAsSQLValue(
+                  field.type,
+                  subFieldName,
+                  subFieldValue,
+                );
 
-          if (!isDefined(compositeFieldTypeDefinition)) {
-            throw new Error(
-              `Composite field type definition not found for ${field.type}`,
+              const subFieldNameAsSQLColumnName = `${field.name}${capitalize(subFieldName)}`;
+
+              objectRecordSeedsAsSQLFlattenedSeeds[
+                subFieldNameAsSQLColumnName
+              ] = subFieldValueAsSQLValue;
+            }
+          } else {
+            const fieldValue = recordSeed[field.name];
+
+            const fieldValueAsSQLValue = this.turnFieldValueAsSQLValue(
+              field.type,
+              fieldValue,
             );
-          }
 
-          const fieldNames = compositeFieldTypeDefinition.properties
-            ?.map((property) => property.name)
-            .filter(isDefined);
-
-          for (const subFieldName of fieldNames) {
-            flattenedSeed[`${field.name}${capitalize(subFieldName)}`] =
-              seed?.[field.name]?.[subFieldName];
+            objectRecordSeedsAsSQLFlattenedSeeds[field.name] =
+              fieldValueAsSQLValue;
           }
-        } else {
-          flattenedSeed[field.name] = seed[field.name];
         }
-      }
 
-      return flattenedSeed;
-    });
+        return objectRecordSeedsAsSQLFlattenedSeeds;
+      },
+    );
 
-    const sqlFieldNames = [...fieldMetadataMap, 'position'];
+    const fieldMetadataNamesAsFlattenedSQLColumnNames = Object.keys(
+      objectRecordSeedsAsSQLFlattenedSeeds[0],
+    );
 
-    const values = flattenedSeeds.map((flattenedSeed, index) => ({
-      ...flattenedSeed,
-      position: index,
-    }));
+    const sqlFieldNames = [
+      ...fieldMetadataNamesAsFlattenedSQLColumnNames,
+      'position',
+    ];
 
-    console.log({
-      sqlFieldNames,
-      values,
-    });
+    const sqlValues = objectRecordSeedsAsSQLFlattenedSeeds.map(
+      (flattenedSeed, index) => ({
+        ...flattenedSeed,
+        position: index,
+      }),
+    );
 
     await entityManager
       .createQueryBuilder()
@@ -161,8 +156,57 @@ export class SeederService {
         sqlFieldNames,
       )
       .orIgnore()
-      .values(values)
+      .values(sqlValues)
       .returning('*')
       .execute();
+  }
+
+  private addAutomaticalyCreatedNameFieldToFieldMetadataSeeds(
+    arrayOfMetadataFields: any[],
+  ) {
+    arrayOfMetadataFields.unshift({
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
+    });
+  }
+
+  private turnCompositeSubFieldValueAsSQLValue(
+    fieldType: FieldMetadataType,
+    subFieldName: string,
+    subFieldValue: any,
+  ) {
+    if (!isCompositeFieldMetadataType(fieldType)) {
+      throw new Error(
+        `${subFieldName} is not a sub field of a composite field type.`,
+      );
+    }
+
+    const compositeFieldTypeDefinition =
+      compositeTypeDefinitions.get(fieldType);
+
+    const compositeSubFieldType =
+      compositeFieldTypeDefinition?.properties.find(
+        (property) => property.name === subFieldName,
+      )?.type ?? null;
+
+    if (!isDefined(compositeSubFieldType)) {
+      throw new Error(
+        `Cannot find ${subFieldName} in properties of composite type ${fieldType}.`,
+      );
+    }
+
+    return this.turnFieldValueAsSQLValue(compositeSubFieldType, subFieldValue);
+  }
+
+  private turnFieldValueAsSQLValue(
+    fieldType: FieldMetadataType,
+    fieldValue: any,
+  ) {
+    if (fieldType === FieldMetadataType.RAW_JSON) {
+      return JSON.stringify(fieldValue);
+    }
+
+    return fieldValue;
   }
 }
