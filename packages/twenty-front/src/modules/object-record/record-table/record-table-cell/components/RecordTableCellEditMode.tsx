@@ -40,7 +40,11 @@ export const RecordTableCellEditMode = ({
       ref={refs.setReference}
       data-testid="editable-cell-edit-mode-container"
     >
-      <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
+      <OverlayContainer
+        ref={refs.setFloating}
+        style={floatingStyles}
+        borderRadius="sm"
+      >
         {children}
       </OverlayContainer>
     </StyledEditableCellEditModeContainer>
