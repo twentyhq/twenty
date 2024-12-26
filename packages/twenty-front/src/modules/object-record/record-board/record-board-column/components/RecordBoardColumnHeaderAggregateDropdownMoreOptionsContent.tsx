@@ -64,27 +64,24 @@ export const RecordBoardColumnHeaderAggregateDropdownMoreOptionsContent =
               ([
                 availableAggregationOperation,
                 availableAggregationFieldsIdsForOperation,
-              ]) =>
-                isEmpty(availableAggregationFieldsIdsForOperation) ? (
-                  <></>
-                ) : (
-                  <RecordBoardColumnHeaderAggregateDropdownMenuItem
-                    key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
-                    onContentChange={() => {
-                      setAggregateOperation(
-                        availableAggregationOperation as AGGREGATE_OPERATIONS,
-                      );
-                      setAvailableFieldsForAggregateOperation(
-                        availableAggregationFieldsIdsForOperation,
-                      );
-                      onContentChange('aggregateFields');
-                    }}
-                    text={getAggregateOperationLabel(
+              ]) => (
+                <RecordBoardColumnHeaderAggregateDropdownMenuItem
+                  key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
+                  onContentChange={() => {
+                    setAggregateOperation(
                       availableAggregationOperation as AGGREGATE_OPERATIONS,
-                    )}
-                    hasSubMenu
-                  />
-                ),
+                    );
+                    setAvailableFieldsForAggregateOperation(
+                      availableAggregationFieldsIdsForOperation,
+                    );
+                    onContentChange('aggregateFields');
+                  }}
+                  text={getAggregateOperationLabel(
+                    availableAggregationOperation as AGGREGATE_OPERATIONS,
+                  )}
+                  hasSubMenu
+                />
+              ),
             )}
         </DropdownMenuItemsContainer>
       </>

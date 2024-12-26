@@ -69,7 +69,10 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               LeftIcon={getIcon(fieldMetadata.icon) ?? Icon123}
               text={fieldMetadata.label}
               RightIcon={
-                recordIndexKanbanAggregateOperation?.fieldMetadataId === fieldId
+                recordIndexKanbanAggregateOperation?.fieldMetadataId ===
+                  fieldId &&
+                recordIndexKanbanAggregateOperation?.operation ===
+                  aggregateOperation
                   ? IconCheck
                   : undefined
               }
