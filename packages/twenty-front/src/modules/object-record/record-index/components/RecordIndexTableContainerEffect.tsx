@@ -6,7 +6,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 import { ViewField } from '@/views/types/ViewField';
@@ -77,7 +77,7 @@ export const RecordIndexTableContainerEffect = () => {
       (viewField: ViewField) => {
         const aggregateOperationForViewField = snapshot
           .getLoadable(
-            aggregateOperationForViewFieldState({
+            viewFieldAggregateOperationState({
               viewFieldId: viewField.id,
             }),
           )
@@ -85,7 +85,7 @@ export const RecordIndexTableContainerEffect = () => {
 
         if (aggregateOperationForViewField !== viewField.aggregateOperation) {
           set(
-            aggregateOperationForViewFieldState({
+            viewFieldAggregateOperationState({
               viewFieldId: viewField.id,
             }),
             viewField.aggregateOperation,

@@ -94,7 +94,7 @@ export const ObjectFilterDropdownRecordSelect = ({
   const currentWorkspaceMemberSelectableItem: SelectableItem = {
     id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
     name: 'Me',
-    isSelected: isCurrentWorkspaceMemberSelected,
+    isSelected: isCurrentWorkspaceMemberSelected ?? false,
     AvatarIcon: IconUserCircle,
   };
 

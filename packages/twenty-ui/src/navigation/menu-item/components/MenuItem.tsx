@@ -25,6 +25,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -40,6 +41,7 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  RightIcon,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -81,6 +83,9 @@ export const MenuItem = ({
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
+      {RightIcon && (
+        <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+      )}
       {hasSubMenu && (
         <IconChevronRight
           size={theme.icon.size.sm}
