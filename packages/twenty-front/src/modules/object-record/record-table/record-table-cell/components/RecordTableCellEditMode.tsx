@@ -4,13 +4,12 @@ import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModeProps>`
-  position: absolute;
   align-items: center;
   display: flex;
-  min-width: 200px;
+  height: 100%;
+  position: absolute;
   width: calc(100% + 2px);
   z-index: 1;
-  height: 100%;
 `;
 
 export type RecordTableCellEditModeProps = {

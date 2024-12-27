@@ -317,8 +317,8 @@ export const seedPeople = async (
         whatsappPrimaryPhoneCallingCode: '+33',
         whatsappPrimaryPhoneNumber: '788901235',
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: null,
-        createdByName: '',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
     ])
     .execute();
