@@ -3,6 +3,7 @@ import { ReactNode, useEffect } from 'react';
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
+import { useRecoilValue } from 'recoil';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 import { isDefined } from '~/utils/isDefined';
 
@@ -28,8 +29,14 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds, setSelectableListOnEnter, setSelectedItemId } =
-    useSelectableList(selectableListId);
+  const {
+    setSelectableItemIds,
+    setSelectableListOnEnter,
+    setSelectedItemId,
+    selectedItemIdState,
+  } = useSelectableList(selectableListId);
+
+  const selectedItemId = useRecoilValue(selectedItemIdState);
 
   useEffect(() => {
     setSelectableListOnEnter(() => onEnter);
@@ -49,7 +56,12 @@ export const SelectableList = ({
     if (isDefined(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
 
-      if (selectFirstItem && selectableItemIdArray.length > 0) {
+      if (
+        selectFirstItem &&
+        selectableItemIdArray.length > 0 &&
+        (!isDefined(selectedItemId) ||
+          !selectableItemIdArray.includes(selectedItemId))
+      ) {
         setSelectedItemId(selectableItemIdArray[0]);
       }
     }
@@ -59,6 +71,7 @@ export const SelectableList = ({
     setSelectableItemIds,
     setSelectedItemId,
     selectFirstItem,
+    selectedItemId,
   ]);
 
   return (

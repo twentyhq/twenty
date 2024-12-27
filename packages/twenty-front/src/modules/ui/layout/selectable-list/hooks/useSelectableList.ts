@@ -50,5 +50,6 @@ export const useSelectableList = (selectableListId?: string) => {
     setSelectableListOnEnter,
     resetSelectedItem,
     setSelectedItemId,
+    selectedItemIdState,
   };
 };
