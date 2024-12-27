@@ -35,7 +35,7 @@ export class BeforeDeleteOneRelation implements BeforeDeleteOneHook {
         workspaceId,
         id: instance.id.toString(),
       },
-      relations: ['fromFieldMetafata', 'toFieldMetadata'],
+      relations: ['fromFieldMetadata', 'toFieldMetadata'],
     });
 
     if (!relationMetadata) {

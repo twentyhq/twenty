@@ -1,6 +1,5 @@
 import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
@@ -20,10 +19,12 @@ export const useSeeVersionsWorkflowSingleRecordAction: SingleRecordActionHookWit
         return;
       }
 
-      const filterQueryParams: FilterQueryParams = {
+      const filterQueryParams = {
         filter: {
           workflow: {
-            [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+            [ViewFilterOperand.Is]: {
+              selectedRecordIds: [workflowWithCurrentVersion.id],
+            },
           },
         },
       };

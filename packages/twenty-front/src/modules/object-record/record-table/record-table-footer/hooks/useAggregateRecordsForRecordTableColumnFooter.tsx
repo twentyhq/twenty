@@ -6,7 +6,7 @@ import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useReco
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
@@ -43,7 +43,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     )?.id ?? '';
 
   const aggregateOperationForViewField = useRecoilValue(
-    aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
+    viewFieldAggregateOperationState({ viewFieldId: viewFieldId }),
   );
 
   const fieldName = objectMetadataItem.fields.find(
