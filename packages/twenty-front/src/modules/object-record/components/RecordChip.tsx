@@ -29,7 +29,7 @@ export const RecordChip = ({
 
   return (
     <AvatarChip
-      placeholderColorSeed={record.id}
+      // placeholderColorSeed={record.id}
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
