@@ -33,7 +33,7 @@ import { Avatar, IconCheckbox, IconNotes, IconSparkles } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-export const useComputeCommandMenuCommands = () => {
+export const useCommandMenuCommands = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );

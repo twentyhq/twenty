@@ -6,6 +6,8 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -23,6 +25,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui';
 
 const StyledLayout = styled.div`
@@ -80,6 +83,9 @@ export const DefaultLayout = () => {
   const { toggleCommandMenu } = useCommandMenu();
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+
+  useCommandMenuHotKeys();
 
   return (
     <>
@@ -108,7 +114,7 @@ export const DefaultLayout = () => {
                   <RecordActionMenuEntriesSetter />
                   {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
                   <ActionMenuConfirmationModals />
-                  <CommandMenu />
+                  {isCommandMenuOpened && <CommandMenu />}
                 </ActionMenuContext.Provider>
               </ActionMenuComponentInstanceContext.Provider>
             </ContextStoreComponentInstanceContext.Provider>

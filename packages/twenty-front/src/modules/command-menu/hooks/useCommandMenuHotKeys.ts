@@ -18,11 +18,14 @@ export const useCommandMenuHotKeys = () => {
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+    'command-menu',
   );
 
   const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
     contextStoreNumberOfSelectedRecordsComponentState,
+    'command-menu',
   );
+
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
