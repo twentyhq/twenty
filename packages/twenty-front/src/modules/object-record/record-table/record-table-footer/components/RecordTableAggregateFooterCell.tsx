@@ -11,20 +11,19 @@ const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnFooterCell = styled.th<{
   columnWidth: number;
-  isResizing?: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 0;
-  text-align: left;
-  transition: 0.3s ease;
-
   background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  overflow: hidden;
+  padding: 0;
+
+  position: relative;
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
       `}
-  position: relative;
-  user-select: none;
+  text-align: left;
+  transition: 0.3s ease;
   ${({ theme }) => {
     return `
     &:hover {
@@ -35,23 +34,14 @@ const StyledColumnFooterCell = styled.th<{
     };
     `;
   }};
-  ${({ isResizing, theme }) => {
-    if (isResizing === true) {
-      return `&:after {
-        background-color: ${theme.color.blue};
-        bottom: 0;
-        content: '';
-        display: block;
-        position: absolute;
-        right: -1px;
-        top: 0;
-        width: 2px;
-      }`;
-    }
-  }};
 
-  // TODO: refactor this, each component should own its CSS
+  user-select: none;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  *::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledColumnFootContainer = styled.div`
