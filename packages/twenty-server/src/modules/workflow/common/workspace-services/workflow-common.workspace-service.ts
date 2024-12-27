@@ -55,4 +55,35 @@ export class WorkflowCommonWorkspaceService {
 
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
+
+  async cleanWorkflowsSubEntities(workflowIds: string[]): Promise<void> {
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowEventListenerRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowEventListener',
+      );
+
+    workflowIds.map(async (workflowId) => {
+      workflowEventListenerRepository.softDelete({
+        workflowId,
+      });
+
+      workflowRunRepository.softDelete({
+        workflowId,
+      });
+
+      workflowVersionRepository.softDelete({
+        workflowId,
+      });
+    });
+  }
 }
