@@ -634,6 +634,7 @@ export const CommandMenu = () => {
                   selectableListId="command-menu-list"
                   selectableItemIdArray={selectableItemIds}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
+                  selectFirstItem={true}
                   onEnter={(itemId) => {
                     const command = [
                       ...copilotCommands,
