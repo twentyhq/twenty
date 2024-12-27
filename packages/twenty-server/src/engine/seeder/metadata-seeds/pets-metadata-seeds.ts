@@ -84,7 +84,7 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
       type: FieldMetadataType.CURRENCY,
       label: 'Average cost of kibble per month',
       name: 'averageCostOfKibblePerMonth',
-    }, 
+    },
     {
       type: FieldMetadataType.FULL_NAME,
       label: 'Makes its owner think of',
@@ -102,13 +102,13 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
     },
     {
       type: FieldMetadataType.ARRAY,
-      label: "Interesting facts",
-      name: "interestingFacts",
+      label: 'Interesting facts',
+      name: 'interestingFacts',
     },
     {
       type: FieldMetadataType.RAW_JSON,
-      label: "Extra data",
-      name: "extraData",
+      label: 'Extra data',
+      name: 'extraData',
     },
   ],
 };
