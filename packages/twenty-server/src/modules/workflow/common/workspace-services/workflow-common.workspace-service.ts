@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowTriggerException,
@@ -54,5 +56,38 @@ export class WorkflowCommonWorkspaceService {
     // }
 
     return { ...workflowVersion, trigger: workflowVersion.trigger };
+  }
+
+  async cleanWorkflowsSubEntities(workflowIds: string[]): Promise<void> {
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowEventListenerRepository =
+      await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
+        'workflowEventListener',
+      );
+
+    Promise.all(
+      workflowIds.map((workflowId) => {
+        workflowEventListenerRepository.softDelete({
+          workflowId,
+        });
+
+        workflowRunRepository.softDelete({
+          workflowId,
+        });
+
+        workflowVersionRepository.softDelete({
+          workflowId,
+        });
+      }),
+    );
   }
 }
