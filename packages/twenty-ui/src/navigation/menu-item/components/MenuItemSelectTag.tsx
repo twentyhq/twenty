@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
-import { IconCheck, Tag } from '@ui/display';
+import { IconCheck, IconComponent, Tag } from '@ui/display';
 import { ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
@@ -14,6 +14,7 @@ type MenuItemSelectTagProps = {
   color: ThemeColor | 'transparent';
   text: string;
   variant?: 'solid' | 'outline';
+  LeftIcon?: IconComponent | null;
 };
 
 export const MenuItemSelectTag = ({
@@ -24,9 +25,9 @@ export const MenuItemSelectTag = ({
   onClick,
   text,
   variant = 'solid',
+  LeftIcon,
 }: MenuItemSelectTagProps) => {
   const theme = useTheme();
-
   return (
     <StyledMenuItemSelect
       onClick={onClick}
@@ -35,7 +36,12 @@ export const MenuItemSelectTag = ({
       isKeySelected={isKeySelected}
     >
       <StyledMenuItemLeftContent>
-        <Tag variant={variant} color={color} text={text} />
+        <Tag
+          variant={variant}
+          color={color}
+          text={text}
+          Icon={LeftIcon ?? undefined}
+        />
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>

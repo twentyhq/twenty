@@ -172,7 +172,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
         description: 'Additional Phones',
         isNullable: true,
         defaultValue: null,
-        placeholder: '{ number: "", countryCode: "" }',
+        placeholder: '{ number: "", callingCode: "" }',
         list: true,
       };
       return [primaryPhoneNumber, primaryPhoneCountryCode, additionalPhones];

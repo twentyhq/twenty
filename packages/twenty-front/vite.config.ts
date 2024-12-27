@@ -2,6 +2,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
+import fs from 'fs';
 import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -18,10 +19,15 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    REACT_APP_PORT
+    VITE_HOST,
+    SSL_CERT_PATH,
+    SSL_KEY_PATH,
+    REACT_APP_PORT,
   } = env;
 
-  const port = isNonEmptyString(REACT_APP_PORT) ? parseInt(REACT_APP_PORT) : 3001;
+  const port = isNonEmptyString(REACT_APP_PORT)
+    ? parseInt(REACT_APP_PORT)
+    : 3001;
 
   const isBuildCommand = command === 'build';
 
@@ -65,8 +71,19 @@ export default defineConfig(({ command, mode }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
-      port,
-      host: 'localhost',
+      port: port,
+      ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      ...(SSL_KEY_PATH && SSL_CERT_PATH
+        ? {
+            protocol: 'https',
+            https: {
+              key: fs.readFileSync(env.SSL_KEY_PATH),
+              cert: fs.readFileSync(env.SSL_CERT_PATH),
+            },
+          }
+        : {
+            protocol: 'http',
+          }),
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
@@ -114,6 +131,10 @@ export default defineConfig(({ command, mode }) => {
       }),
     ],
 
+    optimizeDeps: {
+      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+    },
+
     build: {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
@@ -122,6 +143,9 @@ export default defineConfig(({ command, mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
+      _env_: {
+        REACT_APP_SERVER_BASE_URL,
+      },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
       },

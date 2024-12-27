@@ -6,7 +6,7 @@ import { EntityManager } from 'typeorm';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
   SEED_APPLE_WORKSPACE_ID,
-  SEED_TWENTY_WORKSPACE_ID,
+  SEED_ACME_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import {
   getDevSeedCompanyCustomFields,
@@ -42,7 +42,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -53,7 +53,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
+  workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_ACME_WORKSPACE_ID];
   private readonly logger = new Logger(DataSeedWorkspaceCommand.name);
 
   constructor(
@@ -211,7 +211,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               );
             }
 
-            const viewDefinitionsWithId = await viewPrefillData(
+            const viewDefinitionsWithId = await seedViewWithDemoData(
               entityManager,
               dataSourceMetadata.schema,
               objectMetadataMap,

@@ -12,8 +12,10 @@ export const getHighlightedDates = (highlightedDateRange?: {
   const minDate = subMonths(currentDate, 2);
   const maxDate = addMonths(currentDate, 2);
 
-  let dateToHighlight = start < minDate ? minDate : start;
+  const startDate = start < minDate ? minDate : start;
   const lastDate = end > maxDate ? maxDate : end;
+
+  let dateToHighlight = new Date(startDate);
 
   while (dateToHighlight <= lastDate) {
     highlightedDates.push(dateToHighlight);

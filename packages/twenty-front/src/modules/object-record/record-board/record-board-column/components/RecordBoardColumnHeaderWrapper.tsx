@@ -1,8 +1,10 @@
 import { isDefined } from 'twenty-ui';
 
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilValue } from 'recoil';
 
 type RecordBoardColumnHeaderWrapperProps = {
@@ -12,14 +14,16 @@ type RecordBoardColumnHeaderWrapperProps = {
 export const RecordBoardColumnHeaderWrapper = ({
   columnId,
 }: RecordBoardColumnHeaderWrapperProps) => {
-  const { columnsFamilySelector, recordIdsByColumnIdFamilyState } =
-    useRecordBoardStates();
+  const recordGroupDefinition = useRecoilValue(
+    recordGroupDefinitionFamilyState(columnId),
+  );
 
-  const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    columnId,
+  );
 
-  const recordIds = useRecoilValue(recordIdsByColumnIdFamilyState(columnId));
-
-  if (!isDefined(columnDefinition)) {
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
@@ -27,9 +31,9 @@ export const RecordBoardColumnHeaderWrapper = ({
     <RecordBoardColumnContext.Provider
       value={{
         columnId,
-        columnDefinition: columnDefinition,
-        recordCount: recordIds.length,
-        recordIds,
+        columnDefinition: recordGroupDefinition,
+        recordCount: recordIdsByGroup.length,
+        recordIds: recordIdsByGroup,
       }}
     >
       <RecordBoardColumnHeader />

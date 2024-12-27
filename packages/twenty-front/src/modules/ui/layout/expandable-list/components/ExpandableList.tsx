@@ -4,7 +4,6 @@ import { AnimatedContainer, Chip, ChipVariant } from 'twenty-ui';
 
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
@@ -101,20 +100,18 @@ export const ExpandableList = ({
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
 
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: () => {
-      // Handle container resize
-      if (
-        childrenContainerElement?.clientWidth !== previousChildrenContainerWidth
-      ) {
-        resetFirstHiddenChildIndex();
-        setPreviousChildrenContainerWidth(
-          childrenContainerElement?.clientWidth ?? 0,
-        );
-      }
-    },
-  });
+  const handleClickOutside = () => {
+    setIsListExpanded(false);
+
+    if (
+      childrenContainerElement?.clientWidth !== previousChildrenContainerWidth
+    ) {
+      resetFirstHiddenChildIndex();
+      setPreviousChildrenContainerWidth(
+        childrenContainerElement?.clientWidth ?? 0,
+      );
+    }
+  };
 
   return (
     <StyledContainer
@@ -163,10 +160,7 @@ export const ExpandableList = ({
       {isListExpanded && (
         <ExpandedListDropdown
           anchorElement={containerRef.current ?? undefined}
-          onClickOutside={() => {
-            resetFirstHiddenChildIndex();
-            setIsListExpanded(false);
-          }}
+          onClickOutside={handleClickOutside}
           withBorder={withExpandedListBorder}
         >
           {children}

@@ -98,6 +98,7 @@ export class PgBossDriver
         ? {
             ...options,
             singletonKey: options?.id,
+            useSingletonQueue: true, // When used with singletonKey, ensures only one job can be queued. See https://logsnag.com/blog/deep-dive-into-background-jobs-with-pg-boss-and-typescript
           }
         : {},
     );

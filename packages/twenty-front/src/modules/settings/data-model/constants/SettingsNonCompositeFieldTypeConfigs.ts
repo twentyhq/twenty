@@ -120,18 +120,18 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       label: 'JSON',
       Icon: IllustrationIconJson,
       exampleValue: { key: 'value' },
-      category: 'Basic',
+      category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
     [FieldMetadataType.RichText]: {
       label: 'Rich Text',
       Icon: IllustrationIconSetting,
-      exampleValue: { key: 'value' },
+      exampleValue: "{ key: 'value' }",
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
     [FieldMetadataType.Array]: {
       label: 'Array',
       Icon: IllustrationIconArray,
-      category: 'Basic',
+      category: 'Advanced',
       exampleValue: ['value1', 'value2'],
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
   };

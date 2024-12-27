@@ -26,11 +26,13 @@ export type GenericFieldContextType = {
   recoilScopeId?: string;
   hotkeyScope: string;
   isLabelIdentifier: boolean;
-  basePathToShowPage?: string;
+  labelIdentifierLink?: string;
   clearable?: boolean;
   maxWidth?: number;
   isCentered?: boolean;
   overridenIsFieldEmpty?: boolean;
+  displayedMaxRows?: number;
+  isDisplayModeFixHeight?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

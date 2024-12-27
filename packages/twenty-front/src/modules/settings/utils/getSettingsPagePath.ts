@@ -1,19 +1,25 @@
+import { ExtractPathParams } from '@/types/ExtractPathParams';
 import { SettingsPath } from '@/types/SettingsPath';
 import { isDefined } from '~/utils/isDefined';
 
-type PathParams = {
+type Params<V extends string> = {
+  [K in ExtractPathParams<V>]: string;
+} & {
   id?: string;
-  objectSlug?: string;
 };
 
 export const getSettingsPagePath = <Path extends SettingsPath>(
   path: Path,
-  params?: PathParams,
+  params?: Params<Path>,
 ) => {
   let resultPath = `/settings/${path}`;
 
-  if (isDefined(params?.objectSlug)) {
-    resultPath = resultPath.replace(':objectSlug', params.objectSlug);
+  if (isDefined(params)) {
+    resultPath = resultPath.replace(/:([a-zA-Z]+)/g, (_, key) => {
+      const value = params[key as keyof Params<Path>];
+
+      return value;
+    });
   }
 
   if (isDefined(params?.id)) {

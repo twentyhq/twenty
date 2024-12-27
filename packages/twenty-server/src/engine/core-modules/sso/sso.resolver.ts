@@ -8,7 +8,6 @@ import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.inpu
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
 import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoOutput } from 'src/engine/core-modules/sso/dtos/edit-sso.output';
-import { FindAvailableSSOIDPInput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.input';
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 import { GetAuthorizationUrlInput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.input';
 import { GetAuthorizationUrlOutput } from 'src/engine/core-modules/sso/dtos/get-authorization-url.output';
@@ -37,14 +36,6 @@ export class SSOResolver {
       setupSsoInput,
       workspaceId,
     );
-  }
-
-  @UseGuards(SSOProviderEnabledGuard)
-  @Mutation(() => [FindAvailableSSOIDPOutput])
-  async findAvailableSSOIdentityProviders(
-    @Args('input') input: FindAvailableSSOIDPInput,
-  ): Promise<Array<FindAvailableSSOIDPOutput>> {
-    return this.sSOService.findAvailableSSOIdentityProviders(input.email);
   }
 
   @UseGuards(SSOProviderEnabledGuard)

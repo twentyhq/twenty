@@ -1,8 +1,3 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-
-import { PositionType } from '../types/PositionType';
-
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -13,7 +8,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { MenuItem } from 'twenty-ui';
+import { PositionType } from '../types/PositionType';
 
 type StyledContainerProps = {
   position: PositionType;
@@ -21,10 +19,6 @@ type StyledContainerProps = {
 
 const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   align-items: flex-start;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
 
@@ -33,7 +27,8 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   top: ${(props) => `${props.position.y}px`};
 
   transform: translateX(-50%);
-  width: auto;
+  width: 0;
+  height: 0;
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
@@ -84,6 +79,7 @@ export const RecordIndexActionMenuDropdown = () => {
             ))}
           </DropdownMenuItemsContainer>
         }
+        avoidPortal
       />
     </StyledContainerActionMenuDropdown>
   );

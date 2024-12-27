@@ -1,30 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-
-@ObjectType()
-class AuthProviders {
-  @Field(() => Boolean)
-  google: boolean;
-
-  @Field(() => Boolean)
-  magicLink: boolean;
-
-  @Field(() => Boolean)
-  password: boolean;
-
-  @Field(() => Boolean)
-  microsoft: boolean;
-
-  @Field(() => Boolean)
-  sso: boolean;
-}
-
-@ObjectType()
-class Telemetry {
-  @Field(() => Boolean)
-  enabled: boolean;
-}
+import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 
 @ObjectType()
 class Billing {
@@ -86,7 +63,16 @@ export class ClientConfig {
   signInPrefilled: boolean;
 
   @Field(() => Boolean)
-  signUpDisabled: boolean;
+  isMultiWorkspaceEnabled: boolean;
+
+  @Field(() => Boolean)
+  isSSOEnabled: boolean;
+
+  @Field(() => String, { nullable: true })
+  defaultSubdomain: string;
+
+  @Field(() => String)
+  frontDomain: string;
 
   @Field(() => Boolean)
   debugMode: boolean;

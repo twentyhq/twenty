@@ -26,24 +26,37 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
+import {
+  UserExists,
+  UserNotExists,
+} from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -55,9 +68,54 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
-  async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userRepository.findOneBy({
-      email: challengeInput.email,
+  private async checkAccessAndUseInvitationOrThrow(
+    workspace: Workspace,
+    user: User,
+  ) {
+    if (
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      )
+    ) {
+      return;
+    }
+
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
+
+    if (invitation) {
+      await this.workspaceInvitationService.validateInvitation({
+        workspacePersonalInviteToken: invitation.value,
+        email: user.email,
+      });
+      await this.userWorkspaceService.addUserToWorkspace(user, workspace);
+
+      return;
+    }
+
+    throw new AuthException(
+      "You're not member of this workspace.",
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
+  }
+
+  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+    if (!targetWorkspace.isPasswordAuthEnabled) {
+      throw new AuthException(
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        email: challengeInput.email,
+      },
+      relations: ['workspaces'],
     });
 
     if (!user) {
@@ -66,6 +124,8 @@ export class AuthService {
         AuthExceptionCode.USER_NOT_FOUND,
       );
     }
+
+    await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -94,19 +154,23 @@ export class AuthService {
     password,
     workspaceInviteHash,
     workspacePersonalInviteToken,
+    targetWorkspaceSubdomain,
     firstName,
     lastName,
     picture,
     fromSSO,
+    authProvider,
   }: {
     email: string;
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string | null;
-    workspacePersonalInviteToken?: string | null;
+    workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
+    targetWorkspaceSubdomain?: string;
+    authProvider?: WorkspaceAuthProvider;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -115,12 +179,14 @@ export class AuthService {
       lastName,
       workspaceInviteHash,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain,
       picture,
       fromSSO,
+      authProvider,
     });
   }
 
-  async verify(email: string): Promise<Verify> {
+  async verify(email: string, workspaceId: string): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -129,40 +195,27 @@ export class AuthService {
     }
 
     const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      where: { email },
     });
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
-    if (!user.defaultWorkspace) {
-      throw new AuthException(
-        'User has no default workspace',
-        AuthExceptionCode.INVALID_DATA,
-      );
-    }
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
     const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
     const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
 
     return {
-      user,
       tokens: {
         accessToken,
         refreshToken,
@@ -170,12 +223,19 @@ export class AuthService {
     };
   }
 
-  async checkUserExists(email: string): Promise<UserExists> {
+  async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
     const user = await this.userRepository.findOneBy({
       email,
     });
 
-    return { exists: !!user };
+    if (userValidator.isDefined(user)) {
+      return {
+        exists: true,
+        availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
+      };
+    }
+
+    return { exists: false };
   }
 
   async checkWorkspaceInviteHashIsValid(
@@ -188,56 +248,10 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async impersonate(userIdToImpersonate: string, userImpersonating: User) {
-    if (!userImpersonating.canImpersonate) {
-      throw new AuthException(
-        'User cannot impersonate',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userIdToImpersonate,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
-    if (!user.defaultWorkspace.allowImpersonation) {
-      throw new AuthException(
-        'Impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const accessToken = await this.accessTokenService.generateAccessToken(
-      user.id,
-      user.defaultWorkspaceId,
-    );
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      user.id,
-      user.defaultWorkspaceId,
-    );
-
-    return {
-      user,
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
-    };
-  }
-
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
     user: User,
+    workspace: Workspace,
   ): Promise<AuthorizeApp> {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -289,14 +303,14 @@ export class AuthService {
           value: codeChallenge,
           type: AppTokenType.CodeChallenge,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
         {
           value: authorizationCode,
           type: AppTokenType.AuthorizationCode,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
       ]);
@@ -307,7 +321,7 @@ export class AuthService {
         value: authorizationCode,
         type: AppTokenType.AuthorizationCode,
         userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
         expiresAt,
       });
 
@@ -359,7 +373,7 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.environmentService.get('FRONT_BASE_URL'),
+      link: this.domainManagerService.getBaseUrl().toString(),
     });
 
     const html = render(emailTemplate, {
@@ -399,9 +413,55 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.get(
-      'FRONT_BASE_URL',
-    )}/verify?loginToken=${loginToken}`;
+  computeRedirectURI(loginToken: string, subdomain?: string) {
+    const url = this.domainManagerService.buildWorkspaceURL({
+      subdomain,
+      pathname: '/verify',
+      searchParams: { loginToken },
+    });
+
+    return url.toString();
+  }
+
+  async findAvailableWorkspacesByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: [
+        'workspaces',
+        'workspaces.workspace',
+        'workspaces.workspace.workspaceSSOIdentityProviders',
+      ],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
+      id: userWorkspace.workspaceId,
+      displayName: userWorkspace.workspace.displayName,
+      subdomain: userWorkspace.workspace.subdomain,
+      logo: userWorkspace.workspace.logo,
+      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
   }
 }

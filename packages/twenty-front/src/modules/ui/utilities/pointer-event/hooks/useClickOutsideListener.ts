@@ -2,10 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
-import {
-  ClickOutsideListenerProps,
-  useListenClickOutsideV2,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+
 import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
@@ -16,35 +13,6 @@ export const useClickOutsideListener = (componentId: string) => {
     getClickOutsideListenerCallbacksState,
     getClickOutsideListenerMouseDownHappenedState,
   } = useClickOustideListenerStates(componentId);
-
-  const useListenClickOutside = <T extends Element>({
-    callback,
-    refs,
-    enabled,
-    mode,
-  }: Omit<ClickOutsideListenerProps<T>, 'listenerId'>) => {
-    return useListenClickOutsideV2({
-      listenerId: componentId,
-      refs,
-      callback: useRecoilCallback(
-        ({ snapshot }) =>
-          (event) => {
-            callback(event);
-
-            const additionalCallbacks = snapshot
-              .getLoadable(getClickOutsideListenerCallbacksState)
-              .getValue();
-
-            additionalCallbacks.forEach((additionalCallback) => {
-              additionalCallback.callbackFunction(event);
-            });
-          },
-        [callback],
-      ),
-      enabled,
-      mode,
-    });
-  };
 
   const toggleClickOutsideListener = useRecoilCallback(
     ({ set }) =>
@@ -152,7 +120,6 @@ export const useClickOutsideListener = (componentId: string) => {
   };
 
   return {
-    useListenClickOutside,
     toggleClickOutsideListener,
     useRegisterClickOutsideListenerCallback,
   };

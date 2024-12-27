@@ -217,6 +217,13 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   note: '20202020-1f25-43fe-8b00-af212fdde824',
   view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
+  favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
+};
+
+export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
+  position: '20202020-5278-4bde-8909-2cec74d43744',
+  name: '20202020-82a3-4537-8ff0-dbce7eec35d6',
+  favorites: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
 };
 
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
@@ -373,6 +380,7 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   size: '20202020-6fab-4bd0-ae72-20f3ee39d581',
   position: '20202020-19e5-4e4c-8c15-3a96d1fd0650',
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
+  aggregateOperation: '20202020-2cd7-4f94-ae83-4a14f5731a04',
 };
 
 export const VIEW_GROUP_STANDARD_FIELD_IDS = {
@@ -413,6 +421,9 @@ export const VIEW_STANDARD_FIELD_IDS = {
   key: '20202020-298e-49fa-9f4a-7b416b110443',
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
   kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
+  kanbanAggregateOperation: '20202020-8da2-45de-a731-61bed84b17a8',
+  kanbanAggregateOperationFieldMetadataId:
+    '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
@@ -445,6 +456,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
+  createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
 };
 
 export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {

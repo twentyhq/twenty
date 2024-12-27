@@ -15,7 +15,7 @@ export const generateEmptyFieldValue = (
       return { primaryEmail: '', additionalEmails: null };
     }
     case FieldMetadataType.Links: {
-      return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null };
+      return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: [] };
     }
     case FieldMetadataType.FullName: {
       return {
@@ -95,6 +95,7 @@ export const generateEmptyFieldValue = (
       return {
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',
+        primaryPhoneCallingCode: '',
         additionalPhones: null,
       };
     }

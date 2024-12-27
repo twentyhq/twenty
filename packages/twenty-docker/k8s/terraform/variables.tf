@@ -29,7 +29,7 @@ variable "twentycrm_server_image" {
 
 variable "twentycrm_db_image" {
   type        = string
-  default     = "twentycrm/twenty-postgres:latest"
+  default     = "twentycrm/twenty-postgres-spilo:latest"
   description = "TwentyCRM image for database deployment. This defaults to latest."
 }
 

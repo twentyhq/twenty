@@ -23,9 +23,15 @@ describe('computeSchemaComponents', () => {
           fieldPhones: {
             properties: {
               additionalPhones: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
               },
               primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneCallingCode: {
                 type: 'string',
               },
               primaryPhoneNumber: {
@@ -41,7 +47,11 @@ describe('computeSchemaComponents', () => {
                 type: 'string',
               },
               additionalEmails: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'email',
+                },
               },
             },
           },
@@ -85,6 +95,7 @@ describe('computeSchemaComponents', () => {
                   properties: {
                     url: {
                       type: 'string',
+                      format: 'uri',
                     },
                     label: {
                       type: 'string',
@@ -200,9 +211,15 @@ describe('computeSchemaComponents', () => {
           fieldPhones: {
             properties: {
               additionalPhones: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
               },
               primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneCallingCode: {
                 type: 'string',
               },
               primaryPhoneNumber: {
@@ -218,7 +235,11 @@ describe('computeSchemaComponents', () => {
                 type: 'string',
               },
               additionalEmails: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'email',
+                },
               },
             },
           },
@@ -262,6 +283,7 @@ describe('computeSchemaComponents', () => {
                   properties: {
                     url: {
                       type: 'string',
+                      format: 'uri',
                     },
                     label: {
                       type: 'string',
@@ -376,9 +398,15 @@ describe('computeSchemaComponents', () => {
           fieldPhones: {
             properties: {
               additionalPhones: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
               },
               primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneCallingCode: {
                 type: 'string',
               },
               primaryPhoneNumber: {
@@ -394,7 +422,11 @@ describe('computeSchemaComponents', () => {
                 type: 'string',
               },
               additionalEmails: {
-                type: 'object',
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'email',
+                },
               },
             },
           },
@@ -438,6 +470,7 @@ describe('computeSchemaComponents', () => {
                   properties: {
                     url: {
                       type: 'string',
+                      format: 'uri',
                     },
                     label: {
                       type: 'string',

@@ -61,6 +61,7 @@ export const RecordTableTd = ({
   hasRightBorder = true,
   hasBottomBorder = true,
   width,
+  colSpan,
   ...dragHandleProps
 }: {
   className?: string;
@@ -74,6 +75,7 @@ export const RecordTableTd = ({
   hasBottomBorder?: boolean;
   left?: number;
   width?: number;
+  colSpan?: number;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
@@ -97,6 +99,7 @@ export const RecordTableTd = ({
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
       width={width}
+      colSpan={colSpan}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
     >

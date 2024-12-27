@@ -6,7 +6,7 @@ import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperti
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   CalendarEventParticipantMatchParticipantJob,
   CalendarEventParticipantMatchParticipantJobData,
@@ -16,7 +16,7 @@ import {
   CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class CalendarEventParticipantPersonListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('person', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('person', DatabaseEventAction.CREATED)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<PersonWorkspaceEntity>
@@ -49,7 +49,7 @@ export class CalendarEventParticipantPersonListener {
     }
   }
 
-  @OnDatabaseEvent('person', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('person', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<PersonWorkspaceEntity>

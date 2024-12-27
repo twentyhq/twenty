@@ -1,16 +1,16 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -28,15 +28,17 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellFromCell = () => {
-  const { onOpenTableCell } = useContext(RecordTableContext);
-  const cellPosition = useCurrentTableCellPosition();
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
   const { recordId, fieldDefinition } = useContext(FieldContext);
-  const { isReadOnly, pathToShowPage, objectNameSingular } = useContext(
-    RecordTableRowContext,
-  );
-  const isFieldReadOnly = useIsFieldReadOnly();
-  const cellIsReadOnly = isReadOnly || isFieldReadOnly;
+
+  const { pathToShowPage, objectNameSingular } =
+    useRecordTableRowContextOrThrow();
+
+  const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
+
+  const cellPosition = useCurrentTableCellPosition();
+
+  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const openTableCell = (
     initialValue?: string,
@@ -47,7 +49,7 @@ export const useOpenRecordTableCellFromCell = () => {
       customCellHotkeyScope,
       recordId,
       fieldDefinition,
-      isReadOnly: cellIsReadOnly,
+      isReadOnly: isFieldReadOnly,
       pathToShowPage,
       objectNameSingular,
       initialValue,

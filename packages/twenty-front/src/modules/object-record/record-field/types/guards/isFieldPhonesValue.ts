@@ -5,8 +5,15 @@ import { FieldPhonesValue } from '../FieldMetadata';
 export const phonesSchema = z.object({
   primaryPhoneNumber: z.string(),
   primaryPhoneCountryCode: z.string(),
+  primaryPhoneCallingCode: z.string(),
   additionalPhones: z
-    .array(z.object({ number: z.string(), countryCode: z.string() }))
+    .array(
+      z.object({
+        number: z.string(),
+        callingCode: z.string(),
+        countryCode: z.string(),
+      }),
+    )
     .nullable(),
 }) satisfies z.ZodType<FieldPhonesValue>;
 

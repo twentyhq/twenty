@@ -7,14 +7,6 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
-import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
-import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
-import {
-  GenerateJWTOutput,
-  GenerateJWTOutputWithAuthTokens,
-  GenerateJWTOutputWithSSOAUTH,
-} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
@@ -22,7 +14,7 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
-import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+// import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -36,15 +28,24 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { ChallengeInput } from './dto/challenge.input';
-import { ImpersonateInput } from './dto/impersonate.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
-import { UserExists } from './dto/user-exists.entity';
+import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
-import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
@@ -62,19 +63,16 @@ export class AuthResolver {
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
-    private oauthService: OAuthService,
+    // private oauthService: OAuthService,
+    private domainManagerService: DomainManagerService,
   ) {}
 
   @UseGuards(CaptchaGuard)
-  @Query(() => UserExists)
+  @Query(() => UserExistsOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<UserExists> {
-    const { exists } = await this.authService.checkUserExists(
-      checkUserExistsInput.email,
-    );
-
-    return { exists };
+  ): Promise<typeof UserExistsOutput> {
+    return await this.authService.checkUserExists(checkUserExistsInput.email);
   }
 
   @Query(() => WorkspaceInviteHashValid)
@@ -97,40 +95,66 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
-    const user = await this.authService.challenge(challengeInput);
+  async challenge(
+    @Args() challengeInput: ChallengeInput,
+    @OriginHeader() origin: string,
+  ): Promise<LoginToken> {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+    const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
     return { loginToken };
   }
 
   @UseGuards(CaptchaGuard)
-  @Mutation(() => LoginToken)
-  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
-    const user = await this.authService.signInUp({
+  @Mutation(() => SignUpOutput)
+  async signUp(
+    @Args() signUpInput: SignUpInput,
+    @OriginHeader() origin: string,
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
+      targetWorkspaceSubdomain:
+        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
       fromSSO: false,
+      authProvider: 'password',
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
-    return { loginToken };
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        subdomain: workspace.subdomain,
+      },
+    };
   }
 
-  @Mutation(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    const tokens = await this.oauthService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-
-    return tokens;
-  }
+  // @Mutation(() => ExchangeAuthCode)
+  // async exchangeAuthorizationCode(
+  //   @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  // ) {
+  //   return await this.oauthService.verifyAuthorizationCode(
+  //     exchangeAuthCodeInput,
+  //   );
+  // }
 
   @Mutation(() => TransientToken)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -150,21 +174,35 @@ export class AuthResolver {
       await this.transientTokenService.generateTransientToken(
         workspaceMember.id,
         user.id,
-        user.defaultWorkspaceId,
+        workspace.id,
       );
 
     return { transientToken };
   }
 
-  @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
-    const email = await this.loginTokenService.verifyLoginToken(
-      verifyInput.loginToken,
-    );
+  @Mutation(() => AuthTokens)
+  async verify(
+    @Args() verifyInput: VerifyInput,
+    @OriginHeader() origin: string,
+  ): Promise<AuthTokens> {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
-    const result = await this.authService.verify(email);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    return result;
+    const { sub: email, workspaceId } =
+      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
+
+    if (workspaceId !== workspace.id) {
+      throw new AuthException(
+        'Token is not valid for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return await this.authService.verify(email, workspace.id);
   }
 
   @Mutation(() => AuthorizeApp)
@@ -172,51 +210,25 @@ export class AuthResolver {
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<AuthorizeApp> {
-    const authorizedApp = await this.authService.generateAuthorizationCode(
+    return await this.authService.generateAuthorizationCode(
       authorizeAppInput,
       user,
+      workspace,
     );
-
-    return authorizedApp;
   }
 
-  @Mutation(() => GenerateJWTOutput)
+  @Mutation(() => PublicWorkspaceDataOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async generateJWT(
+  async switchWorkspace(
     @AuthUser() user: User,
-    @Args() args: GenerateJwtInput,
-  ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
-    const result = await this.switchWorkspaceService.switchWorkspace(
+    @Args() args: SwitchWorkspaceInput,
+  ): Promise<PublicWorkspaceDataOutput> {
+    return await this.switchWorkspaceService.switchWorkspace(
       user,
       args.workspaceId,
     );
-
-    if (result.useSSOAuth) {
-      return {
-        success: true,
-        reason: 'WORKSPACE_USE_SSO_AUTH',
-        availableSSOIDPs: result.availableSSOIdentityProviders.map(
-          (identityProvider) => ({
-            ...identityProvider,
-            workspace: {
-              id: result.workspace.id,
-              displayName: result.workspace.displayName,
-            },
-          }),
-        ),
-      };
-    }
-
-    return {
-      success: true,
-      reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
-      authTokens:
-        await this.switchWorkspaceService.generateSwitchWorkspaceToken(
-          user,
-          result.workspace,
-        ),
-    };
   }
 
   @Mutation(() => AuthTokens)
@@ -226,15 +238,6 @@ export class AuthResolver {
     );
 
     return { tokens: tokens };
-  }
-
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  @Mutation(() => Verify)
-  async impersonate(
-    @Args() impersonateInput: ImpersonateInput,
-    @AuthUser() user: User,
-  ): Promise<Verify> {
-    return await this.authService.impersonate(impersonateInput.userId, user);
   }
 
   @UseGuards(WorkspaceAuthGuard)
@@ -287,5 +290,12 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  @Query(() => [AvailableWorkspaceOutput])
+  async findAvailableWorkspacesByEmail(
+    @Args('email') email: string,
+  ): Promise<AvailableWorkspaceOutput[]> {
+    return this.authService.findAvailableWorkspacesByEmail(email);
   }
 }

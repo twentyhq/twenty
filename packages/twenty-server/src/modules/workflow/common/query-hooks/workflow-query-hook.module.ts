@@ -9,6 +9,10 @@ import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/quer
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.pre-query.hook';
 import { WorkflowRunCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-many.pre-query.hook';
 import { WorkflowRunCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-one.pre-query.hook';
+import { WorkflowRunDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-many.pre-query.hook';
+import { WorkflowRunDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-one.pre-query.hook';
+import { WorkflowRunUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-many.pre-query.hook';
+import { WorkflowRunUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-one.pre-query.hook';
 import { WorkflowUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-many.pre-query.hook';
 import { WorkflowUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-one.pre-query.hook';
 import { WorkflowVersionCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-many.pre-query.hook';
@@ -31,6 +35,10 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowUpdateManyPreQueryHook,
     WorkflowRunCreateOnePreQueryHook,
     WorkflowRunCreateManyPreQueryHook,
+    WorkflowRunUpdateOnePreQueryHook,
+    WorkflowRunUpdateManyPreQueryHook,
+    WorkflowRunDeleteOnePreQueryHook,
+    WorkflowRunDeleteManyPreQueryHook,
     WorkflowVersionCreateOnePreQueryHook,
     WorkflowVersionCreateManyPreQueryHook,
     WorkflowVersionUpdateOnePreQueryHook,

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconComponent, MenuItem } from 'twenty-ui';
+import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,11 +12,13 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<Value extends string | number | null> = {
+export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;
   label: string;
   Icon?: IconComponent;
 };
+
+export type SelectSizeVariant = 'small' | 'default';
 
 type CallToActionButton = {
   text: string;
@@ -24,10 +26,12 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
-  disableBlur?: boolean;
+  selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   dropdownWidthAuto?: boolean;
@@ -39,6 +43,7 @@ export type SelectProps<Value extends string | number | null> = {
   options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
+  needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
 };
 
@@ -54,10 +59,10 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
-  disableBlur = false,
+  selectSizeVariant,
   dropdownId,
   dropdownWidth = 176,
   dropdownWidthAuto = false,
@@ -69,6 +74,7 @@ export const Select = <Value extends string | number | null>({
   options,
   value,
   withSearchInput,
+  needIconCheck,
   callToActionButton,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
@@ -115,6 +121,7 @@ export const Select = <Value extends string | number | null>({
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={isDisabled}
+          selectSizeVariant={selectSizeVariant}
         />
       ) : (
         <Dropdown
@@ -125,9 +132,9 @@ export const Select = <Value extends string | number | null>({
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
+              selectSizeVariant={selectSizeVariant}
             />
           }
-          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (
@@ -143,10 +150,12 @@ export const Select = <Value extends string | number | null>({
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
-                    <MenuItem
-                      key={option.value}
+                    <MenuItemSelect
+                      key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
+                      selected={selectedOption.value === option.value}
+                      needIconCheck={needIconCheck}
                       onClick={() => {
                         onChange?.(option.value);
                         onBlur?.();
@@ -160,7 +169,7 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}

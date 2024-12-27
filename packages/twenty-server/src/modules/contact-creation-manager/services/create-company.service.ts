@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
-import { EntityManager, ILike } from 'typeorm';
+import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared';
+import { DeepPartial, EntityManager, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -25,7 +26,7 @@ export class CreateCompanyService {
 
   constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
     this.httpService = axios.create({
-      baseURL: 'https://companies.twenty.com',
+      baseURL: TWENTY_COMPANIES_BASE_URL,
     });
   }
 
@@ -90,11 +91,7 @@ export class CreateCompanyService {
     );
 
     // Create new companies
-    const createdCompanies = await companyRepository.save(
-      newCompaniesData,
-      undefined,
-      transactionManager,
-    );
+    const createdCompanies = await companyRepository.save(newCompaniesData);
     const createdCompanyIdsMap = this.createCompanyMap(createdCompanies);
 
     return {
@@ -157,10 +154,10 @@ export class CreateCompanyService {
     };
   }
 
-  private createCompanyMap(companies: CompanyWorkspaceEntity[]) {
+  private createCompanyMap(companies: DeepPartial<CompanyWorkspaceEntity>[]) {
     return companies.reduce(
       (acc, company) => {
-        if (!company.domainName) {
+        if (!company.domainName?.primaryLinkUrl || !company.id) {
           return acc;
         }
         const key = extractDomainFromLink(company.domainName.primaryLinkUrl);

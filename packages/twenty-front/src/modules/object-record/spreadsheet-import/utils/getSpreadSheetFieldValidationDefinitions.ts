@@ -33,9 +33,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
     case FieldMetadataType.Number:
       return [
         {
-          rule: 'regex',
-          value: '^\\d+$',
-          errorMessage: fieldName + ' must be a number',
+          rule: 'function',
+          isValid: (value: string) => !isNaN(+value),
+          errorMessage: fieldName + ' is not valid',
           level: 'error',
         },
       ];

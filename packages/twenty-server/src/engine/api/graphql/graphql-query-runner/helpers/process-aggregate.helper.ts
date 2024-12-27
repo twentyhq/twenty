@@ -1,16 +1,15 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { formatColumnNameFromCompositeFieldAndSubfield } from 'src/engine/twenty-orm/utils/format-column-name-from-composite-field-and-subfield.util';
+import { isDefined } from 'src/utils/is-defined';
 
 export class ProcessAggregateHelper {
   public addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
-    fieldMetadataMapByName,
     selectedAggregatedFields,
     queryBuilder,
   }: {
-    fieldMetadataMapByName: Record<string, FieldMetadataInterface>;
     selectedAggregatedFields: Record<string, AggregationField>;
     queryBuilder: SelectQueryBuilder<any>;
   }) => {
@@ -19,17 +18,28 @@ export class ProcessAggregateHelper {
     for (const [aggregatedFieldName, aggregatedField] of Object.entries(
       selectedAggregatedFields,
     )) {
-      const fieldMetadata = fieldMetadataMapByName[aggregatedField.fromField];
-
-      if (!fieldMetadata) {
+      if (
+        !isDefined(aggregatedField?.fromField) ||
+        !isDefined(aggregatedField?.aggregateOperation)
+      ) {
         continue;
       }
 
-      const fieldName = fieldMetadata.name;
-      const operation = aggregatedField.aggregationOperation;
+      const columnName = formatColumnNameFromCompositeFieldAndSubfield(
+        aggregatedField.fromField,
+        aggregatedField.fromSubField,
+      );
+
+      if (
+        !Object.values(AGGREGATE_OPERATIONS).includes(
+          aggregatedField.aggregateOperation,
+        )
+      ) {
+        continue;
+      }
 
       queryBuilder.addSelect(
-        `${operation}("${fieldName}")`,
+        `${aggregatedField.aggregateOperation}("${columnName}")`,
         `${aggregatedFieldName}`,
       );
     }

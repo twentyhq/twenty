@@ -3,17 +3,21 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 
+import { CommandLogger } from './logger';
 export type BaseCommandOptions = {
   workspaceId?: string;
   dryRun?: boolean;
+  verbose?: boolean;
 };
 
 export abstract class BaseCommandRunner extends CommandRunner {
-  protected readonly logger: Logger;
-
+  protected logger: CommandLogger | Logger;
   constructor() {
     super();
-    this.logger = new Logger(this.constructor.name);
+    this.logger = new CommandLogger({
+      verbose: false,
+      constructorName: this.constructor.name,
+    });
   }
 
   @Option({
@@ -25,10 +29,26 @@ export abstract class BaseCommandRunner extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '-v, --verbose',
+    description: 'Verbose output',
+    required: false,
+  })
+  parseVerbose(): boolean {
+    return true;
+  }
+
   override async run(
     passedParams: string[],
     options: BaseCommandOptions,
   ): Promise<void> {
+    if (options.verbose) {
+      this.logger = new CommandLogger({
+        verbose: true,
+        constructorName: this.constructor.name,
+      });
+    }
+
     try {
       await this.executeBaseCommand(passedParams, options);
     } catch (error) {

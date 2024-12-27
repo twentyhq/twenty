@@ -25,11 +25,13 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
   text: ReactNode;
+  contextualText?: ReactNode;
   hasSubMenu?: boolean;
 };
 
@@ -39,11 +41,13 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  RightIcon,
   onClick,
   onMouseEnter,
   onMouseLeave,
   testId,
   text,
+  contextualText,
   hasSubMenu = false,
 }: MenuItemProps) => {
   const theme = useTheme();
@@ -68,13 +72,20 @@ export const MenuItem = ({
       onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        <MenuItemLeftContent
+          LeftIcon={LeftIcon ?? undefined}
+          text={text}
+          contextualText={contextualText}
+        />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
+      {RightIcon && (
+        <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+      )}
       {hasSubMenu && (
         <IconChevronRight
           size={theme.icon.size.sm}

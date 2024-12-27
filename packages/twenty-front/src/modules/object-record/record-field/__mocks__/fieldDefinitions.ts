@@ -108,5 +108,6 @@ export const actorFieldDefinition: FieldDefinition<FieldActorMetadata> = {
   defaultValue: { source: 'MANUAL', name: '' },
   metadata: {
     fieldName: 'actor',
+    objectMetadataNameSingular: 'person',
   },
 };

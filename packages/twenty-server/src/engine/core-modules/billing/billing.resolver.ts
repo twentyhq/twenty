@@ -1,14 +1,13 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { AvailableProduct } from 'src/engine/core-modules/billing/interfaces/available-product.interface';
-
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dto/billing-session.input';
 import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
 import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
 import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
 import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
 import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-billing.entity';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
@@ -41,11 +40,12 @@ export class BillingResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async billingPortalSession(
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
-        user.defaultWorkspaceId,
+        workspace.id,
         returnUrlPath,
       ),
     };

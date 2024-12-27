@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { IconCheck, IconMinus } from '@ui/display';
+
+import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
 import * as React from 'react';
 
 export enum CheckboxVariant {
@@ -42,8 +43,13 @@ type InputProps = {
 };
 
 const StyledInputContainer = styled.div<InputProps>`
-  --size: ${({ checkboxSize }) =>
-    checkboxSize === CheckboxSize.Large ? '32px' : '24px'};
+  --size: ${({ checkboxSize, hoverable }) => {
+    if (hoverable === true) {
+      return checkboxSize === CheckboxSize.Large ? '32px' : '24px';
+    } else {
+      return checkboxSize === CheckboxSize.Large ? '20px' : '14px';
+    }
+  }};
   align-items: center;
   border-radius: ${({ theme, shape }) =>
     shape === CheckboxShape.Rounded
@@ -52,17 +58,22 @@ const StyledInputContainer = styled.div<InputProps>`
 
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  padding: ${({ theme, checkboxSize }) =>
-    checkboxSize === CheckboxSize.Large
-      ? theme.spacing(1.5)
-      : theme.spacing(1.25)};
+  padding: ${({ theme, checkboxSize, hoverable }) => {
+    if (hoverable === true) {
+      return checkboxSize === CheckboxSize.Large
+        ? theme.spacing(1.5)
+        : theme.spacing(1.25);
+    } else {
+      return 0;
+    }
+  }};
   position: relative;
   ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
     if (!hoverable || disabled === true) return '';
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
-          ? theme.color.blue10
+          ? theme.background.transparent.blue
           : theme.background.transparent.light
       };
     }}

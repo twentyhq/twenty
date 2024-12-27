@@ -7,7 +7,7 @@ import {
 
 export const parseGaxiosError = (
   error: GaxiosError,
-): MessageImportDriverException => {
+): MessageImportDriverException | undefined => {
   const { code } = error;
 
   switch (code) {
@@ -22,9 +22,6 @@ export const parseGaxiosError = (
       );
 
     default:
-      return new MessageImportDriverException(
-        error.message,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
+      return undefined;
   }
 };

@@ -24,10 +24,12 @@ describe('formatFieldMetadataItemInput', () => {
     const input = {
       defaultValue: "'OPTION_1'",
       label: 'Example Label',
+      name: 'exampleLabel',
       icon: 'example-icon',
       type: FieldMetadataType.Select,
       description: 'Example description',
       options,
+      isLabelSyncedWithName: true,
     };
 
     const expected = {
@@ -37,6 +39,7 @@ describe('formatFieldMetadataItemInput', () => {
       name: 'exampleLabel',
       options,
       defaultValue: "'OPTION_1'",
+      isLabelSyncedWithName: true,
     };
 
     const result = formatFieldMetadataItemInput(input);
@@ -47,9 +50,11 @@ describe('formatFieldMetadataItemInput', () => {
   it('should handle input without options', () => {
     const input = {
       label: 'Example Label',
+      name: 'exampleLabel',
       icon: 'example-icon',
       type: FieldMetadataType.Select,
       description: 'Example description',
+      isLabelSyncedWithName: true,
     };
 
     const expected = {
@@ -59,6 +64,7 @@ describe('formatFieldMetadataItemInput', () => {
       name: 'exampleLabel',
       options: undefined,
       defaultValue: undefined,
+      isLabelSyncedWithName: true,
     };
 
     const result = formatFieldMetadataItemInput(input);
@@ -86,10 +92,12 @@ describe('formatFieldMetadataItemInput', () => {
     const input = {
       defaultValue: ["'OPTION_1'", "'OPTION_2'"],
       label: 'Example Label',
+      name: 'exampleLabel',
       icon: 'example-icon',
       type: FieldMetadataType.MultiSelect,
       description: 'Example description',
       options,
+      isLabelSyncedWithName: true,
     };
 
     const expected = {
@@ -99,6 +107,7 @@ describe('formatFieldMetadataItemInput', () => {
       name: 'exampleLabel',
       options,
       defaultValue: ["'OPTION_1'", "'OPTION_2'"],
+      isLabelSyncedWithName: true,
     };
 
     const result = formatFieldMetadataItemInput(input);
@@ -109,9 +118,11 @@ describe('formatFieldMetadataItemInput', () => {
   it('should handle multi select input without options', () => {
     const input = {
       label: 'Example Label',
+      name: 'exampleLabel',
       icon: 'example-icon',
       type: FieldMetadataType.MultiSelect,
       description: 'Example description',
+      isLabelSyncedWithName: true,
     };
 
     const expected = {
@@ -121,6 +132,7 @@ describe('formatFieldMetadataItemInput', () => {
       name: 'exampleLabel',
       options: undefined,
       defaultValue: undefined,
+      isLabelSyncedWithName: true,
     };
 
     const result = formatFieldMetadataItemInput(input);

@@ -6,8 +6,10 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -21,6 +23,9 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,7 +34,11 @@ export class MicrosoftAPIsAuthController {
     private readonly microsoftAPIsService: MicrosoftAPIsService,
     private readonly transientTokenService: TransientTokenService,
     private readonly environmentService: EnvironmentService,
+    private readonly workspaceService: WorkspaceService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly onboardingService: OnboardingService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   @Get()
@@ -96,10 +105,24 @@ export class MicrosoftAPIsAuthController {
       });
     }
 
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     return res.redirect(
-      `${this.environmentService.get('FRONT_BASE_URL')}${
-        redirectLocation || '/settings/accounts'
-      }`,
+      this.domainManagerService
+        .buildWorkspaceURL({
+          subdomain: workspace.subdomain,
+          pathname: redirectLocation || '/settings/accounts',
+        })
+        .toString(),
     );
   }
 }

@@ -22,7 +22,6 @@ export const AdvancedFilterViewFilterValueInput = ({
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
     setSelectedFilter,
   } = useFilterDropdown();
 
@@ -40,7 +39,6 @@ export const AdvancedFilterViewFilterValueInput = ({
 
   return (
     <Dropdown
-      disableBlur
       dropdownId={dropdownId}
       clickableComponent={
         <SelectControl
@@ -53,7 +51,6 @@ export const AdvancedFilterViewFilterValueInput = ({
       onOpen={() => {
         setFilterDefinitionUsedInDropdown(filter.definition);
         setSelectedOperandInDropdown(filter.operand);
-        setIsObjectFilterDropdownOperandSelectUnfolded(true);
         setSelectedFilter(filter);
       }}
       dropdownComponents={

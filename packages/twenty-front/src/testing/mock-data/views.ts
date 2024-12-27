@@ -67,7 +67,7 @@ export const mockedViewsData = [
     objectMetadataId: companyObjectMetadata?.id,
     type: 'table',
     icon: 'IconSkyline',
-    key: 'INDEX',
+    key: null,
     kanbanFieldMetadataId: null,
     position: 0,
     createdAt: '2021-09-01T00:00:00.000Z',

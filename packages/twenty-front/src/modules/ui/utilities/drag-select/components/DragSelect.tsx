@@ -22,7 +22,9 @@ export const DragSelect = ({
   onDragSelectionEnd,
 }: DragSelectProps) => {
   const theme = useTheme();
+
   const { isDragSelectionStartEnabled } = useDragSelect();
+
   const { DragSelection } = useSelectionContainer({
     shouldStartSelecting: (target) => {
       if (!isDragSelectionStartEnabled()) {

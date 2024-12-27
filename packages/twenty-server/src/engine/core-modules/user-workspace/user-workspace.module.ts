@@ -9,17 +9,20 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [User, UserWorkspace, AppToken],
+          [User, UserWorkspace, Workspace],
           'core',
         ),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,
@@ -29,6 +32,6 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [UserWorkspaceService],
+  providers: [UserWorkspaceService, UserWorkspaceResolver],
 })
 export class UserWorkspaceModule {}

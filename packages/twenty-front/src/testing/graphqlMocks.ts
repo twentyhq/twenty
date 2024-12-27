@@ -11,6 +11,7 @@ import {
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
@@ -22,6 +23,7 @@ import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/gen
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
+import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
 
 const peopleMock = getPeopleMock();
 const companiesMock = getCompaniesMock();
@@ -40,6 +42,28 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query(
+      getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
+      () => {
+        return HttpResponse.json({
+          data: {
+            getPublicWorkspaceDataBySubdomain: {
+              id: 'id',
+              logo: 'logo',
+              displayName: 'displayName',
+              subdomain: 'subdomain',
+              authProviders: {
+                google: true,
+                microsoft: false,
+                password: true,
+                magicLink: false,
+                sso: [],
+              },
+            },
+          },
+        });
+      },
+    ),
     graphql.mutation(getOperationName(TRACK) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -103,6 +127,45 @@ export const graphqlMocks = {
         data: {
           searchOpportunities: {
             edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('CombinedSearchRecords', () => {
+      return HttpResponse.json({
+        data: {
+          searchOpportunities: {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          searchCompanies: {
+            edges: companiesMock.slice(0, 3).map((company) => ({
+              node: company,
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          searchPeople: {
+            edges: peopleMock.slice(0, 3).map((person) => ({
+              node: person,
+              cursor: null,
+            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -212,8 +275,20 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
+            totalCount: mockedFavoritesData.length,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          favoriteFolders: {
             edges: [],
-            totalCount: 0,
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -449,7 +524,10 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
-            edges: [],
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -661,6 +739,11 @@ export const graphqlMocks = {
                   },
                   deletedAt: null,
                   workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                  workflow: {
+                    __typename: 'Workflow',
+                    id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                    name: '1231 qqerrt',
+                  },
                 },
               },
             ],

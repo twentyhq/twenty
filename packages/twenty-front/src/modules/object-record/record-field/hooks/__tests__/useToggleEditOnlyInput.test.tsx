@@ -102,6 +102,7 @@ const mocks: MockedResponse[] = [
                   companyId
                   createdAt
                   deletedAt
+                  favoriteFolderId
                   id
                   noteId
                   opportunityId
@@ -207,6 +208,7 @@ const mocks: MockedResponse[] = [
                   phones {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   position
@@ -214,6 +216,7 @@ const mocks: MockedResponse[] = [
                   whatsapp {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   workPreference

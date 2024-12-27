@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext, useMemo } from 'react';
+import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -9,7 +9,9 @@ import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
+import { Nullable, stringToHslColor } from '@ui/utilities';
+import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
+import { getImageAbsoluteURI } from 'twenty-shared';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -81,17 +83,17 @@ export const Avatar = ({
     invalidAvatarUrlsState,
   );
 
-  const avatarImageURI = useMemo(
-    () => getImageAbsoluteURI(avatarUrl),
-    [avatarUrl],
-  );
-
-  const noAvatarUrl = !isNonEmptyString(avatarImageURI);
+  const avatarImageURI = isNonEmptyString(avatarUrl)
+    ? getImageAbsoluteURI({
+        imageUrl: avatarUrl,
+        baseUrl: REACT_APP_SERVER_BASE_URL,
+      })
+    : null;
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
   const showPlaceholder =
-    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
+    isNull(avatarImageURI) || invalidAvatarUrls.includes(avatarImageURI);
 
   const handleImageError = () => {
     if (isNonEmptyString(avatarImageURI)) {
@@ -110,11 +112,7 @@ export const Avatar = ({
     <StyledAvatar
       size={size}
       backgroundColor={
-        Icon
-          ? theme.background.tertiary
-          : showBackgroundColor
-            ? fixedBackgroundColor
-            : 'none'
+        Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
       }
       color={fixedColor}
       clickable={!isUndefined(onClick)}

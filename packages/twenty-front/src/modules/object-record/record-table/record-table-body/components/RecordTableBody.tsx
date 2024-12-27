@@ -1,29 +1,50 @@
-import { RecordTableRows } from '@/object-record/record-table/components/RecordTableRows';
-import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
-import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
-import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
-import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
-import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-export const RecordTableBody = () => {
-  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState);
+const StyledTbody = styled.tbody`
+  &.first-columns-sticky {
+    td:nth-of-type(1) {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      transition: 0.3s ease;
+    }
+    td:nth-of-type(2) {
+      position: sticky;
+      left: 11px;
+      z-index: 5;
+      transition: 0.3s ease;
+    }
+    td:nth-of-type(3) {
+      position: sticky;
+      left: 43px;
+      z-index: 5;
+      transition: 0.3s ease;
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
-    isRecordTableInitialLoadingComponentState,
-  );
+      @media (max-width: ${MOBILE_VIEWPORT}px) {
+        & [data-testid='editable-cell-display-mode'] {
+          [data-testid='tooltip'] {
+            display: none;
+          }
 
-  if (isRecordTableInitialLoading && tableRowIds.length === 0) {
-    return <RecordTableBodyLoading />;
+          [data-testid='chip'] {
+            gap: 0;
+          }
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        height: calc(100% + 2px);
+        width: 4px;
+        right: 0px;
+        box-shadow: ${({ theme }) => theme.boxShadow.light};
+        clip-path: inset(0px -4px 0px 0px);
+      }
+    }
   }
+`;
 
-  return (
-    <RecordTableBodyDragDropContext>
-      <RecordTableBodyDroppable>
-        <RecordTablePendingRow />
-        <RecordTableRows />
-      </RecordTableBodyDroppable>
-    </RecordTableBodyDragDropContext>
-  );
-};
+export const RecordTableBody = StyledTbody;

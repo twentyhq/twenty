@@ -24,10 +24,12 @@ import { isFieldRelationToOneValue } from '@/object-record/record-field/types/gu
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -111,6 +113,10 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
+        const fieldIsRichText =
+          isFieldRichText(fieldDefinition) &&
+          isFieldRichTextValue(valueToPersist);
+
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
@@ -131,7 +137,8 @@ export const usePersistField = () => {
           fieldIsMultiSelect ||
           fieldIsAddress ||
           fieldIsRawJson ||
-          fieldIsArray;
+          fieldIsArray ||
+          fieldIsRichText;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
@@ -141,7 +148,7 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelationToOneObject) {
-            const value = valueToPersist as EntityForSelect;
+            const value = valueToPersist as RecordForSelect;
             updateRecord?.({
               variables: {
                 where: { id: recordId },

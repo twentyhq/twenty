@@ -1,12 +1,11 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
-import { IconChevronDown, IconWorld } from 'twenty-ui';
-
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
+import { IconChevronDown, IconWorld } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
@@ -31,9 +30,7 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   height: 32px;
 
   padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -47,13 +44,24 @@ const StyledIconContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
   justify-content: center;
 
   svg {
     align-items: center;
     display: flex;
     height: 12px;
+    width: 16px;
+    justify-content: center;
+  }
+`;
+
+const StyledCheveronIconContainer = styled.div`
+  svg {
+    align-items: center;
+    display: flex;
+    height: 14px;
+    width: 14px;
     justify-content: center;
   }
 `;
@@ -95,7 +103,9 @@ export const PhoneCountryPickerDropdownButton = ({
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
-            <IconChevronDown size={theme.icon.size.sm} />
+            <StyledCheveronIconContainer>
+              <IconChevronDown size={theme.icon.size.sm} />
+            </StyledCheveronIconContainer>
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       }

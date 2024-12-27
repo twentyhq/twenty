@@ -1,76 +1,99 @@
 import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 
-export const generateFakeObjectRecordEvent = <Entity>(
+export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
   action: DatabaseEventAction,
-):
-  | ObjectRecordCreateEvent<Entity>
-  | ObjectRecordUpdateEvent<Entity>
-  | ObjectRecordDeleteEvent<Entity>
-  | ObjectRecordDestroyEvent<Entity> => {
+): BaseOutputSchema => {
   const recordId = v4();
   const userId = v4();
   const workspaceMemberId = v4();
 
-  const after = generateFakeObjectRecord<Entity>(objectMetadataEntity);
+  const after = generateFakeObjectRecord(objectMetadataEntity);
+  const formattedObjectMetadataEntity = Object.entries(
+    objectMetadataEntity,
+  ).reduce((acc: BaseOutputSchema, [key, value]) => {
+    acc[key] = { isLeaf: true, value };
+
+    return acc;
+  }, {});
+
+  const baseResult: BaseOutputSchema = {
+    recordId: {
+      isLeaf: true,
+      type: 'string',
+      value: recordId,
+      label: 'Record ID',
+    },
+    userId: { isLeaf: true, type: 'string', value: userId, label: 'User ID' },
+    workspaceMemberId: {
+      isLeaf: true,
+      type: 'string',
+      value: workspaceMemberId,
+      label: 'Workspace Member ID',
+    },
+    objectMetadata: {
+      isLeaf: false,
+      value: formattedObjectMetadataEntity,
+      label: 'Object Metadata',
+    },
+  };
 
   if (action === DatabaseEventAction.CREATED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        after,
+        isLeaf: false,
+        value: { after: { isLeaf: false, value: after, label: 'After' } },
+        label: 'Properties',
       },
-    } satisfies ObjectRecordCreateEvent<Entity>;
+    };
   }
 
-  const before = generateFakeObjectRecord<Entity>(objectMetadataEntity);
+  const before = generateFakeObjectRecord(objectMetadataEntity);
 
   if (action === DatabaseEventAction.UPDATED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
-        after,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before, label: 'Before' },
+          after: { isLeaf: false, value: after, label: 'After' },
+        },
+        label: 'Properties',
       },
-    } satisfies ObjectRecordUpdateEvent<Entity>;
+    };
   }
 
   if (action === DatabaseEventAction.DELETED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before, label: 'Before' },
+        },
+        label: 'Properties',
       },
-    } satisfies ObjectRecordDeleteEvent<Entity>;
+    };
   }
 
   if (action === DatabaseEventAction.DESTROYED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before, label: 'Before' },
+        },
+        label: 'Properties',
       },
-    } satisfies ObjectRecordDestroyEvent<Entity>;
+    };
   }
 
   throw new Error(`Unknown action '${action}'`);

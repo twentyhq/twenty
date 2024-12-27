@@ -1,8 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { useMemo } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import React from 'react';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
@@ -109,7 +111,12 @@ export const ImageInput = ({
     hiddenFileInput.current?.click();
   };
 
-  const pictureURI = useMemo(() => getImageAbsoluteURI(picture), [picture]);
+  const pictureURI = isNonEmptyString(picture)
+    ? getImageAbsoluteURI({
+        imageUrl: picture,
+        baseUrl: REACT_APP_SERVER_BASE_URL,
+      })
+    : null;
 
   return (
     <StyledContainer className={className}>

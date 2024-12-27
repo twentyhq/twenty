@@ -1,3 +1,4 @@
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -10,15 +11,10 @@ import {
 } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
   'billingSubscriptionId',
   'stripeProductId',
-])
-@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
-  'billingSubscriptionId',
-  'stripeSubscriptionItemId',
 ])
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
@@ -36,6 +32,15 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   billingSubscriptionId: string;
 
+  @Column({ nullable: true })
+  stripeSubscriptionId: string;
+
+  @Column({ nullable: false, type: 'jsonb', default: {} })
+  metadata: Stripe.Metadata;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  billingThresholds: Stripe.SubscriptionItem.BillingThresholds;
+
   @ManyToOne(
     () => BillingSubscription,
     (billingSubscription) => billingSubscription.billingSubscriptionItems,
@@ -51,9 +56,9 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   stripePriceId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   stripeSubscriptionItemId: string;
 
-  @Column({ nullable: false })
-  quantity: number;
+  @Column({ nullable: true, type: 'numeric' })
+  quantity: number | null;
 }

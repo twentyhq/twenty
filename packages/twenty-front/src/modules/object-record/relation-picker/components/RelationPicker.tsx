@@ -6,16 +6,16 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SearchPickerInitialValueEffect } from '@/object-record/relation-picker/components/SearchPickerInitialValueEffect';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 export type RelationPickerProps = {
   selectedRecordId?: string;
-  onSubmit: (selectedEntity: EntityForSelect | null) => void;
+  onSubmit: (selectedRecord: RecordForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
-  excludeRecordIds?: string[];
+  excludedRecordIds?: string[];
   initialSearchFilter?: string | null;
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
 };
@@ -24,16 +24,16 @@ export const RelationPicker = ({
   selectedRecordId,
   onSubmit,
   onCancel,
-  excludeRecordIds,
+  excludedRecordIds,
   width,
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
-  const relationPickerScopeId = 'relation-picker';
+  const recordPickerInstanceId = 'relation-picker';
 
-  const handleEntitySelected = (
-    selectedEntity: EntityForSelect | null | undefined,
-  ) => onSubmit(selectedEntity ?? null);
+  const handleRecordSelected = (
+    selectedRecord: RecordForSelect | null | undefined,
+  ) => onSubmit(selectedRecord ?? null);
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -60,21 +60,21 @@ export const RelationPicker = ({
     <>
       <SearchPickerInitialValueEffect
         initialValueForSearchFilter={initialSearchFilter}
-        relationPickerScopeId={relationPickerScopeId}
+        recordPickerInstanceId={recordPickerInstanceId}
       />
-      <SingleEntitySelect
+      <SingleRecordSelect
         EmptyIcon={IconForbid}
         emptyLabel={'No ' + fieldDefinition.label}
         onCancel={onCancel}
         onCreate={createNewRecordAndOpenRightDrawer}
-        onEntitySelected={handleEntitySelected}
+        onRecordSelected={handleRecordSelected}
         width={width}
-        relationObjectNameSingular={
+        objectNameSingular={
           fieldDefinition.metadata.relationObjectMetadataNameSingular
         }
-        relationPickerScopeId={relationPickerScopeId}
-        selectedRelationRecordIds={selectedRecordId ? [selectedRecordId] : []}
-        excludedRelationRecordIds={excludeRecordIds}
+        recordPickerInstanceId={recordPickerInstanceId}
+        selectedRecordIds={selectedRecordId ? [selectedRecordId] : []}
+        excludedRecordIds={excludedRecordIds}
       />
     </>
   );

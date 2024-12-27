@@ -5,11 +5,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -28,7 +27,10 @@ registerEnumType(OnboardingStatus, {
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
-@Unique('UQ_USER_EMAIL', ['email', 'deletedAt'])
+@Index('UQ_USER_EMAIL', ['email'], {
+  unique: true,
+  where: '"deletedAt" IS NULL',
+})
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -78,16 +80,6 @@ export class User {
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 
-  @Field(() => Workspace, { nullable: false })
-  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'RESTRICT',
-  })
-  defaultWorkspace: Relation<Workspace>;
-
-  @Field()
-  @Column()
-  defaultWorkspaceId: string;
-
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
@@ -107,4 +99,7 @@ export class User {
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
+
+  @Field(() => Workspace, { nullable: true })
+  currentWorkspace: Relation<Workspace>;
 }

@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { join } from 'path';
-
 import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import { WorkflowSendEmailStepOutputSchema } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -28,7 +25,6 @@ import { isDefined } from 'src/utils/is-defined';
 export class WorkflowBuilderWorkspaceService {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly codeIntrospectionService: CodeIntrospectionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
@@ -39,12 +35,12 @@ export class WorkflowBuilderWorkspaceService {
   }: {
     step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
-  }): Promise<object> {
+  }): Promise<OutputSchema> {
     const stepType = step.type;
 
     switch (stepType) {
       case WorkflowTriggerType.DATABASE_EVENT: {
-        return await this.computeDatabaseEventTriggerOutputSchema({
+        return this.computeDatabaseEventTriggerOutputSchema({
           eventName: step.settings.eventName,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
@@ -57,7 +53,7 @@ export class WorkflowBuilderWorkspaceService {
           return {};
         }
 
-        return await this.computeRecordOutputSchema({
+        return this.computeRecordOutputSchema({
           objectType,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
@@ -66,24 +62,21 @@ export class WorkflowBuilderWorkspaceService {
       case WorkflowActionType.SEND_EMAIL: {
         return this.computeSendEmailActionOutputSchema();
       }
-      case WorkflowActionType.CODE: {
-        const { serverlessFunctionId, serverlessFunctionVersion } =
-          step.settings.input;
-
-        return await this.computeCodeActionOutputSchema({
-          serverlessFunctionId,
-          serverlessFunctionVersion,
-          workspaceId,
-          serverlessFunctionService: this.serverlessFunctionService,
-          codeIntrospectionService: this.codeIntrospectionService,
-        });
-      }
-      case WorkflowActionType.RECORD_CRUD:
-        return await this.computeRecordOutputSchema({
+      case WorkflowActionType.CREATE_RECORD:
+      case WorkflowActionType.UPDATE_RECORD:
+      case WorkflowActionType.DELETE_RECORD:
+        return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
         });
+      case WorkflowActionType.FIND_RECORDS:
+        return this.computeFindRecordsOutputSchema({
+          objectType: step.settings.input.objectName,
+          workspaceId,
+          objectMetadataRepository: this.objectMetadataRepository,
+        });
+      case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
         return {};
     }
@@ -97,7 +90,7 @@ export class WorkflowBuilderWorkspaceService {
     eventName: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  }) {
+  }): Promise<OutputSchema> {
     const [nameSingular, action] = eventName.split('.');
 
     if (!checkStringIsDatabaseEventAction(action)) {
@@ -122,7 +115,7 @@ export class WorkflowBuilderWorkspaceService {
     );
   }
 
-  private async computeRecordOutputSchema<Entity>({
+  private async computeFindRecordsOutputSchema({
     objectType,
     workspaceId,
     objectMetadataRepository,
@@ -130,7 +123,38 @@ export class WorkflowBuilderWorkspaceService {
     objectType: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  }) {
+  }): Promise<OutputSchema> {
+    const recordOutputSchema = await this.computeRecordOutputSchema({
+      objectType,
+      workspaceId,
+      objectMetadataRepository,
+    });
+
+    return {
+      first: {
+        isLeaf: false,
+        icon: 'IconAlpha',
+        value: recordOutputSchema,
+      },
+      last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
+      totalCount: {
+        isLeaf: true,
+        icon: 'IconSum',
+        type: 'number',
+        value: generateFakeValue('number'),
+      },
+    };
+  }
+
+  private async computeRecordOutputSchema({
+    objectType,
+    workspaceId,
+    objectMetadataRepository,
+  }: {
+    objectType: string;
+    workspaceId: string;
+    objectMetadataRepository: Repository<ObjectMetadataEntity>;
+  }): Promise<OutputSchema> {
     const objectMetadata = await objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: objectType,
@@ -143,55 +167,10 @@ export class WorkflowBuilderWorkspaceService {
       return {};
     }
 
-    return generateFakeObjectRecord<Entity>(objectMetadata);
+    return generateFakeObjectRecord(objectMetadata);
   }
 
-  private computeSendEmailActionOutputSchema(): WorkflowSendEmailStepOutputSchema {
-    return { success: true };
-  }
-
-  private async computeCodeActionOutputSchema({
-    serverlessFunctionId,
-    serverlessFunctionVersion,
-    workspaceId,
-    serverlessFunctionService,
-    codeIntrospectionService,
-  }: {
-    serverlessFunctionId: string;
-    serverlessFunctionVersion: string;
-    workspaceId: string;
-    serverlessFunctionService: ServerlessFunctionService;
-    codeIntrospectionService: CodeIntrospectionService;
-  }) {
-    if (serverlessFunctionId === '') {
-      return {};
-    }
-
-    const sourceCode = (
-      await serverlessFunctionService.getServerlessFunctionSourceCode(
-        workspaceId,
-        serverlessFunctionId,
-        serverlessFunctionVersion,
-      )
-    )?.[join('src', INDEX_FILE_NAME)];
-
-    if (!isDefined(sourceCode)) {
-      return {};
-    }
-
-    const inputSchema =
-      codeIntrospectionService.getFunctionInputSchema(sourceCode);
-    const fakeFunctionInput =
-      codeIntrospectionService.generateInputData(inputSchema);
-
-    const resultFromFakeInput =
-      await serverlessFunctionService.executeOneServerlessFunction(
-        serverlessFunctionId,
-        workspaceId,
-        fakeFunctionInput,
-        serverlessFunctionVersion,
-      );
-
-    return resultFromFakeInput.data ?? {};
+  private computeSendEmailActionOutputSchema(): OutputSchema {
+    return { success: { isLeaf: true, type: 'boolean', value: true } };
   }
 }

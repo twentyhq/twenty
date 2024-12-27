@@ -7,12 +7,13 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { AuthResolver } from './auth.resolver';
 
 import { ApiKeyService } from './services/api-key.service';
 import { AuthService } from './services/auth.service';
-import { OAuthService } from './services/oauth.service';
+// import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { SwitchWorkspaceService } from './services/switch-workspace.service';
 import { LoginTokenService } from './token/services/login-token.service';
@@ -44,6 +45,14 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
+          provide: DomainManagerService,
+          useValue: {
+            buildWorkspaceURL: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
+          },
+        },
+        {
           provide: UserWorkspaceService,
           useValue: {},
         },
@@ -71,10 +80,10 @@ describe('AuthResolver', () => {
           provide: TransientTokenService,
           useValue: {},
         },
-        {
-          provide: OAuthService,
-          useValue: {},
-        },
+        // {
+        //   provide: OAuthService,
+        //   useValue: {},
+        // },
       ],
     })
       .overrideGuard(CaptchaGuard)

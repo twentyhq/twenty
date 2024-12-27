@@ -1,5 +1,5 @@
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
-import { ObjectFilterDropdownFilterOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterOperandSelect';
+import { ObjectFilterDropdownOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 
 type ObjectFilterOperandSelectAndInputProps = {
   filterDropdownId?: string;
@@ -10,7 +10,7 @@ export const ObjectFilterOperandSelectAndInput = ({
 }: ObjectFilterOperandSelectAndInputProps) => {
   return (
     <>
-      <ObjectFilterDropdownFilterOperandSelect
+      <ObjectFilterDropdownOperandDropdown
         filterDropdownId={filterDropdownId}
       />
       <ObjectFilterDropdownFilterInput filterDropdownId={filterDropdownId} />

@@ -1,4 +1,4 @@
-type BaseWorkflowStepSettings = {
+type BaseWorkflowActionSettings = {
   input: object;
   outputSchema: object;
   errorHandlingOptions: {
@@ -11,7 +11,7 @@ type BaseWorkflowStepSettings = {
   };
 };
 
-export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
+export type WorkflowCodeActionSettings = BaseWorkflowActionSettings & {
   input: {
     serverlessFunctionId: string;
     serverlessFunctionVersion: string;
@@ -21,7 +21,7 @@ export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   };
 };
 
-export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
+export type WorkflowSendEmailActionSettings = BaseWorkflowActionSettings & {
   input: {
     connectedAccountId: string;
     email: string;
@@ -30,33 +30,78 @@ export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
   };
 };
 
-type BaseWorkflowStep = {
+type ObjectRecord = Record<string, any>;
+
+export type WorkflowCreateRecordActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    objectRecord: ObjectRecord;
+  };
+};
+
+export type WorkflowUpdateRecordActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    objectRecord: ObjectRecord;
+    objectRecordId: string;
+    fieldsToUpdate: string[];
+  };
+};
+
+export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
+  input: {
+    objectName: string;
+    objectRecordId: string;
+  };
+};
+
+type BaseWorkflowAction = {
   id: string;
   name: string;
   valid: boolean;
 };
 
-export type WorkflowCodeStep = BaseWorkflowStep & {
+export type WorkflowCodeAction = BaseWorkflowAction & {
   type: 'CODE';
-  settings: WorkflowCodeStepSettings;
+  settings: WorkflowCodeActionSettings;
 };
 
-export type WorkflowSendEmailStep = BaseWorkflowStep & {
+export type WorkflowSendEmailAction = BaseWorkflowAction & {
   type: 'SEND_EMAIL';
-  settings: WorkflowSendEmailStepSettings;
+  settings: WorkflowSendEmailActionSettings;
 };
 
-export type WorkflowAction = WorkflowCodeStep | WorkflowSendEmailStep;
+export type WorkflowCreateRecordAction = BaseWorkflowAction & {
+  type: 'CREATE_RECORD';
+  settings: WorkflowCreateRecordActionSettings;
+};
 
-export type WorkflowStep = WorkflowAction;
+export type WorkflowUpdateRecordAction = BaseWorkflowAction & {
+  type: 'UPDATE_RECORD';
+  settings: WorkflowUpdateRecordActionSettings;
+};
+
+export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
+  type: 'DELETE_RECORD';
+  settings: WorkflowDeleteRecordActionSettings;
+};
+
+export type WorkflowAction =
+  | WorkflowCodeAction
+  | WorkflowSendEmailAction
+  | WorkflowCreateRecordAction
+  | WorkflowUpdateRecordAction
+  | WorkflowDeleteRecordAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
+
+export type WorkflowStep = WorkflowAction;
 
 export type WorkflowStepType = WorkflowStep['type'];
 
 type BaseTrigger = {
+  name?: string;
   type: string;
-  input?: object;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {

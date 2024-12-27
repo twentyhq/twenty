@@ -1,18 +1,19 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
+export const FIRST_TH_WIDTH = '9px';
 
 const StyledTableHead = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
-    width: 9px;
+    width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
   }
@@ -77,14 +78,8 @@ const StyledTableHead = styled.thead`
   }
 `;
 
-export const RecordTableHeader = ({
-  objectMetadataNameSingular,
-}: {
-  objectMetadataNameSingular: string;
-}) => {
-  const visibleTableColumns = useRecoilComponentValueV2(
-    visibleTableColumnsComponentSelector,
-  );
+export const RecordTableHeader = () => {
+  const { visibleTableColumns } = useRecordTableContextOrThrow();
 
   return (
     <StyledTableHead id="record-table-header" data-select-disable>
@@ -92,11 +87,7 @@ export const RecordTableHeader = ({
         <RecordTableHeaderDragDropColumn />
         <RecordTableHeaderCheckboxColumn />
         {visibleTableColumns.map((column) => (
-          <RecordTableHeaderCell
-            key={column.fieldMetadataId}
-            column={column}
-            objectMetadataNameSingular={objectMetadataNameSingular}
-          />
+          <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
         ))}
         <RecordTableHeaderLastColumn />
       </tr>

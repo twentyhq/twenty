@@ -10,21 +10,34 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
+import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
+import { buildNameLabelAndDescriptionForForeignKeyFieldMetadata } from 'src/engine/metadata-modules/object-metadata/utils/build-name-label-and-description-for-foreign-key-field-metadata.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { capitalize } from 'src/utils/capitalize';
+
+const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
+  STANDARD_OBJECT_IDS.timelineActivity,
+  STANDARD_OBJECT_IDS.favorite,
+  STANDARD_OBJECT_IDS.attachment,
+  STANDARD_OBJECT_IDS.noteTarget,
+  STANDARD_OBJECT_IDS.taskTarget,
+];
 
 @Injectable()
 export class ObjectMetadataRelationService {
@@ -37,46 +50,63 @@ export class ObjectMetadataRelationService {
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
   ) {}
 
-  public async createMetadata(
+  public async createRelationsAndForeignKeysMetadata(
+    workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity,
+    { primaryKeyFieldMetadataSettings, primaryKeyColumnType },
+  ) {
+    const relatedObjectMetadataCollection = await Promise.all(
+      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
+        async (relationObjectMetadataStandardId) =>
+          this.createRelationAndForeignKeyMetadata(
+            workspaceId,
+            createdObjectMetadata,
+            mapUdtNameToFieldType(primaryKeyColumnType ?? 'uuid'),
+            primaryKeyFieldMetadataSettings,
+            relationObjectMetadataStandardId,
+          ),
+      ),
+    );
+
+    return relatedObjectMetadataCollection;
+  }
+
+  private async createRelationAndForeignKeyMetadata(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    relatedObjectMetadataName: string,
+    relationObjectMetadataStandardId: string,
   ) {
     const relatedObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
-        nameSingular: relatedObjectMetadataName,
+        standardId: relationObjectMetadataStandardId,
         workspaceId: workspaceId,
+        isCustom: false,
       });
 
-    await this.createForeignKeyFieldMetadata(
-      workspaceId,
-      createdObjectMetadata,
-      relatedObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-    );
+    const relationFieldMetadataCollection =
+      await this.createRelationFieldMetadas(
+        workspaceId,
+        createdObjectMetadata,
+        relatedObjectMetadata,
+        objectPrimaryKeyType,
+        objectPrimaryKeyFieldSettings,
+      );
 
-    const relationFieldMetadata = await this.createRelationFields(
+    await this.createRelationMetadataFromFieldMetadatas(
       workspaceId,
       createdObjectMetadata,
       relatedObjectMetadata,
-    );
-
-    await this.createRelationMetadata(
-      workspaceId,
-      createdObjectMetadata,
-      relatedObjectMetadata,
-      relationFieldMetadata,
+      relationFieldMetadataCollection,
     );
 
     return relatedObjectMetadata;
   }
 
-  private async createForeignKeyFieldMetadata(
+  private async createRelationFieldMetadas(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
@@ -85,85 +115,187 @@ export class ObjectMetadataRelationService {
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
   ) {
-    const customStandardFieldId =
-      STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom;
-
-    if (!customStandardFieldId) {
-      throw new Error(
-        `Custom standard field ID not found for ${relatedObjectMetadata.nameSingular}`,
-      );
-    }
-
-    await this.fieldMetadataRepository.save({
-      standardId: createForeignKeyDeterministicUuid({
-        objectId: createdObjectMetadata.id,
-        standardId: customStandardFieldId,
-      }),
-      objectMetadataId: relatedObjectMetadata.id,
-      workspaceId: workspaceId,
-      isCustom: false,
-      isActive: true,
-      type: objectPrimaryKeyType,
-      name: `${createdObjectMetadata.nameSingular}Id`,
-      label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-      description: `${relatedObjectMetadata.labelSingular} ${createdObjectMetadata.labelSingular} id foreign key`,
-      icon: undefined,
-      isNullable: true,
-      isSystem: true,
-      defaultValue: undefined,
-      settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
-    });
-  }
-
-  private async createRelationFields(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    relatedObjectMetadata: ObjectMetadataEntity,
-  ) {
-    return await this.fieldMetadataRepository.save([
-      this.createFromField(
+    return this.fieldMetadataRepository.save([
+      this.buildFromFieldMetadata(
         workspaceId,
         createdObjectMetadata,
         relatedObjectMetadata,
       ),
-      this.createToField(
+      this.buildToFieldMetadata(
         workspaceId,
         createdObjectMetadata,
         relatedObjectMetadata,
+      ),
+      this.buildForeignKeyFieldMetadata(
+        workspaceId,
+        createdObjectMetadata,
+        relatedObjectMetadata,
+        objectPrimaryKeyType,
+        objectPrimaryKeyFieldSettings,
       ),
     ]);
   }
 
-  private createFromField(
+  public async updateRelationsAndForeignKeysMetadata(
     workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    relatedObjectMetadata: ObjectMetadataEntity,
+    updatedObjectMetadata: ObjectMetadataEntity,
+  ): Promise<
+    {
+      relatedObjectMetadata: ObjectMetadataEntity;
+      foreignKeyFieldMetadata: FieldMetadataEntity;
+      toFieldMetadata: FieldMetadataEntity;
+      fromFieldMetadata: FieldMetadataEntity;
+    }[]
+  > {
+    return await Promise.all(
+      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
+        async (relationObjectMetadataStandardId) =>
+          this.updateRelationAndForeignKeyMetadata(
+            workspaceId,
+            updatedObjectMetadata,
+            relationObjectMetadataStandardId,
+          ),
+      ),
+    );
+  }
+
+  private async updateRelationAndForeignKeyMetadata(
+    workspaceId: string,
+    updatedObjectMetadata: ObjectMetadataEntity,
+    relationObjectMetadataStandardId: string,
   ) {
-    const relationObjectMetadataNamePlural = relatedObjectMetadata.namePlural;
+    const relatedObjectMetadata =
+      await this.objectMetadataRepository.findOneByOrFail({
+        standardId: relationObjectMetadataStandardId,
+        workspaceId: workspaceId,
+        isCustom: false,
+      });
+
+    const toFieldMetadataUpdateCriteria = {
+      standardId: createRelationDeterministicUuid({
+        objectId: updatedObjectMetadata.id,
+        standardId:
+          STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom,
+      }),
+      objectMetadataId: relatedObjectMetadata.id,
+      workspaceId: workspaceId,
+    };
+    const toFieldMetadataUpdateData = this.buildToFieldMetadata(
+      workspaceId,
+      updatedObjectMetadata,
+      relatedObjectMetadata,
+      true,
+    );
+    const toFieldMetadataToUpdate =
+      await this.fieldMetadataRepository.findOneBy(
+        toFieldMetadataUpdateCriteria,
+      );
+    const toFieldMetadata = await this.fieldMetadataRepository.save({
+      ...toFieldMetadataToUpdate,
+      ...toFieldMetadataUpdateData,
+    });
+
+    const fromFieldMetadataUpdateCriteria = {
+      standardId:
+        CUSTOM_OBJECT_STANDARD_FIELD_IDS[relatedObjectMetadata.namePlural],
+      objectMetadataId: updatedObjectMetadata.id,
+      workspaceId: workspaceId,
+    };
+    const fromFieldMetadataUpdateData = this.buildFromFieldMetadata(
+      workspaceId,
+      updatedObjectMetadata,
+      relatedObjectMetadata,
+      true,
+    );
+    const fromFieldMetadataToUpdate =
+      await this.fieldMetadataRepository.findOneBy(
+        fromFieldMetadataUpdateCriteria,
+      );
+    const fromFieldMetadata = await this.fieldMetadataRepository.save({
+      ...fromFieldMetadataToUpdate,
+      ...fromFieldMetadataUpdateData,
+    });
+
+    const foreignKeyFieldMetadataUpdateCriteria = {
+      standardId: createForeignKeyDeterministicUuid({
+        objectId: updatedObjectMetadata.id,
+        standardId:
+          STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom,
+      }),
+      objectMetadataId: relatedObjectMetadata.id,
+      workspaceId: workspaceId,
+    };
+    const foreignKeyFieldMetadataUpdateData = this.buildForeignKeyFieldMetadata(
+      workspaceId,
+      updatedObjectMetadata,
+      relatedObjectMetadata,
+      FieldMetadataType.UUID,
+      undefined,
+      true,
+    );
+    const foreignKeyFieldMetadataToUpdate =
+      await this.fieldMetadataRepository.findOneBy(
+        foreignKeyFieldMetadataUpdateCriteria,
+      );
+    const foreignKeyFieldMetadata = await this.fieldMetadataRepository.save({
+      ...foreignKeyFieldMetadataToUpdate,
+      ...foreignKeyFieldMetadataUpdateData,
+    });
 
     return {
-      standardId:
-        CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationObjectMetadataNamePlural],
-      objectMetadataId: createdObjectMetadata.id,
-      workspaceId: workspaceId,
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      type: FieldMetadataType.RELATION,
-      name: relatedObjectMetadata.namePlural,
-      label: capitalize(relationObjectMetadataNamePlural),
-      description: `${capitalize(relationObjectMetadataNamePlural)} tied to the ${createdObjectMetadata.labelSingular}`,
-      icon:
-        STANDARD_OBJECT_ICONS[relatedObjectMetadata.nameSingular] ||
-        'IconBuildingSkyscraper',
-      isNullable: true,
+      relatedObjectMetadata,
+      foreignKeyFieldMetadata,
+      toFieldMetadata,
+      fromFieldMetadata,
     };
   }
 
-  private createToField(
+  private buildFromFieldMetadata(
     workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
+    objectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
+    isUpdate = false,
+  ) {
+    const relationObjectMetadataNamePlural = relatedObjectMetadata.namePlural;
+
+    const { description } = buildDescriptionForRelationFieldMetadataOnFromField(
+      {
+        relationObjectMetadataNamePlural,
+        targetObjectLabelSingular: objectMetadata.labelSingular,
+      },
+    );
+
+    return {
+      description,
+      ...(!isUpdate
+        ? {
+            standardId:
+              CUSTOM_OBJECT_STANDARD_FIELD_IDS[
+                relationObjectMetadataNamePlural
+              ],
+            objectMetadataId: objectMetadata.id,
+            workspaceId: workspaceId,
+            isCustom: false,
+            isActive: true,
+            isSystem: true,
+            type: FieldMetadataType.RELATION,
+            name: relatedObjectMetadata.namePlural,
+            label: capitalize(relationObjectMetadataNamePlural),
+            description,
+            icon:
+              STANDARD_OBJECT_ICONS[relatedObjectMetadata.nameSingular] ||
+              'IconBuildingSkyscraper',
+            isNullable: true,
+          }
+        : {}),
+    };
+  }
+
+  private buildToFieldMetadata(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    relatedObjectMetadata: ObjectMetadataEntity,
+    isUpdate = false,
   ) {
     const customStandardFieldId =
       STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom;
@@ -174,32 +306,98 @@ export class ObjectMetadataRelationService {
       );
     }
 
+    const { description } = buildDescriptionForRelationFieldMetadataOnToField({
+      relationObjectMetadataNamePlural: relatedObjectMetadata.namePlural,
+      targetObjectLabelSingular: objectMetadata.labelSingular,
+    });
+
     return {
-      standardId: createRelationDeterministicUuid({
-        objectId: createdObjectMetadata.id,
-        standardId: customStandardFieldId,
-      }),
-      objectMetadataId: relatedObjectMetadata.id,
-      workspaceId: workspaceId,
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      type: FieldMetadataType.RELATION,
-      name: createdObjectMetadata.nameSingular,
-      label: createdObjectMetadata.labelSingular,
-      description: `${capitalize(relatedObjectMetadata.nameSingular)} ${createdObjectMetadata.labelSingular}`,
-      icon: 'IconBuildingSkyscraper',
-      isNullable: true,
+      name: objectMetadata.nameSingular,
+      label: objectMetadata.labelSingular,
+      description,
+      ...(!isUpdate
+        ? {
+            standardId: createRelationDeterministicUuid({
+              objectId: objectMetadata.id,
+              standardId: customStandardFieldId,
+            }),
+            objectMetadataId: relatedObjectMetadata.id,
+            workspaceId: workspaceId,
+            isCustom: false,
+            isActive: true,
+            isSystem: true,
+            type: FieldMetadataType.RELATION,
+            name: objectMetadata.nameSingular,
+            label: objectMetadata.labelSingular,
+            description,
+            icon: 'IconBuildingSkyscraper',
+            isNullable: true,
+          }
+        : {}),
     };
   }
 
-  private async createRelationMetadata(
+  private buildForeignKeyFieldMetadata(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    relatedObjectMetadata: ObjectMetadataEntity,
+    objectPrimaryKeyType: FieldMetadataType,
+    objectPrimaryKeyFieldSettings:
+      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | undefined,
+    isUpdate = false,
+  ) {
+    const customStandardFieldId =
+      STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom;
+
+    if (!customStandardFieldId) {
+      throw new Error(
+        `Custom standard field ID not found for ${relatedObjectMetadata.nameSingular}`,
+      );
+    }
+
+    const { name, label, description } =
+      buildNameLabelAndDescriptionForForeignKeyFieldMetadata({
+        targetObjectNameSingular: objectMetadata.nameSingular,
+        targetObjectLabelSingular: objectMetadata.labelSingular,
+        relatedObjectLabelSingular: relatedObjectMetadata.labelSingular,
+      });
+
+    return {
+      name,
+      label,
+      description,
+      ...(!isUpdate
+        ? {
+            standardId: createForeignKeyDeterministicUuid({
+              objectId: objectMetadata.id,
+              standardId: customStandardFieldId,
+            }),
+            objectMetadataId: relatedObjectMetadata.id,
+            workspaceId: workspaceId,
+            isCustom: false,
+            isActive: true,
+            type: objectPrimaryKeyType,
+            name,
+            label,
+            description,
+            icon: undefined,
+            isNullable: true,
+            isSystem: true,
+            defaultValue: undefined,
+            settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
+          }
+        : {}),
+    };
+  }
+
+  private async createRelationMetadataFromFieldMetadatas(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
-    relationFieldMetadata: FieldMetadataEntity[],
+    relationFieldMetadataCollection: FieldMetadataEntity[],
   ) {
-    const relationFieldMetadataMap = relationFieldMetadata.reduce(
+    const relationFieldMetadataMap = relationFieldMetadataCollection.reduce(
       (acc, fieldMetadata: FieldMetadataEntity) => {
         if (fieldMetadata.type === FieldMetadataType.RELATION) {
           acc[fieldMetadata.objectMetadataId] = fieldMetadata;
@@ -225,7 +423,10 @@ export class ObjectMetadataRelationService {
     ]);
   }
 
-  async updateObjectRelationships(objectMetadataId: string, isActive: boolean) {
+  async updateObjectRelationshipsActivationStatus(
+    objectMetadataId: string,
+    isActive: boolean,
+  ) {
     const affectedRelations = await this.relationMetadataRepository.find({
       where: [
         { fromObjectMetadataId: objectMetadataId },

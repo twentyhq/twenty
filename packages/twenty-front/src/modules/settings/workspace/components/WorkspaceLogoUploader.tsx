@@ -10,7 +10,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
-  const [updateWorkspce] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -39,7 +39,7 @@ export const WorkspaceLogoUploader = () => {
     if (!currentWorkspace?.id) {
       throw new Error('Workspace id not found');
     }
-    await updateWorkspce({
+    await updateWorkspace({
       variables: {
         input: {
           logo: null,

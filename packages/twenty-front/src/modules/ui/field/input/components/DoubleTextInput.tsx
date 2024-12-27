@@ -10,24 +10,20 @@ import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
-  align-items: center;
   display: flex;
   justify-content: space-between;
 
-  input {
-    width: 100%;
-  }
-
   & > input:last-child {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+    border-left: 1px solid ${({ theme }) => theme.border.color.strong};
     padding-left: ${({ theme }) => theme.spacing(2)};
   }
 `;
@@ -158,6 +154,7 @@ export const DoubleTextInput = ({
       });
     },
     enabled: isDefined(onClickOutside),
+    listenerId: 'double-text-input',
   });
 
   const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
@@ -185,39 +182,41 @@ export const DoubleTextInput = ({
   };
 
   return (
-    <StyledContainer ref={containerRef}>
-      <StyledTextInput
-        autoComplete="off"
-        autoFocus
-        onFocus={() => setFocusPosition('left')}
-        ref={firstValueInputRef}
-        placeholder={firstValuePlaceholder}
-        value={firstInternalValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(
-            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            secondInternalValue,
-          );
-        }}
-        onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
-          handleOnPaste(event)
-        }
-        onClick={handleClickToPreventParentClickEvents}
-      />
-      <StyledTextInput
-        autoComplete="off"
-        onFocus={() => setFocusPosition('right')}
-        ref={secondValueInputRef}
-        placeholder={secondValuePlaceholder}
-        value={secondInternalValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleChange(
-            firstInternalValue,
-            turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-          );
-        }}
-        onClick={handleClickToPreventParentClickEvents}
-      />
-    </StyledContainer>
+    <FieldInputContainer>
+      <StyledContainer ref={containerRef}>
+        <StyledTextInput
+          autoComplete="off"
+          autoFocus
+          onFocus={() => setFocusPosition('left')}
+          ref={firstValueInputRef}
+          placeholder={firstValuePlaceholder}
+          value={firstInternalValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            handleChange(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+              secondInternalValue,
+            );
+          }}
+          onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
+            handleOnPaste(event)
+          }
+          onClick={handleClickToPreventParentClickEvents}
+        />
+        <StyledTextInput
+          autoComplete="off"
+          onFocus={() => setFocusPosition('right')}
+          ref={secondValueInputRef}
+          placeholder={secondValuePlaceholder}
+          value={secondInternalValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            handleChange(
+              firstInternalValue,
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            );
+          }}
+          onClick={handleClickToPreventParentClickEvents}
+        />
+      </StyledContainer>
+    </FieldInputContainer>
   );
 };

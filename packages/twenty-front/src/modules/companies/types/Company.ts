@@ -11,8 +11,19 @@ export type Company = {
         __typename?: 'Links';
         primaryLinkUrl: string;
         primaryLinkLabel: string;
+        secondaryLinks: never[] | [];
       };
-  address: string;
+  address: {
+    __typename?: 'Address';
+    addressLine1: string;
+    addressLine2: string;
+    addressCity: string;
+    addressState: string;
+    addressPostcode: string;
+    addressCountry: string;
+    addressLat: number | null;
+    addressLng: number | null;
+  };
   accountOwnerId?: string | null;
   position?: number;
   linkedinLink: {

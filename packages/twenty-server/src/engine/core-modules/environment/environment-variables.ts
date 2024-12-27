@@ -1,4 +1,4 @@
-import { LogLevel } from '@nestjs/common';
+import { LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
@@ -24,6 +24,7 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
@@ -126,13 +127,26 @@ export class EnvironmentVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
-  @IsUrl({ require_tld: false })
-  FRONT_BASE_URL: string;
-
-  // Server URL
-  @IsUrl({ require_tld: false })
+  @IsString()
   @IsOptional()
-  SERVER_URL: string;
+  FRONT_DOMAIN?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
+  DEFAULT_SUBDOMAIN = 'app';
+
+  @IsString()
+  @IsOptional()
+  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  FRONT_PORT?: number;
+
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  SERVER_URL = 'http://localhost:3000';
 
   @IsString()
   APP_SECRET: string;
@@ -165,10 +179,6 @@ export class EnvironmentVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   // Auth
-  @IsUrl({ require_tld: false })
-  @IsOptional()
-  FRONT_AUTH_CALLBACK_URL: string;
-
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
@@ -197,11 +207,11 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CALLBACK_URL: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
@@ -218,7 +228,7 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
@@ -230,6 +240,11 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   ENTERPRISE_KEY: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_MULTIWORKSPACE_ENABLED = false;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -367,11 +382,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  IS_SIGN_UP_DISABLED = false;
-
   @IsEnum(CaptchaDriverType)
   @IsOptional()
   CAPTCHA_DRIVER?: CaptchaDriverType;
@@ -447,8 +457,19 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
-  @ValidateIf((env) => env.ENTERPRISE_KEY)
-  SESSION_STORE_SECRET: string;
+  @IsString()
+  @IsOptional()
+  @AssertOrWarn(
+    (env, value) =>
+      !env.AUTH_SSO_ENABLED ||
+      (env.AUTH_SSO_ENABLED &&
+        value !== 'replace_me_with_a_random_string_session'),
+    {
+      message:
+        'SESSION_STORE_SECRET should be changed to a secure, random string.',
+    },
+  )
+  SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
@@ -463,6 +484,15 @@ export class EnvironmentVariables {
   // milliseconds
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
+
+  // SSL
+  @IsString()
+  @IsOptional()
+  SSL_KEY_PATH: string;
+
+  @IsString()
+  @IsOptional()
+  SSL_CERT_PATH: string;
 }
 
 export const validate = (
@@ -470,7 +500,19 @@ export const validate = (
 ): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig);
+  const errors = validateSync(validatedConfig, { strictGroups: true });
+
+  const warnings = validateSync(validatedConfig, { groups: ['warning'] });
+
+  if (warnings.length > 0) {
+    warnings.forEach((warning) => {
+      if (warning.constraints && warning.property) {
+        Object.values(warning.constraints).forEach((message) => {
+          Logger.warn(message);
+        });
+      }
+    });
+  }
 
   assert(!errors.length, errors.toString());
 

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, EntityManager, Repository } from 'typeorm';
+import { Any, EntityManager, Equal } from 'typeorm';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -22,8 +20,6 @@ export class MatchParticipantService<
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
   private async getParticipantRepository(
@@ -119,8 +115,8 @@ export class MatchParticipantService<
       transactionManager,
     );
 
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataName}.matched`,
+    this.workspaceEventEmitter.emitCustomBatchEvent(
+      `${objectMetadataName}_matched`,
       [
         {
           workspaceMemberId: null,
@@ -148,7 +144,7 @@ export class MatchParticipantService<
 
     const participantsToUpdate = await participantRepository.find({
       where: {
-        handle,
+        handle: Equal(handle),
       },
     });
 
@@ -174,12 +170,12 @@ export class MatchParticipantService<
         },
       });
 
-      this.workspaceEventEmitter.emit(
-        `${objectMetadataName}.matched`,
+      this.workspaceEventEmitter.emitCustomBatchEvent(
+        `${objectMetadataName}_matched`,
         [
           {
             workspaceId,
-            name: `${objectMetadataName}.matched`,
+            name: `${objectMetadataName}_matched`,
             workspaceMemberId: null,
             participants: updatedParticipants,
           },
@@ -214,7 +210,7 @@ export class MatchParticipantService<
     if (personId) {
       await participantRepository.update(
         {
-          handle,
+          handle: Equal(handle),
         },
         {
           person: null,
@@ -224,7 +220,7 @@ export class MatchParticipantService<
     if (workspaceMemberId) {
       await participantRepository.update(
         {
-          handle,
+          handle: Equal(handle),
         },
         {
           workspaceMember: null,

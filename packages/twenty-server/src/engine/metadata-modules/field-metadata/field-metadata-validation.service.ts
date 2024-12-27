@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  Max,
   Min,
   validateOrReject,
 } from 'class-validator';
@@ -22,7 +23,7 @@ enum ValueType {
   NUMBER = 'number',
 }
 
-class SettingsValidation {
+class NumberSettingsValidation {
   @IsOptional()
   @IsInt()
   @Min(0)
@@ -31,6 +32,14 @@ class SettingsValidation {
   @IsOptional()
   @IsEnum(ValueType)
   type?: 'percentage' | 'number';
+}
+
+class TextSettingsValidation {
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  displayedMaxRows?: number;
 }
 
 @Injectable()
@@ -48,23 +57,28 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateNumberSettings(settings);
+        await this.validateSettings(NumberSettingsValidation, settings);
+        break;
+      case FieldMetadataType.TEXT:
+        await this.validateSettings(TextSettingsValidation, settings);
         break;
       default:
         break;
     }
   }
 
-  private async validateNumberSettings(settings: any) {
+  private async validateSettings(validator: any, settings: any) {
     try {
-      const settingsInstance = plainToInstance(SettingsValidation, settings);
+      const settingsInstance = plainToInstance(validator, settings);
 
       await validateOrReject(settingsInstance);
-    } catch (errors) {
-      const errorMessages = errors
-        .map((error: any) => Object.values(error.constraints))
-        .flat()
-        .join(', ');
+    } catch (error) {
+      const errorMessages = Array.isArray(error)
+        ? error
+            .map((err: any) => Object.values(err.constraints))
+            .flat()
+            .join(', ')
+        : error.message;
 
       throw new FieldMetadataException(
         `Value for settings is invalid: ${errorMessages}`,

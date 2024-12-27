@@ -3,10 +3,11 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
-import { SettingsDataModelFieldNumberDecimalsInput } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberDecimalInput';
+import { Separator } from '@/settings/components/Separator';
+import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import styled from '@emotion/styled';
-import { CardContent, IconNumber9, IconPercentage } from 'twenty-ui';
+import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -16,13 +17,6 @@ export const settingsDataModelFieldNumberFormSchema = z.object({
 export type SettingsDataModelFieldNumberFormValues = z.infer<
   typeof settingsDataModelFieldNumberFormSchema
 >;
-
-const StyledFormCardTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
 
 type SettingsDataModelFieldNumberFormProps = {
   disabled?: boolean;
@@ -39,52 +33,61 @@ export const SettingsDataModelFieldNumberForm = ({
   const { control } = useFormContext<SettingsDataModelFieldNumberFormValues>();
 
   return (
-    <CardContent>
-      <Controller
-        name="settings"
-        defaultValue={{
-          decimals:
-            fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
-          type: fieldMetadataItem?.settings?.type || 'number',
-        }}
-        control={control}
-        render={({ field: { onChange, value } }) => {
-          const count = value?.decimals ?? 0;
-          const type = value?.type ?? 'number';
+    <Controller
+      name="settings"
+      defaultValue={{
+        decimals:
+          fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
+        type: fieldMetadataItem?.settings?.type ?? 'number',
+      }}
+      control={control}
+      render={({ field: { onChange, value } }) => {
+        const count = value?.decimals ?? 0;
+        const type = value?.type ?? 'number';
 
-          return (
-            <>
-              <StyledFormCardTitle>Type</StyledFormCardTitle>
-              <Select
-                disabled={disabled}
-                dropdownId="selectNumberTypes"
-                options={[
-                  {
-                    label: 'Number',
-                    value: 'number',
-                    Icon: IconNumber9,
-                  },
-                  {
-                    label: 'Percentage',
-                    value: 'percentage',
-                    Icon: IconPercentage,
-                  },
-                ]}
+        return (
+          <>
+            <SettingsOptionCardContentSelect
+              Icon={IconEye}
+              title="Number type"
+              description="Display as a plain number or a percentage"
+            >
+              <Select<string>
+                selectSizeVariant="small"
+                dropdownId="number-type"
+                dropdownWidth={120}
                 value={type}
                 onChange={(value) => onChange({ type: value, decimals: count })}
-                withSearchInput={false}
-                dropdownWidthAuto={true}
-              />
-              <br />
-              <SettingsDataModelFieldNumberDecimalsInput
-                value={count}
-                onChange={(value) => onChange({ type: type, decimals: value })}
                 disabled={disabled}
+                needIconCheck={false}
+                options={[
+                  {
+                    Icon: IconNumber9,
+                    label: 'Number',
+                    value: 'number',
+                  },
+                  {
+                    Icon: IconPercentage,
+                    label: 'Percentage',
+                    value: 'percentage',
+                  },
+                ]}
               />
-            </>
-          );
-        }}
-      />
-    </CardContent>
+            </SettingsOptionCardContentSelect>
+            <Separator />
+            <SettingsOptionCardContentCounter
+              Icon={IconDecimal}
+              title="Number of decimals"
+              description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
+              value={count}
+              onChange={(value) => onChange({ type: type, decimals: value })}
+              disabled={disabled}
+              minValue={0}
+              maxValue={100} // needs to be changed
+            />
+          </>
+        );
+      }}
+    />
   );
 };

@@ -30,12 +30,13 @@ export const generateWorkflowDiagram = ({
     yPos: number,
   ) => {
     const nodeId = step.id;
+
     nodes.push({
       id: nodeId,
       data: {
         nodeType: 'action',
         actionType: step.type,
-        label: step.name,
+        name: step.name,
       },
       position: {
         x: xPos,
@@ -52,6 +53,7 @@ export const generateWorkflowDiagram = ({
         type: MarkerType.ArrowClosed,
       },
       deletable: false,
+      selectable: false,
     });
 
     return nodeId;
@@ -91,7 +93,7 @@ export const generateWorkflowDiagram = ({
       data: {
         nodeType: 'trigger',
         triggerType: trigger.type,
-        label: triggerLabel,
+        name: isDefined(trigger.name) ? trigger.name : triggerLabel,
       },
       position: {
         x: 0,

@@ -1,4 +1,15 @@
-export const generateFakeValue = (valueType: string): any => {
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
+type FakeValueTypes =
+  | string
+  | number
+  | boolean
+  | Date
+  | FakeValueTypes[]
+  | FieldMetadataType
+  | { [key: string]: FakeValueTypes };
+
+export const generateFakeValue = (valueType: string): FakeValueTypes => {
   if (valueType === 'string') {
     return 'generated-string-value';
   } else if (valueType === 'number') {
@@ -27,6 +38,8 @@ export const generateFakeValue = (valueType: string): any => {
     });
 
     return objData;
+  } else if (valueType === FieldMetadataType.TEXT) {
+    return 'My text';
   } else {
     return 'generated-string-value';
   }

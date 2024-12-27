@@ -32,6 +32,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -174,6 +175,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataForCreate,
         objectMetadata,
       );
+
+      if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
+        validateNameAndLabelAreSyncOrThrow(
+          fieldMetadataForCreate.label,
+          fieldMetadataForCreate.name,
+        );
+      }
 
       console.time('createOne save');
       const createdFieldMetadata = await fieldMetadataRepository.save(
@@ -407,6 +415,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         objectMetadata,
       );
 
+      const isLabelSyncedWithName =
+        fieldMetadataForUpdate.isLabelSyncedWithName ??
+        existingFieldMetadata.isLabelSyncedWithName;
+
+      if (isLabelSyncedWithName) {
+        validateNameAndLabelAreSyncOrThrow(
+          fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
+          fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
+        );
+      }
+
       // We're running field update under a transaction, so we can rollback if migration fails
       await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
@@ -632,23 +651,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    let fieldMetadataInputOverrided = {};
-
-    fieldMetadataInputOverrided = {
+    const updatableStandardFieldInput: UpdateFieldInput = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
+      settings: fieldMetadataInput.settings,
     };
 
-    if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
-      fieldMetadataInputOverrided = {
-        ...fieldMetadataInputOverrided,
+    if (
+      existingFieldMetadata.type === FieldMetadataType.SELECT ||
+      existingFieldMetadata.type === FieldMetadataType.MULTI_SELECT
+    ) {
+      return {
+        ...updatableStandardFieldInput,
         options: fieldMetadataInput.options,
       };
     }
 
-    return fieldMetadataInputOverrided as UpdateFieldInput;
+    return updatableStandardFieldInput;
   }
 
   public async getRelationDefinitionFromRelationMetadata(
@@ -731,7 +752,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         } else if (error instanceof NameNotAvailableException) {
           throw new FieldMetadataException(
-            `Name "${fieldMetadataInput.name}" is not available`,
+            `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         } else {

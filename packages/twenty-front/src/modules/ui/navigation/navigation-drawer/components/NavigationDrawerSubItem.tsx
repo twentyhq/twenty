@@ -8,6 +8,7 @@ type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
 export const NavigationDrawerSubItem = ({
   className,
   label,
+  objectName,
   Icon,
   to,
   onClick,
@@ -17,11 +18,14 @@ export const NavigationDrawerSubItem = ({
   count,
   keyboard,
   subItemState,
+  rightOptions,
+  isDragging,
 }: NavigationDrawerSubItemProps) => {
   return (
     <NavigationDrawerItem
       className={className}
       label={label}
+      objectName={objectName}
       indentationLevel={2}
       subItemState={subItemState}
       Icon={Icon}
@@ -32,6 +36,8 @@ export const NavigationDrawerSubItem = ({
       soon={soon}
       count={count}
       keyboard={keyboard}
+      rightOptions={rightOptions}
+      isDragging={isDragging}
     />
   );
 };

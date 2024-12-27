@@ -112,15 +112,13 @@ export const UpdateViewButtonGroup = ({
               />
             }
             dropdownComponents={
-              <>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    onClick={handleCreateViewClick}
-                    LeftIcon={IconPlus}
-                    text="Create view"
-                  />
-                </DropdownMenuItemsContainer>
-              </>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  onClick={handleCreateViewClick}
+                  LeftIcon={IconPlus}
+                  text="Create view"
+                />
+              </DropdownMenuItemsContainer>
             }
           />
         </ButtonGroup>

@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-no-navigate-prefer-link */
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -11,6 +10,7 @@ import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-s
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
+import { isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -21,6 +21,7 @@ export const useRecordShowPagePagination = (
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
   } = useParams();
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('view');
@@ -53,7 +54,7 @@ export const useRecordShowPagePagination = (
       recordGqlFields: { id: true },
     });
 
-  const cursorFromRequest = currentRecordsPageInfo?.endCursor;
+  const currentRecordCursorFromRequest = currentRecordsPageInfo?.endCursor;
 
   const [totalCountBefore, setTotalCountBefore] = useState<number>(0);
   const [totalCountAfter, setTotalCountAfter] = useState<number>(0);
@@ -62,12 +63,15 @@ export const useRecordShowPagePagination = (
     useFindManyRecords({
       skip: loadingCursor,
       fetchPolicy: 'network-only',
-      filter,
+      filter: {
+        ...filter,
+        id: { neq: objectRecordId },
+      },
       orderBy,
-      cursorFilter: isNonEmptyString(cursorFromRequest)
+      cursorFilter: isNonEmptyString(currentRecordCursorFromRequest)
         ? {
             cursorDirection: 'before',
-            cursor: cursorFromRequest,
+            cursor: currentRecordCursorFromRequest,
             limit: 1,
           }
         : undefined,
@@ -81,13 +85,16 @@ export const useRecordShowPagePagination = (
   const { loading: loadingRecordAfter, records: recordsAfter } =
     useFindManyRecords({
       skip: loadingCursor,
-      filter,
+      filter: {
+        ...filter,
+        id: { neq: objectRecordId },
+      },
       fetchPolicy: 'network-only',
       orderBy,
-      cursorFilter: cursorFromRequest
+      cursorFilter: currentRecordCursorFromRequest
         ? {
             cursorDirection: 'after',
-            cursor: cursorFromRequest,
+            cursor: currentRecordCursorFromRequest,
             limit: 1,
           }
         : undefined,
@@ -100,22 +107,70 @@ export const useRecordShowPagePagination = (
 
   const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
-  const isThereARecordBefore = recordsBefore.length > 0;
-  const isThereARecordAfter = recordsAfter.length > 0;
-
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
+  const isFirstRecord = !loading && !isDefined(recordBefore);
+  const isLastRecord = !loading && !isDefined(recordAfter);
+
+  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
+    objectNamePlural: objectMetadataItem.namePlural,
+    fieldVariables: {
+      filter,
+      orderBy,
+    },
+  });
+
+  const cacheIsAvailableForNavigation =
+    !loading &&
+    (totalCountAfter > 0 || totalCountBefore > 0) &&
+    recordIdsInCache.length > 0;
+
+  const canNavigateToPreviousRecord =
+    !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
+
   const navigateToPreviousRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
-    );
+    if (isFirstRecord) {
+      if (cacheIsAvailableForNavigation) {
+        const lastRecordIdFromCache =
+          recordIdsInCache[recordIdsInCache.length - 1];
+
+        navigate(
+          buildShowPageURL(
+            objectNameSingular,
+            lastRecordIdFromCache,
+            viewIdQueryParam,
+          ),
+        );
+      }
+    } else {
+      navigate(
+        buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
+      );
+    }
   };
 
+  const canNavigateToNextRecord =
+    !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
+
   const navigateToNextRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
-    );
+    if (isLastRecord) {
+      if (cacheIsAvailableForNavigation) {
+        const firstRecordIdFromCache = recordIdsInCache[0];
+
+        navigate(
+          buildShowPageURL(
+            objectNameSingular,
+            firstRecordIdFromCache,
+            viewIdQueryParam,
+          ),
+        );
+      }
+    } else {
+      navigate(
+        buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
+      );
+    }
   };
 
   const navigateToIndexView = () => {
@@ -129,33 +184,26 @@ export const useRecordShowPagePagination = (
     navigate(indexTableURL);
   };
 
-  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldVariables: {
-      filter,
-      orderBy,
-    },
-  });
-
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
-  const rankFoundInFiew = rankInView > -1;
+  const rankFoundInView = rankInView > -1;
 
-  const objectLabel = capitalize(objectMetadataItem.namePlural);
+  const objectLabel = capitalize(objectMetadataItem.labelPlural);
 
-  const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
+  const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
 
-  const viewNameWithCount = rankFoundInFiew
+  const viewNameWithCount = rankFoundInView
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
     : `${objectLabel} (${totalCount})`;
 
   return {
     viewName: viewNameWithCount,
-    hasPreviousRecord: isThereARecordBefore,
     isLoadingPagination: loading,
-    hasNextRecord: isThereARecordAfter,
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
+    canNavigateToNextRecord,
+    canNavigateToPreviousRecord,
+    objectMetadataItem,
   };
 };

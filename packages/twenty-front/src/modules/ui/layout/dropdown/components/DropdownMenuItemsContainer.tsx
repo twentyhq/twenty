@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
+import { useId } from 'react';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
@@ -11,7 +11,6 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  gap: 2px;
   max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
 
   padding: var(--padding);
@@ -19,12 +18,8 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   width: calc(100% - 2 * var(--padding));
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  width: 100%;
-`;
-
 const StyledDropdownMenuItemsInternalContainer = styled.div`
-  align-items: flex-start;
+  align-items: stretch;
   display: flex;
 
   flex-direction: column;
@@ -33,19 +28,35 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
   width: 100%;
 `;
 
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  width: 100%;
+`;
+
 // TODO: refactor this, the dropdown should handle the max height behavior + scroll with the size middleware
 // We should instead create a DropdownMenuItemsContainerScrollable or take for granted that it is the default behavior
 export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
+  className,
+  scrollable = true,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
+  className?: string;
+  scrollable?: boolean;
 }) => {
-  return (
-    <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
+  const id = useId();
+
+  return scrollable !== true ? (
+    <StyledDropdownMenuItemsExternalContainer
+      hasMaxHeight={hasMaxHeight}
+      className={className}
+    >
       {hasMaxHeight ? (
-        <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+        <StyledScrollWrapper
+          contextProviderName="dropdownMenuItemsContainer"
+          componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+        >
           <StyledDropdownMenuItemsInternalContainer>
             {children}
           </StyledDropdownMenuItemsInternalContainer>
@@ -56,5 +67,19 @@ export const DropdownMenuItemsContainer = ({
         </StyledDropdownMenuItemsInternalContainer>
       )}
     </StyledDropdownMenuItemsExternalContainer>
+  ) : (
+    <ScrollWrapper
+      contextProviderName="dropdownMenuItemsContainer"
+      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+    >
+      <StyledDropdownMenuItemsExternalContainer
+        hasMaxHeight={hasMaxHeight}
+        className={className}
+      >
+        <StyledDropdownMenuItemsInternalContainer>
+          {children}
+        </StyledDropdownMenuItemsInternalContainer>
+      </StyledDropdownMenuItemsExternalContainer>
+    </ScrollWrapper>
   );
 };

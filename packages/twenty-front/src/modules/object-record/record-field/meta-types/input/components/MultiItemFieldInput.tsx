@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
@@ -18,11 +17,6 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
-const StyledDropdownMenu = styled(DropdownMenu)`
-  margin-left: -1px;
-  margin-top: -1px;
-`;
-
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onPersist: (updatedItems: T[]) => void;
@@ -41,6 +35,7 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: DropdownMenuInputProps['renderInput'];
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -57,20 +52,19 @@ export const MultiItemFieldInput = <T,>({
   newItemLabel,
   fieldMetadataType,
   renderInput,
+  onClickOutside,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleDropdownClose = () => {
     onCancel?.();
   };
 
-  const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
-    onCancel?.();
-    event.stopImmediatePropagation();
-  };
-
   useListenClickOutside({
     refs: [containerRef],
-    callback: handleDropdownCloseOutside,
+    callback: (event) => {
+      onClickOutside?.(event);
+    },
+    listenerId: hotkeyScope,
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
@@ -107,9 +101,13 @@ export const MultiItemFieldInput = <T,>({
         break;
       case FieldMetadataType.Phones:
         item = items[index] as PhoneRecord;
-        setInputValue(item.countryCode + item.number);
+        setInputValue(item.callingCode + item.number);
         break;
       case FieldMetadataType.Emails:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
+      case FieldMetadataType.Array:
         item = items[index] as string;
         setInputValue(item);
         break;
@@ -160,7 +158,7 @@ export const MultiItemFieldInput = <T,>({
   };
 
   return (
-    <StyledDropdownMenu ref={containerRef} width={200}>
+    <DropdownMenu ref={containerRef} width={200}>
       {!!items.length && (
         <>
           <DropdownMenuItemsContainer>
@@ -201,10 +199,12 @@ export const MultiItemFieldInput = <T,>({
           }
           onEnter={handleSubmitInput}
           rightComponent={
-            <LightIconButton
-              Icon={isAddingNewItem ? IconPlus : IconCheck}
-              onClick={handleSubmitInput}
-            />
+            items.length ? (
+              <LightIconButton
+                Icon={isAddingNewItem ? IconPlus : IconCheck}
+                onClick={handleSubmitInput}
+              />
+            ) : null
           }
         />
       ) : (
@@ -216,6 +216,6 @@ export const MultiItemFieldInput = <T,>({
           />
         </DropdownMenuItemsContainer>
       )}
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

@@ -1,5 +1,3 @@
-import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -9,7 +7,21 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormCreateRecord';
+import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { Suspense, lazy } from 'react';
+import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
 import { isDefined } from 'twenty-ui';
+import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+
+const WorkflowEditActionFormServerlessFunction = lazy(() =>
+  import(
+    '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction'
+  ).then((module) => ({
+    default: module.WorkflowEditActionFormServerlessFunction,
+  })),
+);
 
 type WorkflowStepDetailProps =
   | {
@@ -53,8 +65,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerDatabaseEventForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -62,8 +73,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerManualForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -78,28 +88,51 @@ export const WorkflowStepDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <WorkflowEditActionFormServerlessFunction
-              action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
-            />
+            <Suspense fallback={<RightDrawerSkeletonLoader />}>
+              <WorkflowEditActionFormServerlessFunction
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            </Suspense>
           );
         }
         case 'SEND_EMAIL': {
           return (
             <WorkflowEditActionFormSendEmail
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
+            />
+          );
+        }
+        case 'CREATE_RECORD': {
+          return (
+            <WorkflowEditActionFormCreateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'UPDATE_RECORD': {
+          return (
+            <WorkflowEditActionFormUpdateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'DELETE_RECORD': {
+          return (
+            <WorkflowEditActionFormDeleteRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
             />
           );
         }
       }
 
-      return assertUnreachable(
-        stepDefinition.definition,
-        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-      );
+      return null;
     }
   }
 
