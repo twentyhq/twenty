@@ -9,6 +9,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
+import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -125,6 +126,21 @@ export const useCommandMenu = () => {
             contextStoreCurrentViewType,
           );
         }
+
+        const actionMenuEntries = snapshot
+          .getLoadable(
+            actionMenuEntriesComponentState.atomFamily({
+              instanceId: mainContextStoreComponentInstanceId,
+            }),
+          )
+          .getValue();
+
+        set(
+          actionMenuEntriesComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          actionMenuEntries,
+        );
 
         setIsCommandMenuOpened(true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
