@@ -29,7 +29,7 @@ export const RecordIdentifierChip = ({
   const { Icon: LeftIcon, IconColor: LeftIconColor } =
     useGetStandardObjectIcon(objectNameSingular);
 
-  if (!isNonEmptyString(recordChipData.name)) {
+  if (!isNonEmptyString(recordChipData.name.trim())) {
     return null;
   }
 

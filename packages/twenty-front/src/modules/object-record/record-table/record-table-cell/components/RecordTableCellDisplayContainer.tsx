@@ -24,6 +24,7 @@ const StyledInnerContainer = styled.div`
 
 const StyledEmptyPlaceholderField = withTheme(styled.div<{ theme: Theme }>`
   color: ${({ theme }) => theme.font.color.light};
+  padding-left: 4px;
 `);
 
 export type EditableCellDisplayContainerProps = {
@@ -54,7 +55,7 @@ export const RecordTableCellDisplayContainer = ({
   >
     {placeholderForEmptyCell ? (
       <StyledEmptyPlaceholderField>
-        {placeholderForEmptyCell}
+        {`Set ${placeholderForEmptyCell}`}
       </StyledEmptyPlaceholderField>
     ) : (
       <StyledInnerContainer>{children}</StyledInnerContainer>
