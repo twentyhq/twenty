@@ -167,6 +167,7 @@ type StepRunOutput = {
 
 export type WorkflowRunOutput = {
   steps: Record<string, StepRunOutput>;
+  error?: string;
 };
 
 export type WorkflowRun = {

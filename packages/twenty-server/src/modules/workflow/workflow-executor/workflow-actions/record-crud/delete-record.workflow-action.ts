@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
@@ -12,7 +19,13 @@ import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/wor
 
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowAction {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   async execute(
     workflowActionInput: WorkflowDeleteRecordActionInput,
@@ -20,6 +33,28 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );
+
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new RecordCRUDActionException(
+        'Failed to create: Workspace ID is required',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: workflowActionInput.objectName,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new RecordCRUDActionException(
+        'Failed to create: Object metadata not found',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const objectRecord = await repository.findOne({
       where: {
@@ -36,6 +71,21 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
 
     await repository.update(workflowActionInput.objectRecordId, {
       deletedAt: new Date(),
+    });
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: workflowActionInput.objectName,
+      action: DatabaseEventAction.DELETED,
+      events: [
+        {
+          recordId: objectRecord.id,
+          objectMetadata,
+          properties: {
+            before: objectRecord,
+          },
+        },
+      ],
+      workspaceId,
     });
 
     return {
