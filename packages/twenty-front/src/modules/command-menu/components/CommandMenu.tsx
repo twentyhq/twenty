@@ -1,15 +1,11 @@
-import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
-import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Note } from '@/activities/types/Note';
-import { Task } from '@/activities/types/Task';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuCommandsComponentSelector } from '@/command-menu/states/commandMenuCommandsSelector';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { useComputeCommandMenuCommands } from '@/command-menu/hooks/useComputeCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -17,61 +13,24 @@ import {
   CommandScope,
   CommandType,
 } from '@/command-menu/types/Command';
-import { Company } from '@/companies/types/Company';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/relation-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
-import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import isEmpty from 'lodash.isempty';
-import { useMemo, useRef } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import {
-  Avatar,
-  IconCheckbox,
-  IconComponent,
-  IconNotes,
-  IconSparkles,
-  isDefined,
-} from 'twenty-ui';
+import { useRef } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
-import { getLogoUrlFromDomainName } from '~/utils';
-import { capitalize } from '~/utils/string/capitalize';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 type CommandGroupConfig = {
   heading: string;
   items?: any[];
-  renderItem: (item: any) => {
-    id: string;
-    Icon?: IconComponent;
-    label: string;
-    to?: string;
-    onClick?: () => void;
-    key?: string;
-    firstHotKey?: string;
-    secondHotKey?: string;
-    shouldCloseCommandMenuOnClick?: boolean;
-  };
 };
 
 const StyledCommandMenu = styled.div`
@@ -122,234 +81,32 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
+  const { onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
+
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
-  const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-
-  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
 
   const isMobile = useIsMobile();
 
-  const commandMenuCommands = useRecoilComponentValueV2(
-    commandMenuCommandsComponentSelector,
-  );
-
-  useScopedHotkeys(
-    'ctrl+k,meta+k',
-    () => {
-      closeKeyboardShortcutMenu();
-      toggleCommandMenu();
-    },
-    AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu],
-  );
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      closeCommandMenu();
-    },
-    AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
-  );
-
-  useScopedHotkeys(
-    [Key.Backspace, Key.Delete],
-    () => {
-      if (!isNonEmptyString(commandMenuSearch)) {
-        setContextStoreTargetedRecordsRule({
-          mode: 'selection',
-          selectedRecordIds: [],
-        });
-
-        setContextStoreNumberOfSelectedRecords(0);
-      }
-    },
-    AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
-    {
-      preventDefault: false,
-    },
-  );
+  useCommandMenuHotKeys();
 
   const {
-    matchesSearchFilterObjectRecordsQueryResult,
-    matchesSearchFilterObjectRecordsLoading: loading,
-  } = useMultiObjectSearch({
-    excludedObjects: [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note],
-    searchFilterValue: deferredCommandMenuSearch ?? undefined,
-    limit: 3,
-  });
-
-  const { objectRecordsMap: matchesSearchFilterObjectRecords } =
-    useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap({
-      multiObjectRecordsQueryResult:
-        matchesSearchFilterObjectRecordsQueryResult,
-    });
-
-  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
-    skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Note,
-    filter: deferredCommandMenuSearch
-      ? makeOrFilterVariables([
-          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-        ])
-      : undefined,
-    limit: 3,
-  });
-
-  const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Task>({
-    skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Task,
-    filter: deferredCommandMenuSearch
-      ? makeOrFilterVariables([
-          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-        ])
-      : undefined,
-    limit: 3,
-  });
-
-  const people = matchesSearchFilterObjectRecords.people?.map(
-    (people) => people.record,
-  );
-  const companies = matchesSearchFilterObjectRecords.companies?.map(
-    (companies) => companies.record,
-  );
-  const opportunities = matchesSearchFilterObjectRecords.opportunities?.map(
-    (opportunities) => opportunities.record,
-  );
-
-  const customObjectRecordsMap = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(matchesSearchFilterObjectRecords).filter(
-        ([namePlural, records]) =>
-          ![
-            CoreObjectNamePlural.Person,
-            CoreObjectNamePlural.Opportunity,
-            CoreObjectNamePlural.Company,
-          ].includes(namePlural as CoreObjectNamePlural) && !isEmpty(records),
-      ),
-    );
-  }, [matchesSearchFilterObjectRecords]);
-
-  const peopleCommands = useMemo(
-    () =>
-      people?.map(({ id, name: { firstName, lastName } }) => ({
-        id,
-        label: `${firstName} ${lastName}`,
-        to: `object/person/${id}`,
-        shouldCloseCommandMenuOnClick: true,
-      })),
-    [people],
-  );
-
-  const companyCommands = useMemo(
-    () =>
-      companies?.map(({ id, name }) => ({
-        id,
-        label: name ?? '',
-        to: `object/company/${id}`,
-        shouldCloseCommandMenuOnClick: true,
-      })),
-    [companies],
-  );
-
-  const opportunityCommands = useMemo(
-    () =>
-      opportunities?.map(({ id, name }) => ({
-        id,
-        label: name ?? '',
-        to: `object/opportunity/${id}`,
-        shouldCloseCommandMenuOnClick: true,
-      })),
-    [opportunities],
-  );
-
-  const noteCommands = useMemo(
-    () =>
-      notes?.map((note) => ({
-        id: note.id,
-        label: note.title ?? '',
-        to: '',
-        onCommandClick: () => openActivityRightDrawer(note.id),
-        shouldCloseCommandMenuOnClick: true,
-      })),
-    [notes, openActivityRightDrawer],
-  );
-
-  const tasksCommands = useMemo(
-    () =>
-      tasks?.map((task) => ({
-        id: task.id,
-        label: task.title ?? '',
-        to: '',
-        onCommandClick: () => openActivityRightDrawer(task.id),
-        shouldCloseCommandMenuOnClick: true,
-      })),
-    [tasks, openActivityRightDrawer],
-  );
-
-  const customObjectCommands = useMemo(() => {
-    const customObjectCommandsArray: Command[] = [];
-    Object.values(customObjectRecordsMap).forEach((objectRecords) => {
-      customObjectCommandsArray.push(
-        ...objectRecords.map((objectRecord) => ({
-          id: objectRecord.record.id,
-          label: objectRecord.recordIdentifier.name,
-          to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
-          shouldCloseCommandMenuOnClick: true,
-        })),
-      );
-    });
-
-    return customObjectCommandsArray;
-  }, [customObjectRecordsMap]);
-
-  const otherCommands = useMemo(() => {
-    const commandsArray: Command[] = [];
-    if (peopleCommands?.length > 0) {
-      commandsArray.push(...(peopleCommands as Command[]));
-    }
-    if (companyCommands?.length > 0) {
-      commandsArray.push(...(companyCommands as Command[]));
-    }
-    if (opportunityCommands?.length > 0) {
-      commandsArray.push(...(opportunityCommands as Command[]));
-    }
-    if (noteCommands?.length > 0) {
-      commandsArray.push(...(noteCommands as Command[]));
-    }
-    if (tasksCommands?.length > 0) {
-      commandsArray.push(...(tasksCommands as Command[]));
-    }
-    if (customObjectCommands?.length > 0) {
-      commandsArray.push(...(customObjectCommands as Command[]));
-    }
-    return commandsArray;
-  }, [
+    copilotCommands,
+    navigateCommands,
+    actionCommands,
+    workflowRunCommands,
     peopleCommands,
     companyCommands,
     opportunityCommands,
     noteCommands,
-    customObjectCommands,
     tasksCommands,
-  ]);
+    customObjectCommands,
+    isLoading,
+  } = useComputeCommandMenuCommands();
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -364,15 +121,14 @@ export const CommandMenu = () => {
     return false;
   };
 
-  const matchingNavigateCommand = commandMenuCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) && cmd.type === CommandType.Navigate,
+  const matchingNavigateCommand = navigateCommands.filter((cmd) =>
+    deferredCommandMenuSearch.length > 0
+      ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+        checkInLabels(cmd, deferredCommandMenuSearch)
+      : true,
   );
 
-  const matchingCreateCommand = commandMenuCommands.filter(
+  const matchingCreateCommand = actionCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
@@ -380,18 +136,17 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
-  const matchingStandardActionRecordSelectionCommands =
-    commandMenuCommands.filter(
-      (cmd) =>
-        (deferredCommandMenuSearch.length > 0
-          ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-            checkInLabels(cmd, deferredCommandMenuSearch)
-          : true) &&
-        cmd.type === CommandType.StandardAction &&
-        cmd.scope === CommandScope.RecordSelection,
-    );
+  const matchingStandardActionRecordSelectionCommands = actionCommands.filter(
+    (cmd) =>
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
+        : true) &&
+      cmd.type === CommandType.StandardAction &&
+      cmd.scope === CommandScope.RecordSelection,
+  );
 
-  const matchingStandardActionGlobalCommands = commandMenuCommands.filter(
+  const matchingStandardActionGlobalCommands = actionCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
@@ -401,7 +156,7 @@ export const CommandMenu = () => {
       cmd.scope === CommandScope.Global,
   );
 
-  const matchingWorkflowRunRecordSelectionCommands = commandMenuCommands.filter(
+  const matchingWorkflowRunRecordSelectionCommands = workflowRunCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
@@ -411,7 +166,7 @@ export const CommandMenu = () => {
       cmd.scope === CommandScope.RecordSelection,
   );
 
-  const matchingWorkflowRunGlobalCommands = commandMenuCommands.filter(
+  const matchingWorkflowRunGlobalCommands = workflowRunCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
@@ -428,44 +183,25 @@ export const CommandMenu = () => {
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
   });
 
-  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
-  const setCopilotQuery = useSetRecoilState(copilotQueryState);
-  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
+  if (isLoading) {
+    return;
+  }
 
-  const copilotCommand: Command = {
-    id: 'copilot',
-    to: '', // TODO
-    Icon: IconSparkles,
-    label: 'Open Copilot',
-    type: CommandType.Navigate,
-    onCommandClick: () => {
-      setCopilotQuery(deferredCommandMenuSearch);
-      openCopilotRightDrawer();
-    },
-  };
+  const selectableItems = copilotCommands
+    .concat(matchingStandardActionRecordSelectionCommands)
+    .concat(matchingWorkflowRunRecordSelectionCommands)
+    .concat(matchingStandardActionGlobalCommands)
+    .concat(matchingWorkflowRunGlobalCommands)
+    .concat(matchingCreateCommand)
+    .concat(matchingNavigateCommand)
+    .concat(peopleCommands)
+    .concat(companyCommands)
+    .concat(opportunityCommands)
+    .concat(noteCommands)
+    .concat(tasksCommands)
+    .concat(customObjectCommands);
 
-  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
-
-  const selectableItemIds = copilotCommands
-    .map((cmd) => cmd.id)
-    .concat(matchingStandardActionRecordSelectionCommands.map((cmd) => cmd.id))
-    .concat(matchingWorkflowRunRecordSelectionCommands.map((cmd) => cmd.id))
-    .concat(matchingStandardActionGlobalCommands.map((cmd) => cmd.id))
-    .concat(matchingWorkflowRunGlobalCommands.map((cmd) => cmd.id))
-    .concat(matchingCreateCommand.map((cmd) => cmd.id))
-    .concat(matchingNavigateCommand.map((cmd) => cmd.id))
-    .concat(people?.map((person) => person.id))
-    .concat(companies?.map((company) => company.id))
-    .concat(opportunities?.map((opportunity) => opportunity.id))
-    .concat(notes?.map((note) => note.id))
-    .concat(tasks?.map((task) => task.id))
-    .concat(
-      Object.values(customObjectRecordsMap)
-        ?.map((objectRecords) =>
-          objectRecords.map((objectRecord) => objectRecord.record.id),
-        )
-        .flat() ?? [],
-    );
+  const selectableItemIds = selectableItems.map((item) => item.id);
 
   const isNoResults =
     !matchingStandardActionRecordSelectionCommands.length &&
@@ -474,146 +210,46 @@ export const CommandMenu = () => {
     !matchingWorkflowRunGlobalCommands.length &&
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
-    !people?.length &&
-    !companies?.length &&
-    !notes?.length &&
-    !tasks?.length &&
-    !opportunities?.length &&
-    isEmpty(customObjectRecordsMap);
-
-  const isLoading = loading || isNotesLoading || isTasksLoading;
+    !peopleCommands?.length &&
+    !companyCommands?.length &&
+    !opportunityCommands?.length &&
+    !noteCommands?.length &&
+    !tasksCommands?.length &&
+    !customObjectCommands?.length;
 
   const commandGroups: CommandGroupConfig[] = [
     {
       heading: 'Navigate',
       items: matchingNavigateCommand,
-      renderItem: (command) => ({
-        id: command.id,
-        Icon: command.Icon,
-        label: command.label,
-        to: command.to,
-        onClick: command.onCommandClick,
-        firstHotKey: command.firstHotKey,
-        secondHotKey: command.secondHotKey,
-        shouldCloseCommandMenuOnClick: command.shouldCloseCommandMenuOnClick,
-      }),
     },
     {
       heading: 'Other',
       items: matchingCreateCommand,
-      renderItem: (command) => ({
-        id: command.id,
-        Icon: command.Icon,
-        label: command.label,
-        to: command.to,
-        onClick: command.onCommandClick,
-        firstHotKey: command.firstHotKey,
-        secondHotKey: command.secondHotKey,
-        shouldCloseCommandMenuOnClick: command.shouldCloseCommandMenuOnClick,
-      }),
     },
     {
       heading: 'People',
-      items: people,
-      renderItem: (person) => ({
-        id: person.id,
-        label: `${person.name.firstName} ${person.name.lastName}`,
-        to: `object/person/${person.id}`,
-        Icon: () => (
-          <Avatar
-            type="rounded"
-            avatarUrl={null}
-            placeholderColorSeed={person.id}
-            placeholder={`${person.name.firstName} ${person.name.lastName}`}
-          />
-        ),
-        firstHotKey: person.firstHotKey,
-        secondHotKey: person.secondHotKey,
-        shouldCloseCommandMenuOnClick: true,
-      }),
+      items: peopleCommands,
     },
     {
       heading: 'Companies',
-      items: companies,
-      renderItem: (company) => ({
-        id: company.id,
-        label: company.name,
-        to: `object/company/${company.id}`,
-        Icon: () => (
-          <Avatar
-            placeholderColorSeed={company.id}
-            placeholder={company.name}
-            avatarUrl={getLogoUrlFromDomainName(
-              getCompanyDomainName(company as Company),
-            )}
-          />
-        ),
-        firstHotKey: company.firstHotKey,
-        secondHotKey: company.secondHotKey,
-        shouldCloseCommandMenuOnClick: true,
-      }),
+      items: companyCommands,
     },
     {
       heading: 'Opportunities',
-      items: opportunities,
-      renderItem: (opportunity) => ({
-        id: opportunity.id,
-        label: opportunity.name ?? '',
-        to: `object/opportunity/${opportunity.id}`,
-        Icon: () => (
-          <Avatar
-            type="rounded"
-            avatarUrl={null}
-            placeholderColorSeed={opportunity.id}
-            placeholder={opportunity.name ?? ''}
-          />
-        ),
-        shouldCloseCommandMenuOnClick: true,
-      }),
+      items: opportunityCommands,
     },
     {
       heading: 'Notes',
-      items: notes,
-      renderItem: (note) => ({
-        id: note.id,
-        Icon: IconNotes,
-        label: note.title ?? '',
-        onClick: () => openActivityRightDrawer(note.id),
-        shouldCloseCommandMenuOnClick: true,
-      }),
+      items: noteCommands,
     },
     {
       heading: 'Tasks',
-      items: tasks,
-      renderItem: (task) => ({
-        id: task.id,
-        Icon: IconCheckbox,
-        label: task.title ?? '',
-        onClick: () => openActivityRightDrawer(task.id),
-        shouldCloseCommandMenuOnClick: true,
-      }),
+      items: tasksCommands,
     },
-    ...Object.entries(customObjectRecordsMap).map(
-      ([customObjectNamePlural, objectRecords]): CommandGroupConfig => ({
-        heading: capitalize(customObjectNamePlural),
-        items: objectRecords,
-        renderItem: (objectRecord) => ({
-          key: objectRecord.record.id,
-          id: objectRecord.record.id,
-          label: objectRecord.recordIdentifier.name,
-          to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
-          Icon: () => (
-            <Avatar
-              type="rounded"
-              avatarUrl={null}
-              placeholderColorSeed={objectRecord.id}
-              placeholder={objectRecord.recordIdentifier.name ?? ''}
-            />
-          ),
-          shouldCloseCommandMenuOnClick: true,
-        }),
-      }),
-    ),
+    {
+      heading: 'Custom Objects',
+      items: customObjectCommands,
+    },
   ];
 
   return (
@@ -634,13 +270,10 @@ export const CommandMenu = () => {
                   selectableListId="command-menu-list"
                   selectableItemIdArray={selectableItemIds}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
-                  selectFirstItem={true}
                   onEnter={(itemId) => {
-                    const command = [
-                      ...copilotCommands,
-                      ...commandMenuCommands,
-                      ...otherCommands,
-                    ].find((cmd) => cmd.id === itemId);
+                    const command = selectableItems.find(
+                      (item) => item.id === itemId,
+                    );
 
                     if (isDefined(command)) {
                       const {
@@ -660,22 +293,24 @@ export const CommandMenu = () => {
                   {isNoResults && !isLoading && (
                     <StyledEmpty>No results found</StyledEmpty>
                   )}
-                  {isCopilotEnabled && (
+                  {copilotCommands.length > 0 && (
                     <CommandGroup heading="Copilot">
-                      <SelectableItem itemId={copilotCommand.id}>
-                        <CommandMenuItem
-                          id={copilotCommand.id}
-                          Icon={copilotCommand.Icon}
-                          label={`${copilotCommand.label} ${
-                            deferredCommandMenuSearch.length > 2
-                              ? `"${deferredCommandMenuSearch}"`
-                              : ''
-                          }`}
-                          onClick={copilotCommand.onCommandClick}
-                          firstHotKey={copilotCommand.firstHotKey}
-                          secondHotKey={copilotCommand.secondHotKey}
-                        />
-                      </SelectableItem>
+                      {copilotCommands.map((copilotCommand) => (
+                        <SelectableItem itemId={copilotCommand.id}>
+                          <CommandMenuItem
+                            id={copilotCommand.id}
+                            Icon={copilotCommand.Icon}
+                            label={`${copilotCommand.label} ${
+                              deferredCommandMenuSearch.length > 2
+                                ? `"${deferredCommandMenuSearch}"`
+                                : ''
+                            }`}
+                            onClick={copilotCommand.onCommandClick}
+                            firstHotKey={copilotCommand.firstHotKey}
+                            secondHotKey={copilotCommand.secondHotKey}
+                          />
+                        </SelectableItem>
+                      ))}
                     </CommandGroup>
                   )}
                   <CommandGroup heading="Record Selection">
@@ -780,34 +415,23 @@ export const CommandMenu = () => {
                     </CommandGroup>
                   )}
 
-                  {commandGroups.map(({ heading, items, renderItem }) =>
+                  {commandGroups.map(({ heading, items }) =>
                     items?.length ? (
                       <CommandGroup heading={heading} key={heading}>
                         {items.map((item) => {
-                          const {
-                            id,
-                            Icon,
-                            label,
-                            to,
-                            onClick,
-                            key,
-                            firstHotKey,
-                            secondHotKey,
-                            shouldCloseCommandMenuOnClick,
-                          } = renderItem(item);
                           return (
-                            <SelectableItem itemId={id} key={id}>
+                            <SelectableItem itemId={item.id} key={item.id}>
                               <CommandMenuItem
-                                key={key}
-                                id={id}
-                                Icon={Icon}
-                                label={label}
-                                to={to}
-                                onClick={onClick}
-                                firstHotKey={firstHotKey}
-                                secondHotKey={secondHotKey}
+                                key={item.id}
+                                id={item.id}
+                                Icon={item.Icon}
+                                label={item.label}
+                                to={item.to}
+                                onClick={item.onClick}
+                                firstHotKey={item.firstHotKey}
+                                secondHotKey={item.secondHotKey}
                                 shouldCloseCommandMenuOnClick={
-                                  shouldCloseCommandMenuOnClick
+                                  item.shouldCloseCommandMenuOnClick
                                 }
                               />
                             </SelectableItem>
