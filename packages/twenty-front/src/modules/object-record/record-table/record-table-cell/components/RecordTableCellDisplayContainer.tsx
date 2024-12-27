@@ -55,7 +55,7 @@ export const RecordTableCellDisplayContainer = ({
   >
     {placeholderForEmptyCell ? (
       <StyledEmptyPlaceholderField>
-        {`Set ${placeholderForEmptyCell}`}
+        {'Set ' + placeholderForEmptyCell}
       </StyledEmptyPlaceholderField>
     ) : (
       <StyledInnerContainer>{children}</StyledInnerContainer>
