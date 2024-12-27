@@ -204,6 +204,13 @@ export const useCommandMenu = () => {
           null,
         );
 
+        set(
+          actionMenuEntriesComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          new Map(),
+        );
+
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
           resetSelectedItem();

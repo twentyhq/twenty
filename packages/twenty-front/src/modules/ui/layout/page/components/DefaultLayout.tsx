@@ -1,3 +1,5 @@
+import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -16,7 +18,8 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { css, Global, useTheme } from '@emotion/react';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
@@ -76,6 +79,8 @@ export const DefaultLayout = () => {
   const showAuthModal = useShowAuthModal();
   const { toggleCommandMenu } = useCommandMenu();
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
   return (
     <>
       <Global
@@ -100,6 +105,8 @@ export const DefaultLayout = () => {
                     onActionExecutedCallback: toggleCommandMenu,
                   }}
                 >
+                  <RecordActionMenuEntriesSetter />
+                  {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
                   <ActionMenuConfirmationModals />
                   <CommandMenu />
                 </ActionMenuContext.Provider>
