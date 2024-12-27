@@ -38,7 +38,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
 
     if (!workspaceId) {
       throw new RecordCRUDActionException(
-        'Failed to create: Workspace ID is required',
+        'Failed to delete: Workspace ID is required',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -51,7 +51,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
 
     if (!objectMetadata) {
       throw new RecordCRUDActionException(
-        'Failed to create: Object metadata not found',
+        'Failed to delete: Object metadata not found',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -69,9 +69,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    await repository.update(workflowActionInput.objectRecordId, {
-      deletedAt: new Date(),
-    });
+    await repository.softDelete(workflowActionInput.objectRecordId);
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: workflowActionInput.objectName,

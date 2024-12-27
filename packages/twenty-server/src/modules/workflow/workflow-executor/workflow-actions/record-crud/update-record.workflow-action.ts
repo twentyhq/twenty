@@ -42,7 +42,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
 
     if (!workspaceId) {
       throw new RecordCRUDActionException(
-        'Failed to create: Workspace ID is required',
+        'Failed to update: Workspace ID is required',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -55,7 +55,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
 
     if (!objectMetadata) {
       throw new RecordCRUDActionException(
-        'Failed to create: Object metadata not found',
+        'Failed to update: Object metadata not found',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
