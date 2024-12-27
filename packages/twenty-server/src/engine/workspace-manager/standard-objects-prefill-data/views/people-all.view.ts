@@ -1,4 +1,4 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-map';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -7,11 +7,12 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const peopleAllView = (
-  objectMetadataMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
     name: 'All',
-    objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.person].id,
+    objectMetadataId:
+      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -21,7 +22,7 @@ export const peopleAllView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.name
           ],
         position: 0,
@@ -30,7 +31,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.emails
           ],
         position: 1,
@@ -39,7 +40,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.createdBy
           ],
         position: 2,
@@ -48,7 +49,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.company
           ],
         position: 3,
@@ -57,7 +58,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.phones
           ],
         position: 4,
@@ -66,7 +67,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 5,
@@ -75,7 +76,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.city
           ],
         position: 6,
@@ -84,7 +85,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.jobTitle
           ],
         position: 7,
@@ -93,7 +94,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.linkedinLink
           ],
         position: 8,
@@ -102,7 +103,7 @@ export const peopleAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
             PERSON_STANDARD_FIELD_IDS.xLink
           ],
         position: 9,

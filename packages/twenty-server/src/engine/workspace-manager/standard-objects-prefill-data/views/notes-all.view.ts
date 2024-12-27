@@ -1,4 +1,4 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-map';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -7,11 +7,12 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const notesAllView = (
-  objectMetadataMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
     name: 'All Notes',
-    objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.note].id,
+    objectMetadataId:
+      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
@@ -21,7 +22,7 @@ export const notesAllView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
             NOTE_STANDARD_FIELD_IDS.title
           ],
         position: 0,
@@ -30,7 +31,7 @@ export const notesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
             NOTE_STANDARD_FIELD_IDS.noteTargets
           ],
         position: 1,
@@ -39,7 +40,7 @@ export const notesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
             NOTE_STANDARD_FIELD_IDS.body
           ],
         position: 2,
@@ -48,7 +49,7 @@ export const notesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
             NOTE_STANDARD_FIELD_IDS.createdBy
           ],
         position: 3,
@@ -57,7 +58,7 @@ export const notesAllView = (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.note].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 4,
