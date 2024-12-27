@@ -74,18 +74,20 @@ export class WorkflowCommonWorkspaceService {
         'workflowEventListener',
       );
 
-    workflowIds.map(async (workflowId) => {
-      workflowEventListenerRepository.softDelete({
-        workflowId,
-      });
+    Promise.all(
+      workflowIds.map((workflowId) => {
+        workflowEventListenerRepository.softDelete({
+          workflowId,
+        });
 
-      workflowRunRepository.softDelete({
-        workflowId,
-      });
+        workflowRunRepository.softDelete({
+          workflowId,
+        });
 
-      workflowVersionRepository.softDelete({
-        workflowId,
-      });
-    });
+        workflowVersionRepository.softDelete({
+          workflowId,
+        });
+      }),
+    );
   }
 }
