@@ -1,28 +1,28 @@
 import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
-import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
-import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
+import { RecordTableColumnAggregateFooterValueCell } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValueCell';
 import { RecordTableFooterAggregateContentId } from '@/object-record/record-table/record-table-footer/types/RecordTableFooterAggregateContentId';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 
 type RecordTableColumnFooterWithDropdownProps = {
-  column: ColumnDefinition<FieldMetadata>;
   isFirstCell: boolean;
   currentRecordGroupId?: string;
 };
 
 export const RecordTableColumnFooterWithDropdown = ({
-  column,
   currentRecordGroupId,
   isFirstCell,
 }: RecordTableColumnFooterWithDropdownProps) => {
   const { currentContentId, handleContentChange, handleResetContent } =
     useCurrentContentId<RecordTableFooterAggregateContentId>();
+
+  const { fieldMetadataId } = useContext(
+    RecordTableColumnAggregateFooterCellContext,
+  );
 
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
@@ -38,12 +38,9 @@ export const RecordTableColumnFooterWithDropdown = ({
     toggleScrollYWrapper(true);
   }, [handleResetContent, toggleScrollXWrapper, toggleScrollYWrapper]);
 
-  const { aggregateValue, aggregateLabel } =
-    useAggregateRecordsForRecordTableColumnFooter(column.fieldMetadataId);
-
   const dropdownId = currentRecordGroupId
-    ? `${column.fieldMetadataId}-footer-${currentRecordGroupId}`
-    : `${column.fieldMetadataId}-footer`;
+    ? `${fieldMetadataId}-footer-${currentRecordGroupId}`
+    : `${fieldMetadataId}-footer`;
 
   return (
     <Dropdown
@@ -51,9 +48,7 @@ export const RecordTableColumnFooterWithDropdown = ({
       onClose={handleDropdownClose}
       dropdownId={dropdownId}
       clickableComponent={
-        <RecordTableColumnAggregateFooterValue
-          aggregateLabel={aggregateLabel}
-          aggregateValue={aggregateValue}
+        <RecordTableColumnAggregateFooterValueCell
           dropdownId={dropdownId}
           isFirstCell={isFirstCell}
         />
@@ -65,7 +60,7 @@ export const RecordTableColumnFooterWithDropdown = ({
             onContentChange: handleContentChange,
             resetContent: handleResetContent,
             dropdownId: dropdownId,
-            fieldMetadataId: column.fieldMetadataId,
+            fieldMetadataId: fieldMetadataId,
           }}
         >
           <RecordTableColumnAggregateFooterDropdownContent />
