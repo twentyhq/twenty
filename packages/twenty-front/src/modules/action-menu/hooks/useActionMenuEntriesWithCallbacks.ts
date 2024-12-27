@@ -1,5 +1,5 @@
 import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-ui';
 
 export const useActionMenuEntriesWithCallbacks = (
   objectMetadataItem: ObjectMetadataItem,
-  viewType: ActionAvailableOn,
+  viewType: ActionViewType,
 ) => {
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
     'IS_PAGE_HEADER_V2_ENABLED',

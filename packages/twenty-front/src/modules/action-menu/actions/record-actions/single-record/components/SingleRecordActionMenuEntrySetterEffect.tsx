@@ -1,4 +1,4 @@
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { useActionMenuEntriesWithCallbacks } from '@/action-menu/hooks/useActionMenuEntriesWithCallbacks';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,7 +9,7 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
   viewType,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  viewType: ActionAvailableOn;
+  viewType: ActionViewType;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 

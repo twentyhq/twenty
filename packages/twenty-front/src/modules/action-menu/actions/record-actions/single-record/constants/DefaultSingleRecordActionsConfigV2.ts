@@ -5,7 +5,7 @@ import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -37,8 +37,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     isPinned: true,
     Icon: IconHeart,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -52,8 +52,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     position: 1,
     Icon: IconHeartOff,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
@@ -68,8 +68,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDeleteSingleRecordAction,
   },
@@ -84,8 +84,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDestroySingleRecordAction,
   },
@@ -98,7 +98,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     position: 4,
     isPinned: true,
     Icon: IconChevronUp,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
@@ -110,7 +110,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     position: 5,
     isPinned: true,
     Icon: IconChevronDown,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToNextRecordSingleRecordAction,
   },
 };
