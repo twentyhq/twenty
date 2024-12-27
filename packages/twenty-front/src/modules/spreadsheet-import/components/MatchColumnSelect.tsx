@@ -25,6 +25,13 @@ const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
+const StyledDropdownMenu = styled(DropdownMenu)`
+  background-color: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+`;
+
 interface MatchColumnSelectProps {
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
@@ -121,7 +128,7 @@ export const MatchColumnSelect = ({
       {isOpen &&
         createPortal(
           <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <DropdownMenu
+            <StyledDropdownMenu
               data-select-disable
               ref={dropdownContainerRef}
               // width={refs.domReference.current?.clientWidth}
@@ -162,7 +169,7 @@ export const MatchColumnSelect = ({
                   <MenuItem key="No result" text="No result" />
                 )}
               </DropdownMenuItemsContainer>
-            </DropdownMenu>
+            </StyledDropdownMenu>
           </StyledFloatingDropdown>,
           document.body,
         )}
