@@ -65,9 +65,10 @@ export const RecordTableActionRow = ({
       <StyledIconContainer>
         <LeftIcon size={theme.icon.size.sm} color={theme.font.color.tertiary} />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer colSpan={visibleTableColumns.length}>
+      <StyledRecordTableTdTextContainer>
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
+      <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />
       <StyledEmptyTd />
       <StyledEmptyTd />
     </StyledRecordTableDraggableTr>

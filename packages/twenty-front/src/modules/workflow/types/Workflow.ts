@@ -44,6 +44,7 @@ export type WorkflowUpdateRecordActionSettings = BaseWorkflowActionSettings & {
     objectName: string;
     objectRecord: ObjectRecord;
     objectRecordId: string;
+    fieldsToUpdate: string[];
   };
 };
 

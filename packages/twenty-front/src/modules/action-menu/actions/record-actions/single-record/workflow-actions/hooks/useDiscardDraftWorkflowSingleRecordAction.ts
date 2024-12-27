@@ -1,63 +1,31 @@
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { IconTrash, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-ui';
 
-export const useDiscardDraftWorkflowSingleRecordAction = ({
-  workflowId,
-}: {
-  workflowId: string;
-}) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+export const useDiscardDraftWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+  ({ recordId }) => {
+    const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
 
-  const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
+    const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
-
-  const registerDiscardDraftWorkflowSingleRecordAction = ({
-    position,
-  }: {
-    position: number;
-  }) => {
-    if (
-      !isDefined(workflowWithCurrentVersion) ||
-      workflowWithCurrentVersion.versions.length < 2
-    ) {
-      return;
-    }
-
-    const isDraft =
+    const shouldBeRegistered =
+      isDefined(workflowWithCurrentVersion) &&
+      workflowWithCurrentVersion.versions.length > 1 &&
       workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
 
-    if (!isDraft) {
-      return;
-    }
+    const onClick = () => {
+      if (!shouldBeRegistered) {
+        return;
+      }
 
-    addActionMenuEntry({
-      key: 'discard-workflow-draft-single-record',
-      label: 'Discard Draft',
-      position,
-      Icon: IconTrash,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
-      onClick: () => {
-        deleteOneWorkflowVersion({
-          workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-        });
-      },
-    });
-  };
+      deleteOneWorkflowVersion({
+        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+      });
+    };
 
-  const unregisterDiscardDraftWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('discard-workflow-draft-single-record');
+    return {
+      shouldBeRegistered,
+      onClick,
+    };
   };
-
-  return {
-    registerDiscardDraftWorkflowSingleRecordAction,
-    unregisterDiscardDraftWorkflowSingleRecordAction,
-  };
-};

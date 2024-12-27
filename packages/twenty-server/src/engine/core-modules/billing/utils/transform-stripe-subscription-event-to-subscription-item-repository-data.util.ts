@@ -17,7 +17,10 @@ export const transformStripeSubscriptionEventToSubscriptionItemRepositoryData =
         stripeSubscriptionItemId: item.id,
         quantity: item.quantity,
         metadata: item.metadata,
-        billingThresholds: item.billing_thresholds ?? undefined,
+        billingThresholds:
+          item.billing_thresholds === null
+            ? undefined
+            : item.billing_thresholds,
       };
     });
   };

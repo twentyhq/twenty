@@ -19,7 +19,7 @@ export type NavigationDrawerProps = {
   className?: string;
   footer?: ReactNode;
   logo?: string;
-  title?: string;
+  title: string;
 };
 
 const StyledAnimatedContainer = styled(motion.div)<{ isSettings?: boolean }>`
@@ -116,7 +116,7 @@ export const NavigationDrawer = ({
         ) : (
           <NavigationDrawerHeader
             name={title}
-            logo={logo}
+            logo={logo || ''}
             showCollapseButton={isHovered}
           />
         )}

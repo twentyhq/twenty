@@ -10,6 +10,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -75,9 +76,20 @@ export const triggerCreateRecordsOptimisticEffect = ({
           rootQueryCachedObjectRecordConnection,
         );
 
+        const rootQueryCachedPageInfo = readField<{
+          startCursor?: string;
+          endCursor?: string;
+          hasNextPage?: boolean;
+          hasPreviousPage?: boolean;
+        }>('pageInfo', rootQueryCachedObjectRecordConnection);
+
         const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
           ? [...rootQueryCachedRecordEdges]
           : [];
+
+        const nextQueryCachedPageInfo = isDefined(rootQueryCachedPageInfo)
+          ? { ...rootQueryCachedPageInfo }
+          : {};
 
         const hasAddedRecords = recordsToCreate
           .map((recordToCreate) => {
@@ -116,11 +128,55 @@ export const triggerCreateRecordsOptimisticEffect = ({
               );
 
               if (recordToCreateReference && !recordAlreadyInCache) {
-                nextRootQueryCachedRecordEdges.unshift({
+                const cursor = encodeCursor(recordToCreate);
+
+                const edge = {
                   __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                   node: recordToCreateReference,
-                  cursor: '',
-                });
+                  cursor,
+                };
+
+                if (
+                  !isDefined(recordToCreate.position) ||
+                  recordToCreate.position === 'first'
+                ) {
+                  nextRootQueryCachedRecordEdges.unshift(edge);
+                  nextQueryCachedPageInfo.startCursor = cursor;
+                } else if (recordToCreate.position === 'last') {
+                  nextRootQueryCachedRecordEdges.push(edge);
+                  nextQueryCachedPageInfo.endCursor = cursor;
+                } else if (typeof recordToCreate.position === 'number') {
+                  let index = Math.round(
+                    nextRootQueryCachedRecordEdges.length *
+                      recordToCreate.position,
+                  );
+
+                  if (recordToCreate.position < 0) {
+                    index = Math.max(
+                      0,
+                      nextRootQueryCachedRecordEdges.length +
+                        Math.round(recordToCreate.position),
+                    );
+                  } else if (recordToCreate.position > 1) {
+                    index = nextRootQueryCachedRecordEdges.length;
+                  }
+
+                  index = Math.max(
+                    0,
+                    Math.min(index, nextRootQueryCachedRecordEdges.length),
+                  );
+
+                  nextRootQueryCachedRecordEdges.splice(index, 0, edge);
+
+                  if (index === 0) {
+                    nextQueryCachedPageInfo.startCursor = cursor;
+                  } else if (
+                    index ===
+                    nextRootQueryCachedRecordEdges.length - 1
+                  ) {
+                    nextQueryCachedPageInfo.endCursor = cursor;
+                  }
+                }
 
                 return true;
               }
@@ -140,6 +196,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
           totalCount: isDefined(rootQueryCachedRecordTotalCount)
             ? rootQueryCachedRecordTotalCount + 1
             : undefined,
+          pageInfo: nextQueryCachedPageInfo,
         };
       },
     },

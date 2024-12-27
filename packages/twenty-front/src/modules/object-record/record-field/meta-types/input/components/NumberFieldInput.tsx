@@ -1,8 +1,8 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
-import { useNumberField } from '../../hooks/useNumberField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { useNumberField } from '../../hooks/useNumberField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
@@ -57,7 +57,7 @@ export const NumberFieldInput = ({
   };
 
   return (
-    <FieldInputOverlay>
+    <FieldInputContainer>
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
@@ -70,6 +70,6 @@ export const NumberFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-    </FieldInputOverlay>
+    </FieldInputContainer>
   );
 };

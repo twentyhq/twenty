@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { WorkspaceQueryRunnerJobModule } from 'src/engine/api/graphql/workspace-query-runner/jobs/workspace-query-runner-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
@@ -23,6 +22,7 @@ import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspac
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
+import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
@@ -47,11 +47,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CalendarEventParticipantManagerModule,
     TimelineActivityModule,
     StripeModule,
-    WorkspaceQueryRunnerJobModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
     WebhookJobModule,
     WorkflowModule,
+    FavoriteModule,
   ],
   providers: [
     CleanInactiveWorkspaceJob,

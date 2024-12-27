@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -25,7 +26,7 @@ const filterQueryParamsSchema = z.object({
     .record(
       z.record(
         z.nativeEnum(ViewFilterOperand),
-        z.string().or(z.array(z.string())),
+        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )
     .optional(),
@@ -143,9 +144,11 @@ export const useViewFromQueryParams = () => {
                   relationRecordNames.push(...relationRecordNamesFromQuery);
                 }
 
-                const filterValueAsString = Array.isArray(filterValueFromURL)
-                  ? JSON.stringify(filterValueFromURL)
-                  : filterValueFromURL;
+                const filterValueAsString =
+                  Array.isArray(filterValueFromURL) ||
+                  isObject(filterValueFromURL)
+                    ? JSON.stringify(filterValueFromURL)
+                    : filterValueFromURL;
 
                 return {
                   __typename: 'ViewFilter',

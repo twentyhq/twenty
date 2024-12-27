@@ -38,7 +38,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsFunctionSettingsEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsWorkflowEnabled,
@@ -84,16 +84,6 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IsAggregateQueryEnabled,
         workspaceId: workspaceId,
         value: false,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
-        workspaceId: workspaceId,
-        value: true,
       },
       {
         key: FeatureFlagKey.IsPageHeaderV2Enabled,

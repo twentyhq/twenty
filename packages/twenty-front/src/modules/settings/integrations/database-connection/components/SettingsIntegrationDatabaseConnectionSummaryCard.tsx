@@ -1,7 +1,6 @@
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import styled from '@emotion/styled';
 import {
@@ -64,18 +63,16 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
               <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
             }
             dropdownComponents={
-              <DropdownMenu>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconTrash}
-                    text="Remove"
-                    onClick={onRemove}
-                  />
-                  <UndecoratedLink to="./edit">
-                    <MenuItem LeftIcon={IconPencil} text="Edit" />
-                  </UndecoratedLink>
-                </DropdownMenuItemsContainer>
-              </DropdownMenu>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconTrash}
+                  text="Remove"
+                  onClick={onRemove}
+                />
+                <UndecoratedLink to="./edit">
+                  <MenuItem LeftIcon={IconPencil} text="Edit" />
+                </UndecoratedLink>
+              </DropdownMenuItemsContainer>
             }
           />
         </>

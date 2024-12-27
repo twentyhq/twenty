@@ -11,6 +11,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -108,6 +109,21 @@ export const useCommandMenu = () => {
             }),
             contextStoreCurrentViewId,
           );
+
+          const contextStoreCurrentViewType = snapshot
+            .getLoadable(
+              contextStoreCurrentViewTypeComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreCurrentViewTypeComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreCurrentViewType,
+          );
         }
 
         setIsCommandMenuOpened(true);
@@ -121,11 +137,56 @@ export const useCommandMenu = () => {
   );
 
   const closeCommandMenu = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       () => {
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
+
+        set(
+          contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
+
+        set(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          {
+            mode: 'selection',
+            selectedRecordIds: [],
+          },
+        );
+
+        set(
+          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          0,
+        );
+
+        set(
+          contextStoreFiltersComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          [],
+        );
+
+        set(
+          contextStoreCurrentViewIdComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
+
+        set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
@@ -155,8 +216,21 @@ export const useCommandMenu = () => {
   );
 
   const onItemClick = useCallback(
-    (onClick?: () => void, to?: string) => {
-      toggleCommandMenu();
+    ({
+      shouldCloseCommandMenuOnClick,
+      onClick,
+      to,
+    }: {
+      shouldCloseCommandMenuOnClick?: boolean;
+      onClick?: () => void;
+      to?: string;
+    }) => {
+      if (
+        isDefined(shouldCloseCommandMenuOnClick) &&
+        shouldCloseCommandMenuOnClick
+      ) {
+        toggleCommandMenu();
+      }
 
       if (isDefined(onClick)) {
         onClick();

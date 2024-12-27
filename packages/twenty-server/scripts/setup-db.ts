@@ -56,7 +56,7 @@ rawDataSource
     ]; // See https://supabase.github.io/wrappers/
 
     for (const wrapper of supabaseWrappers) {
-      if (await checkForeignDataWrapperExists(wrapper)) {
+      if (await checkForeignDataWrapperExists(`${wrapper.toLowerCase()}_fdw`)) {
         continue;
       }
       await performQuery(

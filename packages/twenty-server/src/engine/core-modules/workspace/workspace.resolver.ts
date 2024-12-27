@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -12,7 +12,6 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
@@ -22,11 +21,10 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-output';
 import {
   AuthProviders,
   PublicWorkspaceDataOutput,
-} from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+} from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
@@ -41,6 +39,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -50,10 +49,10 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
+@UseFilters(GraphqlValidationExceptionFilter)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly loginTokenService: LoginTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
@@ -72,21 +71,21 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => ActivateWorkspaceOutput)
+  @Mutation(() => Workspace)
   @UseGuards(UserAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
+    @OriginHeader() origin: string,
   ) {
-    const workspace = await this.workspaceService.activateWorkspace(user, data);
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-    );
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
-    return {
-      workspace,
-      loginToken,
-    };
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
   @Mutation(() => Workspace)
@@ -185,48 +184,54 @@ export class WorkspaceResolver {
 
   @Query(() => PublicWorkspaceDataOutput)
   async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOrigin(origin);
+    try {
+      const workspace =
+        await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          origin,
+        );
 
-    workspaceValidator.assertIsExist(
-      workspace,
-      new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
-
-    let workspaceLogoWithToken = '';
-
-    if (workspace.logo) {
-      try {
-        const workspaceLogoToken = await this.fileService.encodeFileToken({
-          workspaceId: workspace.id,
-        });
-
-        workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
-      } catch (e) {
-        workspaceLogoWithToken = workspace.logo;
-      }
-    }
-
-    const systemEnabledProviders: AuthProviders = {
-      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
-      magicLink: false,
-      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-      sso: [],
-    };
-
-    return {
-      id: workspace.id,
-      logo: workspaceLogoWithToken,
-      displayName: workspace.displayName,
-      subdomain: workspace.subdomain,
-      authProviders: getAuthProvidersByWorkspace({
+      workspaceValidator.assertIsDefinedOrThrow(
         workspace,
-        systemEnabledProviders,
-      }),
-    };
+        new WorkspaceException(
+          'Workspace not found',
+          WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+        ),
+      );
+
+      let workspaceLogoWithToken = '';
+
+      if (workspace.logo) {
+        try {
+          const workspaceLogoToken = await this.fileService.encodeFileToken({
+            workspaceId: workspace.id,
+          });
+
+          workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
+        } catch (e) {
+          workspaceLogoWithToken = workspace.logo;
+        }
+      }
+
+      const systemEnabledProviders: AuthProviders = {
+        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+        magicLink: false,
+        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: [],
+      };
+
+      return {
+        id: workspace.id,
+        logo: workspaceLogoWithToken,
+        displayName: workspace.displayName,
+        subdomain: workspace.subdomain,
+        authProviders: getAuthProvidersByWorkspace({
+          workspace,
+          systemEnabledProviders,
+        }),
+      };
+    } catch (err) {
+      workspaceGraphqlApiExceptionHandler(err);
+    }
   }
 }

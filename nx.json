@@ -47,7 +47,8 @@
       "configurations": {
         "ci": { "cacheStrategy": "content" },
         "fix": { "fix": true }
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "fmt": {
       "executor": "nx:run-commands",
@@ -63,7 +64,8 @@
       "configurations": {
         "ci": { "cacheStrategy": "content" },
         "fix": { "write": true }
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -74,7 +76,8 @@
       },
       "configurations": {
         "watch": { "watch": true }
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -115,7 +118,8 @@
         "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true storybook build",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "storybook:serve:dev": {
       "executor": "nx:run-commands",

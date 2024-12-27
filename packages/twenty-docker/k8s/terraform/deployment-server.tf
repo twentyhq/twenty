@@ -60,13 +60,8 @@ resource "kubernetes_deployment" "twentycrm_server" {
             value = "redis://${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local:6379"
           }
           env {
-            name  = "ENABLE_DB_MIGRATIONS"
-            value = "true"
-          }
-
-          env {
-            name  = "SIGN_IN_PREFILLED"
-            value = "true"
+            name  = "DISABLE_DB_MIGRATIONS"
+            value = "false"
           }
 
           env {

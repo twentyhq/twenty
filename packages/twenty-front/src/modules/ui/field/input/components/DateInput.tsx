@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { Nullable } from 'twenty-ui';
 
@@ -10,14 +9,6 @@ import {
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-
-const StyledCalendarContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-`;
 
 export type DateInputProps = {
   value: Nullable<Date>;
@@ -32,6 +23,7 @@ export type DateInputProps = {
   isDateTimeInput?: boolean;
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
+  hideHeaderInput?: boolean;
 };
 
 export const DateInput = ({
@@ -44,6 +36,7 @@ export const DateInput = ({
   isDateTimeInput,
   onClear,
   onSubmit,
+  hideHeaderInput,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -87,18 +80,17 @@ export const DateInput = ({
 
   return (
     <div ref={wrapperRef}>
-      <StyledCalendarContainer>
-        <InternalDatePicker
-          date={internalValue ?? new Date()}
-          onChange={handleChange}
-          onMouseSelect={handleMouseSelect}
-          clearable={clearable ? clearable : false}
-          isDateTimeInput={isDateTimeInput}
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClear={handleClear}
-        />
-      </StyledCalendarContainer>
+      <InternalDatePicker
+        date={internalValue ?? new Date()}
+        onChange={handleChange}
+        onMouseSelect={handleMouseSelect}
+        clearable={clearable ? clearable : false}
+        isDateTimeInput={isDateTimeInput}
+        onEnter={onEnter}
+        onEscape={onEscape}
+        onClear={handleClear}
+        hideHeaderInput={hideHeaderInput}
+      />
     </div>
   );
 };
