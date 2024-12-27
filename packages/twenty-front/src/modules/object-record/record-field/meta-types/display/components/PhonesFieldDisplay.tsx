@@ -11,31 +11,40 @@ export const PhonesFieldDisplay = () => {
 
   const { isFocused } = useFieldFocus();
 
-  const {enqueueSnackBar} = useSnackBar();
+  const { enqueueSnackBar } = useSnackBar();
 
-  const {getIcon} = useIcons();
+  const { getIcon } = useIcons();
 
-  const IconClipboard = getIcon('IconClipboard');
+  const IconCircleCheck = getIcon('IconCircleCheck');
+  const IconExclamationCircle = getIcon('IconExclamationCircle');
 
-  const handleClick = async(phoneNumber:string,event: React.MouseEvent<HTMLElement>) =>{
-      event.preventDefault();
-      try{
-        await navigator.clipboard.writeText(phoneNumber);
-        enqueueSnackBar('Phone number copied to clipboard', {
-          variant: SnackBarVariant.Success,
-          icon: <IconClipboard size={16} />,
-          duration: 2000
-        });
-      }catch(err){
-        enqueueSnackBar('Error copying to clipboard', {
-          variant: SnackBarVariant.Error,
-          icon: <IconClipboard size={16} />,
-          duration: 2000
-        });
-      }
+  const handleClick = async (
+    phoneNumber: string,
+    event: React.MouseEvent<HTMLElement>,
+  ) => {
+    event.preventDefault();
 
+    try {
+      await navigator.clipboard.writeText(phoneNumber);
+      enqueueSnackBar('Phone number copied to clipboard', {
+        variant: SnackBarVariant.Success,
+        icon: <IconCircleCheck size={16} color="green" />,
+        duration: 2000,
+      });
+    } catch (err) {
+      enqueueSnackBar('Error copying to clipboard', {
+        variant: SnackBarVariant.Error,
+        icon: <IconExclamationCircle size={16} color="red" />,
+        duration: 2000,
+      });
+    }
+  };
 
-  }
-
-  return <PhonesDisplay value={fieldValue} isFocused={isFocused} onPhoneNumberClick={handleClick}/>;
+  return (
+    <PhonesDisplay
+      value={fieldValue}
+      isFocused={isFocused}
+      onPhoneNumberClick={handleClick}
+    />
+  );
 };

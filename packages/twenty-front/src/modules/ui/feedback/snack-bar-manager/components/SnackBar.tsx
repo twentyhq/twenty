@@ -74,22 +74,12 @@ const StyledHeader = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(6)};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledActions = styled.div`
   align-items: center;
   display: flex;
   margin-left: auto;
-`;
-
-const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 200px;
 `;
 
 const defaultTitleByVariant: Record<SnackBarVariant, string> = {
@@ -183,7 +173,7 @@ export const SnackBar = ({
       />
       <StyledHeader>
         {icon}
-        {title}
+        {message}
         <StyledActions>
           {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
 
@@ -192,7 +182,6 @@ export const SnackBar = ({
           )}
         </StyledActions>
       </StyledHeader>
-      {message && <StyledDescription>{message}</StyledDescription>}
     </StyledContainer>
   );
 };
