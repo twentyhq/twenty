@@ -79,7 +79,6 @@ export const RecordTableAggregateFooterCell = ({
 
   return (
     <StyledColumnFooterCell
-      key={fieldMetadataId}
       columnWidth={Math.max(
         tableColumnsByKey[fieldMetadataId].size + 24,
         COLUMN_MIN_WIDTH,

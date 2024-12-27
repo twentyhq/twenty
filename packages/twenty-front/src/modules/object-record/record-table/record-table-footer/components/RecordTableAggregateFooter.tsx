@@ -92,13 +92,13 @@ export const RecordTableAggregateFooter = ({
         <StyledTh />
         {visibleTableColumns.map((column, index) => (
           <RecordTableColumnAggregateFooterCellContext.Provider
+            key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             value={{
               viewFieldId: column.viewFieldId || '',
               fieldMetadataId: column.fieldMetadataId,
             }}
           >
             <RecordTableAggregateFooterCell
-              key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
               currentRecordGroupId={currentRecordGroupId}
               isFirstCell={index === 0}
             />
