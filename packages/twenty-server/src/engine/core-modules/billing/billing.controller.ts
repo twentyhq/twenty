@@ -6,6 +6,7 @@ import {
   RawBodyRequest,
   Req,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -15,11 +16,15 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
+import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 @Controller('billing')
+@UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
 
@@ -28,6 +33,8 @@ export class BillingController {
     private readonly billingWebhookSubscriptionService: BillingWebhookSubscriptionService,
     private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingWebhookProductService: BillingWebhookProductService,
+    private readonly billingWebhookPriceService: BillingWebhookPriceService,
   ) {}
 
   @Post('/webhooks')
@@ -79,6 +86,28 @@ export class BillingController {
         if (
           error instanceof BillingException &&
           error.code === BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND
+        ) {
+          res.status(404).end();
+        }
+      }
+    }
+
+    if (
+      event.type === WebhookEvent.PRODUCT_CREATED ||
+      event.type === WebhookEvent.PRODUCT_UPDATED
+    ) {
+      await this.billingWebhookProductService.processStripeEvent(event.data);
+    }
+    if (
+      event.type === WebhookEvent.PRICE_CREATED ||
+      event.type === WebhookEvent.PRICE_UPDATED
+    ) {
+      try {
+        await this.billingWebhookPriceService.processStripeEvent(event.data);
+      } catch (error) {
+        if (
+          error instanceof BillingException &&
+          error.code === BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND
         ) {
           res.status(404).end();
         }

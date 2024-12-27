@@ -7,6 +7,8 @@ import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/que
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
 import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.pre-query.hook';
+import { WorkflowDeleteManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-many.post-query.hook';
+import { WorkflowDeleteOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-one.post-query.hook';
 import { WorkflowRunCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-many.pre-query.hook';
 import { WorkflowRunCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-one.pre-query.hook';
 import { WorkflowRunDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-many.pre-query.hook';
@@ -49,6 +51,8 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowCreateManyPostQueryHook,
     WorkflowVersionValidationWorkspaceService,
     WorkflowCommonWorkspaceService,
+    WorkflowDeleteManyPostQueryHook,
+    WorkflowDeleteOnePostQueryHook,
   ],
 })
 export class WorkflowQueryHookModule {}

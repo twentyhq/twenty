@@ -1,6 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 
-import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -17,10 +17,11 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { isDefined } from 'src/utils/is-defined';
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
-  context: WorkspaceSchemaBuilderContext,
+  context: WorkspaceQueryRunnerOptions,
 ) => {
   if (error instanceof QueryFailedError) {
     if (
@@ -49,7 +50,11 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
               return fieldMetadata?.label;
             });
 
-        const columnNames = affectedColumns?.join(', ');
+        if (!isDefined(affectedColumns)) {
+          throw new UserInputError(`A duplicate entry was detected`);
+        }
+
+        const columnNames = affectedColumns.join(', ');
 
         if (affectedColumns?.length === 1) {
           throw new UserInputError(
@@ -96,6 +101,7 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       case GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR:
       case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
       case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
+      case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
         throw new UserInputError(error.message);
       case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
         throw new NotFoundError(error.message);

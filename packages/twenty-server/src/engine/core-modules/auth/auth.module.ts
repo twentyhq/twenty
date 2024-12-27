@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
-import { AuthExceptionHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -15,7 +14,7 @@ import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
-import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+// import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
@@ -103,9 +102,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ResetPasswordService,
     SwitchWorkspaceService,
     TransientTokenService,
-    AuthExceptionHandlerService,
     ApiKeyService,
-    OAuthService,
+    // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
+    // OAuthService,
   ],
   exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
 })

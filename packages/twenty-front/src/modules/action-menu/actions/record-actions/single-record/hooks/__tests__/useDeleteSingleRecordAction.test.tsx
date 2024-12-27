@@ -1,121 +1,64 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { expect } from '@storybook/test';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import { useDeleteSingleRecordAction } from '../useDeleteSingleRecordAction';
+
+const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'person',
+)!;
+
+const peopleMock = getPeopleMock();
+
+const deleteOneRecordMock = jest.fn();
 
 jest.mock('@/object-record/hooks/useDeleteOneRecord', () => ({
   useDeleteOneRecord: () => ({
-    deleteOneRecord: jest.fn(),
-  }),
-}));
-jest.mock('@/favorites/hooks/useDeleteFavorite', () => ({
-  useDeleteFavorite: () => ({
-    deleteFavorite: jest.fn(),
-  }),
-}));
-jest.mock('@/favorites/hooks/useFavorites', () => ({
-  useFavorites: () => ({
-    sortedFavorites: [],
-  }),
-}));
-jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
-  useRecordTable: () => ({
-    resetTableRowSelection: jest.fn(),
+    deleteOneRecord: deleteOneRecordMock,
   }),
 }));
 
-const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-)!;
+const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  apolloMocks: [],
+  componentInstanceId: '1',
+  contextStoreCurrentObjectMetadataNameSingular:
+    personMockObjectMetadataItem.nameSingular,
+  contextStoreTargetedRecordsRule: {
+    mode: 'selection',
+    selectedRecordIds: [peopleMock[0].id],
+  },
+  onInitializeRecoilSnapshot: (snapshot) => {
+    snapshot.set(recordStoreFamilyState(peopleMock[0].id), peopleMock[0]);
+  },
+});
 
 describe('useDeleteSingleRecordAction', () => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <RecoilRoot>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: '1',
-        }}
-      >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{
-            instanceId: '1',
-          }}
-        >
-          {children}
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
-    </RecoilRoot>
-  );
-
-  it('should register delete action', () => {
+  it('should call deleteOneRecord on click', () => {
     const { result } = renderHook(
-      () => {
-        const actionMenuEntries = useRecoilComponentValueV2(
-          actionMenuEntriesComponentState,
-        );
-
-        return {
-          actionMenuEntries,
-          useDeleteSingleRecordAction: useDeleteSingleRecordAction({
-            recordId: 'record1',
-            objectMetadataItem: companyMockObjectMetadataItem,
-          }),
-        };
+      () =>
+        useDeleteSingleRecordAction({
+          recordId: peopleMock[0].id,
+          objectMetadataItem: personMockObjectMetadataItem,
+        }),
+      {
+        wrapper,
       },
-      { wrapper },
     );
 
-    act(() => {
-      result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
-        { position: 1 },
-      );
-    });
-
-    expect(result.current.actionMenuEntries.size).toBe(1);
-    expect(
-      result.current.actionMenuEntries.get('delete-single-record'),
-    ).toBeDefined();
-    expect(
-      result.current.actionMenuEntries.get('delete-single-record')?.position,
-    ).toBe(1);
-  });
-
-  it('should unregister delete action', () => {
-    const { result } = renderHook(
-      () => {
-        const actionMenuEntries = useRecoilComponentValueV2(
-          actionMenuEntriesComponentState,
-        );
-
-        return {
-          actionMenuEntries,
-          useDeleteSingleRecordAction: useDeleteSingleRecordAction({
-            recordId: 'record1',
-            objectMetadataItem: companyMockObjectMetadataItem,
-          }),
-        };
-      },
-      { wrapper },
-    );
+    expect(result.current.ConfirmationModal?.props?.isOpen).toBe(false);
 
     act(() => {
-      result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
-        { position: 1 },
-      );
+      result.current.onClick();
     });
 
-    expect(result.current.actionMenuEntries.size).toBe(1);
+    expect(result.current.ConfirmationModal?.props?.isOpen).toBe(true);
 
     act(() => {
-      result.current.useDeleteSingleRecordAction.unregisterDeleteSingleRecordAction();
+      result.current.ConfirmationModal?.props?.onConfirmClick();
     });
 
-    expect(result.current.actionMenuEntries.size).toBe(0);
+    expect(deleteOneRecordMock).toHaveBeenCalledWith(peopleMock[0].id);
   });
 });

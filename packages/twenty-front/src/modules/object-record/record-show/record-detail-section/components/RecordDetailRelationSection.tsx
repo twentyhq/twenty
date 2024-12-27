@@ -30,7 +30,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -129,10 +128,12 @@ export const RecordDetailRelationSection = ({
       view.objectMetadataId === relationObjectMetadataItem.id,
   );
 
-  const filterQueryParams: FilterQueryParams = {
+  const filterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
-        [ViewFilterOperand.Is]: [recordId],
+        [ViewFilterOperand.Is]: {
+          selectedRecordIds: [recordId],
+        },
       },
     },
     view: indexView?.id,

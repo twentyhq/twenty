@@ -1,7 +1,7 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { useContext } from 'react';
 
-export const useCurrentRecordGroupId = () => {
+export const useCurrentRecordGroupId = (): string => {
   const context = useContext(RecordGroupContext);
 
   if (!context) {

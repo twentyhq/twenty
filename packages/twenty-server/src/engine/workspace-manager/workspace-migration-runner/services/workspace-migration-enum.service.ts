@@ -231,19 +231,22 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     columnName: string,
   ): Promise<string> {
-    const result = await queryRunner.query(
-      `SELECT udt_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
+    const [result] = await queryRunner.query(
+      `SELECT udt_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
       [schemaName, tableName, columnName],
     );
 
-    const enumTypeName = result[0]?.udt_name;
-
-    if (!enumTypeName) {
+    if (!result) {
       throw new WorkspaceMigrationException(
         `Enum type name not found for column ${columnName} in table ${tableName} while trying to alter enum`,
         WorkspaceMigrationExceptionCode.ENUM_TYPE_NAME_NOT_FOUND,
       );
     }
+
+    const enumTypeName =
+      result.data_type === 'ARRAY'
+        ? result.udt_name.replace(/^_/, '')
+        : result.udt_name;
 
     return enumTypeName;
   }

@@ -164,7 +164,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           placeholder="employees"
                           value={value}
                           onChange={onChange}
-                          disabled={disabled || isLabelSyncedWithName}
+                          disabled={
+                            disabled || (isLabelSyncedWithName ?? false)
+                          }
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
                           RightIcon={() =>

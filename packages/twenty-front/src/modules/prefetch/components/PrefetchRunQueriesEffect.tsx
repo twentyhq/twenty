@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
+import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
@@ -23,15 +24,14 @@ export const PrefetchRunQueriesEffect = () => {
     usePrefetchRunQuery<Favorite>({
       prefetchKey: PrefetchKey.AllFavorites,
     });
-
+  const { upsertRecordsInCache: upsertFavoritesFoldersInCache } =
+    usePrefetchRunQuery<FavoriteFolder>({
+      prefetchKey: PrefetchKey.AllFavoritesFolders,
+    });
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const operationSignatures = Object.values(PREFETCH_CONFIG)
-    .filter(
-      ({ objectNameSingular }) =>
-        // TODO: Remove this filter once we merge PrefetchFavortiteFoldersRunQueriesEffect with this component
-        objectNameSingular !== 'favoriteFolder',
-    )
+
     .map(({ objectNameSingular, operationSignatureFactory }) => {
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,
@@ -53,7 +53,15 @@ export const PrefetchRunQueriesEffect = () => {
     if (isDefined(result.favorites)) {
       upsertFavoritesInCache(result.favorites as Favorite[]);
     }
-  }, [result, upsertViewsInCache, upsertFavoritesInCache]);
+    if (isDefined(result.favoriteFolders)) {
+      upsertFavoritesFoldersInCache(result.favoriteFolders as FavoriteFolder[]);
+    }
+  }, [
+    result,
+    upsertViewsInCache,
+    upsertFavoritesInCache,
+    upsertFavoritesFoldersInCache,
+  ]);
 
   return <></>;
 };

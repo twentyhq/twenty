@@ -1,6 +1,6 @@
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -9,6 +9,7 @@ import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -204,11 +205,11 @@ export const FormSelectFieldInput = ({
   ];
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledFormFieldInputRowContainer>
-        <StyledFormFieldInputInputContainer
+      <FormFieldInputRowContainer>
+        <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
@@ -234,23 +235,25 @@ export const FormSelectFieldInput = ({
               onRemove={handleUnlinkVariable}
             />
           )}
-        </StyledFormFieldInputInputContainer>
+        </FormFieldInputInputContainer>
         <StyledSelectInputContainer>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
-              <SelectInput
-                selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
-                selectableItemIdArray={optionIds}
-                hotkeyScope={hotkeyScope}
-                onEnter={handleSelectEnter}
-                onOptionSelected={handleSubmit}
-                options={options}
-                onCancel={onCancel}
-                defaultOption={selectedOption}
-                onFilterChange={setFilteredOptions}
-                onClear={handleClearField}
-                clearLabel={clearLabel}
-              />
+              <OverlayContainer>
+                <SelectInput
+                  selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
+                  selectableItemIdArray={optionIds}
+                  hotkeyScope={hotkeyScope}
+                  onEnter={handleSelectEnter}
+                  onOptionSelected={handleSubmit}
+                  options={options}
+                  onCancel={onCancel}
+                  defaultOption={selectedOption}
+                  onFilterChange={setFilteredOptions}
+                  onClear={handleClearField}
+                  clearLabel={clearLabel}
+                />
+              </OverlayContainer>
             )}
         </StyledSelectInputContainer>
 
@@ -260,7 +263,7 @@ export const FormSelectFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         )}
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+      </FormFieldInputRowContainer>
+    </FormFieldInputContainer>
   );
 };

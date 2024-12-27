@@ -4,10 +4,10 @@ import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { MainButton, HorizontalSeparator } from 'twenty-ui';
+import { HorizontalSeparator, MainButton } from 'twenty-ui';
 
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { isDefined } from '~/utils/isDefined';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -15,15 +15,15 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SignInUpSSOIdentityProviderSelection = () => {
-  const authProviders = useRecoilValue(authProvidersState);
+  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const { redirectToSSOLoginPage } = useSSO();
 
   return (
     <>
       <StyledContentContainer>
-        {isDefined(authProviders?.sso) &&
-          authProviders?.sso.map((idp) => (
+        {isDefined(workspaceAuthProviders?.sso) &&
+          workspaceAuthProviders?.sso.map((idp) => (
             <>
               <MainButton
                 key={idp.id}

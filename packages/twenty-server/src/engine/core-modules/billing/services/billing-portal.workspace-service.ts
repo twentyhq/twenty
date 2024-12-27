@@ -31,10 +31,13 @@ export class BillingPortalWorkspaceService {
     priceId: string,
     successUrlPath?: string,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
-    const successUrl = successUrlPath
-      ? frontBaseUrl + successUrlPath
-      : frontBaseUrl;
+    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const cancelUrl = frontBaseUrl.toString();
+
+    if (successUrlPath) {
+      frontBaseUrl.pathname = successUrlPath;
+    }
+    const successUrl = frontBaseUrl.toString();
 
     const quantity = await this.userWorkspaceRepository.countBy({
       workspaceId: workspace.id,
@@ -42,16 +45,17 @@ export class BillingPortalWorkspaceService {
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
       })
     )?.stripeCustomerId;
 
     const session = await this.stripeService.createCheckoutSession(
       user,
+      workspace.id,
       priceId,
       quantity,
       successUrl,
-      frontBaseUrl,
+      cancelUrl,
       stripeCustomerId,
     );
 
@@ -81,10 +85,12 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
-    const returnUrl = returnUrlPath
-      ? frontBaseUrl + returnUrlPath
-      : frontBaseUrl;
+    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+
+    if (returnUrlPath) {
+      frontBaseUrl.pathname = returnUrlPath;
+    }
+    const returnUrl = frontBaseUrl.toString();
 
     const session = await this.stripeService.createBillingPortalSession(
       stripeCustomerId,

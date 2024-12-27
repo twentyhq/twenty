@@ -22,6 +22,7 @@ export const generateAggregateQuery = ({
       objectMetadataItem.nameSingular,
     )}FilterInput) {
       ${objectMetadataItem.namePlural}(filter: $filter) {
+        ${selectedFields ? '' : '__typename'}
         ${selectedFields}
       }
     }

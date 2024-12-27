@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -68,13 +69,6 @@ export const WorkflowEditActionFormDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  useEffect(() => {
-    setFormData({
-      objectName: action.settings.input.objectName,
-      objectRecordId: action.settings.input.objectRecordId,
-    });
-  }, [action.settings.input]);
-
   const selectedObjectMetadataItemNameSingular = formData.objectName;
 
   const selectedObjectMetadataItem = activeObjectMetadataItems.find(
@@ -118,52 +112,55 @@ export const WorkflowEditActionFormDeleteRecord = ({
   const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
 
   return (
-    <WorkflowEditGenericFormBase
-      onTitleChange={(newName: string) => {
-        if (actionOptions.readonly === true) {
-          return;
-        }
+    <>
+      <WorkflowStepHeader
+        onTitleChange={(newName: string) => {
+          if (actionOptions.readonly === true) {
+            return;
+          }
 
-        actionOptions.onActionUpdate({
-          ...action,
-          name: newName,
-        });
-      }}
-      Icon={IconAddressBook}
-      iconColor={theme.font.color.tertiary}
-      initialTitle={headerTitle}
-      headerType="Action"
-    >
-      <Select
-        dropdownId="workflow-edit-action-record-delete-object-name"
-        label="Object"
-        fullWidth
-        disabled={isFormDisabled}
-        value={formData.objectName}
-        emptyOption={{ label: 'Select an option', value: '' }}
-        options={availableMetadata}
-        onChange={(objectName) => {
-          const newFormData: DeleteRecordFormData = {
-            objectName,
-            objectRecordId: '',
-          };
-
-          setFormData(newFormData);
-
-          saveAction(newFormData);
+          actionOptions.onActionUpdate({
+            ...action,
+            name: newName,
+          });
         }}
+        Icon={IconAddressBook}
+        iconColor={theme.font.color.tertiary}
+        initialTitle={headerTitle}
+        headerType="Action"
       />
+      <WorkflowStepBody>
+        <Select
+          dropdownId="workflow-edit-action-record-delete-object-name"
+          label="Object"
+          fullWidth
+          disabled={isFormDisabled}
+          value={formData.objectName}
+          emptyOption={{ label: 'Select an option', value: '' }}
+          options={availableMetadata}
+          onChange={(objectName) => {
+            const newFormData: DeleteRecordFormData = {
+              objectName,
+              objectRecordId: '',
+            };
 
-      <HorizontalSeparator noMargin />
+            setFormData(newFormData);
 
-      <WorkflowSingleRecordPicker
-        label="Record"
-        onChange={(objectRecordId) =>
-          handleFieldChange('objectRecordId', objectRecordId)
-        }
-        objectNameSingular={formData.objectName}
-        defaultValue={formData.objectRecordId}
-      />
-    </WorkflowEditGenericFormBase>
+            saveAction(newFormData);
+          }}
+        />
+
+        <HorizontalSeparator noMargin />
+
+        <WorkflowSingleRecordPicker
+          label="Record"
+          onChange={(objectRecordId) =>
+            handleFieldChange('objectRecordId', objectRecordId)
+          }
+          objectNameSingular={formData.objectName}
+          defaultValue={formData.objectRecordId}
+        />
+      </WorkflowStepBody>
+    </>
   );
 };

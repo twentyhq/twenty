@@ -76,7 +76,6 @@ export const AdvancedFilterViewFilterOperandSelect = ({
   return (
     <StyledContainer>
       <Dropdown
-        disableBlur
         dropdownId={dropdownId}
         clickableComponent={
           <SelectControl

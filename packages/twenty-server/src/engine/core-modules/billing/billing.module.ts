@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingController } from 'src/engine/core-modules/billing/billing.controller';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
+import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -10,10 +11,13 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
+import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -53,6 +57,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingResolver,
     BillingWorkspaceMemberListener,
     BillingService,
+    BillingWebhookProductService,
+    BillingWebhookPriceService,
+    BillingRestApiExceptionFilter,
+    BillingSyncCustomerDataCommand,
   ],
   exports: [
     BillingSubscriptionService,

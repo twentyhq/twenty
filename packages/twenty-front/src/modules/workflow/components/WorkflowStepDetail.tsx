@@ -10,8 +10,8 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormCreateRecord';
 import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { Suspense, lazy } from 'react';
 import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
-import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-ui';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 

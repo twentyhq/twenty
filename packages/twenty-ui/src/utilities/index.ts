@@ -6,7 +6,6 @@ export * from './animation/components/AnimatedTextWord';
 export * from './animation/components/AnimatedTranslation';
 export * from './color/utils/stringToHslColor';
 export * from './dimensions/components/ComputeNodeDimensions';
-export * from './image/getImageAbsoluteURI';
 export * from './isDefined';
 export * from './responsive/hooks/useIsMobile';
 export * from './screen-size/hooks/useScreenSize';

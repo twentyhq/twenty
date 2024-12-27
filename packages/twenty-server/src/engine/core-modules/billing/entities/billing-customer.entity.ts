@@ -8,7 +8,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -18,10 +17,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
 @ObjectType('billingCustomer')
-@Unique('IndexOnWorkspaceIdAndStripeCustomerIdUnique', [
-  'workspaceId',
-  'stripeCustomerId',
-])
 export class BillingCustomer {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -36,7 +31,7 @@ export class BillingCustomer {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid', unique: true })
   workspaceId: string;
 
   @Column({ nullable: false, unique: true })

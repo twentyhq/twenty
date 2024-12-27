@@ -176,6 +176,7 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
+  authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']['output']>;
@@ -204,7 +205,7 @@ export type CreateFieldInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isCustom?: InputMaybe<Scalars['Boolean']['input']>;
-  isLabelSyncedWithName: Scalars['Boolean']['input'];
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
   isRemoteCreation?: InputMaybe<Scalars['Boolean']['input']>;
   isSystem?: InputMaybe<Scalars['Boolean']['input']>;
@@ -356,13 +357,6 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
-};
-
-export type ExchangeAuthCode = {
-  __typename?: 'ExchangeAuthCode';
-  accessToken: AuthToken;
-  loginToken: AuthToken;
-  refreshToken: AuthToken;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -581,12 +575,11 @@ export type Mutation = {
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
-  exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
-  impersonate: Verify;
+  impersonate: AuthTokens;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -613,7 +606,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
-  verify: Verify;
+  verify: AuthTokens;
 };
 
 
@@ -762,13 +755,6 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
-export type MutationExchangeAuthorizationCodeArgs = {
-  authorizationCode: Scalars['String']['input'];
-  clientSecret?: InputMaybe<Scalars['String']['input']>;
-  codeVerifier?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type MutationExecuteOneServerlessFunctionArgs = {
   input: ExecuteServerlessFunctionInput;
 };
@@ -787,6 +773,7 @@ export type MutationGetAuthorizationUrlArgs = {
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -1571,8 +1558,6 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
-  /** Boolean to check if we need to update stepOutput */
-  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };
@@ -1595,9 +1580,8 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
+  currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
-  defaultWorkspace: Workspace;
-  defaultWorkspaceId: Scalars['String']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
@@ -1683,12 +1667,6 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String']['output'];
 };
 
-export type Verify = {
-  __typename?: 'Verify';
-  tokens: AuthTokenPair;
-  user: User;
-};
-
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
@@ -1707,6 +1685,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
+  billingCustomers?: Maybe<Array<BillingCustomer>>;
   billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
@@ -1729,6 +1708,12 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+};
+
+
+export type WorkspaceBillingCustomersArgs = {
+  filter?: BillingCustomerFilter;
+  sorting?: Array<BillingCustomerSort>;
 };
 
 
@@ -1819,6 +1804,27 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
+export type BillingCustomer = {
+  __typename?: 'billingCustomer';
+  id: Scalars['UUID']['output'];
+};
+
+export type BillingCustomerFilter = {
+  and?: InputMaybe<Array<BillingCustomerFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingCustomerFilter>>;
+};
+
+export type BillingCustomerSort = {
+  direction: SortDirection;
+  field: BillingCustomerSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingCustomerSortFields {
+  Id = 'id'
+}
+
 export type BillingEntitlement = {
   __typename?: 'billingEntitlement';
   id: Scalars['UUID']['output'];
@@ -1853,7 +1859,7 @@ export type Field = {
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
   isCustom?: Maybe<Scalars['Boolean']['output']>;
-  isLabelSyncedWithName: Scalars['Boolean']['output'];
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']['output']>;
   isNullable?: Maybe<Scalars['Boolean']['output']>;
   isSystem?: Maybe<Scalars['Boolean']['output']>;
   isUnique?: Maybe<Scalars['Boolean']['output']>;
@@ -2120,7 +2126,7 @@ export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: any, updatedAt: any, settings?: any | null, isLabelSyncedWithName: boolean } };
+export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: any, updatedAt: any, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID']['input'];
@@ -2157,7 +2163,7 @@ export type ObjectMetadataItemsQueryVariables = Exact<{
 }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, indexMetadatas: { __typename?: 'ObjectIndexMetadatasConnection', edges: Array<{ __typename?: 'indexEdge', node: { __typename?: 'index', id: any, createdAt: any, updatedAt: any, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, indexFieldMetadatas: { __typename?: 'IndexIndexFieldMetadatasConnection', edges: Array<{ __typename?: 'indexFieldEdge', node: { __typename?: 'indexField', id: any, createdAt: any, updatedAt: any, order: number, fieldMetadataId: any } }> } } }> }, fields: { __typename?: 'ObjectFieldsConnection', edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: any, updatedAt: any, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName: boolean, relationDefinition?: { __typename?: 'RelationDefinition', relationId: any, direction: RelationDefinitionType, sourceObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'field', id: any, name: string }, targetObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, targetFieldMetadata: { __typename?: 'field', id: any, name: string } } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, indexMetadatas: { __typename?: 'ObjectIndexMetadatasConnection', edges: Array<{ __typename?: 'indexEdge', node: { __typename?: 'index', id: any, createdAt: any, updatedAt: any, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, indexFieldMetadatas: { __typename?: 'IndexIndexFieldMetadatasConnection', edges: Array<{ __typename?: 'indexFieldEdge', node: { __typename?: 'indexField', id: any, createdAt: any, updatedAt: any, order: number, fieldMetadataId: any } }> } } }> }, fields: { __typename?: 'ObjectFieldsConnection', edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: any, updatedAt: any, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relationDefinition?: { __typename?: 'RelationDefinition', relationId: any, direction: RelationDefinitionType, sourceObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'field', id: any, name: string }, targetObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, targetFieldMetadata: { __typename?: 'field', id: any, name: string } } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any };
 

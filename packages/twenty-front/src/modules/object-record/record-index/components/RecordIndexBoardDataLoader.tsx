@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordIndexBoardColumnLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnLoaderEffect';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -19,8 +19,8 @@ export const RecordIndexBoardDataLoader = ({
     objectNameSingular,
   });
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const recordGroupIds = useRecoilComponentValueV2(
+    recordGroupIdsComponentState,
   );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
@@ -33,7 +33,7 @@ export const RecordIndexBoardDataLoader = ({
 
   return (
     <>
-      {visibleRecordGroupIds.map((recordGroupId, index) => (
+      {recordGroupIds.map((recordGroupId, index) => (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
           boardFieldMetadataId={recordIndexKanbanFieldMetadataId}

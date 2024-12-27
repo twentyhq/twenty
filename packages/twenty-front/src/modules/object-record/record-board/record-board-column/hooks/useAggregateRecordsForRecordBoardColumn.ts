@@ -1,8 +1,9 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { buildRecordGqlFieldsAggregate } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregate';
+import { buildRecordGqlFieldsAggregateForRecordBoard } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForRecordBoard';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
@@ -42,7 +43,7 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     );
   }
 
-  const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregate({
+  const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregateForRecordBoard({
     objectMetadataItem: objectMetadataItem,
     recordIndexKanbanAggregateOperation: recordIndexKanbanAggregateOperation,
     kanbanFieldName: kanbanFieldName,
@@ -53,7 +54,11 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,
@@ -74,15 +79,16 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     skip: !isAggregateQueryEnabled,
   });
 
-  const { value, label } = computeAggregateValueAndLabel(
+  const { value, labelWithFieldName } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
-    recordIndexKanbanAggregateOperation,
-    kanbanFieldName,
-  );
+    fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
+    aggregateOperation: recordIndexKanbanAggregateOperation?.operation,
+    fallbackFieldName: kanbanFieldName,
+  });
 
   return {
     aggregateValue: isAggregateQueryEnabled ? value : recordCount,
-    aggregateLabel: isDefined(value) ? label : undefined,
+    aggregateLabel: isDefined(value) ? labelWithFieldName : undefined,
   };
 };

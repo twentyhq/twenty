@@ -10,12 +10,12 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
-import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
@@ -48,11 +48,6 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
-    isScrollEnabledForRecordTableState,
-    recordTableId,
-  );
-
   const { resetTableRowSelection, selectAllRows, setHasUserSelectedAllRows } =
     useRecordTable({
       recordTableId,
@@ -96,27 +91,32 @@ export const RecordTableWithWrappers = ({
   );
 
   return (
-    <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <ScrollWrapper
-        enableXScroll={isScrollEnabledForRecordTable.enableXScroll}
-        enableYScroll={isScrollEnabledForRecordTable.enableYScroll}
-        contextProviderName="recordTableWithWrappers"
+    <RecordTableComponentInstance
+      recordTableId={recordTableId}
+      onColumnsChange={handleColumnsChange}
+    >
+      <RecordTableContextProvider
+        recordTableId={recordTableId}
+        viewBarId={viewBarId}
+        objectNameSingular={objectNameSingular}
       >
-        <RecordUpdateContext.Provider value={updateRecordMutation}>
-          <StyledTableWithHeader>
-            <StyledTableContainer>
-              <StyledTableInternalContainer>
-                <RecordTable
-                  viewBarId={viewBarId}
-                  recordTableId={recordTableId}
-                  objectNameSingular={objectNameSingular}
-                  onColumnsChange={handleColumnsChange}
-                />
-              </StyledTableInternalContainer>
-            </StyledTableContainer>
-          </StyledTableWithHeader>
-        </RecordUpdateContext.Provider>
-      </ScrollWrapper>
-    </EntityDeleteContext.Provider>
+        <EntityDeleteContext.Provider value={deleteOneRecord}>
+          <ScrollWrapper
+            contextProviderName="recordTableWithWrappers"
+            componentInstanceId={`record-table-scroll-${recordTableId}`}
+          >
+            <RecordUpdateContext.Provider value={updateRecordMutation}>
+              <StyledTableWithHeader>
+                <StyledTableContainer>
+                  <StyledTableInternalContainer>
+                    <RecordTable />
+                  </StyledTableInternalContainer>
+                </StyledTableContainer>
+              </StyledTableWithHeader>
+            </RecordUpdateContext.Provider>
+          </ScrollWrapper>
+        </EntityDeleteContext.Provider>
+      </RecordTableContextProvider>
+    </RecordTableComponentInstance>
   );
 };

@@ -1,21 +1,19 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordIndexTableContainerEffect = () => {
-  const { recordIndexId, objectNameSingular } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const viewBarId = recordIndexId;
 
@@ -79,7 +77,7 @@ export const RecordIndexTableContainerEffect = () => {
       (viewField: ViewField) => {
         const aggregateOperationForViewField = snapshot
           .getLoadable(
-            aggregateOperationForViewFieldState({
+            viewFieldAggregateOperationState({
               viewFieldId: viewField.id,
             }),
           )
@@ -87,7 +85,7 @@ export const RecordIndexTableContainerEffect = () => {
 
         if (aggregateOperationForViewField !== viewField.aggregateOperation) {
           set(
-            aggregateOperationForViewFieldState({
+            viewFieldAggregateOperationState({
               viewFieldId: viewField.id,
             }),
             viewField.aggregateOperation,

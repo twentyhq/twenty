@@ -10,6 +10,7 @@ import { ConfirmationQuestion } from 'src/database/commands/questions/confirmati
 import { UpgradeTo0_32CommandModule } from 'src/database/commands/upgrade-version/0-32/0-32-upgrade-version.module';
 import { UpgradeTo0_33CommandModule } from 'src/database/commands/upgrade-version/0-33/0-33-upgrade-version.module';
 import { UpgradeTo0_34CommandModule } from 'src/database/commands/upgrade-version/0-34/0-34-upgrade-version.module';
+import { UpgradeTo0_35CommandModule } from 'src/database/commands/upgrade-version/0-35/0-35-upgrade-version.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -22,6 +23,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -29,6 +31,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 
 @Module({
   imports: [
+    SeederModule,
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
@@ -51,6 +54,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     UpgradeTo0_32CommandModule,
     UpgradeTo0_33CommandModule,
     UpgradeTo0_34CommandModule,
+    UpgradeTo0_35CommandModule,
     FeatureFlagModule,
   ],
   providers: [

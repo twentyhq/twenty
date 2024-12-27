@@ -5,7 +5,7 @@ import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/Agg
 import { FieldMetadataType } from '~/generated/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
-const MOCK_KANBAN_FIELD = 'stage';
+const MOCK_KANBAN_FIELD_NAME = 'stage';
 
 describe('computeAggregateValueAndLabel', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
@@ -20,12 +20,13 @@ describe('computeAggregateValueAndLabel', () => {
   } as ObjectMetadataItem;
 
   it('should return empty object for empty data', () => {
-    const result = computeAggregateValueAndLabel(
-      {},
-      mockObjectMetadata,
-      { fieldMetadataId: MOCK_FIELD_ID, operation: AGGREGATE_OPERATIONS.sum },
-      MOCK_KANBAN_FIELD,
-    );
+    const result = computeAggregateValueAndLabel({
+      data: {},
+      objectMetadataItem: mockObjectMetadata,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
 
     expect(result).toEqual({});
   });
@@ -37,36 +38,110 @@ describe('computeAggregateValueAndLabel', () => {
       },
     };
 
-    const result = computeAggregateValueAndLabel(
-      mockData,
-      mockObjectMetadata,
-      { fieldMetadataId: MOCK_FIELD_ID, operation: AGGREGATE_OPERATIONS.sum },
-      MOCK_KANBAN_FIELD,
-    );
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadata,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
 
     expect(result).toEqual({
-      value: 2,
-      label: 'Sum of amount',
+      value: '2',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of amount',
+    });
+  });
+
+  it('should handle number field as percentage', () => {
+    const mockObjectMetadataWithPercentageField: ObjectMetadataItem = {
+      id: '123',
+      fields: [
+        {
+          id: MOCK_FIELD_ID,
+          name: 'percentage',
+          type: FieldMetadataType.Number,
+          settings: {
+            type: 'percentage',
+          },
+        } as FieldMetadataItem,
+      ],
+    } as ObjectMetadataItem;
+
+    const mockData = {
+      percentage: {
+        [AGGREGATE_OPERATIONS.avg]: 0.3,
+      },
+    };
+
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadataWithPercentageField,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.avg,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
+
+    expect(result).toEqual({
+      value: '30%',
+      label: 'Average',
+      labelWithFieldName: 'Average of percentage',
+    });
+  });
+
+  it('should handle number field with decimals', () => {
+    const mockObjectMetadataWithDecimalsField: ObjectMetadataItem = {
+      id: '123',
+      fields: [
+        {
+          id: MOCK_FIELD_ID,
+          name: 'decimals',
+          type: FieldMetadataType.Number,
+          settings: {
+            decimals: 2,
+          },
+        } as FieldMetadataItem,
+      ],
+    } as ObjectMetadataItem;
+
+    const mockData = {
+      decimals: {
+        [AGGREGATE_OPERATIONS.sum]: 0.009,
+      },
+    };
+
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadataWithDecimalsField,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
+
+    expect(result).toEqual({
+      value: '0.01',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of decimals',
     });
   });
 
   it('should default to count when field not found', () => {
     const mockData = {
-      [MOCK_KANBAN_FIELD]: {
+      [MOCK_KANBAN_FIELD_NAME]: {
         [AGGREGATE_OPERATIONS.count]: 42,
       },
     };
 
-    const result = computeAggregateValueAndLabel(
-      mockData,
-      mockObjectMetadata,
-      { fieldMetadataId: 'non-existent', operation: AGGREGATE_OPERATIONS.sum },
-      MOCK_KANBAN_FIELD,
-    );
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadata,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
 
     expect(result).toEqual({
       value: 42,
       label: 'Count',
+      labelWithFieldName: 'Count',
     });
   });
 
@@ -77,16 +152,17 @@ describe('computeAggregateValueAndLabel', () => {
       },
     };
 
-    const result = computeAggregateValueAndLabel(
-      mockData,
-      mockObjectMetadata,
-      { fieldMetadataId: MOCK_FIELD_ID, operation: AGGREGATE_OPERATIONS.sum },
-      MOCK_KANBAN_FIELD,
-    );
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadata,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+    });
 
     expect(result).toEqual({
-      value: undefined,
-      label: 'Sum of amount',
+      value: '-',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of amount',
     });
   });
 });
