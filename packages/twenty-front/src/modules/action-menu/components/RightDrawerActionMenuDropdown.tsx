@@ -69,7 +69,7 @@ export const RightDrawerActionMenuDropdown = () => {
           {actionMenuEntries
             .filter(
               (actionMenuEntry) =>
-                actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+                actionMenuEntry.scope === ActionMenuEntryScope.RightDrawer,
             )
             .map((actionMenuEntry, index) => (
               <MenuItem
