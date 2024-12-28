@@ -6,8 +6,8 @@ import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from
 import { RecordBoardColumnHeaderAggregateDropdownButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownButton';
 import { AggregateDropdownContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { AggregateContentId } from '@/object-record/record-board/types/AggregateContentId';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
+import { RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 type RecordBoardColumnHeaderAggregateDropdownProps = {
@@ -24,13 +24,14 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
   dropdownId,
 }: RecordBoardColumnHeaderAggregateDropdownProps) => {
   const { currentContentId, handleContentChange, handleResetContent } =
-    useCurrentContentId<AggregateContentId>();
+    useCurrentContentId<RecordBoardColumnHeaderAggregateContentId>();
 
   return (
     <RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
       <Dropdown
+        onClose={handleResetContent}
         dropdownId={dropdownId}
         dropdownHotkeyScope={{
           scope: RecordBoardColumnHotkeyScope.ColumnHeader,

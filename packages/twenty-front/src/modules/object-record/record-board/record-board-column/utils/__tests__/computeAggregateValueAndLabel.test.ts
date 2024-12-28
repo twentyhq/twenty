@@ -141,6 +141,7 @@ describe('computeAggregateValueAndLabel', () => {
     expect(result).toEqual({
       value: 42,
       label: 'Count',
+      labelWithFieldName: 'Count',
     });
   });
 

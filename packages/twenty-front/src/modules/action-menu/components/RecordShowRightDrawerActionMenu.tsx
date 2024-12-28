@@ -21,7 +21,6 @@ export const RecordShowRightDrawerActionMenu = () => {
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: true,
-            onActionExecutedCallback: () => {},
           }}
         >
           <RightDrawerActionMenuDropdown />
