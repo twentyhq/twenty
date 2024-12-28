@@ -1,5 +1,6 @@
 import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/multiple-records/components/MultipleRecordsActionMenuEntrySetterEffect';
 import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
+import { RightDrawerActionMenuEntriesSetterEffect } from '@/action-menu/actions/record-actions/right-drawer/components/RightDrawerActionMenuEntriesSetterEffect';
 import { ShowPageSingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/ShowPageSingleRecordActionMenuEntrySetterEffect';
 import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
@@ -9,6 +10,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
@@ -54,6 +56,7 @@ const ActionEffects = ({
   );
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
 
   return (
     <>
@@ -87,6 +90,11 @@ const ActionEffects = ({
       {(contextStoreTargetedRecordsRule.mode === 'exclusion' ||
         contextStoreTargetedRecordsRule.selectedRecordIds.length > 1) && (
         <MultipleRecordsActionMenuEntrySetterEffect
+          objectMetadataItem={objectMetadataItem}
+        />
+      )}
+      {isRightDrawerOpen && (
+        <RightDrawerActionMenuEntriesSetterEffect
           objectMetadataItem={objectMetadataItem}
         />
       )}

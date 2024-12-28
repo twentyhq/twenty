@@ -178,6 +178,8 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
   });
 
+  // [Issue 8439] TODO: Make the editor instance available to useExportNoteToPdfAction
+
   useScopedHotkeys(
     Key.Escape,
     () => {
