@@ -226,6 +226,25 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       return [primaryLinkLabel, primaryLinkUrl, secondaryLinks];
     }
+    case FieldMetadataType.RICH_TEXT: {
+      const blocknote: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'blocknote',
+        label: 'Blocknote',
+        description: 'Blocknote',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const markdown: NodeField = {
+        type: FieldMetadataType.TEXT,
+        name: 'markdown',
+        label: 'Markdown',
+        description: 'Markdown',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [blocknote, markdown];
+    }
     default:
       throw new Error(`Unknown nodeField type: ${nodeField.type}`);
   }
@@ -250,6 +269,7 @@ export const computeInputFields = (
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.LINKS:
       case FieldMetadataType.ADDRESS:
+      case FieldMetadataType.RICH_TEXT:
         for (const subNodeField of get_subfieldsFromField(nodeField)) {
           const field = {
             key: `${nodeField.name}__${subNodeField.name}`,
@@ -265,7 +285,6 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.PHONE:
       case FieldMetadataType.EMAIL:
       case FieldMetadataType.DATE_TIME:
