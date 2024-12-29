@@ -1,17 +1,13 @@
 import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
-import {
-  DOCXExporter,
-  docxDefaultSchemaMappings,
-} from '@blocknote/xl-docx-exporter';
+
 import {
   PDFExporter,
   pdfDefaultSchemaMappings,
 } from '@blocknote/xl-pdf-exporter';
 import * as ReactPDF from '@react-pdf/renderer';
 import { Buffer } from 'buffer';
-import { Packer } from 'docx';
 import { saveAs } from 'file-saver';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -30,14 +26,14 @@ const exportNoteToPdf = async (editor: BlockNoteEditor, filename: string) => {
   saveAs(blob, `${filename}.pdf`);
 };
 
-const exportNoteToDocx = async (editor: BlockNoteEditor, filename: string) => {
-  const exporter = new DOCXExporter(editor.schema, docxDefaultSchemaMappings);
+// const exportNoteToDocx = async (editor: BlockNoteEditor, filename: string) => {
+//   const exporter = new DOCXExporter(editor.schema, docxDefaultSchemaMappings);
 
-  const docxDocument = await exporter.toDocxJsDocument(editor.document);
+//   const docxDocument = await exporter.`toDocxJsDocument(editor.document);
 
-  const blob = await Packer.toBlob(docxDocument);
-  saveAs(blob, `${filename}.docx`);
-};
+//   const blob = await Packer.toBlob(do`cxDocument);
+//   saveAs(blob, `${filename}.docx`);
+// };
 
 export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
   ({ recordId, objectMetadataItem }) => {
