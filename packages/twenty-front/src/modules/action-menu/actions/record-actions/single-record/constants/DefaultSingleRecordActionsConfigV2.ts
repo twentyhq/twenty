@@ -33,7 +33,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
-    label: 'Export note',
+    label: 'Export to PDF',
     shortLabel: 'Export',
     position: 0,
     isPinned: true,
