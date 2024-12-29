@@ -36,10 +36,15 @@ export class FieldMetadataDefaultValueRawJson {
 }
 
 export class FieldMetadataDefaultValueRichText {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
-  value: string | null;
+  @ValidateIf((object, value) => value !== null)
+  @IsQuotedString()
+  blocknote: string | null;
+
+  @ValidateIf((object, value) => value !== null)
+  @IsQuotedString()
+  markdown: string | null;
 }
+
 export class FieldMetadataDefaultValueNumber {
   @ValidateIf((object, value) => value !== null)
   @IsNumber()

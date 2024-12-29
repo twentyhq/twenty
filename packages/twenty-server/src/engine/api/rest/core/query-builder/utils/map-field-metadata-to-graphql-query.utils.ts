@@ -28,7 +28,6 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
-    FieldMetadataType.RICH_TEXT,
     FieldMetadataType.ARRAY,
     FieldMetadataType.TS_VECTOR,
   ].includes(fieldType);
@@ -152,6 +151,14 @@ export const mapFieldMetadataToGraphqlQuery = (
         primaryPhoneCountryCode
         primaryPhoneCallingCode
         additionalPhones
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.RICH_TEXT) {
+    return `
+      ${field.name}
+      {
+        blocknote
+        markdown
       }
     `;
   }
