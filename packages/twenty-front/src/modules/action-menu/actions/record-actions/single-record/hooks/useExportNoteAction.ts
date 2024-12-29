@@ -1,4 +1,5 @@
 import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
 
@@ -42,8 +43,8 @@ export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
     const filename = `${selectedRecord?.title || 'Untitled Note'}`;
 
     const isNoteOrTask =
-      objectMetadataItem?.nameSingular === 'note' ||
-      objectMetadataItem?.nameSingular === 'task';
+      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
+      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
     const shouldBeRegistered =
       isDefined(objectMetadataItem) &&
