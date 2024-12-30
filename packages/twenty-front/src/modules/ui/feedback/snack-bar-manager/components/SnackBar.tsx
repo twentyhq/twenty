@@ -110,11 +110,11 @@ const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
 export const SnackBar = ({
   className,
   progress: overrideProgressValue,
-  duration = 100000,
+  duration = 6000,
   icon: iconComponent,
   id,
   message,
-  detailedMessage = 'Test lkajsd lkasjd lkajsd lkajsd laksjd lkasjd lkajsd jd jjdj jdj jdj jdj jjdj d',
+  detailedMessage,
   onCancel,
   onClose,
   role = 'status',
