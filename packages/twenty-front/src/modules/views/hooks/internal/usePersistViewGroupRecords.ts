@@ -41,14 +41,16 @@ export const usePersistViewGroupRecords = () => {
     async (viewGroupsToUpdate: ViewGroup[]) => {
       if (!viewGroupsToUpdate.length) return;
 
-      return viewGroupsToUpdate.map((viewGroup) =>
-        updateOneRecord({
-          idToUpdate: viewGroup.id,
-          updateOneRecordInput: {
-            isVisible: viewGroup.isVisible,
-            position: viewGroup.position,
-          },
-        }),
+      return Promise.all(
+        viewGroupsToUpdate.map((viewGroup) =>
+          updateOneRecord({
+            idToUpdate: viewGroup.id,
+            updateOneRecordInput: {
+              isVisible: viewGroup.isVisible,
+              position: viewGroup.position,
+            },
+          }),
+        ),
       );
     },
     [updateOneRecord],
