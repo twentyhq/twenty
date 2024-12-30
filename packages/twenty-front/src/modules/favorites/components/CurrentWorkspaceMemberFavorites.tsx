@@ -5,7 +5,7 @@ import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext'
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
-import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -50,13 +50,20 @@ export const CurrentWorkspaceMemberFavorites = ({
     folder.folderName,
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [activeFavoriteFolderId, setActiveFavoriteFolderId] = useRecoilState(
-    activeFavoriteFolderIdState,
+
+  const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
+    openFavoriteFolderIdsState,
   );
-  const isOpen = activeFavoriteFolderId === folder.folderId;
+  const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
-    setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
+    setOpenFavoriteFolderIds((currentOpenFolders) => {
+      if (isOpen) {
+        return currentOpenFolders.filter((id) => id !== folder.folderId);
+      } else {
+        return [...currentOpenFolders, folder.folderId];
+      }
+    });
   };
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();

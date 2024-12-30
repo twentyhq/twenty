@@ -1,7 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
-import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -15,7 +13,9 @@ import {
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
+import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
 import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -176,6 +176,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
         initialTitle={headerTitle}
         headerType="Action"
       />
+
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-record-update-object-name"

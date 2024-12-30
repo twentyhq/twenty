@@ -1,12 +1,5 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
-import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
@@ -18,8 +11,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { css, Global, useTheme } from '@emotion/react';
+import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
@@ -77,9 +69,6 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-  const { toggleCommandMenu } = useCommandMenu();
-
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   return (
     <>
@@ -93,25 +82,7 @@ export const DefaultLayout = () => {
       <StyledLayout>
         {!showAuthModal && (
           <>
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: 'command-menu' }}
-            >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{ instanceId: 'command-menu' }}
-              >
-                <ActionMenuContext.Provider
-                  value={{
-                    isInRightDrawer: false,
-                    onActionExecutedCallback: toggleCommandMenu,
-                  }}
-                >
-                  <RecordActionMenuEntriesSetter />
-                  {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
-                  <ActionMenuConfirmationModals />
-                  <CommandMenu />
-                </ActionMenuContext.Provider>
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
+            <CommandMenuContainer />
             <KeyboardShortcutMenu />
           </>
         )}

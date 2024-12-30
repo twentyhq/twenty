@@ -485,6 +485,13 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
+
+  // milliseconds
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_THROTTLE_TTL = 1000;
+
   // SSL
   @IsString()
   @IsOptional()

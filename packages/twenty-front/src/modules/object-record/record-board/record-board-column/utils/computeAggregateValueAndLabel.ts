@@ -35,6 +35,7 @@ export const computeAggregateValueAndLabel = ({
     return {
       value: data?.[fallbackFieldName]?.[AGGREGATE_OPERATIONS.count],
       label: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
+      labelWithFieldName: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
     };
   }
 

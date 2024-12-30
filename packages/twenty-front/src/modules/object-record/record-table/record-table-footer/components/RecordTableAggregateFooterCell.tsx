@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
@@ -12,20 +11,19 @@ const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnFooterCell = styled.th<{
   columnWidth: number;
-  isResizing?: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 0;
-  text-align: left;
-  transition: 0.3s ease;
-
   background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  overflow: hidden;
+  padding: 0;
+
+  position: relative;
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
       `}
-  position: relative;
-  user-select: none;
+  text-align: left;
+  transition: 0.3s ease;
   ${({ theme }) => {
     return `
     &:hover {
@@ -36,23 +34,14 @@ const StyledColumnFooterCell = styled.th<{
     };
     `;
   }};
-  ${({ isResizing, theme }) => {
-    if (isResizing === true) {
-      return `&:after {
-        background-color: ${theme.color.blue};
-        bottom: 0;
-        content: '';
-        display: block;
-        position: absolute;
-        right: -1px;
-        top: 0;
-        width: 2px;
-      }`;
-    }
-  }};
 
-  // TODO: refactor this, each component should own its CSS
+  user-select: none;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  *::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledColumnFootContainer = styled.div`
@@ -62,11 +51,9 @@ const StyledColumnFootContainer = styled.div`
 `;
 
 export const RecordTableAggregateFooterCell = ({
-  column,
   isFirstCell = false,
   currentRecordGroupId,
 }: {
-  column: ColumnDefinition<FieldMetadata>;
   isFirstCell?: boolean;
   currentRecordGroupId?: string;
 }) => {
@@ -76,18 +63,19 @@ export const RecordTableAggregateFooterCell = ({
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
     [tableColumns],
   );
+  const { fieldMetadataId } = useContext(
+    RecordTableColumnAggregateFooterCellContext,
+  );
 
   return (
     <StyledColumnFooterCell
-      key={column.fieldMetadataId}
       columnWidth={Math.max(
-        tableColumnsByKey[column.fieldMetadataId].size + 24,
+        tableColumnsByKey[fieldMetadataId].size + 24,
         COLUMN_MIN_WIDTH,
       )}
     >
       <StyledColumnFootContainer>
         <RecordTableColumnFooterWithDropdown
-          column={column}
           currentRecordGroupId={currentRecordGroupId}
           isFirstCell={isFirstCell}
         />
