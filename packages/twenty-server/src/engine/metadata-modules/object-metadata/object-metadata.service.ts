@@ -8,6 +8,8 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
+
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -409,6 +411,26 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
     );
+  }
+
+  public async getObjectMetadataStandardIdToIdMap(workspaceId: string) {
+    const objectMetadata = await this.findManyWithinWorkspace(workspaceId);
+
+    const objectMetadataStandardIdToIdMap =
+      objectMetadata.reduce<ObjectMetadataStandardIdToIdMap>((acc, object) => {
+        acc[object.standardId ?? ''] = {
+          id: object.id,
+          fields: object.fields.reduce((acc, field) => {
+            acc[field.standardId ?? ''] = field.id;
+
+            return acc;
+          }, {}),
+        };
+
+        return acc;
+      }, {});
+
+    return { objectMetadataStandardIdToIdMap };
   }
 
   private async handleObjectNameAndLabelUpdates(
