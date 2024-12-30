@@ -31,10 +31,9 @@ export const CustomAddBlockItem = ({
     const [firstElement] = currentBlockContent || [];
 
     if (firstElement === undefined) {
-      editor.openSelectionMenu('/');
+      editor.openSuggestionMenu('/');
     } else {
-      editor.sideMenu.addBlock();
-      editor.openSelectionMenu('/');
+      editor.openSuggestionMenu('/');
       editor.sideMenu.unfreezeMenu();
     }
   };
