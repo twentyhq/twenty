@@ -125,6 +125,26 @@ export const CommandMenu = () => {
 
   const commandGroups: CommandGroupConfig[] = [
     {
+      heading: 'Copilot',
+      items: copilotCommands,
+    },
+    {
+      heading: 'Record Selection',
+      items: matchingStandardActionRecordSelectionCommands,
+    },
+    {
+      heading: 'Workflow Record Selection',
+      items: matchingWorkflowRunRecordSelectionCommands,
+    },
+    {
+      heading: 'View',
+      items: matchingStandardActionGlobalCommands,
+    },
+    {
+      heading: 'Workflows',
+      items: matchingWorkflowRunGlobalCommands,
+    },
+    {
       heading: 'Navigate',
       items: matchingNavigateCommand,
     },
@@ -194,124 +214,6 @@ export const CommandMenu = () => {
                 {isNoResults && !isLoading && (
                   <StyledEmpty>No results found</StyledEmpty>
                 )}
-                {copilotCommands.length > 0 && (
-                  <CommandGroup heading="Copilot">
-                    {copilotCommands.map((copilotCommand) => (
-                      <SelectableItem itemId={copilotCommand.id}>
-                        <CommandMenuItem
-                          id={copilotCommand.id}
-                          Icon={copilotCommand.Icon}
-                          label={`${copilotCommand.label} ${
-                            commandMenuSearch.length > 2
-                              ? `"${commandMenuSearch}"`
-                              : ''
-                          }`}
-                          onClick={copilotCommand.onCommandClick}
-                          firstHotKey={copilotCommand.firstHotKey}
-                          secondHotKey={copilotCommand.secondHotKey}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                )}
-                <CommandGroup heading="Record Selection">
-                  {matchingStandardActionRecordSelectionCommands?.map(
-                    (standardActionrecordSelectionCommand) => (
-                      <SelectableItem
-                        itemId={standardActionrecordSelectionCommand.id}
-                        key={standardActionrecordSelectionCommand.id}
-                      >
-                        <CommandMenuItem
-                          id={standardActionrecordSelectionCommand.id}
-                          label={standardActionrecordSelectionCommand.label}
-                          Icon={standardActionrecordSelectionCommand.Icon}
-                          onClick={
-                            standardActionrecordSelectionCommand.onCommandClick
-                          }
-                          firstHotKey={
-                            standardActionrecordSelectionCommand.firstHotKey
-                          }
-                          secondHotKey={
-                            standardActionrecordSelectionCommand.secondHotKey
-                          }
-                        />
-                      </SelectableItem>
-                    ),
-                  )}
-                  {matchingWorkflowRunRecordSelectionCommands?.map(
-                    (workflowRunRecordSelectionCommand) => (
-                      <SelectableItem
-                        itemId={workflowRunRecordSelectionCommand.id}
-                        key={workflowRunRecordSelectionCommand.id}
-                      >
-                        <CommandMenuItem
-                          id={workflowRunRecordSelectionCommand.id}
-                          label={workflowRunRecordSelectionCommand.label}
-                          Icon={workflowRunRecordSelectionCommand.Icon}
-                          onClick={
-                            workflowRunRecordSelectionCommand.onCommandClick
-                          }
-                          firstHotKey={
-                            workflowRunRecordSelectionCommand.firstHotKey
-                          }
-                          secondHotKey={
-                            workflowRunRecordSelectionCommand.secondHotKey
-                          }
-                        />
-                      </SelectableItem>
-                    ),
-                  )}
-                </CommandGroup>
-                {matchingStandardActionGlobalCommands?.length > 0 && (
-                  <CommandGroup heading="View">
-                    {matchingStandardActionGlobalCommands?.map(
-                      (standardActionGlobalCommand) => (
-                        <SelectableItem
-                          itemId={standardActionGlobalCommand.id}
-                          key={standardActionGlobalCommand.id}
-                        >
-                          <CommandMenuItem
-                            id={standardActionGlobalCommand.id}
-                            label={standardActionGlobalCommand.label}
-                            Icon={standardActionGlobalCommand.Icon}
-                            onClick={standardActionGlobalCommand.onCommandClick}
-                            firstHotKey={
-                              standardActionGlobalCommand.firstHotKey
-                            }
-                            secondHotKey={
-                              standardActionGlobalCommand.secondHotKey
-                            }
-                          />
-                        </SelectableItem>
-                      ),
-                    )}
-                  </CommandGroup>
-                )}
-                {matchingWorkflowRunGlobalCommands?.length > 0 && (
-                  <CommandGroup heading="Workflows">
-                    {matchingWorkflowRunGlobalCommands?.map(
-                      (workflowRunGlobalCommand) => (
-                        <SelectableItem
-                          itemId={workflowRunGlobalCommand.id}
-                          key={workflowRunGlobalCommand.id}
-                        >
-                          <CommandMenuItem
-                            id={workflowRunGlobalCommand.id}
-                            label={workflowRunGlobalCommand.label}
-                            Icon={workflowRunGlobalCommand.Icon}
-                            onClick={workflowRunGlobalCommand.onCommandClick}
-                            firstHotKey={workflowRunGlobalCommand.firstHotKey}
-                            secondHotKey={workflowRunGlobalCommand.secondHotKey}
-                            shouldCloseCommandMenuOnClick={
-                              workflowRunGlobalCommand.shouldCloseCommandMenuOnClick
-                            }
-                          />
-                        </SelectableItem>
-                      ),
-                    )}
-                  </CommandGroup>
-                )}
-
                 {commandGroups.map(({ heading, items }) =>
                   items?.length ? (
                     <CommandGroup heading={heading} key={heading}>
