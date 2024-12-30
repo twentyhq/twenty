@@ -78,7 +78,7 @@ export const useRecordGroupReorderConfirmationModal = ({
             isOpen={isReorderConfirmationModalOpen}
             setIsOpen={setIsReorderConfirmationModalOpen}
             title="Group sorting"
-            subtitle={`Would you like to remove ${recordGroupSort} group sorting`}
+            subtitle={`Would you like to remove ${recordGroupSort} group sorting ?`}
             onConfirmClick={handleConfirmClick}
             deleteButtonText="Remove"
           />,
