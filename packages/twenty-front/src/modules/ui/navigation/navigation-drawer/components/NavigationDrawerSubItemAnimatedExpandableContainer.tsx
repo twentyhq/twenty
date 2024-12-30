@@ -1,4 +1,4 @@
-import { useTheme } from '@emotion/react';
+import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactNode } from 'react';
@@ -19,23 +19,21 @@ export const NavigationDrawerSubItemAnimatedExpandableContainer = ({
   children,
   isOpen = false,
 }: NavigationDrawerSubItemAnimatedExpandableContainerProps) => {
-  const theme = useTheme();
+  const { contentRef, motionAnimationVariants } = useExpandedAnimation(isOpen);
 
   return (
     <AnimatePresence>
-      <StyledAnimatedContainer
-        animate={{
-          height: isOpen ? 'auto' : 0,
-          opacity: isOpen ? 1 : 0,
-        }}
-        initial={false}
-        transition={{
-          duration: theme.animation.duration.normal,
-          ease: 'easeInOut',
-        }}
-      >
-        {children}
-      </StyledAnimatedContainer>
+      {isOpen && (
+        <StyledAnimatedContainer
+          ref={contentRef}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={motionAnimationVariants}
+        >
+          {children}
+        </StyledAnimatedContainer>
+      )}
     </AnimatePresence>
   );
 };
