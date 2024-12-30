@@ -5,7 +5,7 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCellFieldInput } from '@/object-record/record-board/record-board-card/components/RecordBoardCellFieldInput';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
@@ -172,7 +172,7 @@ export const RecordBoardCard = () => {
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
-  const { columnId } = useContext(RecordBoardColumnContext);
+  const { columnId } = useRecordBoardColumnContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,

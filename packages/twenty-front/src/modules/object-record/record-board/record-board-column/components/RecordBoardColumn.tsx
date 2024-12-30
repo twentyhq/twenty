@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 
-import { RecordBoardBodyContextProviderComponent } from '@/object-record/record-board/components/RecordBoardBodyContextProviderComponent';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { RecordBoardColumnContextProvider } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnContextProvider';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -42,26 +41,17 @@ export const RecordBoardColumn = ({
   }
 
   return (
-    <RecordBoardColumnContext.Provider
-      value={{
-        columnDefinition: recordGroupDefinition,
-        recordCount: recordIdsByGroup.length,
-        columnId: recordBoardColumnId,
-        recordIds: recordIdsByGroup,
-      }}
-    >
-      <RecordBoardBodyContextProviderComponent columnId={recordBoardColumnId}>
-        <Droppable droppableId={recordBoardColumnId}>
-          {(droppableProvided) => (
-            <StyledColumn>
-              <RecordBoardColumnCardsContainer
-                droppableProvided={droppableProvided}
-                recordIds={recordIdsByGroup}
-              />
-            </StyledColumn>
-          )}
-        </Droppable>
-      </RecordBoardBodyContextProviderComponent>
-    </RecordBoardColumnContext.Provider>
+    <RecordBoardColumnContextProvider recordBoardColumnId={recordBoardColumnId}>
+      <Droppable droppableId={recordBoardColumnId}>
+        {(droppableProvided) => (
+          <StyledColumn>
+            <RecordBoardColumnCardsContainer
+              droppableProvided={droppableProvided}
+              recordIds={recordIdsByGroup}
+            />
+          </StyledColumn>
+        )}
+      </Droppable>
+    </RecordBoardColumnContextProvider>
   );
 };

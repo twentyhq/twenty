@@ -1,6 +1,6 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { buildRecordGqlFieldsAggregateForRecordBoard } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForRecordBoard';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -19,9 +19,8 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     'IS_AGGREGATE_QUERY_ENABLED',
   );
 
-  const { columnDefinition, recordCount } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition, recordCount } =
+    useRecordBoardColumnContextOrThrow();
 
   const { objectMetadataItem } = useContext(RecordBoardContext);
 

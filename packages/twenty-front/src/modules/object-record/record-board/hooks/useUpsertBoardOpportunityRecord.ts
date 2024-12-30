@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { RecordBoardContext } from '../contexts/RecordBoardContext';
@@ -11,7 +11,7 @@ import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../state
 export const useUpsertBoardOpportunityRecord = (recordBoardId: string) => {
   const { selectFieldMetadataItem, createOneRecord } =
     useContext(RecordBoardContext);
-  const columnContext = useContext(RecordBoardColumnContext);
+  const columnContext = useRecordBoardColumnContextOrThrow();
 
   const recordBoardPendingRecordIdByColumnState =
     useRecoilComponentCallbackStateV2(

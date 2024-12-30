@@ -11,7 +11,7 @@ import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/r
 import { RecordBoardColumnNewOpportunity } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunity';
 import { RecordBoardColumnNewRecord } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecord';
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
@@ -49,7 +49,7 @@ export const RecordBoardColumnCardsContainer = ({
   recordIds,
   droppableProvided,
 }: RecordBoardColumnCardsContainerProps) => {
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { columnDefinition } = useRecordBoardColumnContextOrThrow();
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
   const columnId = columnDefinition.id;

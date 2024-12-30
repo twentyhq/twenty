@@ -1,4 +1,4 @@
-import { useRecordBoardBodyContextOrThrow } from '@/object-record/record-board/contexts/RecordBoardBodyContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
@@ -12,7 +12,7 @@ import { useRecoilCallback } from 'recoil';
 export const RecordBoardCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { onUpsertRecord, onCloseInlineCell } =
-    useRecordBoardBodyContextOrThrow();
+    useRecordBoardColumnContextOrThrow();
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const handleEnter: FieldInputEvent = (persistField) => {
