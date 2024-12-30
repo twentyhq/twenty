@@ -86,10 +86,7 @@ export const SignInUpGlobalScopeForm = () => {
         const response = data.checkUserExists;
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
-            const workspace =
-              response.availableWorkspaces.find(
-                (workspace) => workspace.id === response.defaultWorkspaceId,
-              ) ?? response.availableWorkspaces[0];
+            const workspace = response.availableWorkspaces[0];
             return redirectToWorkspaceDomain(workspace.subdomain, pathname, {
               email: form.getValues('email'),
             });
@@ -107,9 +104,10 @@ export const SignInUpGlobalScopeForm = () => {
     <>
       <StyledContentContainer>
         {authProviders.google && <SignInUpWithGoogle />}
-
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
-        <HorizontalSeparator />
+        {(authProviders.google || authProviders.microsoft) && (
+          <HorizontalSeparator />
+        )}
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>

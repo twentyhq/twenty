@@ -3,9 +3,7 @@ import { useParams } from 'react-router-dom';
 import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
-import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
@@ -56,9 +54,6 @@ export const RecordShowPage = () => {
           value={{ instanceId: `record-show-${objectRecordId}` }}
         >
           <RecordValueSetterEffect recordId={objectRecordId} />
-          <ContextStoreCurrentViewTypeEffect
-            viewType={ContextStoreViewType.ShowPage}
-          />
           <PageContainer>
             <PageTitle title={pageTitle} />
             <RecordShowPageHeader

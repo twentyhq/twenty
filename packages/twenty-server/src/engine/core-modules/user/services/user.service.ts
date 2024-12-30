@@ -72,18 +72,13 @@ export class UserService extends TypeOrmQueryService<User> {
     return workspaceMemberRepository.find();
   }
 
-  async deleteUser(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-      relations: ['defaultWorkspace'],
-    });
-
-    assert(user, 'User not found');
-
-    const workspaceId = user.defaultWorkspaceId;
-
+  private async deleteUserFromWorkspace({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -103,8 +98,6 @@ export class UserService extends TypeOrmQueryService<User> {
 
     if (workspaceMembers.length === 1) {
       await this.workspaceService.deleteWorkspace(workspaceId);
-
-      return user;
     }
 
     await workspaceDataSource?.query(
@@ -131,6 +124,19 @@ export class UserService extends TypeOrmQueryService<User> {
       ],
       workspaceId,
     });
+  }
+
+  async deleteUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['workspaces'],
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    await Promise.all(user.workspaces.map(this.deleteUserFromWorkspace));
 
     return user;
   }
@@ -153,17 +159,5 @@ export class UserService extends TypeOrmQueryService<User> {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
-  }
-
-  async saveDefaultWorkspaceIfUserHasAccessOrThrow(
-    userId: string,
-    workspaceId: string,
-  ) {
-    await this.hasUserAccessToWorkspaceOrThrow(userId, workspaceId);
-
-    return await this.userRepository.save({
-      id: userId,
-      defaultWorkspaceId: workspaceId,
-    });
   }
 }

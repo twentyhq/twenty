@@ -1,13 +1,15 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
@@ -20,25 +22,26 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,
   );
 
-  const viewFieldId =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-    )?.id ?? '';
-
+  const { viewFieldId } = useContext(
+    RecordTableColumnAggregateFooterCellContext,
+  );
   const aggregateOperationForViewField = useRecoilValue(
-    aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
+    viewFieldAggregateOperationState({ viewFieldId }),
   );
 
   const fieldName = objectMetadataItem.fields.find(
@@ -52,7 +55,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const { data } = useAggregateRecords({
+  const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter: { ...requestFilters, ...recordGroupFilter },
@@ -70,5 +73,6 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   return {
     aggregateValue: value,
     aggregateLabel: isDefined(value) ? label : undefined,
+    isLoading: loading,
   };
 };

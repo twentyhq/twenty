@@ -13,6 +13,7 @@ import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOne
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { v4 } from 'uuid';
 
 export const usePersistViewFilterRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -49,7 +50,7 @@ export const usePersistViewFilterRecords = () => {
             mutation: createOneRecordMutation,
             variables: {
               input: {
-                id: viewFilter.id,
+                id: v4(),
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,

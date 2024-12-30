@@ -3,12 +3,22 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CustomException } from 'src/utils/custom-exception';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 
-const assertIsExist = (
+const assertIsDefinedOrThrow = (
   workspace: Workspace | undefined | null,
-  exceptionToThrow?: CustomException,
+  exceptionToThrow: CustomException = new WorkspaceException(
+    'Workspace not found',
+    WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+  ),
 ): asserts workspace is Workspace => {
   if (!workspace) {
     throw exceptionToThrow;
@@ -28,7 +38,10 @@ const assertIsActive = (
 const isAuthEnabledOrThrow = (
   provider: WorkspaceAuthProvider,
   workspace: Workspace,
-  exceptionToThrowCustom: AuthException,
+  exceptionToThrowCustom: AuthException = new AuthException(
+    `${provider} auth is not enabled for this workspace`,
+    AuthExceptionCode.OAUTH_ACCESS_DENIED,
+  ),
 ) => {
   if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
   if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled) return true;
@@ -38,11 +51,11 @@ const isAuthEnabledOrThrow = (
 };
 
 export const workspaceValidator: {
-  assertIsExist: typeof assertIsExist;
+  assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
   assertIsActive: typeof assertIsActive;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
 } = {
-  assertIsExist: assertIsExist,
+  assertIsDefinedOrThrow: assertIsDefinedOrThrow,
   assertIsActive: assertIsActive,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
 };

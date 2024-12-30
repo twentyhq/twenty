@@ -125,7 +125,7 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     [FieldMetadataType.RichText]: {
       label: 'Rich Text',
       Icon: IllustrationIconSetting,
-      exampleValue: { key: 'value' },
+      exampleValue: "{ key: 'value' }",
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
     [FieldMetadataType.Array]: {

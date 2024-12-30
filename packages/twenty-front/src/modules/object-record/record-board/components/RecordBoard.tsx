@@ -86,6 +86,7 @@ export const RecordBoard = () => {
       'action-menu-dropdown',
       'command-menu',
       'modal-backdrop',
+      'page-action-container',
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [boardRef],

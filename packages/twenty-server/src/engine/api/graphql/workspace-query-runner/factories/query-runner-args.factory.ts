@@ -40,7 +40,9 @@ export class QueryRunnerArgsFactory {
 
     const shouldBackfillPosition =
       options.objectMetadataItemWithFieldMaps.fields.some(
-        (field) => field.type === FieldMetadataType.POSITION,
+        (field) =>
+          field.type === FieldMetadataType.POSITION &&
+          field.name === 'position',
       );
 
     switch (resolverArgsType) {

@@ -15,6 +15,7 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/modules/webhook/jobs/call-webhook.job';
+import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -62,15 +63,22 @@ export class CallWebhookJobsJob {
       const record = eventData.properties.after || eventData.properties.before;
       const updatedFields = eventData.properties.updatedFields;
 
+      const isWebhookEvent = nameSingular === 'webhook';
+      const sanitizedRecord = removeSecretFromWebhookRecord(
+        record,
+        isWebhookEvent,
+      );
+
       webhooks.forEach((webhook) => {
         const webhookData = {
           targetUrl: webhook.targetUrl,
+          secret: webhook.secret,
           eventName,
           objectMetadata,
           workspaceId,
           webhookId: webhook.id,
           eventDate: new Date(),
-          record,
+          record: sanitizedRecord,
           ...(updatedFields && { updatedFields }),
         };
 

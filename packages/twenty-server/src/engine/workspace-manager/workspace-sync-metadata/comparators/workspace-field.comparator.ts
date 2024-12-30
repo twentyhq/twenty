@@ -193,7 +193,7 @@ export class WorkspaceFieldComparator {
           if (
             (fieldPropertiesToStringify as readonly string[]).includes(property)
           ) {
-            fieldPropertiesToUpdateMap[id][property] = JSON.parse(
+            fieldPropertiesToUpdateMap[id][property] = this.parseJSONOrString(
               difference.value,
             );
           } else {
@@ -232,5 +232,17 @@ export class WorkspaceFieldComparator {
     }
 
     return result;
+  }
+
+  private parseJSONOrString(value: string | null): string | object | null {
+    if (value === null) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
   }
 }
