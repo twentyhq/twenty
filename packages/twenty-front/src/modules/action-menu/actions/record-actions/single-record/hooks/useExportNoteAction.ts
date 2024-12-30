@@ -9,7 +9,7 @@ export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
   ({ recordId, objectMetadataItem }) => {
     const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-    const filename = `${selectedRecord?.title || 'Untitled Note'}`;
+    const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
     const isNoteOrTask =
       objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
@@ -35,7 +35,7 @@ export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
 
       await exportBlockNoteEditorToPdf(editor, filename);
 
-      // TODO: Implement a Modal? to choose the export format between PDF and DOCX
+      // TODO later: implement DOCX export
       // const { exportBlockNoteEditorToDocx } = await import(
       //   '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToDocx'
       // );

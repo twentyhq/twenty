@@ -36,7 +36,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     label: 'Export to PDF',
     shortLabel: 'Export',
     position: 0,
-    isPinned: true,
+    isPinned: false,
     Icon: IconFileExport,
     availableOn: [ActionAvailableOn.SHOW_PAGE],
     actionHook: useExportNoteAction,
