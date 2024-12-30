@@ -64,10 +64,11 @@ export const useCommandMenuCommands = () => {
 
   const navigateCommands = Object.values(COMMAND_MENU_NAVIGATE_COMMANDS);
 
-  const actionCommands: Command[] = actionMenuEntries
+  const actionRecordSelectionCommands: Command[] = actionMenuEntries
     ?.filter(
       (actionMenuEntry) =>
-        actionMenuEntry.type === ActionMenuEntryType.Standard,
+        actionMenuEntry.type === ActionMenuEntryType.Standard &&
+        actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
     )
     ?.map((actionMenuEntry) => ({
       id: actionMenuEntry.key,
@@ -75,16 +76,29 @@ export const useCommandMenuCommands = () => {
       Icon: actionMenuEntry.Icon,
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
-      scope:
-        actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection
-          ? CommandScope.RecordSelection
-          : CommandScope.Global,
+      scope: CommandScope.RecordSelection,
     }));
 
-  const workflowRunCommands: Command[] = actionMenuEntries
+  const actionGlobalCommands: Command[] = actionMenuEntries
     ?.filter(
       (actionMenuEntry) =>
-        actionMenuEntry.type === ActionMenuEntryType.WorkflowRun,
+        actionMenuEntry.type === ActionMenuEntryType.Standard &&
+        actionMenuEntry.scope === ActionMenuEntryScope.Global,
+    )
+    ?.map((actionMenuEntry) => ({
+      id: actionMenuEntry.key,
+      label: actionMenuEntry.label,
+      Icon: actionMenuEntry.Icon,
+      onCommandClick: actionMenuEntry.onClick,
+      type: CommandType.StandardAction,
+      scope: CommandScope.Global,
+    }));
+
+  const workflowRunRecordSelectionCommands: Command[] = actionMenuEntries
+    ?.filter(
+      (actionMenuEntry) =>
+        actionMenuEntry.type === ActionMenuEntryType.WorkflowRun &&
+        actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
     )
     ?.map((actionMenuEntry) => ({
       id: actionMenuEntry.key,
@@ -92,10 +106,22 @@ export const useCommandMenuCommands = () => {
       Icon: actionMenuEntry.Icon,
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.WorkflowRun,
-      scope:
-        actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection
-          ? CommandScope.RecordSelection
-          : CommandScope.Global,
+      scope: CommandScope.RecordSelection,
+    }));
+
+  const workflowRunGlobalCommands: Command[] = actionMenuEntries
+    ?.filter(
+      (actionMenuEntry) =>
+        actionMenuEntry.type === ActionMenuEntryType.WorkflowRun &&
+        actionMenuEntry.scope === ActionMenuEntryScope.Global,
+    )
+    ?.map((actionMenuEntry) => ({
+      id: actionMenuEntry.key,
+      label: actionMenuEntry.label,
+      Icon: actionMenuEntry.Icon,
+      onCommandClick: actionMenuEntry.onClick,
+      type: CommandType.WorkflowRun,
+      scope: CommandScope.Global,
     }));
 
   const {
@@ -273,8 +299,10 @@ export const useCommandMenuCommands = () => {
   return {
     copilotCommands,
     navigateCommands,
-    actionCommands,
-    workflowRunCommands,
+    actionRecordSelectionCommands,
+    actionGlobalCommands,
+    workflowRunRecordSelectionCommands,
+    workflowRunGlobalCommands,
     peopleCommands,
     companyCommands,
     opportunityCommands,

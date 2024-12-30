@@ -4,13 +4,8 @@ import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuCommands } from '@/command-menu/hooks/useCommandMenuCommands';
+import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import {
-  Command,
-  CommandScope,
-  CommandType,
-} from '@/command-menu/types/Command';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -18,11 +13,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { useDebounce } from 'use-debounce';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -85,91 +78,8 @@ export const CommandMenu = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
   );
-  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
 
   const isMobile = useIsMobile();
-
-  const {
-    copilotCommands,
-    navigateCommands,
-    actionCommands,
-    workflowRunCommands,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
-    isLoading,
-  } = useCommandMenuCommands();
-
-  const checkInShortcuts = (cmd: Command, search: string) => {
-    return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
-      .toLowerCase()
-      .includes(search.toLowerCase());
-  };
-
-  const checkInLabels = (cmd: Command, search: string) => {
-    if (isNonEmptyString(cmd.label)) {
-      return cmd.label.toLowerCase().includes(search.toLowerCase());
-    }
-    return false;
-  };
-
-  const matchingNavigateCommand = navigateCommands.filter((cmd) =>
-    deferredCommandMenuSearch.length > 0
-      ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-        checkInLabels(cmd, deferredCommandMenuSearch)
-      : true,
-  );
-
-  const matchingCreateCommand = actionCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) && cmd.type === CommandType.Create,
-  );
-
-  const matchingStandardActionRecordSelectionCommands = actionCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) &&
-      cmd.type === CommandType.StandardAction &&
-      cmd.scope === CommandScope.RecordSelection,
-  );
-
-  const matchingStandardActionGlobalCommands = actionCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) &&
-      cmd.type === CommandType.StandardAction &&
-      cmd.scope === CommandScope.Global,
-  );
-
-  const matchingWorkflowRunRecordSelectionCommands = workflowRunCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) &&
-      cmd.type === CommandType.WorkflowRun &&
-      cmd.scope === CommandScope.RecordSelection,
-  );
-
-  const matchingWorkflowRunGlobalCommands = workflowRunCommands.filter(
-    (cmd) =>
-      (deferredCommandMenuSearch.length > 0
-        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
-          checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) &&
-      cmd.type === CommandType.WorkflowRun &&
-      cmd.scope === CommandScope.Global,
-  );
 
   useListenClickOutside({
     refs: [commandMenuRef],
@@ -178,12 +88,30 @@ export const CommandMenu = () => {
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
   });
 
+  const {
+    isNoResults,
+    isLoading,
+    copilotCommands,
+    matchingStandardActionRecordSelectionCommands,
+    matchingWorkflowRunRecordSelectionCommands,
+    matchingStandardActionGlobalCommands,
+    matchingWorkflowRunGlobalCommands,
+    matchingNavigateCommand,
+    peopleCommands,
+    companyCommands,
+    opportunityCommands,
+    noteCommands,
+    tasksCommands,
+    customObjectCommands,
+  } = useMatchingCommandMenuCommands({
+    commandMenuSearch,
+  });
+
   const selectableItems = copilotCommands
     .concat(matchingStandardActionRecordSelectionCommands)
     .concat(matchingWorkflowRunRecordSelectionCommands)
     .concat(matchingStandardActionGlobalCommands)
     .concat(matchingWorkflowRunGlobalCommands)
-    .concat(matchingCreateCommand)
     .concat(matchingNavigateCommand)
     .concat(peopleCommands)
     .concat(companyCommands)
@@ -195,28 +123,10 @@ export const CommandMenu = () => {
 
   const selectableItemIds = selectableItems.map((item) => item.id);
 
-  const isNoResults =
-    !matchingStandardActionRecordSelectionCommands.length &&
-    !matchingWorkflowRunRecordSelectionCommands.length &&
-    !matchingStandardActionGlobalCommands.length &&
-    !matchingWorkflowRunGlobalCommands.length &&
-    !matchingCreateCommand.length &&
-    !matchingNavigateCommand.length &&
-    !peopleCommands?.length &&
-    !companyCommands?.length &&
-    !opportunityCommands?.length &&
-    !noteCommands?.length &&
-    !tasksCommands?.length &&
-    !customObjectCommands?.length;
-
   const commandGroups: CommandGroupConfig[] = [
     {
       heading: 'Navigate',
       items: matchingNavigateCommand,
-    },
-    {
-      heading: 'Other',
-      items: matchingCreateCommand,
     },
     {
       heading: 'People',
@@ -292,8 +202,8 @@ export const CommandMenu = () => {
                           id={copilotCommand.id}
                           Icon={copilotCommand.Icon}
                           label={`${copilotCommand.label} ${
-                            deferredCommandMenuSearch.length > 2
-                              ? `"${deferredCommandMenuSearch}"`
+                            commandMenuSearch.length > 2
+                              ? `"${commandMenuSearch}"`
                               : ''
                           }`}
                           onClick={copilotCommand.onCommandClick}
