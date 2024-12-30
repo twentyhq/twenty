@@ -2,39 +2,8 @@ import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/acti
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
-
-import {
-  PDFExporter,
-  pdfDefaultSchemaMappings,
-} from '@blocknote/xl-pdf-exporter';
-import * as ReactPDF from '@react-pdf/renderer';
-import { Buffer } from 'buffer';
-import { saveAs } from 'file-saver';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
-
-// Polyfill needed for exportNoteToDocX
-if (typeof window !== 'undefined') {
-  window.Buffer = Buffer;
-}
-
-const exportNoteToPdf = async (editor: BlockNoteEditor, filename: string) => {
-  const exporter = new PDFExporter(editor.schema, pdfDefaultSchemaMappings);
-
-  const pdfDocument = await exporter.toReactPDFDocument(editor.document);
-
-  const blob = await ReactPDF.pdf(pdfDocument).toBlob();
-  saveAs(blob, `${filename}.pdf`);
-};
-
-// const exportNoteToDocx = async (editor: BlockNoteEditor, filename: string) => {
-//   const exporter = new DOCXExporter(editor.schema, docxDefaultSchemaMappings);
-
-//   const docxDocument = await exporter.`toDocxJsDocument(editor.document);
-
-//   const blob = await Packer.toBlob(do`cxDocument);
-//   saveAs(blob, `${filename}.docx`);
-// };
 
 export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
   ({ recordId, objectMetadataItem }) => {
@@ -60,10 +29,17 @@ export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
         initialContent: JSON.parse(selectedRecord.body),
       });
 
-      await exportNoteToPdf(editor, filename);
+      const { exportBlockNoteEditorToPdf } = await import(
+        '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToPdf'
+      );
+
+      await exportBlockNoteEditorToPdf(editor, filename);
 
       // TODO: Implement a Modal? to choose the export format between PDF and DOCX
-      // await exportNoteToDocx(editor, filename);
+      // const { exportBlockNoteEditorToDocx } = await import(
+      //   '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToDocx'
+      // );
+      // await exportBlockNoteEditorToDocx(editor, filename);
     };
 
     return {
