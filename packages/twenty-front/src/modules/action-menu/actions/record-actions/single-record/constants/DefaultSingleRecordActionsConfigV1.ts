@@ -2,7 +2,7 @@ import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/recor
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -25,8 +25,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     position: 0,
     Icon: IconHeart,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -38,8 +38,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     position: 1,
     Icon: IconHeartOff,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
@@ -53,8 +53,8 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useDeleteSingleRecordAction,
   },
