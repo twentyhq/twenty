@@ -22,7 +22,7 @@ export const NavigationDrawerSubItemAnimatedExpandableContainer = ({
   const theme = useTheme();
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       <StyledAnimatedContainer
         animate={{
           height: isOpen ? 'auto' : 0,
