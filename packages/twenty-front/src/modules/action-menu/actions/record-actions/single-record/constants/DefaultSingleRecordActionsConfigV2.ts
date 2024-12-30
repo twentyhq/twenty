@@ -38,7 +38,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     position: 0,
     isPinned: false,
     Icon: IconFileExport,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useExportNoteAction,
   },
   addToFavoritesSingleRecord: {

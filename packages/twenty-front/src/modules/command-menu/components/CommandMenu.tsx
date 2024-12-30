@@ -5,6 +5,7 @@ import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -81,6 +82,8 @@ export const CommandMenu = () => {
   );
 
   const isMobile = useIsMobile();
+
+  useCommandMenuHotKeys();
 
   useListenClickOutside({
     refs: [commandMenuRef],
