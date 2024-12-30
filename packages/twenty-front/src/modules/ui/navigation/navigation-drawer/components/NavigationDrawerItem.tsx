@@ -32,7 +32,7 @@ export type NavigationDrawerItemProps = {
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
   onClick?: () => void;
-  Icon: IconComponent | ((props: TablerIconsProps) => JSX.Element);
+  Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
@@ -40,6 +40,7 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDragging?: boolean;
+  isRightOptionsDropdownOpen?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -89,7 +90,7 @@ const StyledItem = styled('button', {
 
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
-      ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(6)})`
+      ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
       : `calc(100% - ${props.theme.spacing(2)})`};
 
   ${({ isDragging }) =>
@@ -211,6 +212,7 @@ const visibleStateStyles = css`
 
 const StyledRightOptionsVisbility = styled.div<{
   isMobile: boolean;
+  isRightOptionsDropdownOpen?: boolean;
 }>`
   display: block;
   opacity: 0;
@@ -223,7 +225,8 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile }) => isMobile && visibleStateStyles}
+  ${({ isMobile, isRightOptionsDropdownOpen }) =>
+    (isMobile || isRightOptionsDropdownOpen) && visibleStateStyles}
 
   .navigation-drawer-item:hover & {
     ${visibleStateStyles}
@@ -246,6 +249,7 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDragging,
+  isRightOptionsDropdownOpen,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -253,6 +257,7 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
+  const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
 
   const handleItemClick = () => {
     if (isMobile) {
@@ -316,7 +321,7 @@ export const NavigationDrawerItem = ({
             </StyledEllipsisContainer>
           </StyledLabelParent>
 
-          <StyledSpacer />
+          {showStyledSpacer && <StyledSpacer />}
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
@@ -337,20 +342,26 @@ export const NavigationDrawerItem = ({
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
-          <NavigationDrawerAnimatedCollapseWrapper>
-            {rightOptions && (
+
+          {rightOptions && (
+            <NavigationDrawerAnimatedCollapseWrapper>
               <StyledRightOptionsContainer
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                 }}
               >
-                <StyledRightOptionsVisbility isMobile={isMobile}>
+                <StyledRightOptionsVisbility
+                  isMobile={isMobile}
+                  isRightOptionsDropdownOpen={
+                    isRightOptionsDropdownOpen || false
+                  }
+                >
                   {rightOptions}
                 </StyledRightOptionsVisbility>
               </StyledRightOptionsContainer>
-            )}
-          </NavigationDrawerAnimatedCollapseWrapper>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
         </StyledItemElementsContainer>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>

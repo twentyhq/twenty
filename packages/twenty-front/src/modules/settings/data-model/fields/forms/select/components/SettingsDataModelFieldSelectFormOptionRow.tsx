@@ -79,8 +79,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
 
-  const SELECT_COLOR_DROPDOWN_ID = 'select-color-dropdown';
-  const SELECT_ACTIONS_DROPDOWN_ID = 'select-actions-dropdown';
+  const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
+  const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
 
   const { closeDropdown: closeColorDropdown } = useDropdown(
     SELECT_COLOR_DROPDOWN_ID,

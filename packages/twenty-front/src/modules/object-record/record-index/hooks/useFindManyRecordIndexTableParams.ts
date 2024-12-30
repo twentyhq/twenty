@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
@@ -35,7 +36,10 @@ export const useFindManyRecordIndexTableParams = (
     recordTableId,
   );
 
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const stateFilter = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     tableFilters,
     objectMetadataItem?.fields ?? [],
     tableViewFilterGroups,

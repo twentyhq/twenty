@@ -1,4 +1,4 @@
-import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/workspace-member";
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data";
 
 export const peopleDemo = [
   {

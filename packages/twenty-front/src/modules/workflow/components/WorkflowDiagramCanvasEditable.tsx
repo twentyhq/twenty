@@ -17,7 +17,6 @@ export const WorkflowDiagramCanvasEditable = ({
   return (
     <ReactFlowProvider>
       <WorkflowDiagramCanvasBase
-        key={workflowWithCurrentVersion.currentVersion.id}
         diagram={diagram}
         status={workflowWithCurrentVersion.currentVersion.status}
         nodeTypes={{
