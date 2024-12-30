@@ -1,5 +1,5 @@
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { availableRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/availableRecordGroupIdsComponentSelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -9,24 +9,26 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewType } from '@/views/types/ViewType';
 import { useRecoilCallback } from 'recoil';
 
-export const RecordIndexPageTableAddButtonInGroup = () => {
-  const dropdownId = `record-index-page-table-add-button-dropdown`;
+type RecordIndexAddRecordInGroupDropdownProps = {
+  dropdownId: string;
+  clickableComponent: React.ReactNode;
+};
 
+export const RecordIndexAddRecordInGroupDropdown = ({
+  dropdownId,
+  clickableComponent,
+}: RecordIndexAddRecordInGroupDropdownProps) => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
-    visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Table,
+  const recordGroupIds = useRecoilComponentValueV2(
+    availableRecordGroupIdsComponentSelector,
   );
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
@@ -70,11 +72,11 @@ export const RecordIndexPageTableAddButtonInGroup = () => {
     <Dropdown
       dropdownMenuWidth="200px"
       dropdownPlacement="bottom-start"
-      clickableComponent={<PageAddButton />}
+      clickableComponent={clickableComponent}
       dropdownId={dropdownId}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {visibleRecordGroupIds.map((recordGroupId) => (
+          {recordGroupIds.map((recordGroupId) => (
             <RecordIndexPageKanbanAddMenuItem
               key={recordGroupId}
               columnId={recordGroupId}
