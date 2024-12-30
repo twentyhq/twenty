@@ -2,8 +2,8 @@ import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useRecordBoardBodyContextOrThrow } from '@/object-record/record-board/contexts/RecordBoardBodyContext';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCellFieldInput } from '@/object-record/record-board/record-board-card/components/RecordBoardCellFieldInput';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
@@ -20,11 +20,11 @@ import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldB
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -81,11 +81,6 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   &:hover .compact-icon-container {
     opacity: 1;
   }
-`;
-
-const StyledTextInput = styled(TextInput)`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  width: ${({ theme }) => theme.spacing(53)};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -192,6 +187,7 @@ export const RecordBoardCard = () => {
   const [pendingRecord] = useRecoilState(
     recordBoardPendingRecordIdByColumnState(columnId),
   );
+
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
 
   const actionMenuDropdownId =
@@ -262,14 +258,10 @@ export const RecordBoardCard = () => {
     (field) => field.isLabelIdentifier,
   );
 
-  const { onUpsertRecord, onCloseInlineCell } =
-    useRecordBoardBodyContextOrThrow();
-
   return (
     <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
-      {!pendingRecord?.recordId && (
-        <RecordValueSetterEffect recordId={recordId} />
-      )}
+      <RecordValueSetterEffect recordId={recordId} />
+
       <InView>
         <StyledBoardCard
           ref={cardRef}
@@ -299,26 +291,20 @@ export const RecordBoardCard = () => {
                     iconName: labelIdentifierField?.iconName || '',
                     type: labelIdentifierField?.type || FieldMetadataType.Text,
                     defaultValue: labelIdentifierField?.defaultValue || '',
-                    metadata: labelIdentifierField?.metadata,
+                    metadata: labelIdentifierField?.metadata || {
+                      fieldName:
+                        labelIdentifierField?.metadata?.fieldName || 'name',
+
+                      ...labelIdentifierField?.metadata,
+                    },
                   },
-                  useUpdateRecord: () => {
-                    const updateRecord = (params: RecordUpdateHookParams) => {
-                      if (pendingRecord?.recordId === recordId) {
-                        onUpsertRecord({
-                          persistField: () => {},
-                          recordId,
-                          fieldName: params.variables.updateOneRecordInput
-                            .fieldName as string,
-                        });
-                        onCloseInlineCell();
-                      }
-                    };
-                    return [updateRecord, { loading: false }];
-                  },
+
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCell />
+                <RecordInlineCellEditMode>
+                  <RecordBoardCellFieldInput />
+                </RecordInlineCellEditMode>
               </FieldContext.Provider>
             ) : (
               <RecordIdentifierChip

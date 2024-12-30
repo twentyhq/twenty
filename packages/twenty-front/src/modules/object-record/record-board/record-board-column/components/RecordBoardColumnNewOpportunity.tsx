@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useCreateBoardRecordFromPending } from '@/object-record/record-board/hooks/useCreateBoardRecordFromPending';
+import { useUpsertBoardOpportunityRecord } from '@/object-record/record-board/hooks/useUpsertBoardOpportunityRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
@@ -26,9 +26,11 @@ export const RecordBoardColumnNewOpportunity = ({
 }) => {
   const { recordBoardId } = useContext(RecordBoardContext);
   const { createNewBoardRecord } = useCreateNewBoardRecord(recordBoardId);
-
-  const { createBoardRecordFromPending } =
-    useCreateBoardRecordFromPending(recordBoardId);
+  const { objectMetadataItem } = useContext(RecordBoardContext);
+  const isOpportunity =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
+  const { upsertBoardOpportunityRecord } =
+    useUpsertBoardOpportunityRecord(recordBoardId);
 
   const pendingRecord = useRecoilComponentFamilyValueV2(
     recordBoardPendingRecordIdByColumnComponentFamilyState,
@@ -46,11 +48,15 @@ export const RecordBoardColumnNewOpportunity = ({
     viewableRecordNameSingularState,
   );
 
+  const shouldDisplayCompanyPicker =
+    pendingRecord?.recordId &&
+    pendingRecord.position === position &&
+    isOpportunity;
+
   const createCompanyOpportunityAndOpenRightDrawer = async (
     searchInput?: string,
   ) => {
     const newRecordId = v4();
-
     const createdCompany = await createCompany({
       id: newRecordId,
       name: searchInput,
@@ -61,33 +67,31 @@ export const RecordBoardColumnNewOpportunity = ({
     openRightDrawer(RightDrawerPages.ViewRecord);
 
     if (isDefined(createdCompany)) {
-      createNewBoardRecord(columnId, position, true);
+      createNewBoardRecord(columnId, position);
     }
   };
 
   return (
     <>
-      {pendingRecord?.recordId &&
-        pendingRecord.position === position &&
-        pendingRecord.isOpportunity && (
-          <OverlayContainer>
-            <RecordPickerComponentInstanceContext.Provider
-              value={{ instanceId: 'relation-picker' }}
-            >
-              <SingleRecordSelect
-                onCancel={() => createNewBoardRecord(columnId, position, false)}
-                onRecordSelected={(company) => {
-                  if (isDefined(company)) {
-                    createBoardRecordFromPending(columnId, '', company);
-                  }
-                }}
-                objectNameSingular={CoreObjectNameSingular.Company}
-                selectedRecordIds={[]}
-                onCreate={createCompanyOpportunityAndOpenRightDrawer}
-              />
-            </RecordPickerComponentInstanceContext.Provider>
-          </OverlayContainer>
-        )}
+      {shouldDisplayCompanyPicker && (
+        <OverlayContainer>
+          <RecordPickerComponentInstanceContext.Provider
+            value={{ instanceId: 'relation-picker' }}
+          >
+            <SingleRecordSelect
+              onCancel={() => createNewBoardRecord(columnId, position)}
+              onRecordSelected={(company) => {
+                if (isDefined(company)) {
+                  upsertBoardOpportunityRecord(columnId, company);
+                }
+              }}
+              objectNameSingular={CoreObjectNameSingular.Company}
+              selectedRecordIds={[]}
+              onCreate={createCompanyOpportunityAndOpenRightDrawer}
+            />
+          </RecordPickerComponentInstanceContext.Provider>
+        </OverlayContainer>
+      )}
     </>
   );
 };

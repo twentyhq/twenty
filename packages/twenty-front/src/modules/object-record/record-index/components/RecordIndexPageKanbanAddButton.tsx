@@ -1,6 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateNewBoardRecord } from '@/object-record/record-board/hooks/useCreateNewBoardRecord';
-import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
@@ -30,28 +28,17 @@ export const RecordIndexPageKanbanAddButton = () => {
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordIndexKanbanFieldMetadataId,
   );
-  const isOpportunity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
 
   const { closeDropdown } = useDropdown(dropdownId);
-  const { isOpportunitiesCompanyFieldDisabled } =
-    useIsOpportunitiesCompanyFieldDisabled();
 
   const { createNewBoardRecord } = useCreateNewBoardRecord(recordIndexId);
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordGroupDefinition) => {
-      const isOpportunityEnabled =
-        isOpportunity && !isOpportunitiesCompanyFieldDisabled;
-      createNewBoardRecord(columnDefinition.id, 'first', isOpportunityEnabled);
+      createNewBoardRecord(columnDefinition.id, 'first');
       closeDropdown();
     },
-    [
-      isOpportunity,
-      createNewBoardRecord,
-      closeDropdown,
-      isOpportunitiesCompanyFieldDisabled,
-    ],
+    [createNewBoardRecord, closeDropdown],
   );
 
   if (!selectFieldMetadataItem) {

@@ -127,10 +127,7 @@ export const RecordBoardColumnCardsContainer = ({
         />
       )}
       <StyledNewButtonContainer>
-        <RecordBoardColumnNewRecordButton
-          columnId={columnDefinition.id}
-          isOpportunity={showNewOpportunityButton}
-        />
+        <RecordBoardColumnNewRecordButton columnId={columnDefinition.id} />
       </StyledNewButtonContainer>
     </StyledColumnCardsContainer>
   );

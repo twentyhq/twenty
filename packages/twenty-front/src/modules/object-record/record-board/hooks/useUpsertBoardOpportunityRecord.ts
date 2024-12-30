@@ -5,12 +5,11 @@ import { isDefined } from '~/utils/isDefined';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { RecordBoardContext } from '../contexts/RecordBoardContext';
 import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../states/recordBoardPendingRecordIdByColumnComponentFamilyState';
 
-export const useCreateBoardRecordFromPending = (recordBoardId: string) => {
-  const { objectMetadataItem, selectFieldMetadataItem, createOneRecord } =
+export const useUpsertBoardOpportunityRecord = (recordBoardId: string) => {
+  const { selectFieldMetadataItem, createOneRecord } =
     useContext(RecordBoardContext);
   const columnContext = useContext(RecordBoardColumnContext);
 
@@ -20,13 +19,9 @@ export const useCreateBoardRecordFromPending = (recordBoardId: string) => {
       recordBoardId,
     );
 
-  const createBoardRecordFromPending = useRecoilCallback(
+  const upsertBoardOpportunityRecord = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        columnId: string,
-        labelValue?: string,
-        company?: RecordForSelect,
-      ) => {
+      async (columnId: string, company?: RecordForSelect) => {
         const pendingRecord = snapshot
           .getLoadable(recordBoardPendingRecordIdByColumnState(columnId))
           .getValue();
@@ -35,42 +30,13 @@ export const useCreateBoardRecordFromPending = (recordBoardId: string) => {
           return;
         }
 
-        const { isOpportunity, position } = pendingRecord;
+        const { position } = pendingRecord;
         set(recordBoardPendingRecordIdByColumnState(columnId), {
           recordId: null,
-          isOpportunity: false,
           position: undefined,
-          company: null,
         });
 
-        if (!isOpportunity && labelValue !== '') {
-          const labelIdentifierField = objectMetadataItem?.fields.find(
-            (field) =>
-              field.id === objectMetadataItem.labelIdentifierFieldMetadataId,
-          );
-
-          if (!isDefined(labelIdentifierField)) {
-            throw new Error('Label identifier field not found');
-          }
-
-          let computedLabelIdentifierValue: any = labelValue;
-
-          if (labelIdentifierField.type === FieldMetadataType.FullName) {
-            computedLabelIdentifierValue = {
-              firstName: labelValue,
-              lastName: '',
-            };
-          }
-
-          await createOneRecord({
-            [selectFieldMetadataItem.name]:
-              columnContext?.columnDefinition.value,
-            position,
-            [labelIdentifierField.name]: computedLabelIdentifierValue,
-          });
-        }
-
-        if (isOpportunity && isDefined(company)) {
+        if (isDefined(company)) {
           await createOneRecord({
             [selectFieldMetadataItem.name]:
               columnContext?.columnDefinition.value,
@@ -81,7 +47,6 @@ export const useCreateBoardRecordFromPending = (recordBoardId: string) => {
         }
       },
     [
-      objectMetadataItem,
       selectFieldMetadataItem,
       createOneRecord,
       recordBoardPendingRecordIdByColumnState,
@@ -90,6 +55,6 @@ export const useCreateBoardRecordFromPending = (recordBoardId: string) => {
   );
 
   return {
-    createBoardRecordFromPending,
+    upsertBoardOpportunityRecord,
   };
 };

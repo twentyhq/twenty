@@ -24,19 +24,15 @@ const StyledNewButton = styled.button`
 
 export const RecordBoardColumnNewRecordButton = ({
   columnId,
-  isOpportunity,
 }: {
   columnId: string;
-  isOpportunity: boolean;
 }) => {
   const theme = useTheme();
   const { recordBoardId } = useContext(RecordBoardContext);
   const { createNewBoardRecord } = useCreateNewBoardRecord(recordBoardId);
 
   return (
-    <StyledNewButton
-      onClick={() => createNewBoardRecord(columnId, 'last', isOpportunity)}
-    >
+    <StyledNewButton onClick={() => createNewBoardRecord(columnId, 'last')}>
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

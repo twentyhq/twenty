@@ -17,15 +17,13 @@ export const RecordBoardColumnNewRecord = ({
 
   return (
     <>
-      {pendingRecord?.recordId &&
-        pendingRecord.position === position &&
-        !pendingRecord.isOpportunity && (
-          <RecordBoardCardContext.Provider
-            value={{ recordId: pendingRecord.recordId }}
-          >
-            <RecordBoardCard />
-          </RecordBoardCardContext.Provider>
-        )}
+      {pendingRecord?.recordId && pendingRecord.position === position && (
+        <RecordBoardCardContext.Provider
+          value={{ recordId: pendingRecord.recordId }}
+        >
+          <RecordBoardCard />
+        </RecordBoardCardContext.Provider>
+      )}
     </>
   );
 };

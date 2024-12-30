@@ -1,6 +1,6 @@
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import { RecordBoardBodyContextProvider } from '../contexts/RecordBoardBodyContext';
 import { useUpsertBoardRecord } from '../hooks/useUpsertBoardRecord';
 
@@ -15,27 +15,24 @@ export const RecordBoardBodyContextProviderComponent = ({
 }: RecordBoardBodyContextProviderComponentProps) => {
   const { upsertBoardRecord } = useUpsertBoardRecord(columnId);
   const { closeInlineCell } = useInlineCell();
-  const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
-    recordTableId: columnId,
-  });
+
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const handleUpsertBoardRecord = ({
-    persistField,
     recordId,
     fieldName,
+    persistField,
   }: {
-    persistField: () => void;
     recordId: string;
     fieldName: string;
+    persistField: () => void;
   }) => {
-    upsertBoardRecord(persistField, recordId, fieldName);
-  };
-
-  const handleActionMenuDropdown = (
-    event: React.MouseEvent,
-    recordId: string,
-  ) => {
-    triggerActionMenuDropdown(event, recordId);
+    upsertBoardRecord(
+      persistField,
+      recordId,
+      fieldName,
+      columnDefinition?.value ?? '',
+    );
   };
 
   return (
@@ -44,7 +41,6 @@ export const RecordBoardBodyContextProviderComponent = ({
         columnId,
         onUpsertRecord: handleUpsertBoardRecord,
         onCloseInlineCell: closeInlineCell,
-        onActionMenuDropdownOpened: handleActionMenuDropdown,
       }}
     >
       {children}

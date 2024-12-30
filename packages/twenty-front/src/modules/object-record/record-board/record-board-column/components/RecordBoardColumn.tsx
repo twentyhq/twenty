@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 
+import { RecordBoardBodyContextProviderComponent } from '@/object-record/record-board/components/RecordBoardBodyContextProviderComponent';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -49,16 +50,18 @@ export const RecordBoardColumn = ({
         recordIds: recordIdsByGroup,
       }}
     >
-      <Droppable droppableId={recordBoardColumnId}>
-        {(droppableProvided) => (
-          <StyledColumn>
-            <RecordBoardColumnCardsContainer
-              droppableProvided={droppableProvided}
-              recordIds={recordIdsByGroup}
-            />
-          </StyledColumn>
-        )}
-      </Droppable>
+      <RecordBoardBodyContextProviderComponent columnId={recordBoardColumnId}>
+        <Droppable droppableId={recordBoardColumnId}>
+          {(droppableProvided) => (
+            <StyledColumn>
+              <RecordBoardColumnCardsContainer
+                droppableProvided={droppableProvided}
+                recordIds={recordIdsByGroup}
+              />
+            </StyledColumn>
+          )}
+        </Droppable>
+      </RecordBoardBodyContextProviderComponent>
     </RecordBoardColumnContext.Provider>
   );
 };

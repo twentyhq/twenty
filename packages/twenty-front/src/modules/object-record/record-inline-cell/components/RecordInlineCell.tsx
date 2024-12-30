@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -72,22 +72,23 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
-
         const activeDropdownFocusId = snapshot
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
-          return;
+        if (isDefined(activeDropdownFocusId)) {
+          const recordFieldDropdownId = getDropdownFocusIdForRecordField(
+            recordId,
+            fieldDefinition.fieldMetadataId,
+            'inline-cell',
+          );
+
+          if (recordFieldDropdownId !== activeDropdownFocusId) {
+            return;
+          }
         }
 
         event.stopImmediatePropagation();
-
         persistField();
         closeInlineCell();
       },
