@@ -31,13 +31,10 @@ export const CustomAddBlockItem = ({
     const [firstElement] = currentBlockContent || [];
 
     if (firstElement === undefined) {
-      editor.insertInlineContent('/');
+      editor.openSuggestionMenu('/');
     } else {
-      const currentBlock = editor.getTextCursorPosition().block;
-
-      editor.insertBlocks([{ type: 'paragraph' }], currentBlock, 'after');
-
-      editor.insertInlineContent('/');
+      editor.openSuggestionMenu('/');
+      editor.sideMenu.unfreezeMenu();
     }
   };
   return (
