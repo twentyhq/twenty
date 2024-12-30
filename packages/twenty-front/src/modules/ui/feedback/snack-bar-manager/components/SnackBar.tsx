@@ -66,7 +66,7 @@ const StyledProgressBar = styled(ProgressBar)`
 `;
 
 const StyledHeader = styled.div`
-  align-items: flex-start;
+  align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -80,7 +80,8 @@ const StyledMessage = styled.div`
 `;
 
 const StyledIcon = styled.div`
-  flex-shrink: 0;
+  align-items: center;
+  display: flex;
 `;
 
 const StyledActions = styled.div`
@@ -109,11 +110,11 @@ const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
 export const SnackBar = ({
   className,
   progress: overrideProgressValue,
-  duration = 6000,
+  duration = 100000,
   icon: iconComponent,
   id,
   message,
-  detailedMessage,
+  detailedMessage = 'Test lkajsd lkasjd lkajsd lkajsd laksjd lkasjd lkajsd jd jjdj jdj jdj jdj jjdj d',
   onCancel,
   onClose,
   role = 'status',
