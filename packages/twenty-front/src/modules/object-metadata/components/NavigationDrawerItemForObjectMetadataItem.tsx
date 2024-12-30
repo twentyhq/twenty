@@ -5,6 +5,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { NavigationDrawerSubItemAnimatedExpandableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItemAnimatedExpandableContainer';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
@@ -66,8 +67,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         Icon={getIcon(objectMetadataItem.icon)}
         active={isActive}
       />
-      {shouldSubItemsBeDisplayed &&
-        sortedObjectMetadataViews.map((view, index) => (
+
+      <NavigationDrawerSubItemAnimatedExpandableContainer
+        isOpen={shouldSubItemsBeDisplayed}
+      >
+        {sortedObjectMetadataViews.map((view, index) => (
           <NavigationDrawerSubItem
             label={view.name}
             to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
@@ -81,6 +85,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             key={view.id}
           />
         ))}
+      </NavigationDrawerSubItemAnimatedExpandableContainer>
     </NavigationDrawerItemsCollapsableContainer>
   );
 };

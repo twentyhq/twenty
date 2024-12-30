@@ -15,6 +15,7 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { NavigationDrawerSubItemAnimatedExpandableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItemAnimatedExpandableContainer';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { Droppable } from '@hello-pangea/dnd';
 import { useContext, useState } from 'react';
@@ -158,7 +159,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           </FavoritesDroppable>
         )}
 
-        {isOpen && (
+        <NavigationDrawerSubItemAnimatedExpandableContainer isOpen={isOpen}>
           <Droppable droppableId={`folder-${folder.folderId}`}>
             {(provided) => (
               <div
@@ -202,7 +203,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               </div>
             )}
           </Droppable>
-        )}
+        </NavigationDrawerSubItemAnimatedExpandableContainer>
       </NavigationDrawerItemsCollapsableContainer>
 
       {createPortal(
