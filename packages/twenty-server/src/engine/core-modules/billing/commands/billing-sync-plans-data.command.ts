@@ -121,7 +121,9 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
       const batchPrices = await this.getBillingPrices(batch, options);
 
       prices.push(...batchPrices);
-      this.logger.log(`Processed batch ${start / this.batchSize + 1}`);
+      this.logger.log(
+        `Processed batch ${start / this.batchSize + 1} of products`,
+      );
     }
 
     return prices;
