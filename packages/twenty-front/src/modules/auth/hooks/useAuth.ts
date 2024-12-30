@@ -43,16 +43,17 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { BillingCheckoutSessionState } from '@/billing/states/billingCheckoutSessionState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { AppPath } from '@/types/AppPath';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -382,8 +383,10 @@ export const useAuth = () => {
       params: {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
+        billingCheckoutSession?: BillingCheckoutSessionState;
       },
     ) => {
+      console.log('params', JSON.stringify(params.billingCheckoutSession));
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
       if (isDefined(params.workspaceInviteHash)) {
         url.searchParams.set('inviteHash', params.workspaceInviteHash);
@@ -392,6 +395,12 @@ export const useAuth = () => {
         url.searchParams.set(
           'inviteToken',
           params.workspacePersonalInviteToken,
+        );
+      }
+      if (isDefined(params.billingCheckoutSession)) {
+        url.searchParams.set(
+          'billingCheckoutSessionState',
+          JSON.stringify(params.billingCheckoutSession),
         );
       }
 
@@ -408,6 +417,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSessionState;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -418,6 +428,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSessionState;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },

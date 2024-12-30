@@ -52,9 +52,9 @@ export class BillingWebhookProductService {
 
   isValidBillingPlanKey(planKey?: string) {
     switch (planKey) {
-      case BillingPlanKey.BASE_PLAN:
+      case BillingPlanKey.BASE:
         return true;
-      case BillingPlanKey.PRO_PLAN:
+      case BillingPlanKey.PRO:
         return true;
       default:
         return false;
