@@ -8,6 +8,7 @@ import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -19,6 +20,9 @@ export const RecordIndexPageTableAddButtonInGroup = () => {
   const dropdownId = `record-index-page-table-add-button-dropdown`;
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
@@ -47,11 +51,13 @@ export const RecordIndexPageTableAddButtonInGroup = () => {
       (recordGroup: RecordGroupDefinition) => {
         set(isRecordGroupTableSectionToggledState(recordGroup.id), true);
         createNewTableRecordInGroup(recordGroup.id);
+        setActiveDropdownFocusIdAndMemorizePrevious(null);
         closeDropdown();
       },
     [
       closeDropdown,
       createNewTableRecordInGroup,
+      setActiveDropdownFocusIdAndMemorizePrevious,
       isRecordGroupTableSectionToggledState,
     ],
   );
