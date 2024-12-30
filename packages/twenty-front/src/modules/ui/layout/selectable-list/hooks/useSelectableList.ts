@@ -33,11 +33,23 @@ export const useSelectableList = (selectableListId?: string) => {
     [selectedItemIdState, isSelectedItemIdSelector],
   );
 
+  const setSelectedItemId = useRecoilCallback(
+    ({ set }) =>
+      (itemId: string) => {
+        resetSelectedItem();
+        set(selectedItemIdState, itemId);
+        set(isSelectedItemIdSelector(itemId), true);
+      },
+    [resetSelectedItem, selectedItemIdState, isSelectedItemIdSelector],
+  );
+
   return {
     selectableListId: scopeId,
     setSelectableItemIds,
     isSelectedItemIdSelector,
     setSelectableListOnEnter,
     resetSelectedItem,
+    setSelectedItemId,
+    selectedItemIdState,
   };
 };
