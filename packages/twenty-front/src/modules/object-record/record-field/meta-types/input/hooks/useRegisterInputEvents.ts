@@ -37,7 +37,6 @@ export const useRegisterInputEvents = <T>({
   useScopedHotkeys(
     'enter',
     () => {
-      console.log('enter', hotkeyScope);
       onEnter?.(inputValue);
     },
     hotkeyScope,

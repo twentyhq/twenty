@@ -44,7 +44,6 @@ export const FullNameFieldInput = ({
   };
 
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    console.log('persistFullNameField', persistFullNameField);
     onEnter?.(() => persistFullNameField(convertToFullName(newDoubleText)));
   };
 
@@ -56,7 +55,6 @@ export const FullNameFieldInput = ({
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    console.log('handleClickOutside', persistFullNameField);
     onClickOutside?.(
       () => persistFullNameField(convertToFullName(newDoubleText)),
       event,
