@@ -1,4 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
@@ -176,6 +177,9 @@ export const CommandMenu = () => {
 
   return (
     <>
+      <CommandMenuDefaultSelectionEffect
+        selectableItemIds={selectableItemIds}
+      />
       <StyledCommandMenu ref={commandMenuRef} className="command-menu">
         <CommandMenuTopBar
           commandMenuSearch={commandMenuSearch}
