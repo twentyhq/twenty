@@ -192,8 +192,8 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Columns cannot duplicate', {
-                title: 'Another column unselected',
+              enqueueSnackBar('Another column unselected', {
+                detailedMessage: 'Columns cannot duplicate',
                 variant: SnackBarVariant.Error,
               });
               return setColumn(column);

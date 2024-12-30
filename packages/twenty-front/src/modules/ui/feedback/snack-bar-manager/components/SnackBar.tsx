@@ -24,15 +24,13 @@ export enum SnackBarVariant {
   Warning = 'warning',
 }
 
-export type SnackBarProps = Pick<
-  ComponentPropsWithoutRef<'div'>,
-  'id' | 'title'
-> & {
+export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   className?: string;
   progress?: number;
   duration?: number;
   icon?: ReactNode;
-  message?: string;
+  message: string;
+  detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
   role?: 'alert' | 'status';
@@ -73,7 +71,17 @@ const StyledHeader = styled.div`
   display: flex;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledIcon = styled.div`
+  align-items: center;
+  display: flex;
 `;
 
 const StyledActions = styled.div`
@@ -82,7 +90,16 @@ const StyledActions = styled.div`
   margin-left: auto;
 `;
 
-const defaultTitleByVariant: Record<SnackBarVariant, string> = {
+const StyledDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+`;
+
+const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
   [SnackBarVariant.Default]: 'Alert',
   [SnackBarVariant.Error]: 'Error',
   [SnackBarVariant.Info]: 'Info',
@@ -97,11 +114,11 @@ export const SnackBar = ({
   icon: iconComponent,
   id,
   message,
+  detailedMessage,
   onCancel,
   onClose,
   role = 'status',
   variant = SnackBarVariant.Default,
-  title = defaultTitleByVariant[variant],
 }: SnackBarProps) => {
   const theme = useTheme();
   const { animation: progressAnimation, value: progressValue } =
@@ -119,7 +136,7 @@ export const SnackBar = ({
       return iconComponent;
     }
 
-    const ariaLabel = defaultTitleByVariant[variant];
+    const ariaLabel = defaultAriaLabelByVariant[variant];
     const color = theme.snackBar[variant].color;
     const size = theme.icon.size.md;
 
@@ -164,7 +181,7 @@ export const SnackBar = ({
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      title={message || title || defaultTitleByVariant[variant]}
+      title={message || defaultAriaLabelByVariant[variant]}
       {...{ className, id, role, variant }}
     >
       <StyledProgressBar
@@ -172,8 +189,8 @@ export const SnackBar = ({
         value={progressValue}
       />
       <StyledHeader>
-        {icon}
-        {message}
+        <StyledIcon>{icon}</StyledIcon>
+        <StyledMessage>{message}</StyledMessage>
         <StyledActions>
           {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
 
@@ -182,6 +199,9 @@ export const SnackBar = ({
           )}
         </StyledActions>
       </StyledHeader>
+      {detailedMessage && (
+        <StyledDescription>{detailedMessage}</StyledDescription>
+      )}
     </StyledContainer>
   );
 };

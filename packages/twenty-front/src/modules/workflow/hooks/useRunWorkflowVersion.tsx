@@ -37,9 +37,8 @@ export const useRunWorkflowVersion = () => {
       variables: { input: { workflowVersionId, payload } },
     });
 
-    enqueueSnackBar('', {
+    enqueueSnackBar(`${capitalize(workflowName)} starting...`, {
       variant: SnackBarVariant.Success,
-      title: `${capitalize(workflowName)} starting...`,
       icon: (
         <IconSettingsAutomation
           size={16}
