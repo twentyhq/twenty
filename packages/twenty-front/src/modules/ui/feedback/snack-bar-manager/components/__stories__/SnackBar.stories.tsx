@@ -19,8 +19,8 @@ const meta: Meta<typeof SnackBar> = {
     icon: { control: false },
   },
   args: {
-    title: 'Lorem ipsum',
-    message:
+    message: 'Lorem ipsum',
+    detailedMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec eros tincidunt lacinia.',
     onCancel: undefined,
     onClose: fn(),
