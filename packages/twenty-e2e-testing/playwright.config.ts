@@ -34,11 +34,18 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  reporter: [['html', { open: 'never' }]],
+  reporter: process.env.CI ? 'github' : 'list',
   projects: [
     {
       name: 'Login setup',
       testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
+    },
+    {
+      name: 'Demo check',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      testMatch: /demo\/demo_basic\.spec\.ts/,
     },
     {
       name: 'chromium',
@@ -47,6 +54,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
       dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
+      testMatch: /all\/.+\.spec\.ts/,
     },
     {
       name: 'firefox',
@@ -55,6 +63,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
+      testMatch: /all\/.+\.spec\.ts/,
     },
     {
       name: 'Authentication',

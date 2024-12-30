@@ -21,9 +21,12 @@ export const useTriggerNodeSelection = () => {
       return;
     }
 
-    reactflow.updateNode(workflowDiagramTriggerNodeSelection, {
-      selected: true,
-    });
+    reactflow.setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        selected: workflowDiagramTriggerNodeSelection === node.id,
+      })),
+    );
 
     setWorkflowDiagramTriggerNodeSelection(undefined);
   }, [

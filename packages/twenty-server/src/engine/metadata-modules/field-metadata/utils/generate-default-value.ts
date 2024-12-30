@@ -44,6 +44,7 @@ export function generateDefaultValue(
       return {
         primaryPhoneNumber: "''",
         primaryPhoneCountryCode: "''",
+        primaryPhoneCallingCode: "''",
         additionalPhones: null,
       };
     default:

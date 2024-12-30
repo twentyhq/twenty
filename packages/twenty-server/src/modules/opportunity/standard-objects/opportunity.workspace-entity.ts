@@ -113,10 +113,10 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Opportunity record position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,

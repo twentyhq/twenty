@@ -53,7 +53,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer withoutScrollWrapper>
+      <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           fullWidth
           to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}

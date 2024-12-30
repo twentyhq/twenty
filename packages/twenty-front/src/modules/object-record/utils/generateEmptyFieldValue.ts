@@ -95,6 +95,7 @@ export const generateEmptyFieldValue = (
       return {
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',
+        primaryPhoneCallingCode: '',
         additionalPhones: null,
       };
     }

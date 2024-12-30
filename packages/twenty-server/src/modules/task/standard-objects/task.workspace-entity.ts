@@ -57,10 +57,10 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Task record position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.title,

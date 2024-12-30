@@ -7,8 +7,6 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
-import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
@@ -16,7 +14,7 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
-import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+// import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -31,7 +29,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
-import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import {
   AuthException,
   AuthExceptionCode,
@@ -39,6 +37,8 @@ import {
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -46,7 +46,6 @@ import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
-import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
@@ -64,7 +63,7 @@ export class AuthResolver {
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
-    private oauthService: OAuthService,
+    // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
   ) {}
 
@@ -101,7 +100,9 @@ export class AuthResolver {
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
     if (!workspace) {
       throw new AuthException(
@@ -112,18 +113,19 @@ export class AuthResolver {
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
     return { loginToken };
   }
 
   @UseGuards(CaptchaGuard)
-  @Mutation(() => LoginToken)
+  @Mutation(() => SignUpOutput)
   async signUp(
     @Args() signUpInput: SignUpInput,
     @OriginHeader() origin: string,
-  ): Promise<LoginToken> {
-    const user = await this.authService.signInUp({
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
       targetWorkspaceSubdomain:
         this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
@@ -133,19 +135,26 @@ export class AuthResolver {
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
-    return { loginToken };
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        subdomain: workspace.subdomain,
+      },
+    };
   }
 
-  @Mutation(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    return await this.oauthService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-  }
+  // @Mutation(() => ExchangeAuthCode)
+  // async exchangeAuthorizationCode(
+  //   @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  // ) {
+  //   return await this.oauthService.verifyAuthorizationCode(
+  //     exchangeAuthCodeInput,
+  //   );
+  // }
 
   @Mutation(() => TransientToken)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -165,25 +174,35 @@ export class AuthResolver {
       await this.transientTokenService.generateTransientToken(
         workspaceMember.id,
         user.id,
-        user.defaultWorkspaceId,
+        workspace.id,
       );
 
     return { transientToken };
   }
 
-  @Mutation(() => Verify)
+  @Mutation(() => AuthTokens)
   async verify(
     @Args() verifyInput: VerifyInput,
     @OriginHeader() origin: string,
-  ): Promise<Verify> {
+  ): Promise<AuthTokens> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
 
-    const { sub: email } = await this.loginTokenService.verifyLoginToken(
-      verifyInput.loginToken,
-    );
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    return await this.authService.verify(email, workspace?.id);
+    const { sub: email, workspaceId } =
+      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
+
+    if (workspaceId !== workspace.id) {
+      throw new AuthException(
+        'Token is not valid for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return await this.authService.verify(email, workspace.id);
   }
 
   @Mutation(() => AuthorizeApp)
@@ -191,10 +210,12 @@ export class AuthResolver {
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<AuthorizeApp> {
     return await this.authService.generateAuthorizationCode(
       authorizeAppInput,
       user,
+      workspace,
     );
   }
 

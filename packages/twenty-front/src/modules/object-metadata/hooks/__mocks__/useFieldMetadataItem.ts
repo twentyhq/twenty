@@ -134,7 +134,7 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
-      defaultWorkspace {
+      currentWorkspace {
         id
         displayName
         logo
@@ -281,7 +281,7 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
-      defaultWorkspace: {
+      currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
         logo: null,

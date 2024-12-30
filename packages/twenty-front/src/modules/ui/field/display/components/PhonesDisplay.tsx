@@ -5,6 +5,7 @@ import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
+import { DEFAULT_PHONE_CALLING_CODE } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -44,7 +45,10 @@ export const PhonesDisplay = ({
         value?.primaryPhoneNumber
           ? {
               number: value.primaryPhoneNumber,
-              callingCode: value.primaryPhoneCountryCode,
+              callingCode:
+                value.primaryPhoneCallingCode ||
+                value.primaryPhoneCountryCode ||
+                `+${DEFAULT_PHONE_CALLING_CODE}`,
             }
           : null,
         ...parseAdditionalPhones(value?.additionalPhones),
@@ -58,11 +62,11 @@ export const PhonesDisplay = ({
         }),
     [
       value?.primaryPhoneNumber,
+      value?.primaryPhoneCallingCode,
       value?.primaryPhoneCountryCode,
       value?.additionalPhones,
     ],
   );
-
   const parsePhoneNumberOrReturnInvalidValue = (number: string) => {
     try {
       return { parsedPhone: parsePhoneNumber(number) };

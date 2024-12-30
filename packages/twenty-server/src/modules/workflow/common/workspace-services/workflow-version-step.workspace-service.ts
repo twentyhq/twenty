@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -20,7 +21,6 @@ import {
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isDefined } from 'src/utils/is-defined';
-import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -81,6 +81,15 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
+            outputSchema: {
+              link: {
+                isLeaf: true,
+                icon: 'IconVariable',
+                tab: 'test',
+                label: 'Generate Function Input',
+              },
+              _outputSchemaType: 'LINK',
+            },
             input: {
               serverlessFunctionId: newServerlessFunction.id,
               serverlessFunctionVersion: 'draft',
@@ -143,6 +152,7 @@ export class WorkflowVersionStepWorkspaceService {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
               objectRecordId: '',
+              fieldsToUpdate: [],
             },
           },
         };

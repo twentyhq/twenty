@@ -32,7 +32,7 @@ export const CurrencyPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu disableBlur>
+    <DropdownMenu>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
