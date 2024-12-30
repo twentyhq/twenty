@@ -19,7 +19,11 @@ export const NavigationDrawerSubItemAnimatedExpandableContainer = ({
   children,
   isOpen = false,
 }: NavigationDrawerSubItemAnimatedExpandableContainerProps) => {
-  const { contentRef, motionAnimationVariants } = useExpandedAnimation(isOpen);
+  const { contentRef, motionAnimationVariants } = useExpandedAnimation(
+    isOpen,
+    'height',
+    true,
+  );
 
   return (
     <AnimatePresence>

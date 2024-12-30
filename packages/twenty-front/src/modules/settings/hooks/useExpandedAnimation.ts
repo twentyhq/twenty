@@ -21,6 +21,7 @@ const advancedSectionAnimationConfig = (
   isExpanded: boolean,
   dimension: AnimationDimension,
   measuredValue?: number,
+  fitContent?: boolean,
 ) => ({
   initial: {
     ...commonStyles(dimension),
@@ -28,9 +29,11 @@ const advancedSectionAnimationConfig = (
   animate: {
     opacity: 1,
     [dimension]: isExpanded
-      ? dimension === 'width'
-        ? '100%'
-        : measuredValue
+      ? fitContent
+        ? 'fit-content'
+        : dimension === 'width'
+          ? '100%'
+          : measuredValue
       : 0,
     ...getTransitionValues(dimension),
   },
@@ -42,6 +45,7 @@ const advancedSectionAnimationConfig = (
 export const useExpandedAnimation = (
   isExpanded: boolean,
   dimension: AnimationDimension = 'height',
+  fitContent?: boolean,
 ) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [measuredValue, setMeasuredValue] = useState(0);
@@ -58,6 +62,7 @@ export const useExpandedAnimation = (
       isExpanded,
       dimension,
       dimension === 'height' ? measuredValue : undefined,
+      fitContent,
     ),
   };
 };
