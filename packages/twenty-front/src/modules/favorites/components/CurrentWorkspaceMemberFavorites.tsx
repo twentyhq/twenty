@@ -159,7 +159,10 @@ export const CurrentWorkspaceMemberFavorites = ({
           </FavoritesDroppable>
         )}
 
-        <NavigationDrawerSubItemAnimatedExpandableContainer isOpen={isOpen}>
+        <NavigationDrawerSubItemAnimatedExpandableContainer
+          isOpen={isOpen}
+          key={`folder-${folder.folderId}`}
+        >
           <Droppable droppableId={`folder-${folder.folderId}`}>
             {(provided) => (
               <div
