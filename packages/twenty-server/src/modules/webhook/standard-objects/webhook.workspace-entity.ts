@@ -60,4 +60,14 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   description: string;
+
+  @WorkspaceField({
+    standardId: WEBHOOK_STANDARD_FIELD_IDS.secret,
+    type: FieldMetadataType.TEXT,
+    label: 'Secret',
+    description:
+      'Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests.',
+    icon: 'IconLock',
+  })
+  secret: string;
 }

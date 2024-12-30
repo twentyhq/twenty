@@ -6,9 +6,10 @@ import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useReco
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
@@ -21,7 +22,6 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
   );
@@ -37,13 +37,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     recordIndexViewFilterGroups,
   );
 
-  const viewFieldId =
-    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-      (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-    )?.id ?? '';
-
+  const { viewFieldId } = useContext(
+    RecordTableColumnAggregateFooterCellContext,
+  );
   const aggregateOperationForViewField = useRecoilValue(
-    viewFieldAggregateOperationState({ viewFieldId: viewFieldId }),
+    viewFieldAggregateOperationState({ viewFieldId }),
   );
 
   const fieldName = objectMetadataItem.fields.find(
@@ -57,7 +55,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const { data } = useAggregateRecords({
+  const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter: { ...requestFilters, ...recordGroupFilter },
@@ -75,5 +73,6 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   return {
     aggregateValue: value,
     aggregateLabel: isDefined(value) ? label : undefined,
+    isLoading: loading,
   };
 };

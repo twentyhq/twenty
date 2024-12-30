@@ -1,7 +1,4 @@
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
-import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
-import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
-import { useExportNoteAction } from '@/action-menu/actions/record-actions/single-record/hooks/useExportNoteAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
@@ -16,38 +13,23 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
-  IconFileExport,
   IconHeart,
   IconHeartOff,
-  IconTrash,
-  IconTrashX,
 } from 'twenty-ui';
 
-export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
+export const WORKFLOW_RUNS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     actionHook: SingleRecordActionHook;
   }
 > = {
-  exportNoteToPdf: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
-    label: 'Export to PDF',
-    shortLabel: 'Export',
-    position: 0,
-    isPinned: false,
-    Icon: IconFileExport,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
-    actionHook: useExportNoteAction,
-  },
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: 'Add to favorites',
     shortLabel: 'Add to favorites',
-    position: 1,
+    position: 0,
     isPinned: true,
     Icon: IconHeart,
     availableOn: [
@@ -63,7 +45,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     label: 'Remove from favorites',
     shortLabel: 'Remove from favorites',
     isPinned: true,
-    position: 2,
+    position: 1,
     Icon: IconHeartOff,
     availableOn: [
       ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -71,45 +53,13 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
-  deleteSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DELETE,
-    label: 'Delete record',
-    shortLabel: 'Delete',
-    position: 3,
-    Icon: IconTrash,
-    accent: 'danger',
-    isPinned: true,
-    availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
-    ],
-    actionHook: useDeleteSingleRecordAction,
-  },
-  destroySingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DESTROY,
-    label: 'Permanently destroy record',
-    shortLabel: 'Destroy',
-    position: 4,
-    Icon: IconTrashX,
-    accent: 'danger',
-    isPinned: true,
-    availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
-    ],
-    actionHook: useDestroySingleRecordAction,
-  },
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous record',
     shortLabel: '',
-    position: 5,
+    position: 2,
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionAvailableOn.SHOW_PAGE],
@@ -121,7 +71,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next record',
     shortLabel: '',
-    position: 6,
+    position: 3,
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionAvailableOn.SHOW_PAGE],
