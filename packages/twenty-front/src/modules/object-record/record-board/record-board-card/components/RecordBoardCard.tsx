@@ -2,8 +2,8 @@ import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { useRecordBoardBodyContextOrThrow } from '@/object-record/record-board/contexts/RecordBoardBodyContext';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useCreateBoardRecordFromPending } from '@/object-record/record-board/hooks/useCreateBoardRecordFromPending';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
@@ -20,7 +20,6 @@ import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldB
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -46,6 +45,7 @@ import {
   LightIconButton,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { FieldMetadataType } from '~/generated/graphql';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -156,8 +156,6 @@ const StyledCompactIconContainer = styled.div`
 export const RecordBoardCard = () => {
   const { recordId } = useContext(RecordBoardCardContext);
 
-  const [newLabelValue, setNewLabelValue] = useState('');
-
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -184,8 +182,6 @@ export const RecordBoardCard = () => {
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
   );
-  const { createBoardRecordFromPending } =
-    useCreateBoardRecordFromPending(recordBoardId);
 
   const recordBoardPendingRecordIdByColumnState =
     useRecoilComponentCallbackStateV2(
@@ -193,7 +189,7 @@ export const RecordBoardCard = () => {
       recordBoardId,
     );
 
-  const [pendingRecord, setPendingRecord] = useRecoilState(
+  const [pendingRecord] = useRecoilState(
     recordBoardPendingRecordIdByColumnState(columnId),
   );
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
@@ -266,6 +262,9 @@ export const RecordBoardCard = () => {
     (field) => field.isLabelIdentifier,
   );
 
+  const { onUpsertRecord, onCloseInlineCell } =
+    useRecordBoardBodyContextOrThrow();
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
       {!pendingRecord?.recordId && (
@@ -284,31 +283,43 @@ export const RecordBoardCard = () => {
         >
           <StyledBoardCardHeader showCompactView={isCompactModeActive}>
             {pendingRecord?.recordId === recordId ? (
-              <RecordInlineCellEditMode>
-                <StyledTextInput
-                  autoFocus
-                  value={newLabelValue}
-                  onInputEnter={() => {
-                    if (newLabelValue.trim() !== '') {
-                      createBoardRecordFromPending(columnId, newLabelValue);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (newLabelValue.trim() !== '') {
-                      createBoardRecordFromPending(columnId, newLabelValue);
-                    } else {
-                      setPendingRecord({
-                        recordId: null,
-                        isOpportunity: false,
-                        position: 'last',
-                        company: null,
-                      });
-                    }
-                  }}
-                  onChange={(text: string) => setNewLabelValue(text)}
-                  placeholder={labelIdentifierField?.label}
-                />
-              </RecordInlineCellEditMode>
+              <FieldContext.Provider
+                value={{
+                  recordId: recordId,
+                  maxWidth: 156,
+                  recoilScopeId:
+                    recordId + labelIdentifierField?.fieldMetadataId,
+                  isLabelIdentifier:
+                    labelIdentifierField?.isLabelIdentifier || false,
+                  fieldDefinition: {
+                    disableTooltip: false,
+                    fieldMetadataId:
+                      labelIdentifierField?.fieldMetadataId || '',
+                    label: labelIdentifierField?.label || '',
+                    iconName: labelIdentifierField?.iconName || '',
+                    type: labelIdentifierField?.type || FieldMetadataType.Text,
+                    defaultValue: labelIdentifierField?.defaultValue || '',
+                    metadata: labelIdentifierField?.metadata,
+                  },
+                  useUpdateRecord: () => {
+                    const updateRecord = (params: RecordUpdateHookParams) => {
+                      if (pendingRecord?.recordId === recordId) {
+                        onUpsertRecord({
+                          persistField: () => {},
+                          recordId,
+                          fieldName: params.variables.updateOneRecordInput
+                            .fieldName as string,
+                        });
+                        onCloseInlineCell();
+                      }
+                    };
+                    return [updateRecord, { loading: false }];
+                  },
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                }}
+              >
+                <RecordInlineCell />
+              </FieldContext.Provider>
             ) : (
               <RecordIdentifierChip
                 objectNameSingular={objectMetadataItem.nameSingular}
@@ -362,7 +373,8 @@ export const RecordBoardCard = () => {
                       recordId: recordId,
                       maxWidth: 156,
                       recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
-                      isLabelIdentifier: false,
+                      isLabelIdentifier:
+                        fieldDefinition.isLabelIdentifier || false,
                       fieldDefinition: {
                         disableTooltip: false,
                         fieldMetadataId: fieldDefinition.fieldMetadataId,

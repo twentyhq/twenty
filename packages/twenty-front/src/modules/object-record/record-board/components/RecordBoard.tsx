@@ -5,6 +5,7 @@ import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { RecordBoardBodyContextProviderComponent } from '@/object-record/record-board/components/RecordBoardBodyContextProviderComponent';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
@@ -206,10 +207,14 @@ export const RecordBoard = () => {
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <StyledColumnContainer>
                     {visibleRecordGroupIds.map((recordGroupId) => (
-                      <RecordBoardColumn
+                      <RecordBoardBodyContextProviderComponent
                         key={recordGroupId}
-                        recordBoardColumnId={recordGroupId}
-                      />
+                        columnId={recordGroupId}
+                      >
+                        <RecordBoardColumn
+                          recordBoardColumnId={recordGroupId}
+                        />
+                      </RecordBoardBodyContextProviderComponent>
                     ))}
                   </StyledColumnContainer>
                 </DragDropContext>

@@ -1,7 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { isDefined } from '@ui/utilities/isDefined';
 import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../states/recordBoardPendingRecordIdByColumnComponentFamilyState';
 
 export const useCreateNewBoardRecord = (recordBoardId: string) => {
@@ -10,6 +13,8 @@ export const useCreateNewBoardRecord = (recordBoardId: string) => {
       recordBoardPendingRecordIdByColumnComponentFamilyState,
       recordBoardId,
     );
+
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const createNewBoardRecord = useRecoilCallback(
     ({ set }) =>
@@ -26,10 +31,15 @@ export const useCreateNewBoardRecord = (recordBoardId: string) => {
           position,
           company: null,
         });
+        if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
+          const inlineCellScopeId =
+            recordId + objectMetadataItem.labelIdentifierFieldMetadataId;
+          set(isInlineCellInEditModeScopedState(inlineCellScopeId), true);
+        }
 
         return recordId;
       },
-    [recordBoardPendingRecordIdByColumnState],
+    [recordBoardPendingRecordIdByColumnState, objectMetadataItem],
   );
 
   return {
