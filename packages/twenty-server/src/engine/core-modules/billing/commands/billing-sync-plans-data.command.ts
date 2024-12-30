@@ -22,6 +22,7 @@ import { transformStripeProductDataToProductRepositoryData } from 'src/engine/co
     'Fetches from stripe the plans data (meter, product and price) and upserts it into the database',
 })
 export class BillingSyncPlansDataCommand extends BaseCommandRunner {
+  private readonly batchSize = 5;
   constructor(
     @InjectRepository(BillingPrice, 'core')
     private readonly billingPriceRepository: Repository<BillingPrice>,
@@ -74,6 +75,58 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     }
   }
 
+  private async getBillingPrices(
+    products: Stripe.Product[],
+    options: BaseCommandOptions,
+  ): Promise<Stripe.Price[][]> {
+    return await Promise.all(
+      products.map(async (product) => {
+        if (!isStripeValidProductMetadata(product.metadata)) {
+          this.logger.log(
+            `Product: ${product.id} purposefully not inserted, invalid metadata format: ${JSON.stringify(
+              product.metadata,
+            )}`,
+          );
+
+          return [];
+        }
+        await this.upsertProductRepositoryData(product, options);
+
+        const prices = await this.stripeService.getPricesByProductId(
+          product.id,
+        );
+
+        this.logger.log(
+          `${prices.length} prices found for product: ${product.id}`,
+        );
+
+        return prices;
+      }),
+    );
+  }
+
+  private async processBillingPricesByProductBatches(
+    products: Stripe.Product[],
+    options: BaseCommandOptions,
+  ) {
+    const prices: Stripe.Price[][] = [];
+
+    for (let start = 0; start < products.length; start += this.batchSize) {
+      const end =
+        start + this.batchSize > products.length
+          ? products.length
+          : start + this.batchSize;
+
+      const batch = products.slice(start, end);
+      const batchPrices = await this.getBillingPrices(batch, options);
+
+      prices.push(...batchPrices);
+      this.logger.log(`Processed batch ${start / this.batchSize + 1}`);
+    }
+
+    return prices;
+  }
+
   override async executeBaseCommand(
     passedParams: string[],
     options: BaseCommandOptions,
@@ -84,42 +137,15 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
 
     const billingProducts = await this.stripeService.getAllProducts();
 
-    const billingProductsIds = await Promise.all(
-      billingProducts.map(async (product) => {
-        if (isStripeValidProductMetadata(product.metadata)) {
-          await this.upsertProductRepositoryData(product, options);
-
-          return product.id;
-        } else {
-          this.logger.log(
-            `Product: ${product.id} purposefully not inserted, invalid metadata format: ${JSON.stringify(
-              product.metadata,
-            )}`,
-          );
-        }
-      }),
+    const billingPrices = await this.processBillingPricesByProductBatches(
+      billingProducts,
+      options,
     );
-
-    const billingPrices = await Promise.all(
-      billingProductsIds.map(async (productId) => {
-        if (productId) {
-          const prices =
-            await this.stripeService.getPricesByProductId(productId);
-
-          this.logger.log(
-            `${prices.length} prices found for product: ${productId}`,
-          );
-
-          return prices;
-        }
-
-        return [];
-      }),
+    const transformedPrices = billingPrices.flatMap((prices) =>
+      prices.map((price) =>
+        transformStripePriceDataToPriceRepositoryData(price),
+      ),
     );
-
-    const transformedPrices = billingPrices
-      .flat()
-      .map((price) => transformStripePriceDataToPriceRepositoryData(price));
 
     this.logger.log(`Upserting ${transformedPrices.length} transformed prices`);
 
