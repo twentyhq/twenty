@@ -152,7 +152,7 @@
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ],
         "parallel": true
-      },
+      }
     },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
@@ -164,7 +164,7 @@
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ],
         "parallel": true
-      },
+      }
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",
