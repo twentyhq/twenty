@@ -14,12 +14,6 @@ jest.mock('@/auth/hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('@/auth/states/billingCheckoutSessionState', () => ({
-  billingCheckoutSessionState: {
-    default: jest.fn(),
-  },
-}));
-
 describe('useSignInWithGoogle', () => {
   const mockBillingCheckoutSession = {
     plan: BillingPlanKey.Pro,

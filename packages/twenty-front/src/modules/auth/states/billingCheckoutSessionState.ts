@@ -1,6 +1,6 @@
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { createState } from '@ui/utilities/state/utils/createState';
 import { syncEffect } from 'recoil-sync';
-import { createState } from 'twenty-ui';
 import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
 
 export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
