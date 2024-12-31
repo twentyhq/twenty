@@ -70,6 +70,7 @@ describe('useSignInWithMicrosoft', () => {
     result.current.signInWithMicrosoft();
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
+      billingCheckoutSession: mockBillingCheckoutSession,
       workspaceInviteHash: workspaceInviteHashMock,
       workspacePersonalInviteToken: undefined,
     });
