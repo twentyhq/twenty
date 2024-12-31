@@ -1,5 +1,5 @@
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
+import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
 import styled from '@emotion/styled';
 
 export const StyledContainer = styled.div`
