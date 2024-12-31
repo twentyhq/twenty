@@ -89,6 +89,10 @@ const StyledColumnHeadContainer = styled.div`
   justify-content: space-between;
   position: relative;
   z-index: 1;
+
+  & > div {
+    flex: 1;
+  }
 `;
 
 const StyledHeaderIcon = styled.div`
