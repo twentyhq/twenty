@@ -9707,6 +9707,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:^1.49.0":
+  version: 1.49.1
+  resolution: "@playwright/test@npm:1.49.1"
+  dependencies:
+    playwright: "npm:1.49.1"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/2fca0bb7b334f7a23c7c5dfa5dbe37b47794c56f39b747c8d74a2f95c339e7902a296f2f1dd32c47bdd723cfa92cee05219f1a5876725dc89a1871b9137a286d
+  languageName: node
+  linkType: hard
+
 "@polka/url@npm:^1.0.0-next.24":
   version: 1.0.0-next.25
   resolution: "@polka/url@npm:1.0.0-next.25"
@@ -38583,6 +38594,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.49.1":
+  version: 1.49.1
+  resolution: "playwright-core@npm:1.49.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/990b619c75715cd98b2c10c1180a126e3a454b247063b8352bc67792fe01183ec07f31d30c8714c3768cefed12886d1d64ac06da701f2baafc2cad9b439e3919
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
@@ -38595,6 +38615,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/fa4192af99908c2c02ae20880e27f51efa6694348c2496d1c2818908eb394c4b21947edd0c5ce2a83f471f5399ac3f0cee8a7be8a35cd80d32d32875184962c7
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.49.1":
+  version: 1.49.1
+  resolution: "playwright@npm:1.49.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.49.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/2368762c898920d4a0a5788b153dead45f9c36c3f5cf4d2af5228d0b8ea65823e3bbe998877950a2b9bb23a211e4633996f854c6188769dc81a25543ac818ab5
   languageName: node
   linkType: hard
 
@@ -44872,7 +44907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:^1.46.0"
+    "@playwright/test": "npm:^1.49.0"
   languageName: unknown
   linkType: soft
 
