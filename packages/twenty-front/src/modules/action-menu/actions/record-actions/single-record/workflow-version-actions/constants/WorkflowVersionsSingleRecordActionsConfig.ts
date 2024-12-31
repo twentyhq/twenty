@@ -1,6 +1,4 @@
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
-import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
-import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
@@ -9,7 +7,7 @@ import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actio
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -24,8 +22,6 @@ import {
   IconHistory,
   IconHistoryToggle,
   IconPencil,
-  IconTrash,
-  IconTrashX,
 } from 'twenty-ui';
 
 export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
@@ -37,40 +33,43 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   useAsDraftWorkflowVersionSingleRecord: {
     key: WorkflowVersionSingleRecordActionKeys.USE_AS_DRAFT,
     label: 'Use as draft',
+    shortLabel: 'Use as draft',
     position: 1,
     isPinned: true,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconPencil,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useUseAsDraftWorkflowVersionSingleRecordAction,
   },
   seeWorkflowRunsSingleRecord: {
     key: WorkflowVersionSingleRecordActionKeys.SEE_RUNS,
     label: 'See runs',
+    shortLabel: 'See runs',
     position: 2,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistoryToggle,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useSeeRunsWorkflowVersionSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
     key: WorkflowVersionSingleRecordActionKeys.SEE_VERSIONS,
     label: 'See versions history',
+    shortLabel: 'See versions',
     position: 3,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistory,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useSeeVersionsWorkflowVersionSingleRecordAction,
   },
@@ -82,7 +81,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     shortLabel: '',
     position: 4,
     Icon: IconChevronUp,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
@@ -93,7 +92,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     shortLabel: '',
     position: 5,
     Icon: IconChevronDown,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToNextRecordSingleRecordAction,
   },
   addToFavoritesSingleRecord: {
@@ -106,8 +105,8 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconHeart,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -121,41 +120,9 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     position: 7,
     Icon: IconHeartOff,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
-  },
-  deleteSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DELETE,
-    label: 'Delete record',
-    shortLabel: 'Delete',
-    position: 8,
-    Icon: IconTrash,
-    accent: 'danger',
-    isPinned: false,
-    availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
-    ],
-    actionHook: useDeleteSingleRecordAction,
-  },
-  destroySingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DESTROY,
-    label: 'Permanently destroy record',
-    shortLabel: 'Destroy',
-    position: 9,
-    Icon: IconTrashX,
-    accent: 'danger',
-    isPinned: false,
-    availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
-    ],
-    actionHook: useDestroySingleRecordAction,
   },
 };

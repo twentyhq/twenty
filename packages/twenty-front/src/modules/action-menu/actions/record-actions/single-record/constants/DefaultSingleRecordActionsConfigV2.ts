@@ -1,11 +1,12 @@
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
+import { useExportNoteAction } from '@/action-menu/actions/record-actions/single-record/hooks/useExportNoteAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -15,6 +16,7 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
+  IconFileExport,
   IconHeart,
   IconHeartOff,
   IconTrash,
@@ -27,18 +29,30 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     actionHook: SingleRecordActionHook;
   }
 > = {
+  exportNoteToPdf: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
+    label: 'Export to PDF',
+    shortLabel: 'Export',
+    position: 0,
+    isPinned: false,
+    Icon: IconFileExport,
+    availableOn: [ActionViewType.SHOW_PAGE],
+    actionHook: useExportNoteAction,
+  },
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: 'Add to favorites',
     shortLabel: 'Add to favorites',
-    position: 0,
+    position: 1,
     isPinned: true,
     Icon: IconHeart,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -49,11 +63,11 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     label: 'Remove from favorites',
     shortLabel: 'Remove from favorites',
     isPinned: true,
-    position: 1,
+    position: 2,
     Icon: IconHeartOff,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
@@ -63,13 +77,13 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.DELETE,
     label: 'Delete record',
     shortLabel: 'Delete',
-    position: 2,
+    position: 3,
     Icon: IconTrash,
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDeleteSingleRecordAction,
   },
@@ -79,13 +93,13 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.DESTROY,
     label: 'Permanently destroy record',
     shortLabel: 'Destroy',
-    position: 3,
+    position: 4,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDestroySingleRecordAction,
   },
@@ -95,10 +109,10 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous record',
     shortLabel: '',
-    position: 4,
+    position: 5,
     isPinned: true,
     Icon: IconChevronUp,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
@@ -107,10 +121,10 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next record',
     shortLabel: '',
-    position: 5,
+    position: 6,
     isPinned: true,
     Icon: IconChevronDown,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToNextRecordSingleRecordAction,
   },
 };

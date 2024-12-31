@@ -1,5 +1,5 @@
-import { initializeEditorContent } from '@/workflow/search-variables/utils/initializeEditorContent';
-import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
+import { initializeEditorContent } from '@/workflow/workflow-variables/utils/initializeEditorContent';
+import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Paragraph from '@tiptap/extension-paragraph';

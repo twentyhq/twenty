@@ -1,8 +1,9 @@
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
+
+import { seedCompaniesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -16,22 +17,22 @@ import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-
 export const seedViewWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
-  objectMetadataMap: Record<string, ObjectMetadataEntity>,
+  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
   isWorkflowEnabled: boolean,
 ) => {
   const viewDefinitions = [
-    companiesAllView(objectMetadataMap),
-    peopleAllView(objectMetadataMap),
-    opportunitiesAllView(objectMetadataMap),
-    opportunitiesByStageView(objectMetadataMap),
-    notesAllView(objectMetadataMap),
-    tasksAllView(objectMetadataMap),
-    tasksByStatusView(objectMetadataMap),
+    seedCompaniesAllView(objectMetadataStandardIdToIdMap),
+    peopleAllView(objectMetadataStandardIdToIdMap),
+    opportunitiesAllView(objectMetadataStandardIdToIdMap),
+    opportunitiesByStageView(objectMetadataStandardIdToIdMap),
+    notesAllView(objectMetadataStandardIdToIdMap),
+    tasksAllView(objectMetadataStandardIdToIdMap),
+    tasksByStatusView(objectMetadataStandardIdToIdMap),
     ...(isWorkflowEnabled
       ? [
-          workflowsAllView(objectMetadataMap),
-          workflowVersionsAllView(objectMetadataMap),
-          workflowRunsAllView(objectMetadataMap),
+          workflowsAllView(objectMetadataStandardIdToIdMap),
+          workflowVersionsAllView(objectMetadataStandardIdToIdMap),
+          workflowRunsAllView(objectMetadataStandardIdToIdMap),
         ]
       : []),
   ];

@@ -23,9 +23,9 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
+import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { IconsProvider } from 'twenty-ui';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
-import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
 export type PageDecoratorArgs = {
   routePath: string;
