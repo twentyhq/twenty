@@ -39,7 +39,6 @@ describe('useDeleteSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useDeleteSingleRecordAction({
-          recordIds: [peopleMock[0].id],
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {

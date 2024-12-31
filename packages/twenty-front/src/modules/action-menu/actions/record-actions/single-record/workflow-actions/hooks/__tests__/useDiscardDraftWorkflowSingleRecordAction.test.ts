@@ -178,10 +178,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
       () => noDraftWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDiscardDraftWorkflowSingleRecordAction({
-          recordIds: [noDraftWorkflowMock.id],
-        }),
+      () => useDiscardDraftWorkflowSingleRecordAction(),
       {
         wrapper: noDraftWorkflowWrapper,
       },
@@ -196,10 +193,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     );
 
     const { result } = renderHook(
-      () =>
-        useDiscardDraftWorkflowSingleRecordAction({
-          recordIds: [draftWorkflowMockWithOneVersion.id],
-        }),
+      () => useDiscardDraftWorkflowSingleRecordAction(),
       {
         wrapper: draftWorkflowWithOneVersionWrapper,
       },
@@ -213,10 +207,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
       () => draftWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDiscardDraftWorkflowSingleRecordAction({
-          recordIds: [draftWorkflowMock.id],
-        }),
+      () => useDiscardDraftWorkflowSingleRecordAction(),
       {
         wrapper: draftWorkflowWrapper,
       },
@@ -230,10 +221,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
       () => draftWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDiscardDraftWorkflowSingleRecordAction({
-          recordIds: [draftWorkflowMock.id],
-        }),
+      () => useDiscardDraftWorkflowSingleRecordAction(),
       {
         wrapper: draftWorkflowWrapper,
       },
