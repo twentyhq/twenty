@@ -15,12 +15,13 @@
 - Monorepo: nx
 - Database: PostgreSQL + TypeORM (core, metadata schemas)
 - State Management: Recoil
+- Data Management: Apollo / GraphQL
 - Cache: redis
 - Auth: JWT
 - Queue: BullMQ
 - Storage: S3/local filesystem
 - Testing Backend: Jest, Supertest
-- Testing Frontent: Jest, Storybook, MSW
+- Testing Frontend: Jest, Storybook, MSW
 - Testing E2E: Playwright
 
 ## Styling
