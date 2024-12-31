@@ -1,5 +1,4 @@
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -13,9 +12,8 @@ import { FilterOperand } from '@/object-record/object-filter-dropdown/types/Filt
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-ui';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
@@ -69,8 +67,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       recordGqlFields: { id: true },
     });
 
-    const { closeRightDrawer } = useRightDrawer();
-
     const handleDeleteClick = useCallback(async () => {
       const recordsToDelete = await fetchAllRecordIds();
       const recordIdsToDelete = recordsToDelete.map((record) => record.id);
@@ -81,12 +77,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
     const isRemoteObject = objectMetadataItem.isRemote;
-
-    const {
-      isInRightDrawer,
-      onActionStartedCallback,
-      onActionExecutedCallback,
-    } = useContext(ActionMenuContext);
 
     const shouldBeRegistered =
       !isRemoteObject &&
@@ -109,18 +99,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Records'}
         subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
-        onConfirmClick={async () => {
-          onActionStartedCallback?.({
-            key: 'delete-multiple-records',
-          });
-          await handleDeleteClick();
-          onActionExecutedCallback?.({
-            key: 'delete-multiple-records',
-          });
-          if (isInRightDrawer) {
-            closeRightDrawer();
-          }
-        }}
+        onConfirmClick={handleDeleteClick}
         deleteButtonText={'Delete Records'}
       />
     );
