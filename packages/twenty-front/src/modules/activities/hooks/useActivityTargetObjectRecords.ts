@@ -37,7 +37,7 @@ export const useActivityTargetObjectRecords = (
       const correspondingObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
-          ![CoreObjectNameSingular.Note, CoreObjectNameSingular.Task].includes(
+          [CoreObjectNameSingular.Note, CoreObjectNameSingular.Task].includes(
             objectMetadataItem.nameSingular as CoreObjectNameSingular,
           ),
       );
