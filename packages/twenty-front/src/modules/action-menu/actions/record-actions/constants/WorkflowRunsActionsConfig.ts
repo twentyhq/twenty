@@ -1,3 +1,6 @@
+import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
@@ -13,6 +16,7 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
+  IconDatabaseExport,
   IconHeart,
   IconHeartOff,
 } from 'twenty-ui';
@@ -76,5 +80,31 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToNextRecordSingleRecordAction,
+  },
+  exportMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.EXPORT,
+    label: 'Export records',
+    shortLabel: 'Export',
+    position: 4,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    actionHook: useExportMultipleRecordsAction,
+  },
+  exportView: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: NoSelectionRecordActionKeys.EXPORT_VIEW,
+    label: 'Export view',
+    shortLabel: 'Export',
+    position: 5,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    actionHook: useExportMultipleRecordsAction,
   },
 };
