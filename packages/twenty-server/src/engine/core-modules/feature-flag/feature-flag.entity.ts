@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -24,7 +24,7 @@ export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field(() => String)
+  @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
   key: FeatureFlagKey;
 
@@ -47,3 +47,7 @@ export class FeatureFlagEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+registerEnumType(FeatureFlagKey, {
+  name: 'FeatureFlagKey',
+});

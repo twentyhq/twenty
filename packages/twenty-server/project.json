@@ -115,6 +115,13 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
+        "command": "ts-node"
+      }
+    },
+    "ts-node-no-deps-transpile-only": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
         "command": "ts-node --transpile-only"
       }
     },
@@ -151,7 +158,6 @@
           "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ],
-        "parallel": true
       }
     },
     "database:migrate:revert": {
@@ -163,7 +169,6 @@
           "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ],
-        "parallel": true
       }
     },
     "generate:integration-test": {
@@ -183,8 +188,8 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush"
           ],
@@ -193,8 +198,8 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"
