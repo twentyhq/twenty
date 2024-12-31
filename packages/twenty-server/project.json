@@ -157,7 +157,7 @@
         "commands": [
           "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
-        ],
+        ]
       }
     },
     "database:migrate:revert": {
@@ -168,7 +168,7 @@
         "commands": [
           "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
-        ],
+        ]
       }
     },
     "generate:integration-test": {
