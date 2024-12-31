@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { RecoilURLSyncJSON } from 'recoil-sync';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 export const getJestMetadataAndApolloMocksWrapper = ({
@@ -16,13 +17,15 @@ export const getJestMetadataAndApolloMocksWrapper = ({
 }) => {
   return ({ children }: { children: ReactNode }) => (
     <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <MockedProvider mocks={apolloMocks} addTypename={false}>
-          <JestObjectMetadataItemSetter>
-            {children}
-          </JestObjectMetadataItemSetter>
-        </MockedProvider>
-      </SnackBarProviderScope>
+      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          <MockedProvider mocks={apolloMocks} addTypename={false}>
+            <JestObjectMetadataItemSetter>
+              {children}
+            </JestObjectMetadataItemSetter>
+          </MockedProvider>
+        </SnackBarProviderScope>
+      </RecoilURLSyncJSON>
     </RecoilRoot>
   );
 };

@@ -1,9 +1,9 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
-import { billingCheckoutSessionState } from '@/billing/states/billingCheckoutSessionState';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -89,7 +89,6 @@ export const ChooseYourPlan = () => {
   const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
     billingCheckoutSessionState,
   );
-  console.log('billingCheckoutSession', billingCheckoutSession);
 
   const [checkoutSession] = useCheckoutSessionMutation();
 
@@ -115,10 +114,6 @@ export const ChooseYourPlan = () => {
     }
     window.location.replace(data.checkoutSession.url);
   };
-
-  if (billingCheckoutSession.skipPlanPage) {
-    handleCheckoutSession();
-  }
 
   const handleIntervalChange = (type?: SubscriptionInterval) => {
     return () => {
@@ -156,6 +151,10 @@ export const ChooseYourPlan = () => {
     }
     return 'Cancel anytime';
   };
+
+  if (billingCheckoutSession.skipPlanPage && !isSubmitting) {
+    handleCheckoutSession();
+  }
 
   if (billingCheckoutSession.skipPlanPage || isSubmitting) {
     return <Loader />;

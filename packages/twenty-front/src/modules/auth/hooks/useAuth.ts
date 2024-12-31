@@ -43,7 +43,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { BillingCheckoutSessionState } from '@/billing/states/billingCheckoutSessionState';
+import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
@@ -383,7 +383,7 @@ export const useAuth = () => {
       params: {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
-        billingCheckoutSession?: BillingCheckoutSessionState;
+        billingCheckoutSession?: BillingCheckoutSession;
       },
     ) => {
       console.log('params', JSON.stringify(params.billingCheckoutSession));
@@ -417,7 +417,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
-      billingCheckoutSession?: BillingCheckoutSessionState;
+      billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -428,7 +428,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
-      billingCheckoutSession?: BillingCheckoutSessionState;
+      billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },

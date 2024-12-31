@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingCheckoutSessionState } from '@/billing/states/billingCheckoutSessionState';
+import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { useRecoilValue } from 'recoil';
 
 export const useSignInWithGoogle = () => {
