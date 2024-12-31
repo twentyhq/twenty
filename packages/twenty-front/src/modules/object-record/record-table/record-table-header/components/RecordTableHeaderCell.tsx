@@ -90,7 +90,7 @@ const StyledColumnHeadContainer = styled.div`
   position: relative;
   z-index: 1;
 
-  & > div {
+  & > :first-of-type {
     flex: 1;
   }
 `;
