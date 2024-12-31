@@ -1,4 +1,5 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
+import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -18,6 +19,7 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
+  IconDatabaseExport,
   IconFileExport,
   IconHeart,
   IconHeartOff,
@@ -102,13 +104,26 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     actionHook: useDeleteMultipleRecordsAction,
   },
+  exportMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.EXPORT,
+    label: 'Export records',
+    shortLabel: 'Export',
+    position: 5,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    actionHook: useExportMultipleRecordsAction,
+  },
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
     label: 'Permanently destroy record',
     shortLabel: 'Destroy',
-    position: 5,
+    position: 6,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
@@ -124,7 +139,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: 'Navigate to previous record',
     shortLabel: '',
-    position: 6,
+    position: 7,
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
@@ -136,7 +151,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: 'Navigate to next record',
     shortLabel: '',
-    position: 7,
+    position: 8,
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
