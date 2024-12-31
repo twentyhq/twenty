@@ -1,8 +1,8 @@
 import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/multiple-records/components/MultipleRecordsActionMenuEntrySetterEffect';
 import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
-import { ShowPageSingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/ShowPageSingleRecordActionMenuEntrySetterEffect';
 import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -67,14 +67,16 @@ const ActionEffects = ({
         contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
           <>
             {contextStoreCurrentViewType === ContextStoreViewType.ShowPage && (
-              <ShowPageSingleRecordActionMenuEntrySetterEffect
+              <SingleRecordActionMenuEntrySetterEffect
                 objectMetadataItem={objectMetadataItem}
+                viewType={ActionViewType.SHOW_PAGE}
               />
             )}
             {(contextStoreCurrentViewType === ContextStoreViewType.Table ||
               contextStoreCurrentViewType === ContextStoreViewType.Kanban) && (
               <SingleRecordActionMenuEntrySetterEffect
                 objectMetadataItem={objectMetadataItem}
+                viewType={ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION}
               />
             )}
             {isWorkflowEnabled && (
