@@ -4,7 +4,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
-import { isNull } from '@sniptt/guards';
+import { isDefined } from '~/utils/isDefined';
 
 export const hasPendingRecordComponentSelector = createComponentSelectorV2({
   key: 'hasPendingRecordComponentSelector',
@@ -21,7 +21,7 @@ export const hasPendingRecordComponentSelector = createComponentSelectorV2({
           recordTablePendingRecordIdComponentState.atomFamily({ instanceId }),
         );
 
-        return !isNull(pendingRecordId);
+        return !isDefined(pendingRecordId);
       }
 
       const recordGroupIds = get(
@@ -36,7 +36,7 @@ export const hasPendingRecordComponentSelector = createComponentSelectorV2({
           }),
         );
 
-        if (!isNull(pendingRecordId)) {
+        if (!isDefined(pendingRecordId)) {
           return true;
         }
       }
