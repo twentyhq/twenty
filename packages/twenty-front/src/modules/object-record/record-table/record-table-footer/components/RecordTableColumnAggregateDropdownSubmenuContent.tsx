@@ -21,7 +21,6 @@ export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
     RecordTableColumnAggregateFooterDropdownContext,
   );
   const { closeDropdown } = useDropdown(dropdownId);
-  //   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   useScopedHotkeys(
     [Key.Escape],
@@ -31,44 +30,6 @@ export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
     },
     TableOptionsHotkeyScope.Dropdown,
   );
-
-  //   const CONTENT_ID_CONFIG = useMemo(() => {
-  //     return {
-  //       countAggregateOperationsOptions: {
-  //         filter: (aggregateOperation: AGGREGATE_OPERATIONS) =>
-  //           COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-  //         title: 'Count',
-  //       },
-  //       moreAggregateOperationOptions: {
-  //         filter: (aggregateOperation: AGGREGATE_OPERATIONS) =>
-  //           !COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation) &&
-  //           !PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-  //         title: 'More options',
-  //       },
-  //       percentAggregateOperationsOptions: {
-  //         filter: (aggregateOperation: AGGREGATE_OPERATIONS) =>
-  //           PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-  //         title: 'Percent',
-  //       },
-  //     };
-  //   }, []);
-
-  //   const availableAggregateOperations = useMemo(() => {
-  //     const field = objectMetadataItem.fields.find(
-  //       (field) => field.id === fieldMetadataId,
-  //     );
-
-  //     return getAvailableAggregateOperationsForFieldMetadataType({
-  //       fieldMetadataType: field?.type,
-  //     }).filter(CONTENT_ID_CONFIG[currentContentId].filter);
-  //   }, [
-  //     CONTENT_ID_CONFIG,
-  //     currentContentId,
-  //     fieldMetadataId,
-  //     objectMetadataItem.fields,
-  //   ]);
-
-  //   const title = CONTENT_ID_CONFIG[currentContentId].title;
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>

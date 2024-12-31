@@ -1,5 +1,4 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableColumnAggregateFooterAggregateOperationMenuItems } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
@@ -36,11 +35,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
     [fieldMetadataId, objectMetadataItem.fields],
   );
 
-  const standardAvailableAggregateOperation =
-    availableAggregateOperation.filter((aggregateOperation) =>
-      STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-    );
-
   const otherAvailableAggregateOperation = availableAggregateOperation.filter(
     (aggregateOperation) =>
       !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
@@ -48,20 +42,29 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   return (
     <>
       <DropdownMenuItemsContainer>
-        <RecordTableColumnAggregateFooterAggregateOperationMenuItems
-          aggregateOperations={standardAvailableAggregateOperation}
-        >
-          {otherAvailableAggregateOperation.length > 0 ? (
-            <MenuItem
-              key={'more-options'}
-              onClick={() => {
-                onContentChange('moreAggregateOperationOptions');
-              }}
-              text={'More options'}
-              hasSubMenu
-            />
-          ) : null}
-        </RecordTableColumnAggregateFooterAggregateOperationMenuItems>
+        <MenuItem
+          onClick={() => {
+            onContentChange('countAggregateOperationsOptions');
+          }}
+          text={'Count'}
+          hasSubMenu
+        />
+        <MenuItem
+          onClick={() => {
+            onContentChange('percentAggregateOperationsOptions');
+          }}
+          text={'Percent'}
+          hasSubMenu
+        />
+        {otherAvailableAggregateOperation.length > 0 ? (
+          <MenuItem
+            onClick={() => {
+              onContentChange('moreAggregateOperationOptions');
+            }}
+            text={'More options'}
+            hasSubMenu
+          />
+        ) : null}
       </DropdownMenuItemsContainer>
     </>
   );
