@@ -6,6 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "cache": true,
       "options": {
         "cwd": "packages/twenty-server",
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
@@ -99,7 +100,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "ts-node ../../node_modules/typeorm/cli.js"
+        "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
       }
     },
     "ts-node": {
@@ -114,7 +115,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "ts-node"
+        "command": "ts-node --transpile-only"
       }
     },
     "lint": {
@@ -150,8 +151,8 @@
           "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ],
-        "parallel": false
-      }
+        "parallel": true
+      },
     },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
@@ -162,8 +163,8 @@
           "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ],
-        "parallel": false
-      }
+        "parallel": true
+      },
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",
