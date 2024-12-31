@@ -35,7 +35,7 @@ import {
   IconTrashX,
 } from 'twenty-ui';
 
-export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
+export const WORKFLOW_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     actionHook: ActionHook;

@@ -24,7 +24,7 @@ import {
   IconPencil,
 } from 'twenty-ui';
 
-export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
+export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     actionHook: ActionHook;

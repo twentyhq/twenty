@@ -4,7 +4,7 @@ import { useActionMenuEntriesWithCallbacks } from '@/action-menu/hooks/useAction
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useEffect } from 'react';
 
-export const SingleRecordActionMenuEntrySetterEffect = ({
+export const RecordActionMenuEntrySetterEffect = ({
   objectMetadataItem,
   viewType,
 }: {

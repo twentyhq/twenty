@@ -17,7 +17,7 @@ import {
   IconHeartOff,
 } from 'twenty-ui';
 
-export const WORKFLOW_RUNS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
+export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     actionHook: ActionHook;

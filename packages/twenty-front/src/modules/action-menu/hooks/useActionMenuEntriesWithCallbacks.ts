@@ -1,5 +1,5 @@
-import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
