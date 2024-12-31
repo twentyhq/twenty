@@ -7,8 +7,8 @@ import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actio
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -27,7 +27,7 @@ import {
 export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: SingleRecordActionHook;
+    actionHook: ActionHook;
   }
 > = {
   useAsDraftWorkflowVersionSingleRecord: {

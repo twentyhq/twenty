@@ -14,8 +14,8 @@ import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/reco
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
 import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -38,7 +38,7 @@ import {
 export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: SingleRecordActionHook;
+    actionHook: ActionHook;
   }
 > = {
   activateWorkflowDraftSingleRecord: {

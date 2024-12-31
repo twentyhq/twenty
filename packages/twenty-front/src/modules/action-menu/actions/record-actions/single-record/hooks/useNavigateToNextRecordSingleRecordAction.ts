@@ -1,11 +1,13 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { useContext } from 'react';
 
-export const useNavigateToNextRecordSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
+export const useNavigateToNextRecordSingleRecordAction: ActionHookWithObjectMetadataItem =
+  ({ recordIds, objectMetadataItem }) => {
     const { isInRightDrawer } = useContext(ActionMenuContext);
+
+    const recordId = recordIds[0];
 
     const { navigateToNextRecord } = useRecordShowPagePagination(
       objectMetadataItem.nameSingular,

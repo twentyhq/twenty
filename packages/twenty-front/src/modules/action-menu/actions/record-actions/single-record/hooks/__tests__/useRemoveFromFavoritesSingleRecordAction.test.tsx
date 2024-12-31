@@ -85,7 +85,7 @@ describe('useRemoveFromFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useRemoveFromFavoritesSingleRecordAction({
-          recordId: peopleMock[0].id,
+          recordIds: [peopleMock[0].id],
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
@@ -100,7 +100,7 @@ describe('useRemoveFromFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useRemoveFromFavoritesSingleRecordAction({
-          recordId: peopleMock[1].id,
+          recordIds: [peopleMock[1].id],
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
@@ -115,7 +115,7 @@ describe('useRemoveFromFavoritesSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useRemoveFromFavoritesSingleRecordAction({
-          recordId: peopleMock[0].id,
+          recordIds: [peopleMock[0].id],
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {

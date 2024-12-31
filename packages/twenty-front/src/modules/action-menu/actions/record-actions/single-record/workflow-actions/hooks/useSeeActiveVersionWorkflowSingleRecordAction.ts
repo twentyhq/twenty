@@ -1,12 +1,14 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeActiveVersionWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  ({ recordIds }) => {
+    const recordId = recordIds[0];
+
     const workflow = useWorkflowWithCurrentVersion(recordId);
 
     const isDraft = workflow?.statuses?.includes('DRAFT') || false;

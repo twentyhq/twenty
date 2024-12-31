@@ -57,7 +57,7 @@ describe('useActivateDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useActivateDraftWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
+          recordIds: [workflowMock.id],
         }),
       {
         wrapper,
@@ -71,7 +71,7 @@ describe('useActivateDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useActivateDraftWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
+          recordIds: [workflowMock.id],
         }),
       {
         wrapper,

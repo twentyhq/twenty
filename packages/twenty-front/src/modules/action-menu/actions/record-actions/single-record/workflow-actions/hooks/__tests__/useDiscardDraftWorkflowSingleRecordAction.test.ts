@@ -180,7 +180,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useDiscardDraftWorkflowSingleRecordAction({
-          recordId: noDraftWorkflowMock.id,
+          recordIds: [noDraftWorkflowMock.id],
         }),
       {
         wrapper: noDraftWorkflowWrapper,
@@ -198,7 +198,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useDiscardDraftWorkflowSingleRecordAction({
-          recordId: draftWorkflowMockWithOneVersion.id,
+          recordIds: [draftWorkflowMockWithOneVersion.id],
         }),
       {
         wrapper: draftWorkflowWithOneVersionWrapper,
@@ -215,7 +215,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useDiscardDraftWorkflowSingleRecordAction({
-          recordId: draftWorkflowMock.id,
+          recordIds: [draftWorkflowMock.id],
         }),
       {
         wrapper: draftWorkflowWrapper,
@@ -232,7 +232,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useDiscardDraftWorkflowSingleRecordAction({
-          recordId: draftWorkflowMock.id,
+          recordIds: [draftWorkflowMock.id],
         }),
       {
         wrapper: draftWorkflowWrapper,

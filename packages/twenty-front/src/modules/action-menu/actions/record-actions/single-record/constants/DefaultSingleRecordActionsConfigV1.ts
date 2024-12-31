@@ -2,8 +2,8 @@ import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/recor
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -14,7 +14,7 @@ import { IconHeart, IconHeartOff, IconTrash } from 'twenty-ui';
 export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
   string,
   ActionMenuEntry & {
-    actionHook: SingleRecordActionHook;
+    actionHook: ActionHook;
   }
 > = {
   addToFavoritesSingleRecord: {

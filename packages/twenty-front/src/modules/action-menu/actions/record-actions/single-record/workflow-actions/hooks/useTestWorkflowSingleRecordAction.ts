@@ -1,10 +1,12 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useTestWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  ({ recordIds }) => {
+    const recordId = recordIds[0];
+
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const { runWorkflowVersion } = useRunWorkflowVersion();

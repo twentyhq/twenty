@@ -1,11 +1,13 @@
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeVersionsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  ({ recordIds }) => {
+    const recordId = recordIds[0];
+
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
     if (!isDefined(workflowVersion)) {
@@ -14,7 +16,7 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: SingleRecordAction
 
     const { shouldBeRegistered, onClick } =
       useSeeVersionsWorkflowSingleRecordAction({
-        recordId: workflowVersion.workflow.id,
+        recordIds: [workflowVersion.workflow.id],
       });
 
     return {

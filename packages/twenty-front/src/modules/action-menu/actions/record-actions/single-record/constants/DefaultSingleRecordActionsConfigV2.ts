@@ -6,8 +6,8 @@ import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -26,7 +26,7 @@ import {
 export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
   string,
   ActionMenuEntry & {
-    actionHook: SingleRecordActionHook;
+    actionHook: ActionHook;
   }
 > = {
   exportNoteToPdf: {

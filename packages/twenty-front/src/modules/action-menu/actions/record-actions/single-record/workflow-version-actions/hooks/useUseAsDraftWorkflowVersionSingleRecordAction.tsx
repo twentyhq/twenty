@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
@@ -10,8 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useUseAsDraftWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  ({ recordIds }) => {
+    const recordId = recordIds[0];
+
     const workflowVersion = useWorkflowVersion(recordId);
 
     const workflow = useWorkflowWithCurrentVersion(

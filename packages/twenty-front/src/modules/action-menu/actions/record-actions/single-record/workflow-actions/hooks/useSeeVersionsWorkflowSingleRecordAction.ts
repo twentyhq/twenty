@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -6,8 +6,10 @@ import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeVersionsWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  ({ recordIds }) => {
+    const recordId = recordIds[0];
+
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const navigate = useNavigate();

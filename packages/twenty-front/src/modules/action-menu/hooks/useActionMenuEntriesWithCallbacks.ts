@@ -43,7 +43,7 @@ export const useActionMenuEntriesWithCallbacks = (
     .map((action) => {
       const { shouldBeRegistered, onClick, ConfirmationModal } =
         action.actionHook({
-          recordId: selectedRecordId,
+          recordIds: [selectedRecordId],
           objectMetadataItem,
         });
 

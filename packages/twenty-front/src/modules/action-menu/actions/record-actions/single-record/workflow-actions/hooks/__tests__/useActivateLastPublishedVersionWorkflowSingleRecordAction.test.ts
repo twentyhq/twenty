@@ -58,7 +58,7 @@ describe('useActivateLastPublishedVersionWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useActivateLastPublishedVersionWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
+          recordIds: [workflowMock.id],
         }),
       {
         wrapper,
@@ -72,7 +72,7 @@ describe('useActivateLastPublishedVersionWorkflowSingleRecordAction', () => {
     const { result } = renderHook(
       () =>
         useActivateLastPublishedVersionWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
+          recordIds: [workflowMock.id],
         }),
       {
         wrapper,
