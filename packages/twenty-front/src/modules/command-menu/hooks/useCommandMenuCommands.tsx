@@ -31,6 +31,7 @@ import { useMemo } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Avatar, IconCheckbox, IconNotes, IconSparkles } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const useCommandMenuCommands = () => {
@@ -44,7 +45,7 @@ export const useCommandMenuCommands = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
 
-  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
+  const isCopilotEnabled = useIsFeatureEnabled(FeatureFlagKey.IsCopilotEnabled);
   const setCopilotQuery = useSetRecoilState(copilotQueryState);
   const openCopilotRightDrawer = useOpenCopilotRightDrawer();
 
