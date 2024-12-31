@@ -229,6 +229,8 @@ export class SignInUpService {
         email,
       );
 
+      await this.userService.verifyUserEmail(updatedUser.id);
+
       return {
         user: updatedUser,
         workspace: invitationValidation.workspace,
