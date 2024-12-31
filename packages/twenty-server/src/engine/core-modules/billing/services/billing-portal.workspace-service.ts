@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
@@ -30,6 +31,8 @@ export class BillingPortalWorkspaceService {
     workspace: Workspace,
     priceId: string,
     successUrlPath?: string,
+    plan?: BillingPlanKey,
+    requirePaymentMethod?: boolean,
   ): Promise<string> {
     const frontBaseUrl = this.domainManagerService.getBaseUrl();
     const cancelUrl = frontBaseUrl.toString();
@@ -57,6 +60,8 @@ export class BillingPortalWorkspaceService {
       successUrl,
       cancelUrl,
       stripeCustomerId,
+      plan,
+      requirePaymentMethod,
     );
 
     assert(session.url, 'Error: missing checkout.session.url');
