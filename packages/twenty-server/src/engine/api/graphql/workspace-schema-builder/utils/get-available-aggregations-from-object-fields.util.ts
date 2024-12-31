@@ -1,6 +1,10 @@
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
+import {
+  getColumnNameForAggregateOperation,
+  getSubfieldForAggregateOperation,
+} from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -22,43 +26,55 @@ export const getAvailableAggregationsFromObjectFields = (
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {
-      acc[`countUniqueValues${capitalize(field.name)}`] = {
+      const columnName = getColumnNameForAggregateOperation(
+        field.name,
+        field.type,
+      );
+
+      const fromSubField = getSubfieldForAggregateOperation(field.type);
+
+      acc[`countUniqueValues${capitalize(columnName)}`] = {
         type: GraphQLInt,
         description: `Number of unique values for ${field.name}`,
         fromField: field.name,
         fromFieldType: field.type,
+        fromSubField,
         aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       };
 
-      acc[`countEmpty${capitalize(field.name)}`] = {
+      acc[`countEmpty${capitalize(columnName)}`] = {
         type: GraphQLInt,
         description: `Number of empty values for ${field.name}`,
         fromField: field.name,
         fromFieldType: field.type,
+        fromSubField,
         aggregateOperation: AGGREGATE_OPERATIONS.countEmpty,
       };
 
-      acc[`countNotEmpty${capitalize(field.name)}`] = {
+      acc[`countNotEmpty${capitalize(columnName)}`] = {
         type: GraphQLInt,
         description: `Number of non-empty values for ${field.name}`,
         fromField: field.name,
         fromFieldType: field.type,
+        fromSubField,
         aggregateOperation: AGGREGATE_OPERATIONS.countNotEmpty,
       };
 
-      acc[`percentageEmpty${capitalize(field.name)}`] = {
+      acc[`percentageEmpty${capitalize(columnName)}`] = {
         type: GraphQLFloat,
         description: `Percentage of empty values for ${field.name}`,
         fromField: field.name,
         fromFieldType: field.type,
+        fromSubField,
         aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
       };
 
-      acc[`percentageNotEmpty${capitalize(field.name)}`] = {
+      acc[`percentageNotEmpty${capitalize(columnName)}`] = {
         type: GraphQLFloat,
         description: `Percentage of non-empty values for ${field.name}`,
         fromField: field.name,
         fromFieldType: field.type,
+        fromSubField,
         aggregateOperation: AGGREGATE_OPERATIONS.percentageNotEmpty,
       };
 
