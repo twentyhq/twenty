@@ -47,6 +47,7 @@ export const useTriggerActionMenuDropdown = ({
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {
+        console.log('triggerActionMenuDropdown');
         event.preventDefault();
 
         set(recordIndexActionMenuDropdownPositionState, {

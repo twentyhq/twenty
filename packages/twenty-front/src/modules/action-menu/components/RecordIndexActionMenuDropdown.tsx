@@ -8,28 +8,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { MenuItem } from 'twenty-ui';
-import { PositionType } from '../types/PositionType';
-
-type StyledContainerProps = {
-  position: PositionType;
-};
-
-const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
-
-  left: ${(props) => `${props.position.x}px`};
-  position: fixed;
-  top: ${(props) => `${props.position.y}px`};
-
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-`;
 
 export const RecordIndexActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -55,32 +35,32 @@ export const RecordIndexActionMenuDropdown = () => {
     : undefined;
 
   return (
-    <StyledContainerActionMenuDropdown
-      position={actionMenuDropdownPosition}
-      className="action-menu-dropdown"
-    >
-      <Dropdown
-        dropdownId={getActionMenuDropdownIdFromActionMenuId(actionMenuId)}
-        dropdownHotkeyScope={{
-          scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
-        }}
-        data-select-disable
-        dropdownMenuWidth={width}
-        dropdownComponents={
-          <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item, index) => (
-              <MenuItem
-                key={index}
-                LeftIcon={item.Icon}
-                onClick={item.onClick}
-                accent={item.accent}
-                text={item.label}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        }
-        avoidPortal
-      />
-    </StyledContainerActionMenuDropdown>
+    <Dropdown
+      dropdownId={getActionMenuDropdownIdFromActionMenuId(actionMenuId)}
+      dropdownHotkeyScope={{
+        scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+      }}
+      data-select-disable
+      dropdownMenuWidth={width}
+      dropdownPlacement="bottom-start"
+      dropdownStrategy="absolute"
+      dropdownOffset={{
+        x: actionMenuDropdownPosition.x ?? 0,
+        y: actionMenuDropdownPosition.y ?? 0,
+      }}
+      dropdownComponents={
+        <DropdownMenuItemsContainer>
+          {actionMenuEntries.map((item, index) => (
+            <MenuItem
+              key={index}
+              LeftIcon={item.Icon}
+              onClick={item.onClick}
+              accent={item.accent}
+              text={item.label}
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+      }
+    />
   );
 };
