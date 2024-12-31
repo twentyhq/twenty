@@ -51,10 +51,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
         deleteButtonText={'Override Draft'}
         AdditionalButtons={
           <StyledCenteredButton
-            to={buildShowPageURL(
-              CoreObjectNameSingular.WorkflowVersion,
-              draftWorkflowVersionId,
-            )}
+            to={buildShowPageURL(CoreObjectNameSingular.Workflow, workflowId)}
             onClick={() => {
               setOpenOverrideWorkflowDraftConfirmationModal(false);
             }}
