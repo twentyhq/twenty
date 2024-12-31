@@ -2,7 +2,7 @@ import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { MarkerType } from '@xyflow/react';
 import { v4 } from 'uuid';
 

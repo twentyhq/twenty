@@ -1,6 +1,6 @@
 import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
-import { generateWorkflowDiagram } from '@/workflow/utils/generateWorkflowDiagram';
+import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isDefined } from 'twenty-ui';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {

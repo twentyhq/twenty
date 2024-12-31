@@ -1,12 +1,12 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
-import { TRIGGER_TYPES } from '@/workflow/constants/TriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { getTriggerDefaultDefinition } from '@/workflow/utils/getTriggerDefaultDefinition';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/TriggerTypes';
+import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { MenuItem } from 'twenty-ui';

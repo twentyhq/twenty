@@ -1,7 +1,7 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
-import { getWorkflowVersionDiagram } from '@/workflow/utils/getWorkflowVersionDiagram';
+import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';

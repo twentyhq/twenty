@@ -4,7 +4,7 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useTriggerNodeSelection } from '@/workflow/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
-import { WorkflowDiagramNode } from '@/workflow/types/WorkflowDiagram';
+import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';

@@ -1,6 +1,6 @@
-import { ACTIONS } from '@/workflow/constants/Actions';
 import { useCreateStep } from '@/workflow/hooks/useCreateStep';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { ACTIONS } from '@/workflow/workflow-actions/constants/Actions';
 import styled from '@emotion/styled';
 import { MenuItem } from 'twenty-ui';
 

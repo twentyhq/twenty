@@ -1,12 +1,12 @@
-import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import {
-  WorkflowDiagram,
-  WorkflowDiagramEdge,
-  WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
+import {
+    WorkflowDiagram,
+    WorkflowDiagramEdge,
+    WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { MarkerType } from '@xyflow/react';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';

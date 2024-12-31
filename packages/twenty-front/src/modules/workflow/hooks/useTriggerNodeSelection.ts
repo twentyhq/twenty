@@ -2,7 +2,7 @@ import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/work
 import {
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';

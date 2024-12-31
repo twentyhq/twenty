@@ -2,17 +2,17 @@ import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useLis
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
+import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
-} from '@/workflow/types/WorkflowDiagram';
-import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
-import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import styled from '@emotion/styled';
 import {
   applyEdgeChanges,

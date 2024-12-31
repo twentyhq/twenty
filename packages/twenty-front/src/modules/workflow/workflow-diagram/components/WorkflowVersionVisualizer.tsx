@@ -1,6 +1,6 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { WorkflowDiagramCanvasReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasReadonly';
+import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import '@xyflow/react/dist/style.css';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';

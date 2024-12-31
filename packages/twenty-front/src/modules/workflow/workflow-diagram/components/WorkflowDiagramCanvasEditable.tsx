@@ -1,10 +1,10 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepNode';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
+import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowDiagramCanvasEditable = ({

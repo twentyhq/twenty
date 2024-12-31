@@ -1,11 +1,11 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { OBJECT_EVENT_TRIGGERS } from '@/workflow/constants/ObjectEventTriggers';
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
+import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
+import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 
 export const getTriggerDefaultDefinition = ({
   type,

@@ -1,7 +1,7 @@
 import {
   WorkflowDiagram,
   WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = ['selected'];
 

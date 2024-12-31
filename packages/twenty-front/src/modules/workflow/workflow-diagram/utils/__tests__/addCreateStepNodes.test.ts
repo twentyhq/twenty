@@ -1,5 +1,5 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { generateWorkflowDiagram } from '@/workflow/utils/generateWorkflowDiagram';
+import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { addCreateStepNodes } from '../addCreateStepNodes';
 
 describe('addCreateStepNodes', () => {

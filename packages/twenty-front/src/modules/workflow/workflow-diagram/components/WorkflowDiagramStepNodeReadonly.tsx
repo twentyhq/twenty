@@ -1,5 +1,5 @@
-import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
+import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   data,

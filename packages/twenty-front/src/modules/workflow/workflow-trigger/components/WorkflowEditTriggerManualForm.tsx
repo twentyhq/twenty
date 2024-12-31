@@ -1,13 +1,13 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/constants/ManualTriggerAvailabilityOptions';
 import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
 } from '@/workflow/types/Workflow';
-import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { WorkflowStepBody } from '@/workflow/workflow-step/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
+import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
+import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { IconHandMove, isDefined, useIcons } from 'twenty-ui';
 

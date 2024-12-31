@@ -5,7 +5,7 @@ import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatable
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { setNestedValue } from '@/workflow/utils/setNestedValue';
+import { setNestedValue } from '@/workflow/workflow-actions/utils/setNestedValue';
 import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';

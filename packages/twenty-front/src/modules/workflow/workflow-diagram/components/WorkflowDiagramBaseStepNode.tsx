@@ -1,4 +1,4 @@
-import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
+import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
