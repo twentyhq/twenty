@@ -35,8 +35,8 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { isWorkEmail } from 'src/utils/is-work-email';
 import { isDefined } from 'src/utils/is-defined';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export type SignInUpServiceInput = {
   email: string;

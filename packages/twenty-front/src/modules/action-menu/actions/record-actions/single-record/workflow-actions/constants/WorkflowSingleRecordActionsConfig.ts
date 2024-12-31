@@ -14,7 +14,7 @@ import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/reco
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
 import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -51,8 +51,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useActivateDraftWorkflowSingleRecordAction,
   },
@@ -66,8 +66,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useActivateLastPublishedVersionWorkflowSingleRecordAction,
   },
@@ -81,8 +81,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useDeactivateWorkflowSingleRecordAction,
   },
@@ -96,8 +96,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useDiscardDraftWorkflowSingleRecordAction,
   },
@@ -111,8 +111,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useSeeActiveVersionWorkflowSingleRecordAction,
   },
@@ -126,8 +126,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useSeeRunsWorkflowSingleRecordAction,
   },
@@ -141,8 +141,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useSeeVersionsWorkflowSingleRecordAction,
   },
@@ -156,8 +156,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
-      ActionAvailableOn.SHOW_PAGE,
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useTestWorkflowSingleRecordAction,
   },
@@ -169,7 +169,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     shortLabel: '',
     position: 9,
     Icon: IconChevronUp,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
@@ -180,7 +180,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     shortLabel: '',
     position: 10,
     Icon: IconChevronDown,
-    availableOn: [ActionAvailableOn.SHOW_PAGE],
+    availableOn: [ActionViewType.SHOW_PAGE],
     actionHook: useNavigateToNextRecordSingleRecordAction,
   },
   addToFavoritesSingleRecord: {
@@ -193,8 +193,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconHeart,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -208,8 +208,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     position: 12,
     Icon: IconHeartOff,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
@@ -224,8 +224,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     accent: 'danger',
     isPinned: false,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDeleteSingleRecordAction,
   },
@@ -240,8 +240,8 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     accent: 'danger',
     isPinned: false,
     availableOn: [
-      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionAvailableOn.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDestroySingleRecordAction,
   },

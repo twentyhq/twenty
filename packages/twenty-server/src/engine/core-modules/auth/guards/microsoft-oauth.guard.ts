@@ -33,6 +33,14 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       request.params.workspaceSubdomain = request.query.workspaceSubdomain;
     }
 
+    if (
+      request.query.billingCheckoutSessionState &&
+      typeof request.query.billingCheckoutSessionState === 'string'
+    ) {
+      request.params.billingCheckoutSessionState =
+        request.query.billingCheckoutSessionState;
+    }
+
     return (await super.canActivate(context)) as boolean;
   }
 }

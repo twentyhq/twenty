@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 

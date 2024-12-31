@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
@@ -8,6 +9,7 @@ import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWork
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import {
   Button,
@@ -78,6 +80,8 @@ export const RecordShowPageWorkflowVersionHeader = ({
     openOverrideWorkflowDraftConfirmationModalState,
   );
 
+  const navigate = useNavigate();
+
   return (
     <>
       {showUseAsDraftButton ? (
@@ -97,6 +101,12 @@ export const RecordShowPageWorkflowVersionHeader = ({
                 trigger: workflowVersion.trigger,
                 steps: workflowVersion.steps,
               });
+              navigate(
+                buildShowPageURL(
+                  CoreObjectNameSingular.Workflow,
+                  workflowVersion.workflow.id,
+                ),
+              );
             }
           }}
         />
