@@ -4,8 +4,8 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
-    WorkflowVersion,
-    WorkflowWithCurrentVersion,
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 
