@@ -1,3 +1,4 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
@@ -13,13 +14,12 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
-  recordIds,
   objectMetadataItem,
 }) => {
+  const recordId = useSelectedRecordIdOrThrow();
+
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
-
-  const recordId = recordIds[0];
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,

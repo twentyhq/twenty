@@ -1,3 +1,4 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -7,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
 export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
-  ({ recordIds }) => {
-    const recordId = recordIds[0];
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 

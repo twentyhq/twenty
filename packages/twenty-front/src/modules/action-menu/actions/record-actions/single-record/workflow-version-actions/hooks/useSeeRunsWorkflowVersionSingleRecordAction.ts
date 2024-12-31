@@ -1,3 +1,4 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -9,8 +10,8 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useSeeRunsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
-  ({ recordIds }) => {
-    const recordId = recordIds[0];
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
 
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 

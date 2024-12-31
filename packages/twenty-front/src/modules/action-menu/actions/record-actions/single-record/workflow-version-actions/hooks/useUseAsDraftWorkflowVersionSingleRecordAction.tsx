@@ -1,3 +1,4 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
@@ -11,8 +12,8 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
-  ({ recordIds }) => {
-    const recordId = recordIds[0];
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
 
     const workflowVersion = useWorkflowVersion(recordId);
 

@@ -1,3 +1,4 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
@@ -6,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
 export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
-  ({ recordIds }) => {
-    const recordId = recordIds[0];
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
 
     const workflow = useWorkflowWithCurrentVersion(recordId);
 

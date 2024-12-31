@@ -5,16 +5,10 @@ export type ActionHook =
   | ActionHookWithoutObjectMetadataItem
   | ActionHookWithObjectMetadataItem;
 
-export type ActionHookWithoutObjectMetadataItem = ({
-  recordIds,
-}: {
-  recordIds: string[];
-}) => ActionHookResult;
+export type ActionHookWithoutObjectMetadataItem = () => ActionHookResult;
 
 export type ActionHookWithObjectMetadataItem = ({
-  recordIds,
   objectMetadataItem,
 }: {
-  recordIds: string[];
   objectMetadataItem: ObjectMetadataItem;
 }) => ActionHookResult;
