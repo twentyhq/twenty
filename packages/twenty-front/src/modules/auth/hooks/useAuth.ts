@@ -386,7 +386,6 @@ export const useAuth = () => {
         billingCheckoutSession?: BillingCheckoutSession;
       },
     ) => {
-      console.log('params', JSON.stringify(params.billingCheckoutSession));
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
       if (isDefined(params.workspaceInviteHash)) {
         url.searchParams.set('inviteHash', params.workspaceInviteHash);

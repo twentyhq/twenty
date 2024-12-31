@@ -1,7 +1,12 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import Stripe from 'stripe';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -9,12 +14,12 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 @ArgsType()
 export class CheckoutSessionInput {
   @Field(() => SubscriptionInterval)
-  @IsString()
+  @IsEnum(SubscriptionInterval)
   @IsNotEmpty()
-  recurringInterval: Stripe.Price.Recurring.Interval;
+  recurringInterval: SubscriptionInterval;
 
   @Field(() => BillingPlanKey, { defaultValue: BillingPlanKey.PRO })
-  @IsString()
+  @IsEnum(BillingPlanKey)
   @IsOptional()
   plan?: BillingPlanKey;
 
