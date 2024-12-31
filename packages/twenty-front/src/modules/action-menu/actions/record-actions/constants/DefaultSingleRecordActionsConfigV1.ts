@@ -1,3 +1,5 @@
+import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
@@ -57,5 +59,18 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useDeleteSingleRecordAction,
+  },
+  deleteMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.DELETE,
+    label: 'Delete records',
+    shortLabel: 'Delete',
+    position: 3,
+    Icon: IconTrash,
+    accent: 'danger',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    actionHook: useDeleteMultipleRecordsAction,
   },
 };
