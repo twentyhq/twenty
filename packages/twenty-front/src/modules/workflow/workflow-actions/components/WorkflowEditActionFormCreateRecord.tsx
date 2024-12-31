@@ -3,10 +3,10 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowStepBody } from '@/workflow/workflow-step/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
