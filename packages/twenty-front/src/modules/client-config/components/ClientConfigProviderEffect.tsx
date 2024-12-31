@@ -7,6 +7,7 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
@@ -28,6 +29,9 @@ export const ClientConfigProviderEffect = () => {
   );
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
+  );
+  const setIsEmailVerificationRequired = useSetRecoilState(
+    isEmailVerificationRequiredState,
   );
   const setIsSSOEnabledState = useSetRecoilState(isSSOEnabledState);
 
@@ -86,6 +90,9 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
+    setIsEmailVerificationRequired(
+      data?.clientConfig.isEmailVerificationRequired,
+    );
     setBilling(data?.clientConfig.billing);
     setSupportChat(data?.clientConfig.support);
 
@@ -112,6 +119,7 @@ export const ClientConfigProviderEffect = () => {
     setIsDebugMode,
     setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
+    setIsEmailVerificationRequired,
     setSupportChat,
     setBilling,
     setSentryConfig,

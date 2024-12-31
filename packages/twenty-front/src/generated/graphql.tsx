@@ -170,6 +170,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean'];
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
+  isEmailVerificationRequired: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
   isSSOEnabled: Scalars['Boolean'];
   sentry: Sentry;
@@ -180,6 +181,30 @@ export type ClientConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+};
+
+export type CreateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUnique?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+  type: FieldMetadataType;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
 };
 
 export type CreateServerlessFunctionInput = {
@@ -203,6 +228,11 @@ export type CursorPaging = {
   first?: InputMaybe<Scalars['Int']>;
   /** Paginate last */
   last?: InputMaybe<Scalars['Int']>;
+};
+
+export type DeleteOneFieldInput = {
+  /** The id of the field to delete. */
+  id: Scalars['UUID'];
 };
 
 export type DeleteOneObjectInput = {
@@ -447,12 +477,14 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
+  createOneField: Field;
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
+  deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
@@ -478,6 +510,7 @@ export type Mutation = {
   switchWorkspace: PublicWorkspaceDataOutput;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
+  updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
@@ -543,6 +576,11 @@ export type MutationCreateOidcIdentityProviderArgs = {
 };
 
 
+export type MutationCreateOneFieldArgs = {
+  input: CreateOneFieldMetadataInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
@@ -560,6 +598,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
+};
+
+
+export type MutationDeleteOneFieldArgs = {
+  input: DeleteOneFieldInput;
 };
 
 
@@ -662,6 +705,11 @@ export type MutationSwitchWorkspaceArgs = {
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
+};
+
+
+export type MutationUpdateOneFieldArgs = {
+  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -825,6 +873,8 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  field: Field;
+  fields: FieldConnection;
   findAvailableWorkspacesByEmail: Array<AvailableWorkspaceOutput>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneServerlessFunction: ServerlessFunction;
@@ -1241,6 +1291,22 @@ export type UpdateBillingEntity = {
   success: Scalars['Boolean'];
 };
 
+export type UpdateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUnique?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -1253,6 +1319,13 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
   shortcut?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateOneFieldMetadataInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateFieldInput;
 };
 
 export type UpdateOneObjectInput = {
@@ -1964,7 +2037,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isSSOEnabled: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, isSSOEnabled: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3364,6 +3437,7 @@ export const GetClientConfigDocument = gql`
     }
     signInPrefilled
     isMultiWorkspaceEnabled
+    isEmailVerificationRequired
     isSSOEnabled
     defaultSubdomain
     frontDomain

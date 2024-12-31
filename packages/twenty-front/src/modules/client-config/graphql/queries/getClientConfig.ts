@@ -22,6 +22,7 @@ export const GET_CLIENT_CONFIG = gql`
       }
       signInPrefilled
       isMultiWorkspaceEnabled
+      isEmailVerificationRequired
       isSSOEnabled
       defaultSubdomain
       frontDomain

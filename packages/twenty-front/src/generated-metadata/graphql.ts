@@ -32,12 +32,6 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type ActivateWorkspaceOutput = {
-  __typename?: 'ActivateWorkspaceOutput';
-  loginToken: AuthToken;
-  workspace: Workspace;
-};
-
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -183,6 +177,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
+  isEmailVerificationRequired: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   isSSOEnabled: Scalars['Boolean']['output'];
   sentry: Sentry;
@@ -481,6 +476,12 @@ export enum IdentityProviderType {
   Saml = 'SAML'
 }
 
+export type ImpersonateOutput = {
+  __typename?: 'ImpersonateOutput';
+  loginToken: AuthToken;
+  workspace: WorkspaceSubdomainAndId;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
@@ -544,7 +545,7 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
-  activateWorkspace: ActivateWorkspaceOutput;
+  activateWorkspace: Workspace;
   addUserToWorkspace: User;
   addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
@@ -579,13 +580,13 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
-  impersonate: AuthTokens;
+  impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
-  signUp: LoginToken;
+  signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   switchWorkspace: PublicWorkspaceDataOutput;
   syncRemoteTable: RemoteTable;
@@ -1368,6 +1369,12 @@ export type SetupSsoOutput = {
   type: IdentityProviderType;
 };
 
+export type SignUpOutput = {
+  __typename?: 'SignUpOutput';
+  loginToken: AuthToken;
+  workspace: WorkspaceSubdomainAndId;
+};
+
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -1751,6 +1758,7 @@ export type WorkspaceEdge = {
 
 export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
+  allowImpersonation: Scalars['Boolean']['output'];
   featureFlags: Array<FeatureFlag>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
@@ -1802,6 +1810,12 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+};
+
+export type WorkspaceSubdomainAndId = {
+  __typename?: 'WorkspaceSubdomainAndId';
+  id: Scalars['String']['output'];
+  subdomain: Scalars['String']['output'];
 };
 
 export type BillingCustomer = {

@@ -66,6 +66,9 @@ export class ClientConfig {
   isMultiWorkspaceEnabled: boolean;
 
   @Field(() => Boolean)
+  isEmailVerificationRequired: boolean;
+
+  @Field(() => Boolean)
   isSSOEnabled: boolean;
 
   @Field(() => String, { nullable: true })
