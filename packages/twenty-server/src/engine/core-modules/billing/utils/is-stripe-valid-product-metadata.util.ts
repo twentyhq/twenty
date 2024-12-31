@@ -18,9 +18,9 @@ export function isStripeValidProductMetadata(
 
 const isValidBillingPlanKey = (planKey?: string) => {
   switch (planKey) {
-    case BillingPlanKey.BASE_PLAN:
+    case BillingPlanKey.ENTERPRISE:
       return true;
-    case BillingPlanKey.PRO_PLAN:
+    case BillingPlanKey.PRO:
       return true;
     default:
       return false;
