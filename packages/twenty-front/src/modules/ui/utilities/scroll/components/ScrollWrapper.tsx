@@ -15,12 +15,21 @@ import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/stat
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import 'overlayscrollbars/overlayscrollbars.css';
 
+type HeightMode = 'full' | 'fit-content';
+
 const StyledScrollWrapper = styled.div<{
   scrollHide?: boolean;
-  fullHeight?: boolean;
+  heightMode: HeightMode;
 }>`
   display: flex;
-  height: ${({ fullHeight }) => (fullHeight ? '100%' : 'fit-content')};
+  height: ${({ heightMode }) => {
+    switch (heightMode) {
+      case 'full':
+        return '100%';
+      case 'fit-content':
+        return 'fit-content';
+    }
+  }};
   width: 100%;
 
   .os-scrollbar-handle {
@@ -36,7 +45,7 @@ const StyledInnerContainer = styled.div`
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
-  fullHeight?: boolean;
+  heightMode?: HeightMode;
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
@@ -48,7 +57,7 @@ export const ScrollWrapper = ({
   componentInstanceId,
   children,
   className,
-  fullHeight,
+  heightMode = 'full',
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
@@ -169,7 +178,7 @@ export const ScrollWrapper = ({
           ref={scrollableRef}
           className={className}
           scrollHide={scrollHide}
-          fullHeight={fullHeight}
+          heightMode={heightMode}
         >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>
