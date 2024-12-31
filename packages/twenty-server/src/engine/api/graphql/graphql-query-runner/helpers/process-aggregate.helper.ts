@@ -67,13 +67,13 @@ export class ProcessAggregateHelper {
           break;
         case AGGREGATE_OPERATIONS.percentageEmpty:
           queryBuilder.addSelect(
-            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE CAST(((COUNT(*) - COUNT(${columnEmptyValueExpression})) / COUNT(*)) AS DECIMAL) END`,
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE CAST(((COUNT(*) - COUNT(${columnEmptyValueExpression})::decimal) / COUNT(*)) AS DECIMAL) END`,
             `${aggregatedFieldName}`,
           );
           break;
         case AGGREGATE_OPERATIONS.percentageNotEmpty:
           queryBuilder.addSelect(
-            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE CAST((COUNT(${columnEmptyValueExpression}) / COUNT(*)) AS DECIMAL) END`,
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE CAST((COUNT(${columnEmptyValueExpression})::decimal / COUNT(*)) AS DECIMAL) END`,
             `${aggregatedFieldName}`,
           );
           break;
