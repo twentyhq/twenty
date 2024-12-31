@@ -54,8 +54,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         }),
       },
       defaultOptions: {
-        query: {
-          fetchPolicy: 'cache-first',
+        watchQuery: {
+          fetchPolicy: 'cache-and-network',
         },
       },
       connectToDevTools: isDebugMode,
