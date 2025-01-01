@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
     timeout-minutes: 30
     env:
@@ -45,6 +45,15 @@ jobs:
       with:
         node-version: lts/*
 
+    - name: Check system resources
+      run: |
+        echo "Available memory:"
+        free -h
+        echo "Available disk space:"
+        df -h
+        echo "CPU info:"
+        lscpu
+
     - name: Check for changed files
       id: changed-files
       uses: tj-actions/changed-files@v11
@@ -64,7 +73,7 @@ jobs:
 
     - name: Build twenty-shared
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-shared
+      run: npx nx build twenty-shared
 
     - name: Setup environment files
       if: steps.changed-files.outputs.any_changed == 'true'
@@ -75,13 +84,11 @@ jobs:
 
     - name: Build server
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: |
-        NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-server
+      run: NODE_ENV=production npx nx build twenty-server
 
     - name: Build frontend
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: |
-        NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
+      run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
 
     - name: Create and setup database
       if: steps.changed-files.outputs.any_changed == 'true'
