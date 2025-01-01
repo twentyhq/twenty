@@ -12,10 +12,11 @@ import { RecordTableRecordGroupSection } from '@/object-record/record-table/reco
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordTableRecordGroupsBody = () => {
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
   const allRecordIds = useRecoilComponentValueV2(
     recordIndexAllRecordIdsComponentSelector,

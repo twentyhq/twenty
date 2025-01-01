@@ -5,6 +5,7 @@ import { EmailThreadMembersChip } from '@/activities/emails/components/EmailThre
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -15,7 +16,7 @@ const StyledButtonContainer = styled.div`
 
 export const MessageThreadSubscribersTopBar = () => {
   const isMessageThreadSubscriberEnabled = useIsFeatureEnabled(
-    'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
+    FeatureFlagKey.IsMessageThreadSubscriberEnabled,
   );
 
   const messageThread = useRecoilValue(messageThreadState);

@@ -2,12 +2,13 @@ import { Button, IconButton, IconDotsVertical, useIsMobile } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PageHeaderOpenCommandMenuButton = () => {
   const { openCommandMenu } = useCommandMenu();
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   const isMobile = useIsMobile();
