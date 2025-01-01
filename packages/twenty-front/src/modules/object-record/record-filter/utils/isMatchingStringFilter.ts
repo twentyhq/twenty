@@ -21,7 +21,11 @@ export const isMatchingStringFilter = ({
       return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
-      const regexPattern = stringFilter.ilike.replace(/%/g, '.*');
+      const escapedPattern = stringFilter.ilike.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
       return regexCaseInsensitive.test(value);
