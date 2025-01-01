@@ -31,6 +31,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const {
@@ -41,7 +42,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
     closeDropdown,
   } = useOptionsDropdown();
 
-  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
 
   const { getIcon } = useIcons();
   const { currentViewWithCombinedFiltersAndSorts: currentView } =

@@ -37,6 +37,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
@@ -114,7 +115,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
     navigate(developerPath);
   };
 
-  const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
+  const isAnalyticsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsAnalyticsV2Enabled,
+  );
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [

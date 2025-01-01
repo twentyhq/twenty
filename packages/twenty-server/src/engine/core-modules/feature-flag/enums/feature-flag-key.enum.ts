@@ -17,4 +17,6 @@ export enum FeatureFlagKey {
   IsAggregateQueryEnabled = 'IS_AGGREGATE_QUERY_ENABLED',
   IsViewGroupsEnabled = 'IS_VIEW_GROUPS_ENABLED',
   IsPageHeaderV2Enabled = 'IS_PAGE_HEADER_V2_ENABLED',
+  IsCrmMigrationEnabled = 'IS_CRM_MIGRATION_ENABLED',
+  IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
 }

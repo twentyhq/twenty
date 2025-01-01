@@ -8,10 +8,13 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useWorkflowRunActions = () => {
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
 
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
