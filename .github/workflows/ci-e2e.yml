@@ -82,13 +82,13 @@ jobs:
         cp packages/twenty-front/.env.example packages/twenty-front/.env
         npx nx reset:env twenty-server
 
-    - name: Build server
-      if: steps.changed-files.outputs.any_changed == 'true'
-      run: NODE_ENV=production npx nx build twenty-server
-
     - name: Build frontend
       if: steps.changed-files.outputs.any_changed == 'true'
       run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
+
+    - name: Build server
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: NODE_ENV=production npx nx build twenty-server
 
     - name: Create and setup database
       if: steps.changed-files.outputs.any_changed == 'true'
