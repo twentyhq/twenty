@@ -10,6 +10,25 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
     - uses: actions/checkout@v4
       with:
@@ -34,12 +53,47 @@ jobs:
     - name: Install dependencies
       if: steps.changed-files.outputs.any_changed == 'true'
       uses: ./.github/workflows/actions/yarn-install
+
+    - name: Setup environment files
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
+        cp packages/twenty-front/.env.example packages/twenty-front/.env
+        cp packages/twenty-server/.env.example packages/twenty-server/.env
+
+    - name: Build server
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        npx nx build twenty-server
+
+    - name: Start server
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        npx nx start twenty-server &
+        echo "Waiting for server to be ready..."
+        timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+
+    - name: Start frontend
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        npx nx start twenty-front &
+        echo "Waiting for frontend to be ready..."
+        timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
+
+    - name: Start worker
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        npx nx run twenty-server:worker:ci &
+        echo "Worker started"
+
     - name: Install Playwright Browsers
       if: steps.changed-files.outputs.any_changed == 'true'
       run: npx nx setup twenty-e2e-testing
+
     - name: Run Playwright tests
       if: steps.changed-files.outputs.any_changed == 'true'
       run: npx nx test twenty-e2e-testing
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:
