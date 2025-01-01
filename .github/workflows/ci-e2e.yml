@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      # https://github.com/actions/runner-images/issues/70#issuecomment-589562148
+      NODE_OPTIONS: "--max-old-space-size=10240"
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -76,6 +77,7 @@ jobs:
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
         npx nx build twenty-server
+
 
     - name: Build frontend
       if: steps.changed-files.outputs.any_changed == 'true'
