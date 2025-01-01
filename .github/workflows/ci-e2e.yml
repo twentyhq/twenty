@@ -80,6 +80,7 @@ jobs:
       run: |
         cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
         cp packages/twenty-front/.env.example packages/twenty-front/.env
+        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
         npx nx reset:env twenty-server
 
     - name: Build frontend
@@ -108,9 +109,10 @@ jobs:
     - name: Start frontend
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
-        cd packages/twenty-front && yarn start:prod &
+        npm_config_yes=true npx serve -s packages/twenty-front/dist -l 3001 &
         echo "Waiting for frontend to be ready..."
         timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
+        
     - name: Start worker
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
