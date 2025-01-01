@@ -4,8 +4,9 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - '**'
+    types: [labeled]
+    if: contains(github.event.pull_request.labels.*.name, 'run-e2e')
+    
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,10 +41,10 @@ jobs:
       uses: ./.github/workflows/actions/yarn-install
     - name: Install Playwright Browsers
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: yarn playwright install --with-deps
+      run: npx nx setup twenty-e2e-testing
     - name: Run Playwright tests
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: yarn test:e2e companies
+      run: npx nx test twenty-e2e-testing
     - uses: actions/upload-artifact@v4
       if: always()
       with:
