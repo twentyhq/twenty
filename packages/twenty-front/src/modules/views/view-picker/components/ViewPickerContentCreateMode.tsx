@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -63,6 +64,8 @@ export const ViewPickerContentCreateMode = () => {
   const [viewPickerType, setViewPickerType] = useRecoilComponentStateV2(
     viewPickerTypeComponentState,
   );
+
+  const { objectMetadataItem } = useObjectMetadataItem();
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -183,7 +186,7 @@ export const ViewPickerContentCreateMode = () => {
             </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
               <StyledNoKanbanFieldAvailableContainer>
-                Set up a Select field on Companies to create a Kanban
+               Set up a Select field on {objectMetadataItem.labelPlural} to create a Kanban
               </StyledNoKanbanFieldAvailableContainer>
             )}
           </>
