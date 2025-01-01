@@ -1,3 +1,4 @@
+import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
@@ -11,7 +12,6 @@ import {
   within,
 } from '@storybook/test';
 import { DateTime } from 'luxon';
-import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
 
 const meta: Meta<typeof FormDateTimeFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormDateTimeFieldInput',
@@ -24,16 +24,18 @@ export default meta;
 
 type Story = StoryObj<typeof FormDateTimeFieldInput>;
 
+const currentYear = new Date().getFullYear();
+
 export const Default: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Created At');
-    await canvas.findByDisplayValue(/12\/09\/2024 \d{2}:20/);
+    await canvas.findByDisplayValue(/12\/09\/${currentYear} \d{2}:20/);
   },
 };
 
@@ -67,11 +69,11 @@ export const SetsDateTimeWithInput: Story = {
     const dialog = await canvas.findByRole('dialog');
     expect(dialog).toBeVisible();
 
-    await userEvent.type(input, '12/08/2024 12:10{enter}');
+    await userEvent.type(input, `12/08/${currentYear} 12:10{enter}`);
 
     await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith(
-        expect.stringMatching(/2024-12-08T\d{2}:10:00.000Z/),
+        expect.stringMatching(/${currentYear}-12-08T\d{2}:10:00.000Z/),
       );
     });
 
@@ -95,7 +97,7 @@ export const DoesNotSetDateWithoutTime: Story = {
     const dialog = await canvas.findByRole('dialog');
     expect(dialog).toBeVisible();
 
-    await userEvent.type(input, '12/08/2024{enter}');
+    await userEvent.type(input, `12/08/${currentYear}{enter}`);
 
     expect(args.onPersist).not.toHaveBeenCalled();
     expect(dialog).toBeVisible();
@@ -120,7 +122,7 @@ export const SetsDateTimeWithDatePicker: Story = {
     expect(datePicker).toBeVisible();
 
     const dayToChoose = await within(datePicker).findByRole('option', {
-      name: 'Choose Saturday, December 7th, 2024',
+      name: `Choose Saturday, December 7th, ${currentYear}`,
     });
 
     await Promise.all([
@@ -129,12 +131,12 @@ export const SetsDateTimeWithDatePicker: Story = {
       waitForElementToBeRemoved(datePicker),
       waitFor(() => {
         expect(args.onPersist).toHaveBeenCalledWith(
-          expect.stringMatching(/^2024-12-07/),
+          expect.stringMatching(/^${currentYear}-12-07/),
         );
       }),
       waitFor(() => {
         expect(
-          canvas.getByDisplayValue(/12\/07\/2024 \d{2}:\d{2}/),
+          canvas.getByDisplayValue(/12\/07\/${currentYear} \d{2}:\d{2}/),
         ).toBeVisible();
       }),
     ]);
@@ -144,7 +146,7 @@ export const SetsDateTimeWithDatePicker: Story = {
 export const ResetsDateByClickingButton: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -177,7 +179,7 @@ export const ResetsDateByClickingButton: Story = {
 export const ResetsDateByErasingInputContent: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -186,7 +188,7 @@ export const ResetsDateByErasingInputContent: Story = {
     const input = await canvas.findByPlaceholderText('mm/dd/yyyy hh:mm');
     expect(input).toBeVisible();
 
-    expect(input).toHaveDisplayValue(/12\/09\/2024 \d{2}:\d{2}/);
+    expect(input).toHaveDisplayValue(/12\/09\/${currentYear} \d{2}:\d{2}/);
 
     await userEvent.clear(input);
 
@@ -363,7 +365,7 @@ export const SwitchesToStandaloneVariable: Story = {
 export const ClickingOutsideDoesNotResetInputState: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
