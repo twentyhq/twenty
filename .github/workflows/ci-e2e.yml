@@ -11,11 +11,13 @@ concurrency:
 
 jobs:
   test:
+    runs-on: shipfox-8vcpu-ubuntu-2204
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
     timeout-minutes: 30
-    runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      # https://github.com/actions/runner-images/issues/70#issuecomment-589562148
+      NODE_OPTIONS: "--max-old-space-size=10240"
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
