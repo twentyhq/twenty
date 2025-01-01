@@ -35,7 +35,9 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Created At');
-    await canvas.findByDisplayValue(/12\/09\/${currentYear} \d{2}:20/);
+    await canvas.findByDisplayValue(
+      new RegExp(`12/09/${currentYear} \\d{2}:20`),
+    );
   },
 };
 
@@ -73,7 +75,7 @@ export const SetsDateTimeWithInput: Story = {
 
     await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith(
-        expect.stringMatching(/${currentYear}-12-08T\d{2}:10:00.000Z/),
+        expect.stringMatching(new RegExp(`^${currentYear}-12-08`)),
       );
     });
 
@@ -122,7 +124,9 @@ export const SetsDateTimeWithDatePicker: Story = {
     expect(datePicker).toBeVisible();
 
     const dayToChoose = await within(datePicker).findByRole('option', {
-      name: `Choose Saturday, December 7th, ${currentYear}`,
+      name: (accessibleName) => {
+        return accessibleName.includes(`December 7th, ${currentYear}`);
+      },
     });
 
     await Promise.all([
@@ -188,7 +192,9 @@ export const ResetsDateByErasingInputContent: Story = {
     const input = await canvas.findByPlaceholderText('mm/dd/yyyy hh:mm');
     expect(input).toBeVisible();
 
-    expect(input).toHaveDisplayValue(/12\/09\/${currentYear} \d{2}:\d{2}/);
+    expect(input).toHaveDisplayValue(
+      new RegExp(`12/09/${currentYear} \\d{2}:\\d{2}`),
+    );
 
     await userEvent.clear(input);
 

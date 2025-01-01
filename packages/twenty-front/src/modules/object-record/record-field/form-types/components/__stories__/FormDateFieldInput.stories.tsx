@@ -99,7 +99,9 @@ export const SetsDateWithDatePicker: Story = {
     expect(datePicker).toBeVisible();
 
     const dayToChoose = await within(datePicker).findByRole('option', {
-      name: `Choose Saturday, December 7th, ${currentYear}`,
+      name: (accessibleName) => {
+        return accessibleName.includes(`December 7th, ${currentYear}`);
+      },
     });
 
     await Promise.all([
