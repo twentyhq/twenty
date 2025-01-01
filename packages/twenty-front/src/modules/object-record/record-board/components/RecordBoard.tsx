@@ -207,8 +207,8 @@ export const RecordBoard = () => {
                   <StyledColumnContainer>
                     {visibleRecordGroupIds.map((recordGroupId) => (
                       <RecordBoardColumn
-                        key={recordGroupId}
                         recordBoardColumnId={recordGroupId}
+                        key={recordGroupId}
                       />
                     ))}
                   </StyledColumnContainer>

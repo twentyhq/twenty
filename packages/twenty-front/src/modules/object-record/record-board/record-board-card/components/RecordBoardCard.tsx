@@ -3,10 +3,13 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCellFieldInput } from '@/object-record/record-board/record-board-card/components/RecordBoardCellFieldInput';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardPendingRecordIdByColumnComponentFamilyState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import {
   FieldContext,
@@ -22,16 +25,16 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
@@ -42,7 +45,7 @@ import {
   LightIconButton,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
+import { FieldMetadataType } from '~/generated/graphql';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -78,11 +81,6 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   &:hover .compact-icon-container {
     opacity: 1;
   }
-`;
-
-const StyledTextInput = styled(TextInput)`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  width: ${({ theme }) => theme.spacing(53)};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -150,20 +148,8 @@ const StyledCompactIconContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const RecordBoardCard = ({
-  isCreating = false,
-  onCreateSuccess,
-  position,
-}: {
-  isCreating?: boolean;
-  onCreateSuccess?: () => void;
-  position?: 'first' | 'last';
-}) => {
+export const RecordBoardCard = () => {
   const { recordId } = useContext(RecordBoardCardContext);
-
-  const [newLabelValue, setNewLabelValue] = useState('');
-
-  const { handleBlur, handleInputEnter } = useAddNewCard();
 
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -186,9 +172,20 @@ export const RecordBoardCard = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+  const { columnId } = useRecordBoardColumnContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
+  );
+
+  const recordBoardPendingRecordIdByColumnState =
+    useRecoilComponentCallbackStateV2(
+      recordBoardPendingRecordIdByColumnComponentFamilyState,
+      recordBoardId,
+    );
+
+  const [pendingRecord] = useRecoilState(
+    recordBoardPendingRecordIdByColumnState(columnId),
   );
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
@@ -263,44 +260,52 @@ export const RecordBoardCard = ({
 
   return (
     <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
-      {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
+      <RecordValueSetterEffect recordId={recordId} />
+
       <InView>
         <StyledBoardCard
           ref={cardRef}
           selected={isCurrentCardSelected}
           onMouseLeave={onMouseLeaveBoard}
           onClick={() => {
-            if (!isCreating) {
+            if (!pendingRecord?.recordId) {
               setIsCurrentCardSelected(!isCurrentCardSelected);
             }
           }}
         >
           <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-            {isCreating && position !== undefined ? (
-              <RecordInlineCellEditMode>
-                <StyledTextInput
-                  autoFocus
-                  value={newLabelValue}
-                  onInputEnter={() =>
-                    handleInputEnter(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onBlur={() =>
-                    handleBlur(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onChange={(text: string) => setNewLabelValue(text)}
-                  placeholder={labelIdentifierField?.label}
-                />
-              </RecordInlineCellEditMode>
+            {pendingRecord?.recordId === recordId ? (
+              <FieldContext.Provider
+                value={{
+                  recordId: recordId,
+                  maxWidth: 156,
+                  recoilScopeId:
+                    recordId + labelIdentifierField?.fieldMetadataId,
+                  isLabelIdentifier:
+                    labelIdentifierField?.isLabelIdentifier || false,
+                  fieldDefinition: {
+                    disableTooltip: false,
+                    fieldMetadataId:
+                      labelIdentifierField?.fieldMetadataId || '',
+                    label: labelIdentifierField?.label || '',
+                    iconName: labelIdentifierField?.iconName || '',
+                    type: labelIdentifierField?.type || FieldMetadataType.Text,
+                    defaultValue: labelIdentifierField?.defaultValue || '',
+                    metadata: labelIdentifierField?.metadata || {
+                      fieldName:
+                        labelIdentifierField?.metadata?.fieldName || 'name',
+
+                      ...labelIdentifierField?.metadata,
+                    },
+                  },
+
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                }}
+              >
+                <RecordInlineCellEditMode>
+                  <RecordBoardCellFieldInput />
+                </RecordInlineCellEditMode>
+              </FieldContext.Provider>
             ) : (
               <RecordIdentifierChip
                 objectNameSingular={objectMetadataItem.nameSingular}
@@ -311,7 +316,7 @@ export const RecordBoardCard = ({
               />
             )}
 
-            {!isCreating && (
+            {!pendingRecord?.recordId && (
               <>
                 {isCompactModeActive && (
                   <StyledCompactIconContainer className="compact-icon-container">
@@ -351,12 +356,11 @@ export const RecordBoardCard = ({
                 >
                   <FieldContext.Provider
                     value={{
-                      recordId: isCreating ? '' : recordId,
+                      recordId: recordId,
                       maxWidth: 156,
-                      recoilScopeId:
-                        (isCreating ? 'new' : recordId) +
-                        fieldDefinition.fieldMetadataId,
-                      isLabelIdentifier: false,
+                      recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
+                      isLabelIdentifier:
+                        fieldDefinition.isLabelIdentifier || false,
                       fieldDefinition: {
                         disableTooltip: false,
                         fieldMetadataId: fieldDefinition.fieldMetadataId,

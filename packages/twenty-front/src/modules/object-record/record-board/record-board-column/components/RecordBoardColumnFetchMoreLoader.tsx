@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue } from 'recoil';
 import { GRAY_SCALE } from 'twenty-ui';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
@@ -22,7 +22,7 @@ const StyledText = styled.div`
 `;
 
 export const RecordBoardColumnFetchMoreLoader = () => {
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { columnDefinition } = useRecordBoardColumnContextOrThrow();
 
   const isFetchingRecord = useRecoilValue(
     isRecordBoardFetchingRecordsByColumnFamilyState(columnDefinition.id),

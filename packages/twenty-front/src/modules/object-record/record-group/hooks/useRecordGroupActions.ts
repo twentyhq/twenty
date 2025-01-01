@@ -1,14 +1,14 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
@@ -19,9 +19,8 @@ export const useRecordGroupActions = () => {
 
   const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const { columnDefinition: recordGroupDefinition } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition: recordGroupDefinition } =
+    useRecordBoardColumnContextOrThrow();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,

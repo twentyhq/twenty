@@ -77,7 +77,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
           fieldDefinition.fieldMetadataId,
           'inline-cell',
         );
-
         const activeDropdownFocusId = snapshot
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
@@ -87,7 +86,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         }
 
         event.stopImmediatePropagation();
-
         persistField();
         closeInlineCell();
       },
