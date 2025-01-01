@@ -5,8 +5,7 @@ on:
       - main
   pull_request:
     types: [labeled]
-    if: contains(github.event.pull_request.labels.*.name, 'run-e2e')
-    
+  if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
