@@ -77,6 +77,11 @@ jobs:
         npx nx build twenty-server
 
 
+    - name: Build frontend
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        npx nx build twenty-front
+
     - name: Create and setup database
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
@@ -84,7 +89,6 @@ jobs:
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
         npx nx run twenty-server:database:init:prod
         npx nx run twenty-server:database:migrate:prod
-
 
     - name: Start server
       if: steps.changed-files.outputs.any_changed == 'true'
@@ -96,7 +100,7 @@ jobs:
     - name: Start frontend
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
-        npx nx start twenty-front &
+        cd packages/twenty-front && npm_config_yes=true npx serve -s dist -l 3001 &
         echo "Waiting for frontend to be ready..."
         timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
 
