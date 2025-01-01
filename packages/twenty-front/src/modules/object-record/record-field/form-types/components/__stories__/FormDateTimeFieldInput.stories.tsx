@@ -109,7 +109,7 @@ export const DoesNotSetDateWithoutTime: Story = {
 export const SetsDateTimeWithDatePicker: Story = {
   args: {
     label: 'Created At',
-    defaultValue: undefined,
+    defaultValue: `2024-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -124,9 +124,7 @@ export const SetsDateTimeWithDatePicker: Story = {
     expect(datePicker).toBeVisible();
 
     const dayToChoose = await within(datePicker).findByRole('option', {
-      name: (accessibleName) => {
-        return accessibleName.includes(`December 7th, ${currentYear}`);
-      },
+      name: 'Choose Saturday, December 7th, 2024',
     });
 
     await Promise.all([
@@ -135,12 +133,12 @@ export const SetsDateTimeWithDatePicker: Story = {
       waitForElementToBeRemoved(datePicker),
       waitFor(() => {
         expect(args.onPersist).toHaveBeenCalledWith(
-          expect.stringMatching(/^${currentYear}-12-07/),
+          expect.stringMatching(/^2024-12-07/),
         );
       }),
       waitFor(() => {
         expect(
-          canvas.getByDisplayValue(/12\/07\/${currentYear} \d{2}:\d{2}/),
+          canvas.getByDisplayValue(new RegExp(`12/07/2024 \\d{2}:\\d{2}`)),
         ).toBeVisible();
       }),
     ]);
