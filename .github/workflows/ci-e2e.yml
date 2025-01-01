@@ -5,11 +5,17 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e'))
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -54,17 +60,31 @@ jobs:
       if: steps.changed-files.outputs.any_changed == 'true'
       uses: ./.github/workflows/actions/yarn-install
 
+    - name: Build twenty-shared
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: npx nx build twenty-shared
+
     - name: Setup environment files
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
         cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
         cp packages/twenty-front/.env.example packages/twenty-front/.env
-        cp packages/twenty-server/.env.example packages/twenty-server/.env
+        npx nx reset:env twenty-server
 
     - name: Build server
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
         npx nx build twenty-server
+
+
+    - name: Create and setup database
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+        npx nx run twenty-server:database:init:prod
+        npx nx run twenty-server:database:migrate:prod
+
 
     - name: Start server
       if: steps.changed-files.outputs.any_changed == 'true'
