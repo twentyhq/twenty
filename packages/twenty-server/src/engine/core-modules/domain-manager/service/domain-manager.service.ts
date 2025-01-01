@@ -66,7 +66,7 @@ export class DomainManagerService {
     token: string;
     email: string;
   }) {
-    return `${this.getBaseUrl()}/verify-email?token=${token}&email=${email}`;
+    return `${this.getBaseUrl()}verify-email?token=${token}&email=${email}`;
   }
 
   buildWorkspaceURL({

@@ -16,7 +16,7 @@ export class EmailVerificationResolver {
   async verifyEmail(
     @Args('input') input: VerifyEmailInput,
   ): Promise<VerifyEmailOutput> {
-    await this.emailVerificationService.validateEmailVerificationToken(
+    await this.emailVerificationService.verifyEmailVerificationToken(
       input.token,
     );
 

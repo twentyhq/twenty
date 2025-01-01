@@ -49,7 +49,7 @@ export class EmailVerificationService {
     return this.appTokenRepository.save(verificationToken);
   }
 
-  async validateEmailVerificationToken(appTokenId: string) {
+  async verifyEmailVerificationToken(appTokenId: string) {
     const appToken = await this.appTokenRepository.findOne({
       where: {
         id: appTokenId,
