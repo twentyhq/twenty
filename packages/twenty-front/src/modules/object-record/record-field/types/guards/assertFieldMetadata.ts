@@ -2,30 +2,30 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import {
-  FieldActorMetadata,
-  FieldAddressMetadata,
-  FieldArrayMetadata,
-  FieldBooleanMetadata,
-  FieldCurrencyMetadata,
-  FieldDateMetadata,
-  FieldDateTimeMetadata,
-  FieldEmailMetadata,
-  FieldEmailsMetadata,
-  FieldFullNameMetadata,
-  FieldLinkMetadata,
-  FieldLinksMetadata,
-  FieldMetadata,
-  FieldMultiSelectMetadata,
-  FieldNumberMetadata,
-  FieldPhoneMetadata,
-  FieldPhonesMetadata,
-  FieldRatingMetadata,
-  FieldRawJsonMetadata,
-  FieldRelationMetadata,
-  FieldRichTextMetadata,
-  FieldSelectMetadata,
-  FieldTextMetadata,
-  FieldUuidMetadata,
+    FieldActorMetadata,
+    FieldAddressMetadata,
+    FieldArrayMetadata,
+    FieldBooleanMetadata,
+    FieldCurrencyMetadata,
+    FieldDateMetadata,
+    FieldDateTimeMetadata,
+    FieldEmailMetadata,
+    FieldEmailsMetadata,
+    FieldFullNameMetadata,
+    FieldLinkMetadata,
+    FieldLinksMetadata,
+    FieldMetadata,
+    FieldMultiSelectMetadata,
+    FieldNumberMetadata,
+    FieldPhoneMetadata,
+    FieldPhonesMetadata,
+    FieldRatingMetadata,
+    FieldRawJsonMetadata,
+    FieldRelationMetadata,
+    FieldRichTextOldMetadata,
+    FieldSelectMetadata,
+    FieldTextMetadata,
+    FieldUuidMetadata,
 } from '../FieldMetadata';
 
 type AssertFieldMetadataFunction = <
@@ -68,8 +68,8 @@ type AssertFieldMetadataFunction = <
                                       ? FieldAddressMetadata
                                       : E extends 'RAW_JSON'
                                         ? FieldRawJsonMetadata
-                                        : E extends 'RICH_TEXT'
-                                          ? FieldRichTextMetadata
+                                        : E extends 'RICH_TEXT_OLD'
+                                          ? FieldRichTextOldMetadata
                                           : E extends 'ACTOR'
                                             ? FieldActorMetadata
                                             : E extends 'ARRAY'

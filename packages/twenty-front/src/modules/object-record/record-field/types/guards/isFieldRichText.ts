@@ -1,9 +1,9 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
-import { FieldMetadata, FieldRichTextMetadata } from '../FieldMetadata';
+import { FieldMetadata, FieldRichTextOldMetadata } from '../FieldMetadata';
 
-export const isFieldRichText = (
+export const isFieldRichTextOld = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
-): field is FieldDefinition<FieldRichTextMetadata> =>
-  field.type === FieldMetadataType.RichText;
+): field is FieldDefinition<FieldRichTextOldMetadata> =>
+  field.type === FieldMetadataType.RichTextOld;

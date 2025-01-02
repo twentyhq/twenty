@@ -49,6 +49,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RICH_TEXT]: [FieldMetadataDefaultValueRichText],
+  [FieldMetadataType.RICH_TEXT_OLD]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
   [FieldMetadataType.ACTOR]: [FieldMetadataDefaultActor],

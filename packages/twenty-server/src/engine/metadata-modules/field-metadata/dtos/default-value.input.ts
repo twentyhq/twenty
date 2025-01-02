@@ -45,6 +45,12 @@ export class FieldMetadataDefaultValueRichText {
   markdown: string | null;
 }
 
+export class FieldMetadataDefaultValueRichTextOld {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  value: string | null;
+}
+
 export class FieldMetadataDefaultValueNumber {
   @ValidateIf((object, value) => value !== null)
   @IsNumber()

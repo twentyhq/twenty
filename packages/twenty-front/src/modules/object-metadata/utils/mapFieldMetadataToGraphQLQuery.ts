@@ -35,7 +35,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataType.MultiSelect,
     FieldMetadataType.Position,
     FieldMetadataType.RawJson,
-    FieldMetadataType.RichText,
+    FieldMetadataType.RichTextOld,
     FieldMetadataType.Array,
   ].includes(fieldType);
 

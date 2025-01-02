@@ -15,7 +15,7 @@ export const isFieldCellSupported = (
     [
       FieldMetadataType.Uuid,
       FieldMetadataType.Position,
-      FieldMetadataType.RichText,
+      FieldMetadataType.RichTextOld,
     ].includes(fieldMetadataItem.type)
   ) {
     return false;

@@ -420,7 +420,7 @@ export enum FieldMetadataType {
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
   Relation = 'RELATION',
-  RichText = 'RICH_TEXT',
+  RichTextOld = 'RICH_TEXT_OLD',
   Select = 'SELECT',
   Text = 'TEXT',
   TsVector = 'TS_VECTOR',

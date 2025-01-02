@@ -15,7 +15,7 @@ const getTypeFromFieldMetadataType = (
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
+    case FieldMetadataType.RICH_TEXT_OLD:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.LINK:
@@ -285,6 +285,7 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
+      case FieldMetadataType.RICH_TEXT_OLD:
       case FieldMetadataType.PHONE:
       case FieldMetadataType.EMAIL:
       case FieldMetadataType.DATE_TIME:

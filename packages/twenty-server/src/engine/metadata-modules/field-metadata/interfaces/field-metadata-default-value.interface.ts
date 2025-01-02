@@ -12,7 +12,7 @@ import {
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichText,
+  FieldMetadataDefaultValueRichTextOld,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
@@ -47,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
+  [FieldMetadataType.RICH_TEXT_OLD]: FieldMetadataDefaultValueRichTextOld;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
   [FieldMetadataType.ARRAY]: FieldMetadataDefaultArray;
 };

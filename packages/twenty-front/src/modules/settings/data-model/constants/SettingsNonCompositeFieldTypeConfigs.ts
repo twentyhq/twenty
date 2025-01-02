@@ -11,7 +11,7 @@ import {
   IllustrationIconTags,
   IllustrationIconText,
   IllustrationIconToggle,
-  IllustrationIconUid
+  IllustrationIconUid,
 } from 'twenty-ui';
 
 import {
@@ -24,9 +24,11 @@ import {
   FieldNumberValue,
   FieldRatingValue,
   FieldRelationValue,
+  FieldRichTextValue,
+  FieldRichTextOldValue,
   FieldSelectValue,
   FieldTextValue,
-  FieldUUidValue
+  FieldUUidValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
@@ -120,6 +122,18 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       exampleValue: { key: 'value' },
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
+    [FieldMetadataType.RichText]: {
+      label: 'Rich Text',
+      Icon: IllustrationIconSetting,
+      exampleValue: "{ key: 'value' }",
+      category: 'Basic',
+    } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
+    [FieldMetadataType.RichTextOld]: {
+      label: 'Rich Text Old',
+      Icon: IllustrationIconSetting,
+      exampleValue: "{ key: 'value' }",
+      category: 'Basic',
+    } as const satisfies SettingsFieldTypeConfig<FieldRichTextOldValue>,
     [FieldMetadataType.Array]: {
       label: 'Array',
       Icon: IllustrationIconArray,

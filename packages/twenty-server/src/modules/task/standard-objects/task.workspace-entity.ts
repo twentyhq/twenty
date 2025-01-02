@@ -38,7 +38,8 @@ const BODY_FIELD_NAME = 'body';
 
 export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: `${BODY_FIELD_NAME}Blocknote`, type: FieldMetadataType.RICH_TEXT }, // TODO: Check later if and how this works
+  // { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT }, // TODO: Check later if and how this works
+  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_OLD },
 ];
 
 @WorkspaceEntity({
@@ -74,7 +75,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
+    type: FieldMetadataType.RICH_TEXT_OLD,
     label: 'Body',
     description: 'Task body',
     icon: 'IconFilePencil',

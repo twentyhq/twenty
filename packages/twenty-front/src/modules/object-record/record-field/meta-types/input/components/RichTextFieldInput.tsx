@@ -1,6 +1,6 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useRichTextField } from '@/object-record/record-field/meta-types/hooks/useRichTextField';
+import { useRichTextOldField } from '@/object-record/record-field/meta-types/hooks/useRichTextOldField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
@@ -11,24 +11,24 @@ import styled from '@emotion/styled';
 
 import { useContext, useRef } from 'react';
 
-const StyledRichTextContainer = styled.div`
+const StyledRichTextOldContainer = styled.div`
   height: 400px;
   width: 500px;
 
   overflow: auto;
 `;
 
-export type RichTextFieldInputProps = {
+export type RichTextOldFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
 };
 
-export const RichTextFieldInput = ({
+export const RichTextOldFieldInput = ({
   onClickOutside,
-}: RichTextFieldInputProps) => {
+}: RichTextOldFieldInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { recordId } = useContext(FieldContext);
-  const { draftValue, hotkeyScope, persistRichTextField, fieldDefinition } =
-    useRichTextField();
+  const { draftValue, hotkeyScope, persistRichTextOldField, fieldDefinition } =
+    useRichTextOldField();
 
   const editor = useCreateBlockNote({
     initialContent: draftValue,
@@ -37,7 +37,7 @@ export const RichTextFieldInput = ({
   });
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-    onClickOutside?.(() => persistRichTextField(editor.document), event);
+    onClickOutside?.(() => persistRichTextOldField(editor.document), event);
   };
 
   useRegisterInputEvents<PartialBlock[]>({
@@ -48,12 +48,12 @@ export const RichTextFieldInput = ({
   });
 
   return (
-    <StyledRichTextContainer ref={containerRef}>
+    <StyledRichTextOldContainer ref={containerRef}>
       <BlockEditorComponentInstanceContext.Provider
         value={{ instanceId: `${recordId}-${fieldDefinition.fieldMetadataId}` }}
       >
         <BlockEditor editor={editor} />
       </BlockEditorComponentInstanceContext.Provider>
-    </StyledRichTextContainer>
+    </StyledRichTextOldContainer>
   );
 };

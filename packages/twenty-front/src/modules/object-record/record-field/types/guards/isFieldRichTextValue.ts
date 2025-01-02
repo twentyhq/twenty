@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { FieldRichTextValue } from '../FieldMetadata';
 
 export const richTextSchema: z.ZodType<FieldRichTextValue> = z.object({
   blocknote: z.string().nullable(),

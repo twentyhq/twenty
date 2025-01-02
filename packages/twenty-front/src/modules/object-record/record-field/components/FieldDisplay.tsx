@@ -19,7 +19,7 @@ import { isFieldPhones } from '@/object-record/record-field/types/guards/isField
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
-import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+import { isFieldRichTextOld } from '@/object-record/record-field/types/guards/isFieldRichTextOld';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -88,7 +88,7 @@ export const FieldDisplay = () => {
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
     <RatingFieldDisplay />
-  ) : isFieldRichText(fieldDefinition) ? (
+  ) : isFieldRichTextOld(fieldDefinition) ? (
     <RichTextFieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
     <ActorFieldDisplay />

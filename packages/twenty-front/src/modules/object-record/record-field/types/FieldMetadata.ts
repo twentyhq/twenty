@@ -127,7 +127,7 @@ export type FieldRawJsonMetadata = {
   settings?: null;
 };
 
-export type FieldRichTextMetadata = {
+export type FieldRichTextOldMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   settings?: null;
@@ -263,6 +263,8 @@ export type FieldRichTextValue = {
   blocknote: string | null; // TODO: Can these be null?
   markdown: string | null;
 };
+
+export type FieldRichTextOldValue = null | string;
 
 export type FieldActorValue = {
   source: string;
