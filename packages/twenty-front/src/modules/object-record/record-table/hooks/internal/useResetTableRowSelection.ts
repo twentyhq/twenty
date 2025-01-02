@@ -54,8 +54,6 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
 
         set(hasUserSelectedAllRowsState, false);
 
-        console.log('resetTableRowSelection');
-
         set(isActionMenuDropdownOpenState, false);
       },
     [
