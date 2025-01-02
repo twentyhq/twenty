@@ -1,13 +1,13 @@
-import {
-  WorkflowWithCurrentVersion,
-  WorkflowVersion,
-} from '@/workflow/types/Workflow';
-import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import {
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
+} from '@/workflow/types/Workflow';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 
 export const useDeleteStep = ({
   workflow,

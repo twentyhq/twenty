@@ -8,13 +8,14 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useActionMenuEntriesWithCallbacks = (
   objectMetadataItem: ObjectMetadataItem,
   viewType: ActionViewType,
 ) => {
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   const actionConfig = getActionConfig(

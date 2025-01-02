@@ -106,7 +106,7 @@ export const SignInUpGlobalScopeForm = () => {
         {authProviders.google && <SignInUpWithGoogle />}
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
         {(authProviders.google || authProviders.microsoft) && (
-          <HorizontalSeparator visible />
+          <HorizontalSeparator />
         )}
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>

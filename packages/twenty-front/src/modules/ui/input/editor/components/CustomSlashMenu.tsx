@@ -23,6 +23,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledInnerContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
   height: 250px;
   width: 100%;
 `;

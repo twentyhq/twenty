@@ -46,7 +46,7 @@ export type NavigationDrawerItemProps = {
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
-> & { isNavigationDrawerExpanded: boolean };
+> & { isNavigationDrawerExpanded: boolean; hasRightOptions: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
@@ -80,7 +80,8 @@ const StyledItem = styled('button', {
 
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-right: ${({ theme, hasRightOptions }) =>
+    hasRightOptions ? theme.spacing(0.5) : theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
@@ -284,6 +285,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDragging={isDragging}
+        hasRightOptions={!!rightOptions}
       >
         <StyledItemElementsContainer>
           {showBreadcrumb && (

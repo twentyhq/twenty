@@ -12,12 +12,15 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuContainer = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   useScopedHotkeys(

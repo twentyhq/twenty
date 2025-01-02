@@ -1,12 +1,12 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { setNestedValue } from '@/workflow/utils/setNestedValue';
+import { setNestedValue } from '@/workflow/workflow-actions/utils/setNestedValue';
+import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
@@ -19,11 +19,11 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { WorkflowStepBody } from '@/workflow/workflow-step/components/WorkflowStepBody';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';

@@ -1,4 +1,11 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 export enum BillingPlanKey {
-  BASE_PLAN = 'BASE_PLAN',
-  PRO_PLAN = 'PRO_PLAN',
+  PRO = 'PRO',
+  ENTERPRISE = 'ENTERPRISE',
 }
+
+registerEnumType(BillingPlanKey, {
+  name: 'BillingPlanKey',
+  description: 'The different billing plans available',
+});
