@@ -15,20 +15,17 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  let aggregateOperations = [];
-
   switch (currentContentId) {
-    case 'moreAggregateOperationOptions':
-      aggregateOperations = getAvailableAggregateOperationsForFieldMetadataType(
-        {
+    case 'moreAggregateOperationOptions': {
+      const aggregateOperations =
+        getAvailableAggregateOperationsForFieldMetadataType({
           fieldMetadataType: objectMetadataItem.fields.find(
             (field) => field.id === fieldMetadataId,
           )?.type,
-        },
-      ).filter(
-        (aggregateOperation) =>
-          !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-      );
+        }).filter(
+          (aggregateOperation) =>
+            !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+        );
 
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
@@ -36,38 +33,39 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
           title="More options"
         />
       );
-    case 'countAggregateOperationsOptions':
-      aggregateOperations = getAvailableAggregateOperationsForFieldMetadataType(
-        {
+    }
+    case 'countAggregateOperationsOptions': {
+      const aggregateOperations =
+        getAvailableAggregateOperationsForFieldMetadataType({
           fieldMetadataType: objectMetadataItem.fields.find(
             (field) => field.id === fieldMetadataId,
           )?.type,
-        },
-      ).filter((aggregateOperation) =>
-        COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-      );
+        }).filter((aggregateOperation) =>
+          COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+        );
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
           title="Count"
         />
       );
-    case 'percentAggregateOperationsOptions':
-      aggregateOperations = getAvailableAggregateOperationsForFieldMetadataType(
-        {
+    }
+    case 'percentAggregateOperationsOptions': {
+      const aggregateOperations =
+        getAvailableAggregateOperationsForFieldMetadataType({
           fieldMetadataType: objectMetadataItem.fields.find(
             (field) => field.id === fieldMetadataId,
           )?.type,
-        },
-      ).filter((aggregateOperation) =>
-        PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-      );
+        }).filter((aggregateOperation) =>
+          PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+        );
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
           title="Percent"
         />
       );
+    }
     default:
       return <RecordTableColumnAggregateFooterMenuContent />;
   }

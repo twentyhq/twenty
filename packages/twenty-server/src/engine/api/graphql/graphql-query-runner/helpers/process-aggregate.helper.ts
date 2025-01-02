@@ -43,7 +43,7 @@ export class ProcessAggregateHelper {
         FIELD_METADATA_TYPES_TO_TEXT_COLUMN_TYPE.includes(
           aggregatedField.fromFieldType,
         )
-          ? `NULLIF(NULLIF("${columnName}", ''), NULL)`
+          ? `NULLIF("${columnName}", '')`
           : `"${columnName}"`;
 
       switch (aggregatedField.aggregateOperation) {

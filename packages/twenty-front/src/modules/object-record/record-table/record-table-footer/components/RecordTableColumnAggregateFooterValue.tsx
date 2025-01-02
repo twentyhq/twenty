@@ -1,6 +1,6 @@
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-ui';
+import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 
 const StyledText = styled.span`
   overflow: hidden;
@@ -23,13 +23,7 @@ const StyledValueContainer = styled.div`
   gap: 4px;
   height: 32px;
   justify-content: flex-end;
-  padding: 8px;
-`;
-
-const StyledLabel = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
+  padding: 0 8px;
 `;
 
 const StyledValue = styled.div`
@@ -57,7 +51,7 @@ export const RecordTableColumnAggregateFooterValue = ({
             <></>
           ) : (
             <>
-              <StyledLabel>{aggregateLabel}</StyledLabel>
+              <OverflowingTextWithTooltip text={aggregateLabel} />
               <StyledValue>{aggregateValue}</StyledValue>
             </>
           )}

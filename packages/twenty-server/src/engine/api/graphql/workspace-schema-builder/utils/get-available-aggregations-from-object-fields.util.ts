@@ -78,94 +78,94 @@ export const getAvailableAggregationsFromObjectFields = (
         aggregateOperation: AGGREGATE_OPERATIONS.percentageNotEmpty,
       };
 
-      if (field.type === FieldMetadataType.DATE_TIME) {
-        acc[`min${capitalize(field.name)}`] = {
-          type: GraphQLISODateTime,
-          description: `Oldest date contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.min,
-        };
+      switch (field.type) {
+        case FieldMetadataType.DATE_TIME:
+          acc[`min${capitalize(field.name)}`] = {
+            type: GraphQLISODateTime,
+            description: `Oldest date contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.min,
+          };
 
-        acc[`max${capitalize(field.name)}`] = {
-          type: GraphQLISODateTime,
-          description: `Most recent date contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.max,
-        };
-      }
+          acc[`max${capitalize(field.name)}`] = {
+            type: GraphQLISODateTime,
+            description: `Most recent date contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.max,
+          };
+          break;
+        case FieldMetadataType.NUMBER:
+          acc[`min${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Minimum amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.min,
+          };
 
-      if (field.type === FieldMetadataType.NUMBER) {
-        acc[`min${capitalize(field.name)}`] = {
-          type: GraphQLFloat,
-          description: `Minimum amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.min,
-        };
+          acc[`max${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Maximum amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.max,
+          };
 
-        acc[`max${capitalize(field.name)}`] = {
-          type: GraphQLFloat,
-          description: `Maximum amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.max,
-        };
+          acc[`avg${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Average amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.avg,
+          };
 
-        acc[`avg${capitalize(field.name)}`] = {
-          type: GraphQLFloat,
-          description: `Average amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.avg,
-        };
+          acc[`sum${capitalize(field.name)}`] = {
+            type: GraphQLFloat,
+            description: `Sum of amounts contained in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.sum,
+          };
+          break;
+        case FieldMetadataType.CURRENCY:
+          acc[`min${capitalize(field.name)}AmountMicros`] = {
+            type: GraphQLFloat,
+            description: `Minimum amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromSubField: 'amountMicros',
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.min,
+          };
 
-        acc[`sum${capitalize(field.name)}`] = {
-          type: GraphQLFloat,
-          description: `Sum of amounts contained in the field ${field.name}`,
-          fromField: field.name,
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.sum,
-        };
-      }
+          acc[`max${capitalize(field.name)}AmountMicros`] = {
+            type: GraphQLFloat,
+            description: `Maximal amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromSubField: 'amountMicros',
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.max,
+          };
 
-      if (field.type === FieldMetadataType.CURRENCY) {
-        acc[`min${capitalize(field.name)}AmountMicros`] = {
-          type: GraphQLFloat,
-          description: `Minimum amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromSubField: 'amountMicros',
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.min,
-        };
+          acc[`sum${capitalize(field.name)}AmountMicros`] = {
+            type: GraphQLFloat,
+            description: `Sum of amounts contained in the field ${field.name}`,
+            fromField: field.name,
+            fromSubField: 'amountMicros',
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.sum,
+          };
 
-        acc[`max${capitalize(field.name)}AmountMicros`] = {
-          type: GraphQLFloat,
-          description: `Maximal amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromSubField: 'amountMicros',
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.max,
-        };
-
-        acc[`sum${capitalize(field.name)}AmountMicros`] = {
-          type: GraphQLFloat,
-          description: `Sum of amounts contained in the field ${field.name}`,
-          fromField: field.name,
-          fromSubField: 'amountMicros',
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.sum,
-        };
-
-        acc[`avg${capitalize(field.name)}AmountMicros`] = {
-          type: GraphQLFloat,
-          description: `Average amount contained in the field ${field.name}`,
-          fromField: field.name,
-          fromSubField: 'amountMicros',
-          fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.avg,
-        };
+          acc[`avg${capitalize(field.name)}AmountMicros`] = {
+            type: GraphQLFloat,
+            description: `Average amount contained in the field ${field.name}`,
+            fromField: field.name,
+            fromSubField: 'amountMicros',
+            fromFieldType: field.type,
+            aggregateOperation: AGGREGATE_OPERATIONS.avg,
+          };
+          break;
       }
 
       return acc;
