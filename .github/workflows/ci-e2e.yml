@@ -96,9 +96,8 @@ jobs:
       run: |
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-        npx nx run twenty-server:database:init:prod
-        npx nx run twenty-server:database:migrate:prod
-
+        npx nx run twenty-server:database:reset
+        
     - name: Start server
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |

@@ -59,7 +59,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
       dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
-      testMatch: /all\/.+\.spec\.ts/,
+      testMatch: /all\/.+\.e2e-spec\.ts/,
     },
     {
       name: 'firefox',
@@ -68,11 +68,11 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
-      testMatch: /all\/.+\.spec\.ts/,
+      testMatch: /all\/.+\.e2e-spec\.ts/,
     },
     {
       name: 'Authentication',
-      testMatch: /authentication\/.*\.spec\.ts/,
+      testMatch: /authentication\/.*\.e2e-spec\.ts/,
     },
 
     //{
