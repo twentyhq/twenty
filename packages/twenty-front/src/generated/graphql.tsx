@@ -117,7 +117,6 @@ export type Billing = {
 
 /** The different billing plans available */
 export enum BillingPlanKey {
-  Base = 'BASE',
   Enterprise = 'ENTERPRISE',
   Pro = 'PRO'
 }
@@ -332,7 +331,6 @@ export enum FeatureFlagKey {
   IsSsoEnabled = 'IsSSOEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
