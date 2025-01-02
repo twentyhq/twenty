@@ -13,6 +13,7 @@ export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
+  contextStoreNumberOfSelectedRecords?: number;
   contextStoreCurrentObjectMetadataNameSingular?: string;
   componentInstanceId: string;
 };
@@ -21,6 +22,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
   contextStoreTargetedRecordsRule,
+  contextStoreNumberOfSelectedRecords,
   contextStoreCurrentObjectMetadataNameSingular,
   componentInstanceId,
 }: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
@@ -43,6 +45,9 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
         >
           <JestContextStoreSetter
             contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+            contextStoreNumberOfSelectedRecords={
+              contextStoreNumberOfSelectedRecords
+            }
             contextStoreCurrentObjectMetadataNameSingular={
               contextStoreCurrentObjectMetadataNameSingular
             }
