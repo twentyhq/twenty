@@ -2,7 +2,6 @@ import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import path from 'path';
 
-// Load environment variables from .env file
 const envResult = config({
   path: path.resolve(__dirname, '.env'),
 });
