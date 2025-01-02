@@ -60,7 +60,7 @@ export const Dropdown = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   dropdownStrategy = 'absolute',
-  dropdownOffset = { x: 0, y: 0 },
+  dropdownOffset,
   onClickOutside,
   onClose,
   onOpen,
@@ -73,15 +73,22 @@ export const Dropdown = ({
     dropdownId,
   );
 
+  const isUsingOffset =
+    isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
+
+  const offsetMiddleware = isUsingOffset
+    ? [
+        offset({
+          crossAxis: dropdownOffset?.x ?? 0,
+          mainAxis: dropdownOffset?.y ?? 0,
+        }),
+      ]
+    : [];
+
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
-
     middleware: [
-      offset({
-        crossAxis: dropdownOffset.x,
-        mainAxis: dropdownOffset.y,
-      }),
-
+      ...offsetMiddleware,
       flip(),
       size({
         padding: 32,

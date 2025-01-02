@@ -5,11 +5,23 @@ import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDro
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { MenuItem } from 'twenty-ui';
+
+const StyledDropdownMenuContainer = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const RecordIndexActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -20,10 +32,13 @@ export const RecordIndexActionMenuDropdown = () => {
     ActionMenuComponentInstanceContext,
   );
 
+  const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+  const { closeDropdown } = useDropdown(dropdownId);
+
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(
       recordIndexActionMenuDropdownPositionComponentState,
-      getActionMenuDropdownIdFromActionMenuId(actionMenuId),
+      dropdownId,
     ),
   );
 
@@ -36,7 +51,7 @@ export const RecordIndexActionMenuDropdown = () => {
 
   return (
     <Dropdown
-      dropdownId={getActionMenuDropdownIdFromActionMenuId(actionMenuId)}
+      dropdownId={dropdownId}
       dropdownHotkeyScope={{
         scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
       }}
@@ -49,17 +64,22 @@ export const RecordIndexActionMenuDropdown = () => {
         y: actionMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          {actionMenuEntries.map((item, index) => (
-            <MenuItem
-              key={index}
-              LeftIcon={item.Icon}
-              onClick={item.onClick}
-              accent={item.accent}
-              text={item.label}
-            />
-          ))}
-        </DropdownMenuItemsContainer>
+        <StyledDropdownMenuContainer className="action-menu-dropdown">
+          <DropdownMenuItemsContainer>
+            {actionMenuEntries.map((item) => (
+              <MenuItem
+                key={item.key}
+                LeftIcon={item.Icon}
+                onClick={() => {
+                  item.onClick?.();
+                  closeDropdown();
+                }}
+                accent={item.accent}
+                text={item.label}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
+        </StyledDropdownMenuContainer>
       }
     />
   );
