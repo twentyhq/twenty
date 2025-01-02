@@ -47,6 +47,11 @@ export function generateDefaultValue(
         primaryPhoneCallingCode: "''",
         additionalPhones: null,
       };
+    case FieldMetadataType.RICH_TEXT:
+      return {
+        blocknote: "''",
+        markdown: "''",
+      };
     default:
       return null;
   }

@@ -43,7 +43,6 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
     case FieldMetadataType.UUID:
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return { type: 'string' };
     case FieldMetadataType.DATE_TIME:
       return { type: 'string', format: 'date-time' };
@@ -267,6 +266,19 @@ const getSchemaComponentsProperties = ({
             },
           },
           type: 'object',
+        };
+        break;
+      case FieldMetadataType.RICH_TEXT:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            blocknote: {
+              type: 'string',
+            },
+            markdown: {
+              type: 'string',
+            },
+          },
         };
         break;
       default:

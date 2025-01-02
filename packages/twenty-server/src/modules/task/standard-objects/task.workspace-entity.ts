@@ -5,6 +5,7 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RichTextMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -37,7 +38,7 @@ const BODY_FIELD_NAME = 'body';
 
 export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
+  { name: `${BODY_FIELD_NAME}Blocknote`, type: FieldMetadataType.RICH_TEXT }, // TODO: Check later if and how this works
 ];
 
 @WorkspaceEntity({
@@ -79,7 +80,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: string | null;
+  [BODY_FIELD_NAME]: RichTextMetadata | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,

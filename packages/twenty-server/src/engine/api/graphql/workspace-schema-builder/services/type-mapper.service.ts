@@ -80,7 +80,6 @@ export class TypeMapperService {
         FieldMetadataType.ARRAY,
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
-      [FieldMetadataType.RICH_TEXT, GraphQLString],
       [FieldMetadataType.TS_VECTOR, GraphQLString],
     ]);
 
@@ -115,7 +114,6 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
-      [FieldMetadataType.RICH_TEXT, StringFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],
@@ -141,7 +139,6 @@ export class TypeMapperService {
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
-      [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
       [FieldMetadataType.TS_VECTOR, OrderByDirectionType], // TODO: Add TSVectorOrderByType
     ]);

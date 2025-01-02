@@ -21,7 +21,7 @@ export class ActivityQueryResultGetterHandler
       return activity;
     }
 
-    const body: RichTextBody = JSON.parse(activity.body);
+    const body: RichTextBody = JSON.parse(activity.body.blocknote);
 
     const bodyWithSignedPayload = await Promise.all(
       body.map(async (block: RichTextBlock) => {
@@ -51,7 +51,10 @@ export class ActivityQueryResultGetterHandler
 
     return {
       ...activity,
-      body: JSON.stringify(bodyWithSignedPayload),
+      body: {
+        blocknote: JSON.stringify(bodyWithSignedPayload),
+        markdown: activity.body.markdown,
+      },
     };
   }
 }

@@ -26,7 +26,7 @@ export const useRichTextFieldDisplay = () => {
     fieldName,
   );
 
-  const fieldValueParsed = parseJson<PartialBlock[]>(fieldValue);
+  const fieldValueParsed = parseJson<PartialBlock[]>(fieldValue?.blocknote);
 
   return {
     fieldDefinition,

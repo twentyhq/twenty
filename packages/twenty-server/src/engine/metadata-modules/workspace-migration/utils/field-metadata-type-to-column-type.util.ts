@@ -15,7 +15,6 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.UUID:
       return 'uuid';
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ARRAY:
       return 'text';
     case FieldMetadataType.NUMERIC:
