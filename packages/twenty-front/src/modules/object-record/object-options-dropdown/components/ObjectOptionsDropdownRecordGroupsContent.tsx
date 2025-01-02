@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
@@ -76,7 +77,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const {
     handleRecordGroupOrderChangeWithModal,
-    RecordGroupReorderConfirmationModal,
+    handleRecordGroupReorderConfirmClick,
   } = useRecordGroupReorderConfirmationModal({
     recordIndexId,
     viewType,
@@ -148,7 +149,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           </DropdownMenuItemsContainer>
         </>
       )}
-      {RecordGroupReorderConfirmationModal}
+      <RecordGroupReorderConfirmationModal
+        onConfirmClick={handleRecordGroupReorderConfirmClick}
+      />
     </>
   );
 };

@@ -1,16 +1,16 @@
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
+import { isRecordGroupReorderConfirmationModalVisibleState } from '@/object-record/record-group/states/isRecordGroupReorderConfirmationModalVisibleState';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewType } from '@/views/types/ViewType';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useSetRecoilState } from 'recoil';
 
 type UseRecordGroupReorderConfirmationModalParams = {
   recordIndexId: string;
@@ -26,8 +26,9 @@ export const useRecordGroupReorderConfirmationModal = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const [isReorderConfirmationModalOpen, setIsReorderConfirmationModalOpen] =
-    useState(false);
+  const setIsRecordGroupReorderConfirmationModalVisible = useSetRecoilState(
+    isRecordGroupReorderConfirmationModalVisibleState,
+  );
 
   const [pendingDragEndReorder, setPendingDragEndReorder] =
     useState<Parameters<OnDragEndResponder> | null>(null);
@@ -42,7 +43,7 @@ export const useRecordGroupReorderConfirmationModal = ({
     recordIndexRecordGroupIsDraggableSortComponentSelector,
   );
 
-  const [recordGroupSort, setRecordGroupSort] = useRecoilComponentStateV2(
+  const setRecordGroupSort = useSetRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -51,7 +52,7 @@ export const useRecordGroupReorderConfirmationModal = ({
     provided,
   ) => {
     if (!isDragableSortRecordGroup) {
-      setIsReorderConfirmationModalOpen(true);
+      setIsRecordGroupReorderConfirmationModalVisible(true);
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndReorder([result, provided]);
     } else {
@@ -72,18 +73,6 @@ export const useRecordGroupReorderConfirmationModal = ({
 
   return {
     handleRecordGroupOrderChangeWithModal,
-    RecordGroupReorderConfirmationModal: isReorderConfirmationModalOpen
-      ? createPortal(
-          <ConfirmationModal
-            isOpen={isReorderConfirmationModalOpen}
-            setIsOpen={setIsReorderConfirmationModalOpen}
-            title="Group sorting"
-            subtitle={`Would you like to remove ${recordGroupSort} group sorting ?`}
-            onConfirmClick={handleConfirmClick}
-            deleteButtonText="Remove"
-          />,
-          document.body,
-        )
-      : null,
+    handleRecordGroupReorderConfirmClick: handleConfirmClick,
   };
 };
