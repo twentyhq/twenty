@@ -36,6 +36,5 @@ test.describe('', () => {
 
   test('Syncing all workspaces', async () => {
     await sh('npx nx run twenty-server:command workspace:sync-metadata -f');
-    await sh('npx nx run twenty-server:command workspace:sync-metadata -f');
   });
 });
