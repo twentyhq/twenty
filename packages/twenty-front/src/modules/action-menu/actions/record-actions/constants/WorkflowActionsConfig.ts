@@ -1,3 +1,7 @@
+import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
+import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
@@ -14,8 +18,8 @@ import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/reco
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
 import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -24,6 +28,7 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
+  IconDatabaseExport,
   IconHeart,
   IconHeartOff,
   IconHistory,
@@ -35,10 +40,10 @@ import {
   IconTrashX,
 } from 'twenty-ui';
 
-export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
+export const WORKFLOW_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: SingleRecordActionHook;
+    actionHook: ActionHook;
   }
 > = {
   activateWorkflowDraftSingleRecord: {
@@ -229,13 +234,26 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     ],
     actionHook: useDeleteSingleRecordAction,
   },
+  deleteMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.DELETE,
+    label: 'Delete records',
+    shortLabel: 'Delete',
+    position: 14,
+    Icon: IconTrash,
+    accent: 'danger',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    actionHook: useDeleteMultipleRecordsAction,
+  },
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
     label: 'Permanently destroy record',
     shortLabel: 'Destroy',
-    position: 14,
+    position: 15,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: false,
@@ -244,5 +262,31 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     actionHook: useDestroySingleRecordAction,
+  },
+  exportMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.EXPORT,
+    label: 'Export records',
+    shortLabel: 'Export',
+    position: 16,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    actionHook: useExportMultipleRecordsAction,
+  },
+  exportView: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: NoSelectionRecordActionKeys.EXPORT_VIEW,
+    label: 'Export view',
+    shortLabel: 'Export',
+    position: 17,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    actionHook: useExportMultipleRecordsAction,
   },
 };
