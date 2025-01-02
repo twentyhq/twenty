@@ -41,6 +41,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type SettingsNavigationItem = {
   label: string;
@@ -80,10 +81,14 @@ export const SettingsNavigationDrawerItems = () => {
 
   const billing = useRecoilValue(billingState);
   const isFunctionSettingsEnabled = useIsFeatureEnabled(
-    'IS_FUNCTION_SETTINGS_ENABLED',
+    FeatureFlagKey.IsFunctionSettingsEnabled,
   );
-  const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
-  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isFreeAccessEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsFreeAccessEnabled,
+  );
+  const isCRMMigrationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCrmMigrationEnabled,
+  );
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 

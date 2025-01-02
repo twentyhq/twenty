@@ -1,4 +1,8 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import {
   GithubVersionLink,
   IconAt,
@@ -17,10 +21,17 @@ import {
   IconUsers,
 } from 'twenty-ui';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -33,8 +44,29 @@ import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,
-  decorators: [ComponentWithRouterDecorator, SnackBarDecorator],
-  parameters: { layout: 'fullscreen' },
+  decorators: [
+    ComponentWithRouterDecorator,
+    SnackBarDecorator,
+    ObjectMetadataItemsDecorator,
+    PrefetchLoadedDecorator,
+    (Story) => {
+      const setCurrentWorkspaceMember = useSetRecoilState(
+        currentWorkspaceMemberState,
+      );
+      const setObjectMetadataItems = useSetRecoilState(
+        objectMetadataItemsState,
+      );
+      useEffect(() => {
+        setObjectMetadataItems(generatedMockObjectMetadataItems);
+        setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+      }, [setObjectMetadataItems, setCurrentWorkspaceMember]);
+      return <Story />;
+    },
+  ],
+  parameters: {
+    layout: 'fullscreen',
+    msw: graphqlMocks,
+  },
   argTypes: { children: { control: false }, footer: { control: false } },
 };
 
@@ -86,6 +118,11 @@ export const Default: Story = {
       </>
     ),
     footer: null,
+  },
+  play: async () => {
+    const canvas = within(document.body);
+
+    expect(await canvas.findByText('Workspace')).toBeInTheDocument();
   },
 };
 
@@ -149,5 +186,10 @@ export const Settings: Story = {
       </>
     ),
     footer: <GithubVersionLink version={jsonPage.version} />,
+  },
+  play: async () => {
+    const canvas = within(document.body);
+
+    expect(await canvas.findByText('User')).toBeInTheDocument();
   },
 };

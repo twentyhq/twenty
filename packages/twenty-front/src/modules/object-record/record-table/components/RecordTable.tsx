@@ -22,6 +22,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRef } from 'react';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -36,7 +37,7 @@ export const RecordTable = () => {
   const tableBodyRef = useRef<HTMLTableElement>(null);
 
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   const { toggleClickOutsideListener } = useClickOutsideListener(

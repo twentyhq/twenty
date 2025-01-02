@@ -26,9 +26,12 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
-  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
 
   const {
     viewType,
