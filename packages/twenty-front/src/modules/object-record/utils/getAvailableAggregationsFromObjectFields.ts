@@ -16,6 +16,13 @@ export const getAvailableAggregationsFromObjectFields = (
   fields: FieldMetadataItem[],
 ): Aggregations => {
   return fields.reduce<Record<string, NameForAggregation>>((acc, field) => {
+    if (field.type === FieldMetadataType.Relation) {
+      acc[field.name] = {
+        [AGGREGATE_OPERATIONS.count]: 'totalCount',
+      };
+      return acc;
+    }
+
     const columnName = getColumnNameForAggregateOperation(
       field.name,
       field.type,

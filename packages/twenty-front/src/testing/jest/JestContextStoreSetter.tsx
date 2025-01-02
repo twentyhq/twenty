@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import {
   ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
@@ -13,10 +14,12 @@ export const JestContextStoreSetter = ({
     mode: 'selection',
     selectedRecordIds: [],
   },
+  contextStoreNumberOfSelectedRecords = 0,
   contextStoreCurrentObjectMetadataNameSingular = '',
   children,
 }: {
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
+  contextStoreNumberOfSelectedRecords?: number;
   contextStoreCurrentObjectMetadataNameSingular?: string;
   children: ReactNode;
 }) => {
@@ -26,6 +29,10 @@ export const JestContextStoreSetter = ({
 
   const setContextStoreCurrentObjectMetadataId = useSetRecoilComponentStateV2(
     contextStoreCurrentObjectMetadataIdComponentState,
+  );
+
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -38,12 +45,15 @@ export const JestContextStoreSetter = ({
   useEffect(() => {
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
     setContextStoreCurrentObjectMetadataId(contextStoreCurrentObjectMetadataId);
+    setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
     setIsLoaded(true);
   }, [
     setContextStoreTargetedRecordsRule,
     setContextStoreCurrentObjectMetadataId,
     contextStoreTargetedRecordsRule,
     contextStoreCurrentObjectMetadataId,
+    setContextStoreNumberOfSelectedRecords,
+    contextStoreNumberOfSelectedRecords,
   ]);
 
   return isLoaded ? <>{children}</> : null;

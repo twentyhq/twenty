@@ -1,132 +1,87 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { expect } from '@storybook/test';
-import { renderHook } from '@testing-library/react';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import { useDeleteMultipleRecordsAction } from '../useDeleteMultipleRecordsAction';
+
+const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'person',
+)!;
+
+const peopleMock = getPeopleMock();
+
+const deleteManyRecordsMock = jest.fn();
+const resetTableRowSelectionMock = jest.fn();
 
 jest.mock('@/object-record/hooks/useDeleteManyRecords', () => ({
   useDeleteManyRecords: () => ({
-    deleteManyRecords: jest.fn(),
+    deleteManyRecords: deleteManyRecordsMock,
   }),
 }));
-jest.mock('@/favorites/hooks/useDeleteFavorite', () => ({
-  useDeleteFavorite: () => ({
-    deleteFavorite: jest.fn(),
-  }),
+
+jest.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
+  useLazyFetchAllRecords: () => {
+    return {
+      fetchAllRecords: () => [peopleMock[0], peopleMock[1]],
+    };
+  },
 }));
-jest.mock('@/favorites/hooks/useFavorites', () => ({
-  useFavorites: () => ({
-    sortedFavorites: [],
-  }),
-}));
+
 jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
   useRecordTable: () => ({
-    resetTableRowSelection: jest.fn(),
+    resetTableRowSelection: resetTableRowSelectionMock,
   }),
 }));
 
-const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-)!;
-
-const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
-  onInitializeRecoilSnapshot: ({ set }) => {
-    set(
-      contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-        instanceId: '1',
-      }),
-      3,
-    );
+  componentInstanceId: '1',
+  contextStoreCurrentObjectMetadataNameSingular:
+    personMockObjectMetadataItem.nameSingular,
+  contextStoreTargetedRecordsRule: {
+    mode: 'selection',
+    selectedRecordIds: [peopleMock[0].id, peopleMock[1].id],
+  },
+  contextStoreNumberOfSelectedRecords: 2,
+  onInitializeRecoilSnapshot: (snapshot) => {
+    snapshot.set(recordStoreFamilyState(peopleMock[0].id), peopleMock[0]);
+    snapshot.set(recordStoreFamilyState(peopleMock[1].id), peopleMock[1]);
   },
 });
 
 describe('useDeleteMultipleRecordsAction', () => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <JestMetadataAndApolloMocksWrapper>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: '1',
-        }}
-      >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{
-            instanceId: '1',
-          }}
-        >
-          {children}
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
-    </JestMetadataAndApolloMocksWrapper>
-  );
-
-  it('should register delete action', () => {
+  it('should call deleteManyRecords on click', async () => {
     const { result } = renderHook(
-      () => {
-        const actionMenuEntries = useRecoilComponentValueV2(
-          actionMenuEntriesComponentState,
-        );
-
-        return {
-          actionMenuEntries,
-          useDeleteMultipleRecordsAction: useDeleteMultipleRecordsAction({
-            objectMetadataItem: companyMockObjectMetadataItem,
-          }),
-        };
+      () =>
+        useDeleteMultipleRecordsAction({
+          objectMetadataItem: personMockObjectMetadataItem,
+        }),
+      {
+        wrapper,
       },
-      { wrapper },
     );
 
-    act(() => {
-      result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
-        { position: 1 },
-      );
-    });
-
-    expect(result.current.actionMenuEntries.size).toBe(1);
-    expect(
-      result.current.actionMenuEntries.get('delete-multiple-records'),
-    ).toBeDefined();
-    expect(
-      result.current.actionMenuEntries.get('delete-multiple-records')?.position,
-    ).toBe(1);
-  });
-
-  it('should unregister delete action', () => {
-    const { result } = renderHook(
-      () => {
-        const actionMenuEntries = useRecoilComponentValueV2(
-          actionMenuEntriesComponentState,
-        );
-
-        return {
-          actionMenuEntries,
-          useDeleteMultipleRecordsAction: useDeleteMultipleRecordsAction({
-            objectMetadataItem: companyMockObjectMetadataItem,
-          }),
-        };
-      },
-      { wrapper },
-    );
+    expect(result.current.ConfirmationModal?.props?.isOpen).toBe(false);
 
     act(() => {
-      result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
-        { position: 1 },
-      );
+      result.current.onClick();
     });
 
-    expect(result.current.actionMenuEntries.size).toBe(1);
+    expect(result.current.ConfirmationModal?.props?.isOpen).toBe(true);
 
     act(() => {
-      result.current.useDeleteMultipleRecordsAction.unregisterDeleteMultipleRecordsAction();
+      result.current.ConfirmationModal?.props?.onConfirmClick();
     });
 
-    expect(result.current.actionMenuEntries.size).toBe(0);
+    await waitFor(() => {
+      expect(resetTableRowSelectionMock).toHaveBeenCalled();
+
+      expect(deleteManyRecordsMock).toHaveBeenCalledWith([
+        peopleMock[0].id,
+        peopleMock[1].id,
+      ]);
+    });
   });
 });

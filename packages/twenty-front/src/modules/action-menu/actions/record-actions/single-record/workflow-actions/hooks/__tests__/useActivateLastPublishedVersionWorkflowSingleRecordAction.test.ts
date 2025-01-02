@@ -56,10 +56,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 describe('useActivateLastPublishedVersionWorkflowSingleRecordAction', () => {
   it('should be registered', () => {
     const { result } = renderHook(
-      () =>
-        useActivateLastPublishedVersionWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
-        }),
+      () => useActivateLastPublishedVersionWorkflowSingleRecordAction(),
       {
         wrapper,
       },
@@ -70,10 +67,7 @@ describe('useActivateLastPublishedVersionWorkflowSingleRecordAction', () => {
 
   it('should call activateWorkflowVersion on click', () => {
     const { result } = renderHook(
-      () =>
-        useActivateLastPublishedVersionWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
-        }),
+      () => useActivateLastPublishedVersionWorkflowSingleRecordAction(),
       {
         wrapper,
       },

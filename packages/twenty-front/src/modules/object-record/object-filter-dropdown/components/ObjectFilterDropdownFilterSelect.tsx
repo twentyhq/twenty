@@ -22,6 +22,7 @@ import { availableFilterDefinitionsComponentState } from '@/views/states/availab
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -146,7 +147,7 @@ export const ObjectFilterDropdownFilterSelect = ({
     useGetCurrentView();
 
   const isAdvancedFiltersEnabled = useIsFeatureEnabled(
-    'IS_ADVANCED_FILTERS_ENABLED',
+    FeatureFlagKey.IsAdvancedFiltersEnabled,
   );
 
   const shouldShowAdvancedFilterButton =

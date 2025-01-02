@@ -26,6 +26,10 @@ export const getAvailableAggregationsFromObjectFields = (
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {
+      if (field.type === FieldMetadataType.RELATION) {
+        return acc;
+      }
+
       const columnName = getColumnNameForAggregateOperation(
         field.name,
         field.type,
