@@ -24,9 +24,12 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
-  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
 
   const { currentContentId, recordIndexId, onContentChange, resetContent } =
     useOptionsDropdown();

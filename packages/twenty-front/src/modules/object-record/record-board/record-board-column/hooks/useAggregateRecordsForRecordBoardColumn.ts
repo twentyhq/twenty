@@ -12,11 +12,12 @@ import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/s
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateRecordsForRecordBoardColumn = () => {
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   const { columnDefinition, recordCount } = useContext(

@@ -1,11 +1,11 @@
-import { FunctionInput } from '@/workflow/types/FunctionInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { isObject } from '@sniptt/guards';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { FunctionInput } from '@/workflow/workflow-actions/types/FunctionInput';
+import styled from '@emotion/styled';
+import { isObject } from '@sniptt/guards';
+import { ReactNode } from 'react';
 
 const StyledContainer = styled.div`
   display: inline-flex;

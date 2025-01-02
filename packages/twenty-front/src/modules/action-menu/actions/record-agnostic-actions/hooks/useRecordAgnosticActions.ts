@@ -1,8 +1,11 @@
 import { useWorkflowRunActions } from '@/action-menu/actions/record-agnostic-actions/workflow-run-actions/hooks/useWorkflowRunActions';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordAgnosticActions = () => {
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
 
   const { addWorkflowRunActions, removeWorkflowRunActions } =
     useWorkflowRunActions();

@@ -1,7 +1,8 @@
-import { renderHook } from '@testing-library/react';
-import { useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
+import { renderHook } from '@testing-library/react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
@@ -13,6 +14,17 @@ jest.mock('@/auth/hooks/useAuth', () => ({
 }));
 
 describe('useSignInWithMicrosoft', () => {
+  const Wrapper = getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: [],
+  });
+
+  const mockBillingCheckoutSession = {
+    plan: 'PRO',
+    interval: 'Month',
+    requirePaymentMethod: true,
+    skipPlanPage: false,
+  };
+
   it('should call signInWithMicrosoft with the correct parameters', () => {
     const workspaceInviteHashMock = 'testHash';
     const inviteTokenMock = 'testToken';
@@ -28,12 +40,15 @@ describe('useSignInWithMicrosoft', () => {
       signInWithMicrosoft: signInWithMicrosoftMock,
     });
 
-    const { result } = renderHook(() => useSignInWithMicrosoft());
+    const { result } = renderHook(() => useSignInWithMicrosoft(), {
+      wrapper: Wrapper,
+    });
     result.current.signInWithMicrosoft();
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
       workspaceInviteHash: workspaceInviteHashMock,
       workspacePersonalInviteToken: inviteTokenMock,
+      billingCheckoutSession: mockBillingCheckoutSession,
     });
   });
 
@@ -49,10 +64,13 @@ describe('useSignInWithMicrosoft', () => {
       signInWithMicrosoft: signInWithMicrosoftMock,
     });
 
-    const { result } = renderHook(() => useSignInWithMicrosoft());
+    const { result } = renderHook(() => useSignInWithMicrosoft(), {
+      wrapper: Wrapper,
+    });
     result.current.signInWithMicrosoft();
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
+      billingCheckoutSession: mockBillingCheckoutSession,
       workspaceInviteHash: workspaceInviteHashMock,
       workspacePersonalInviteToken: undefined,
     });
