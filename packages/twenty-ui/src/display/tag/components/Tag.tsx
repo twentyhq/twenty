@@ -21,6 +21,7 @@ const StyledTag = styled.h3<{
   weight: TagWeight;
   variant: TagVariant;
   preventShrink?: boolean;
+  preventPadding?: boolean;
 }>`
   align-items: center;
   background: ${({ color, theme }) => {
@@ -52,7 +53,7 @@ const StyledTag = styled.h3<{
   height: ${spacing5};
   margin: 0;
   overflow: hidden;
-  padding: 0 ${spacing2};
+  padding: ${({ preventPadding }) => (preventPadding ? '0' : `0 ${spacing2}`)};
   border: ${({ variant, theme }) =>
     variant === 'outline' || variant === 'border'
       ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
@@ -91,6 +92,7 @@ type TagProps = {
   weight?: TagWeight;
   variant?: TagVariant;
   preventShrink?: boolean;
+  preventPadding?: boolean;
 };
 
 // TODO: Find a way to have ellipsis and shrinkable tag in tag list while keeping good perf for table cells
@@ -103,6 +105,7 @@ export const Tag = ({
   weight = 'regular',
   variant = 'solid',
   preventShrink,
+  preventPadding,
 }: TagProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -115,6 +118,7 @@ export const Tag = ({
       weight={weight}
       variant={variant}
       preventShrink={preventShrink}
+      preventPadding={preventPadding}
     >
       {isDefined(Icon) ? (
         <StyledIconContainer>
