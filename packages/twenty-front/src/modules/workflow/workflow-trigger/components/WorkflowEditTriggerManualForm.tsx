@@ -4,8 +4,8 @@ import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
 } from '@/workflow/types/Workflow';
-import { WorkflowStepBody } from '@/workflow/workflow-step/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
