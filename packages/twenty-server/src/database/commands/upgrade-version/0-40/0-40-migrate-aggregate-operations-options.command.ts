@@ -34,7 +34,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 @Command({
   name: 'upgrade-0.40:migrate-aggregate-operation-options',
-  description: 'Add calling code and change country code with default one',
+  description: 'Add aggregate operations options to relevant fields',
 })
 export class MigrateAggregateOperationOptionsCommand extends ActiveWorkspacesCommandRunner {
   constructor(
