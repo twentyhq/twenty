@@ -71,7 +71,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         isExpanded={shouldSubItemsBeDisplayed}
         dimension="height"
         mode="fit-content"
-        useThemeAnimation
         containAnimation
       >
         {sortedObjectMetadataViews.map((view, index) => (

@@ -8,14 +8,13 @@ type AnimationDimension = 'width' | 'height';
 type AnimationMode = 'scroll-height' | 'fit-content';
 type Size = number | 'fit-content';
 
-type UseExpandedAnimationProps = {
-  isExpanded: boolean;
-  dimension: AnimationDimension;
-  mode: AnimationMode;
-  opacityDuration?: number;
-  sizeDuration?: number;
-  useThemeAnimation: boolean;
+type DurationsObject = {
+  opacity: number;
+  size: number;
 };
+
+type AnimationDurations = DurationsObject | 'default';
+
 const StyledMotionContainer = styled(motion.div)<{
   containAnimation: boolean;
 }>`
@@ -29,25 +28,21 @@ const StyledMotionContainer = styled(motion.div)<{
   `}
 `;
 
+type UseExpandedAnimationProps = {
+  isExpanded: boolean;
+  dimension: AnimationDimension;
+  mode: AnimationMode;
+  durations: DurationsObject;
+};
+
 export const useExpandedAnimation = ({
   isExpanded,
   dimension,
   mode,
-  opacityDuration,
-  sizeDuration,
-  useThemeAnimation,
+  durations,
 }: UseExpandedAnimationProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<Size>(0);
-  const theme = useTheme();
-
-  const actualSizeDuration = useThemeAnimation
-    ? theme.animation.duration.normal
-    : sizeDuration;
-
-  const actualOpacityDuration = useThemeAnimation
-    ? theme.animation.duration.normal
-    : opacityDuration;
 
   useLayoutEffect(() => {
     if (
@@ -62,8 +57,8 @@ export const useExpandedAnimation = ({
   const motionAnimationVariants = expandableAnimationConfig(
     isExpanded,
     dimension,
-    actualOpacityDuration ?? 0,
-    actualSizeDuration ?? 0,
+    durations.opacity,
+    durations.size,
     mode === 'fit-content' ? 'fit-content' : size,
   );
 
@@ -131,10 +126,8 @@ type AnimatedExpandableContainerProps = {
   children: ReactNode;
   isExpanded: boolean;
   dimension?: AnimationDimension;
-  opacityDuration?: number;
-  sizeDuration?: number;
+  animationDurations?: AnimationDurations;
   mode?: AnimationMode;
-  useThemeAnimation?: boolean;
   containAnimation?: boolean;
 };
 
@@ -142,20 +135,26 @@ export const AnimatedExpandableContainer = ({
   children,
   isExpanded,
   dimension = 'height',
-  opacityDuration = 0.3,
-  sizeDuration = 0.3,
+  animationDurations = 'default',
   mode = 'scroll-height',
-  useThemeAnimation = false,
   containAnimation = true,
 }: AnimatedExpandableContainerProps) => {
+  const theme = useTheme();
+  const actualDurations: DurationsObject =
+    animationDurations === 'default'
+      ? {
+          opacity: theme.animation.duration.normal,
+          size: theme.animation.duration.normal,
+        }
+      : animationDurations;
+
   const { contentRef, motionAnimationVariants } = useExpandedAnimation({
     isExpanded,
     dimension,
     mode,
-    opacityDuration,
-    sizeDuration,
-    useThemeAnimation,
+    durations: actualDurations,
   });
+
   return (
     <AnimatePresence>
       {isExpanded && (

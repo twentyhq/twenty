@@ -63,7 +63,7 @@ export const UnmatchColumn = <T extends string>({
         isExpanded={isExpanded}
         dimension="height"
         mode="scroll-height"
-        useThemeAnimation
+        containAnimation
       >
         <StyledContentWrapper>
           {column.matchedOptions.map((option) => (

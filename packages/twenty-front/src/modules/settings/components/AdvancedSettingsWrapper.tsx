@@ -55,8 +55,7 @@ export const AdvancedSettingsWrapper = ({
     <AnimatedExpandableContainer
       isExpanded={isAdvancedModeEnabled}
       dimension={dimension}
-      opacityDuration={ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}
-      sizeDuration={ADVANCED_SETTINGS_ANIMATION_DURATION.size}
+      animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
       mode="scroll-height"
       containAnimation={false}
     >

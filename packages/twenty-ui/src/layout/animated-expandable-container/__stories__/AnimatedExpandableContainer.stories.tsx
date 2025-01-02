@@ -49,9 +49,12 @@ type AnimatedExpandableContainerWithButtonProps = {
   isExpanded: boolean;
   dimension: 'width' | 'height';
   mode: 'scroll-height' | 'fit-content';
-  opacityDuration: number;
-  sizeDuration: number;
-  useThemeAnimation: boolean;
+  animationDurations:
+    | {
+        opacity: number;
+        size: number;
+      }
+    | 'default';
 };
 
 const AnimatedExpandableContainerWithButton = ({
@@ -69,9 +72,7 @@ const AnimatedExpandableContainerWithButton = ({
         isExpanded={isExpanded}
         dimension={args.dimension}
         mode={args.mode}
-        opacityDuration={args.opacityDuration}
-        sizeDuration={args.sizeDuration}
-        useThemeAnimation={args.useThemeAnimation}
+        animationDurations={args.animationDurations}
       >
         <StyledExpandableWrapper>
           <StyledContent dimension={args.dimension} mode={args.mode}>
@@ -116,20 +117,15 @@ const meta: Meta<typeof AnimatedExpandableContainerWithButton> = {
       description: 'How the container should calculate its expanded size',
       defaultValue: 'scroll-height',
     },
-    opacityDuration: {
-      control: 'number',
-      description: 'Duration of the opacity animation in seconds',
-      defaultValue: 0.3,
-    },
-    sizeDuration: {
-      control: 'number',
-      description: 'Duration of the size animation in seconds',
-      defaultValue: 0.3,
-    },
-    useThemeAnimation: {
-      control: 'boolean',
-      description: 'Whether to use theme-based animation duration',
-      defaultValue: false,
+    animationDurations: {
+      control: 'radio',
+      options: ['default', 'custom'],
+      mapping: {
+        default: 'default',
+        custom: { opacity: 0.3, size: 0.3 },
+      },
+      description:
+        'Animation durations - either default theme values or custom values',
     },
   },
 };
@@ -142,9 +138,7 @@ export const Default: Story = {
     isExpanded: false,
     dimension: 'height',
     mode: 'scroll-height',
-    opacityDuration: 0.3,
-    sizeDuration: 0.3,
-    useThemeAnimation: false,
+    animationDurations: 'default',
   },
 };
 
@@ -155,18 +149,10 @@ export const FitContent: Story = {
   },
 };
 
-export const ThemeAnimation: Story = {
-  args: {
-    ...Default.args,
-    useThemeAnimation: true,
-  },
-};
-
 export const CustomDurations: Story = {
   args: {
     ...Default.args,
-    opacityDuration: 0.8,
-    sizeDuration: 1.2,
+    animationDurations: { opacity: 0.8, size: 1.2 },
   },
 };
 

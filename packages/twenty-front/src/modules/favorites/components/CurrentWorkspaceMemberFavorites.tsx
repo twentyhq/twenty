@@ -163,7 +163,6 @@ export const CurrentWorkspaceMemberFavorites = ({
           isExpanded={isOpen}
           dimension="height"
           mode="fit-content"
-          useThemeAnimation
           containAnimation
         >
           <Droppable droppableId={`folder-${folder.folderId}`}>
