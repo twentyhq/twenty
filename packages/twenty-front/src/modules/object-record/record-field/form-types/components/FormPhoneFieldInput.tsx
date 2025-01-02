@@ -28,7 +28,7 @@ export const FormPhoneFieldInput = ({
     onPersist({
       primaryPhoneCountryCode: newCountry,
       primaryPhoneCallingCode: newCallingCode,
-      primaryPhoneNumber: '',
+      primaryPhoneNumber: defaultValue?.primaryPhoneNumber || '',
     });
   };
 
