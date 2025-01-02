@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 

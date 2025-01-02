@@ -15,6 +15,7 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { RecordShowPageWorkflowVersionHeader } from '@/workflow/components/RecordShowPageWorkflowVersionHeader';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
@@ -40,7 +41,7 @@ export const RecordShowPage = () => {
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   return (

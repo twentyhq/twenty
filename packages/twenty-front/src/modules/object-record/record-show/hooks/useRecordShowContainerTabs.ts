@@ -17,6 +17,7 @@ import {
   IconSettings,
 } from 'twenty-ui';
 import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -149,7 +150,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -169,7 +170,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -188,7 +189,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
@@ -202,7 +203,7 @@ export const useRecordShowContainerTabs = (
             ifMobile: false,
             ifDesktop: false,
             ifInRightDrawer: false,
-            ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+            ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
             ifRequiredObjectsInactive: [],
             ifRelationsMissing: [],
           },
