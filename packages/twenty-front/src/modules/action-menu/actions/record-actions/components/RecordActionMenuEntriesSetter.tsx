@@ -36,7 +36,7 @@ export const RecordActionMenuEntriesSetter = () => {
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   if (
