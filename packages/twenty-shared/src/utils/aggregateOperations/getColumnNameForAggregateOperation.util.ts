@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'src/types/FieldMetadataType';
-import { getSubfieldForAggregateOperation } from 'src/utils/aggregateOperations/getSubfieldForAggregateOperation.util';
+import { getSubfieldForAggregateOperation } from 'src/utils/aggregateOperations/getSubFieldForAggregateOperation.util';
 import { isCompositeFieldMetadataType } from 'src/utils/aggregateOperations/isCompositeFieldMetadataType.util';
 import { capitalize } from 'src/utils/strings/capitalize';
 
