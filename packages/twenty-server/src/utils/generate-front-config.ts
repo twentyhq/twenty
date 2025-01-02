@@ -23,6 +23,10 @@ export function generateFrontConfig(): void {
   const indexPath = path.join(distPath, 'index.html');
 
   if (!fs.existsSync(indexPath)) {
+    console.log(
+      'Frontend build not found, assuming it is served independently',
+    );
+
     return;
   }
 
