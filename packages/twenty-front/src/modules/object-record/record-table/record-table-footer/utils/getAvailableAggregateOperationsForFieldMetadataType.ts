@@ -10,6 +10,10 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
 }: {
   fieldMetadataType?: FieldMetadataType;
 }) => {
+  if (fieldMetadataType === FieldMetadataType.Relation) {
+    return [AGGREGATE_OPERATIONS.count];
+  }
+
   const availableAggregateOperations = new Set<AGGREGATE_OPERATIONS>([
     AGGREGATE_OPERATIONS.count,
     AGGREGATE_OPERATIONS.countEmpty,

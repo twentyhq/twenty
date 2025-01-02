@@ -9,6 +9,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItem } from 'twenty-ui';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
   const { fieldMetadataId, dropdownId, onContentChange } = useContext(
@@ -39,6 +40,11 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
     (aggregateOperation) =>
       !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
   );
+
+  const fieldIsRelation =
+    objectMetadataItem.fields.find((field) => field.id === fieldMetadataId)
+      ?.type === FieldMetadataType.Relation;
+
   return (
     <>
       <DropdownMenuItemsContainer>
@@ -49,13 +55,15 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           text={'Count'}
           hasSubMenu
         />
-        <MenuItem
-          onClick={() => {
-            onContentChange('percentAggregateOperationsOptions');
-          }}
-          text={'Percent'}
-          hasSubMenu
-        />
+        {!fieldIsRelation && (
+          <MenuItem
+            onClick={() => {
+              onContentChange('percentAggregateOperationsOptions');
+            }}
+            text={'Percent'}
+            hasSubMenu
+          />
+        )}
         {otherAvailableAggregateOperation.length > 0 ? (
           <MenuItem
             onClick={() => {

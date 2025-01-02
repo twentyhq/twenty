@@ -15,13 +15,13 @@ export const getSubfieldForAggregateOperation = (
       case FieldMetadataType.ADDRESS:
         return 'addressStreet1';
       case FieldMetadataType.LINKS:
-        return 'linkPrimaryLinkLabel';
+        return 'primaryLinkLabel';
       case FieldMetadataType.ACTOR:
         return 'workspaceMemberId';
       case FieldMetadataType.EMAILS:
         return 'primaryEmail';
       case FieldMetadataType.PHONES:
-        return 'primaryPhone';
+        return 'primaryPhoneNumber';
       default:
         throw new Error(`Unsupported composite field type: ${fieldType}`);
     }
