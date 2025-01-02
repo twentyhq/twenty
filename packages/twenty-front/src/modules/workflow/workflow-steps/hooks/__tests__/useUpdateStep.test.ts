@@ -11,11 +11,14 @@ jest.mock('recoil', () => ({
   atom: (params: any) => params,
 }));
 
-jest.mock('@/workflow/hooks/useUpdateWorkflowVersionStep', () => ({
-  useUpdateWorkflowVersionStep: () => ({
-    updateWorkflowVersionStep: mockUpdateWorkflowVersionStep,
+jest.mock(
+  '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep',
+  () => ({
+    useUpdateWorkflowVersionStep: () => ({
+      updateWorkflowVersionStep: mockUpdateWorkflowVersionStep,
+    }),
   }),
-}));
+);
 
 jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
   useCreateNewWorkflowVersion: () => ({

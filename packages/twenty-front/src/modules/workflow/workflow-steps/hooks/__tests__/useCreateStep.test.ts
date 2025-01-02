@@ -20,11 +20,14 @@ jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useCreateWorkflowVersionStep', () => ({
-  useCreateWorkflowVersionStep: () => ({
-    createWorkflowVersionStep: mockCreateWorkflowVersionStep,
+jest.mock(
+  '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep',
+  () => ({
+    useCreateWorkflowVersionStep: () => ({
+      createWorkflowVersionStep: mockCreateWorkflowVersionStep,
+    }),
   }),
-}));
+);
 
 jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
   useCreateNewWorkflowVersion: () => ({
