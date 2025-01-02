@@ -22,7 +22,6 @@ import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/fav
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
-import { seedMessageThreadSubscribers } from 'src/database/typeorm-seeds/workspace/message-thread-subscribers';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
@@ -182,12 +181,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             dataSourceMetadata.workspaceId,
           );
 
-        const isMessageThreadSubscriberEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IsMessageThreadSubscriberEnabled,
-            dataSourceMetadata.workspaceId,
-          );
-
         const isWorkflowEnabled =
           await this.featureFlagService.isFeatureEnabled(
             FeatureFlagKey.IsWorkflowEnabled,
@@ -206,13 +199,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         if (dataSourceMetadata.workspaceId === SEED_APPLE_WORKSPACE_ID) {
           await seedMessageThread(entityManager, dataSourceMetadata.schema);
           await seedConnectedAccount(entityManager, dataSourceMetadata.schema);
-
-          if (isMessageThreadSubscriberEnabled) {
-            await seedMessageThreadSubscribers(
-              entityManager,
-              dataSourceMetadata.schema,
-            );
-          }
 
           await seedMessage(entityManager, dataSourceMetadata.schema);
           await seedMessageChannel(entityManager, dataSourceMetadata.schema);
