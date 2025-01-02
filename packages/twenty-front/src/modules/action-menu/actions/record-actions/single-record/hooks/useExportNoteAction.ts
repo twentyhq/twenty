@@ -1,49 +1,51 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useExportNoteAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
-    const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
+  objectMetadataItem,
+}) => {
+  const recordId = useSelectedRecordIdOrThrow();
 
-    const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-    const isNoteOrTask =
-      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
-      objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
+  const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
-    const shouldBeRegistered =
-      isDefined(objectMetadataItem) &&
-      isDefined(selectedRecord) &&
-      isNoteOrTask;
+  const isNoteOrTask =
+    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
+    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-    const onClick = async () => {
-      if (!shouldBeRegistered || !selectedRecord?.body) {
-        return;
-      }
+  const shouldBeRegistered =
+    isDefined(objectMetadataItem) && isDefined(selectedRecord) && isNoteOrTask;
 
-      const editor = await BlockNoteEditor.create({
-        initialContent: JSON.parse(selectedRecord.body),
-      });
+  const onClick = async () => {
+    if (!shouldBeRegistered || !selectedRecord?.body) {
+      return;
+    }
 
-      const { exportBlockNoteEditorToPdf } = await import(
-        '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToPdf'
-      );
+    const editor = await BlockNoteEditor.create({
+      initialContent: JSON.parse(selectedRecord.body),
+    });
 
-      await exportBlockNoteEditorToPdf(editor, filename);
+    const { exportBlockNoteEditorToPdf } = await import(
+      '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToPdf'
+    );
 
-      // TODO later: implement DOCX export
-      // const { exportBlockNoteEditorToDocx } = await import(
-      //   '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToDocx'
-      // );
-      // await exportBlockNoteEditorToDocx(editor, filename);
-    };
+    await exportBlockNoteEditorToPdf(editor, filename);
 
-    return {
-      shouldBeRegistered,
-      onClick,
-    };
+    // TODO later: implement DOCX export
+    // const { exportBlockNoteEditorToDocx } = await import(
+    //   '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToDocx'
+    // );
+    // await exportBlockNoteEditorToDocx(editor, filename);
   };
+
+  return {
+    shouldBeRegistered,
+    onClick,
+  };
+};

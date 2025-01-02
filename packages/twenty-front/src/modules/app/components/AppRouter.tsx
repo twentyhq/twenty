@@ -4,14 +4,19 @@ import { billingState } from '@/client-config/states/billingState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const AppRouter = () => {
   const billing = useRecoilValue(billingState);
-  const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
-  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
-  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
+  const isFreeAccessEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsFreeAccessEnabled,
+  );
+  const isCRMMigrationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCrmMigrationEnabled,
+  );
+  const isSSOEnabled = useIsFeatureEnabled(FeatureFlagKey.IsSsoEnabled);
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
-    'IS_FUNCTION_SETTINGS_ENABLED',
+    FeatureFlagKey.IsFunctionSettingsEnabled,
   );
 
   const isBillingPageEnabled =

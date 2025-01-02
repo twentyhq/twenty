@@ -14,6 +14,7 @@ import { RecordGroupDefinitionType } from '@/object-record/record-group/types/Re
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -103,7 +104,7 @@ export const RecordBoardColumnHeader = () => {
   );
 
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   const { isOpportunitiesCompanyFieldDisabled } =

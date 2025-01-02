@@ -24,16 +24,18 @@ export default meta;
 
 type Story = StoryObj<typeof FormDateFieldInput>;
 
+const currentYear = new Date().getFullYear();
+
 export const Default: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Created At');
-    await canvas.findByDisplayValue('12/09/2024');
+    await canvas.findByDisplayValue('12/09/' + currentYear);
   },
 };
 
@@ -67,10 +69,12 @@ export const SetsDateWithInput: Story = {
     const dialog = await canvas.findByRole('dialog');
     expect(dialog).toBeVisible();
 
-    await userEvent.type(input, '12/08/2024{enter}');
+    await userEvent.type(input, `12/08/${currentYear}{enter}`);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith('2024-12-08T00:00:00.000Z');
+      expect(args.onPersist).toHaveBeenCalledWith(
+        `${currentYear}-12-08T00:00:00.000Z`,
+      );
     });
 
     expect(dialog).toBeVisible();
@@ -80,7 +84,7 @@ export const SetsDateWithInput: Story = {
 export const SetsDateWithDatePicker: Story = {
   args: {
     label: 'Created At',
-    defaultValue: undefined,
+    defaultValue: `2024-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -95,7 +99,7 @@ export const SetsDateWithDatePicker: Story = {
     expect(datePicker).toBeVisible();
 
     const dayToChoose = await within(datePicker).findByRole('option', {
-      name: 'Choose Saturday, December 7th, 2024',
+      name: `Choose Saturday, December 7th, 2024`,
     });
 
     await Promise.all([
@@ -104,11 +108,11 @@ export const SetsDateWithDatePicker: Story = {
       waitForElementToBeRemoved(datePicker),
       waitFor(() => {
         expect(args.onPersist).toHaveBeenCalledWith(
-          expect.stringMatching(/^2024-12-07/),
+          expect.stringMatching(new RegExp(`^2024-12-07`)),
         );
       }),
       waitFor(() => {
-        expect(canvas.getByDisplayValue('12/07/2024')).toBeVisible();
+        expect(canvas.getByDisplayValue(`12/07/2024`)).toBeVisible();
       }),
     ]);
   },
@@ -117,7 +121,7 @@ export const SetsDateWithDatePicker: Story = {
 export const ResetsDateByClickingButton: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -150,7 +154,7 @@ export const ResetsDateByClickingButton: Story = {
 export const ResetsDateByErasingInputContent: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -159,7 +163,7 @@ export const ResetsDateByErasingInputContent: Story = {
     const input = await canvas.findByPlaceholderText('mm/dd/yyyy');
     expect(input).toBeVisible();
 
-    expect(input).toHaveDisplayValue('12/09/2024');
+    expect(input).toHaveDisplayValue(`12/09/${currentYear}`);
 
     await userEvent.clear(input);
 
@@ -336,7 +340,7 @@ export const SwitchesToStandaloneVariable: Story = {
 export const ClickingOutsideDoesNotResetInputState: Story = {
   args: {
     label: 'Created At',
-    defaultValue: '2024-12-09T13:20:19.631Z',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {

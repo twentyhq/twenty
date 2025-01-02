@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 
 import { MessageThread } from '@/activities/emails/types/MessageThread';
 
