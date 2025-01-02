@@ -1,3 +1,4 @@
+import { FormFieldHint } from '@/object-record/record-field/form-types/components/FormFieldHint';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
@@ -24,6 +25,7 @@ type FormNumberFieldInputProps = {
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
   VariablePicker?: VariablePickerComponent;
+  hint?: string;
 };
 
 export const FormNumberFieldInput = ({
@@ -32,6 +34,7 @@ export const FormNumberFieldInput = ({
   defaultValue,
   onPersist,
   VariablePicker,
+  hint,
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
 
@@ -125,6 +128,8 @@ export const FormNumberFieldInput = ({
           />
         ) : null}
       </FormFieldInputRowContainer>
+
+      {hint ? <FormFieldHint>{hint}</FormFieldHint> : null}
     </FormFieldInputContainer>
   );
 };

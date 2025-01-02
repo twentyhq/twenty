@@ -6,14 +6,14 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { SelectOption } from '@/spreadsheet-import/types';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 
-export const FormCountrySelectInput = ({
-  selectedCountryName,
+export const FormCountryCodeSelectInput = ({
+  selectedCountryCode,
   onPersist,
   readonly = false,
   VariablePicker,
 }: {
-  selectedCountryName: string;
-  onPersist: (country: string) => void;
+  selectedCountryCode: string;
+  onPersist: (countryCode: string) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -21,9 +21,9 @@ export const FormCountrySelectInput = ({
 
   const options: SelectOption[] = useMemo(() => {
     const countryList = countries.map<SelectOption>(
-      ({ countryName, Flag }) => ({
-        label: countryName,
-        value: countryName,
+      ({ countryName, countryCode, callingCode, Flag }) => ({
+        label: `${countryName} (+${callingCode})`,
+        value: countryCode,
         color: 'transparent',
         icon: (props: IconComponentProps) =>
           Flag({ width: props.size, height: props.size }),
@@ -39,24 +39,24 @@ export const FormCountrySelectInput = ({
     ];
   }, [countries]);
 
-  const onChange = (country: string | null) => {
+  const onChange = (countryCode: string | null) => {
     if (readonly) {
       return;
     }
 
-    if (country === null) {
+    if (countryCode === null) {
       onPersist('');
     } else {
-      onPersist(country);
+      onPersist(countryCode);
     }
   };
 
   return (
     <FormSelectFieldInput
-      label="Country"
+      label="Country Code"
       onPersist={onChange}
       options={options}
-      defaultValue={selectedCountryName}
+      defaultValue={selectedCountryCode}
       VariablePicker={VariablePicker}
     />
   );
