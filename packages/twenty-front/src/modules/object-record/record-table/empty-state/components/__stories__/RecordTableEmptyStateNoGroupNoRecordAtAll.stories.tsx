@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
-import { RecordTableEmptyStateNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordAtAll';
+import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ComponentDecorator } from 'twenty-ui';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -10,8 +10,9 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta = {
-  title: 'Modules/ObjectRecord/RecordTable/RecordTableEmptyStateNoRecordAtAll',
-  component: RecordTableEmptyStateNoRecordAtAll,
+  title:
+    'Modules/ObjectRecord/RecordTable/RecordTableEmptyStateNoGroupNoRecordAtAll',
+  component: RecordTableEmptyStateNoGroupNoRecordAtAll,
   decorators: [
     ComponentDecorator,
     MemoryRouterDecorator,
@@ -34,6 +35,6 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RecordTableEmptyStateNoRecordAtAll>;
+type Story = StoryObj<typeof RecordTableEmptyStateNoGroupNoRecordAtAll>;
 
 export const Default: Story = {};

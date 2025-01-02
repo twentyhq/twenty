@@ -5,10 +5,14 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
+import { getColumnNameForAggregateOperation } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/utils/generateAggregateQuery');
+jest.mock('twenty-shared', () => ({
+  getColumnNameForAggregateOperation: jest.fn(),
+}));
 
 const mockObjectMetadataItem: ObjectMetadataItem = {
   nameSingular: 'company',
@@ -65,6 +69,7 @@ describe('useAggregateRecordsQuery', () => {
   });
 
   it('should handle simple count operation', () => {
+    (getColumnNameForAggregateOperation as jest.Mock).mockReturnValue('name');
     const { result } = renderHook(() =>
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
@@ -86,6 +91,7 @@ describe('useAggregateRecordsQuery', () => {
   });
 
   it('should handle field aggregation', () => {
+    (getColumnNameForAggregateOperation as jest.Mock).mockReturnValue('amount');
     const { result } = renderHook(() =>
       useAggregateRecordsQuery({
         objectNameSingular: 'company',

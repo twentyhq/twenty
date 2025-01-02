@@ -5,7 +5,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 
-export const RecordTableEmptyStateNoRecordAtAll = () => {
+export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
@@ -27,7 +27,7 @@ export const RecordTableEmptyStateNoRecordAtAll = () => {
       buttonTitle={buttonTitle}
       subTitle={subTitle}
       title={title}
-      Icon={IconPlus}
+      ButtonIcon={IconPlus}
       animatedPlaceholderType="noRecord"
       onClick={handleButtonClick}
     />
