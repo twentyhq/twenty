@@ -1,8 +1,6 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
-import express from 'express';
-
 import { AppModule } from 'src/app.module';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 
@@ -42,7 +40,13 @@ export const createApp = async (
         }
         throw new Error('Invalid signature');
       },
-    }); // or perhaps create an alternative stripe service for testing?
+      updateCustomerMetadataWorkspaceId: (
+        _customerId: string,
+        _workspaceId: string,
+      ) => {
+        return;
+      },
+    });
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);
@@ -50,15 +54,10 @@ export const createApp = async (
 
   const moduleFixture: TestingModule = await moduleBuilder.compile();
 
-  const app = moduleFixture.createNestApplication<NestExpressApplication>();
-
-  app.use(
-    express.json({
-      verify: (req: any, res, buf) => {
-        req.rawBody = buf;
-      },
-    }),
-  );
+  const app = moduleFixture.createNestApplication<NestExpressApplication>({
+    rawBody: true,
+    cors: true,
+  });
 
   if (config.appInitHook) {
     await config.appInitHook(app);

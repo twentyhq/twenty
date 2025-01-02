@@ -33,6 +33,10 @@ export class BillingWebhookProductService {
       conflictPaths: ['stripeProductId'],
       skipUpdateIfNoValuesChanged: true,
     });
+
+    return {
+      stripeProductId: data.object.id,
+    };
   }
 
   isStripeValidProductMetadata(

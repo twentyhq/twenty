@@ -63,5 +63,10 @@ export class BillingWebhookPriceService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    return {
+      stripePriceId: data.object.id,
+      stripeMeterId: meterId,
+    };
   }
 }

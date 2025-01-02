@@ -153,6 +153,7 @@ jobs:
           PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: "true"
           SPILO_PROVIDER: "local"
+          IS_BILLING_ENABLED: "true"
         ports:
           - 5432:5432
         options: >-
