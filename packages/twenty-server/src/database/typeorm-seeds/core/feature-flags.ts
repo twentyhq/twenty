@@ -78,7 +78,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsAggregateQueryEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IsPageHeaderV2Enabled,

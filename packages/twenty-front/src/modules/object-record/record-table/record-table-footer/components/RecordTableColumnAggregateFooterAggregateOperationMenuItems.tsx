@@ -2,7 +2,6 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ReactNode, useContext } from 'react';
 import { IconCheck, isDefined, MenuItem } from 'twenty-ui';
@@ -24,7 +23,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   );
   const { closeDropdown } = useDropdown(dropdownId);
   return (
-    <DropdownMenuItemsContainer>
+    <>
       {aggregateOperations.map((operation) => (
         <MenuItem
           key={operation}
@@ -55,6 +54,6 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
         }
         aria-selected={!isDefined(currentViewFieldAggregateOperation)}
       />
-    </DropdownMenuItemsContainer>
+    </>
   );
 };
