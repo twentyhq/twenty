@@ -58,7 +58,8 @@
       "runtimeArgs": ["nx", "test", "twenty-e2e-testing", "${file}"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "envFile": "${workspaceFolder}/packages/twenty-e2e-testing/.env"
     }
   ]
 }

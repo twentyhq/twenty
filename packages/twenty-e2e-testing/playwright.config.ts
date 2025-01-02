@@ -2,7 +2,14 @@ import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import path from 'path';
 
-config();
+// Load environment variables from .env file
+const envResult = config({
+  path: path.resolve(__dirname, '.env'),
+});
+
+if (envResult.error) {
+  throw new Error('Failed to load .env file');
+}
 
 /* === Run your local dev server before starting the tests === */
 
