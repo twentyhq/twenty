@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -194,9 +195,8 @@ export class MigrateAggregateOperationOptionsCommand extends ActiveWorkspacesCom
   ) {
     if (
       fieldMetadata.options.some((option) => {
-        return this.ADDITIONAL_AGGREGATE_OPERATIONS_VALUES.some(
-          (additionalAggregateOperationsValue) =>
-            additionalAggregateOperationsValue === option.value,
+        return this.ADDITIONAL_AGGREGATE_OPERATIONS_VALUES.includes(
+          option.value as AGGREGATE_OPERATIONS,
         );
       })
     ) {
@@ -208,9 +208,14 @@ export class MigrateAggregateOperationOptionsCommand extends ActiveWorkspacesCom
         ...fieldMetadata,
         options: [
           ...fieldMetadata.options,
-          ...this.ADDITIONAL_AGGREGATE_OPERATIONS,
+          ...this.ADDITIONAL_AGGREGATE_OPERATIONS.map((operation) => ({
+            ...operation,
+            id: v4(),
+          })),
         ],
       };
+
+      await this.fieldMetadataRepository.save(updatedFieldMetadata);
 
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(
