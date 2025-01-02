@@ -9,17 +9,29 @@ const StyledAdvancedWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{ navigationDrawerItem: boolean }>`
   display: flex;
-  height: 100%;
-  left: ${({ theme }) => theme.spacing(-4)};
   position: absolute;
-  top: 0;
+
+  ${({ navigationDrawerItem, theme }) => {
+    if (navigationDrawerItem) {
+      return `
+        height: 100%;
+        left: ${theme.spacing(-5)};
+        align-items: center;
+      `;
+    }
+    return `
+      left: ${theme.spacing(-4)};
+      top: ${theme.spacing(1)};
+    `;
+  }}
 `;
 
 const StyledContent = styled.div`
   width: 100%;
 `;
+
 const StyledIconPoint = styled(IconPoint)`
   margin-right: 0;
 `;
@@ -28,12 +40,14 @@ type AdvancedSettingsWrapperProps = {
   children: React.ReactNode;
   dimension?: 'width' | 'height';
   hideIcon?: boolean;
+  navigationDrawerItem?: boolean;
 };
 
 export const AdvancedSettingsWrapper = ({
   children,
   dimension = 'height',
   hideIcon = false,
+  navigationDrawerItem = false,
 }: AdvancedSettingsWrapperProps) => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
@@ -44,10 +58,11 @@ export const AdvancedSettingsWrapper = ({
       opacityDuration={ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}
       sizeDuration={ADVANCED_SETTINGS_ANIMATION_DURATION.size}
       mode="scroll-height"
+      containAnimation={false}
     >
       <StyledAdvancedWrapper>
         {!hideIcon && (
-          <StyledIconContainer>
+          <StyledIconContainer navigationDrawerItem={navigationDrawerItem}>
             <StyledIconPoint
               size={12}
               color={MAIN_COLORS.yellow}

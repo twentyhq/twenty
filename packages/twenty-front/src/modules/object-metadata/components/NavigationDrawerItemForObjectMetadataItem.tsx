@@ -5,12 +5,11 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { NavigationDrawerSubItemAnimatedExpandableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItemAnimatedExpandableContainer';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
-import { useIcons } from 'twenty-ui';
+import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -68,8 +67,12 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         active={isActive}
       />
 
-      <NavigationDrawerSubItemAnimatedExpandableContainer
-        isOpen={shouldSubItemsBeDisplayed}
+      <AnimatedExpandableContainer
+        isExpanded={shouldSubItemsBeDisplayed}
+        dimension="height"
+        mode="fit-content"
+        useThemeAnimation
+        containAnimation
       >
         {sortedObjectMetadataViews.map((view, index) => (
           <NavigationDrawerSubItem
@@ -85,7 +88,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             key={view.id}
           />
         ))}
-      </NavigationDrawerSubItemAnimatedExpandableContainer>
+      </AnimatedExpandableContainer>
     </NavigationDrawerItemsCollapsableContainer>
   );
 };

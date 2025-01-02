@@ -15,7 +15,6 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { NavigationDrawerSubItemAnimatedExpandableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItemAnimatedExpandableContainer';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { Droppable } from '@hello-pangea/dnd';
 import { useContext, useState } from 'react';
@@ -23,6 +22,7 @@ import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
+  AnimatedExpandableContainer,
   IconFolder,
   IconFolderOpen,
   IconHeartOff,
@@ -159,9 +159,12 @@ export const CurrentWorkspaceMemberFavorites = ({
           </FavoritesDroppable>
         )}
 
-        <NavigationDrawerSubItemAnimatedExpandableContainer
-          isOpen={isOpen}
-          key={`folder-${folder.folderId}`}
+        <AnimatedExpandableContainer
+          isExpanded={isOpen}
+          dimension="height"
+          mode="fit-content"
+          useThemeAnimation
+          containAnimation
         >
           <Droppable droppableId={`folder-${folder.folderId}`}>
             {(provided) => (
@@ -206,7 +209,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               </div>
             )}
           </Droppable>
-        </NavigationDrawerSubItemAnimatedExpandableContainer>
+        </AnimatedExpandableContainer>
       </NavigationDrawerItemsCollapsableContainer>
 
       {createPortal(
