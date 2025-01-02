@@ -46,11 +46,9 @@
     "**/.yarn": true,
   },
   "eslint.debug": true,
-<<<<<<< Updated upstream
   "files.associations": {
     ".cursorrules": "markdown"
-  }
-=======
+  },
   "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}"
->>>>>>> Stashed changes
+  }
 }
