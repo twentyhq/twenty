@@ -1,4 +1,4 @@
-import { test, expect } from '../../lib/fixtures/screenshot';
+import { expect, test } from '../../lib/fixtures/screenshot';
 
 test.describe('Basic check', () => {
   test('Checking if table in Companies is visible', async ({ page }) => {

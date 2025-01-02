@@ -6,12 +6,11 @@
       "name": "twenty-server - start debug",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "yarn",
-      "runtimeVersion": "18",
+      "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:start",
+        "twenty-server:start"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
@@ -22,12 +21,11 @@
       "name": "twenty-server - worker debug",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "yarn",
-      "runtimeVersion": "18",
+      "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:worker",
+        "twenty-server:worker"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
@@ -45,12 +43,23 @@
         "run",
         "twenty-server:command",
         "my-command",
-        "--my-parameter value",
+        "--my-parameter value"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
       "cwd": "${workspaceFolder}/packages/twenty-server/"
+    },
+    {
+      "name": "Playwright Test current file",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "test", "twenty-e2e-testing", "${file}"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "neverOpen",
+      "envFile": "${workspaceFolder}/packages/twenty-e2e-testing/.env"
     }
   ]
 }
