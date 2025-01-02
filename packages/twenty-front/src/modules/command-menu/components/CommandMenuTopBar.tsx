@@ -2,9 +2,11 @@ import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandM
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
@@ -50,15 +52,11 @@ const StyledCloseButtonContainer = styled.div`
   justify-content: center;
 `;
 
-type CommandMenuTopBarProps = {
-  commandMenuSearch: string;
-  setCommandMenuSearch: (search: string) => void;
-};
+export const CommandMenuTopBar = () => {
+  const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
+    commandMenuSearchState,
+  );
 
-export const CommandMenuTopBar = ({
-  commandMenuSearch,
-  setCommandMenuSearch,
-}: CommandMenuTopBarProps) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };

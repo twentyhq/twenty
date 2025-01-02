@@ -10,6 +10,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { commandMenuViewableRecordIdState } from '@/command-menu/states/commandMenuViewableRecordIdState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -212,6 +213,7 @@ export const useCommandMenu = () => {
         );
 
         if (isCommandMenuOpened) {
+          set(commandMenuViewableRecordIdState, null);
           setIsCommandMenuOpened(false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
