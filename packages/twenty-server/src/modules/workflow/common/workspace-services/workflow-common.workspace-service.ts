@@ -76,8 +76,6 @@ export class WorkflowCommonWorkspaceService {
 
     Promise.all(
       workflowIds.map((workflowId) => {
-        Promise.reject(new Error('Uppssiii'));
-
         workflowEventListenerRepository.softDelete({
           workflowId,
         });
