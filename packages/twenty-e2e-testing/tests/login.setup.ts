@@ -1,28 +1,32 @@
-import { expect, test as setup } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
+import { LoginPage } from '../lib/pom/loginPage';
 import path from 'path';
 
-setup('Login test', async ({ page }) => {
+// fixture
+const test = base.extend<{ loginPage: LoginPage }>({
+  loginPage: async ({ page }, use) => {
+    const loginPage = new LoginPage(page);
+    await use(loginPage);
+  },
+});
+
+test('Login test', async ({ loginPage, page }) => {
   console.log('Starting login test');
 
   await page.goto('/');
   console.log('Navigated to homepage');
 
-  await page.getByRole('button', { name: 'Continue With Email' }).click();
-  console.log('Clicked email login button');
-
   console.log('Default login', process.env.DEFAULT_LOGIN);
-  await page.getByPlaceholder('Email').fill(process.env.DEFAULT_LOGIN ?? '');
+  await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
   console.log('Filled email field');
 
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await loginPage.clickContinueButton();
   console.log('Clicked continue button');
 
-  await page
-    .getByPlaceholder('Password')
-    .fill(process.env.DEFAULT_PASSWORD ?? '');
+  await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
   console.log('Filled password field');
 
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  await loginPage.clickSignInButton();
   console.log('Clicked sign in button');
 
   await page.waitForLoadState('networkidle');
@@ -35,4 +39,6 @@ setup('Login test', async ({ page }) => {
     path: path.resolve(__dirname, '..', '.auth', 'user.json'),
   });
   console.log('Saved auth state');
+
+  process.env.LINK = page.url();
 });
