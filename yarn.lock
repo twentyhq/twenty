@@ -9707,6 +9707,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:^1.49.0":
+  version: 1.49.1
+  resolution: "@playwright/test@npm:1.49.1"
+  dependencies:
+    playwright: "npm:1.49.1"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/2fca0bb7b334f7a23c7c5dfa5dbe37b47794c56f39b747c8d74a2f95c339e7902a296f2f1dd32c47bdd723cfa92cee05219f1a5876725dc89a1871b9137a286d
+  languageName: node
+  linkType: hard
+
 "@polka/url@npm:^1.0.0-next.24":
   version: 1.0.0-next.25
   resolution: "@polka/url@npm:1.0.0-next.25"
@@ -11573,6 +11584,13 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: 10c0/2364cca978c5cc3ba235cacd375299dce0d25ff0965ed767b58fcdddb8ff8dadf41efcb1191f2dfd75efa73ffbd88e0387f7daad478b457f0915748d63e4b1b5
+  languageName: node
+  linkType: hard
+
+"@recoiljs/refine@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@recoiljs/refine@npm:0.1.1"
+  checksum: 10c0/27ca1c4ea500b1b99a3af5ee48d6749310e5138e83b87ddfb41304e2222fa64567acb985f340334ab73980202ab277a0f133c40817fbec786076c06bfb3f5363
   languageName: node
   linkType: hard
 
@@ -38576,6 +38594,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.49.1":
+  version: 1.49.1
+  resolution: "playwright-core@npm:1.49.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/990b619c75715cd98b2c10c1180a126e3a454b247063b8352bc67792fe01183ec07f31d30c8714c3768cefed12886d1d64ac06da701f2baafc2cad9b439e3919
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
@@ -38588,6 +38615,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/fa4192af99908c2c02ae20880e27f51efa6694348c2496d1c2818908eb394c4b21947edd0c5ce2a83f471f5399ac3f0cee8a7be8a35cd80d32d32875184962c7
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.49.1":
+  version: 1.49.1
+  resolution: "playwright@npm:1.49.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.49.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/2368762c898920d4a0a5788b153dead45f9c36c3f5cf4d2af5228d0b8ea65823e3bbe998877950a2b9bb23a211e4633996f854c6188769dc81a25543ac818ab5
   languageName: node
   linkType: hard
 
@@ -40636,6 +40678,18 @@ __metadata:
   dependencies:
     resolve: "npm:^1.1.6"
   checksum: 10c0/22c4bb32f4934a9468468b608417194f7e3ceba9a508512125b16082c64f161915a28467562368eeb15dc16058eb5b7c13a20b9eb29ff9927d1ebb3b5aa83e84
+  languageName: node
+  linkType: hard
+
+"recoil-sync@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "recoil-sync@npm:0.2.0"
+  dependencies:
+    "@recoiljs/refine": "npm:^0.1.1"
+    transit-js: "npm:^0.8.874"
+  peerDependencies:
+    recoil: ">=0.7.3"
+  checksum: 10c0/f3a671a3cfcecadb5bbb22d47b3b040721be1013ee91d4fa0570a64ca1707eb68e818b291a82e133551adf4a2dd2fc9a0715d550c1f1e3db82f3b8d9169e2a5a
   languageName: node
   linkType: hard
 
@@ -44346,6 +44400,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"transit-js@npm:^0.8.874":
+  version: 0.8.874
+  resolution: "transit-js@npm:0.8.874"
+  checksum: 10c0/6ca0b413f1e3780a4a56b9bbde54b67a2ffefda1c052f8dc68bf28c1a3df4c29baa6f17f60484c9f2fb056a8c7dcd1fe04d24e091fb99afe1525e4d4406ad58a
+  languageName: node
+  linkType: hard
+
 "transliteration@npm:^2.3.5":
   version: 2.3.5
   resolution: "transliteration@npm:2.3.5"
@@ -44846,7 +44907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:^1.46.0"
+    "@playwright/test": "npm:^1.49.0"
   languageName: unknown
   linkType: soft
 
@@ -44879,6 +44940,7 @@ __metadata:
     buffer: "npm:^6.0.3"
     docx: "npm:^9.1.0"
     file-saver: "npm:^2.0.5"
+    recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
   languageName: unknown
   linkType: soft

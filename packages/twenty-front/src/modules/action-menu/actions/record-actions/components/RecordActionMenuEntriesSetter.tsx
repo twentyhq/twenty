@@ -13,6 +13,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
@@ -53,7 +54,9 @@ const ActionEffects = ({
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
 
   return (
     <>

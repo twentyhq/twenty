@@ -46,4 +46,7 @@
     "**/.yarn": true,
   },
   "eslint.debug": true,
+  "files.associations": {
+    ".cursorrules": "markdown"
+  }
 }

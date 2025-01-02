@@ -42,6 +42,7 @@ export type OpenTableCellArgs = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
   isActionButtonClick: boolean;
+  isNavigating: boolean;
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
@@ -84,6 +85,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         fieldDefinition,
         recordId,
         isActionButtonClick,
+        isNavigating,
       }: OpenTableCellArgs) => {
         if (isReadOnly) {
           return;
@@ -106,7 +108,10 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           fieldValue,
         });
 
-        if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
+        if (
+          (isFirstColumnCell && !isEmpty && !isActionButtonClick) ||
+          isNavigating
+        ) {
           leaveTableFocus();
 
           navigate(indexIdentifierUrl(recordId));

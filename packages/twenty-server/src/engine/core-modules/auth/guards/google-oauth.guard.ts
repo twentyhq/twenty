@@ -45,6 +45,14 @@ export class GoogleOauthGuard extends AuthGuard('google') {
       request.params.workspaceSubdomain = request.query.workspaceSubdomain;
     }
 
+    if (
+      request.query.billingCheckoutSessionState &&
+      typeof request.query.billingCheckoutSessionState === 'string'
+    ) {
+      request.params.billingCheckoutSessionState =
+        request.query.billingCheckoutSessionState;
+    }
+
     return (await super.canActivate(context)) as boolean;
   }
 }

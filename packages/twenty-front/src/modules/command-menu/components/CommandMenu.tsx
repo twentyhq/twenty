@@ -8,6 +8,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { Command } from '@/command-menu/types/Command';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -23,7 +24,7 @@ const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 type CommandGroupConfig = {
   heading: string;
-  items?: any[];
+  items?: Command[];
 };
 
 const StyledCommandMenu = styled.div`
@@ -233,7 +234,7 @@ export const CommandMenu = () => {
                               Icon={item.Icon}
                               label={item.label}
                               to={item.to}
-                              onClick={item.onClick}
+                              onClick={item.onCommandClick}
                               firstHotKey={item.firstHotKey}
                               secondHotKey={item.secondHotKey}
                               shouldCloseCommandMenuOnClick={

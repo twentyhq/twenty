@@ -30,6 +30,7 @@ import {
   UndecoratedLink,
   isDefined,
 } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
@@ -69,7 +70,7 @@ export const SettingsObjectDetailPage = () => {
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
-    'IS_UNIQUE_INDEXES_ENABLED',
+    FeatureFlagKey.IsUniqueIndexesEnabled,
   );
 
   useEffect(() => {

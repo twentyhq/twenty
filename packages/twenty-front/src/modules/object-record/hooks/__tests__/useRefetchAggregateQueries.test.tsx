@@ -12,6 +12,12 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
 }));
 
+jest.mock('~/generated/graphql', () => ({
+  FeatureFlagKey: {
+    IsAggregateQueryEnabled: 'IsAggregateQueryEnabled',
+  },
+}));
+
 describe('useRefetchAggregateQueries', () => {
   const mockRefetchQueries = jest.fn();
   const mockApolloClient = {

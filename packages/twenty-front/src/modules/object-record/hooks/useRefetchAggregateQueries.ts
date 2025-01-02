@@ -1,6 +1,7 @@
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useApolloClient } from '@apollo/client';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRefetchAggregateQueries = ({
   objectMetadataNamePlural,
@@ -9,7 +10,7 @@ export const useRefetchAggregateQueries = ({
 }) => {
   const apolloClient = useApolloClient();
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
   const refetchAggregateQueries = async () => {
     if (isAggregateQueryEnabled) {
