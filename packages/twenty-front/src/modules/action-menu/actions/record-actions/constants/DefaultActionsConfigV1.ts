@@ -4,10 +4,6 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
-import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
-import { useExportNoteAction } from '@/action-menu/actions/record-actions/single-record/hooks/useExportNoteAction';
-import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
-import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
@@ -18,46 +14,28 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-  IconChevronDown,
-  IconChevronUp,
   IconDatabaseExport,
-  IconFileExport,
   IconHeart,
   IconHeartOff,
   IconTrash,
-  IconTrashX,
 } from 'twenty-ui';
 
-export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
+export const DEFAULT_ACTIONS_CONFIG_V1: Record<
   string,
   ActionMenuEntry & {
     actionHook: ActionHook;
   }
 > = {
-  exportNoteToPdf: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
-    label: 'Export to PDF',
-    shortLabel: 'Export',
-    position: 0,
-    isPinned: false,
-    Icon: IconFileExport,
-    availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useExportNoteAction,
-  },
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: 'Add to favorites',
-    shortLabel: 'Add to favorites',
-    position: 1,
-    isPinned: true,
+    position: 0,
     Icon: IconHeart,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
@@ -66,13 +44,11 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: 'Remove from favorites',
-    shortLabel: 'Remove from favorites',
-    isPinned: true,
-    position: 2,
+    position: 1,
     Icon: IconHeartOff,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
@@ -80,15 +56,14 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
-    label: 'Delete record',
-    shortLabel: 'Delete',
-    position: 3,
+    label: 'Delete',
+    position: 2,
     Icon: IconTrash,
     accent: 'danger',
     isPinned: true,
     availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     actionHook: useDeleteSingleRecordAction,
   },
@@ -98,7 +73,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: MultipleRecordsActionKeys.DELETE,
     label: 'Delete records',
     shortLabel: 'Delete',
-    position: 4,
+    position: 3,
     Icon: IconTrash,
     accent: 'danger',
     isPinned: true,
@@ -111,7 +86,7 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: MultipleRecordsActionKeys.EXPORT,
     label: 'Export records',
     shortLabel: 'Export',
-    position: 5,
+    position: 4,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
@@ -124,51 +99,11 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2: Record<
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: 'Export view',
     shortLabel: 'Export',
-    position: 6,
+    position: 5,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     actionHook: useExportMultipleRecordsAction,
-  },
-  destroySingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DESTROY,
-    label: 'Permanently destroy record',
-    shortLabel: 'Destroy',
-    position: 7,
-    Icon: IconTrashX,
-    accent: 'danger',
-    isPinned: true,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    actionHook: useDestroySingleRecordAction,
-  },
-  navigateToPreviousRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
-    label: 'Navigate to previous record',
-    shortLabel: '',
-    position: 8,
-    isPinned: true,
-    Icon: IconChevronUp,
-    availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToPreviousRecordSingleRecordAction,
-  },
-  navigateToNextRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
-    label: 'Navigate to next record',
-    shortLabel: '',
-    position: 9,
-    isPinned: true,
-    Icon: IconChevronDown,
-    availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToNextRecordSingleRecordAction,
   },
 };

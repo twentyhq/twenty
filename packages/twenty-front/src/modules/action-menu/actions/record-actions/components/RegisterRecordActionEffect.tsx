@@ -37,11 +37,9 @@ export const RegisterRecordActionEffect = ({
   });
 
   useEffect(() => {
-    if (!shouldBeRegistered) {
-      return;
+    if (shouldBeRegistered) {
+      addActionMenuEntry(wrappedAction);
     }
-
-    addActionMenuEntry(wrappedAction);
 
     return () => {
       removeActionMenuEntry(wrappedAction.key);
