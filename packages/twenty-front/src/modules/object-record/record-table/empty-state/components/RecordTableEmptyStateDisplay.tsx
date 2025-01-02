@@ -11,41 +11,49 @@ import {
   IconComponent,
 } from 'twenty-ui';
 
-type RecordTableEmptyStateDisplayProps = {
-  animatedPlaceholderType: AnimatedPlaceholderType;
-  title: string;
-  subTitle: string;
-  Icon: IconComponent;
+type RecordTableEmptyStateDisplayButtonComponentProps = {
+  buttonComponent?: React.ReactNode;
+};
+
+type RecordTableEmptyStateDisplayButtonProps = {
+  ButtonIcon: IconComponent;
   buttonTitle: string;
   onClick: () => void;
 };
 
-export const RecordTableEmptyStateDisplay = ({
-  Icon,
-  animatedPlaceholderType,
-  buttonTitle,
-  onClick,
-  subTitle,
-  title,
-}: RecordTableEmptyStateDisplayProps) => {
+type RecordTableEmptyStateDisplayProps = {
+  animatedPlaceholderType: AnimatedPlaceholderType;
+  title: string;
+  subTitle: string;
+} & (
+  | RecordTableEmptyStateDisplayButtonComponentProps
+  | RecordTableEmptyStateDisplayButtonProps
+);
+
+export const RecordTableEmptyStateDisplay = (
+  props: RecordTableEmptyStateDisplayProps,
+) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
   return (
     <AnimatedPlaceholderEmptyContainer>
-      <AnimatedPlaceholder type={animatedPlaceholderType} />
+      <AnimatedPlaceholder type={props.animatedPlaceholderType} />
       <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
+        <AnimatedPlaceholderEmptyTitle>
+          {props.title}
+        </AnimatedPlaceholderEmptyTitle>
         <AnimatedPlaceholderEmptySubTitle>
-          {subTitle}
+          {props.subTitle}
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
-      {!isReadOnly && (
+      {'buttonComponent' in props && props.buttonComponent}
+      {'buttonTitle' in props && !isReadOnly && (
         <Button
-          Icon={Icon}
-          title={buttonTitle}
+          Icon={props.ButtonIcon}
+          title={props.buttonTitle}
           variant={'secondary'}
-          onClick={onClick}
+          onClick={props.onClick}
         />
       )}
     </AnimatedPlaceholderEmptyContainer>
