@@ -96,13 +96,13 @@ export class UserService extends TypeOrmQueryService<User> {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    if (workspaceMembers.length === 1) {
-      await this.workspaceService.deleteWorkspace(workspaceId);
-    }
-
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
+
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+    }
 
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
@@ -136,7 +136,9 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await Promise.all(user.workspaces.map(this.deleteUserFromWorkspace));
+    await Promise.all(
+      user.workspaces.map(this.deleteUserFromWorkspace.bind(this)),
+    );
 
     return user;
   }
