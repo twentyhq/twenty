@@ -2,10 +2,10 @@ import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useLis
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
+import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,

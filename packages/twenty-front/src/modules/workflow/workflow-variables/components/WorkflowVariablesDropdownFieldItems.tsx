@@ -12,9 +12,9 @@ import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOu
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
-import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
-import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
