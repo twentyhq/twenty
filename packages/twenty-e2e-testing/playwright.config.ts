@@ -70,10 +70,6 @@ export default defineConfig({
       dependencies: ['Login setup'],
       testMatch: /all\/.+\.e2e-spec\.ts/,
     },
-    {
-      name: 'Authentication',
-      testMatch: /authentication\/.*\.e2e-spec\.ts/,
-    },
 
     //{
     //  name: 'webkit',
