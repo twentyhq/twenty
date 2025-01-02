@@ -109,7 +109,7 @@ jobs:
     - name: Start frontend
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
-        npm_config_yes=true npx serve -s packages/twenty-front/dist -l 3001 &
+        npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
         echo "Waiting for frontend to be ready..."
         timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
         
