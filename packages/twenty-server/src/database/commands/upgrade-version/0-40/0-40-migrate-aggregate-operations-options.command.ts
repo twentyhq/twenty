@@ -14,6 +14,7 @@ import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runne
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -46,6 +47,7 @@ export class MigrateAggregateOperationOptionsCommand extends ActiveWorkspacesCom
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository);
   }
@@ -173,6 +175,10 @@ export class MigrateAggregateOperationOptionsCommand extends ActiveWorkspacesCom
           isDefined(viewFieldAggregateOperationFieldMetadata)
         ) {
           await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+            workspaceId,
+          );
+
+          await this.workspaceMetadataVersionService.incrementMetadataVersion(
             workspaceId,
           );
         }
