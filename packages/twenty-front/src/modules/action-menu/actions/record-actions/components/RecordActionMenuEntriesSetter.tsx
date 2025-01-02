@@ -1,13 +1,10 @@
-import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/multiple-records/components/MultipleRecordsActionMenuEntrySetterEffect';
-import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
-import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
+import { RegisterRecordActionEffect } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffect';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
+import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -19,32 +16,12 @@ export const RecordActionMenuEntriesSetter = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === contextStoreCurrentObjectMetadataId,
   );
-
-  if (
-    !isDefined(contextStoreCurrentObjectMetadataId) ||
-    !isDefined(objectMetadataItem)
-  ) {
-    return null;
-  }
-
-  return (
-    <ActionEffects objectMetadataItemId={contextStoreCurrentObjectMetadataId} />
-  );
-};
-
-const ActionEffects = ({
-  objectMetadataItemId,
-}: {
-  objectMetadataItemId: string;
-}) => {
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId,
-  });
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -58,43 +35,52 @@ const ActionEffects = ({
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPageHeaderV2Enabled,
+  );
+
+  if (
+    !isDefined(contextStoreCurrentObjectMetadataId) ||
+    !isDefined(objectMetadataItem)
+  ) {
+    return null;
+  }
+
+  const viewType = getActionViewType(
+    contextStoreCurrentViewType,
+    contextStoreTargetedRecordsRule,
+  );
+
+  const actionConfig = getActionConfig(
+    objectMetadataItem,
+    isPageHeaderV2Enabled,
+  );
+
+  const actionsToRegister = isDefined(viewType)
+    ? Object.values(actionConfig ?? {}).filter((action) =>
+        action.availableOn?.includes(viewType),
+      )
+    : [];
+
   return (
     <>
-      {contextStoreTargetedRecordsRule.mode === 'selection' &&
-        contextStoreTargetedRecordsRule.selectedRecordIds.length === 0 && (
-          <NoSelectionActionMenuEntrySetterEffect
+      {actionsToRegister.map((action) => (
+        <RegisterRecordActionEffect
+          key={action.key}
+          action={action}
+          objectMetadataItem={objectMetadataItem}
+        />
+      ))}
+
+      {isWorkflowEnabled &&
+        !(
+          contextStoreTargetedRecordsRule?.mode === 'selection' &&
+          contextStoreTargetedRecordsRule?.selectedRecordIds.length === 0
+        ) && (
+          <WorkflowRunRecordActionMenuEntrySetterEffect
             objectMetadataItem={objectMetadataItem}
           />
         )}
-      {contextStoreTargetedRecordsRule.mode === 'selection' &&
-        contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
-          <>
-            {contextStoreCurrentViewType === ContextStoreViewType.ShowPage && (
-              <SingleRecordActionMenuEntrySetterEffect
-                objectMetadataItem={objectMetadataItem}
-                viewType={ActionViewType.SHOW_PAGE}
-              />
-            )}
-            {(contextStoreCurrentViewType === ContextStoreViewType.Table ||
-              contextStoreCurrentViewType === ContextStoreViewType.Kanban) && (
-              <SingleRecordActionMenuEntrySetterEffect
-                objectMetadataItem={objectMetadataItem}
-                viewType={ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION}
-              />
-            )}
-            {isWorkflowEnabled && (
-              <WorkflowRunRecordActionMenuEntrySetterEffect
-                objectMetadataItem={objectMetadataItem}
-              />
-            )}
-          </>
-        )}
-      {(contextStoreTargetedRecordsRule.mode === 'exclusion' ||
-        contextStoreTargetedRecordsRule.selectedRecordIds.length > 1) && (
-        <MultipleRecordsActionMenuEntrySetterEffect
-          objectMetadataItem={objectMetadataItem}
-        />
-      )}
     </>
   );
 };
