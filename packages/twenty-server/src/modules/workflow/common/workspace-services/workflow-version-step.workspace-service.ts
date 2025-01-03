@@ -436,6 +436,7 @@ export class WorkflowVersionStepWorkspaceService {
     const workflowVersionToCopy = await workflowVersionRepository.findOne({
       where: {
         id: workflowVersionIdToCopy,
+        workflowId,
       },
     });
 
