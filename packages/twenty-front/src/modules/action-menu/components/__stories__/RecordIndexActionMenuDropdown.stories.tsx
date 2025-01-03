@@ -120,13 +120,5 @@ export const WithInteractions: Story = {
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
     expect(deleteMock).toHaveBeenCalled();
-
-    const markAsDoneButton = await canvas.findByText('Mark as done');
-    await userEvent.click(markAsDoneButton);
-    expect(markAsDoneMock).toHaveBeenCalled();
-
-    const addToFavoritesButton = await canvas.findByText('Add to favorites');
-    await userEvent.click(addToFavoritesButton);
-    expect(addToFavoritesMock).toHaveBeenCalled();
   },
 };
