@@ -73,10 +73,8 @@ export const RecordActionMenuEntriesSetter = () => {
       ))}
 
       {isWorkflowEnabled &&
-        !(
-          contextStoreTargetedRecordsRule?.mode === 'selection' &&
-          contextStoreTargetedRecordsRule?.selectedRecordIds.length === 0
-        ) && (
+        contextStoreTargetedRecordsRule?.mode === 'selection' &&
+        contextStoreTargetedRecordsRule?.selectedRecordIds.length === 1 && (
           <WorkflowRunRecordActionMenuEntrySetterEffect
             objectMetadataItem={objectMetadataItem}
           />
