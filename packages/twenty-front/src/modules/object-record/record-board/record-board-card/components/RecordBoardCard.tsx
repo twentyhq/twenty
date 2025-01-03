@@ -262,7 +262,10 @@ export const RecordBoardCard = ({
   );
 
   return (
-    <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
+    <StyledBoardCardWrapper
+      className="record-board-card"
+      onContextMenu={handleActionMenuDropdown}
+    >
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
       <InView>
         <StyledBoardCard
