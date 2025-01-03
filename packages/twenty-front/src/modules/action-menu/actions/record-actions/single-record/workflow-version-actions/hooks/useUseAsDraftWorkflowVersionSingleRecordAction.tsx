@@ -1,92 +1,80 @@
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconPencil, isDefined } from 'twenty-ui';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
-export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
-  workflowVersionId,
-}: {
-  workflowVersionId: string;
-}) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
 
-  const workflowVersion = useRecoilValue(
-    recordStoreFamilyState(workflowVersionId),
-  );
+    const workflowVersion = useWorkflowVersion(recordId);
 
-  const workflow = useWorkflowWithCurrentVersion(
-    workflowVersion?.workflow?.id ?? '',
-  );
+    const workflow = useWorkflowWithCurrentVersion(
+      workflowVersion?.workflow?.id ?? '',
+    );
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+    const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
-  const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
-    openOverrideWorkflowDraftConfirmationModalState,
-  );
+    const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
+      openOverrideWorkflowDraftConfirmationModalState,
+    );
 
-  const registerUseAsDraftWorkflowVersionSingleRecordAction = ({
-    position,
-  }: {
-    position: number;
-  }) => {
-    if (
-      !isDefined(workflowVersion) ||
-      !isDefined(workflow) ||
-      !isDefined(workflow.statuses) ||
-      workflowVersion.status === 'DRAFT'
-    ) {
-      return;
-    }
+    const navigate = useNavigate();
 
-    const hasAlreadyDraftVersion = workflow.statuses.includes('DRAFT');
+    const workflowStatuses = workflow?.statuses;
 
-    addActionMenuEntry({
-      key: 'use-workflow-version-as-draft-single-record',
-      label: 'Use as draft',
-      position,
-      Icon: IconPencil,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
-      onClick: async () => {
-        if (hasAlreadyDraftVersion) {
-          setOpenOverrideWorkflowDraftConfirmationModal(true);
-        } else {
-          await createNewWorkflowVersion({
-            workflowId: workflowVersion.workflow.id,
-            name: `v${workflow.versions.length + 1}`,
-            status: 'DRAFT',
-            trigger: workflowVersion.trigger,
-            steps: workflowVersion.steps,
-          });
-        }
-      },
-      ConfirmationModal: (
-        <OverrideWorkflowDraftConfirmationModal
-          draftWorkflowVersionId={workflow?.currentVersion?.id ?? ''}
-          workflowId={workflow?.id ?? ''}
-          workflowVersionUpdateInput={{
-            steps: workflowVersion.steps,
-            trigger: workflowVersion.trigger,
-          }}
-        />
-      ),
-    });
+    const shouldBeRegistered =
+      isDefined(workflowVersion) &&
+      isDefined(workflow) &&
+      isDefined(workflowStatuses) &&
+      workflowVersion.status !== 'DRAFT';
+
+    const onClick = async () => {
+      if (!shouldBeRegistered) return;
+
+      const hasAlreadyDraftVersion = workflowStatuses.includes('DRAFT');
+
+      if (hasAlreadyDraftVersion) {
+        setOpenOverrideWorkflowDraftConfirmationModal(true);
+      } else {
+        await createNewWorkflowVersion({
+          workflowId: workflowVersion.workflow.id,
+          name: `v${workflow.versions.length + 1}`,
+          status: 'DRAFT',
+          trigger: workflowVersion.trigger,
+          steps: workflowVersion.steps,
+        });
+        navigate(
+          buildShowPageURL(
+            CoreObjectNameSingular.Workflow,
+            workflowVersion.workflow.id,
+          ),
+        );
+      }
+    };
+
+    const ConfirmationModal = shouldBeRegistered ? (
+      <OverrideWorkflowDraftConfirmationModal
+        draftWorkflowVersionId={workflow?.currentVersion?.id ?? ''}
+        workflowId={workflow?.id ?? ''}
+        workflowVersionUpdateInput={{
+          steps: workflowVersion.steps,
+          trigger: workflowVersion.trigger,
+        }}
+      />
+    ) : undefined;
+
+    return {
+      shouldBeRegistered,
+      onClick,
+      ConfirmationModal,
+    };
   };
-
-  const unregisterUseAsDraftWorkflowVersionSingleRecordAction = () => {
-    removeActionMenuEntry('use-workflow-version-as-draft-single-record');
-  };
-
-  return {
-    registerUseAsDraftWorkflowVersionSingleRecordAction,
-    unregisterUseAsDraftWorkflowVersionSingleRecordAction,
-  };
-};

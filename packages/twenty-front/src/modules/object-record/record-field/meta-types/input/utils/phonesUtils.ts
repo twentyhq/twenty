@@ -8,7 +8,10 @@ export const createPhonesFromFieldValue = (fieldValue: FieldPhonesValue) => {
         fieldValue.primaryPhoneNumber
           ? {
               number: fieldValue.primaryPhoneNumber,
-              callingCode: fieldValue.primaryPhoneCountryCode,
+              callingCode: fieldValue.primaryPhoneCallingCode
+                ? fieldValue.primaryPhoneCallingCode
+                : fieldValue.primaryPhoneCountryCode,
+              countryCode: fieldValue.primaryPhoneCountryCode,
             }
           : null,
         ...(fieldValue.additionalPhones ?? []),

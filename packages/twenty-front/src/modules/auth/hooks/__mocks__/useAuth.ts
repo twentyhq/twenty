@@ -1,5 +1,6 @@
 import {
   ChallengeDocument,
+  GetCurrentUserDocument,
   SignUpDocument,
   VerifyDocument,
 } from '~/generated/graphql';
@@ -8,6 +9,7 @@ export const queries = {
   challenge: ChallengeDocument,
   verify: VerifyDocument,
   signup: SignUpDocument,
+  getCurrentUser: GetCurrentUserDocument,
 };
 
 export const email = 'test@test.com';
@@ -22,6 +24,7 @@ export const variables = {
   },
   verify: { loginToken: token },
   signup: {},
+  getCurrentUser: {},
 };
 
 export const results = {
@@ -32,7 +35,14 @@ export const results = {
     },
   },
   verify: {
-    user: {
+    tokens: {
+      accessToken: { token, expiresAt: 'expiresAt' },
+      refreshToken: { token, expiresAt: 'expiresAt' },
+    },
+  },
+  signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
+  getCurrentUser: {
+    currentUser: {
       id: 'id',
       firstName: 'firstName',
       lastName: 'lastName',
@@ -49,7 +59,7 @@ export const results = {
         avatarUrl: 'avatarUrl',
         locale: 'locale',
       },
-      defaultWorkspace: {
+      currentWorkspace: {
         id: 'id',
         displayName: 'displayName',
         logo: 'logo',
@@ -65,13 +75,7 @@ export const results = {
         },
       },
     },
-    tokens: {
-      accessToken: { token, expiresAt: 'expiresAt' },
-      refreshToken: { token, expiresAt: 'expiresAt' },
-    },
-    signup: {},
   },
-  signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
 };
 
 export const mocks = [
@@ -106,6 +110,15 @@ export const mocks = [
       data: {
         signUp: results.signUp,
       },
+    })),
+  },
+  {
+    request: {
+      query: queries.getCurrentUser,
+      variables: variables.getCurrentUser,
+    },
+    result: jest.fn(() => ({
+      data: results.getCurrentUser,
     })),
   },
 ];

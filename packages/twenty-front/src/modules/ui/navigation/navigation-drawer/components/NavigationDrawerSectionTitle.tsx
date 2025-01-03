@@ -17,7 +17,10 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: ${({ theme }) => theme.spacing(5)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
 
   &:hover {
@@ -36,38 +39,21 @@ type StyledRightIconProps = {
 
 const StyledRightIcon = styled.div<StyledRightIconProps>`
   cursor: pointer;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  transition: opacity 150ms ease-in-out;
   opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  width: ${({ theme }) => theme.spacing(5)};
-  height: ${({ theme }) => theme.spacing(5)};
-  :hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
 
   .section-title-container:hover & {
     opacity: 1;
-  }
-
-  &:active {
-    cursor: pointer;
   }
 `;
 
 type NavigationDrawerSectionTitleProps = {
   onClick?: () => void;
-  onRightIconClick?: () => void;
   label: string;
   rightIcon?: React.ReactNode;
 };
 
 export const NavigationDrawerSectionTitle = ({
   onClick,
-  onRightIconClick,
   label,
   rightIcon,
 }: NavigationDrawerSectionTitleProps) => {
@@ -85,24 +71,15 @@ export const NavigationDrawerSectionTitle = ({
     }
   };
 
-  const handleRightIconClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    if (isDefined(onRightIconClick)) {
-      onRightIconClick();
-    }
-  };
-
   if (loading && isDefined(currentUser)) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
 
   return (
-    <StyledTitle className="section-title-container" onClick={handleTitleClick}>
-      <StyledLabel>{label}</StyledLabel>
+    <StyledTitle className="section-title-container">
+      <StyledLabel onClick={handleTitleClick}>{label}</StyledLabel>
       {rightIcon && (
-        <StyledRightIcon isMobile={isMobile} onClick={handleRightIconClick}>
-          {rightIcon}
-        </StyledRightIcon>
+        <StyledRightIcon isMobile={isMobile}>{rightIcon}</StyledRightIcon>
       )}
     </StyledTitle>
   );

@@ -54,7 +54,7 @@ export class BillingWebhookSubscriptionService {
         data,
       ),
       {
-        conflictPaths: ['workspaceId', 'stripeCustomerId'],
+        conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );

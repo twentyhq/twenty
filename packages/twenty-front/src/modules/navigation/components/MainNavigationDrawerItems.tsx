@@ -58,7 +58,8 @@ export const MainNavigationDrawerItems = () => {
       )}
       <ScrollWrapper
         contextProviderName="navigationDrawer"
-        enableXScroll={false}
+        componentInstanceId={`scroll-wrapper-navigation-drawer`}
+        defaultEnableXScroll={false}
         scrollHide={true}
       >
         <NavigationDrawerOpenedSection />

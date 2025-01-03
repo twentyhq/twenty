@@ -1,17 +1,19 @@
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { css } from '@emotion/react';
 import { IconListViewGrip } from 'twenty-ui';
 
+export const TABLE_CELL_GRIP_WIDTH = '16px';
+
 const StyledContainer = styled.div<{ isPendingRow?: boolean }>`
+  height: 32px;
+  width: ${TABLE_CELL_GRIP_WIDTH};
   border-color: transparent;
   cursor: grab;
   display: flex;
-  height: 32px;
-  width: 16px;
   ${({ isPendingRow }) =>
     !isPendingRow
       ? css`
@@ -30,9 +32,10 @@ const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
 `;
 
 export const RecordTableCellGrip = () => {
-  const { dragHandleProps, isDragging, isPendingRow } = useContext(
-    RecordTableRowContext,
-  );
+  const { isPendingRow } = useRecordTableRowContextOrThrow();
+
+  const { dragHandleProps, isDragging } =
+    useRecordTableRowDraggableContextOrThrow();
 
   return (
     <RecordTableTd

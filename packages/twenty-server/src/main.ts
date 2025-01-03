@@ -5,14 +5,14 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer } from 'class-validator';
+import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
-import { UnhandledExceptionFilter } from 'src/utils/apply-cors-to-exceptions';
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
 import './instrument';
@@ -38,7 +38,7 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
 
-  // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
+  // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 
@@ -54,6 +54,16 @@ const bootstrap = async () => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (errors) => {
+        const error = new ValidationError();
+
+        error.constraints = Object.assign(
+          {},
+          ...errors.map((error) => error.constraints),
+        );
+
+        return error;
+      },
     }),
   );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
@@ -70,7 +80,7 @@ const bootstrap = async () => {
     }),
   );
 
-  // Create the env-config.js of the front at runtime
+  // Inject the server url in the frontend page
   generateFrontConfig();
 
   // Enable session - Today it's used only for SSO

@@ -14,6 +14,8 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { RecordShowPageWorkflowVersionHeader } from '@/workflow/components/RecordShowPageWorkflowVersionHeader';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
@@ -38,6 +40,10 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPageHeaderV2Enabled,
+  );
+
   return (
     <RecordFieldValueSelectorContextProvider>
       <ContextStoreComponentInstanceContext.Provider
@@ -57,25 +63,30 @@ export const RecordShowPage = () => {
               headerIcon={headerIcon}
             >
               <>
-                {objectNameSingular === CoreObjectNameSingular.Workflow ? (
-                  <RecordShowPageWorkflowHeader workflowId={objectRecordId} />
-                ) : objectNameSingular ===
-                  CoreObjectNameSingular.WorkflowVersion ? (
-                  <RecordShowPageWorkflowVersionHeader
-                    workflowVersionId={objectRecordId}
-                  />
-                ) : (
-                  <>
-                    <RecordShowActionMenu
-                      {...{
-                        isFavorite,
-                        record,
-                        handleFavoriteButtonClick,
-                        objectMetadataItem,
-                        objectNameSingular,
-                      }}
+                {!isPageHeaderV2Enabled &&
+                  objectNameSingular === CoreObjectNameSingular.Workflow && (
+                    <RecordShowPageWorkflowHeader workflowId={objectRecordId} />
+                  )}
+                {!isPageHeaderV2Enabled &&
+                  objectNameSingular ===
+                    CoreObjectNameSingular.WorkflowVersion && (
+                    <RecordShowPageWorkflowVersionHeader
+                      workflowVersionId={objectRecordId}
                     />
-                  </>
+                  )}
+                {(isPageHeaderV2Enabled ||
+                  (objectNameSingular !== CoreObjectNameSingular.Workflow &&
+                    objectNameSingular !==
+                      CoreObjectNameSingular.WorkflowVersion)) && (
+                  <RecordShowActionMenu
+                    {...{
+                      isFavorite,
+                      record,
+                      handleFavoriteButtonClick,
+                      objectMetadataItem,
+                      objectNameSingular,
+                    }}
+                  />
                 )}
               </>
             </RecordShowPageHeader>

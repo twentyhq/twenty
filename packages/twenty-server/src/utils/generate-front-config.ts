@@ -13,23 +13,29 @@ export function generateFrontConfig(): void {
     },
   };
 
-  const configString = `window._env_ = ${JSON.stringify(
-    configObject.window._env_,
-    null,
-    2,
-  )};`;
+  const configString = `<!-- BEGIN: Twenty Config -->
+    <script id="twenty-env-config">
+      window._env_ = ${JSON.stringify(configObject.window._env_, null, 2)};
+    </script>
+    <!-- END: Twenty Config -->`;
 
   const distPath = path.join(__dirname, '../..', 'front');
-  const filePath = path.join(distPath, 'env-config.js');
+  const indexPath = path.join(distPath, 'index.html');
 
-  if (!fs.existsSync(distPath)) {
-    fs.mkdirSync(distPath, { recursive: true });
+  if (!fs.existsSync(indexPath)) {
+    console.log(
+      'Frontend build not found, assuming it is served independently',
+    );
+
+    return;
   }
 
-  if (
-    !fs.existsSync(filePath) ||
-    fs.readFileSync(filePath, 'utf8') !== configString
-  ) {
-    fs.writeFileSync(filePath, configString, 'utf8');
-  }
+  let indexContent = fs.readFileSync(indexPath, 'utf8');
+
+  indexContent = indexContent.replace(
+    /<!-- BEGIN: Twenty Config -->[\s\S]*?<!-- END: Twenty Config -->/,
+    configString,
+  );
+
+  fs.writeFileSync(indexPath, indexContent, 'utf8');
 }

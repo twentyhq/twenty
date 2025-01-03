@@ -11,6 +11,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -30,7 +31,7 @@ const StyledSSOSection = styled(Section)`
 export const SettingsSecurity = () => {
   const isSSOEnabled = useRecoilValue(isSSOEnabledState);
   const isSSOSectionDisplay =
-    useIsFeatureEnabled('IS_SSO_ENABLED') && isSSOEnabled;
+    useIsFeatureEnabled(FeatureFlagKey.IsSsoEnabled) && isSSOEnabled;
 
   return (
     <SubMenuTopBarContainer

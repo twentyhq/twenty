@@ -8,10 +8,12 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import {
-  recordTableCell,
-  recordTableRow,
+  recordTableCellContextValue,
+  recordTableRowContextValue,
+  recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
@@ -55,13 +57,17 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
             isLabelIdentifier: false,
           }}
         >
-          <RecordTableRowContext.Provider value={recordTableRow}>
-            <RecordTableCellContext.Provider
-              value={{ ...recordTableCell, columnIndex: 0 }}
+          <RecordTableRowContextProvider value={recordTableRowContextValue}>
+            <RecordTableRowDraggableContextProvider
+              value={recordTableRowDraggableContextValue}
             >
-              {children}
-            </RecordTableCellContext.Provider>
-          </RecordTableRowContext.Provider>
+              <RecordTableCellContext.Provider
+                value={{ ...recordTableCellContextValue, columnIndex: 0 }}
+              >
+                {children}
+              </RecordTableCellContext.Provider>
+            </RecordTableRowDraggableContextProvider>
+          </RecordTableRowContextProvider>
         </FieldContext.Provider>
       </RecordTableContextProvider>
     </RecordTableComponentInstance>

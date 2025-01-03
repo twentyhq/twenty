@@ -68,7 +68,6 @@ export const AdvancedFilterRuleOptionsDropdown = ({
 
   return (
     <Dropdown
-      disableBlur
       dropdownId={dropdownId}
       clickableComponent={
         <AdvancedFilterRuleOptionsDropdownButton dropdownId={dropdownId} />

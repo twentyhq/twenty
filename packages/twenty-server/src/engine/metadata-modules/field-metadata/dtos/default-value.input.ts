@@ -194,6 +194,10 @@ export class FieldMetadataDefaultValuePhones {
   primaryPhoneCountryCode: string | null;
 
   @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryPhoneCallingCode: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
   @IsObject()
   additionalPhones: object | null;
 }

@@ -38,17 +38,12 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsFunctionSettingsEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: true,
-      },
-      {
-        key: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
-        workspaceId: workspaceId,
-        value: false,
       },
       {
         key: FeatureFlagKey.IsAnalyticsV2Enabled,
@@ -82,16 +77,6 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKey.IsAggregateQueryEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
         workspaceId: workspaceId,
         value: true,
       },

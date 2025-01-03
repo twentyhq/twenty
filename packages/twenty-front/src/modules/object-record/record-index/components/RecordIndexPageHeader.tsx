@@ -13,6 +13,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
@@ -29,12 +30,14 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const numberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   const isObjectMetadataItemReadOnly =
@@ -64,7 +67,7 @@ export const RecordIndexPageHeader = () => {
 
       {isPageHeaderV2Enabled && (
         <>
-          <RecordIndexActionMenu />
+          <RecordIndexActionMenu indexId={recordIndexId} />
           <PageHeaderOpenCommandMenuButton />
         </>
       )}

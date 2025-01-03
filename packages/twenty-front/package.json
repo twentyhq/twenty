@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=3000 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=6000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
@@ -30,16 +30,28 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@blocknote/xl-docx-exporter": "^0.22.0",
+    "@blocknote/xl-pdf-exporter": "^0.22.0",
     "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
-    "@tiptap/extension-document": "^2.9.0",
-    "@tiptap/extension-paragraph": "^2.9.0",
-    "@tiptap/extension-placeholder": "^2.9.0",
-    "@tiptap/extension-text": "^2.9.0",
-    "@tiptap/extension-text-style": "^2.8.0",
-    "@tiptap/react": "^2.8.0",
+    "@react-pdf/renderer": "^4.1.6",
+    "@tiptap/core": "^2.10.4",
+    "@tiptap/extension-document": "^2.10.4",
+    "@tiptap/extension-hard-break": "^2.10.4",
+    "@tiptap/extension-paragraph": "^2.10.4",
+    "@tiptap/extension-placeholder": "^2.10.4",
+    "@tiptap/extension-text": "^2.10.4",
+    "@tiptap/extension-text-style": "^2.10.4",
+    "@tiptap/react": "^2.10.4",
     "@xyflow/react": "^12.0.4",
+    "buffer": "^6.0.3",
+    "docx": "^9.1.0",
+    "file-saver": "^2.0.5",
+    "recoil-sync": "^0.2.0",
     "transliteration": "^2.3.5"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2"
   }
 }

@@ -4,7 +4,9 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
@@ -15,19 +17,21 @@ import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoar
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { ViewType } from '@/views/types/ViewType';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
@@ -46,7 +50,6 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
@@ -65,8 +68,26 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const { toggleClickOutsideListener } = useClickOutsideListener(
+    RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
+  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const { closeActionMenuDropdown } = useActionMenu(actionMenuId);
+
+  const handleDragSelectionStart = () => {
+    closeActionMenuDropdown();
+
+    toggleClickOutsideListener(false);
+  };
+
+  const handleDragSelectionEnd = () => {
+    toggleClickOutsideListener(true);
+  };
+
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    ViewType.Kanban,
   );
 
   const recordIndexRecordIdsByGroupFamilyState =
@@ -87,10 +108,14 @@ export const RecordBoard = () => {
       'action-menu-dropdown',
       'command-menu',
       'modal-backdrop',
+      'page-action-container',
+      'record-board-card',
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
-    refs: [boardRef],
-    callback: resetRecordSelection,
+    refs: [],
+    callback: () => {
+      resetRecordSelection();
+    },
   });
 
   const selectAll = useRecoilCallback(
@@ -194,7 +219,10 @@ export const RecordBoard = () => {
       <RecordBoardComponentInstanceContext.Provider
         value={{ instanceId: recordBoardId }}
       >
-        <ScrollWrapper contextProviderName="recordBoard">
+        <ScrollWrapper
+          contextProviderName="recordBoard"
+          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+        >
           <RecordBoardStickyHeaderEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />
@@ -214,8 +242,9 @@ export const RecordBoard = () => {
               <RecordBoardScrollRestoreEffect />
               <DragSelect
                 dragSelectable={boardRef}
-                onDragSelectionStart={resetRecordSelection}
+                onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
+                onDragSelectionStart={handleDragSelectionStart}
               />
             </StyledBoardContentContainer>
           </StyledContainerContainer>

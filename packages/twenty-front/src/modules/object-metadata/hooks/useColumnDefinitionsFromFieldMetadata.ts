@@ -7,6 +7,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '../utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
@@ -24,7 +25,9 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const isJsonFilterEnabled = useIsFeatureEnabled('IS_JSON_FILTER_ENABLED');
+  const isJsonFilterEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsJsonFilterEnabled,
+  );
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: activeFieldMetadataItems,

@@ -14,7 +14,6 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-ui';
 
 export const useRightDrawerEmailThread = () => {
@@ -37,14 +36,9 @@ export const useRightDrawerEmailThread = () => {
     },
   });
 
-  const isMessageThreadSubscribersEnabled = useIsFeatureEnabled(
-    'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
-  );
-
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
     fetchAllThreadMessagesOperationSignatureFactory({
       messageThreadId: viewableRecordId,
-      isSubscribersEnabled: isMessageThreadSubscribersEnabled,
     });
 
   const {

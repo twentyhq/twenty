@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,7 +15,6 @@ import {
   Section,
   useIcons,
 } from 'twenty-ui';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
@@ -37,6 +37,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
@@ -74,6 +75,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const [operations, setOperations] = useState<WebhookOperationType[]>([
     WEBHOOK_EMPTY_OPERATION,
   ]);
+  const [secret, setSecret] = useState<string>('');
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const { getIcon } = useIcons();
 
@@ -97,6 +99,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
           : [];
 
       setOperations(addEmptyOperationIfNecessary(baseOperations));
+      setSecret(data?.secret ?? '');
       setIsDirty(false);
     },
   });
@@ -112,7 +115,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
     navigate(developerPath);
   };
 
-  const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
+  const isAnalyticsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsAnalyticsV2Enabled,
+  );
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [
@@ -153,9 +158,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
-        operation: cleanedOperations?.[0],
         operations: cleanedOperations,
         description: description,
+        secret: secret,
       },
     });
     navigate(developerPath);
@@ -290,6 +295,22 @@ export const SettingsDevelopersWebhooksDetail = () => {
               )}
             </StyledFilterRow>
           ))}
+        </Section>
+        <Section>
+          <H2Title
+            title="Secret"
+            description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+          />
+          <TextInput
+            type="password"
+            placeholder="Write a secret"
+            value={secret}
+            onChange={(secret: string) => {
+              setSecret(secret.trim());
+              setIsDirty(true);
+            }}
+            fullWidth
+          />
         </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider

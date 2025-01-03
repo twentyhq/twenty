@@ -1,14 +1,14 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
+import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
-import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
-import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -16,7 +16,8 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useState } from 'react';
+import { Droppable } from '@hello-pangea/dnd';
+import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -42,20 +43,27 @@ export const CurrentWorkspaceMemberFavorites = ({
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
-
+  const { isDragging } = useContext(FavoritesDragContext);
   const [isFavoriteFolderRenaming, setIsFavoriteFolderRenaming] =
     useState(false);
   const [favoriteFolderName, setFavoriteFolderName] = useState(
     folder.folderName,
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [activeFavoriteFolderId, setActiveFavoriteFolderId] = useRecoilState(
-    activeFavoriteFolderIdState,
+
+  const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
+    openFavoriteFolderIdsState,
   );
-  const isOpen = activeFavoriteFolderId === folder.folderId;
+  const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
-    setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
+    setOpenFavoriteFolderIds((currentOpenFolders) => {
+      if (isOpen) {
+        return currentOpenFolders.filter((id) => id !== folder.folderId);
+      } else {
+        return [...currentOpenFolders, folder.folderId];
+      }
+    });
   };
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();
@@ -67,7 +75,6 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const { handleReorderFavorite } = useReorderFavorite();
 
   const { deleteFavorite } = useDeleteFavorite();
 
@@ -139,22 +146,28 @@ export const CurrentWorkspaceMemberFavorites = ({
             hotkeyScope="favorites-folder-input"
           />
         ) : (
-          <NavigationDrawerItem
-            key={folder.folderId}
-            label={folder.folderName}
-            Icon={isOpen ? IconFolderOpen : IconFolder}
-            onClick={handleToggle}
-            rightOptions={rightOptions}
-            className="navigation-drawer-item"
-            active={isFavoriteFolderEditDropdownOpen}
-          />
+          <FavoritesDroppable droppableId={`folder-header-${folder.folderId}`}>
+            <NavigationDrawerItem
+              label={folder.folderName}
+              Icon={isOpen ? IconFolderOpen : IconFolder}
+              onClick={handleToggle}
+              rightOptions={rightOptions}
+              className="navigation-drawer-item"
+              isRightOptionsDropdownOpen={isFavoriteFolderEditDropdownOpen}
+            />
+          </FavoritesDroppable>
         )}
 
         {isOpen && (
-          <DraggableList
-            onDragEnd={handleReorderFavorite}
-            draggableItems={
-              <>
+          <Droppable droppableId={`folder-${folder.folderId}`}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...provided.droppableProps}
+                // TODO: (Drag Drop Bug) Adding bottom margin to ensure drag-to-last-position works. Need to find better solution that doesn't affect spacing.
+                // Issue: Without margin, dragging to last position triggers next folder drop area
+              >
                 {folder.favorites.map((favorite, index) => (
                   <DraggableItem
                     key={favorite.id}
@@ -163,8 +176,8 @@ export const CurrentWorkspaceMemberFavorites = ({
                     isInsideScrollableContainer
                     itemComponent={
                       <NavigationDrawerSubItem
-                        key={favorite.id}
                         label={favorite.labelIdentifier}
+                        objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={favorite.link}
                         active={index === selectedFavoriteIndex}
@@ -180,14 +193,15 @@ export const CurrentWorkspaceMemberFavorites = ({
                             accent="tertiary"
                           />
                         }
-                        isDraggable
+                        isDragging={isDragging}
                       />
                     }
                   />
                 ))}
-              </>
-            }
-          />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         )}
       </NavigationDrawerItemsCollapsableContainer>
 

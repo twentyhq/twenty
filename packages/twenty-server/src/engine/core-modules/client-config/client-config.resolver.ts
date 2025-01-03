@@ -22,6 +22,13 @@ export class ClientConfigResolver {
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
+      authProviders: {
+        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+        magicLink: false,
+        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: [],
+      },
       isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
       isMultiWorkspaceEnabled: this.environmentService.get(

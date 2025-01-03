@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
 import FileType from 'file-type';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -23,16 +23,20 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { isDefined } from 'src/utils/is-defined';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -62,6 +66,7 @@ export class SignInUpService {
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly userService: UserService,
   ) {}
 
   async signInUp({
@@ -101,7 +106,6 @@ export class SignInUpService {
 
     const existingUser = await this.userRepository.findOne({
       where: { email },
-      relations: ['defaultWorkspace'],
     });
 
     if (existingUser && !fromSSO) {
@@ -118,53 +122,22 @@ export class SignInUpService {
       }
     }
 
-    const maybeInvitation =
-      fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
-        ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
-            {
-              subdomain: targetWorkspaceSubdomain,
-              email,
-            },
-          )
-        : undefined;
+    const signInUpWithInvitationResult = await this.signInUpWithInvitation({
+      email,
+      workspacePersonalInviteToken,
+      workspaceInviteHash,
+      targetWorkspaceSubdomain,
+      fromSSO,
+      firstName,
+      lastName,
+      picture,
+      authProvider,
+      passwordHash,
+      existingUser,
+    });
 
-    if (
-      workspacePersonalInviteToken ||
-      workspaceInviteHash ||
-      maybeInvitation
-    ) {
-      const invitationValidation =
-        workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
-          ? await this.workspaceInvitationService.validateInvitation({
-              workspacePersonalInviteToken:
-                workspacePersonalInviteToken ?? maybeInvitation?.value,
-              workspaceInviteHash,
-              email,
-            })
-          : null;
-
-      if (
-        invitationValidation?.isValid === true &&
-        invitationValidation.workspace
-      ) {
-        const updatedUser = await this.signInUpOnExistingWorkspace({
-          email,
-          passwordHash,
-          workspace: invitationValidation.workspace,
-          firstName,
-          lastName,
-          picture,
-          existingUser,
-          authProvider,
-        });
-
-        await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-          invitationValidation.workspace.id,
-          email,
-        );
-
-        return updatedUser;
-      }
+    if (isDefined(signInUpWithInvitationResult)) {
+      return signInUpWithInvitationResult;
     }
 
     if (!existingUser) {
@@ -177,7 +150,111 @@ export class SignInUpService {
       });
     }
 
-    return existingUser;
+    const workspace =
+      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
+        targetWorkspaceSubdomain,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    return await this.validateSignIn({
+      user: existingUser,
+      workspace,
+      authProvider,
+    });
+  }
+
+  private async signInUpWithInvitation({
+    email,
+    workspacePersonalInviteToken,
+    workspaceInviteHash,
+    firstName,
+    lastName,
+    picture,
+    fromSSO,
+    targetWorkspaceSubdomain,
+    authProvider,
+    passwordHash,
+    existingUser,
+  }: {
+    email: string;
+    workspacePersonalInviteToken?: string;
+    workspaceInviteHash?: string;
+    firstName: string;
+    lastName: string;
+    picture?: string | null;
+    authProvider?: WorkspaceAuthProvider;
+    passwordHash?: string;
+    existingUser: User | null;
+    fromSSO: boolean;
+    targetWorkspaceSubdomain?: string;
+  }) {
+    const maybeInvitation =
+      fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
+        ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
+            {
+              subdomain: targetWorkspaceSubdomain,
+              email,
+            },
+          )
+        : undefined;
+
+    const invitationValidation =
+      workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
+        ? await this.workspaceInvitationService.validateInvitation({
+            workspacePersonalInviteToken:
+              workspacePersonalInviteToken ?? maybeInvitation?.value,
+            workspaceInviteHash,
+            email,
+          })
+        : null;
+
+    if (
+      invitationValidation?.isValid === true &&
+      invitationValidation.workspace
+    ) {
+      const updatedUser = await this.signInUpOnExistingWorkspace({
+        email,
+        passwordHash,
+        workspace: invitationValidation.workspace,
+        firstName,
+        lastName,
+        picture,
+        existingUser,
+        authProvider,
+      });
+
+      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+        invitationValidation.workspace.id,
+        email,
+      );
+
+      return {
+        user: updatedUser,
+        workspace: invitationValidation.workspace,
+      };
+    }
+  }
+
+  private async validateSignIn({
+    user,
+    workspace,
+    authProvider,
+  }: {
+    user: User;
+    workspace: Workspace;
+    authProvider: SignInUpServiceInput['authProvider'];
+  }) {
+    if (authProvider) {
+      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
+    }
+
+    await this.userService.hasUserAccessToWorkspaceOrThrow(
+      user.id,
+      workspace.id,
+    );
+
+    return { user, workspace };
   }
 
   async signInUpOnExistingWorkspace({
@@ -202,7 +279,7 @@ export class SignInUpService {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
 
-    workspaceValidator.assertIsExist(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',
@@ -219,14 +296,7 @@ export class SignInUpService {
     );
 
     if (authProvider) {
-      workspaceValidator.isAuthEnabledOrThrow(
-        authProvider,
-        workspace,
-        new AuthException(
-          `${authProvider} auth is not enabled for this workspace`,
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
-        ),
-      );
+      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
     }
 
     if (isNewUser) {
@@ -239,7 +309,6 @@ export class SignInUpService {
         defaultAvatarUrl: imagePath,
         canImpersonate: false,
         passwordHash,
-        defaultWorkspace: workspace,
       });
 
       user = await this.userRepository.save(userToCreate);
@@ -299,8 +368,19 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
+    const user: Partial<User> = {
+      email,
+      firstName,
+      lastName,
+      canImpersonate: false,
+      passwordHash,
+    };
+
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
+
+      // if the workspace doesn't exist it means it's the first user of the workspace
+      user.canImpersonate = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
@@ -311,33 +391,30 @@ export class SignInUpService {
       }
     }
 
+    const logo = isWorkEmail(email)
+      ? `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`
+      : undefined;
+
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      logo,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    const imagePath = await this.uploadPicture(picture, workspace.id);
+    user.defaultAvatarUrl = await this.uploadPicture(picture, workspace.id);
 
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      defaultAvatarUrl: imagePath,
-      canImpersonate: false,
-      passwordHash,
-      defaultWorkspace: workspace,
-    });
+    const userCreated = this.userRepository.create(user);
 
-    const user = await this.userRepository.save(userToCreate);
+    const newUser = await this.userRepository.save(userCreated);
 
-    await this.userWorkspaceService.create(user.id, workspace.id);
+    await this.userWorkspaceService.create(newUser.id, workspace.id);
 
-    await this.activateOnboardingForUser(user, workspace, {
+    await this.activateOnboardingForUser(newUser, workspace, {
       firstName,
       lastName,
     });
@@ -347,7 +424,7 @@ export class SignInUpService {
       value: true,
     });
 
-    return user;
+    return { user: newUser, workspace };
   }
 
   async uploadPicture(

@@ -46,6 +46,7 @@ type StepRunOutput = {
 
 export type WorkflowRunOutput = {
   steps: Record<string, StepRunOutput>;
+  error?: string;
 };
 
 @WorkspaceEntity({
@@ -155,10 +156,10 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Workflow run position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   // Relations
   @WorkspaceRelation({

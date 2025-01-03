@@ -3,6 +3,7 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
@@ -15,6 +16,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -80,11 +82,8 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
 `;
 
 const StyledTextInput = styled(TextInput)`
-  backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
-  background: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  width: ${({ theme }) => theme.spacing(53)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  width: ${({ theme }) => theme.spacing(53)};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -187,10 +186,14 @@ export const RecordBoardCard = ({
     );
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
   );
+
+  const { checkIfLastUnselectAndCloseDropdown } =
+    useRecordBoardSelection(recordBoardId);
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
 
@@ -214,6 +217,13 @@ export const RecordBoardCard = ({
       y: event.clientY,
     });
     openActionMenuDropdown();
+  };
+
+  const handleCardClick = () => {
+    if (!isCreating) {
+      setIsCurrentCardSelected(!isCurrentCardSelected);
+      checkIfLastUnselectAndCloseDropdown();
+    }
   };
 
   const PreventSelectOnClickContainer = ({
@@ -263,18 +273,17 @@ export const RecordBoardCard = ({
   );
 
   return (
-    <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
+    <StyledBoardCardWrapper
+      className="record-board-card"
+      onContextMenu={handleActionMenuDropdown}
+    >
       {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
       <InView>
         <StyledBoardCard
           ref={cardRef}
           selected={isCurrentCardSelected}
           onMouseLeave={onMouseLeaveBoard}
-          onClick={() => {
-            if (!isCreating) {
-              setIsCurrentCardSelected(!isCurrentCardSelected);
-            }
-          }}
+          onClick={handleCardClick}
         >
           <StyledBoardCardHeader showCompactView={isCompactModeActive}>
             {isCreating && position !== undefined ? (
@@ -308,6 +317,7 @@ export const RecordBoardCard = ({
                 record={record as ObjectRecord}
                 variant={AvatarChipVariant.Transparent}
                 maxWidth={150}
+                to={indexIdentifierUrl(recordId)}
               />
             )}
 

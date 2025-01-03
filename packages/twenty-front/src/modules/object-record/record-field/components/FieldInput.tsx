@@ -17,7 +17,6 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
-import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -31,7 +30,6 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
-import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -167,8 +165,6 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldRichText(fieldDefinition) ? (
-        <RichTextFieldInput />
       ) : isFieldArray(fieldDefinition) ? (
         <ArrayFieldInput
           onCancel={onCancel}

@@ -157,6 +157,7 @@ ${mapObjectMetadataToGraphQLQuery({
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
+      primaryPhoneCallingCode
       additionalPhones
     }`;
   }
