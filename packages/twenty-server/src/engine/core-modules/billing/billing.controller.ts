@@ -43,6 +43,8 @@ export class BillingController {
     @Req() req: RawBodyRequest<Request>,
     @Res() res: Response,
   ) {
+    let resultBody = {};
+
     if (!req.rawBody) {
       res.status(400).end();
 
@@ -54,7 +56,9 @@ export class BillingController {
     );
 
     if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
-      await this.billingSubscriptionService.handleUnpaidInvoices(event.data);
+      resultBody = await this.billingSubscriptionService.handleUnpaidInvoices(
+        event.data,
+      );
     }
 
     if (
@@ -70,18 +74,20 @@ export class BillingController {
         return;
       }
 
-      await this.billingWebhookSubscriptionService.processStripeEvent(
-        workspaceId,
-        event.data,
-      );
+      resultBody =
+        await this.billingWebhookSubscriptionService.processStripeEvent(
+          workspaceId,
+          event.data,
+        );
     }
     if (
       event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
     ) {
       try {
-        await this.billingWebhookEntitlementService.processStripeEvent(
-          event.data,
-        );
+        resultBody =
+          await this.billingWebhookEntitlementService.processStripeEvent(
+            event.data,
+          );
       } catch (error) {
         if (
           error instanceof BillingException &&
@@ -96,14 +102,18 @@ export class BillingController {
       event.type === WebhookEvent.PRODUCT_CREATED ||
       event.type === WebhookEvent.PRODUCT_UPDATED
     ) {
-      await this.billingWebhookProductService.processStripeEvent(event.data);
+      resultBody = await this.billingWebhookProductService.processStripeEvent(
+        event.data,
+      );
     }
     if (
       event.type === WebhookEvent.PRICE_CREATED ||
       event.type === WebhookEvent.PRICE_UPDATED
     ) {
       try {
-        await this.billingWebhookPriceService.processStripeEvent(event.data);
+        resultBody = await this.billingWebhookPriceService.processStripeEvent(
+          event.data,
+        );
       } catch (error) {
         if (
           error instanceof BillingException &&
@@ -114,6 +124,6 @@ export class BillingController {
       }
     }
 
-    res.status(200).end();
+    res.status(200).send(resultBody).end();
   }
 }

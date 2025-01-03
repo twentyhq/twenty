@@ -95,6 +95,11 @@ export class BillingSubscriptionService {
         billingSubscription.stripeSubscriptionId,
       );
     }
+
+    return {
+      handleUnpaidInvoiceStripeSubscriptionId:
+        billingSubscription.stripeSubscriptionId,
+    };
   }
 
   async getWorkspaceEntitlementByKey(

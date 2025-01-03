@@ -96,7 +96,11 @@ module.exports = {
       rules: {},
     },
     {
-      files: ['*.spec.@(ts|tsx|js|jsx)', '*.test.@(ts|tsx|js|jsx)'],
+      files: [
+        '*.spec.@(ts|tsx|js|jsx)',
+        '*.integration-spec.@(ts|tsx|js|jsx)',
+        '*.test.@(ts|tsx|js|jsx)',
+      ],
       env: {
         jest: true,
       },

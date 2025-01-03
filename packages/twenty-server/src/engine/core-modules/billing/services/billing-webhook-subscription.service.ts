@@ -45,7 +45,7 @@ export class BillingWebhookSubscriptionService {
     });
 
     if (!workspace) {
-      return;
+      return { noWorkspace: true };
     }
 
     await this.billingCustomerRepository.upsert(
@@ -110,5 +110,10 @@ export class BillingWebhookSubscriptionService {
       String(data.object.customer),
       workspaceId,
     );
+
+    return {
+      stripeSubscriptionId: data.object.id,
+      stripeCustomerId: data.object.customer,
+    };
   }
 }
