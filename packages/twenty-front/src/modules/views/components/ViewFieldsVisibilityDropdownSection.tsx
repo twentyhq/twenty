@@ -144,7 +144,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             }-item-tooltip-anchor-${openToolTipIndex}`}
             place="left"
             content={fields[openToolTipIndex].infoTooltipContent}
-            isOpen={true}
+            hidden={false}
           />,
           document.body,
         )}
