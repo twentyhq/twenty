@@ -12,20 +12,18 @@ import {
   IconHierarchy2,
   IconKey,
   IconMail,
-  IconPoint,
   IconRocket,
   IconServer,
   IconSettings,
   IconUserCircle,
   IconUsers,
-  MAIN_COLORS,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -35,11 +33,8 @@ import {
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -51,32 +46,7 @@ type SettingsNavigationItem = {
   matchSubPages?: boolean;
 };
 
-const StyledIconContainer = styled.div`
-  position: absolute;
-  left: ${({ theme }) => theme.spacing(-5)};
-  height: 100%;
-  display: flex;
-  align-items: center;
-`;
-
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
-const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
-`;
-
 export const SettingsNavigationDrawerItems = () => {
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const {
-    contentRef: securityRef,
-    motionAnimationVariants: securityAnimationVariants,
-  } = useExpandedAnimation(isAdvancedModeEnabled);
-  const {
-    contentRef: developersRef,
-    motionAnimationVariants: developersAnimationVariants,
-  } = useExpandedAnimation(isAdvancedModeEnabled);
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
@@ -198,81 +168,36 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-        <AnimatePresence>
-          {isAdvancedModeEnabled && (
-            <motion.div
-              ref={securityRef}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={securityAnimationVariants}
-            >
-              <StyledContainer>
-                <StyledIconContainer>
-                  <StyledIconPoint
-                    size={12}
-                    color={MAIN_COLORS.yellow}
-                    fill={MAIN_COLORS.yellow}
-                  />
-                </StyledIconContainer>
-                <SettingsNavigationDrawerItem
-                  label="Security"
-                  path={SettingsPath.Security}
-                  Icon={IconKey}
-                />
-              </StyledContainer>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AdvancedSettingsWrapper navigationDrawerItem={true}>
+          <SettingsNavigationDrawerItem
+            label="Security"
+            path={SettingsPath.Security}
+            Icon={IconKey}
+          />
+        </AdvancedSettingsWrapper>
       </NavigationDrawerSection>
 
-      <AnimatePresence>
-        {isAdvancedModeEnabled && (
-          <motion.div
-            ref={developersRef}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={developersAnimationVariants}
-          >
-            <NavigationDrawerSection>
-              <NavigationDrawerSectionTitle label="Developers" />
-              <StyledContainer>
-                <StyledIconContainer>
-                  <StyledIconPoint
-                    size={12}
-                    color={MAIN_COLORS.yellow}
-                    fill={MAIN_COLORS.yellow}
-                  />
-                </StyledIconContainer>
-
-                <SettingsNavigationDrawerItem
-                  label="API & Webhooks"
-                  path={SettingsPath.Developers}
-                  Icon={IconCode}
-                />
-              </StyledContainer>
-              {isFunctionSettingsEnabled && (
-                <StyledContainer>
-                  <StyledIconContainer>
-                    <StyledIconPoint
-                      size={12}
-                      color={MAIN_COLORS.yellow}
-                      fill={MAIN_COLORS.yellow}
-                    />
-                  </StyledIconContainer>
-
-                  <SettingsNavigationDrawerItem
-                    label="Functions"
-                    path={SettingsPath.ServerlessFunctions}
-                    Icon={IconFunction}
-                  />
-                </StyledContainer>
-              )}
-            </NavigationDrawerSection>
-          </motion.div>
+      <NavigationDrawerSection>
+        <AdvancedSettingsWrapper hideIcon>
+          <NavigationDrawerSectionTitle label="Developers" />
+        </AdvancedSettingsWrapper>
+        <AdvancedSettingsWrapper navigationDrawerItem={true}>
+          <SettingsNavigationDrawerItem
+            label="API & Webhooks"
+            path={SettingsPath.Developers}
+            Icon={IconCode}
+          />
+        </AdvancedSettingsWrapper>
+        {isFunctionSettingsEnabled && (
+          <AdvancedSettingsWrapper navigationDrawerItem={true}>
+            <SettingsNavigationDrawerItem
+              label="Functions"
+              path={SettingsPath.ServerlessFunctions}
+              Icon={IconFunction}
+            />
+          </AdvancedSettingsWrapper>
         )}
-      </AnimatePresence>
+      </NavigationDrawerSection>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
         {isAdminPageEnabled && (

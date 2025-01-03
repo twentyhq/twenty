@@ -5,7 +5,7 @@ import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/M
 import { Fields } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { ExpandableContainer, isDefined } from 'twenty-ui';
+import { AnimatedExpandableContainer, isDefined } from 'twenty-ui';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: Fields<T>,
@@ -59,7 +59,12 @@ export const UnmatchColumn = <T extends string>({
         buttonOnClick={() => setIsExpanded(!isExpanded)}
         isExpanded={isExpanded}
       />
-      <ExpandableContainer isExpanded={isExpanded}>
+      <AnimatedExpandableContainer
+        isExpanded={isExpanded}
+        dimension="height"
+        mode="scroll-height"
+        containAnimation
+      >
         <StyledContentWrapper>
           {column.matchedOptions.map((option) => (
             <SubMatchingSelect
@@ -71,7 +76,7 @@ export const UnmatchColumn = <T extends string>({
             />
           ))}
         </StyledContentWrapper>
-      </ExpandableContainer>
+      </AnimatedExpandableContainer>
     </StyledContainer>
   );
 };

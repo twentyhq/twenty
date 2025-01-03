@@ -1,3 +1,4 @@
+export * from './animated-expandable-container/components/AnimatedExpandableContainer';
 export * from './animated-placeholder/components/AnimatedPlaceholder';
 export * from './animated-placeholder/components/EmptyPlaceholderStyled';
 export * from './animated-placeholder/components/ErrorPlaceholderStyled';
@@ -9,5 +10,4 @@ export * from './card/components/Card';
 export * from './card/components/CardContent';
 export * from './card/components/CardFooter';
 export * from './card/components/CardHeader';
-export * from './expandableContainer/components/ExpandableContainer';
 export * from './section/components/Section';
