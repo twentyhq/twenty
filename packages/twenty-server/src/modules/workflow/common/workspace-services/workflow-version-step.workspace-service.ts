@@ -59,7 +59,7 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     const newStepId = v4();
 
-    switch (`${type}`) {
+    switch (type) {
       case WorkflowActionType.CODE: {
         const newServerlessFunction =
           await this.serverlessFunctionService.createOneServerlessFunction(
@@ -185,6 +185,48 @@ export class WorkflowVersionStepWorkspaceService {
           `WorkflowActionType '${type}' unknown`,
           WorkflowVersionStepExceptionCode.UNKNOWN,
         );
+    }
+  }
+
+  private async duplicateStep({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    const newStepId = v4();
+
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        const copiedServerlessFunction =
+          await this.serverlessFunctionService.copyOneServerlessFunction({
+            serverlessFunctionToCopyId:
+              step.settings.input.serverlessFunctionId,
+            serverlessFunctionToCopyVersion:
+              step.settings.input.serverlessFunctionVersion,
+            workspaceId,
+          });
+
+        return {
+          ...step,
+          id: newStepId,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              serverlessFunctionId: copiedServerlessFunction.id,
+              serverlessFunctionVersion: copiedServerlessFunction.latestVersion,
+            },
+          },
+        };
+      }
+      default: {
+        return {
+          ...step,
+          id: newStepId,
+        };
+      }
     }
   }
 
@@ -433,40 +475,12 @@ export class WorkflowVersionStepWorkspaceService {
     const newWorkflowVersionSteps: WorkflowAction[] = [];
 
     for (const step of workflowVersionToCopy.steps) {
-      switch (step.type) {
-        case WorkflowActionType.CODE: {
-          const copiedServerlessFunction =
-            await this.serverlessFunctionService.copyOneServerlessFunction({
-              serverlessFunctionToCopyId:
-                step.settings.input.serverlessFunctionId,
-              serverlessFunctionToCopyVersion:
-                step.settings.input.serverlessFunctionVersion,
-              workspaceId,
-            });
+      const duplicatedStep = await this.duplicateStep({
+        step,
+        workspaceId,
+      });
 
-          newWorkflowVersionSteps.push({
-            ...step,
-            id: v4(),
-            settings: {
-              ...step.settings,
-              input: {
-                ...step.settings.input,
-                serverlessFunctionId: copiedServerlessFunction.id,
-                serverlessFunctionVersion:
-                  copiedServerlessFunction.latestVersion,
-              },
-            },
-          });
-
-          break;
-        }
-        default: {
-          newWorkflowVersionSteps.push({
-            ...step,
-            id: v4(),
-          });
-        }
-      }
+      newWorkflowVersionSteps.push(duplicatedStep);
     }
 
     await workflowVersionRepository.update(workflowVersion.id, {
