@@ -174,7 +174,7 @@ export const SettingsNavigationDrawerItems = () => {
             path={SettingsPath.Security}
             Icon={IconKey}
           />
-        </AdvancedSettingsWrapper>{' '}
+        </AdvancedSettingsWrapper>
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
