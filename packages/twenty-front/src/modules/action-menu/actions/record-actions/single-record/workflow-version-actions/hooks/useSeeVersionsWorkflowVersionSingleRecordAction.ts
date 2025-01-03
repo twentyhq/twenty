@@ -15,7 +15,6 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutO
       ? [workflowVersion.workflowId]
       : undefined;
 
-    // TODO: Add recordIds to the hook
     const { shouldBeRegistered, onClick } =
       useSeeVersionsWorkflowSingleRecordAction(workflowIds);
 
