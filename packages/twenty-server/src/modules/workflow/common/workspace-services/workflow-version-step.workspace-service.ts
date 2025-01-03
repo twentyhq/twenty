@@ -13,7 +13,10 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
@@ -418,32 +421,17 @@ export class WorkflowVersionStepWorkspaceService {
 
   async overrideWorkflowDraftVersion({
     workspaceId,
-    workflowVersionId,
+    workflowId,
     workflowVersionIdToCopy,
   }: {
     workspaceId: string;
-    workflowVersionId: string;
+    workflowId: string;
     workflowVersionIdToCopy: string;
-  }): Promise<undefined> {
+  }) {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
       );
-
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    assertWorkflowVersionIsDraft(workflowVersion);
 
     const workflowVersionToCopy = await workflowVersionRepository.findOne({
       where: {
@@ -461,9 +449,32 @@ export class WorkflowVersionStepWorkspaceService {
     assertWorkflowVersionTriggerIsDefined(workflowVersionToCopy);
     assertWorkflowVersionHasSteps(workflowVersionToCopy);
 
-    if (Array.isArray(workflowVersion.steps)) {
+    let draftWorkflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        workflowId,
+        status: WorkflowVersionStatus.DRAFT,
+      },
+    });
+
+    if (!isDefined(draftWorkflowVersion)) {
+      const workflowVersionsCount = await workflowVersionRepository.count({
+        where: {
+          workflowId,
+        },
+      });
+
+      draftWorkflowVersion = await workflowVersionRepository.save({
+        workflowId,
+        name: `v${workflowVersionsCount + 1}`,
+        status: WorkflowVersionStatus.DRAFT,
+      });
+    }
+
+    assertWorkflowVersionIsDraft(draftWorkflowVersion);
+
+    if (Array.isArray(draftWorkflowVersion.steps)) {
       await Promise.all(
-        workflowVersion.steps.map((step) =>
+        draftWorkflowVersion.steps.map((step) =>
           this.runWorkflowVersionStepDeletionSideEffects({
             step,
             workspaceId,
@@ -472,6 +483,7 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
     const newWorkflowVersionSteps: WorkflowAction[] = [];
 
     for (const step of workflowVersionToCopy.steps) {
@@ -483,9 +495,9 @@ export class WorkflowVersionStepWorkspaceService {
       newWorkflowVersionSteps.push(duplicatedStep);
     }
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      trigger: workflowVersionToCopy.trigger,
+    await workflowVersionRepository.update(draftWorkflowVersion.id, {
       steps: newWorkflowVersionSteps,
+      trigger: newWorkflowVersionTrigger,
     });
   }
 
