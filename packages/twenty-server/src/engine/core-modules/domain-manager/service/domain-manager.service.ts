@@ -60,18 +60,20 @@ export class DomainManagerService {
   }
 
   buildEmailVerificationURL({
-    token,
+    emailVerificationToken,
     email,
     workspaceSubdomain,
+    loginToken,
   }: {
-    token: string;
+    emailVerificationToken: string;
     email: string;
-    workspaceSubdomain: string;
+    workspaceSubdomain?: string;
+    loginToken: string;
   }) {
     return this.buildWorkspaceURL({
       subdomain: workspaceSubdomain,
       pathname: 'verify-email',
-      searchParams: { token, email },
+      searchParams: { emailVerificationToken, email, loginToken },
     });
   }
 

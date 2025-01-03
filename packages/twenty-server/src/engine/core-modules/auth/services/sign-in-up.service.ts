@@ -418,14 +418,6 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(newUser.id, workspace.id);
 
-    if (this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
-      await this.emailVerificationService.sendVerificationEmail(
-        newUser.id,
-        newUser.email,
-        workspace.subdomain,
-      );
-    }
-
     await this.activateOnboardingForUser(newUser, workspace, {
       firstName,
       lastName,

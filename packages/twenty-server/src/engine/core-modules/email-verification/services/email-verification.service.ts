@@ -49,10 +49,10 @@ export class EmailVerificationService {
     return this.appTokenRepository.save(verificationToken);
   }
 
-  async verifyEmailVerificationToken(appTokenId: string) {
+  async verifyEmailVerificationToken(token: string) {
     const appToken = await this.appTokenRepository.findOne({
       where: {
-        id: appTokenId,
+        id: token,
         type: AppTokenType.EmailVerificationToken,
       },
       relations: ['user'],
@@ -67,25 +67,37 @@ export class EmailVerificationService {
 
     const emailVerificationToken = castAppTokenToEmailVerification(appToken);
 
-    await this.userService.markEmailAsVerified(emailVerificationToken.userId);
+    const user = await this.userService.markEmailAsVerified(
+      emailVerificationToken.userId,
+    );
 
     await this.appTokenRepository.remove(appToken);
 
     return {
-      isValid: true,
+      success: true,
+      email: user.email,
     };
   }
 
-  async sendVerificationEmail(userId: string, email: string) {
-    const verificationToken = await this.generateEmailVerificationToken(
-      userId,
-      email,
-    );
+  async sendVerificationEmail(
+    userId: string,
+    email: string,
+    workspaceSubdomain: string,
+    loginToken: string,
+  ) {
+    if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+      return;
+    }
+
+    const { id: emailVerificationToken } =
+      await this.generateEmailVerificationToken(userId, email);
 
     const verificationLink =
       this.domainManagerService.buildEmailVerificationURL({
-        token: verificationToken.id,
-        email: email,
+        emailVerificationToken,
+        email,
+        workspaceSubdomain,
+        loginToken,
       });
 
     const emailData = {

@@ -780,7 +780,6 @@ export type MutationVerifyArgs = {
 
 
 export type MutationVerifyEmailArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
   emailVerificationToken: Scalars['String'];
 };
 
@@ -1454,6 +1453,7 @@ export type ValidatePasswordResetToken = {
 
 export type VerifyEmailOutput = {
   __typename?: 'VerifyEmailOutput';
+  email?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
 };
 
@@ -2006,7 +2006,7 @@ export type VerifyEmailMutationVariables = Exact<{
 }>;
 
 
-export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: { __typename?: 'VerifyEmailOutput', success: boolean } };
+export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: { __typename?: 'VerifyEmailOutput', success: boolean, email?: string | null } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -3153,11 +3153,9 @@ export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const VerifyEmailDocument = gql`
     mutation VerifyEmail($emailVerificationToken: String!, $captchaToken: String) {
-  verifyEmail(
-    emailVerificationToken: $emailVerificationToken
-    captchaToken: $captchaToken
-  ) {
+  verifyEmail(emailVerificationToken: $emailVerificationToken) {
     success
+    email
   }
 }
     `;

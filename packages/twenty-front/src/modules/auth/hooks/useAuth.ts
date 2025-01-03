@@ -312,7 +312,7 @@ export const useAuth = () => {
       };
     },
     [
-verify,
+      verify,
       setTokenPair,
       loadCurrentUser,
       checkUserExistsQuery,
@@ -329,9 +329,12 @@ verify,
         },
       });
 
-      if (!verifyEmailResult.data?.verifyEmail.success) {
+      const email = verifyEmailResult.data?.verifyEmail.email;
+      if (!verifyEmailResult.data?.verifyEmail.success || !email) {
         throw new Error('Failed to verify email');
       }
+
+      return { email };
     },
     [verifyEmail],
   );
@@ -482,6 +485,7 @@ verify,
   return {
     challenge: handleChallenge,
     verify: handleVerify,
+    verifyEmail: handleVerifyEmail,
 
     loadCurrentUser,
 

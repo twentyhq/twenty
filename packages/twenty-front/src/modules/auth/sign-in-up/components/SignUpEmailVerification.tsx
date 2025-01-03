@@ -1,7 +1,9 @@
+import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
-import { IconMail, StyledText } from 'twenty-ui';
+import { IconMail, MainButton } from 'twenty-ui';
 
 const StyledContentContainer = styled(motion.div)`
   align-items: center;
@@ -39,7 +41,33 @@ const StyledDescription = styled.div`
   max-width: 320px;
 `;
 
-export const SignUpEmailVerification = () => {
+const StyledButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(6)};
+  width: 200px;
+`;
+
+const StyledContentSection = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+export const SignUpEmailVerification = ({
+  email,
+}: {
+  email: string | null;
+}) => {
+  const navigate = useNavigate();
+
+  const navigateToLoginPage = () => {
+    const url = encodeURI(
+      `${AppPath.SignInUp}${email ? `?email=${email}` : ''}`,
+    );
+
+    navigate(url);
+  };
+
   return (
     <StyledContentContainer
       initial={{ opacity: 0, height: 0 }}
@@ -53,17 +81,34 @@ export const SignUpEmailVerification = () => {
       <StyledIconContainer>
         <IconMail size={24} />
       </StyledIconContainer>
-      <div>
-        <StyledTitle>Check your inbox</StyledTitle>
+      <StyledContentSection>
+        <StyledTitle>
+          {email ? 'Email verified' : 'Check your inbox'}
+        </StyledTitle>
         <StyledDescription>
-          We sent you an email to verify your address. Please click the link in
-          that email to confirm your account.
+          {email
+            ? 'Your email has been verified. Please login to continue.'
+            : 'We sent you an email to verify your address. Please click the link in that email to confirm your account.'}
         </StyledDescription>
-      </div>
-      <StyledText
-        color="secondary"
-        text="Didn't receive the email? Check your spam folder."
-      />
+
+        <StyledButtonContainer>
+          {email ? (
+            <MainButton
+              title="Continue with email"
+              onClick={navigateToLoginPage}
+              fullWidth
+            />
+          ) : (
+            <MainButton
+              title="Resend email"
+              onClick={() => {
+                // TODO#8240: Resend email
+              }}
+              fullWidth
+            />
+          )}
+        </StyledButtonContainer>
+      </StyledContentSection>
     </StyledContentContainer>
   );
 };
