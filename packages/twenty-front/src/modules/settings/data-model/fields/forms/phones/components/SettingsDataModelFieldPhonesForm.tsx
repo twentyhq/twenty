@@ -7,7 +7,7 @@ import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/u
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select } from '@/ui/input/components/Select';
 import { CountryCode } from 'libphonenumber-js';
-import { IconMap } from 'twenty-ui';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -38,12 +38,14 @@ export const SettingsDataModelFieldPhonesForm = ({
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
   const countries = [
-    { label: 'No country', value: '' },
+    { label: 'No country', value: '', Icon: IconCircleOff },
     ...useCountries()
       .sort((a, b) => a.countryName.localeCompare(b.countryName))
       .map((country) => ({
         label: `${country.countryName} (+${country.callingCode})`,
         value: country.countryCode as CountryCodeOrEmpty,
+        Icon: (props: IconComponentProps) =>
+          country.Flag({ width: props.size, height: props.size }),
       })),
   ];
   const defaultDefaultValue = {
@@ -88,6 +90,7 @@ export const SettingsDataModelFieldPhonesForm = ({
               disabled={disabled}
               options={countries}
               selectSizeVariant="small"
+              withSearchInput={true}
             />
           </SettingsOptionCardContentSelect>
         );

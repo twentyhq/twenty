@@ -3,6 +3,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { buildRecordGqlFieldsAggregateForRecordBoard } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForRecordBoard';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
@@ -11,11 +12,12 @@ import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/s
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateRecordsForRecordBoardColumn = () => {
   const isAggregateQueryEnabled = useIsFeatureEnabled(
-    'IS_AGGREGATE_QUERY_ENABLED',
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   const { columnDefinition, recordCount } = useContext(
@@ -53,7 +55,11 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
+    filterValueDependencies,
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,

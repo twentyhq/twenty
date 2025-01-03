@@ -13,7 +13,7 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation,
     }: {
       kanbanAggregateOperationFieldMetadataId: string | null;
-      kanbanAggregateOperation: AGGREGATE_OPERATIONS;
+      kanbanAggregateOperation: AGGREGATE_OPERATIONS | null;
     }) =>
       updateView({
         id: currentViewId,

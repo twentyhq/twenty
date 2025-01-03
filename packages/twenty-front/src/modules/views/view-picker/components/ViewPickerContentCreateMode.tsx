@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -13,6 +14,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
@@ -43,6 +45,13 @@ const StyledNoKanbanFieldAvailableContainer = styled.div`
 export const ViewPickerContentCreateMode = () => {
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
+
+  const viewObjectMetadataId = useRecoilComponentValueV2(
+    viewObjectMetadataIdComponentState,
+  );
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: viewObjectMetadataId ?? '',
+  });
 
   const [viewPickerInputName, setViewPickerInputName] =
     useRecoilComponentStateV2(viewPickerInputNameComponentState);
@@ -183,7 +192,8 @@ export const ViewPickerContentCreateMode = () => {
             </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
               <StyledNoKanbanFieldAvailableContainer>
-                Set up a Select field on Companies to create a Kanban
+                Set up a Select field on {objectMetadataItem.labelPlural} to
+                create a Kanban
               </StyledNoKanbanFieldAvailableContainer>
             )}
           </>

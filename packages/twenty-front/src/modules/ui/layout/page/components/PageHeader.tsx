@@ -18,6 +18,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -111,7 +112,7 @@ export const PageHeader = ({
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   return (

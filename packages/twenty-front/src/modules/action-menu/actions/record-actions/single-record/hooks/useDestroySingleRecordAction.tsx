@@ -1,4 +1,5 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -9,63 +10,66 @@ import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
-    const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
-      useState(false);
+export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
+  objectMetadataItem,
+}) => {
+  const recordId = useSelectedRecordIdOrThrow();
 
-    const { resetTableRowSelection } = useRecordTable({
-      recordTableId: objectMetadataItem.namePlural,
-    });
+  const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
+    useState(false);
 
-    const { destroyOneRecord } = useDestroyOneRecord({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    });
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem.namePlural,
+  });
 
-    const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+  const { destroyOneRecord } = useDestroyOneRecord({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
-    const { closeRightDrawer } = useRightDrawer();
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-    const handleDeleteClick = useCallback(async () => {
-      resetTableRowSelection();
+  const { closeRightDrawer } = useRightDrawer();
 
-      await destroyOneRecord(recordId);
-    }, [resetTableRowSelection, destroyOneRecord, recordId]);
+  const handleDeleteClick = useCallback(async () => {
+    resetTableRowSelection();
 
-    const isRemoteObject = objectMetadataItem.isRemote;
+    await destroyOneRecord(recordId);
+  }, [resetTableRowSelection, destroyOneRecord, recordId]);
 
-    const { isInRightDrawer } = useContext(ActionMenuContext);
+  const isRemoteObject = objectMetadataItem.isRemote;
 
-    const shouldBeRegistered =
-      !isRemoteObject && isDefined(selectedRecord?.deletedAt);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
-    const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
+  const shouldBeRegistered =
+    !isRemoteObject && isDefined(selectedRecord?.deletedAt);
 
-      setIsDestroyRecordsModalOpen(true);
-    };
+  const onClick = () => {
+    if (!shouldBeRegistered) {
+      return;
+    }
 
-    return {
-      shouldBeRegistered,
-      onClick,
-      ConfirmationModal: (
-        <ConfirmationModal
-          isOpen={isDestroyRecordsModalOpen}
-          setIsOpen={setIsDestroyRecordsModalOpen}
-          title={'Permanently Destroy Record'}
-          subtitle={
-            'Are you sure you want to destroy this record? It cannot be recovered anymore.'
-          }
-          onConfirmClick={async () => {
-            await handleDeleteClick();
-            if (isInRightDrawer) {
-              closeRightDrawer();
-            }
-          }}
-          deleteButtonText={'Permanently Destroy Record'}
-        />
-      ),
-    };
+    setIsDestroyRecordsModalOpen(true);
   };
+
+  return {
+    shouldBeRegistered,
+    onClick,
+    ConfirmationModal: (
+      <ConfirmationModal
+        isOpen={isDestroyRecordsModalOpen}
+        setIsOpen={setIsDestroyRecordsModalOpen}
+        title={'Permanently Destroy Record'}
+        subtitle={
+          'Are you sure you want to destroy this record? It cannot be recovered anymore.'
+        }
+        onConfirmClick={async () => {
+          await handleDeleteClick();
+          if (isInRightDrawer) {
+            closeRightDrawer();
+          }
+        }}
+        deleteButtonText={'Permanently Destroy Record'}
+      />
+    ),
+  };
+};

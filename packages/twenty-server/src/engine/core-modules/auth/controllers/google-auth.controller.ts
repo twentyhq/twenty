@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -18,9 +19,8 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Controller('auth/google')
@@ -55,6 +55,7 @@ export class GoogleAuthController {
         workspaceInviteHash,
         workspacePersonalInviteToken,
         targetWorkspaceSubdomain,
+        billingCheckoutSessionState,
       } = req.user;
 
       const signInUpParams = {
@@ -71,8 +72,9 @@ export class GoogleAuthController {
 
       if (
         this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN')
+        (targetWorkspaceSubdomain ===
+          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
+          !targetWorkspaceSubdomain)
       ) {
         const workspaceWithGoogleAuthActive =
           await this.workspaceRepository.findOne({
@@ -84,7 +86,7 @@ export class GoogleAuthController {
                 },
               },
             },
-            relations: ['userWorkspaces', 'userWorkspaces.user'],
+            relations: ['workspaceUsers', 'workspaceUsers.user'],
           });
 
         if (workspaceWithGoogleAuthActive) {
@@ -93,16 +95,19 @@ export class GoogleAuthController {
         }
       }
 
-      const user = await this.authService.signInUp(signInUpParams);
+      const { user, workspace } =
+        await this.authService.signInUp(signInUpParams);
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        workspace.id,
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
-          user.defaultWorkspace.subdomain,
+          workspace.subdomain,
+          billingCheckoutSessionState,
         ),
       );
     } catch (err) {

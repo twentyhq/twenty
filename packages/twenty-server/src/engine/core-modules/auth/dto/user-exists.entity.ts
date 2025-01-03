@@ -7,9 +7,6 @@ export class UserExists {
   @Field(() => Boolean)
   exists: true;
 
-  @Field(() => String)
-  defaultWorkspaceId: string;
-
   @Field(() => [AvailableWorkspaceOutput])
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
 }

@@ -6,8 +6,13 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
+import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
+import { PETS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/pets-metadata-seeds';
+import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
+import { SeederService } from 'src/engine/seeder/seeder.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { demoObjectsPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';
+import { seedWorkspaceWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -17,6 +22,7 @@ export class WorkspaceManagerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly seederService: SeederService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly featureFlagService: FeatureFlagService,
@@ -139,11 +145,25 @@ export class WorkspaceManagerService {
       workspaceId,
     );
 
-    await demoObjectsPrefillData(
+    await seedWorkspaceWithDemoData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
       isWorkflowEnabled,
+    );
+
+    await this.seederService.seedCustomObjects(
+      dataSourceMetadata.id,
+      workspaceId,
+      PETS_METADATA_SEEDS,
+      PETS_DATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjects(
+      dataSourceMetadata.id,
+      workspaceId,
+      SURVEY_RESULTS_METADATA_SEEDS,
+      SURVEY_RESULTS_DATA_SEEDS,
     );
   }
 

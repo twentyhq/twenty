@@ -1,6 +1,6 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
-import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,9 +15,20 @@ export const useHandleFavoriteDragAndDrop = () => {
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
-  const setActiveFavoriteFolderId = useSetRecoilState(
-    activeFavoriteFolderIdState,
+  const setOpenFavoriteFolderIds = useSetRecoilState(
+    openFavoriteFolderIdsState,
   );
+
+  const openDestinationFolder = (folderId: string | null) => {
+    if (!folderId) return;
+
+    setOpenFavoriteFolderIds((current) => {
+      if (!current.includes(folderId)) {
+        return [...current, folderId];
+      }
+      return current;
+    });
+  };
 
   const handleFavoriteDragAndDrop: OnDragEndResponder = (result) => {
     const { destination, source, draggableId } = result;
@@ -53,7 +64,7 @@ export const useHandleFavoriteDragAndDrop = () => {
 
       const newPosition =
         folderFavorites.length === 0
-          ? 0
+          ? 1
           : folderFavorites[folderFavorites.length - 1].position + 1;
 
       updateOneFavorite({
@@ -64,7 +75,7 @@ export const useHandleFavoriteDragAndDrop = () => {
         },
       });
 
-      setActiveFavoriteFolderId(destinationFolderId);
+      openDestinationFolder(destinationFolderId);
       return;
     }
 
@@ -75,9 +86,9 @@ export const useHandleFavoriteDragAndDrop = () => {
 
       let newPosition;
       if (destinationFavorites.length === 0) {
-        newPosition = 0;
+        newPosition = 1;
       } else if (destination.index === 0) {
-        newPosition = destinationFavorites[0].position / 2;
+        newPosition = destinationFavorites[0].position - 1;
       } else if (destination.index >= destinationFavorites.length) {
         newPosition =
           destinationFavorites[destinationFavorites.length - 1].position + 1;
@@ -99,9 +110,9 @@ export const useHandleFavoriteDragAndDrop = () => {
       return;
     }
 
-    const favoritesInSameList = favoritesSorted.filter(
-      (favorite) => favorite.favoriteFolderId === sourceFolderId,
-    );
+    const favoritesInSameList = favoritesSorted
+      .filter((favorite) => favorite.favoriteFolderId === sourceFolderId)
+      .filter((favorite) => favorite.id !== draggableId);
 
     const newPosition = calculateNewPosition({
       destinationIndex: destination.index,

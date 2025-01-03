@@ -52,19 +52,17 @@ export const RecordShowPageWorkflowHeader = ({
           assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
           if (!canWorkflowBeTested) {
-            enqueueSnackBar(
-              'Trigger type should be Manual - when no record(s) are selected',
-              {
-                variant: SnackBarVariant.Error,
-                title: 'Workflow cannot be tested',
-                icon: (
-                  <IconSettingsAutomation
-                    size={16}
-                    color={theme.snackBar.error.color}
-                  />
-                ),
-              },
-            );
+            enqueueSnackBar('Workflow cannot be tested', {
+              variant: SnackBarVariant.Error,
+              detailedMessage:
+                'Trigger type should be Manual - when no record(s) are selected',
+              icon: (
+                <IconSettingsAutomation
+                  size={16}
+                  color={theme.snackBar.error.color}
+                />
+              ),
+            });
             return;
           }
 

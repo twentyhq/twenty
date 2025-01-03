@@ -1,11 +1,11 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AggregateContentId } from '@/object-record/record-board/types/AggregateContentId';
+import { RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
 import { createContext } from 'react';
 
 export type RecordBoardColumnHeaderAggregateDropdownContextValue = {
   objectMetadataItem: ObjectMetadataItem;
-  currentContentId: AggregateContentId | null;
-  onContentChange: (key: AggregateContentId) => void;
+  currentContentId: RecordBoardColumnHeaderAggregateContentId | null;
+  onContentChange: (key: RecordBoardColumnHeaderAggregateContentId) => void;
   resetContent: () => void;
   dropdownId: string;
 };

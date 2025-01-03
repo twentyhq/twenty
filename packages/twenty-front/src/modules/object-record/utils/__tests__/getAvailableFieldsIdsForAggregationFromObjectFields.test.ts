@@ -1,5 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
+import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -43,8 +45,10 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
     ]);
 
     Object.values(AGGREGATE_OPERATIONS).forEach((operation) => {
-      if (operation !== AGGREGATE_OPERATIONS.count) {
-        expect(result[operation]).toEqual([]);
+      if (!STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(operation)) {
+        expect(
+          result[operation as AggregateOperationsOmittingStandardOperations],
+        ).toEqual([]);
       }
     });
   });
@@ -53,8 +57,10 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
     const result = getAvailableFieldsIdsForAggregationFromObjectFields([]);
 
     Object.values(AGGREGATE_OPERATIONS).forEach((operation) => {
-      if (operation !== AGGREGATE_OPERATIONS.count) {
-        expect(result[operation]).toEqual([]);
+      if (!STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(operation)) {
+        expect(
+          result[operation as AggregateOperationsOmittingStandardOperations],
+        ).toEqual([]);
       }
     });
   });

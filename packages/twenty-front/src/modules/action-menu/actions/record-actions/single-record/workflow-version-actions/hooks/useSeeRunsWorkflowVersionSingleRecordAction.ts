@@ -1,7 +1,7 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeRunsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useSeeRunsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
@@ -24,13 +26,17 @@ export const useSeeRunsWorkflowVersionSingleRecordAction: SingleRecordActionHook
     const onClick = () => {
       if (!shouldBeRegistered) return;
 
-      const filterQueryParams: FilterQueryParams = {
+      const filterQueryParams = {
         filter: {
           workflow: {
-            [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+            [ViewFilterOperand.Is]: {
+              selectedRecordIds: [workflowWithCurrentVersion.id],
+            },
           },
           workflowVersion: {
-            [ViewFilterOperand.Is]: [recordId],
+            [ViewFilterOperand.Is]: {
+              selectedRecordIds: [recordId],
+            },
           },
         },
       };

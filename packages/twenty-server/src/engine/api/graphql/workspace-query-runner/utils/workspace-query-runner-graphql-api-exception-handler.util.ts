@@ -17,6 +17,7 @@ import {
   TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { isDefined } from 'src/utils/is-defined';
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
@@ -49,7 +50,11 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
               return fieldMetadata?.label;
             });
 
-        const columnNames = affectedColumns?.join(', ');
+        if (!isDefined(affectedColumns)) {
+          throw new UserInputError(`A duplicate entry was detected`);
+        }
+
+        const columnNames = affectedColumns.join(', ');
 
         if (affectedColumns?.length === 1) {
           throw new UserInputError(
