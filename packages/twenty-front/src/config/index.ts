@@ -17,7 +17,7 @@ const getDefaultUrl = () => {
   } else {
     // Outside of localhost we assume that they run on the same port
     // because the backend will serve the frontend
-    // It prod context, we use index.html + window var to ovewrite it
+    // In prod context, we use index.html + window var to ovewrite it
     return `${window.location.protocol}//${window.location.hostname}${
       window.location.port ? `:${window.location.port}` : ''
     }`;
