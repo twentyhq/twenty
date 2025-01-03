@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
 export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
-  () => {
-    const recordId = useSelectedRecordIdOrThrow();
+  (recordIds) => {
+    const recordId = useSelectedRecordIdOrThrow(recordIds?.[0]);
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 

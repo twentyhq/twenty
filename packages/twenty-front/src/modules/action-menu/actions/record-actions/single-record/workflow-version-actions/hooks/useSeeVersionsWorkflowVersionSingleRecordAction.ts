@@ -11,13 +11,13 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutO
 
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
-    if (!isDefined(workflowVersion)) {
-      throw new Error('Workflow version not found');
-    }
+    const workflowIds = isDefined(workflowVersion)
+      ? [workflowVersion.workflowId]
+      : undefined;
 
     // TODO: Add recordIds to the hook
     const { shouldBeRegistered, onClick } =
-      useSeeVersionsWorkflowSingleRecordAction();
+      useSeeVersionsWorkflowSingleRecordAction(workflowIds);
 
     return {
       shouldBeRegistered,
