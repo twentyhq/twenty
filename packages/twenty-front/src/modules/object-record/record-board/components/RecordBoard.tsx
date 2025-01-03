@@ -4,7 +4,9 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
@@ -70,7 +72,12 @@ export const RecordBoard = () => {
     RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
   );
 
+  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const { closeActionMenuDropdown } = useActionMenu(actionMenuId);
+
   const handleDragSelectionStart = () => {
+    closeActionMenuDropdown();
+
     toggleClickOutsideListener(false);
   };
 
