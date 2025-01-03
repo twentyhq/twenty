@@ -15,6 +15,10 @@ test('Login test', async ({ loginPage, page }) => {
 
   await page.goto('/');
   console.log('Navigated to homepage');
+  await page.waitForLoadState('networkidle'); // wait as a precaution for environments with multi-workspace enabled
+  if (page.url().includes('demo.twenty.com') || !page.url().includes('app.localhost:3001')) {
+    await loginPage.clickLoginWithEmail();
+  }
 
   console.log('Default login', process.env.DEFAULT_LOGIN);
   await loginPage.typeEmail(process.env.DEFAULT_LOGIN);

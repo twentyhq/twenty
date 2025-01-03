@@ -13,7 +13,7 @@ test.describe('Authentication test', () => {
     membersSection,
     settingsPage,
   }) => {
-    await page.goto(process.env.LINK); // skip login page (and redirect) when running on local environment
+    await page.goto(process.env.LINK); // skip login page (and redirect) when running on environments with multi-workspace enabled
     await leftMenu.goToSettings();
     await settingsPage.goToMembersSection();
     await membersSection.copyInviteLink();
