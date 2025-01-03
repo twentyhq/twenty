@@ -76,11 +76,13 @@ export const OverflowingTextWithTooltip = ({
   text,
   isTooltipMultiline,
   displayedMaxRows,
+  hideTooltip,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
+  hideTooltip?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -140,7 +142,7 @@ export const OverflowingTextWithTooltip = ({
           <AppTooltip
             anchorSelect={`#${textElementId}`}
             offset={5}
-            hidden={!isTitleOverflowing}
+            hidden={!isTitleOverflowing || hideTooltip}
             noArrow
             place="bottom"
             positionStrategy="absolute"
