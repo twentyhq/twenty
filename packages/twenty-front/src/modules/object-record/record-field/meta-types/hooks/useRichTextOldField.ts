@@ -2,22 +2,19 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import {
-  FieldRichTextOldValue,
-  FieldRichTextValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRichTextOldValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { isFieldRichTextOld } from '@/object-record/record-field/types/guards/isFieldRichTextOld';
-import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
+import { isFieldRichTextOldValue } from '@/object-record/record-field/types/guards/isFieldRichTextOldValue';
 import { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
-export const useRichTextField = () => {
+export const useRichTextOldField = () => {
   const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
@@ -35,9 +32,9 @@ export const useRichTextField = () => {
       fieldName: fieldName,
     }),
   );
-  const fieldRichTextValue = isFieldRichTextValue(fieldValue)
+  const fieldRichTextOldValue = isFieldRichTextOldValue(fieldValue)
     ? fieldValue
-    : ({ blocknote: null, markdown: null } as FieldRichTextValue);
+    : '';
 
   const { setDraftValue, getDraftValueSelector } =
     useRecordFieldInput<FieldRichTextOldValue>(`${recordId}-${fieldName}`);
@@ -50,7 +47,7 @@ export const useRichTextField = () => {
 
   const persistField = usePersistField();
 
-  const persistRichTextField = (nextValue: PartialBlock[]) => {
+  const persistRichTextOldField = (nextValue: PartialBlock[]) => {
     if (!nextValue) {
       persistField(null);
     } else {
@@ -65,9 +62,9 @@ export const useRichTextField = () => {
     setDraftValue,
     maxWidth,
     fieldDefinition,
-    fieldValue: fieldRichTextValue,
+    fieldValue: fieldRichTextOldValue,
     setFieldValue,
     hotkeyScope,
-    persistRichTextField,
+    persistRichTextOldField,
   };
 };

@@ -1,3 +1,4 @@
+import { FieldRichTextValue } from '@/object-record/record-field/types/FieldMetadata';
 import { z } from 'zod';
 
 export const richTextSchema: z.ZodType<FieldRichTextValue> = z.object({

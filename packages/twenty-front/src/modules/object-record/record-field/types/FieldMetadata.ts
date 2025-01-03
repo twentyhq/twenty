@@ -127,6 +127,12 @@ export type FieldRawJsonMetadata = {
   settings?: null;
 };
 
+export type FieldRichTextMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  settings?: null;
+};
+
 export type FieldRichTextOldMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -211,7 +217,8 @@ export type FieldMetadata =
   | FieldActorMetadata
   | FieldArrayMetadata
   | FieldTsVectorMetadata
-  | FieldRichTextMetadata;
+  | FieldRichTextMetadata
+  | FieldRichTextOldMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
