@@ -9,7 +9,7 @@ export const getServerlessFolder = ({
   version,
 }: {
   serverlessFunction: ServerlessFunctionEntity;
-  version?: string;
+  version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
 }) => {
   const computedVersion =
     version === 'latest' ? serverlessFunction.latestVersion : version;

@@ -82,7 +82,10 @@ function formatFieldMetadataValue(
   value: any,
   fieldMetadata: FieldMetadataInterface,
 ) {
-  if (fieldMetadata.type === FieldMetadataType.RAW_JSON) {
+  if (
+    fieldMetadata.type === FieldMetadataType.RAW_JSON &&
+    typeof value === 'string'
+  ) {
     return JSON.parse(value as string);
   }
 
