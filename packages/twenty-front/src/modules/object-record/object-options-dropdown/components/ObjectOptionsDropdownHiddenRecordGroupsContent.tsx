@@ -25,6 +25,7 @@ import { useSetRecoilState } from 'recoil';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const {
+    viewType,
     currentContentId,
     recordIndexId,
     objectMetadataItem,
@@ -47,6 +48,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
+      viewType,
     });
 
   const viewGroupSettingsUrl = getSettingsPagePath(

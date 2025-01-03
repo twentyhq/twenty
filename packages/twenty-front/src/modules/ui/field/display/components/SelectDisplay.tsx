@@ -4,8 +4,22 @@ type SelectDisplayProps = {
   color: ThemeColor | 'transparent';
   label: string;
   Icon?: IconComponent;
+  isUsedInForm?: boolean;
 };
 
-export const SelectDisplay = ({ color, label, Icon }: SelectDisplayProps) => {
-  return <Tag preventShrink color={color} text={label} Icon={Icon} />;
+export const SelectDisplay = ({
+  color,
+  label,
+  Icon,
+  isUsedInForm,
+}: SelectDisplayProps) => {
+  return (
+    <Tag
+      preventShrink
+      color={color}
+      text={label}
+      Icon={Icon}
+      preventPadding={isUsedInForm}
+    />
+  );
 };

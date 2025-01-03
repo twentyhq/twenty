@@ -32,12 +32,6 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type ActivateWorkspaceOutput = {
-  __typename?: 'ActivateWorkspaceOutput';
-  loginToken: AuthToken;
-  workspace: Workspace;
-};
-
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -127,6 +121,12 @@ export type Billing = {
   billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
 };
+
+/** The different billing plans available */
+export enum BillingPlanKey {
+  Enterprise = 'ENTERPRISE',
+  Pro = 'PRO'
+}
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
@@ -371,7 +371,7 @@ export type ExecuteServerlessFunctionInput = {
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID']['output'];
-  key: Scalars['String']['output'];
+  key: FeatureFlagKey;
   value: Scalars['Boolean']['output'];
   workspaceId: Scalars['String']['output'];
 };
@@ -381,6 +381,28 @@ export type FeatureFlagFilter = {
   id?: InputMaybe<UuidFilterComparison>;
   or?: InputMaybe<Array<FeatureFlagFilter>>;
 };
+
+export enum FeatureFlagKey {
+  IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
+  IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
+  IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
+  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsCopilotEnabled = 'IsCopilotEnabled',
+  IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
+  IsEventObjectEnabled = 'IsEventObjectEnabled',
+  IsFreeAccessEnabled = 'IsFreeAccessEnabled',
+  IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
+  IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
+  IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
+  IsPageHeaderV2Enabled = 'IsPageHeaderV2Enabled',
+  IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
+  IsSsoEnabled = 'IsSSOEnabled',
+  IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
+  IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
+  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
+  IsWorkflowEnabled = 'IsWorkflowEnabled'
+}
 
 export type FeatureFlagSort = {
   direction: SortDirection;
@@ -481,6 +503,12 @@ export enum IdentityProviderType {
   Saml = 'SAML'
 }
 
+export type ImpersonateOutput = {
+  __typename?: 'ImpersonateOutput';
+  loginToken: AuthToken;
+  workspace: WorkspaceSubdomainAndId;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
@@ -544,7 +572,7 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
-  activateWorkspace: ActivateWorkspaceOutput;
+  activateWorkspace: Workspace;
   addUserToWorkspace: User;
   addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
@@ -579,13 +607,13 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
-  impersonate: AuthTokens;
+  impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
-  signUp: LoginToken;
+  signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   switchWorkspace: PublicWorkspaceDataOutput;
   syncRemoteTable: RemoteTable;
@@ -645,7 +673,9 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
+  requirePaymentMethod?: Scalars['Boolean']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1368,6 +1398,12 @@ export type SetupSsoOutput = {
   type: IdentityProviderType;
 };
 
+export type SignUpOutput = {
+  __typename?: 'SignUpOutput';
+  loginToken: AuthToken;
+  workspace: WorkspaceSubdomainAndId;
+};
+
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -1751,6 +1787,7 @@ export type WorkspaceEdge = {
 
 export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
+  allowImpersonation: Scalars['Boolean']['output'];
   featureFlags: Array<FeatureFlag>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
@@ -1802,6 +1839,12 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+};
+
+export type WorkspaceSubdomainAndId = {
+  __typename?: 'WorkspaceSubdomainAndId';
+  id: Scalars['String']['output'];
+  subdomain: Scalars['String']['output'];
 };
 
 export type BillingCustomer = {

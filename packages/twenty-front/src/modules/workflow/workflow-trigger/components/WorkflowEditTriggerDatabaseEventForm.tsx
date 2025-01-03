@@ -2,8 +2,8 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
-import { WorkflowStepBody } from '@/workflow/workflow-step/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-step/components/WorkflowStepHeader';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
 import { useTheme } from '@emotion/react';
 import { IconPlaylistAdd, isDefined } from 'twenty-ui';

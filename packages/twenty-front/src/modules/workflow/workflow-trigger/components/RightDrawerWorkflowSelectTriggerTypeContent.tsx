@@ -1,11 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
-import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/TriggerTypes';
+import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';

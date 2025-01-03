@@ -10,9 +10,9 @@ import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isR
 import { RightDrawerContainer } from '@/ui/layout/right-drawer/components/RightDrawerContainer';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
-import { RightDrawerWorkflowSelectAction } from '@/workflow/workflow-actions/components/RightDrawerWorkflowSelectAction';
-import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-step/components/RightDrawerWorkflowEditStep';
-import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-step/components/RightDrawerWorkflowViewStep';
+import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
+import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
+import { RightDrawerWorkflowSelectAction } from '@/workflow/workflow-steps/workflow-actions/components/RightDrawerWorkflowSelectAction';
 import { RightDrawerWorkflowSelectTriggerType } from '@/workflow/workflow-trigger/components/RightDrawerWorkflowSelectTriggerType';
 import { isDefined } from 'twenty-ui';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
