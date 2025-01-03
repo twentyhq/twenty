@@ -16,10 +16,10 @@ if (envResult.error) {
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: '.',
+  testDir: './tests',
   outputDir: 'run_results/', // directory for screenshots and videos
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}', // just in case, do not delete it
-  fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
+  fullyParallel: false, // parallelization of tests will be done later in the future
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
@@ -49,25 +49,16 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
-      testMatch: /demo\/demo_basic\.spec\.ts/,
+      testMatch: /demo\/demo_basic\.e2e-spec\.ts/,
     },
     {
-      name: 'chromium',
+      name: 'Authentication',
       use: {
-        ...devices['Desktop Chrome'],
+        permissions: ['clipboard-read', 'clipboard-write'],
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
-      dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
-      testMatch: /all\/.+\.e2e-spec\.ts/,
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: path.resolve(__dirname, '.auth', 'user.json'),
-      },
       dependencies: ['Login setup'],
-      testMatch: /all\/.+\.e2e-spec\.ts/,
+      testMatch: /authentication\/.+\.e2e-spec\.ts/, // forces to run login setup before running tests from this project - CASE SENSITIVE
     },
 
     //{
