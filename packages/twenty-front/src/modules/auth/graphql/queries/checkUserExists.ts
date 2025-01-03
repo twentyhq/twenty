@@ -19,6 +19,7 @@ export const CHECK_USER_EXISTS = gql`
             status
           }
         }
+        emailVerified
       }
       ... on UserNotExists {
         exists

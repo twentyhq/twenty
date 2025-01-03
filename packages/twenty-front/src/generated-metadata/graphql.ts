@@ -608,6 +608,7 @@ export type Mutation = {
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
   verify: AuthTokens;
+  verifyEmail: VerifyEmailOutput;
 };
 
 
@@ -910,6 +911,12 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationVerifyArgs = {
   loginToken: Scalars['String']['input'];
+};
+
+
+export type MutationVerifyEmailArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  emailVerificationToken: Scalars['String']['input'];
 };
 
 export type ObjectConnection = {
@@ -1617,6 +1624,7 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  emailVerified: Scalars['Boolean']['output'];
   exists: Scalars['Boolean']['output'];
 };
 
@@ -1672,6 +1680,11 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
+};
+
+export type VerifyEmailOutput = {
+  __typename?: 'VerifyEmailOutput';
+  success: Scalars['Boolean']['output'];
 };
 
 export type WorkflowAction = {

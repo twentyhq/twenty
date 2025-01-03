@@ -26,6 +26,7 @@ import {
   useCheckUserExistsLazyQuery,
   useGetCurrentUserLazyQuery,
   useSignUpMutation,
+  useVerifyEmailMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -43,16 +44,18 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { AppPath } from '@/types/AppPath';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { isEmailFromTrustedProvider } from '~/utils/isEmailFromTrustedProvider';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -67,6 +70,9 @@ export const useAuth = () => {
     currentWorkspaceMembersState,
   );
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isEmailVerificationRequired = useRecoilValue(
+    isEmailVerificationRequiredState,
+  );
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
@@ -77,6 +83,7 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [verifyEmail] = useVerifyEmailMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
   const { isOnAWorkspaceSubdomain } =
@@ -266,7 +273,21 @@ export const useAuth = () => {
   ]);
 
   const handleVerify = useCallback(
-    async (loginToken: string) => {
+    async (loginToken: string, email: string) => {
+      if (isEmailVerificationRequired && !isEmailFromTrustedProvider(email)) {
+        const maybeUser = await checkUserExistsQuery({
+          variables: { email },
+        });
+
+        if (maybeUser.data?.checkUserExists.__typename === 'UserNotExists') {
+          throw new Error('User with this email does not exist');
+        }
+
+        if (!maybeUser.data?.checkUserExists.emailVerified) {
+          return redirect(AppPath.VerifyEmail);
+        }
+      }
+
       const verifyResult = await verify({
         variables: { loginToken },
       });
@@ -290,7 +311,29 @@ export const useAuth = () => {
         tokens: verifyResult.data?.verify.tokens,
       };
     },
-    [verify, setTokenPair, loadCurrentUser],
+    [
+verify,
+      setTokenPair,
+      loadCurrentUser,
+      checkUserExistsQuery,
+      redirect,
+      isEmailVerificationRequired,
+    ],
+  );
+
+  const handleVerifyEmail = useCallback(
+    async (emailVerificationToken: string) => {
+      const verifyEmailResult = await verifyEmail({
+        variables: {
+          emailVerificationToken,
+        },
+      });
+
+      if (!verifyEmailResult.data?.verifyEmail.success) {
+        throw new Error('Failed to verify email');
+      }
+    },
+    [verifyEmail],
   );
 
   const handleCrendentialsSignIn = useCallback(
@@ -300,11 +343,14 @@ export const useAuth = () => {
         password,
         captchaToken,
       );
+
       setIsVerifyPendingState(true);
 
-      const { user, workspaceMember, workspace } = await handleVerify(
-        loginToken.token,
-      );
+      const verifyResult = await handleVerify(loginToken.token, email);
+
+      if (!verifyResult) return null;
+
+      const { user, workspaceMember, workspace } = verifyResult;
 
       setIsVerifyPendingState(false);
 
@@ -352,16 +398,24 @@ export const useAuth = () => {
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
           signUpResult.data.signUp.workspace.subdomain,
-          AppPath.Verify,
+          isEmailVerificationRequired ? AppPath.VerifyEmail : AppPath.Verify,
           {
-            loginToken: signUpResult.data.signUp.loginToken.token,
+            ...(isEmailVerificationRequired
+              ? {}
+              : { loginToken: signUpResult.data.signUp.loginToken.token }),
+            email,
           },
         );
       }
 
-      const { user, workspace, workspaceMember } = await handleVerify(
+      const verifyResult = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
+        email,
       );
+
+      if (!verifyResult) return null;
+
+      const { user, workspaceMember, workspace } = verifyResult;
 
       setIsVerifyPendingState(false);
 
@@ -373,6 +427,7 @@ export const useAuth = () => {
       isMultiWorkspaceEnabled,
       handleVerify,
       redirectToWorkspaceDomain,
+      isEmailVerificationRequired,
     ],
   );
 

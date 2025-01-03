@@ -19,6 +19,7 @@ import {
   PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -64,6 +65,7 @@ export class SignInUpService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
+    private readonly emailVerificationService: EmailVerificationService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
@@ -415,6 +417,14 @@ export class SignInUpService {
     const newUser = await this.userRepository.save(userCreated);
 
     await this.userWorkspaceService.create(newUser.id, workspace.id);
+
+    if (this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+      await this.emailVerificationService.sendVerificationEmail(
+        newUser.id,
+        newUser.email,
+        workspace.subdomain,
+      );
+    }
 
     await this.activateOnboardingForUser(newUser, workspace, {
       firstName,

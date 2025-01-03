@@ -16,7 +16,8 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
-    isMatchingLocation(AppPath.ResetPassword);
+    isMatchingLocation(AppPath.ResetPassword) ||
+    isMatchingLocation(AppPath.VerifyEmail);
 
   const isMatchingOngoingUserCreationRoute =
     isMatchingOpenRoute ||

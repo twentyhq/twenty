@@ -28,6 +28,7 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
   UserExists,
@@ -46,7 +47,6 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -232,6 +232,7 @@ export class AuthService {
       return {
         exists: true,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
+        emailVerified: user.emailVerified,
       };
     }
 

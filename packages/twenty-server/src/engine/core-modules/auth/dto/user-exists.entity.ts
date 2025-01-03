@@ -9,6 +9,9 @@ export class UserExists {
 
   @Field(() => [AvailableWorkspaceOutput])
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
+
+  @Field(() => Boolean)
+  emailVerified: boolean;
 }
 
 @ObjectType()

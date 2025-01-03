@@ -1,6 +1,8 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
@@ -41,6 +43,7 @@ export const useCreateAppRouter = (
       >
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
+          <Route path={AppPath.VerifyEmail} element={<VerifyEmail />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<Invite />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
