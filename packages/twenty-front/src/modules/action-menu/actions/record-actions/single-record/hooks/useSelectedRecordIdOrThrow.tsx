@@ -1,15 +1,10 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-ui';
 
-export const useSelectedRecordIdOrThrow = (recordId?: string) => {
+export const useSelectedRecordIdOrThrow = () => {
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
-
-  if (isDefined(recordId) && recordId !== '') {
-    return recordId;
-  }
 
   if (
     contextStoreTargetedRecordsRule.mode === 'exclusion' ||
