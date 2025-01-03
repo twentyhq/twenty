@@ -135,27 +135,26 @@ export const OverflowingTextWithTooltip = ({
           {text}
         </StyledOverflowingText>
       )}
-      {isTitleOverflowing &&
-        createPortal(
-          <div onClick={handleTooltipClick}>
-            <AppTooltip
-              anchorSelect={`#${textElementId}`}
-              offset={5}
-              isOpen
-              noArrow
-              place="bottom"
-              positionStrategy="absolute"
-              delay={TooltipDelay.mediumDelay}
-            >
-              {isTooltipMultiline ? (
-                <Styledpre>{text}</Styledpre>
-              ) : (
-                `${text || ''}`
-              )}
-            </AppTooltip>
-          </div>,
-          document.body,
-        )}
+      {createPortal(
+        <div onClick={handleTooltipClick}>
+          <AppTooltip
+            anchorSelect={`#${textElementId}`}
+            offset={5}
+            hidden={!isTitleOverflowing}
+            noArrow
+            place="bottom"
+            positionStrategy="absolute"
+            delay={TooltipDelay.mediumDelay}
+          >
+            {isTooltipMultiline ? (
+              <Styledpre>{text}</Styledpre>
+            ) : (
+              `${text || ''}`
+            )}
+          </AppTooltip>
+        </div>,
+        document.body,
+      )}
     </>
   );
 };
