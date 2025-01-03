@@ -7,7 +7,7 @@ export const useSelectedRecordIdOrThrow = (recordId?: string) => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  if (isDefined(recordId)) {
+  if (isDefined(recordId) && recordId !== '') {
     return recordId;
   }
 
