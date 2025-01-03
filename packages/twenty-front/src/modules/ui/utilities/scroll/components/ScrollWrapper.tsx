@@ -13,6 +13,7 @@ import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/state
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { css } from '@emotion/react';
 import 'overlayscrollbars/overlayscrollbars.css';
 
 type HeightMode = 'full' | 'fit-content';
@@ -20,6 +21,7 @@ type HeightMode = 'full' | 'fit-content';
 const StyledScrollWrapper = styled.div<{
   scrollHide?: boolean;
   heightMode: HeightMode;
+  scrollbarVariant: 'with-padding' | 'no-padding';
 }>`
   display: flex;
   height: ${({ heightMode }) => {
@@ -31,11 +33,27 @@ const StyledScrollWrapper = styled.div<{
     }
   }};
   width: 100%;
-
-  .os-scrollbar-handle {
-    background-color: ${({ theme, scrollHide }) =>
-      scrollHide ? 'transparent' : theme.border.color.medium};
+  .os-scrollbar {
+    transition:
+      opacity 300ms,
+      visibility 300ms,
+      top 300ms,
+      right 300ms,
+      bottom 300ms,
+      left 300ms;
   }
+  .os-scrollbar-handle {
+    background-color: ${({ theme }) => theme.border.color.strong};
+  }
+
+  ${({ scrollbarVariant }) =>
+    scrollbarVariant === 'no-padding' &&
+    css`
+      .os-scrollbar {
+        --os-size: 6px;
+        padding: 0px;
+      }
+    `}
 `;
 
 const StyledInnerContainer = styled.div`
@@ -49,8 +67,8 @@ export type ScrollWrapperProps = {
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
-  scrollHide?: boolean;
   componentInstanceId: string;
+  scrollbarVariant?: 'with-padding' | 'no-padding';
 };
 
 export const ScrollWrapper = ({
@@ -61,7 +79,7 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
-  scrollHide = false,
+  scrollbarVariant = 'with-padding',
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -177,8 +195,8 @@ export const ScrollWrapper = ({
         <StyledScrollWrapper
           ref={scrollableRef}
           className={className}
-          scrollHide={scrollHide}
           heightMode={heightMode}
+          scrollbarVariant={scrollbarVariant}
         >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>
