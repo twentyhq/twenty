@@ -502,6 +502,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
+  resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
@@ -671,6 +672,11 @@ export type MutationPublishServerlessFunctionArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String'];
+};
+
+
+export type MutationResendEmailVerificationTokenArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -1043,6 +1049,11 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type ResendEmailVerificationTokenOutput = {
+  __typename?: 'ResendEmailVerificationTokenOutput';
+  success: Scalars['Boolean'];
+};
 
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
@@ -1967,6 +1978,13 @@ export type RenewTokenMutationVariables = Exact<{
 
 export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
+export type ResendEmailVerificationTokenMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationTokenOutput', success: boolean } };
+
 export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -2002,7 +2020,6 @@ export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: '
 
 export type VerifyEmailMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -2983,6 +3000,39 @@ export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
+export const ResendEmailVerificationTokenDocument = gql`
+    mutation ResendEmailVerificationToken($email: String!) {
+  resendEmailVerificationToken(email: $email) {
+    success
+  }
+}
+    `;
+export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
+
+/**
+ * __useResendEmailVerificationTokenMutation__
+ *
+ * To run a mutation, you first call `useResendEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendEmailVerificationTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendEmailVerificationTokenMutation, { data, loading, error }] = useResendEmailVerificationTokenMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useResendEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>(ResendEmailVerificationTokenDocument, options);
+      }
+export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof useResendEmailVerificationTokenMutation>;
+export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
+export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const SignUpDocument = gql`
     mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String) {
   signUp(
@@ -3152,7 +3202,7 @@ export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
 export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const VerifyEmailDocument = gql`
-    mutation VerifyEmail($emailVerificationToken: String!, $captchaToken: String) {
+    mutation VerifyEmail($emailVerificationToken: String!) {
   verifyEmail(emailVerificationToken: $emailVerificationToken) {
     success
     email
@@ -3175,7 +3225,6 @@ export type VerifyEmailMutationFn = Apollo.MutationFunction<VerifyEmailMutation,
  * const [verifyEmailMutation, { data, loading, error }] = useVerifyEmailMutation({
  *   variables: {
  *      emailVerificationToken: // value for 'emailVerificationToken'
- *      captchaToken: // value for 'captchaToken'
  *   },
  * });
  */

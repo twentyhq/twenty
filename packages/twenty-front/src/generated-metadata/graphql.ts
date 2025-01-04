@@ -583,6 +583,7 @@ export type Mutation = {
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
+  resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
@@ -786,6 +787,11 @@ export type MutationPublishServerlessFunctionArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationResendEmailVerificationTokenArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -1255,6 +1261,11 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type ResendEmailVerificationTokenOutput = {
+  __typename?: 'ResendEmailVerificationTokenOutput';
+  success: Scalars['Boolean']['output'];
+};
 
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */

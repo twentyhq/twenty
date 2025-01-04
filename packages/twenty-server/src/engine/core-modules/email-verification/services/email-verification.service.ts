@@ -86,7 +86,10 @@ export class EmailVerificationService {
     workspaceSubdomain?: string,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
-      return;
+      throw new EmailVerificationException(
+        'Email verification token cannot be sent because email verification is not required',
+        EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED,
+      );
     }
 
     const { id: emailVerificationToken } =

@@ -284,7 +284,7 @@ export const useAuth = () => {
         }
 
         if (!maybeUser.data?.checkUserExists.emailVerified) {
-          return redirect(AppPath.VerifyEmail);
+          return redirect(`${AppPath.VerifyEmail}?email=${encodeURI(email)}`);
         }
       }
 

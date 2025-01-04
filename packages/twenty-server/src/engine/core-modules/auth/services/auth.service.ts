@@ -26,7 +26,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
@@ -231,7 +230,8 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
-        availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
+        availableWorkspaces:
+          await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
         emailVerified: user.emailVerified,
       };
     }
@@ -422,47 +422,5 @@ export class AuthService {
     });
 
     return url.toString();
-  }
-
-  async findAvailableWorkspacesByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceSSOIdentityProviders',
-      ],
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
-      id: userWorkspace.workspaceId,
-      displayName: userWorkspace.workspace.displayName,
-      subdomain: userWorkspace.workspace.subdomain,
-      logo: userWorkspace.workspace.logo,
-      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
   }
 }

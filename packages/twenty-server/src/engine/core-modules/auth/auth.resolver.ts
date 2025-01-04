@@ -32,6 +32,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { VerifyEmailInput } from 'src/engine/core-modules/email-verification/dtos/verify-email.input';
 import { VerifyEmailOutput } from 'src/engine/core-modules/email-verification/dtos/verify-email.output';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
@@ -69,6 +70,7 @@ export class AuthResolver {
     private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
+    private userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -146,7 +148,6 @@ export class AuthResolver {
       user.id,
       user.email,
       workspace.subdomain,
-      loginToken.token,
     );
 
     return {
@@ -316,6 +317,6 @@ export class AuthResolver {
   async findAvailableWorkspacesByEmail(
     @Args('email') email: string,
   ): Promise<AvailableWorkspaceOutput[]> {
-    return this.authService.findAvailableWorkspacesByEmail(email);
+    return this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
   }
 }

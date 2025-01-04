@@ -7,6 +7,7 @@ import { EmailVerificationResolver } from 'src/engine/core-modules/email-verific
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 @Module({
@@ -16,6 +17,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
     EnvironmentModule,
     DomainManagerModule,
     UserModule,
+    UserWorkspaceModule,
   ],
   providers: [EmailVerificationService, EmailVerificationResolver],
   exports: [EmailVerificationService],

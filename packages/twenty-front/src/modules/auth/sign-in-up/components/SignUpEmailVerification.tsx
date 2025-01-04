@@ -1,9 +1,12 @@
 import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-import { IconMail, MainButton } from 'twenty-ui';
+import { IconMail, isDefined, Loader, MainButton } from 'twenty-ui';
+import { useResendEmailVerificationTokenMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
   align-items: center;
@@ -26,6 +29,14 @@ const StyledIconContainer = styled.div`
   width: 48px;
 `;
 
+const StyledContentSection = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
@@ -46,26 +57,42 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const StyledContentSection = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
 export const SignUpEmailVerification = ({
   email,
+  isEmailVerified,
 }: {
   email: string | null;
+  isEmailVerified: boolean;
 }) => {
-  const navigate = useNavigate();
+  const [resendEmailVerificationToken, { loading }] =
+    useResendEmailVerificationTokenMutation();
 
-  const navigateToLoginPage = () => {
-    const url = encodeURI(
-      `${AppPath.SignInUp}${email ? `?email=${email}` : ''}`,
-    );
+  const navigate = useNavigate();
+  const { enqueueSnackBar } = useSnackBar();
+  const handleNavigateToSignInUpPage = () => {
+    const searchParams = new URLSearchParams();
+    if (isDefined(email)) {
+      searchParams.set('email', encodeURI(email));
+    }
+
+    const url = `${AppPath.SignInUp}?${searchParams.toString()}`;
 
     navigate(url);
+  };
+
+  const handleResendEmailVerificationToken = async () => {
+    if (!email) return;
+
+    try {
+      await resendEmailVerificationToken({ variables: { email } });
+      enqueueSnackBar('Email verification token resent', {
+        variant: SnackBarVariant.Success,
+      });
+    } catch (error) {
+      enqueueSnackBar('Failed to resend email verification token', {
+        variant: SnackBarVariant.Error,
+      });
+    }
   };
 
   return (
@@ -83,27 +110,27 @@ export const SignUpEmailVerification = ({
       </StyledIconContainer>
       <StyledContentSection>
         <StyledTitle>
-          {email ? 'Email verified' : 'Check your inbox'}
+          {isEmailVerified ? 'Email verified' : 'Check your inbox'}
         </StyledTitle>
         <StyledDescription>
-          {email
+          {isEmailVerified
             ? 'Your email has been verified. Please login to continue.'
-            : 'We sent you an email to verify your address. Please click the link in that email to confirm your account.'}
+            : `We sent an email to ${email}. Please click the link to verify your account and continue.`}
         </StyledDescription>
 
         <StyledButtonContainer>
-          {email ? (
+          {isEmailVerified ? (
             <MainButton
               title="Continue with email"
-              onClick={navigateToLoginPage}
+              onClick={handleNavigateToSignInUpPage}
               fullWidth
             />
           ) : (
             <MainButton
               title="Resend email"
-              onClick={() => {
-                // TODO#8240: Resend email
-              }}
+              onClick={handleResendEmailVerificationToken}
+              disabled={loading}
+              Icon={() => loading && <Loader />}
               fullWidth
             />
           )}

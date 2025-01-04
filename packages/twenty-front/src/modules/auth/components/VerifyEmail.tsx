@@ -10,9 +10,10 @@ export const VerifyEmail = () => {
   const { verifyEmail } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
 
-  const [email, setEmail] = useState<string | null>(null);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const [searchParams] = useSearchParams();
+  const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
   useEffect(() => {
@@ -20,8 +21,8 @@ export const VerifyEmail = () => {
       if (!emailVerificationToken) return;
 
       try {
-        const { email } = await verifyEmail(emailVerificationToken);
-        setEmail(email);
+        await verifyEmail(emailVerificationToken);
+        setIsEmailVerified(true);
       } catch (error) {
         enqueueSnackBar('Email verification failed. Please try again.', {
           variant: SnackBarVariant.Error,
@@ -35,5 +36,7 @@ export const VerifyEmail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <SignUpEmailVerification email={email} />;
+  return (
+    <SignUpEmailVerification email={email} isEmailVerified={isEmailVerified} />
+  );
 };
