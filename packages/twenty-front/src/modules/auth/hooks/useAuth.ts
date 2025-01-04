@@ -55,7 +55,6 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { isEmailFromTrustedProvider } from '~/utils/isEmailFromTrustedProvider';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -274,7 +273,7 @@ export const useAuth = () => {
 
   const handleVerify = useCallback(
     async (loginToken: string, email: string) => {
-      if (isEmailVerificationRequired && !isEmailFromTrustedProvider(email)) {
+      if (isEmailVerificationRequired) {
         const maybeUser = await checkUserExistsQuery({
           variables: { email },
         });
