@@ -139,15 +139,15 @@ export class AuthResolver {
       authProvider: 'password',
     });
 
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      workspace.id,
-    );
-
     await this.emailVerificationService.sendVerificationEmail(
       user.id,
       user.email,
       workspace.subdomain,
+    );
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
     );
 
     return {
