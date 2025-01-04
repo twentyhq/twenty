@@ -60,7 +60,7 @@ export class FileController {
       );
 
       fileStream.on('error', () => {
-        res.status(500).send({ error: 'Internal server error' });
+        res.status(500).send({ error: 'Error streaming file from storage' });
       });
 
       fileStream.pipe(res);
@@ -72,7 +72,9 @@ export class FileController {
         return res.status(404).send({ error: 'File not found' });
       }
 
-      return res.status(500).send({ error: 'Internal server error' });
+      return res
+        .status(500)
+        .send({ error: `Error retrieving file: ${error.message}` });
     }
   }
 }
