@@ -15,6 +15,10 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthFileApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-file-api-exception.filter';
 import {
   checkFilePath,
@@ -42,9 +46,10 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {
-      return res
-        .status(401)
-        .send({ error: 'Unauthorized, missing workspaceId' });
+      throw new AuthException(
+        'Unauthorized, missing workspaceId',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     try {
