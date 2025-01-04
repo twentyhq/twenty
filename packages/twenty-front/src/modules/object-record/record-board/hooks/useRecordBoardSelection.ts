@@ -66,5 +66,23 @@ export const useRecordBoardSelection = (recordBoardId: string) => {
     [isRecordBoardCardSelectedFamilyState],
   );
 
-  return { resetRecordSelection, setRecordAsSelected };
+  const checkIfLastUnselectAndCloseDropdown = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const recordIds = getSnapshotValue(
+          snapshot,
+          recordBoardSelectedRecordIdsSelector,
+        );
+        if (recordIds.length === 0) {
+          set(isActionMenuDropdownOpenState, false);
+        }
+      },
+    [recordBoardSelectedRecordIdsSelector, isActionMenuDropdownOpenState],
+  );
+
+  return {
+    resetRecordSelection,
+    setRecordAsSelected,
+    checkIfLastUnselectAndCloseDropdown,
+  };
 };

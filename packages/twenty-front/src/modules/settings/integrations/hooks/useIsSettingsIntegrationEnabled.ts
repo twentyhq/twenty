@@ -1,13 +1,14 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
-const getFeatureKey = (databaseKey: string) => {
+const getFeatureKey = (databaseKey: string): FeatureFlagKey | null => {
   switch (databaseKey) {
     case 'airtable':
-      return 'IS_AIRTABLE_INTEGRATION_ENABLED';
+      return FeatureFlagKey.IsAirtableIntegrationEnabled;
     case 'postgresql':
-      return 'IS_POSTGRESQL_INTEGRATION_ENABLED';
+      return FeatureFlagKey.IsPostgreSqlIntegrationEnabled;
     case 'stripe':
-      return 'IS_STRIPE_INTEGRATION_ENABLED';
+      return FeatureFlagKey.IsStripeIntegrationEnabled;
     default:
       return null;
   }

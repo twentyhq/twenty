@@ -2,16 +2,12 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -22,6 +18,7 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useAuth } from '@/auth/hooks/useAuth';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -48,9 +45,8 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
 
+  const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
-  const apolloMetadataClient = useApolloMetadataClient();
-  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
 
   // Form
   const {
@@ -75,27 +71,18 @@ export const CreateWorkspace = () => {
             },
           },
         });
-        setIsCurrentUserLoaded(false);
-
-        await apolloMetadataClient?.refetchQueries({
-          include: [FIND_MANY_OBJECT_METADATA_ITEMS],
-        });
 
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error('Unknown error');
         }
+        await loadCurrentUser();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
         });
       }
     },
-    [
-      activateWorkspace,
-      setIsCurrentUserLoaded,
-      apolloMetadataClient,
-      enqueueSnackBar,
-    ],
+    [activateWorkspace, enqueueSnackBar, loadCurrentUser],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

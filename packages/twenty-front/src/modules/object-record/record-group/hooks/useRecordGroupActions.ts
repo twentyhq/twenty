@@ -5,21 +5,26 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
 
-export const useRecordGroupActions = () => {
+type UseRecordGroupActionsParams = {
+  viewType: ViewType;
+};
+
+export const useRecordGroupActions = ({
+  viewType,
+}: UseRecordGroupActionsParams) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { objectNameSingular, recordIndexId } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,
@@ -36,6 +41,7 @@ export const useRecordGroupActions = () => {
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
+      viewType,
     });
 
   const setNavigationMemorizedUrl = useSetRecoilState(

@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -48,7 +50,15 @@ describe('WorkspaceService', () => {
           useValue: {},
         },
         {
+          provide: DomainManagerService,
+          useValue: {},
+        },
+        {
           provide: BillingSubscriptionService,
+          useValue: {},
+        },
+        {
+          provide: BillingService,
           useValue: {},
         },
         {

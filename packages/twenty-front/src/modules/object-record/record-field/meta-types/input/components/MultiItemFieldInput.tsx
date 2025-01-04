@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
@@ -18,11 +17,6 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
-const StyledDropdownMenu = styled(DropdownMenu)`
-  margin: -1px;
-  position: relative;
-`;
-
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onPersist: (updatedItems: T[]) => void;
@@ -41,6 +35,7 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: DropdownMenuInputProps['renderInput'];
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -57,24 +52,19 @@ export const MultiItemFieldInput = <T,>({
   newItemLabel,
   fieldMetadataType,
   renderInput,
+  onClickOutside,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleDropdownClose = () => {
     onCancel?.();
   };
 
-  const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
-    event.stopImmediatePropagation();
-    if (inputValue?.trim().length > 0) {
-      handleSubmitInput();
-    } else {
-      onCancel?.();
-    }
-  };
-
   useListenClickOutside({
     refs: [containerRef],
-    callback: handleDropdownCloseOutside,
+    callback: (event) => {
+      onClickOutside?.(event);
+    },
+    listenerId: hotkeyScope,
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
@@ -111,7 +101,7 @@ export const MultiItemFieldInput = <T,>({
         break;
       case FieldMetadataType.Phones:
         item = items[index] as PhoneRecord;
-        setInputValue(`+${item.callingCode}` + item.number);
+        setInputValue(item.callingCode + item.number);
         break;
       case FieldMetadataType.Emails:
         item = items[index] as string;
@@ -168,7 +158,7 @@ export const MultiItemFieldInput = <T,>({
   };
 
   return (
-    <StyledDropdownMenu ref={containerRef} width={200}>
+    <DropdownMenu ref={containerRef} width={200}>
       {!!items.length && (
         <>
           <DropdownMenuItemsContainer>
@@ -226,6 +216,6 @@ export const MultiItemFieldInput = <T,>({
           />
         </DropdownMenuItemsContainer>
       )}
-    </StyledDropdownMenu>
+    </DropdownMenu>
   );
 };

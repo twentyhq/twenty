@@ -4,11 +4,11 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { addressSchema as addressFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { IconMap } from 'twenty-ui';
+import { Select, SelectOption } from '@/ui/input/components/Select';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
@@ -31,16 +31,22 @@ export const SettingsDataModelFieldAddressForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
-  const countries = useCountries()
-    .sort((a, b) => a.countryName.localeCompare(b.countryName))
-    .map((country) => ({
-      label: country.countryName,
-      value: country.countryName,
-    }));
-  countries.unshift({
-    label: 'No country',
-    value: '',
-  });
+  const countries = [
+    {
+      label: 'No country',
+      value: '',
+      Icon: IconCircleOff,
+    },
+    ...useCountries()
+      .sort((a, b) => a.countryName.localeCompare(b.countryName))
+      .map<SelectOption<string>>(({ countryName, Flag }) => ({
+        label: countryName,
+        value: countryName,
+        Icon: (props: IconComponentProps) =>
+          Flag({ width: props.size, height: props.size }),
+      })),
+  ];
+
   const defaultDefaultValue = {
     addressStreet1: "''",
     addressStreet2: null,
@@ -63,22 +69,27 @@ export const SettingsDataModelFieldAddressForm = ({
       render={({ field: { onChange, value } }) => {
         const defaultCountry = value?.addressCountry || '';
         return (
-          <SettingsOptionCardContentSelect<string>
+          <SettingsOptionCardContentSelect
             Icon={IconMap}
-            dropdownId="selectDefaultCountry"
             title="Default Country"
             description="The default country for new addresses"
-            value={stripSimpleQuotesFromString(defaultCountry)}
-            onChange={(newCountry) =>
-              onChange({
-                ...value,
-                addressCountry: applySimpleQuotesToString(newCountry),
-              })
-            }
-            disabled={disabled}
-            options={countries}
-            fullWidth={true}
-          />
+          >
+            <Select<string>
+              dropdownWidth={220}
+              disabled={disabled}
+              dropdownId="selectDefaultCountry"
+              value={stripSimpleQuotesFromString(defaultCountry)}
+              onChange={(newCountry) =>
+                onChange({
+                  ...value,
+                  addressCountry: applySimpleQuotesToString(newCountry),
+                })
+              }
+              options={countries}
+              selectSizeVariant="small"
+              withSearchInput={true}
+            />
+          </SettingsOptionCardContentSelect>
         );
       }}
     />

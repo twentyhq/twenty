@@ -24,11 +24,11 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { CastToStringArray } from 'src/engine/core-modules/environment/decorators/cast-to-string-array.decorator';
-import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
@@ -127,8 +127,22 @@ export class EnvironmentVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
-  @IsUrl({ require_tld: false, require_protocol: true })
-  FRONT_BASE_URL: string;
+  @IsString()
+  @IsOptional()
+  FRONT_DOMAIN?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
+  DEFAULT_SUBDOMAIN = 'app';
+
+  @IsString()
+  @IsOptional()
+  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  FRONT_PORT?: number;
 
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -226,6 +240,11 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   ENTERPRISE_KEY: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_MULTIWORKSPACE_ENABLED = false;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -363,11 +382,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  IS_SIGN_UP_DISABLED = false;
-
   @IsEnum(CaptchaDriverType)
   @IsOptional()
   CAPTCHA_DRIVER?: CaptchaDriverType;
@@ -471,13 +485,20 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
+
+  // milliseconds
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_THROTTLE_TTL = 1000;
+
   // SSL
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_KEY_PATH: string;
 
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_CERT_PATH: string;
 }
 

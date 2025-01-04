@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { InputSchema } from 'src/modules/code-introspection/types/input-schema.type';
+import { InputSchema } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
 
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',

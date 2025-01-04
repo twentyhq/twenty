@@ -207,6 +207,7 @@ const companyMocks = [
                   phones {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   position
@@ -214,6 +215,7 @@ const companyMocks = [
                   whatsapp {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   workPreference
@@ -290,6 +292,8 @@ const companyMocks = [
             name: 'Example Company',
             id: companyId,
             visaSponsorship: false,
+            deletedAt: undefined,
+            workPolicy: [],
           },
         ],
         upsert: true,

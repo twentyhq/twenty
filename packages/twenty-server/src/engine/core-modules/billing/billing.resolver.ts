@@ -40,11 +40,12 @@ export class BillingResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async billingPortalSession(
     @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
-        user.defaultWorkspaceId,
+        workspace.id,
         returnUrlPath,
       ),
     };
@@ -55,7 +56,13 @@ export class BillingResolver {
   async checkoutSession(
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
-    @Args() { recurringInterval, successUrlPath }: CheckoutSessionInput,
+    @Args()
+    {
+      recurringInterval,
+      successUrlPath,
+      plan,
+      requirePaymentMethod,
+    }: CheckoutSessionInput,
   ) {
     const productPrice = await this.stripeService.getStripePrice(
       AvailableProduct.BasePlan,
@@ -74,6 +81,8 @@ export class BillingResolver {
         workspace,
         productPrice.stripePriceId,
         successUrlPath,
+        plan,
+        requirePaymentMethod,
       ),
     };
   }

@@ -1,91 +1,76 @@
-import { PageFavoriteFoldersDropdown } from '@/favorites/components/PageFavoriteFolderDropdown';
-import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexPageTableAddButton } from '@/object-record/record-index/components/RecordIndexPageTableAddButton';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
+import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
-import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
-  const isFavoriteFolderEnabled = useIsFeatureEnabled(
-    'IS_FAVORITE_FOLDER_ENABLED',
-  );
 
-  const { objectNamePlural, onCreateRecord, recordIndexId } = useContext(
-    RecordIndexRootPropsContext,
-  );
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-  const currentViewId = useRecoilComponentValueV2(
-    currentViewIdComponentState,
-    recordIndexId,
-  );
-
-  const view = views.find((view) => view.id === currentViewId);
-
-  const { sortedFavorites: favorites } = useFavorites();
-
-  const isFavorite = favorites.some(
-    (favorite) =>
-      favorite.recordId === currentViewId && favorite.workspaceMemberId,
-  );
+  const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { getIcon } = useIcons();
-  const Icon = getIcon(
-    findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
-  );
+  const Icon = getIcon(objectMetadataItem?.icon);
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
-  const shouldDisplayAddButton = objectMetadataItem
-    ? !isObjectMetadataReadOnly(objectMetadataItem)
-    : false;
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
+  const numberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPageHeaderV2Enabled,
+  );
+
+  const isObjectMetadataItemReadOnly =
+    isDefined(objectMetadataItem) &&
+    isObjectMetadataReadOnly(objectMetadataItem);
+
+  const shouldDisplayAddButton =
+    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    !isObjectMetadataItemReadOnly;
 
   const isTable = recordIndexViewType === ViewType.Table;
 
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
-  const handleAddButtonClick = () => {
-    onCreateRecord();
-  };
-
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
-      {isFavoriteFolderEnabled && (
-        <PageFavoriteFoldersDropdown
-          record={view}
-          dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
-          objectNameSingular="view"
-          isFavorite={isFavorite}
-        />
-      )}
       {shouldDisplayAddButton &&
+        /**
+         * TODO: Logic between Table and Kanban should be merged here when we move some states to record-index
+         */
         (isTable ? (
-          <PageAddButton onClick={handleAddButtonClick} />
+          <RecordIndexPageTableAddButton />
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}
+
+      {isPageHeaderV2Enabled && (
+        <>
+          <RecordIndexActionMenu indexId={recordIndexId} />
+          <PageHeaderOpenCommandMenuButton />
+        </>
+      )}
     </PageHeader>
   );
 };

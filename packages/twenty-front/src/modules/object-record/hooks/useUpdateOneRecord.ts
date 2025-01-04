@@ -7,6 +7,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -44,6 +45,10 @@ export const useUpdateOneRecord = <
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { refetchAggregateQueries } = useRefetchAggregateQueries({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -152,6 +157,7 @@ export const useUpdateOneRecord = <
         throw error;
       });
 
+    await refetchAggregateQueries();
     return updatedRecord?.data?.[mutationResponseField] ?? null;
   };
 

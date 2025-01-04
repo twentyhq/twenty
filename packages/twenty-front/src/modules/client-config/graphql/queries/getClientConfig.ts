@@ -3,19 +3,28 @@ import { gql } from '@apollo/client';
 export const GET_CLIENT_CONFIG = gql`
   query GetClientConfig {
     clientConfig {
-      authProviders {
-        google
-        password
-        microsoft
-        sso
-      }
       billing {
         isBillingEnabled
         billingUrl
         billingFreeTrialDurationInDays
       }
+      authProviders {
+        google
+        password
+        microsoft
+        sso {
+          id
+          name
+          type
+          status
+          issuer
+        }
+      }
       signInPrefilled
-      signUpDisabled
+      isMultiWorkspaceEnabled
+      isSSOEnabled
+      defaultSubdomain
+      frontDomain
       debugMode
       analyticsEnabled
       support {

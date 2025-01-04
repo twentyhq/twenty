@@ -1,29 +1,22 @@
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
-import { IconTrash, isDefined } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
-export const useDeleteSingleRecordAction = ({
-  position,
+export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
-}: {
-  position: number;
-  objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+  const recordId = useSelectedRecordIdOrThrow();
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
@@ -36,93 +29,67 @@ export const useDeleteSingleRecordAction = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
   const { closeRightDrawer } = useRightDrawer();
 
-  const recordIdToDelete =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds?.[0]
-      : undefined;
-
   const handleDeleteClick = useCallback(async () => {
-    if (!isDefined(recordIdToDelete)) {
-      return;
-    }
-
     resetTableRowSelection();
 
     const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === recordIdToDelete,
+      (favorite) => favorite.recordId === recordId,
     );
 
     if (isDefined(foundFavorite)) {
       deleteFavorite(foundFavorite.id);
     }
 
-    await deleteOneRecord(recordIdToDelete);
+    await deleteOneRecord(recordId);
   }, [
     deleteFavorite,
     deleteOneRecord,
     favorites,
-    recordIdToDelete,
     resetTableRowSelection,
+    recordId,
   ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const { isInRightDrawer, onActionExecutedCallback } =
-    useContext(ActionMenuContext);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const registerDeleteSingleRecordAction = () => {
-    if (isRemoteObject || !isDefined(recordIdToDelete)) {
+  const shouldBeRegistered =
+    !isRemoteObject && isNull(selectedRecord?.deletedAt);
+
+  const onClick = () => {
+    if (!shouldBeRegistered) {
       return;
     }
 
-    addActionMenuEntry({
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
-      key: 'delete-single-record',
-      label: 'Delete',
-      position,
-      Icon: IconTrash,
-      accent: 'danger',
-      isPinned: true,
-      onClick: () => {
-        setIsDeleteRecordsModalOpen(true);
-      },
-      ConfirmationModal: (
-        <ConfirmationModal
-          isOpen={isDeleteRecordsModalOpen}
-          setIsOpen={setIsDeleteRecordsModalOpen}
-          title={'Delete Record'}
-          subtitle={
-            'Are you sure you want to delete this record? It can be recovered from the Options menu.'
-          }
-          onConfirmClick={() => {
-            handleDeleteClick();
-            onActionExecutedCallback?.();
-            if (isInRightDrawer) {
-              closeRightDrawer();
-            }
-          }}
-          deleteButtonText={'Delete Record'}
-        />
-      ),
-    });
-  };
-
-  const unregisterDeleteSingleRecordAction = () => {
-    removeActionMenuEntry('delete-single-record');
+    setIsDeleteRecordsModalOpen(true);
   };
 
   return {
-    registerDeleteSingleRecordAction,
-    unregisterDeleteSingleRecordAction,
+    shouldBeRegistered,
+    onClick,
+    ConfirmationModal: (
+      <ConfirmationModal
+        isOpen={isDeleteRecordsModalOpen}
+        setIsOpen={setIsDeleteRecordsModalOpen}
+        title={'Delete Record'}
+        subtitle={
+          'Are you sure you want to delete this record? It can be recovered from the Options menu.'
+        }
+        onConfirmClick={() => {
+          handleDeleteClick();
+          if (isInRightDrawer) {
+            closeRightDrawer();
+          }
+        }}
+        deleteButtonText={'Delete Record'}
+      />
+    ),
   };
 };

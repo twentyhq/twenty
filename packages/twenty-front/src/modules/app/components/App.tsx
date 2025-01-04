@@ -7,26 +7,29 @@ import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHa
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
+import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
 
 export const App = () => {
   return (
     <RecoilRoot>
-      <AppErrorBoundary>
-        <CaptchaProvider>
-          <RecoilDebugObserverEffect />
-          <ApolloDevLogEffect />
-          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <IconsProvider>
-              <ExceptionHandlerProvider>
-                <HelmetProvider>
-                  <AppRouter />
-                </HelmetProvider>
-              </ExceptionHandlerProvider>
-            </IconsProvider>
-          </SnackBarProviderScope>
-        </CaptchaProvider>
-      </AppErrorBoundary>
+      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+        <AppErrorBoundary>
+          <CaptchaProvider>
+            <RecoilDebugObserverEffect />
+            <ApolloDevLogEffect />
+            <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+              <IconsProvider>
+                <ExceptionHandlerProvider>
+                  <HelmetProvider>
+                    <AppRouter />
+                  </HelmetProvider>
+                </ExceptionHandlerProvider>
+              </IconsProvider>
+            </SnackBarProviderScope>
+          </CaptchaProvider>
+        </AppErrorBoundary>
+      </RecoilURLSyncJSON>
     </RecoilRoot>
   );
 };

@@ -4,7 +4,7 @@ import {
   IconHandMove,
   IconSortAZ,
   IconSortZA,
-  MenuItem,
+  MenuItemSelect,
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
@@ -13,24 +13,22 @@ import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupS
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
-  const { currentContentId, onContentChange, closeDropdown } =
-    useOptionsDropdown();
+  const { currentContentId, onContentChange } = useOptionsDropdown();
 
   const hiddenRecordGroupIds = useRecoilComponentValueV2(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const setRecordGroupSort = useSetRecoilComponentStateV2(
+  const [recordGroupSort, setRecordGroupSort] = useRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
   );
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
     setRecordGroupSort(sort);
-    closeDropdown();
   };
 
   useEffect(() => {
@@ -51,24 +49,27 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
         Sort
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <MenuItem
+        <MenuItemSelect
           onClick={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
           LeftIcon={IconHandMove}
           text={RecordGroupSort.Manual}
+          selected={recordGroupSort === RecordGroupSort.Manual}
         />
-        <MenuItem
+        <MenuItemSelect
           onClick={() =>
             handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
           }
           LeftIcon={IconSortAZ}
           text={RecordGroupSort.Alphabetical}
+          selected={recordGroupSort === RecordGroupSort.Alphabetical}
         />
-        <MenuItem
+        <MenuItemSelect
           onClick={() =>
             handleRecordGroupSortChange(RecordGroupSort.ReverseAlphabetical)
           }
           LeftIcon={IconSortZA}
           text={RecordGroupSort.ReverseAlphabetical}
+          selected={recordGroupSort === RecordGroupSort.ReverseAlphabetical}
         />
       </DropdownMenuItemsContainer>
     </>

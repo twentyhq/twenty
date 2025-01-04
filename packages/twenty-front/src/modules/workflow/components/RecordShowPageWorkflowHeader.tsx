@@ -15,7 +15,6 @@ import {
   IconTrash,
   isDefined,
 } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
 export const RecordShowPageWorkflowHeader = ({
@@ -53,35 +52,23 @@ export const RecordShowPageWorkflowHeader = ({
           assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
           if (!canWorkflowBeTested) {
-            enqueueSnackBar(
-              'Trigger type should be Manual - when no record(s) are selected',
-              {
-                variant: SnackBarVariant.Error,
-                title: 'Workflow cannot be tested',
-                icon: (
-                  <IconSettingsAutomation
-                    size={16}
-                    color={theme.snackBar.error.color}
-                  />
-                ),
-              },
-            );
+            enqueueSnackBar('Workflow cannot be tested', {
+              variant: SnackBarVariant.Error,
+              detailedMessage:
+                'Trigger type should be Manual - when no record(s) are selected',
+              icon: (
+                <IconSettingsAutomation
+                  size={16}
+                  color={theme.snackBar.error.color}
+                />
+              ),
+            });
             return;
           }
 
           await runWorkflowVersion({
             workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-          });
-
-          enqueueSnackBar('', {
-            variant: SnackBarVariant.Success,
-            title: `${capitalize(workflowWithCurrentVersion.name)} starting...`,
-            icon: (
-              <IconSettingsAutomation
-                size={16}
-                color={theme.snackBar.success.color}
-              />
-            ),
+            workflowName: workflowWithCurrentVersion.name,
           });
         }}
       />

@@ -137,7 +137,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   return (
     <Dropdown
-      disableBlur
       dropdownId={dropdownId}
       clickableComponent={
         <LightButton Icon={IconPlus} title="Add filter rule" />

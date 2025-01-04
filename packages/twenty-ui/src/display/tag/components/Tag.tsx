@@ -9,6 +9,7 @@ import {
   ThemeContext,
   ThemeType,
 } from '@ui/theme';
+import { isDefined } from '@ui/utilities';
 
 const spacing5 = THEME_COMMON.spacing(5);
 const spacing2 = THEME_COMMON.spacing(2);
@@ -20,14 +21,27 @@ const StyledTag = styled.h3<{
   weight: TagWeight;
   variant: TagVariant;
   preventShrink?: boolean;
+  preventPadding?: boolean;
 }>`
   align-items: center;
-  background: ${({ color, theme }) =>
-    color === 'transparent' ? color : theme.tag.background[color]};
+  background: ${({ color, theme }) => {
+    if (color === 'transparent') {
+      return 'transparent';
+    } else {
+      const themeColor = theme.tag.background[color];
+
+      if (!isDefined(themeColor)) {
+        console.warn(`Tag color ${color} is not defined in the theme`);
+        return theme.tag.background.gray;
+      } else {
+        return themeColor;
+      }
+    }
+  }};
   border-radius: ${BORDER_COMMON.radius.sm};
   color: ${({ color, theme }) =>
     color === 'transparent'
-      ? theme.font.color.tertiary
+      ? theme.font.color.secondary
       : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -39,7 +53,7 @@ const StyledTag = styled.h3<{
   height: ${spacing5};
   margin: 0;
   overflow: hidden;
-  padding: 0 ${spacing2};
+  padding: ${({ preventPadding }) => (preventPadding ? '0' : `0 ${spacing2}`)};
   border: ${({ variant, theme }) =>
     variant === 'outline' || variant === 'border'
       ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
@@ -78,6 +92,7 @@ type TagProps = {
   weight?: TagWeight;
   variant?: TagVariant;
   preventShrink?: boolean;
+  preventPadding?: boolean;
 };
 
 // TODO: Find a way to have ellipsis and shrinkable tag in tag list while keeping good perf for table cells
@@ -90,6 +105,7 @@ export const Tag = ({
   weight = 'regular',
   variant = 'solid',
   preventShrink,
+  preventPadding,
 }: TagProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -102,11 +118,14 @@ export const Tag = ({
       weight={weight}
       variant={variant}
       preventShrink={preventShrink}
+      preventPadding={preventPadding}
     >
-      {!!Icon && (
+      {isDefined(Icon) ? (
         <StyledIconContainer>
           <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
+      ) : (
+        <></>
       )}
       {preventShrink ? (
         <StyledNonShrinkableText>{text}</StyledNonShrinkableText>

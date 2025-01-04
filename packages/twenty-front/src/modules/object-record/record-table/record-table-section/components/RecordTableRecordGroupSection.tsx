@@ -2,12 +2,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback } from 'react';
-import { IconChevronUp, isDefined, Tag } from 'twenty-ui';
+import { IconChevronDown, isDefined, Tag } from 'twenty-ui';
 
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -19,8 +21,8 @@ const StyledTrContainer = styled.tr`
   cursor: pointer;
 `;
 
-const StyledChevronContainer = styled.td`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+const StyledChevronContainer = styled(RecordTableTd)`
+  border-right: none;
   color: ${({ theme }) => theme.font.color.secondary};
   text-align: center;
   vertical-align: middle;
@@ -33,10 +35,9 @@ const StyledTotalRow = styled.span`
   vertical-align: middle;
 `;
 
-const StyledRecordGroupSection = styled.td`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  padding-bottom: 6px;
-  padding-top: 6px;
+const StyledRecordGroupSection = styled(RecordTableTd)`
+  border-right: none;
+  height: 32px;
 `;
 
 const StyledEmptyTd = styled.td`
@@ -79,19 +80,19 @@ export const RecordTableRecordGroupSection = () => {
 
   return (
     <StyledTrContainer onClick={handleDropdownToggle}>
-      <td aria-hidden></td>
+      <td aria-hidden />
       <StyledChevronContainer>
         <motion.span
-          animate={{ rotate: isRecordGroupTableSectionToggled ? 180 : 0 }}
+          animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{ duration: theme.animation.duration.normal }}
           style={{
             display: 'inline-block',
           }}
         >
-          <IconChevronUp size={theme.icon.size.md} />
+          <IconChevronDown size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
-      <StyledRecordGroupSection colSpan={visibleColumns.length}>
+      <StyledRecordGroupSection>
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue
@@ -107,9 +108,11 @@ export const RecordTableRecordGroupSection = () => {
           weight="medium"
         />
         <StyledTotalRow>{recordIdsByGroup.length}</StyledTotalRow>
+        <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
-      <StyledEmptyTd></StyledEmptyTd>
-      <StyledEmptyTd></StyledEmptyTd>
+      <StyledEmptyTd colSpan={visibleColumns.length - 1} />
+      <StyledEmptyTd />
+      <StyledEmptyTd />
     </StyledTrContainer>
   );
 };

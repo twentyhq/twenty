@@ -17,6 +17,8 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -98,8 +100,6 @@ export const PageHeader = ({
   hasClosePageButton,
   onClosePage,
   hasPaginationButtons,
-  hasPreviousRecord,
-  hasNextRecord,
   navigateToPreviousRecord,
   navigateToNextRecord,
   Icon,
@@ -109,6 +109,10 @@ export const PageHeader = ({
   const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
+  );
+
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   return (
@@ -129,20 +133,18 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {hasPaginationButtons && (
+          {!isPageHeaderV2Enabled && hasPaginationButtons && (
             <>
               <IconButton
                 Icon={IconChevronUp}
                 size="small"
                 variant="secondary"
-                disabled={!hasPreviousRecord}
                 onClick={() => navigateToPreviousRecord?.()}
               />
               <IconButton
                 Icon={IconChevronDown}
                 size="small"
                 variant="secondary"
-                disabled={!hasNextRecord}
                 onClick={() => navigateToNextRecord?.()}
               />
             </>
@@ -159,7 +161,10 @@ export const PageHeader = ({
           )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
-      <StyledPageActionContainer>{children}</StyledPageActionContainer>
+
+      <StyledPageActionContainer className="page-action-container">
+        {children}
+      </StyledPageActionContainer>
     </StyledTopBarContainer>
   );
 };

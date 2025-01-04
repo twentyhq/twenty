@@ -3,7 +3,7 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
-import { IconTool, MAIN_COLORS } from 'twenty-ui';
+import { IconPoint, MAIN_COLORS } from 'twenty-ui';
 
 const StyledAdvancedWrapper = styled.div`
   position: relative;
@@ -11,10 +11,9 @@ const StyledAdvancedWrapper = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
   height: 100%;
-  left: ${({ theme }) => theme.spacing(-6)};
+  left: ${({ theme }) => theme.spacing(-4)};
   position: absolute;
   top: 0;
 `;
@@ -22,8 +21,8 @@ const StyledIconContainer = styled.div`
 const StyledContent = styled.div`
   width: 100%;
 `;
-const StyledIconTool = styled(IconTool)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
+const StyledIconPoint = styled(IconPoint)`
+  margin-right: 0;
 `;
 
 type AdvancedSettingsWrapperProps = {
@@ -56,7 +55,11 @@ export const AdvancedSettingsWrapper = ({
           <StyledAdvancedWrapper>
             {!hideIcon && (
               <StyledIconContainer>
-                <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                <StyledIconPoint
+                  size={12}
+                  color={MAIN_COLORS.yellow}
+                  fill={MAIN_COLORS.yellow}
+                />
               </StyledIconContainer>
             )}
             <StyledContent>{children}</StyledContent>

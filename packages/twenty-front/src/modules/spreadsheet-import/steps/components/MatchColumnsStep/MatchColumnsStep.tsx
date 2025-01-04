@@ -25,6 +25,7 @@ import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/compo
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilState } from 'recoil';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
@@ -77,7 +78,7 @@ export enum ColumnType {
 
 export type MatchedOptions<T> = {
   entry: string;
-  value: T;
+  value?: T;
 };
 
 type EmptyColumn = { type: ColumnType.empty; index: number; header: string };
@@ -192,8 +193,8 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Columns cannot duplicate', {
-                title: 'Another column unselected',
+              enqueueSnackBar('Another column unselected', {
+                detailedMessage: 'Columns cannot duplicate',
                 variant: SnackBarVariant.Error,
               });
               return setColumn(column);
@@ -326,37 +327,43 @@ export const MatchColumnsStep = <T extends string>({
 
   return (
     <>
-      <StyledContent>
-        <Heading
-          title="Match Columns"
-          description="Select the correct field for each column you'd like to import."
-        />
-        <ColumnGrid
-          columns={columns}
-          renderUserColumn={(columns, columnIndex) => (
-            <UserTableColumn
-              column={columns[columnIndex]}
-              importedRow={dataExample.map(
-                (row) => row[columns[columnIndex].index],
-              )}
-            />
-          )}
-          renderTemplateColumn={(columns, columnIndex) => (
-            <TemplateColumn
-              columns={columns}
-              columnIndex={columnIndex}
-              onChange={onChange}
-            />
-          )}
-          renderUnmatchedColumn={(columns, columnIndex) => (
-            <UnmatchColumn
-              columns={columns}
-              columnIndex={columnIndex}
-              onSubChange={onSubChange}
-            />
-          )}
-        />
-      </StyledContent>
+      <ScrollWrapper
+        contextProviderName="modalContent"
+        componentInstanceId="scroll-wrapper-modal-content"
+        heightMode="full"
+      >
+        <StyledContent>
+          <Heading
+            title="Match Columns"
+            description="Select the correct field for each column you'd like to import."
+          />
+          <ColumnGrid
+            columns={columns}
+            renderUserColumn={(columns, columnIndex) => (
+              <UserTableColumn
+                column={columns[columnIndex]}
+                importedRow={dataExample.map(
+                  (row) => row[columns[columnIndex].index],
+                )}
+              />
+            )}
+            renderTemplateColumn={(columns, columnIndex) => (
+              <TemplateColumn
+                columns={columns}
+                columnIndex={columnIndex}
+                onChange={onChange}
+              />
+            )}
+            renderUnmatchedColumn={(columns, columnIndex) => (
+              <UnmatchColumn
+                columns={columns}
+                columnIndex={columnIndex}
+                onSubChange={onSubChange}
+              />
+            )}
+          />
+        </StyledContent>
+      </ScrollWrapper>
       <StepNavigationButton
         onClick={handleOnContinue}
         isLoading={isLoading}

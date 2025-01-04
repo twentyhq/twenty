@@ -8,12 +8,11 @@ import {
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
+import { MainNavigationDrawerItems } from '@/navigation/components/MainNavigationDrawerItems';
 import { AdvancedSettingsToggle } from 'twenty-ui';
-import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
   className?: string;
@@ -39,13 +38,11 @@ export const AppNavigationDrawer = ({
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           />
         ),
+        logo: '',
       }
     : {
-        logo:
-          (currentWorkspace?.logo &&
-            getImageAbsoluteURI(currentWorkspace.logo)) ??
-          undefined,
-        title: currentWorkspace?.displayName ?? undefined,
+        logo: currentWorkspace?.logo ?? '',
+        title: currentWorkspace?.displayName ?? '',
         children: <MainNavigationDrawerItems />,
         footer: <SupportDropdown />,
       };

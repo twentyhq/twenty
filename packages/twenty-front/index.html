@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <link rel="icon" href="/icons/android/android-launchericon-48-48.png" />
+    <link rel="icon" type="image/x-icon" href="/icons/android/android-launchericon-48-48.png" data-rh="true"/>
     <link rel="apple-touch-icon" href="/icons/ios/192.png" />
 
     <meta name="theme-color" content="#000000" />
@@ -28,7 +28,13 @@
     />
 
     <title>Twenty</title>
-    <script src="/env-config.js"></script>
+    <!-- BEGIN: Twenty Config -->
+    <script id="twenty-env-config">
+      window._env_ = {
+        // This will be overwritten
+      };
+    </script>
+    <!-- END: Twenty Config -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module">

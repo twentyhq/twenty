@@ -1,3 +1,4 @@
+import { Separator } from '@/settings/components/Separator';
 import {
   StyledSettingsOptionCardContent,
   StyledSettingsOptionCardDescription,
@@ -57,33 +58,34 @@ export const SettingsOptionCardContentToggle = ({
   const toggleId = useId();
 
   return (
-    <StyledSettingsOptionCardToggleContent
-      divider={divider}
-      disabled={disabled}
-    >
-      {Icon && (
-        <StyledSettingsOptionCardIcon>
-          <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsOptionCardIcon>
-      )}
-      <div>
-        <StyledSettingsOptionCardTitle>
-          <label htmlFor={toggleId}>
-            {title}
-            <StyledSettingsOptionCardToggleCover />
-          </label>
-        </StyledSettingsOptionCardTitle>
-        <StyledSettingsOptionCardDescription>
-          {description}
-        </StyledSettingsOptionCardDescription>
-      </div>
-      <StyledSettingsOptionCardToggleButton
-        id={toggleId}
-        value={checked}
-        onChange={onChange}
-        disabled={disabled}
-        color={advancedMode ? theme.color.yellow : theme.color.blue}
-      />
-    </StyledSettingsOptionCardToggleContent>
+    <>
+      <StyledSettingsOptionCardToggleContent disabled={disabled}>
+        {Icon && (
+          <StyledSettingsOptionCardIcon>
+            <SettingsOptionIconCustomizer Icon={Icon} />
+          </StyledSettingsOptionCardIcon>
+        )}
+        <div>
+          <StyledSettingsOptionCardTitle>
+            <label htmlFor={toggleId}>
+              {title}
+              <StyledSettingsOptionCardToggleCover />
+            </label>
+          </StyledSettingsOptionCardTitle>
+          <StyledSettingsOptionCardDescription>
+            {description}
+          </StyledSettingsOptionCardDescription>
+        </div>
+        <StyledSettingsOptionCardToggleButton
+          id={toggleId}
+          value={checked}
+          onChange={onChange}
+          disabled={disabled}
+          toggleSize="small"
+          color={advancedMode ? theme.color.yellow : theme.color.blue}
+        />
+      </StyledSettingsOptionCardToggleContent>
+      {divider && <Separator />}
+    </>
   );
 };

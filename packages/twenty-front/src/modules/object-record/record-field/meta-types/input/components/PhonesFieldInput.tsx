@@ -2,21 +2,21 @@ import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/us
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
 import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
-import { useMemo } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { TEXT_INPUT_STYLE, isDefined } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
-import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
+export const DEFAULT_PHONE_CALLING_CODE = '1';
+
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
-  height: 32px;
   ${TEXT_INPUT_STYLE}
   padding: 0;
 
@@ -47,44 +47,34 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 
 type PhonesFieldInputProps = {
   onCancel?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
-export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
-  const { persistPhonesField, hotkeyScope, draftValue, fieldDefinition } =
+export const PhonesFieldInput = ({
+  onCancel,
+  onClickOutside,
+}: PhonesFieldInputProps) => {
+  const { persistPhonesField, hotkeyScope, fieldValue, fieldDefinition } =
     usePhonesField();
 
-  const phones = useMemo<{ number: string; callingCode: string }[]>(() => {
-    if (!isDefined(draftValue)) {
-      return [];
-    }
-    return [
-      draftValue.primaryPhoneNumber
-        ? {
-            number: draftValue.primaryPhoneNumber,
-            callingCode: draftValue.primaryPhoneCountryCode,
-          }
-        : null,
-      ...(draftValue.additionalPhones ?? []),
-    ].filter(isDefined);
-  }, [draftValue]);
+  const phones = createPhonesFromFieldValue(fieldValue);
 
-  const defaultCallingCode =
-    stripSimpleQuotesFromString(
-      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? '+1';
-
-  // TODO : improve once we store the real country code
-  const defaultCountry = useCountries().find(
-    (obj) => obj.callingCode === defaultCallingCode,
-  )?.countryCode;
+  const defaultCountry = stripSimpleQuotesFromString(
+    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+  );
 
   const handlePersistPhones = (
-    updatedPhones: { number: string; callingCode: string }[],
+    updatedPhones: {
+      number: string;
+      countryCode: string;
+      callingCode: string;
+    }[],
   ) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = updatedPhones;
     persistPhonesField({
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
-      primaryPhoneCountryCode: nextPrimaryPhone?.callingCode ?? '',
+      primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
+      primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     });
   };
@@ -95,6 +85,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
     <MultiItemFieldInput
       items={phones}
       onPersist={handlePersistPhones}
+      onClickOutside={onClickOutside}
       onCancel={onCancel}
       placeholder="Phone"
       fieldMetadataType={FieldMetadataType.Phones}
@@ -103,12 +94,14 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
         if (phone !== undefined) {
           return {
             number: phone.nationalNumber,
-            callingCode: `${phone.countryCallingCode}`,
+            callingCode: `+${phone.countryCallingCode}`,
+            countryCode: phone.country as string,
           };
         }
         return {
           number: '',
           callingCode: '',
+          countryCode: '',
         };
       }}
       renderItem={({

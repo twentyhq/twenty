@@ -5,20 +5,16 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  AppToken,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { assert } from 'src/utils/assert';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -26,14 +22,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(AppToken, 'core')
-    private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {
     super(userWorkspaceRepository);
   }
@@ -65,7 +59,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
         ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ($1, $2, 'Light', $3, $4, $5)`,
+        VALUES ($1, $2, 'System', $3, $4, $5)`,
       [
         user.firstName,
         user.lastName,
@@ -116,39 +110,19 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       await this.createWorkspaceMember(workspace.id, user);
     }
 
-    return await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-      updatedAt: new Date().toISOString(),
-    });
-  }
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
 
-  async validateInvitation(inviteToken: string, email: string) {
-    const appToken = await this.appTokenRepository.findOne({
-      where: {
-        value: inviteToken,
-        type: AppTokenType.InvitationToken,
-      },
-      relations: ['workspace'],
-    });
-
-    if (!appToken) {
-      throw new Error('Invalid invitation token');
-    }
-
-    if (!appToken.context?.email && appToken.context?.email !== email) {
-      throw new Error('Email does not match the invitation');
-    }
-
-    if (new Date(appToken.expiresAt) < new Date()) {
-      throw new Error('Invitation expired');
-    }
-
-    return appToken;
+    return user;
   }
 
   async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
-    const appToken = await this.validateInvitation(inviteToken, user.email);
+    const appToken = await this.workspaceInvitationService.validateInvitation({
+      workspacePersonalInviteToken: inviteToken,
+      email: user.email,
+    });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       appToken.workspace.id,
@@ -158,7 +132,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return await this.addUserToWorkspace(user, appToken.workspace);
   }
 
-  public async getUserCount(workspaceId): Promise<number | undefined> {
+  public async getUserCount(workspaceId: string): Promise<number | undefined> {
     return await this.userWorkspaceRepository.countBy({
       workspaceId,
     });

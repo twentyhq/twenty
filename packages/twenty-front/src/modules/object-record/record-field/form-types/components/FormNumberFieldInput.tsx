@@ -1,6 +1,7 @@
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldHint } from '@/object-record/record-field/form-types/components/FormFieldHint';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
@@ -24,6 +25,7 @@ type FormNumberFieldInputProps = {
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
   VariablePicker?: VariablePickerComponent;
+  hint?: string;
 };
 
 export const FormNumberFieldInput = ({
@@ -32,6 +34,7 @@ export const FormNumberFieldInput = ({
   defaultValue,
   onPersist,
   VariablePicker,
+  hint,
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
 
@@ -94,11 +97,11 @@ export const FormNumberFieldInput = ({
   };
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
-      <StyledFormFieldInputRowContainer>
-        <StyledFormFieldInputInputContainer
+      <FormFieldInputRowContainer>
+        <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
@@ -116,7 +119,7 @@ export const FormNumberFieldInput = ({
               onRemove={handleUnlinkVariable}
             />
           )}
-        </StyledFormFieldInputInputContainer>
+        </FormFieldInputInputContainer>
 
         {VariablePicker ? (
           <VariablePicker
@@ -124,7 +127,9 @@ export const FormNumberFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+      </FormFieldInputRowContainer>
+
+      {hint ? <FormFieldHint>{hint}</FormFieldHint> : null}
+    </FormFieldInputContainer>
   );
 };

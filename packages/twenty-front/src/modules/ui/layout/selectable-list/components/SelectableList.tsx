@@ -26,7 +26,7 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds, setSelectableListOnEnter } =
+  const { setSelectableItemIds, setSelectableListOnEnter, setSelectedItemId } =
     useSelectableList(selectableListId);
 
   useEffect(() => {
@@ -47,7 +47,12 @@ export const SelectableList = ({
     if (isDefined(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
-  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
+  }, [
+    selectableItemIdArray,
+    selectableItemIdMatrix,
+    setSelectableItemIds,
+    setSelectedItemId,
+  ]);
 
   return (
     <SelectableListScope selectableListScopeId={selectableListId}>

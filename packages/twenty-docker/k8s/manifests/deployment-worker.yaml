@@ -28,11 +28,9 @@ spec:
           env:
             - name: SERVER_URL
               value: "https://crm.example.com:443"
-            - name: FRONT_BASE_URL
-              value: "https://crm.example.com:443"
             - name: PG_DATABASE_URL
-              value: "postgres://postgres:postgres@twenty-db.twentycrm.svc.cluster.local/default"
-            - name: ENABLE_DB_MIGRATIONS
+              value: "postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default"
+            - name: DISABLE_DB_MIGRATIONS
               value: "false" # it already runs on the server
             - name: STORAGE_TYPE
               value: "local"

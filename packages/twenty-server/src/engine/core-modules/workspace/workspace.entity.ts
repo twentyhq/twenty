@@ -13,6 +13,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -20,7 +21,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 export enum WorkspaceActivationStatus {
   ONGOING_CREATION = 'ONGOING_CREATION',
@@ -40,6 +40,9 @@ registerEnumType(WorkspaceActivationStatus, {
   nullable: true,
 })
 @UnPagedRelation('billingEntitlements', () => BillingEntitlement, {
+  nullable: true,
+})
+@UnPagedRelation('billingCustomers', () => BillingCustomer, {
   nullable: true,
 })
 export class Workspace {
@@ -85,9 +88,6 @@ export class Workspace {
   })
   keyValuePairs: Relation<KeyValuePair[]>;
 
-  @OneToMany(() => User, (user) => user.defaultWorkspace)
-  users: Relation<User[]>;
-
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
     onDelete: 'CASCADE',
   })
@@ -116,18 +116,6 @@ export class Workspace {
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(
-    () => BillingSubscription,
-    (billingSubscription) => billingSubscription.workspace,
-  )
-  billingSubscriptions: Relation<BillingSubscription[]>;
-
-  @OneToMany(
-    () => BillingEntitlement,
-    (billingEntitlement) => billingEntitlement.workspace,
-  )
-  billingEntitlements: Relation<BillingEntitlement[]>;
-
-  @OneToMany(
     () => PostgresCredentials,
     (postgresCredentials) => postgresCredentials.workspace,
   )
@@ -150,4 +138,20 @@ export class Workspace {
   @Field()
   @Column({ default: '' })
   databaseSchema: string;
+
+  @Field()
+  @Column({ unique: true })
+  subdomain: string;
+
+  @Field()
+  @Column({ default: true })
+  isGoogleAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isPasswordAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isMicrosoftAuthEnabled: boolean;
 }

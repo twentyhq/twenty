@@ -8,6 +8,7 @@ import {
   IconCsv,
   IconGmail,
   IconRobot,
+  IconSettingsAutomation,
 } from 'twenty-ui';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
@@ -32,6 +33,8 @@ export const ActorDisplay = ({
         return IconCalendar;
       case 'SYSTEM':
         return IconRobot;
+      case 'WORKFLOW':
+        return IconSettingsAutomation;
       default:
         return undefined;
     }

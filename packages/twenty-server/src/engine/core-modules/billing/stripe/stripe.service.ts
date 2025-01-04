@@ -5,6 +5,8 @@ import Stripe from 'stripe';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
@@ -13,11 +15,13 @@ export class StripeService {
   protected readonly logger = new Logger(StripeService.name);
   private readonly stripe: Stripe;
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
+  ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
     }
-
     this.stripe = new Stripe(
       this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},
@@ -74,17 +78,21 @@ export class StripeService {
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrl ?? this.environmentService.get('FRONT_BASE_URL'),
+      return_url:
+        returnUrl ?? this.domainManagerService.getBaseUrl().toString(),
     });
   }
 
   async createCheckoutSession(
     user: User,
+    workspaceId: string,
     priceId: string,
     quantity: number,
     successUrl?: string,
     cancelUrl?: string,
     stripeCustomerId?: string,
+    plan: BillingPlanKey = BillingPlanKey.PRO,
+    requirePaymentMethod = true,
   ): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
       line_items: [
@@ -96,19 +104,23 @@ export class StripeService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId,
+          plan,
         },
         trial_period_days: this.environmentService.get(
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
-      automatic_tax: { enabled: true },
-      tax_id_collection: { enabled: true },
+      automatic_tax: { enabled: !!requirePaymentMethod },
+      tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
       customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
+      payment_method_collection: requirePaymentMethod
+        ? 'always'
+        : 'if_required',
     });
   }
 
@@ -139,9 +151,25 @@ export class StripeService {
       stripeSubscriptionItem.stripeSubscriptionItemId,
       {
         price: stripePriceId,
-        quantity: stripeSubscriptionItem.quantity,
+        quantity:
+          stripeSubscriptionItem.quantity === null
+            ? undefined
+            : stripeSubscriptionItem.quantity,
       },
     );
+  }
+
+  async updateCustomerMetadataWorkspaceId(
+    stripeCustomerId: string,
+    workspaceId: string,
+  ) {
+    await this.stripe.customers.update(stripeCustomerId, {
+      metadata: { workspaceId: workspaceId },
+    });
+  }
+
+  async getMeter(stripeMeterId: string) {
+    return await this.stripe.billing.meters.retrieve(stripeMeterId);
   }
 
   formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
@@ -169,5 +197,37 @@ export class StripeService {
     );
 
     return productPrices.sort((a, b) => a.unitAmount - b.unitAmount);
+  }
+
+  async getStripeCustomerIdFromWorkspaceId(workspaceId: string) {
+    const subscription = await this.stripe.subscriptions.search({
+      query: `metadata['workspaceId']:'${workspaceId}'`,
+      limit: 1,
+    });
+    const stripeCustomerId = subscription.data[0].customer
+      ? String(subscription.data[0].customer)
+      : undefined;
+
+    return stripeCustomerId;
+  }
+
+  async getAllProducts() {
+    const products = await this.stripe.products.list();
+
+    return products.data;
+  }
+
+  async getPricesByProductId(productId: string) {
+    const prices = await this.stripe.prices.search({
+      query: `product:'${productId}'`,
+    });
+
+    return prices.data;
+  }
+
+  async getAllMeters() {
+    const meters = await this.stripe.billing.meters.list();
+
+    return meters.data;
   }
 }

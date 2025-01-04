@@ -31,7 +31,10 @@ export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
   const isMobile = useIsMobile();
   return isMobile ? (
     <StyledOuterContainer>
-      <StyledScrollWrapper contextProviderName="showPageContainer">
+      <StyledScrollWrapper
+        contextProviderName="showPageContainer"
+        componentInstanceId={'scroll-wrapper-show-page-container'}
+      >
         <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>
     </StyledOuterContainer>

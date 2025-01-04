@@ -1,19 +1,20 @@
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
-import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { ReactNode, act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { renderHook } from '@testing-library/react';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
@@ -58,6 +59,7 @@ describe('useAuth', () => {
     });
 
     expect(mocks[1].result).toHaveBeenCalled();
+    expect(mocks[3].result).toHaveBeenCalled();
   });
 
   it('should handle credential sign-in', async () => {
@@ -76,23 +78,29 @@ describe('useAuth', () => {
       () => {
         const client = useApolloClient();
         const icons = useRecoilValue(iconsState);
-        const authProviders = useRecoilValue(authProvidersState);
+        const workspaceAuthProviders = useRecoilValue(
+          workspaceAuthProvidersState,
+        );
         const billing = useRecoilValue(billingState);
         const isDeveloperDefaultSignInPrefilled = useRecoilValue(
           isDeveloperDefaultSignInPrefilledState,
         );
         const supportChat = useRecoilValue(supportChatState);
         const isDebugMode = useRecoilValue(isDebugModeState);
+        const isMultiWorkspaceEnabled = useRecoilValue(
+          isMultiWorkspaceEnabledState,
+        );
         return {
           ...useAuth(),
           client,
           state: {
             icons,
-            authProviders,
+            workspaceAuthProviders,
             billing,
             isDeveloperDefaultSignInPrefilled,
             supportChat,
             isDebugMode,
+            isMultiWorkspaceEnabled,
           },
         };
       },
@@ -113,12 +121,12 @@ describe('useAuth', () => {
     const { state } = result.current;
 
     expect(state.icons).toEqual({});
-    expect(state.authProviders).toEqual({
-      google: false,
+    expect(state.workspaceAuthProviders).toEqual({
+      google: true,
       microsoft: false,
       magicLink: false,
-      password: false,
-      sso: false,
+      password: true,
+      sso: [],
     });
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);

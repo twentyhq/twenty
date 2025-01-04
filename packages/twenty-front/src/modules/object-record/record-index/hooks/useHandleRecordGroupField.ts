@@ -61,6 +61,8 @@ export const useHandleRecordGroupField = ({
             (option) =>
               !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
           )
+          // Alphabetically sort the options by default
+          .sort((a, b) => a.value.localeCompare(b.value))
           .map(
             (option, index) =>
               ({
@@ -73,11 +75,38 @@ export const useHandleRecordGroupField = ({
               }) satisfies ViewGroup,
           );
 
+        if (
+          !existingGroupKeys.has(`${fieldMetadataItem.id}:`) &&
+          fieldMetadataItem.isNullable === true
+        ) {
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            isVisible: true,
+            position: fieldMetadataItem.options.length,
+            fieldMetadataId: fieldMetadataItem.id,
+          } satisfies ViewGroup);
+        }
+
+        const viewGroupsToDelete = view.viewGroups.filter(
+          (group) => group.fieldMetadataId !== fieldMetadataItem.id,
+        );
+
         if (viewGroupsToCreate.length > 0) {
           await createViewGroupRecords(viewGroupsToCreate, view);
         }
+
+        if (viewGroupsToDelete.length > 0) {
+          await deleteViewGroupRecords(viewGroupsToDelete);
+        }
       },
-    [createViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
+    [
+      createViewGroupRecords,
+      deleteViewGroupRecords,
+      currentViewIdCallbackState,
+      getViewFromCache,
+    ],
   );
 
   const resetRecordGroupField = useRecoilCallback(

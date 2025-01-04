@@ -10,10 +10,10 @@ import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
-import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
-import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
-import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
-import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
+import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
+import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
+import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
+import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import styled from '@emotion/styled';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
@@ -40,11 +40,8 @@ type CardComponentProps = {
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
 
 export const CardComponents: Record<CardType, CardComponentType> = {
-  [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
-    <TimelineActivities
-      targetableObject={targetableObject}
-      isInRightDrawer={isInRightDrawer}
-    />
+  [CardType.TimelineCard]: ({ targetableObject }) => (
+    <TimelineActivities targetableObject={targetableObject} />
   ),
 
   [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (
