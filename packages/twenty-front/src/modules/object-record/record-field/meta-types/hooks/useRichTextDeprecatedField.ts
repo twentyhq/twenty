@@ -2,42 +2,47 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldRichTextOldValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRichTextDeprecatedValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { isFieldRichTextOld } from '@/object-record/record-field/types/guards/isFieldRichTextOld';
-import { isFieldRichTextOldValue } from '@/object-record/record-field/types/guards/isFieldRichTextOldValue';
+import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
+import { isFieldRichTextDeprecatedValue } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecatedValue';
 import { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
-export const useRichTextOldField = () => {
+export const useRichTextDeprecatedField = () => {
   const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichTextOld,
-    isFieldRichTextOld,
+    FieldMetadataType.RichTextDeprecated,
+    isFieldRichTextDeprecated,
     fieldDefinition,
   );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRichTextOldValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
-  );
-  const fieldRichTextOldValue = isFieldRichTextOldValue(fieldValue)
+  const [fieldValue, setFieldValue] =
+    useRecoilState<FieldRichTextDeprecatedValue>(
+      recordStoreFamilySelector({
+        recordId,
+        fieldName: fieldName,
+      }),
+    );
+  const fieldRichTextDeprecatedValue = isFieldRichTextDeprecatedValue(
+    fieldValue,
+  )
     ? fieldValue
     : '';
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextOldValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldRichTextDeprecatedValue>(
+      `${recordId}-${fieldName}`,
+    );
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -47,7 +52,7 @@ export const useRichTextOldField = () => {
 
   const persistField = usePersistField();
 
-  const persistRichTextOldField = (nextValue: PartialBlock[]) => {
+  const persistRichTextDeprecatedField = (nextValue: PartialBlock[]) => {
     if (!nextValue) {
       persistField(null);
     } else {
@@ -62,9 +67,9 @@ export const useRichTextOldField = () => {
     setDraftValue,
     maxWidth,
     fieldDefinition,
-    fieldValue: fieldRichTextOldValue,
+    fieldValue: fieldRichTextDeprecatedValue,
     setFieldValue,
     hotkeyScope,
-    persistRichTextOldField,
+    persistRichTextDeprecatedField,
   };
 };

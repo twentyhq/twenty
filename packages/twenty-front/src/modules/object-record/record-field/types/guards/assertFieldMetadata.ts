@@ -22,8 +22,8 @@ import {
   FieldRatingMetadata,
   FieldRawJsonMetadata,
   FieldRelationMetadata,
+  FieldRichTextDeprecatedMetadata,
   FieldRichTextMetadata,
-  FieldRichTextOldMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
   FieldUuidMetadata,
@@ -72,7 +72,7 @@ type AssertFieldMetadataFunction = <
                                         : E extends 'RICH_TEXT'
                                           ? FieldRichTextMetadata
                                           : E extends 'RICH_TEXT_OLD'
-                                            ? FieldRichTextOldMetadata
+                                            ? FieldRichTextDeprecatedMetadata
                                             : E extends 'ACTOR'
                                               ? FieldActorMetadata
                                               : E extends 'ARRAY'

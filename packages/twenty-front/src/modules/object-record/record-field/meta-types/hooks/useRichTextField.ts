@@ -3,14 +3,14 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import {
-  FieldRichTextOldValue,
+  FieldRichTextDeprecatedValue,
   FieldRichTextValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { isFieldRichTextOld } from '@/object-record/record-field/types/guards/isFieldRichTextOld';
+import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -22,25 +22,28 @@ export const useRichTextField = () => {
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichTextOld,
-    isFieldRichTextOld,
+    FieldMetadataType.RichTextDeprecated,
+    isFieldRichTextDeprecated,
     fieldDefinition,
   );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRichTextOldValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
-  );
+  const [fieldValue, setFieldValue] =
+    useRecoilState<FieldRichTextDeprecatedValue>(
+      recordStoreFamilySelector({
+        recordId,
+        fieldName: fieldName,
+      }),
+    );
   const fieldRichTextValue = isFieldRichTextValue(fieldValue)
     ? fieldValue
     : ({ blocknote: null, markdown: null } as FieldRichTextValue);
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextOldValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldRichTextDeprecatedValue>(
+      `${recordId}-${fieldName}`,
+    );
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

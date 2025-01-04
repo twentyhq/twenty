@@ -89,15 +89,15 @@ describe('isFieldValueReadOnly', () => {
     expect(result).toBe(true);
   });
 
-  it('should return true if fieldType is FieldMetadataType.RichTextOld', () => {
+  it('should return true if fieldType is FieldMetadataType.RichTextDeprecated', () => {
     const result = isFieldValueReadOnly({
-      fieldType: FieldMetadataType.RichTextOld,
+      fieldType: FieldMetadataType.RichTextDeprecated,
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false if fieldType is not FieldMetadataType.Actor or FieldMetadataType.RichTextOld', () => {
+  it('should return false if fieldType is not FieldMetadataType.Actor or FieldMetadataType.RichTextDeprecated', () => {
     const result = isFieldValueReadOnly({
       fieldType: FieldMetadataType.Text,
     });

@@ -133,7 +133,7 @@ export type FieldRichTextMetadata = {
   settings?: null;
 };
 
-export type FieldRichTextOldMetadata = {
+export type FieldRichTextDeprecatedMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   settings?: null;
@@ -218,7 +218,7 @@ export type FieldMetadata =
   | FieldArrayMetadata
   | FieldTsVectorMetadata
   | FieldRichTextMetadata
-  | FieldRichTextOldMetadata;
+  | FieldRichTextDeprecatedMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
@@ -271,7 +271,7 @@ export type FieldRichTextValue = {
   markdown: string | null;
 };
 
-export type FieldRichTextOldValue = null | string;
+export type FieldRichTextDeprecatedValue = null | string;
 
 export type FieldActorValue = {
   source: string;

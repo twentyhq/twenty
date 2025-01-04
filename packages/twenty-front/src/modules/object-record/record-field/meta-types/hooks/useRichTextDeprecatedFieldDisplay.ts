@@ -2,29 +2,28 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldRichTextOldValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRichTextDeprecatedValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
-import { isFieldRichTextOld } from '@/object-record/record-field/types/guards/isFieldRichTextOld';
+import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
 import { PartialBlock } from '@blocknote/core';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { parseJson } from '~/utils/parseJson';
 import { FieldContext } from '../../contexts/FieldContext';
 
-export const useRichTextOldFieldDisplay = () => {
+export const useRichTextDeprecatedFieldDisplay = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichTextOld,
-    isFieldRichTextOld,
+    FieldMetadataType.RichTextDeprecated,
+    isFieldRichTextDeprecated,
     fieldDefinition,
   );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldRichTextOldValue | undefined>(
-    recordId,
-    fieldName,
-  );
+  const fieldValue = useRecordFieldValue<
+    FieldRichTextDeprecatedValue | undefined
+  >(recordId, fieldName);
 
   const fieldValueParsed = parseJson<PartialBlock[]>(fieldValue);
 

@@ -177,7 +177,7 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RichTextOld: {
+      case FieldMetadataType.RichTextDeprecated: {
         // TODO: Implement a better rich text filter once it becomes a composite field
         // See this issue for more context: https://github.com/twentyhq/twenty/issues/7613#issuecomment-2408944585
         // This should be tackled in Q4'24

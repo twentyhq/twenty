@@ -1,6 +1,6 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useRichTextOldField } from '@/object-record/record-field/meta-types/hooks/useRichTextOldField';
+import { useRichTextDeprecatedField } from '@/object-record/record-field/meta-types/hooks/useRichTextDeprecatedField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
@@ -11,24 +11,28 @@ import styled from '@emotion/styled';
 
 import { useContext, useRef } from 'react';
 
-const StyledRichTextOldContainer = styled.div`
+const StyledRichTextDeprecatedContainer = styled.div`
   height: 400px;
   width: 500px;
 
   overflow: auto;
 `;
 
-export type RichTextOldFieldInputProps = {
+export type RichTextDeprecatedFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
 };
 
-export const RichTextOldFieldInput = ({
+export const RichTextDeprecatedFieldInput = ({
   onClickOutside,
-}: RichTextOldFieldInputProps) => {
+}: RichTextDeprecatedFieldInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { recordId } = useContext(FieldContext);
-  const { draftValue, hotkeyScope, persistRichTextOldField, fieldDefinition } =
-    useRichTextOldField();
+  const {
+    draftValue,
+    hotkeyScope,
+    persistRichTextDeprecatedField,
+    fieldDefinition,
+  } = useRichTextDeprecatedField();
 
   const editor = useCreateBlockNote({
     initialContent: draftValue,
@@ -37,7 +41,10 @@ export const RichTextOldFieldInput = ({
   });
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-    onClickOutside?.(() => persistRichTextOldField(editor.document), event);
+    onClickOutside?.(
+      () => persistRichTextDeprecatedField(editor.document),
+      event,
+    );
   };
 
   useRegisterInputEvents<PartialBlock[]>({
@@ -48,12 +55,12 @@ export const RichTextOldFieldInput = ({
   });
 
   return (
-    <StyledRichTextOldContainer ref={containerRef}>
+    <StyledRichTextDeprecatedContainer ref={containerRef}>
       <BlockEditorComponentInstanceContext.Provider
         value={{ instanceId: `${recordId}-${fieldDefinition.fieldMetadataId}` }}
       >
         <BlockEditor editor={editor} />
       </BlockEditorComponentInstanceContext.Provider>
-    </StyledRichTextOldContainer>
+    </StyledRichTextDeprecatedContainer>
   );
 };
