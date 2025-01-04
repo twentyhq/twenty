@@ -156,9 +156,11 @@ export class EmailVerificationService {
       },
     });
 
-    appTokens.forEach(async (emailVerificationToken) => {
-      await this.appTokenRepository.delete(emailVerificationToken.id);
-    });
+    await Promise.all(
+      appTokens.map((emailVerificationToken) =>
+        this.appTokenRepository.delete(emailVerificationToken.id),
+      ),
+    );
 
     const workspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
