@@ -72,7 +72,7 @@ export const SignUpEmailVerification = ({
   const handleNavigateToSignInUpPage = () => {
     const searchParams = new URLSearchParams();
     if (isDefined(email)) {
-      searchParams.set('email', encodeURI(email));
+      searchParams.set('email', encodeURIComponent(email));
     }
 
     const url = `${AppPath.SignInUp}?${searchParams.toString()}`;
@@ -81,7 +81,11 @@ export const SignUpEmailVerification = ({
   };
 
   const handleResendEmailVerificationToken = async () => {
-    if (!email) return;
+    if (!email) {
+      return enqueueSnackBar('Email is required', {
+        variant: SnackBarVariant.Error,
+      });
+    }
 
     try {
       await resendEmailVerificationToken({ variables: { email } });
