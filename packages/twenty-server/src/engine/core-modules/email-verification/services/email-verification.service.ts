@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { render } from '@react-email/components';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
 import {
@@ -22,6 +24,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class EmailVerificationService {
   constructor(
     @InjectRepository(AppToken, 'core')
@@ -106,25 +109,24 @@ export class EmailVerificationService {
       link: verificationLink.toString(),
     };
 
-    // TODO#8240 - Create new email template in twenty-emails and link it here
-    // const emailTemplate = VerifyEmailTemplate(emailData);
+    const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    // const html = render(emailTemplate, {
-    //   pretty: true,
-    // });
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
 
-    // const text = render(emailTemplate, {
-    //   plainText: true,
-    // });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
 
-    // Send the email
     await this.emailService.send({
-      from: `Twenty <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Verify your email address',
-      text: emailData.link,
-      // text,
-      // html,
+      subject: 'Welcome to Twenty: Please Confirm Your Email',
+      text,
+      html,
     });
 
     return { success: true };
