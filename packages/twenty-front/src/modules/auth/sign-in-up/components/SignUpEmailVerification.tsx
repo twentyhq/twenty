@@ -72,7 +72,7 @@ export const SignUpEmailVerification = ({
   const handleNavigateToSignInUpPage = () => {
     const searchParams = new URLSearchParams();
     if (isDefined(email)) {
-      searchParams.set('email', encodeURIComponent(email));
+      searchParams.set('email', email);
     }
 
     const url = `${AppPath.SignInUp}?${searchParams.toString()}`;
@@ -125,7 +125,7 @@ export const SignUpEmailVerification = ({
         <StyledButtonContainer>
           {isEmailVerified ? (
             <MainButton
-              title="Continue with email"
+              title="Continue with Email"
               onClick={handleNavigateToSignInUpPage}
               fullWidth
             />
