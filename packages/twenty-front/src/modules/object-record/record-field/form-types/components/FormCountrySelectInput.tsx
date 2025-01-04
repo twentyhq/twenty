@@ -13,7 +13,7 @@ export const FormCountrySelectInput = ({
   VariablePicker,
 }: {
   selectedCountryName: string;
-  onPersist: (countryCode: string) => void;
+  onPersist: (country: string) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -39,15 +39,15 @@ export const FormCountrySelectInput = ({
     ];
   }, [countries]);
 
-  const onChange = (countryCode: string | null) => {
+  const onChange = (country: string | null) => {
     if (readonly) {
       return;
     }
 
-    if (countryCode === null) {
+    if (country === null) {
       onPersist('');
     } else {
-      onPersist(countryCode);
+      onPersist(country);
     }
   };
 

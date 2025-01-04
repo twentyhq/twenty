@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -56,9 +57,13 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const objectRecord = await repository.save(
-      workflowActionInput.objectRecord,
-    );
+    const objectRecord = await repository.save({
+      ...workflowActionInput.objectRecord,
+      createdBy: {
+        source: FieldActorSource.WORKFLOW,
+        name: 'Workflow',
+      },
+    });
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: workflowActionInput.objectName,

@@ -1,6 +1,6 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
-import { AggregateOperationsOmittingCount } from '@/object-record/types/AggregateOperationsOmittingCount';
+import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
 
 describe('initializeAvailableFieldsForAggregateOperationMap', () => {
@@ -18,7 +18,9 @@ describe('initializeAvailableFieldsForAggregateOperationMap', () => {
   it('should not include count operation', () => {
     const result = initializeAvailableFieldsForAggregateOperationMap();
     expect(
-      result[AGGREGATE_OPERATIONS.count as AggregateOperationsOmittingCount],
+      result[
+        AGGREGATE_OPERATIONS.count as AggregateOperationsOmittingStandardOperations
+      ],
     ).toBeUndefined();
   });
 });

@@ -10,20 +10,11 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { saveAs } from 'file-saver';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
-export const download = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', filename);
-  document.body.appendChild(link);
-  link.click();
-  link.parentNode?.removeChild(link);
-};
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];
@@ -128,7 +119,7 @@ export const displayedExportProgress = (progress?: ExportProgress): string => {
 const downloader = (mimeType: string, generator: GenerateExport) => {
   return (filename: string, data: GenerateExportOptions) => {
     const blob = new Blob([generator(data)], { type: mimeType });
-    download(blob, filename);
+    saveAs(blob, filename);
   };
 };
 

@@ -122,6 +122,12 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean']['output'];
 };
 
+/** The different billing plans available */
+export enum BillingPlanKey {
+  Enterprise = 'ENTERPRISE',
+  Pro = 'PRO'
+}
+
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID']['output'];
@@ -366,7 +372,7 @@ export type ExecuteServerlessFunctionInput = {
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID']['output'];
-  key: Scalars['String']['output'];
+  key: FeatureFlagKey;
   value: Scalars['Boolean']['output'];
   workspaceId: Scalars['String']['output'];
 };
@@ -376,6 +382,28 @@ export type FeatureFlagFilter = {
   id?: InputMaybe<UuidFilterComparison>;
   or?: InputMaybe<Array<FeatureFlagFilter>>;
 };
+
+export enum FeatureFlagKey {
+  IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
+  IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
+  IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
+  IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsCopilotEnabled = 'IsCopilotEnabled',
+  IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
+  IsEventObjectEnabled = 'IsEventObjectEnabled',
+  IsFreeAccessEnabled = 'IsFreeAccessEnabled',
+  IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
+  IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
+  IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
+  IsPageHeaderV2Enabled = 'IsPageHeaderV2Enabled',
+  IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
+  IsSsoEnabled = 'IsSSOEnabled',
+  IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
+  IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
+  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
+  IsWorkflowEnabled = 'IsWorkflowEnabled'
+}
 
 export type FeatureFlagSort = {
   direction: SortDirection;
@@ -648,7 +676,9 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
+  requirePaymentMethod?: Scalars['Boolean']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 

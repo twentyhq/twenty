@@ -170,6 +170,7 @@ export class AuthService {
     fromSSO: boolean;
     targetWorkspaceSubdomain?: string;
     authProvider?: WorkspaceAuthProvider;
+    billingCheckoutSessionState?: string;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -414,11 +415,18 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string, subdomain?: string) {
+  computeRedirectURI(
+    loginToken: string,
+    subdomain?: string,
+    billingCheckoutSessionState?: string,
+  ) {
     const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',
-      searchParams: { loginToken },
+      searchParams: {
+        loginToken,
+        ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+      },
     });
 
     return url.toString();

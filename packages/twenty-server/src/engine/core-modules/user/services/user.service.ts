@@ -96,10 +96,6 @@ export class UserService extends TypeOrmQueryService<User> {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    if (workspaceMembers.length === 1) {
-      await this.workspaceService.deleteWorkspace(workspaceId);
-    }
-
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
@@ -107,8 +103,15 @@ export class UserService extends TypeOrmQueryService<User> {
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workspaceMember',
+        workspaceId: workspaceId,
       },
     });
+
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+
+      return;
+    }
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'workspaceMember',
@@ -136,7 +139,9 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await Promise.all(user.workspaces.map(this.deleteUserFromWorkspace));
+    await Promise.all(
+      user.workspaces.map(this.deleteUserFromWorkspace.bind(this)),
+    );
 
     return user;
   }

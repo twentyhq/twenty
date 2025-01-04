@@ -45,6 +45,7 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
+import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
@@ -441,6 +442,7 @@ export const useAuth = () => {
       params: {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
+        billingCheckoutSession?: BillingCheckoutSession;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -451,6 +453,12 @@ export const useAuth = () => {
         url.searchParams.set(
           'inviteToken',
           params.workspacePersonalInviteToken,
+        );
+      }
+      if (isDefined(params.billingCheckoutSession)) {
+        url.searchParams.set(
+          'billingCheckoutSessionState',
+          JSON.stringify(params.billingCheckoutSession),
         );
       }
 
@@ -467,6 +475,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -477,6 +486,7 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },
