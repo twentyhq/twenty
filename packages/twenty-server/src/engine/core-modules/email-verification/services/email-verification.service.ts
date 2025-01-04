@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'crypto';
-
-import { render } from '@react-email/components';
-import { addMilliseconds } from 'date-fns';
-import ms from 'ms';
+import { render } from '@react-email/render';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
@@ -13,12 +9,12 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { castAppTokenToEmailVerification } from 'src/engine/core-modules/email-verification/utils/cast-app-token-to-email-verification.util';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -34,54 +30,8 @@ export class EmailVerificationService {
     private readonly environmentService: EnvironmentService,
     private readonly userService: UserService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly emailVerificationTokenService: EmailVerificationTokenService,
   ) {}
-
-  async generateEmailVerificationToken(userId: string, email: string) {
-    const expiresIn = this.environmentService.get(
-      'EMAIL_VERIFICATION_TOKEN_EXPIRES_IN',
-    );
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const verificationToken = this.appTokenRepository.create({
-      userId,
-      expiresAt,
-      type: AppTokenType.EmailVerificationToken,
-      value: crypto.randomBytes(32).toString('hex'),
-      context: { email },
-    });
-
-    return this.appTokenRepository.save(verificationToken);
-  }
-
-  async verifyEmailVerificationToken(token: string) {
-    const appToken = await this.appTokenRepository.findOne({
-      where: {
-        id: token,
-        type: AppTokenType.EmailVerificationToken,
-      },
-      relations: ['user'],
-    });
-
-    if (!appToken) {
-      throw new EmailVerificationException(
-        'Invalid token',
-        EmailVerificationExceptionCode.INVALID_TOKEN,
-      );
-    }
-
-    const emailVerificationToken = castAppTokenToEmailVerification(appToken);
-
-    const user = await this.userService.markEmailAsVerified(
-      emailVerificationToken.userId,
-    );
-
-    await this.appTokenRepository.remove(appToken);
-
-    return {
-      success: true,
-      email: user.email,
-    };
-  }
 
   async sendVerificationEmail(
     userId: string,
@@ -95,8 +45,8 @@ export class EmailVerificationService {
       );
     }
 
-    const { id: emailVerificationToken } =
-      await this.generateEmailVerificationToken(userId, email);
+    const { token: emailVerificationToken } =
+      await this.emailVerificationTokenService.generateToken(userId, email);
 
     const verificationLink =
       this.domainManagerService.buildEmailVerificationURL({

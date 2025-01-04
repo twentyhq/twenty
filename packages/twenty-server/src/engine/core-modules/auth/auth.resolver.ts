@@ -24,6 +24,7 @@ import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
+import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
@@ -71,6 +72,7 @@ export class AuthResolver {
     // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
     private userWorkspaceService: UserWorkspaceService,
+    private emailVerificationTokenService: EmailVerificationTokenService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -221,7 +223,7 @@ export class AuthResolver {
   async verifyEmail(
     @Args() verifyEmailInput: VerifyEmailInput,
   ): Promise<VerifyEmailOutput> {
-    return await this.emailVerificationService.verifyEmailVerificationToken(
+    return await this.emailVerificationTokenService.verifyToken(
       verifyEmailInput.emailVerificationToken,
     );
   }
