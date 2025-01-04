@@ -1694,7 +1694,7 @@ export type ValidatePasswordResetToken = {
 
 export type VerifyEmailOutput = {
   __typename?: 'VerifyEmailOutput';
-  email?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
 

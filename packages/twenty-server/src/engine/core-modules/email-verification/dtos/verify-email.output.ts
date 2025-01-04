@@ -8,6 +8,6 @@ export class VerifyEmailOutput {
   @Field(() => Boolean)
   success: boolean;
 
-  @Field(() => String, { nullable: true })
-  email?: string;
+  @Field(() => String)
+  email: string;
 }

@@ -1464,7 +1464,7 @@ export type ValidatePasswordResetToken = {
 
 export type VerifyEmailOutput = {
   __typename?: 'VerifyEmailOutput';
-  email?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
   success: Scalars['Boolean'];
 };
 
@@ -2023,7 +2023,7 @@ export type VerifyEmailMutationVariables = Exact<{
 }>;
 
 
-export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: { __typename?: 'VerifyEmailOutput', success: boolean, email?: string | null } };
+export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: { __typename?: 'VerifyEmailOutput', success: boolean, email: string } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
