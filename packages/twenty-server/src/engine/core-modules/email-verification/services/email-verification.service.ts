@@ -62,9 +62,9 @@ export class EmailVerificationService {
       relations: ['user'],
     });
 
-    if (!appToken || new Date() > appToken.expiresAt) {
+    if (!appToken) {
       throw new EmailVerificationException(
-        'Invalid or expired token',
+        'Invalid token',
         EmailVerificationExceptionCode.INVALID_TOKEN,
       );
     }

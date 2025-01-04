@@ -15,6 +15,13 @@ export const castAppTokenToEmailVerification = (appToken: AppToken) => {
     );
   }
 
+  if (new Date() > appToken.expiresAt) {
+    throw new EmailVerificationException(
+      'Token expired',
+      EmailVerificationExceptionCode.TOKEN_EXPIRED,
+    );
+  }
+
   if (!appToken.userId) {
     throw new EmailVerificationException(
       `Email verification corrupted: Missing user id in token`,
