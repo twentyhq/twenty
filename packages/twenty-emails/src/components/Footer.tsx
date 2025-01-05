@@ -8,22 +8,38 @@ export const Footer = () => {
       <Row>
         <Column>
           <ShadowText>
-            <Link href="https://twenty.com/" value="Website" />
+            <Link
+              href="https://twenty.com/"
+              value="Website"
+              aria-label="Visit Twenty's website"
+            />
           </ShadowText>
         </Column>
         <Column>
           <ShadowText>
-            <Link href="https://github.com/twentyhq/twenty" value="Github" />
+            <Link
+              href="https://github.com/twentyhq/twenty"
+              value="Github"
+              aria-label="Visit Twenty's GitHub repository"
+            />
           </ShadowText>
         </Column>
         <Column>
           <ShadowText>
-            <Link href="https://twenty.com/user-guide" value="User guide" />
+            <Link
+              href="https://twenty.com/user-guide"
+              value="User guide"
+              aria-label="Read Twenty's user guide"
+            />
           </ShadowText>
         </Column>
         <Column>
           <ShadowText>
-            <Link href="https://docs.twenty.com/" value="Developers" />
+            <Link
+              href="https://docs.twenty.com/"
+              value="Developers"
+              aria-label="Visit Twenty's developer documentation"
+            />
           </ShadowText>
         </Column>
       </Row>
