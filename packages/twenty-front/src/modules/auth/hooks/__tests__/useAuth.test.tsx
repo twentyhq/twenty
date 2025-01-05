@@ -13,8 +13,8 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 import { renderHook } from '@testing-library/react';
+import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
@@ -55,7 +55,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.verify(token);
+      await result.current.verify(token, email);
     });
 
     expect(mocks[1].result).toHaveBeenCalled();
