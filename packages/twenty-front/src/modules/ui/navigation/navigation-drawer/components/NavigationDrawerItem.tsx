@@ -92,7 +92,7 @@ const StyledItem = styled('button', {
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
       ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
-      : `calc(100% - ${props.theme.spacing(2)})`};
+      : `calc(100% - ${props.theme.spacing(1.5)})`};
 
   ${({ isDragging }) =>
     isDragging &&
@@ -133,16 +133,15 @@ const StyledLabelParent = styled.div`
   text-overflow: clip;
 `;
 const StyledEllipsisContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
+
 const StyledItemObjectName = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
