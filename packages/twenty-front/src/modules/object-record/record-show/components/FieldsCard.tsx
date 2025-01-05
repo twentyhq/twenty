@@ -15,6 +15,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { useSortRecordByView } from '@/object-record/record-show/hooks/useSortRecordByView';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -146,7 +147,7 @@ export const FieldsCard = ({
                     </FieldContext.Provider>
                   ),
                 )}
-                {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
+                {orderedInlineFields?.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
                     value={{
@@ -176,7 +177,7 @@ export const FieldsCard = ({
             objectRecordId={objectRecordId}
             objectNameSingular={objectNameSingular}
           />
-          {boxedRelationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+          {orderedRelationFields?.map((fieldMetadataItem, index) => (
             <FieldContext.Provider
               key={objectRecordId + fieldMetadataItem.id}
               value={{
@@ -197,6 +198,59 @@ export const FieldsCard = ({
               />
             </FieldContext.Provider>
           ))}
+          {remainingRelationFields?.map((fieldMetadataItem, index) => (
+            <FieldContext.Provider
+              key={objectRecordId + fieldMetadataItem.id}
+              value={{
+                recordId: objectRecordId,
+                recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                isLabelIdentifier: false,
+                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                  field: fieldMetadataItem,
+                  position: index,
+                  objectMetadataItem,
+                }),
+                useUpdateRecord: useUpdateOneObjectRecordMutation,
+                hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              }}
+            >
+              <RecordDetailRelationSection
+                loading={isPrefetchLoading || recordLoading}
+              />
+            </FieldContext.Provider>
+          ))}
+          <PropertyBox>
+            {isPrefetchLoading ? (
+              <PropertyBoxSkeletonLoader />
+            ) : (
+              <>
+                <RecordDetailSectionHeader title={'Other Fields'} />
+                {remainingInlineFields?.map((fieldMetadataItem, index) => (
+                  <FieldContext.Provider
+                    key={objectRecordId + fieldMetadataItem.id}
+                    value={{
+                      recordId: objectRecordId,
+                      maxWidth: 200,
+                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                      isLabelIdentifier: false,
+                      fieldDefinition:
+                        formatFieldMetadataItemAsColumnDefinition({
+                          field: fieldMetadataItem,
+                          position: index,
+                          objectMetadataItem,
+                          showLabel: true,
+                          labelWidth: 90,
+                        }),
+                      useUpdateRecord: useUpdateOneObjectRecordMutation,
+                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    }}
+                  >
+                    <RecordInlineCell loading={recordLoading} />
+                  </FieldContext.Provider>
+                ))}
+              </>
+            )}
+          </PropertyBox>
         </>
       )}
     </>
