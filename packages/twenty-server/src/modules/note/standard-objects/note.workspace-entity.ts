@@ -37,7 +37,6 @@ const BODY_FIELD_NAME = 'body';
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
   // { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT }, // TODO: Check later if and how this works
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_OLD },
 ];
 
 @WorkspaceEntity({
@@ -73,7 +72,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT_OLD,
+    type: FieldMetadataType.RICH_TEXT,
     label: 'Body',
     description: 'Note body',
     icon: 'IconFilePencil',

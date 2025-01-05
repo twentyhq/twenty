@@ -96,7 +96,7 @@ export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
       name: 'soundSwag',
     },
     {
-      type: FieldMetadataType.RICH_TEXT_OLD,
+      type: FieldMetadataType.RICH_TEXT_DEPRECATED,
       label: 'Bio',
       name: 'bio',
     },

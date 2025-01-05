@@ -194,7 +194,7 @@ const fieldRawJsonMock = {
 
 const fieldRichTextDeprecatedMock = {
   name: 'fieldRichTextDeprecated',
-  type: FieldMetadataType.RICH_TEXT_OLD,
+  type: FieldMetadataType.RICH_TEXT_DEPRECATED,
   isNullable: true,
   defaultValue: null,
 };

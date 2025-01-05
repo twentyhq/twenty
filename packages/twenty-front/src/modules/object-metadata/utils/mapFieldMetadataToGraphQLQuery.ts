@@ -162,5 +162,13 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
+  if (fieldType === FieldMetadataType.RichText) {
+    return `${field.name}
+{
+  blocknote
+  markdown
+}`;
+  }
+
   return '';
 };

@@ -2,28 +2,28 @@ import { plainToInstance } from 'class-transformer';
 import { ValidationError, validateSync } from 'class-validator';
 
 import {
-  FieldMetadataClassValidation,
-  FieldMetadataDefaultValue,
+    FieldMetadataClassValidation,
+    FieldMetadataDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
-  FieldMetadataDefaultActor,
-  FieldMetadataDefaultValueAddress,
-  FieldMetadataDefaultValueBoolean,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueDate,
-  FieldMetadataDefaultValueDateTime,
-  FieldMetadataDefaultValueEmails,
-  FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLinks,
-  FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueStringArray,
-  FieldMetadataDefaultValueUuidFunction,
+    FieldMetadataDefaultActor,
+    FieldMetadataDefaultValueAddress,
+    FieldMetadataDefaultValueBoolean,
+    FieldMetadataDefaultValueCurrency,
+    FieldMetadataDefaultValueDate,
+    FieldMetadataDefaultValueDateTime,
+    FieldMetadataDefaultValueEmails,
+    FieldMetadataDefaultValueFullName,
+    FieldMetadataDefaultValueLinks,
+    FieldMetadataDefaultValueNowFunction,
+    FieldMetadataDefaultValueNumber,
+    FieldMetadataDefaultValuePhones,
+    FieldMetadataDefaultValueRawJson,
+    FieldMetadataDefaultValueRichText,
+    FieldMetadataDefaultValueString,
+    FieldMetadataDefaultValueStringArray,
+    FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -49,7 +49,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RICH_TEXT]: [FieldMetadataDefaultValueRichText],
-  [FieldMetadataType.RICH_TEXT_OLD]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.RICH_TEXT_DEPRECATED]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
   [FieldMetadataType.ACTOR]: [FieldMetadataDefaultActor],

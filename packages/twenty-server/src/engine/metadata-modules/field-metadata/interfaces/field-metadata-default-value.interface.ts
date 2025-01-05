@@ -47,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.RICH_TEXT_OLD]: FieldMetadataDefaultValueRichTextDeprecated;
+  [FieldMetadataType.RICH_TEXT_DEPRECATED]: FieldMetadataDefaultValueRichTextDeprecated;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
   [FieldMetadataType.ARRAY]: FieldMetadataDefaultArray;
 };

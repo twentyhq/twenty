@@ -1,17 +1,17 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 
 import {
-  computeDepthParameters,
-  computeEndingBeforeParameters,
-  computeFilterParameters,
-  computeIdPathParameter,
-  computeLimitParameters,
-  computeOrderByParameters,
-  computeStartingAfterParameters,
+    computeDepthParameters,
+    computeEndingBeforeParameters,
+    computeFilterParameters,
+    computeIdPathParameter,
+    computeLimitParameters,
+    computeOrderByParameters,
+    computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import {
-  FieldMetadataEntity,
-  FieldMetadataType,
+    FieldMetadataEntity,
+    FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -43,7 +43,7 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
     case FieldMetadataType.UUID:
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT_OLD:
+    case FieldMetadataType.RICH_TEXT_DEPRECATED:
       return { type: 'string' };
     case FieldMetadataType.DATE_TIME:
       return { type: 'string', format: 'date-time' };

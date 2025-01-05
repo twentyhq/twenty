@@ -53,7 +53,8 @@ export enum FieldMetadataType {
   MULTI_SELECT = 'MULTI_SELECT',
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
-  RICH_TEXT_OLD = 'RICH_TEXT_OLD',
+  RICH_TEXT = 'RICH_TEXT',
+  RICH_TEXT_DEPRECATED = 'RICH_TEXT_DEPRECATED',
   ARRAY = 'ARRAY',
 
   // Ignored fieldTypes

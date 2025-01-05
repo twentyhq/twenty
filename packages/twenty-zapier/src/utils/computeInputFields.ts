@@ -1,8 +1,8 @@
 import {
-  FieldMetadataType,
-  InputField,
-  Node,
-  NodeField,
+    FieldMetadataType,
+    InputField,
+    Node,
+    NodeField,
 } from '../utils/data.types';
 
 const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
@@ -15,7 +15,7 @@ const getTypeFromFieldMetadataType = (
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT_OLD:
+    case FieldMetadataType.RICH_TEXT_DEPRECATED:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.LINK:
@@ -285,7 +285,7 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
-      case FieldMetadataType.RICH_TEXT_OLD:
+      case FieldMetadataType.RICH_TEXT_DEPRECATED:
       case FieldMetadataType.PHONE:
       case FieldMetadataType.EMAIL:
       case FieldMetadataType.DATE_TIME:

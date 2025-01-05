@@ -3584,7 +3584,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                     "node": {
                                         "__typename": "field",
                                         "id": "2fdf421d-fab6-4135-81ac-50582724e20e",
-                                        "type": "RICH_TEXT_OLD",
+                                        "type": "RICH_TEXT_DEPRECATED",
                                         "name": "body",
                                         "label": "Body",
                                         "description": "Note body",
@@ -18827,7 +18827,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                     "node": {
                                         "__typename": "field",
                                         "id": "ae853d86-e770-4196-8b4b-2dee50957236",
-                                        "type": "RICH_TEXT_OLD",
+                                        "type": "RICH_TEXT_DEPRECATED",
                                         "name": "body",
                                         "label": "Body",
                                         "description": "Task body",

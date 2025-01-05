@@ -2,31 +2,31 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import {
-  FieldActorMetadata,
-  FieldAddressMetadata,
-  FieldArrayMetadata,
-  FieldBooleanMetadata,
-  FieldCurrencyMetadata,
-  FieldDateMetadata,
-  FieldDateTimeMetadata,
-  FieldEmailMetadata,
-  FieldEmailsMetadata,
-  FieldFullNameMetadata,
-  FieldLinkMetadata,
-  FieldLinksMetadata,
-  FieldMetadata,
-  FieldMultiSelectMetadata,
-  FieldNumberMetadata,
-  FieldPhoneMetadata,
-  FieldPhonesMetadata,
-  FieldRatingMetadata,
-  FieldRawJsonMetadata,
-  FieldRelationMetadata,
-  FieldRichTextDeprecatedMetadata,
-  FieldRichTextMetadata,
-  FieldSelectMetadata,
-  FieldTextMetadata,
-  FieldUuidMetadata,
+    FieldActorMetadata,
+    FieldAddressMetadata,
+    FieldArrayMetadata,
+    FieldBooleanMetadata,
+    FieldCurrencyMetadata,
+    FieldDateMetadata,
+    FieldDateTimeMetadata,
+    FieldEmailMetadata,
+    FieldEmailsMetadata,
+    FieldFullNameMetadata,
+    FieldLinkMetadata,
+    FieldLinksMetadata,
+    FieldMetadata,
+    FieldMultiSelectMetadata,
+    FieldNumberMetadata,
+    FieldPhoneMetadata,
+    FieldPhonesMetadata,
+    FieldRatingMetadata,
+    FieldRawJsonMetadata,
+    FieldRelationMetadata,
+    FieldRichTextDeprecatedMetadata,
+    FieldRichTextMetadata,
+    FieldSelectMetadata,
+    FieldTextMetadata,
+    FieldUuidMetadata,
 } from '../FieldMetadata';
 
 type AssertFieldMetadataFunction = <
@@ -71,7 +71,7 @@ type AssertFieldMetadataFunction = <
                                         ? FieldRawJsonMetadata
                                         : E extends 'RICH_TEXT'
                                           ? FieldRichTextMetadata
-                                          : E extends 'RICH_TEXT_OLD'
+                                          : E extends 'RICH_TEXT_DEPRECATED'
                                             ? FieldRichTextDeprecatedMetadata
                                             : E extends 'ACTOR'
                                               ? FieldActorMetadata

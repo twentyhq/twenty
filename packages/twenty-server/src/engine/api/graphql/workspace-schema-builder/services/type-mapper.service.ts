@@ -2,36 +2,36 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import {
-  GraphQLBoolean,
-  GraphQLEnumType,
-  GraphQLID,
-  GraphQLInputObjectType,
-  GraphQLInputType,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLScalarType,
-  GraphQLString,
-  GraphQLType,
+    GraphQLBoolean,
+    GraphQLEnumType,
+    GraphQLID,
+    GraphQLInputObjectType,
+    GraphQLInputType,
+    GraphQLList,
+    GraphQLNonNull,
+    GraphQLScalarType,
+    GraphQLString,
+    GraphQLType,
 } from 'graphql';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
-  ArrayFilterType,
-  BigFloatFilterType,
-  BooleanFilterType,
-  DateFilterType,
-  FloatFilterType,
-  RawJsonFilterType,
-  StringFilterType,
+    ArrayFilterType,
+    BigFloatFilterType,
+    BooleanFilterType,
+    DateFilterType,
+    FloatFilterType,
+    RawJsonFilterType,
+    StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import {
-  BigFloatScalarType,
-  UUIDScalarType,
+    BigFloatScalarType,
+    UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
@@ -80,7 +80,7 @@ export class TypeMapperService {
         FieldMetadataType.ARRAY,
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
-      [FieldMetadataType.RICH_TEXT_OLD, GraphQLString],
+      [FieldMetadataType.RICH_TEXT_DEPRECATED, GraphQLString],
       [FieldMetadataType.TS_VECTOR, GraphQLString],
     ]);
 
@@ -115,7 +115,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
-      [FieldMetadataType.RICH_TEXT_OLD, StringFilterType],
+      [FieldMetadataType.RICH_TEXT_DEPRECATED, StringFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],
@@ -141,7 +141,7 @@ export class TypeMapperService {
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
-      [FieldMetadataType.RICH_TEXT_OLD, OrderByDirectionType],
+      [FieldMetadataType.RICH_TEXT_DEPRECATED, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
       [FieldMetadataType.TS_VECTOR, OrderByDirectionType], // TODO: Add TSVectorOrderByType
     ]);
