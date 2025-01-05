@@ -187,7 +187,7 @@ export class UserService extends TypeOrmQueryService<User> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    user.emailVerified = true;
+    user.isEmailVerified = true;
 
     return await this.userRepository.save(user);
   }

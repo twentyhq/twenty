@@ -11,7 +11,7 @@ export class UserExists {
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
 
   @Field(() => Boolean)
-  emailVerified: boolean;
+  isEmailVerified: boolean;
 }
 
 @ObjectType()

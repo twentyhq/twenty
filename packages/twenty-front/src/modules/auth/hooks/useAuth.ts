@@ -44,8 +44,8 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
@@ -283,7 +283,7 @@ export const useAuth = () => {
           throw new Error('User with this email does not exist');
         }
 
-        if (!maybeUser.data?.checkUserExists.emailVerified) {
+        if (!maybeUser.data?.checkUserExists.isEmailVerified) {
           return redirect(
             `${AppPath.VerifyEmail}?email=${encodeURIComponent(email)}`,
           );

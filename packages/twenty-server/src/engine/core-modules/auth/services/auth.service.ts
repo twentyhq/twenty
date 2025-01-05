@@ -233,7 +233,7 @@ export class AuthService {
         exists: true,
         availableWorkspaces:
           await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
-        emailVerified: user.emailVerified,
+        isEmailVerified: user.isEmailVerified,
       };
     }
 
