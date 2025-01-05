@@ -12,9 +12,12 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
+import { useSortRecordByView } from '@/object-record/record-show/hooks/useSortRecordByView';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -44,6 +47,11 @@ export const FieldsCard = ({
     objectRecordId,
     recordFromStore,
   });
+
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+    objectMetadataItem.namePlural,
+  );
 
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
@@ -84,6 +92,16 @@ export const FieldsCard = ({
           fieldMetadataItem.name === 'taskTargets')
       ),
   );
+
+  const {
+    orderedFields: orderedInlineFields,
+    remainingFields: remainingInlineFields,
+  } = useSortRecordByView(visibleTableColumns, inlineFieldMetadataItems);
+
+  const {
+    orderedFields: orderedRelationFields,
+    remainingFields: remainingRelationFields,
+  } = useSortRecordByView(visibleTableColumns, boxedRelationFieldMetadataItems);
 
   return (
     <>
