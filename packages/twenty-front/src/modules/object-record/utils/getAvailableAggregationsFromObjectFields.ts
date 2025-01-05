@@ -16,6 +16,10 @@ export const getAvailableAggregationsFromObjectFields = (
   fields: FieldMetadataItem[],
 ): Aggregations => {
   return fields.reduce<Record<string, NameForAggregation>>((acc, field) => {
+    if (field.isSystem === true) {
+      return acc;
+    }
+
     if (field.type === FieldMetadataType.Relation) {
       acc[field.name] = {
         [AGGREGATE_OPERATIONS.count]: 'totalCount',
@@ -36,14 +40,6 @@ export const getAvailableAggregationsFromObjectFields = (
       [AGGREGATE_OPERATIONS.percentageNotEmpty]: `percentageNotEmpty${capitalize(columnName)}`,
       [AGGREGATE_OPERATIONS.count]: 'totalCount',
     };
-
-    if (field.type === FieldMetadataType.DateTime) {
-      acc[field.name] = {
-        ...acc[field.name],
-        [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.max]: `max${capitalize(field.name)}`,
-      };
-    }
 
     if (field.type === FieldMetadataType.Number) {
       acc[field.name] = {
