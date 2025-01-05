@@ -10,8 +10,12 @@ type ArrayDisplayProps = {
 export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
   return (
     <ExpandableList>
-      {value?.map((item) => (
-        <Chip variant={ChipVariant.Highlighted} label={item} />
+      {value?.map((item, index) => (
+        <Chip
+          key={`${item}-${index}`}
+          variant={ChipVariant.Highlighted}
+          label={item}
+        />
       ))}
     </ExpandableList>
   );

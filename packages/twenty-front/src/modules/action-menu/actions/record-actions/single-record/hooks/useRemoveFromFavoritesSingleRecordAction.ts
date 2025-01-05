@@ -1,10 +1,13 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isDefined } from 'twenty-ui';
 
-export const useRemoveFromFavoritesSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
+export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
+  ({ objectMetadataItem }) => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const { sortedFavorites: favorites } = useFavorites();
 
     const { deleteFavorite } = useDeleteFavorite();

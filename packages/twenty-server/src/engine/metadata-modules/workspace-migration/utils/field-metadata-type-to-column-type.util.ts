@@ -1,7 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isTextColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/is-text-column-type.util';
 import {
-    WorkspaceMigrationException,
-    WorkspaceMigrationExceptionCode,
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
@@ -11,13 +12,12 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
    * Composite types are not implemented here, as they are flattened by their composite definitions.
    * See src/metadata/field-metadata/composite-types for more information.
    */
+  if (isTextColumnType(fieldMetadataType)) {
+    return 'text';
+  }
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
       return 'uuid';
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT_DEPRECATED:
-    case FieldMetadataType.ARRAY:
-      return 'text';
     case FieldMetadataType.NUMERIC:
       return 'numeric';
     case FieldMetadataType.NUMBER:

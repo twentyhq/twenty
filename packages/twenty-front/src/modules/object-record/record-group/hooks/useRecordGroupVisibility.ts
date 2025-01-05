@@ -1,20 +1,25 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
+import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { ViewType } from '@/views/types/ViewType';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
 import { useRecoilCallback } from 'recoil';
 
 type UseRecordGroupVisibilityParams = {
   viewBarId: string;
+  viewType: ViewType;
 };
 
 export const useRecordGroupVisibility = ({
   viewBarId,
+  viewType,
 }: UseRecordGroupVisibilityParams) => {
-  const objectOptionsDropdownRecordGroupHideState =
-    useRecoilComponentCallbackStateV2(recordIndexRecordGroupHideComponentState);
+  const objectOptionsDropdownRecordGroupHideFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordGroupHideComponentFamilyState,
+    );
 
   const { saveViewGroup } = useSaveCurrentViewGroups(viewBarId);
 
@@ -27,22 +32,19 @@ export const useRecordGroupVisibility = ({
         );
 
         saveViewGroup(recordGroupDefinitionToViewGroup(updatedRecordGroup));
-
-        // If visibility is manually toggled, we should reset the hideEmptyRecordGroup state
-        set(objectOptionsDropdownRecordGroupHideState, false);
       },
-    [saveViewGroup, objectOptionsDropdownRecordGroupHideState],
+    [saveViewGroup],
   );
 
   const handleHideEmptyRecordGroupChange = useRecoilCallback(
     ({ set }) =>
       async () => {
         set(
-          objectOptionsDropdownRecordGroupHideState,
+          objectOptionsDropdownRecordGroupHideFamilyState(viewType),
           (currentHideState) => !currentHideState,
         );
       },
-    [objectOptionsDropdownRecordGroupHideState],
+    [viewType, objectOptionsDropdownRecordGroupHideFamilyState],
   );
 
   return {

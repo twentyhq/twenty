@@ -2,7 +2,13 @@ import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import path from 'path';
 
-config();
+const envResult = config({
+  path: path.resolve(__dirname, '.env'),
+});
+
+if (envResult.error) {
+  throw new Error('Failed to load .env file');
+}
 
 /* === Run your local dev server before starting the tests === */
 
@@ -19,9 +25,7 @@ export default defineConfig({
   workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
   timeout: 30 * 1000, // timeout can be changed
   use: {
-    baseURL: process.env.CI
-      ? process.env.CI_DEFAULT_BASE_URL
-      : (process.env.FRONTEND_BASE_URL ?? 'http://app.localhost:3001'),
+    baseURL: process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
     trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
@@ -54,7 +58,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
       dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
-      testMatch: /all\/.+\.spec\.ts/,
+      testMatch: /all\/.+\.e2e-spec\.ts/,
     },
     {
       name: 'firefox',
@@ -63,11 +67,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
-      testMatch: /all\/.+\.spec\.ts/,
-    },
-    {
-      name: 'Authentication',
-      testMatch: /authentication\/.*\.spec\.ts/,
+      testMatch: /all\/.+\.e2e-spec\.ts/,
     },
 
     //{

@@ -16490,6 +16490,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.escaperegexp@npm:^4.1.9":
+  version: 4.1.9
+  resolution: "@types/lodash.escaperegexp@npm:4.1.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/ff457cacac0fed3e199fa56e44930ce8e57edaa5706d14b3d1c8b13bf6cfbac2bcc629d68f7922cb20965ac6550616c59de9b5c747cdde0f169963377b49cb18
+  languageName: node
+  linkType: hard
+
 "@types/lodash.groupby@npm:^4.6.9":
   version: 4.6.9
   resolution: "@types/lodash.groupby@npm:4.6.9"
@@ -33451,6 +33460,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.escaperegexp@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "lodash.escaperegexp@npm:4.1.2"
+  checksum: 10c0/484ad4067fa9119bb0f7c19a36ab143d0173a081314993fe977bd00cf2a3c6a487ce417a10f6bac598d968364f992153315f0dbe25c9e38e3eb7581dd333e087
+  languageName: node
+  linkType: hard
+
 "lodash.filter@npm:^4.6.0":
   version: 4.6.0
   resolution: "lodash.filter@npm:4.6.0"
@@ -45169,6 +45185,7 @@ __metadata:
     "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.compact": "npm:^3.0.9"
     "@types/lodash.debounce": "npm:^4.0.7"
+    "@types/lodash.escaperegexp": "npm:^4.1.9"
     "@types/lodash.groupby": "npm:^4.6.9"
     "@types/lodash.identity": "npm:^3.0.9"
     "@types/lodash.isempty": "npm:^4.4.7"
@@ -45285,6 +45302,7 @@ __metadata:
     lodash.chunk: "npm:^4.2.0"
     lodash.compact: "npm:^3.0.1"
     lodash.debounce: "npm:^4.0.8"
+    lodash.escaperegexp: "npm:^4.1.2"
     lodash.groupby: "npm:^4.6.0"
     lodash.identity: "npm:^3.0.0"
     lodash.isempty: "npm:^4.4.0"

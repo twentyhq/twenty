@@ -55,10 +55,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 describe('useActivateDraftWorkflowSingleRecordAction', () => {
   it('should be registered', () => {
     const { result } = renderHook(
-      () =>
-        useActivateDraftWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
-        }),
+      () => useActivateDraftWorkflowSingleRecordAction(),
       {
         wrapper,
       },
@@ -69,10 +66,7 @@ describe('useActivateDraftWorkflowSingleRecordAction', () => {
 
   it('should call activateWorkflowVersion on click', () => {
     const { result } = renderHook(
-      () =>
-        useActivateDraftWorkflowSingleRecordAction({
-          recordId: workflowMock.id,
-        }),
+      () => useActivateDraftWorkflowSingleRecordAction(),
       {
         wrapper,
       },

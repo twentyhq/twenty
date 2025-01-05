@@ -1,4 +1,5 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -12,80 +13,83 @@ import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
-  ({ recordId, objectMetadataItem }) => {
-    const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
-      useState(false);
+export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
+  objectMetadataItem,
+}) => {
+  const recordId = useSelectedRecordIdOrThrow();
 
-    const { resetTableRowSelection } = useRecordTable({
-      recordTableId: objectMetadataItem.namePlural,
-    });
+  const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    useState(false);
 
-    const { deleteOneRecord } = useDeleteOneRecord({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    });
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem.namePlural,
+  });
 
-    const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
-    const { sortedFavorites: favorites } = useFavorites();
-    const { deleteFavorite } = useDeleteFavorite();
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-    const { closeRightDrawer } = useRightDrawer();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { deleteFavorite } = useDeleteFavorite();
 
-    const handleDeleteClick = useCallback(async () => {
-      resetTableRowSelection();
+  const { closeRightDrawer } = useRightDrawer();
 
-      const foundFavorite = favorites?.find(
-        (favorite) => favorite.recordId === recordId,
-      );
+  const handleDeleteClick = useCallback(async () => {
+    resetTableRowSelection();
 
-      if (isDefined(foundFavorite)) {
-        deleteFavorite(foundFavorite.id);
-      }
+    const foundFavorite = favorites?.find(
+      (favorite) => favorite.recordId === recordId,
+    );
 
-      await deleteOneRecord(recordId);
-    }, [
-      deleteFavorite,
-      deleteOneRecord,
-      favorites,
-      resetTableRowSelection,
-      recordId,
-    ]);
+    if (isDefined(foundFavorite)) {
+      deleteFavorite(foundFavorite.id);
+    }
 
-    const isRemoteObject = objectMetadataItem.isRemote;
+    await deleteOneRecord(recordId);
+  }, [
+    deleteFavorite,
+    deleteOneRecord,
+    favorites,
+    resetTableRowSelection,
+    recordId,
+  ]);
 
-    const { isInRightDrawer } = useContext(ActionMenuContext);
+  const isRemoteObject = objectMetadataItem.isRemote;
 
-    const shouldBeRegistered =
-      !isRemoteObject && isNull(selectedRecord?.deletedAt);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
-    const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
+  const shouldBeRegistered =
+    !isRemoteObject && isNull(selectedRecord?.deletedAt);
 
-      setIsDeleteRecordsModalOpen(true);
-    };
+  const onClick = () => {
+    if (!shouldBeRegistered) {
+      return;
+    }
 
-    return {
-      shouldBeRegistered,
-      onClick,
-      ConfirmationModal: (
-        <ConfirmationModal
-          isOpen={isDeleteRecordsModalOpen}
-          setIsOpen={setIsDeleteRecordsModalOpen}
-          title={'Delete Record'}
-          subtitle={
-            'Are you sure you want to delete this record? It can be recovered from the Options menu.'
-          }
-          onConfirmClick={() => {
-            handleDeleteClick();
-            if (isInRightDrawer) {
-              closeRightDrawer();
-            }
-          }}
-          deleteButtonText={'Delete Record'}
-        />
-      ),
-    };
+    setIsDeleteRecordsModalOpen(true);
   };
+
+  return {
+    shouldBeRegistered,
+    onClick,
+    ConfirmationModal: (
+      <ConfirmationModal
+        isOpen={isDeleteRecordsModalOpen}
+        setIsOpen={setIsDeleteRecordsModalOpen}
+        title={'Delete Record'}
+        subtitle={
+          'Are you sure you want to delete this record? It can be recovered from the Options menu.'
+        }
+        onConfirmClick={() => {
+          handleDeleteClick();
+          if (isInRightDrawer) {
+            closeRightDrawer();
+          }
+        }}
+        deleteButtonText={'Delete Record'}
+      />
+    ),
+  };
+};

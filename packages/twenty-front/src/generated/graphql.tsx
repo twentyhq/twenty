@@ -117,7 +117,6 @@ export type Billing = {
 
 /** The different billing plans available */
 export enum BillingPlanKey {
-  Base = 'BASE',
   Enterprise = 'ENTERPRISE',
   Pro = 'PRO'
 }
@@ -325,14 +324,12 @@ export enum FeatureFlagKey {
   IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
   IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsMessageThreadSubscriberEnabled = 'IsMessageThreadSubscriberEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsPageHeaderV2Enabled = 'IsPageHeaderV2Enabled',
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsSsoEnabled = 'IsSSOEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 

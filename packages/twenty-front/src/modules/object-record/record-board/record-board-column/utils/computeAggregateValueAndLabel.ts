@@ -2,6 +2,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
 import isEmpty from 'lodash.isempty';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
@@ -47,10 +49,12 @@ export const computeAggregateValueAndLabel = ({
 
   let value;
 
-  if (aggregateOperation === AGGREGATE_OPERATIONS.count) {
+  if (COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation)) {
     value = aggregateValue;
   } else if (!isDefined(aggregateValue)) {
     value = '-';
+  } else if (PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation)) {
+    value = `${formatNumber(Number(aggregateValue) * 100)}%`;
   } else {
     value = Number(aggregateValue);
 
