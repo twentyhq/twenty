@@ -8,14 +8,15 @@ import bcrypt from 'bcrypt';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -129,6 +130,17 @@ describe('SignInUpService', () => {
           provide: UserService,
           useValue: {
             hasUserAccessToWorkspaceOrThrow: jest.fn(),
+            markEmailAsVerified: jest.fn().mockReturnValue({
+              id: 'test-user-id',
+              email: 'test@test.com',
+              isEmailVerified: true,
+            } as User),
+          },
+        },
+        {
+          provide: EmailVerificationService,
+          useValue: {
+            sendVerificationEmail: jest.fn(),
           },
         },
       ],
