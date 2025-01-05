@@ -48,7 +48,7 @@ export class FileController {
     if (!workspaceId) {
       throw new AuthException(
         'Unauthorized, missing workspaceId',
-        AuthExceptionCode.UNAUTHENTICATED,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
