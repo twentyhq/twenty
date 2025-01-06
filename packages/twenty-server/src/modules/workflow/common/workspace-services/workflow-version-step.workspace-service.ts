@@ -515,6 +515,8 @@ export class WorkflowVersionStepWorkspaceService {
           step.settings.input.serverlessFunctionId,
           workspaceId,
         );
+
+        break;
       }
     }
   }
