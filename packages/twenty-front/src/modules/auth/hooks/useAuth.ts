@@ -88,7 +88,7 @@ export const useAuth = () => {
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
-  const [verify, { loading: verifyLoading }] = useVerifyMutation();
+  const [verify] = useVerifyMutation();
   const [verifyEmail] = useVerifyEmailMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
@@ -513,7 +513,7 @@ export const useAuth = () => {
   return {
     challenge: handleChallenge,
     verify: handleVerify,
-    verifyEmail: { handleVerifyEmail, loading: verifyLoading },
+    verifyEmail: handleVerifyEmail,
 
     loadCurrentUser,
 
