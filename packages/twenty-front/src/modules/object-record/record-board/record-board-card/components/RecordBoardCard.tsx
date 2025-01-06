@@ -216,13 +216,6 @@ export const RecordBoardCard = () => {
     openActionMenuDropdown();
   };
 
-  const handleCardClick = () => {
-    if (!isCreating) {
-      setIsCurrentCardSelected(!isCurrentCardSelected);
-      checkIfLastUnselectAndCloseDropdown();
-    }
-  };
-
   const PreventSelectOnClickContainer = ({
     children,
   }: {
