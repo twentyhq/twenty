@@ -15,12 +15,26 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { useSortRecordByView } from '@/object-record/record-show/hooks/useSortRecordByView';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
-import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+
+const StyledOtherSectionHeader = styled.header`
+  align-items: center;
+  display: flex;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  height: 24px;
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledOtherTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -224,7 +238,9 @@ export const FieldsCard = ({
               <PropertyBoxSkeletonLoader />
             ) : (
               <>
-                <RecordDetailSectionHeader title={'Other Fields'} />
+                <StyledOtherSectionHeader>
+                  <StyledOtherTitle>Other Fields</StyledOtherTitle>
+                </StyledOtherSectionHeader>
                 {remainingInlineFields?.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
