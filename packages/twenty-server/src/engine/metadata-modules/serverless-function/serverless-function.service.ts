@@ -358,11 +358,18 @@ export class ServerlessFunctionService {
     workspaceId: string;
   }) {
     const serverlessFunctionToCopy =
-      await this.serverlessFunctionRepository.findOneByOrFail({
+      await this.serverlessFunctionRepository.findOneBy({
         workspaceId,
         id: serverlessFunctionToCopyId,
         latestVersion: serverlessFunctionToCopyVersion,
       });
+
+    if (!serverlessFunctionToCopy) {
+      throw new ServerlessFunctionException(
+        'Function does not exist',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
 
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
       {
