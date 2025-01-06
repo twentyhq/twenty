@@ -14,6 +14,7 @@ describe('computeAggregateValueAndLabel', () => {
       {
         id: MOCK_FIELD_ID,
         name: 'amount',
+        label: 'amount',
         type: FieldMetadataType.Currency,
       } as FieldMetadataItem,
     ],
@@ -60,6 +61,7 @@ describe('computeAggregateValueAndLabel', () => {
         {
           id: MOCK_FIELD_ID,
           name: 'percentage',
+          label: 'percentage',
           type: FieldMetadataType.Number,
           settings: {
             type: 'percentage',
@@ -96,6 +98,7 @@ describe('computeAggregateValueAndLabel', () => {
         {
           id: MOCK_FIELD_ID,
           name: 'decimals',
+          label: 'decimals',
           type: FieldMetadataType.Number,
           settings: {
             decimals: 2,

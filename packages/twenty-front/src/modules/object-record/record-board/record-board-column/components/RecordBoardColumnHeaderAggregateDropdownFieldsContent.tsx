@@ -19,7 +19,13 @@ import {
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
-  const { closeDropdown, objectMetadataItem, onContentChange } = useDropdown({
+  const {
+    closeDropdown,
+    objectMetadataItem,
+    onContentChange,
+    resetContent,
+    previousContentId,
+  } = useDropdown({
     context: RecordBoardColumnHeaderAggregateDropdownContext,
   });
 
@@ -45,7 +51,11 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('moreAggregateOperationOptions')}
+        onClick={() =>
+          previousContentId
+            ? onContentChange(previousContentId)
+            : resetContent()
+        }
       >
         {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
