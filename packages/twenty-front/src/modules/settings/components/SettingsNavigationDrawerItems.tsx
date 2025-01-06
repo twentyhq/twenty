@@ -39,6 +39,7 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { IconIdBadge2 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -173,6 +174,11 @@ export const SettingsNavigationDrawerItems = () => {
           label="Members"
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
+        />
+        <SettingsNavigationDrawerItem
+          label="Roles"
+          path={SettingsPath.MembersRoles}
+          Icon={IconIdBadge2}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem

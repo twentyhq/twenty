@@ -38,4 +38,9 @@ export enum SettingsPath {
   Releases = 'releases',
   AdminPanel = 'admin-panel',
   FeatureFlags = 'admin-panel/feature-flags',
+  MembersRoles = 'roles',
+  NewRole = 'roles/new',
+  EditRole = 'roles/:roleSlug/edit',
+  ViewRole = 'roles/:roleSlug/view',
+  RoleOverview = 'roles/overview',
 }
