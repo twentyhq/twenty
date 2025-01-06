@@ -19,11 +19,21 @@ const StyledMailContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledEmail = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 const StyledButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
-export const EmailVerificationSent = ({ email }: { email: string | null }) => {
+export const EmailVerificationSent = ({
+  email,
+  isError = false,
+}: {
+  email: string | null;
+  isError?: boolean;
+}) => {
   const theme = useTheme();
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
@@ -38,10 +48,23 @@ export const EmailVerificationSent = ({ email }: { email: string | null }) => {
           <IconMail color={color} size={24} stroke={3} />
         </StyledMailContainer>
       </AnimatedEaseIn>
-      <Title animate>Confirm Your Email Address</Title>
+      <Title animate>
+        {isError ? 'Email Verification Failed' : 'Confirm Your Email Address'}
+      </Title>
       <SubTitle>
-        {`A verification email has been sent to ${email}. Please check your inbox
-        and click the link in the email to activate your account.`}
+        {isError ? (
+          <>
+            Oops! We encountered an issue verifying{' '}
+            <StyledEmail>{email}</StyledEmail>. Please request a new
+            verification email and try again.
+          </>
+        ) : (
+          <>
+            A verification email has been sent to{' '}
+            <StyledEmail>{email}</StyledEmail>. Please check your inbox and
+            click the link in the email to activate your account.
+          </>
+        )}
       </SubTitle>
       <StyledButtonContainer>
         <MainButton

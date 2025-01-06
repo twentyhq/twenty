@@ -1,11 +1,16 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { EmailVerificationStatus } from '@/auth/sign-in-up/components/EmailVerificationStatus';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { useEffect, useState } from 'react';
-import { Navigate, redirect, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import {
+  Navigate,
+  redirect,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
+import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmail = () => {
   const {
@@ -13,11 +18,11 @@ export const VerifyEmail = () => {
   } = useAuth();
   const { enqueueSnackBar } = useSnackBar();
 
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const verifyEmailToken = async () => {
@@ -27,7 +32,15 @@ export const VerifyEmail = () => {
 
       try {
         await handleVerifyEmail(emailVerificationToken);
-        setIsEmailVerified(true);
+
+        enqueueSnackBar(
+          'Email verification successful. Please sign in to continue.',
+          {
+            variant: SnackBarVariant.Success,
+          },
+        );
+
+        navigate(`${AppPath.SignInUp}?email=${encodeURIComponent(email)}`);
       } catch (error) {
         enqueueSnackBar('Email verification failed. Please try again.', {
           variant: SnackBarVariant.Error,
@@ -49,7 +62,5 @@ export const VerifyEmail = () => {
     return <></>;
   }
 
-  return (
-    <EmailVerificationStatus email={email} isEmailVerified={isEmailVerified} />
-  );
+  return <EmailVerificationSent email={email} isError={true} />;
 };

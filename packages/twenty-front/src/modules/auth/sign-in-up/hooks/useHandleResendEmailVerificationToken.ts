@@ -6,7 +6,7 @@ import { useResendEmailVerificationTokenMutation } from '~/generated/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const [resendEmailVerificationToken] =
+  const [resendEmailVerificationToken, { loading }] =
     useResendEmailVerificationTokenMutation();
 
   const handleResendEmailVerificationToken = useCallback(
@@ -43,5 +43,5 @@ export const useHandleResendEmailVerificationToken = () => {
     [enqueueSnackBar, resendEmailVerificationToken],
   );
 
-  return { handleResendEmailVerificationToken };
+  return { handleResendEmailVerificationToken, loading };
 };
