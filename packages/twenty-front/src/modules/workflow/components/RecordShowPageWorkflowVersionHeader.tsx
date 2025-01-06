@@ -12,11 +12,11 @@ import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import {
-    Button,
-    IconPencil,
-    IconPlayerStop,
-    IconPower,
-    isDefined,
+  Button,
+  IconPencil,
+  IconPlayerStop,
+  IconPower,
+  isDefined,
 } from 'twenty-ui';
 
 export const RecordShowPageWorkflowVersionHeader = ({
@@ -74,7 +74,8 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-  const { createDraftFromWorkflowVersion } = useCreateDraftFromWorkflowVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
 
   const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
     openOverrideWorkflowDraftConfirmationModalState,
