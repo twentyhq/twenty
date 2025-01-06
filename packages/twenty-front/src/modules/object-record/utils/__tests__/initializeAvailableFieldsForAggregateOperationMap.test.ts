@@ -38,10 +38,10 @@ describe('initializeAvailableFieldsForAggregateOperationMap', () => {
     const result = initializeAvailableFieldsForAggregateOperationMap(
       COUNT_AGGREGATE_OPERATION_OPTIONS,
     );
-    expect(result[AGGREGATE_OPERATIONS.count]).toBeDefined();
-    expect(result[AGGREGATE_OPERATIONS.countEmpty]).toBeDefined();
-    expect(result[AGGREGATE_OPERATIONS.countNotEmpty]).toBeDefined();
-    expect(result[AGGREGATE_OPERATIONS.countUniqueValues]).toBeDefined();
+    expect(result[AGGREGATE_OPERATIONS.count]).toEqual([]);
+    expect(result[AGGREGATE_OPERATIONS.countEmpty]).toEqual([]);
+    expect(result[AGGREGATE_OPERATIONS.countNotEmpty]).toEqual([]);
+    expect(result[AGGREGATE_OPERATIONS.countUniqueValues]).toEqual([]);
     expect(result[AGGREGATE_OPERATIONS.min]).toBeUndefined();
     expect(result[AGGREGATE_OPERATIONS.percentageEmpty]).toBeUndefined();
   });
@@ -50,8 +50,8 @@ describe('initializeAvailableFieldsForAggregateOperationMap', () => {
     const result = initializeAvailableFieldsForAggregateOperationMap(
       PERCENT_AGGREGATE_OPERATION_OPTIONS,
     );
-    expect(result[AGGREGATE_OPERATIONS.percentageEmpty]).toBeDefined();
-    expect(result[AGGREGATE_OPERATIONS.percentageNotEmpty]).toBeDefined();
+    expect(result[AGGREGATE_OPERATIONS.percentageEmpty]).toEqual([]);
+    expect(result[AGGREGATE_OPERATIONS.percentageNotEmpty]).toEqual([]);
     expect(result[AGGREGATE_OPERATIONS.count]).toBeUndefined();
     expect(result[AGGREGATE_OPERATIONS.min]).toBeUndefined();
   });

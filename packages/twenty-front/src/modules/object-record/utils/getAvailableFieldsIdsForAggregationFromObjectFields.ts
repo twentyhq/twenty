@@ -21,9 +21,6 @@ export const getAvailableFieldsIdsForAggregationFromObjectFields = (
         const typedAggregateOperation = aggregation as AGGREGATE_OPERATIONS;
 
         if (targetAggregateOperations.includes(typedAggregateOperation)) {
-          if (!acc[typedAggregateOperation]) {
-            acc[typedAggregateOperation] = [];
-          }
           acc[typedAggregateOperation]?.push(field.id);
         }
       });
