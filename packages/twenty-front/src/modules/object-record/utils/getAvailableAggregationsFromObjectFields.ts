@@ -1,6 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { getColumnNameForAggregateOperation } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -27,17 +26,12 @@ export const getAvailableAggregationsFromObjectFields = (
       return acc;
     }
 
-    const columnName = getColumnNameForAggregateOperation(
-      field.name,
-      field.type,
-    );
-
     acc[field.name] = {
-      [AGGREGATE_OPERATIONS.countUniqueValues]: `countUniqueValues${capitalize(columnName)}`,
-      [AGGREGATE_OPERATIONS.countEmpty]: `countEmpty${capitalize(columnName)}`,
-      [AGGREGATE_OPERATIONS.countNotEmpty]: `countNotEmpty${capitalize(columnName)}`,
-      [AGGREGATE_OPERATIONS.percentageEmpty]: `percentageEmpty${capitalize(columnName)}`,
-      [AGGREGATE_OPERATIONS.percentageNotEmpty]: `percentageNotEmpty${capitalize(columnName)}`,
+      [AGGREGATE_OPERATIONS.countUniqueValues]: `countUniqueValues${capitalize(field.name)}`,
+      [AGGREGATE_OPERATIONS.countEmpty]: `countEmpty${capitalize(field.name)}`,
+      [AGGREGATE_OPERATIONS.countNotEmpty]: `countNotEmpty${capitalize(field.name)}`,
+      [AGGREGATE_OPERATIONS.percentageEmpty]: `percentageEmpty${capitalize(field.name)}`,
+      [AGGREGATE_OPERATIONS.percentageNotEmpty]: `percentageNotEmpty${capitalize(field.name)}`,
       [AGGREGATE_OPERATIONS.count]: 'totalCount',
     };
 
