@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class OverrideWorkflowDraftVersionInput {
+export class CreateDraftFromWorkflowVersionInput {
   @Field(() => String, {
     description: 'Workflow ID',
     nullable: false,

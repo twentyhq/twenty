@@ -3,7 +3,7 @@ import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
-import { useOverrideWorkflowDraftVersion } from '@/workflow/hooks/useOverrideWorkflowDraftVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
@@ -21,7 +21,8 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
       workflowVersion?.workflow?.id ?? '',
     );
 
-    const { overrideWorkflowDraftVersion } = useOverrideWorkflowDraftVersion();
+    const { createDraftFromWorkflowVersion } =
+      useCreateDraftFromWorkflowVersion();
 
     const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
       openOverrideWorkflowDraftConfirmationModalState,
@@ -45,7 +46,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
       if (hasAlreadyDraftVersion) {
         setOpenOverrideWorkflowDraftConfirmationModal(true);
       } else {
-        await overrideWorkflowDraftVersion({
+        await createDraftFromWorkflowVersion({
           workflowId: workflowVersion.workflow.id,
           workflowVersionIdToCopy: workflowVersion.id,
         });

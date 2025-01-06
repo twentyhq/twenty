@@ -419,7 +419,7 @@ export class WorkflowVersionStepWorkspaceService {
     return stepToDelete;
   }
 
-  async overrideWorkflowDraftVersion({
+  async createDraftFromWorkflowVersion({
     workspaceId,
     workflowId,
     workflowVersionIdToCopy,

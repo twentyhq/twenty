@@ -188,6 +188,13 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export type CreateDraftFromWorkflowVersionInput = {
+  /** Workflow ID */
+  workflowId: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionIdToCopy: Scalars['String'];
+};
+
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -503,6 +510,7 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   computeStepOutputSchema: Scalars['JSON'];
+  createDraftFromWorkflowVersion: Scalars['Boolean'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -528,7 +536,6 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: ImpersonateOutput;
-  overrideWorkflowDraftVersion: Scalars['Boolean'];
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -599,6 +606,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateDraftFromWorkflowVersionArgs = {
+  input: CreateDraftFromWorkflowVersionInput;
 };
 
 
@@ -691,11 +703,6 @@ export type MutationGetAuthorizationUrlArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
-};
-
-
-export type MutationOverrideWorkflowDraftVersionArgs = {
-  input: OverrideWorkflowDraftVersionInput;
 };
 
 
@@ -851,13 +858,6 @@ export type OnboardingStepSuccess = {
   __typename?: 'OnboardingStepSuccess';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
-};
-
-export type OverrideWorkflowDraftVersionInput = {
-  /** Workflow ID */
-  workflowId: Scalars['String'];
-  /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['String'];
 };
 
 export type PageInfo = {
@@ -2192,12 +2192,12 @@ export type DeleteWorkflowVersionStepMutationVariables = Exact<{
 
 export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
 
-export type OverrideWorkflowDraftVersionMutationVariables = Exact<{
-  input: OverrideWorkflowDraftVersionInput;
+export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
+  input: CreateDraftFromWorkflowVersionInput;
 }>;
 
 
-export type OverrideWorkflowDraftVersionMutation = { __typename?: 'Mutation', overrideWorkflowDraftVersion: boolean };
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: boolean };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -4115,37 +4115,37 @@ export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
-export const OverrideWorkflowDraftVersionDocument = gql`
-    mutation OverrideWorkflowDraftVersion($input: OverrideWorkflowDraftVersionInput!) {
-  overrideWorkflowDraftVersion(input: $input)
+export const CreateDraftFromWorkflowVersionDocument = gql`
+    mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
+  createDraftFromWorkflowVersion(input: $input)
 }
     `;
-export type OverrideWorkflowDraftVersionMutationFn = Apollo.MutationFunction<OverrideWorkflowDraftVersionMutation, OverrideWorkflowDraftVersionMutationVariables>;
+export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
 
 /**
- * __useOverrideWorkflowDraftVersionMutation__
+ * __useCreateDraftFromWorkflowVersionMutation__
  *
- * To run a mutation, you first call `useOverrideWorkflowDraftVersionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOverrideWorkflowDraftVersionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateDraftFromWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDraftFromWorkflowVersionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [overrideWorkflowDraftVersionMutation, { data, loading, error }] = useOverrideWorkflowDraftVersionMutation({
+ * const [createDraftFromWorkflowVersionMutation, { data, loading, error }] = useCreateDraftFromWorkflowVersionMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useOverrideWorkflowDraftVersionMutation(baseOptions?: Apollo.MutationHookOptions<OverrideWorkflowDraftVersionMutation, OverrideWorkflowDraftVersionMutationVariables>) {
+export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OverrideWorkflowDraftVersionMutation, OverrideWorkflowDraftVersionMutationVariables>(OverrideWorkflowDraftVersionDocument, options);
+        return Apollo.useMutation<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>(CreateDraftFromWorkflowVersionDocument, options);
       }
-export type OverrideWorkflowDraftVersionMutationHookResult = ReturnType<typeof useOverrideWorkflowDraftVersionMutation>;
-export type OverrideWorkflowDraftVersionMutationResult = Apollo.MutationResult<OverrideWorkflowDraftVersionMutation>;
-export type OverrideWorkflowDraftVersionMutationOptions = Apollo.BaseMutationOptions<OverrideWorkflowDraftVersionMutation, OverrideWorkflowDraftVersionMutationVariables>;
+export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
 export const RunWorkflowVersionDocument = gql`
     mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
   runWorkflowVersion(input: $input) {

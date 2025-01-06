@@ -4,7 +4,7 @@ import {
   ConfirmationModal,
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useOverrideWorkflowDraftVersion } from '@/workflow/hooks/useOverrideWorkflowDraftVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -21,12 +21,13 @@ export const OverrideWorkflowDraftConfirmationModal = ({
     setOpenOverrideWorkflowDraftConfirmationModal,
   ] = useRecoilState(openOverrideWorkflowDraftConfirmationModalState);
 
-  const { overrideWorkflowDraftVersion } = useOverrideWorkflowDraftVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
 
   const navigate = useNavigate();
 
   const handleOverrideDraft = async () => {
-    await overrideWorkflowDraftVersion({
+    await createDraftFromWorkflowVersion({
       workflowId,
       workflowVersionIdToCopy,
     });

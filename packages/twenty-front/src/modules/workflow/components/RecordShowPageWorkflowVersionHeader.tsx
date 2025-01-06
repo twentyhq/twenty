@@ -4,19 +4,19 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
-import { useOverrideWorkflowDraftVersion } from '@/workflow/hooks/useOverrideWorkflowDraftVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import {
-  Button,
-  IconPencil,
-  IconPlayerStop,
-  IconPower,
-  isDefined,
+    Button,
+    IconPencil,
+    IconPlayerStop,
+    IconPower,
+    isDefined,
 } from 'twenty-ui';
 
 export const RecordShowPageWorkflowVersionHeader = ({
@@ -74,7 +74,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-  const { overrideWorkflowDraftVersion } = useOverrideWorkflowDraftVersion();
+  const { createDraftFromWorkflowVersion } = useCreateDraftFromWorkflowVersion();
 
   const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
     openOverrideWorkflowDraftConfirmationModalState,
@@ -94,7 +94,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
             if (hasAlreadyDraftVersion) {
               setOpenOverrideWorkflowDraftConfirmationModal(true);
             } else {
-              await overrideWorkflowDraftVersion({
+              await createDraftFromWorkflowVersion({
                 workflowId: workflowVersion.workflow.id,
                 workflowVersionIdToCopy: workflowVersion.id,
               });
