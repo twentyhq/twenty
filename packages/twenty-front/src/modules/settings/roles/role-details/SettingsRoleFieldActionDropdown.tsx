@@ -4,12 +4,12 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
-    IconArchive,
-    IconDotsVertical,
-    IconPencil,
-    IconTextSize
+  IconArchive,
+  IconDotsVertical,
+  IconPencil,
+  IconTextSize
 } from 'twenty-ui';
   
   type SettingsRoleFieldActionDropdownProps = {
@@ -48,7 +48,7 @@ import {
       closeDropdown();
     };
   
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     return (
       <Dropdown
         dropdownId={dropdownId}
@@ -63,8 +63,7 @@ import {
           <DropdownMenu width="160px">
             <DropdownMenuItemsContainer>
               <MenuItem
-                // text={ t('edit')}
-                text="edit"
+                text={ t('edit')}
                 LeftIcon={IconPencil}
                 onClick={() => handleEdit('Edit')}
               />
@@ -77,7 +76,7 @@ import {
               )}
               {!!onDeactivate && (
                 <MenuItem
-                  text={('deactivate')}
+                  text={t('deactivate')}
                   LeftIcon={IconArchive}
                   onClick={handleDeactivate}
                 />

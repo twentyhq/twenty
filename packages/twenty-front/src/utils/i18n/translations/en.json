@@ -271,6 +271,7 @@
     "archiveRole": "Archive role",
     "archive": "Archive",
     "newRole": "New role",
+    "editRole": "Edit role",
     "existingRoles": "Existing roles",
     "users": "Users",
     "deactivateRole": "Deactivate this role",

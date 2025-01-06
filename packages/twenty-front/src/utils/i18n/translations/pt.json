@@ -253,6 +253,7 @@
     "archiveRole": "Arquivar cargo",
     "archive": "Arquivar",
     "newRole": "Novo cargo",
+    "editRole": "Editar cargo",
     "existingRoles": "Cargos existentes",
     "users": "Usuários",
     "deactivateRole": "Desativar este cargo",
