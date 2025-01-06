@@ -19,6 +19,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { Role } from 'src/engine/core-modules/role/role.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
@@ -154,4 +155,8 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isMicrosoftAuthEnabled: boolean;
+
+  @Field(() => [Role])
+  @OneToMany(() => Role, (role) => role.workspace)
+  roles: Relation<Role[]>;
 }

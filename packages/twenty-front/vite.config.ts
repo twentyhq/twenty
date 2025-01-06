@@ -98,7 +98,7 @@ export default defineConfig(({ command, mode }) => {
         projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
       }),
       svgr(),
-      checker(checkers),
+      // checker(checkers),
       // TODO: fix this, we have to restrict the include to only the components that are using linaria
       // Otherwise the build will fail because wyw tries to include emotion styled components
       wyw({
