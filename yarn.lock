@@ -355,6 +355,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anthropic-ai/sdk@npm:^0.33.1":
+  version: 0.33.1
+  resolution: "@anthropic-ai/sdk@npm:0.33.1"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+  checksum: 10c0/8f40282d2274f61269f783ac89d4dc8b48e881c37bbb244c664801824a8f672a9e97b367be469f93574d92af6cad75753be13f71133a7a818bd1d4af11fe299c
+  languageName: node
+  linkType: hard
+
 "@apollo/cache-control-types@npm:^1.0.3":
   version: 1.0.3
   resolution: "@apollo/cache-control-types@npm:1.0.3"
@@ -45073,6 +45088,7 @@ __metadata:
   resolution: "twenty@workspace:."
   dependencies:
     "@air/react-drag-to-select": "npm:^5.0.8"
+    "@anthropic-ai/sdk": "npm:^0.33.1"
     "@apollo/client": "npm:^3.7.17"
     "@apollo/server": "npm:^4.7.3"
     "@aws-sdk/client-lambda": "npm:^3.614.0"

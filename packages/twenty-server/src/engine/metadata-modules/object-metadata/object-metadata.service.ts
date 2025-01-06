@@ -527,6 +527,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
 
     if (objectAlreadyExists) {
+      // return;
       throw new ObjectMetadataException(
         'Object already exists',
         ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,

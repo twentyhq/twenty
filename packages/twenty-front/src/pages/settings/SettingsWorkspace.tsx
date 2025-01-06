@@ -1,12 +1,16 @@
+import { useRecoilValue } from 'recoil';
 import {
   GithubVersionLink,
   H2Title,
-  Section,
   IconWorld,
+  Section,
   UndecoratedLink,
 } from 'twenty-ui';
-import { useRecoilValue } from 'recoil';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { ApiKeysForm } from '@/settings/components/ApiKeysForm';
+import { MetadataStructureSection } from '@/settings/components/MetaDataStructure';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -16,8 +20,6 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import packageJson from '../../../package.json';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -61,6 +63,22 @@ export const SettingsWorkspace = () => {
             </Section>
           </>
         )}
+
+      <Section>
+        <H2Title 
+          title="Metadata Structure" 
+          description="Create and manage your workspace metadata structure" 
+        />
+        <MetadataStructureSection />
+      </Section>
+
+      <Section>
+        <H2Title title="API Keys" description="Configure your integration keys" />
+        <ApiKeysForm />
+      </Section>
+
+
+      
         <Section>
           <DeleteWorkspace />
         </Section>
