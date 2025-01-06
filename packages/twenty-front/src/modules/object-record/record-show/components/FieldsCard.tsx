@@ -4,6 +4,7 @@ import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/A
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -117,6 +118,30 @@ export const FieldsCard = ({
     remainingFields: remainingRelationFields,
   } = useSortRecordByView(visibleTableColumns, boxedRelationFieldMetadataItems);
 
+  const renderRelationFields = (fields: FieldMetadataItem[] | undefined) => {
+    return fields?.map((fieldMetadataItem, index) => (
+      <FieldContext.Provider
+        key={objectRecordId + fieldMetadataItem.id}
+        value={{
+          recordId: objectRecordId,
+          recoilScopeId: objectRecordId + fieldMetadataItem.id,
+          isLabelIdentifier: false,
+          fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+            field: fieldMetadataItem,
+            position: index,
+            objectMetadataItem,
+          }),
+          useUpdateRecord: useUpdateOneObjectRecordMutation,
+          hotkeyScope: InlineCellHotkeyScope.InlineCell,
+        }}
+      >
+        <RecordDetailRelationSection
+          loading={isPrefetchLoading || recordLoading}
+        />
+      </FieldContext.Provider>
+    ));
+  };
+
   return (
     <>
       {isDefined(recordFromStore) && (
@@ -190,48 +215,9 @@ export const FieldsCard = ({
             objectRecordId={objectRecordId}
             objectNameSingular={objectNameSingular}
           />
-          {orderedRelationFields?.map((fieldMetadataItem, index) => (
-            <FieldContext.Provider
-              key={objectRecordId + fieldMetadataItem.id}
-              value={{
-                recordId: objectRecordId,
-                recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                  field: fieldMetadataItem,
-                  position: index,
-                  objectMetadataItem,
-                }),
-                useUpdateRecord: useUpdateOneObjectRecordMutation,
-                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-              }}
-            >
-              <RecordDetailRelationSection
-                loading={isPrefetchLoading || recordLoading}
-              />
-            </FieldContext.Provider>
-          ))}
-          {remainingRelationFields?.map((fieldMetadataItem, index) => (
-            <FieldContext.Provider
-              key={objectRecordId + fieldMetadataItem.id}
-              value={{
-                recordId: objectRecordId,
-                recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                  field: fieldMetadataItem,
-                  position: index,
-                  objectMetadataItem,
-                }),
-                useUpdateRecord: useUpdateOneObjectRecordMutation,
-                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-              }}
-            >
-              <RecordDetailRelationSection
-                loading={isPrefetchLoading || recordLoading}
-              />
-            </FieldContext.Provider>
-          ))}
+
+          {renderRelationFields(orderedRelationFields)}
+          {renderRelationFields(remainingRelationFields)}
 
           {remainingInlineFields.length > 0 && (
             <>
