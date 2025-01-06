@@ -15,7 +15,7 @@ export const getSubfieldForAggregateOperation = (
       case FieldMetadataType.ADDRESS:
         return 'addressStreet1';
       case FieldMetadataType.LINKS:
-        return 'primaryLinkLabel';
+        return 'primaryLinkUrl';
       case FieldMetadataType.ACTOR:
         return 'workspaceMemberId';
       case FieldMetadataType.EMAILS:
