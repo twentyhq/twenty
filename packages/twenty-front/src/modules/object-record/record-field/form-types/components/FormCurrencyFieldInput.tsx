@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -11,11 +11,8 @@ import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/S
 
 type FormCurrencyFieldInputProps = {
   label?: string;
-  defaultValue?: FieldCurrencyValue | null;
-  onPersist: (value: {
-    currencyCode: CurrencyCode;
-    amountMicros: number | string | null;
-  }) => void;
+  defaultValue?: FormFieldCurrencyValue | null;
+  onPersist: (value: FormFieldCurrencyValue) => void;
   VariablePicker?: VariablePickerComponent;
 };
 
@@ -39,14 +36,14 @@ export const FormCurrencyFieldInput = ({
     newAmountMicros: string | number | null,
   ) => {
     onPersist({
-      currencyCode: (defaultValue?.currencyCode ?? '') as CurrencyCode,
-      amountMicros: newAmountMicros ?? '',
+      currencyCode: defaultValue?.currencyCode ?? null,
+      amountMicros: newAmountMicros ?? null,
     });
   };
 
   const handleCurrencyCodeChange = (newCurrencyCode: string | null) => {
     onPersist({
-      currencyCode: (newCurrencyCode ?? '') as CurrencyCode,
+      currencyCode: (newCurrencyCode as CurrencyCode) ?? null,
       amountMicros: defaultValue?.amountMicros ?? null,
     });
   };

@@ -17,13 +17,13 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldAddressValue,
-  FieldCurrencyValue,
   FieldEmailsValue,
   FieldFullNameValue,
   FieldLinksValue,
   FieldMetadata,
   FieldMultiSelectValue,
   FieldPhonesValue,
+  FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -163,7 +163,7 @@ export const FormFieldInput = ({
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldCurrencyValue | null}
+      defaultValue={defaultValue as FormFieldCurrencyValue | null}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
