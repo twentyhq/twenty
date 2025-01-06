@@ -10,12 +10,13 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import Stripe from 'stripe';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
@@ -43,8 +44,6 @@ export class BillingController {
     @Req() req: RawBodyRequest<Request>,
     @Res() res: Response,
   ) {
-    let resultBody = {};
-
     if (!req.rawBody) {
       res.status(400).end();
 
@@ -55,75 +54,58 @@ export class BillingController {
       req.rawBody,
     );
 
-    if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
-      resultBody = await this.billingSubscriptionService.handleUnpaidInvoices(
-        event.data,
-      );
-    }
+    try {
+      const result = await this.handleStripeEvent(event);
 
-    if (
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
-    ) {
-      const workspaceId = event.data.object.metadata?.workspaceId;
-
-      if (!workspaceId) {
+      res.status(200).send(result).end();
+    } catch (error) {
+      if (error instanceof BillingException) {
         res.status(404).end();
-
-        return;
       }
+    }
+  }
 
-      resultBody =
-        await this.billingWebhookSubscriptionService.processStripeEvent(
+  private async handleStripeEvent(event: Stripe.Event) {
+    switch (event.type) {
+      case BillingWebhookEvent.SETUP_INTENT_SUCCEEDED:
+        return await this.billingSubscriptionService.handleUnpaidInvoices(
+          event.data,
+        );
+      case BillingWebhookEvent.PRICE_UPDATED:
+      case BillingWebhookEvent.PRICE_CREATED:
+        return await this.billingWebhookPriceService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.PRODUCT_UPDATED:
+      case BillingWebhookEvent.PRODUCT_CREATED:
+        return await this.billingWebhookProductService.processStripeEvent(
+          event.data,
+        );
+      case BillingWebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED:
+        return await this.billingWebhookEntitlementService.processStripeEvent(
+          event.data,
+        );
+
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
+        const workspaceId = event.data.object.metadata?.workspaceId;
+
+        if (!workspaceId) {
+          throw new BillingException(
+            'Workspace ID is required for subscription events',
+            BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+          );
+        }
+
+        return await this.billingWebhookSubscriptionService.processStripeEvent(
           workspaceId,
           event.data,
         );
-    }
-    if (
-      event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
-    ) {
-      try {
-        resultBody =
-          await this.billingWebhookEntitlementService.processStripeEvent(
-            event.data,
-          );
-      } catch (error) {
-        if (
-          error instanceof BillingException &&
-          error.code === BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND
-        ) {
-          res.status(404).end();
-        }
       }
+      default:
+        return {};
     }
-
-    if (
-      event.type === WebhookEvent.PRODUCT_CREATED ||
-      event.type === WebhookEvent.PRODUCT_UPDATED
-    ) {
-      resultBody = await this.billingWebhookProductService.processStripeEvent(
-        event.data,
-      );
-    }
-    if (
-      event.type === WebhookEvent.PRICE_CREATED ||
-      event.type === WebhookEvent.PRICE_UPDATED
-    ) {
-      try {
-        resultBody = await this.billingWebhookPriceService.processStripeEvent(
-          event.data,
-        );
-      } catch (error) {
-        if (
-          error instanceof BillingException &&
-          error.code === BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND
-        ) {
-          res.status(404).end();
-        }
-      }
-    }
-
-    res.status(200).send(resultBody).end();
   }
 }
