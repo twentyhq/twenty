@@ -7,12 +7,9 @@ import {
   RecordBoardColumnHeaderAggregateDropdownContextValue,
 } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import { useRecoilValue } from 'recoil';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   const { onContentChange, closeDropdown } =
@@ -26,12 +23,6 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
       closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
-  );
-
-  const { updateViewAggregate } = useUpdateViewAggregate();
-
-  const recordIndexKanbanAggregateOperation = useRecoilValue(
-    recordIndexKanbanAggregateOperationState,
   );
 
   return (
