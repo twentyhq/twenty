@@ -380,15 +380,15 @@ export class ServerlessFunctionService {
       },
     );
 
-    const createdServerlessFunction =
+    const copiedServerlessFunction =
       await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
 
     const serverlessFunctionToCopyFileFolder = getServerlessFolder({
       serverlessFunction: serverlessFunctionToCopy,
       version: 'latest',
     });
-    const createdServerlessFunctionFileFolder = getServerlessFolder({
-      serverlessFunction: createdServerlessFunction,
+    const copiedServerlessFunctionFileFolder = getServerlessFolder({
+      serverlessFunction: copiedServerlessFunction,
       version: 'draft',
     });
 
@@ -397,17 +397,17 @@ export class ServerlessFunctionService {
         folderPath: serverlessFunctionToCopyFileFolder,
       },
       to: {
-        folderPath: createdServerlessFunctionFileFolder,
+        folderPath: copiedServerlessFunctionFileFolder,
       },
     });
 
     await this.buildServerlessFunction({
-      serverlessFunctionId: createdServerlessFunction.id,
+      serverlessFunctionId: copiedServerlessFunction.id,
       serverlessFunctionVersion: 'draft',
       workspaceId,
     });
 
-    return createdServerlessFunction;
+    return copiedServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {
