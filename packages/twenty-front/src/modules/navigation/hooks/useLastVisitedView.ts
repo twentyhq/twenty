@@ -49,7 +49,7 @@ export const useLastVisitedView = () => {
     viewId: string;
   }) => {
     const fallbackObjectMetadataItem =
-    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
     if (isDefined(fallbackObjectMetadataItem)) {
       /* when both are equal meaning there was change in view else 
@@ -72,7 +72,7 @@ export const useLastVisitedView = () => {
     objectNamePlural: string,
   ) => {
     const objectMetadataItemId: string | undefined =
-    findActiveObjectMetadataItemByNamePlural(objectNamePlural)?.id;
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural)?.id;
     return objectMetadataItemId
       ? lastVisitedViewPerObjectMetadataItem?.[objectMetadataItemId]
       : undefined;
