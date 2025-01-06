@@ -30,18 +30,16 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
 
     const navigate = useNavigate();
 
-    const workflowStatuses = workflow?.statuses;
+    const hasAlreadyDraftVersion =
+      workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
     const shouldBeRegistered =
       isDefined(workflowVersion) &&
       isDefined(workflow) &&
-      isDefined(workflowStatuses) &&
       workflowVersion.status !== 'DRAFT';
 
     const onClick = async () => {
       if (!shouldBeRegistered) return;
-
-      const hasAlreadyDraftVersion = workflowStatuses.includes('DRAFT');
 
       if (hasAlreadyDraftVersion) {
         setOpenOverrideWorkflowDraftConfirmationModal(true);
