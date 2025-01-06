@@ -21,7 +21,7 @@ export const hasPendingRecordComponentSelector = createComponentSelectorV2({
           recordTablePendingRecordIdComponentState.atomFamily({ instanceId }),
         );
 
-        return !isDefined(pendingRecordId);
+        return isDefined(pendingRecordId);
       }
 
       const recordGroupIds = get(
@@ -36,7 +36,7 @@ export const hasPendingRecordComponentSelector = createComponentSelectorV2({
           }),
         );
 
-        if (!isDefined(pendingRecordId)) {
+        if (isDefined(pendingRecordId)) {
           return true;
         }
       }

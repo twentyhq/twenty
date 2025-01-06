@@ -76,11 +76,13 @@ export const OverflowingTextWithTooltip = ({
   text,
   isTooltipMultiline,
   displayedMaxRows,
+  hideTooltip,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
+  hideTooltip?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -135,27 +137,26 @@ export const OverflowingTextWithTooltip = ({
           {text}
         </StyledOverflowingText>
       )}
-      {isTitleOverflowing &&
-        createPortal(
-          <div onClick={handleTooltipClick}>
-            <AppTooltip
-              anchorSelect={`#${textElementId}`}
-              offset={5}
-              isOpen
-              noArrow
-              place="bottom"
-              positionStrategy="absolute"
-              delay={TooltipDelay.mediumDelay}
-            >
-              {isTooltipMultiline ? (
-                <Styledpre>{text}</Styledpre>
-              ) : (
-                `${text || ''}`
-              )}
-            </AppTooltip>
-          </div>,
-          document.body,
-        )}
+      {createPortal(
+        <div onClick={handleTooltipClick}>
+          <AppTooltip
+            anchorSelect={`#${textElementId}`}
+            offset={5}
+            hidden={!isTitleOverflowing || hideTooltip}
+            noArrow
+            place="bottom"
+            positionStrategy="absolute"
+            delay={TooltipDelay.mediumDelay}
+          >
+            {isTooltipMultiline ? (
+              <Styledpre>{text}</Styledpre>
+            ) : (
+              `${text || ''}`
+            )}
+          </AppTooltip>
+        </div>,
+        document.body,
+      )}
     </>
   );
 };
