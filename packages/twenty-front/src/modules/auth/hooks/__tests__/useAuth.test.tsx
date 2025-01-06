@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { ReactNode, act } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
@@ -18,7 +19,9 @@ import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
-    <RecoilRoot>{children}</RecoilRoot>
+    <RecoilRoot>
+      <MemoryRouter>{children}</MemoryRouter>
+    </RecoilRoot>
   </MockedProvider>
 );
 
