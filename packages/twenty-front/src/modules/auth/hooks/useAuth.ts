@@ -44,6 +44,10 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -56,6 +60,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useSearchParams } from 'react-router-dom';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -74,6 +79,7 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
 
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -82,7 +88,7 @@ export const useAuth = () => {
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
-  const [verify] = useVerifyMutation();
+  const [verify, { loading: verifyLoading }] = useVerifyMutation();
   const [verifyEmail] = useVerifyEmailMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
@@ -100,6 +106,8 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+
+  const [, setSearchParams] = useSearchParams();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -284,9 +292,9 @@ export const useAuth = () => {
         }
 
         if (!maybeUser.data?.checkUserExists.isEmailVerified) {
-          return redirect(
-            `${AppPath.VerifyEmail}?email=${encodeURIComponent(email)}`,
-          );
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          return null;
         }
       }
 
@@ -318,8 +326,9 @@ export const useAuth = () => {
       setTokenPair,
       loadCurrentUser,
       checkUserExistsQuery,
-      redirect,
       isEmailVerificationRequired,
+      setSignInUpStep,
+      setSearchParams,
     ],
   );
 
@@ -400,14 +409,20 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      if (isEmailVerificationRequired) {
+        setSearchParams({ email });
+        setSignInUpStep(SignInUpStep.EmailVerification);
+        return null;
+      }
+
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
           signUpResult.data.signUp.workspace.subdomain,
-          isEmailVerificationRequired ? AppPath.VerifyEmail : AppPath.Verify,
+          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
-            ...(isEmailVerificationRequired
-              ? {}
-              : { loginToken: signUpResult.data.signUp.loginToken.token }),
+            ...(!isEmailVerificationRequired && {
+              loginToken: signUpResult.data.signUp.loginToken.token,
+            }),
             email,
           },
         );
@@ -431,8 +446,10 @@ export const useAuth = () => {
       signUp,
       isMultiWorkspaceEnabled,
       handleVerify,
-      redirectToWorkspaceDomain,
+      setSignInUpStep,
+      setSearchParams,
       isEmailVerificationRequired,
+      redirectToWorkspaceDomain,
     ],
   );
 
@@ -496,7 +513,7 @@ export const useAuth = () => {
   return {
     challenge: handleChallenge,
     verify: handleVerify,
-    verifyEmail: handleVerifyEmail,
+    verifyEmail: { handleVerifyEmail, loading: verifyLoading },
 
     loadCurrentUser,
 
