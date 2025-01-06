@@ -37,9 +37,8 @@ export class BillingResolver {
   }
 
   @Query(() => SessionEntity)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   async billingPortalSession(
-    @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
@@ -89,8 +88,8 @@ export class BillingResolver {
 
   @Mutation(() => UpdateBillingEntity)
   @UseGuards(WorkspaceAuthGuard)
-  async updateBillingSubscription(@AuthUser() user: User) {
-    await this.billingSubscriptionService.applyBillingSubscription(user);
+  async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.applyBillingSubscription(workspace);
 
     return { success: true };
   }
