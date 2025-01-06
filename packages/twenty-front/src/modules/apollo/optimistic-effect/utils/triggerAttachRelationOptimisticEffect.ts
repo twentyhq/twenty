@@ -32,7 +32,7 @@ export const triggerAttachRelationOptimisticEffect = ({
     id: targetRecordCacheId,
     fields: {
       [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
-        const fieldValueisObjectRecordConnectionWithRefs =
+        const fieldValueIsObjectRecordConnectionWithRefs =
           isObjectRecordConnectionWithRefs(
             sourceObjectNameSingular,
             targetRecordFieldValue,
@@ -47,7 +47,7 @@ export const triggerAttachRelationOptimisticEffect = ({
           return targetRecordFieldValue;
         }
 
-        if (fieldValueisObjectRecordConnectionWithRefs) {
+        if (fieldValueIsObjectRecordConnectionWithRefs) {
           const nextEdges: RecordGqlRefEdge[] = [
             ...targetRecordFieldValue.edges,
             {

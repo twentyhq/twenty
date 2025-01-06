@@ -1,15 +1,5 @@
 /* @license Enterprise */
 
-import {
-  HorizontalSeparator,
-  Button,
-  H2Title,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconUpload,
-  Section,
-} from 'twenty-ui';
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,6 +8,16 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import {
+  Button,
+  H2Title,
+  HorizontalSeparator,
+  IconCheck,
+  IconCopy,
+  IconDownload,
+  IconUpload,
+  Section,
+} from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';
 
@@ -156,7 +156,7 @@ export const SettingsSSOSAMLForm = () => {
               title="Download file"
             ></Button>
           </StyledContainer>
-          <HorizontalSeparator visible={true} text={'Or'} />
+          <HorizontalSeparator text={'Or'} />
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput

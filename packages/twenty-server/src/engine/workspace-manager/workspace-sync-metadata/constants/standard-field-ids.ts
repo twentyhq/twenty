@@ -439,6 +439,7 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   operation: '20202020-15b7-458e-bf30-74770a54410c',
   operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
+  secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
 };
 
 export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {

@@ -1,5 +1,7 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
 
 export const STANDARD_AGGREGATE_OPERATION_OPTIONS = [
-  AGGREGATE_OPERATIONS.count,
+  ...COUNT_AGGREGATE_OPERATION_OPTIONS,
+  ...PERCENT_AGGREGATE_OPERATION_OPTIONS,
 ];

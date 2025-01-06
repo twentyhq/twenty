@@ -42,6 +42,7 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -162,7 +163,7 @@ export const RecordIndexContainer = () => {
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   return (

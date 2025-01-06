@@ -225,6 +225,7 @@ export const FormSelectFieldInput = ({
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
+                    isUsedInForm
                   />
                 ) : null}
               </StyledDisplayModeContainer>

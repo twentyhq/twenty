@@ -3,6 +3,7 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCellFieldInput } from '@/object-record/record-board/record-board-card/components/RecordBoardCellFieldInput';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useRecordBoardColumnContextOrThrow } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -188,6 +189,9 @@ export const RecordBoardCard = () => {
     recordBoardPendingRecordIdByColumnState(columnId),
   );
 
+  const { checkIfLastUnselectAndCloseDropdown } =
+    useRecordBoardSelection(recordBoardId);
+
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
 
   const actionMenuDropdownId =
@@ -210,6 +214,13 @@ export const RecordBoardCard = () => {
       y: event.clientY,
     });
     openActionMenuDropdown();
+  };
+
+  const handleCardClick = () => {
+    if (!isCreating) {
+      setIsCurrentCardSelected(!isCurrentCardSelected);
+      checkIfLastUnselectAndCloseDropdown();
+    }
   };
 
   const PreventSelectOnClickContainer = ({
@@ -259,9 +270,11 @@ export const RecordBoardCard = () => {
   );
 
   return (
-    <StyledBoardCardWrapper onContextMenu={handleActionMenuDropdown}>
+    <StyledBoardCardWrapper
+      className="record-board-card"
+      onContextMenu={handleActionMenuDropdown}
+    >
       <RecordValueSetterEffect recordId={recordId} />
-
       <InView>
         <StyledBoardCard
           ref={cardRef}

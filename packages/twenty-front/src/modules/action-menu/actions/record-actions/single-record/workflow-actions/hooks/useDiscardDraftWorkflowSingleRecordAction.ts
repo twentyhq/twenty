@@ -1,10 +1,13 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useDiscardDraftWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
-  ({ recordId }) => {
+export const useDiscardDraftWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
+    const recordId = useSelectedRecordIdOrThrow();
+
     const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);

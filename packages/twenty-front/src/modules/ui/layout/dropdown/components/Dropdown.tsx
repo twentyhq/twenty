@@ -19,9 +19,16 @@ import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownU
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import styled from '@emotion/styled';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-ui';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
+
+const StyledDropdownFallbackAnchor = styled.div`
+  left: 0;
+  position: absolute;
+  top: 0;
+`;
 
 type DropdownProps = {
   className?: string;
@@ -53,7 +60,7 @@ export const Dropdown = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   dropdownStrategy = 'absolute',
-  dropdownOffset = { x: 0, y: 0 },
+  dropdownOffset,
   onClickOutside,
   onClose,
   onOpen,
@@ -61,24 +68,27 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
-  const offsetMiddlewares = [];
-
   const setDropdownMaxHeight = useSetRecoilComponentStateV2(
     dropdownMaxHeightComponentStateV2,
     dropdownId,
   );
 
-  if (isDefined(dropdownOffset.x)) {
-    offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
-  }
+  const isUsingOffset =
+    isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
 
-  if (isDefined(dropdownOffset.y)) {
-    offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
-  }
+  const offsetMiddleware = isUsingOffset
+    ? [
+        offset({
+          crossAxis: dropdownOffset?.x ?? 0,
+          mainAxis: dropdownOffset?.y ?? 0,
+        }),
+      ]
+    : [];
 
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
+      ...offsetMiddleware,
       flip(),
       size({
         padding: 32,
@@ -89,7 +99,6 @@ export const Dropdown = ({
         },
         boundary: document.querySelector('#root') ?? undefined,
       }),
-      ...offsetMiddlewares,
     ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
@@ -109,13 +118,15 @@ export const Dropdown = ({
     >
       <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
         <>
-          {clickableComponent && (
+          {isDefined(clickableComponent) ? (
             <div
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
             >
               {clickableComponent}
             </div>
+          ) : (
+            <StyledDropdownFallbackAnchor ref={refs.setReference} />
           )}
           {isDropdownOpen && (
             <DropdownContent
@@ -124,7 +135,7 @@ export const Dropdown = ({
               dropdownMenuWidth={dropdownMenuWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
-              dropdownPlacement={placement ?? 'bottom-end'}
+              dropdownPlacement={placement}
               floatingUiRefs={refs}
               hotkeyScope={dropdownHotkeyScope}
               hotkey={hotkey}

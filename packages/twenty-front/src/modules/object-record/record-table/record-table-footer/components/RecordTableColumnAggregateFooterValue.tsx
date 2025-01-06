@@ -1,23 +1,6 @@
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useTheme } from '@emotion/react';
+import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import { IconChevronDown, isDefined } from 'twenty-ui';
-
-const StyledCell = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  flex-shrink: 0;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(7)};
-  justify-content: space-between;
-  min-width: ${({ theme }) => theme.spacing(7)};
-  flex-grow: 1;
-  width: 100%;
-`;
+import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 
 const StyledText = styled.span`
   overflow: hidden;
@@ -40,13 +23,7 @@ const StyledValueContainer = styled.div`
   gap: 4px;
   height: 32px;
   justify-content: flex-end;
-  padding: 8px;
-`;
-
-const StyledLabel = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
+  padding: 0 8px;
 `;
 
 const StyledValue = styled.div`
@@ -54,56 +31,34 @@ const StyledValue = styled.div`
   flex: 1 0 0;
 `;
 
-const StyledIcon = styled(IconChevronDown)`
-  align-items: center;
-  display: flex;
-  height: 20px;
-  justify-content: center;
-  flex-grow: 0;
-  padding-right: ${({ theme }) => theme.spacing(2)};
-`;
-
 export const RecordTableColumnAggregateFooterValue = ({
   dropdownId,
-  aggregateValue,
-  aggregateLabel,
-  isFirstCell,
+  fieldMetadataId,
 }: {
   dropdownId: string;
-  isFirstCell: boolean;
-  aggregateValue?: string | number | null;
-  aggregateLabel?: string;
+  fieldMetadataId: string;
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const { isDropdownOpen } = useDropdown(dropdownId);
   const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
-  const theme = useTheme();
-  const shouldShowValue =
-    isHovered || isDropdownOpen || isDefined(aggregateValue) || isFirstCell;
+
+  const { aggregateValue, aggregateLabel, isLoading } =
+    useAggregateRecordsForRecordTableColumnFooter(fieldMetadataId);
+
   return (
-    <div
-      onMouseEnter={() => {
-        setIsHovered(true);
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <StyledCell>
-        {shouldShowValue ? (
-          <>
-            {isDefined(aggregateValue) ? (
-              <StyledValueContainer>
-                <StyledLabel>{aggregateLabel}</StyledLabel>
-                <StyledValue>{aggregateValue}</StyledValue>
-              </StyledValueContainer>
-            ) : (
-              <StyledText id={sanitizedId}>Calculate</StyledText>
-            )}
-            <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
-          </>
-        ) : (
-          <></>
-        )}
-      </StyledCell>
-    </div>
+    <>
+      {isDefined(aggregateValue) || isLoading ? (
+        <StyledValueContainer>
+          {isLoading ? (
+            <></>
+          ) : (
+            <>
+              <OverflowingTextWithTooltip text={aggregateLabel} />
+              <StyledValue>{aggregateValue}</StyledValue>
+            </>
+          )}
+        </StyledValueContainer>
+      ) : (
+        <StyledText id={sanitizedId}>Calculate</StyledText>
+      )}
+    </>
   );
 };

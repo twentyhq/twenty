@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 export const downloadFile = (fullPath: string, fileName: string) => {
@@ -8,13 +9,6 @@ export const downloadFile = (fullPath: string, fileName: string) => {
         : Promise.reject('Failed downloading file'),
     )
     .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
+      saveAs(blob, fileName);
     });
 };
