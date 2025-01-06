@@ -78,7 +78,7 @@ export const computeAggregateValueAndLabel = ({
   const labelWithFieldName =
     aggregateOperation === AGGREGATE_OPERATIONS.count
       ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`
-      : `${getAggregateOperationLabel(aggregateOperation)} of ${field.name}`;
+      : `${getAggregateOperationLabel(aggregateOperation)} of ${field.label}`;
 
   return {
     value,
