@@ -71,7 +71,7 @@ export const NoteCard = ({
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
-  const body = getActivityPreview(note.body);
+  const body = getActivityPreview(note.body.blocknote);
 
   const { FieldContextProvider: NoteTargetsContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Note,

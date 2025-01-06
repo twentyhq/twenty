@@ -17,7 +17,7 @@ export class ActivityQueryResultGetterHandler
     activity: TaskWorkspaceEntity | NoteWorkspaceEntity,
     workspaceId: string,
   ): Promise<TaskWorkspaceEntity | NoteWorkspaceEntity> {
-    if (!activity.id || !activity.body) {
+    if (!activity.id || !activity.body?.blocknote) {
       return activity;
     }
 

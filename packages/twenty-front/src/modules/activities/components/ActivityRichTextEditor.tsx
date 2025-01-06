@@ -65,7 +65,10 @@ export const ActivityRichTextEditor = ({
       upsertActivity({
         activity,
         input: {
-          body: newBody,
+          body: {
+            blocknote: newBody,
+            markdown: null,
+          },
         },
       });
     }
