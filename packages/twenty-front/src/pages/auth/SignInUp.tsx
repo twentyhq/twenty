@@ -32,18 +32,25 @@ const StandardContent = ({
   workspacePublicData: PublicWorkspaceDataOutput | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
-}) => (
-  <>
-    <AnimatedEaseIn>
-      <Logo secondaryLogo={workspacePublicData?.logo} />
-    </AnimatedEaseIn>
-    <Title animate>
-      Welcome to {workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}
-    </Title>
-    {signInUpForm}
-    {signInUpStep !== SignInUpStep.Password && <FooterNote />}
-  </>
-);
+}) => {
+  return (
+    <>
+      <AnimatedEaseIn>
+        <Logo secondaryLogo={workspacePublicData?.logo} />
+      </AnimatedEaseIn>
+      <Title animate>
+        Welcome to{' '}
+        {!isDefined(workspacePublicData?.displayName)
+          ? DEFAULT_WORKSPACE_NAME
+          : workspacePublicData?.displayName === ''
+            ? 'Your Workspace'
+            : workspacePublicData?.displayName}
+      </Title>
+      {signInUpForm}
+      {signInUpStep !== SignInUpStep.Password && <FooterNote />}
+    </>
+  );
+};
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
