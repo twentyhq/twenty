@@ -37,7 +37,7 @@ export class BillingResolver {
   }
 
   @Query(() => SessionEntity)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
