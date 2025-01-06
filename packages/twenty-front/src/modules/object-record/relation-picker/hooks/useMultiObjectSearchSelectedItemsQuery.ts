@@ -11,8 +11,8 @@ import {
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const EMPTY_QUERY = gql`
   query Empty {
