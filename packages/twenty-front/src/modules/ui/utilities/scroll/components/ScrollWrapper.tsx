@@ -130,6 +130,27 @@ export const ScrollWrapper = ({
     },
     events: {
       scroll: (osInstance) => {
+        const { scrollOffsetElement: target, scrollbarVertical } =
+          osInstance.elements();
+        // Hide vertical scrollbar by default
+        if (scrollbarVertical !== null) {
+          scrollbarVertical.track.style.visibility = 'hidden';
+        }
+
+        // Show vertical scrollbar based on scroll direction
+        const isVerticalScroll =
+          target.scrollTop !== Number(target.dataset.lastScrollTop || '0');
+
+        if (
+          isVerticalScroll === true &&
+          scrollbarVertical !== null &&
+          target.scrollHeight > target.clientHeight
+        ) {
+          scrollbarVertical.track.style.visibility = 'visible';
+        }
+        // Update vertical scroll positions
+        target.dataset.lastScrollTop = target.scrollTop.toString();
+
         handleScroll(osInstance);
       },
     },
@@ -137,11 +158,16 @@ export const ScrollWrapper = ({
 
   useEffect(() => {
     const currentRef = scrollableRef.current;
-
     if (currentRef !== null) {
       initialize(currentRef);
     }
-  }, [initialize, instance]);
+    return () => {
+      // Reset vertical scroll component-specific Recoil state
+      setScrollTop(0);
+      setOverlayScrollbars(null);
+      instance()?.destroy();
+    };
+  }, [initialize, instance, setScrollTop, setOverlayScrollbars]);
 
   useEffect(() => {
     setOverlayScrollbars(instance());
