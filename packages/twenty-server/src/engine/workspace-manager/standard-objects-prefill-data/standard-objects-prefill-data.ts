@@ -5,6 +5,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
+import { rolePrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/role';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 
 export const standardObjectsPrefillData = async (
@@ -37,6 +38,8 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
+    await rolePrefillData(entityManager, objectMetadata.filter((object) => !object.isSystem));
+    
     const viewDefinitionsWithId = await seedViewWithDemoData(
       entityManager,
       schemaName,
