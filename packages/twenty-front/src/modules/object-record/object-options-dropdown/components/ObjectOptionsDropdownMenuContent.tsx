@@ -115,7 +115,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {viewType === ViewType.Kanban && currentView?.key !== 'INDEX' && (
+        {currentView?.key !== 'INDEX' && (
           <MenuItem
             onClick={() =>
               isDefined(recordGroupFieldMetadata)
