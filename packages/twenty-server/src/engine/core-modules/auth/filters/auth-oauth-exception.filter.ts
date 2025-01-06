@@ -24,7 +24,7 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
         response
-          .status(401)
+          .status(403)
           .redirect(this.domainManagerService.getBaseUrl().toString());
         break;
       default:
