@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
+import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
+import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
@@ -19,6 +21,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class EmailVerificationService {
@@ -99,18 +102,29 @@ export class EmailVerificationService {
       );
     }
 
-    const appTokens = await this.appTokenRepository.find({
+    const existingToken = await this.appTokenRepository.findOne({
       where: {
         userId: user.id,
         type: AppTokenType.EmailVerificationToken,
       },
     });
 
-    await Promise.all(
-      appTokens.map((emailVerificationToken) =>
-        this.appTokenRepository.delete(emailVerificationToken.id),
-      ),
-    );
+    if (existingToken) {
+      const cooldownDuration = ms('1m');
+      const timeToWaitMs = differenceInMilliseconds(
+        addMilliseconds(existingToken.createdAt, cooldownDuration),
+        new Date(),
+      );
+
+      if (timeToWaitMs > 0) {
+        throw new EmailVerificationException(
+          `Please wait ${ms(timeToWaitMs, { long: true })} before requesting another verification email`,
+          EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
+        );
+      }
+
+      await this.appTokenRepository.delete(existingToken.id);
+    }
 
     const workspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
