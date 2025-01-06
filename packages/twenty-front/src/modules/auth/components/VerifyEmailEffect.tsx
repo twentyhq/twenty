@@ -4,7 +4,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { useEffect, useState } from 'react';
-import { redirect, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
@@ -22,7 +22,13 @@ export const VerifyEmailEffect = () => {
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        return redirect(AppPath.SignInUp);
+        enqueueSnackBar(
+          `Invalid email verification link. No ${!email ? 'email' : 'token'} provided`,
+          {
+            variant: SnackBarVariant.Error,
+          },
+        );
+        return navigate(AppPath.SignInUp);
       }
 
       try {
