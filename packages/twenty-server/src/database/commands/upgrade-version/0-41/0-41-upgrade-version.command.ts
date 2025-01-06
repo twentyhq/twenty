@@ -26,7 +26,7 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    this.logger.log('Running command to upgrade to 0.40');
+    this.logger.log('Running command to upgrade to 0.41');
 
     await this.createManyToOneRelations.executeActiveWorkspacesCommand(
       passedParam,
