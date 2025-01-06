@@ -2,6 +2,7 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 import {
+  capitalize,
   getColumnNameForAggregateOperation,
   getSubfieldForAggregateOperation,
 } from 'twenty-shared';
@@ -10,7 +11,6 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
 
 export type AggregationField = {
   type: GraphQLScalarType;

@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'src/types/FieldMetadataType';
 import { getSubfieldForAggregateOperation } from 'src/utils/aggregateOperations/getSubFieldForAggregateOperation.util';
 import { isCompositeFieldMetadataType } from 'src/utils/aggregateOperations/isCompositeFieldMetadataType.util';
-import { capitalize } from 'src/utils/strings/capitalize';
+import { capitalize } from 'src/utils/strings';
 
 export const getColumnNameForAggregateOperation = (
   fieldName: string,
