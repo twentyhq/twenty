@@ -27,8 +27,7 @@ const StyledOtherSectionHeader = styled.header`
   display: flex;
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   height: 24px;
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3, 3, 2)};
 `;
 
 const StyledOtherTitle = styled.div`
@@ -233,14 +232,13 @@ export const FieldsCard = ({
               />
             </FieldContext.Provider>
           ))}
-          <PropertyBox>
-            {isPrefetchLoading ? (
-              <PropertyBoxSkeletonLoader />
-            ) : (
-              <>
-                <StyledOtherSectionHeader>
-                  <StyledOtherTitle>Other Fields</StyledOtherTitle>
-                </StyledOtherSectionHeader>
+
+          {remainingInlineFields.length > 0 && (
+            <>
+              <StyledOtherSectionHeader>
+                <StyledOtherTitle>Other Fields</StyledOtherTitle>
+              </StyledOtherSectionHeader>
+              <PropertyBox>
                 {remainingInlineFields?.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
@@ -264,9 +262,9 @@ export const FieldsCard = ({
                     <RecordInlineCell loading={recordLoading} />
                   </FieldContext.Provider>
                 ))}
-              </>
-            )}
-          </PropertyBox>
+              </PropertyBox>
+            </>
+          )}
         </>
       )}
     </>
