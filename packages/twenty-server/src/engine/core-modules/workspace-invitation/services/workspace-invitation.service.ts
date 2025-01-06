@@ -135,7 +135,7 @@ export class WorkspaceInvitationService {
     );
   }
 
-  async findInvitationByWorkspaceSubdomainAndUserEmail({
+  async findInvitationByWorkspaceSubdomainOrHostnameAndUserEmail({
     subdomain,
     email,
   }: {

@@ -195,7 +195,7 @@ export class WorkspaceResolver {
           origin,
         );
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       let workspaceLogoWithToken = '';
 

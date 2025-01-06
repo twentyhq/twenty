@@ -6,10 +6,6 @@ import Cloudflare from 'cloudflare';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { isDefined } from 'src/utils/is-defined';
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname';
@@ -137,7 +133,13 @@ export class DomainManagerService {
     };
   };
 
-  async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
+  async getWorkspaceBySubdomainOrHostnameOrDefaultWorkspace({
+    subdomain,
+    hostname,
+  }: {
+    subdomain?: string;
+    hostname?: string;
+  }) {
     return subdomain
       ? await this.workspaceRepository.findOne({
           where: { subdomain },
@@ -189,30 +191,23 @@ export class DomainManagerService {
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
-    try {
-      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-        return this.getDefaultWorkspace();
-      }
-
-      const { subdomain, hostname } =
-        this.getSubdomainAndHostnameByOrigin(origin);
-
-      if (!hostname && !subdomain) return;
-
-      const where = isDefined(hostname)
-        ? { hostname }
-        : { subdomain, hostname: IsNull() };
-
-      return await this.workspaceRepository.findOne({
-        where,
-        relations: ['workspaceSSOIdentityProviders'],
-      });
-    } catch (e) {
-      throw new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
-      );
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      return this.getDefaultWorkspace();
     }
+
+    const { subdomain, hostname } =
+      this.getSubdomainAndHostnameByOrigin(origin);
+
+    if (!hostname && !subdomain) return;
+
+    const where = isDefined(hostname)
+      ? { hostname }
+      : { subdomain, hostname: IsNull() };
+
+    return await this.workspaceRepository.findOne({
+      where,
+      relations: ['workspaceSSOIdentityProviders'],
+    });
   }
 
   private extractSubdomain(params?: { email?: string; displayName?: string }) {

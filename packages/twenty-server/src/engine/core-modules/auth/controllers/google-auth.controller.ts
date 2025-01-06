@@ -6,9 +6,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Response } from 'express';
 
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
@@ -21,7 +19,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -31,8 +29,7 @@ export class GoogleAuthController {
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly socialSsoService: SocialSsoService,
   ) {}
 
   @Get()
@@ -54,48 +51,35 @@ export class GoogleAuthController {
         picture,
         workspaceInviteHash,
         workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
+        workspaceOrigin,
       } = req.user;
 
-      const signInUpParams = {
+      const currentWorkspace =
+        await this.socialSsoService.findWorkspaceFromOriginAndAuthProvider(
+          workspaceOrigin,
+          {
+            email,
+            authProvider: 'google',
+          },
+        );
+
+      const invitation = this.socialSsoService.findOneInvitation({
+        workspaceId: currentWorkspace.id,
+        email,
+        inviteHash: workspaceInviteHash,
+        personalInviteToken: workspacePersonalInviteToken,
+      });
+
+      const { user, workspace } = await this.authService.signInUp({
         email,
         firstName,
         lastName,
         picture,
-        workspaceInviteHash,
-        workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
+        invitation,
+        workspace: currentWorkspace,
         fromSSO: true,
         isAuthEnabled: 'google',
-      };
-
-      if (
-        this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        (targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
-          !targetWorkspaceSubdomain)
-      ) {
-        const workspaceWithGoogleAuthActive =
-          await this.workspaceRepository.findOne({
-            where: {
-              isGoogleAuthEnabled: true,
-              workspaceUsers: {
-                user: {
-                  email,
-                },
-              },
-            },
-            relations: ['workspaceUsers', 'workspaceUsers.user'],
-          });
-
-        if (workspaceWithGoogleAuthActive) {
-          signInUpParams.targetWorkspaceSubdomain =
-            workspaceWithGoogleAuthActive.subdomain;
-        }
-      }
-
-      const { user, workspace } =
-        await this.authService.signInUp(signInUpParams);
+      });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,

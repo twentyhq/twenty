@@ -37,6 +37,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { isDefined } from 'src/utils/is-defined';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -47,7 +48,7 @@ export type SignInUpServiceInput = {
   workspacePersonalInviteToken?: string;
   picture?: string | null;
   fromSSO: boolean;
-  targetWorkspaceSubdomain?: string;
+  workspace?: Workspace;
   authProvider?: WorkspaceAuthProvider;
 };
 
@@ -73,12 +74,12 @@ export class SignInUpService {
     email,
     workspacePersonalInviteToken,
     workspaceInviteHash,
+    workspace,
     password,
     firstName,
     lastName,
     picture,
     fromSSO,
-    targetWorkspaceSubdomain,
     authProvider,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
@@ -126,7 +127,7 @@ export class SignInUpService {
       email,
       workspacePersonalInviteToken,
       workspaceInviteHash,
-      targetWorkspaceSubdomain,
+      workspace,
       fromSSO,
       firstName,
       lastName,
@@ -150,13 +151,6 @@ export class SignInUpService {
       });
     }
 
-    const workspace =
-      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
-        targetWorkspaceSubdomain,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return await this.validateSignIn({
       user: existingUser,
       workspace,
@@ -166,20 +160,19 @@ export class SignInUpService {
 
   private async signInUpWithInvitation({
     email,
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
+    workspace,
+    invitation,
     firstName,
     lastName,
     picture,
     fromSSO,
-    targetWorkspaceSubdomain,
     authProvider,
     passwordHash,
     existingUser,
   }: {
     email: string;
-    workspacePersonalInviteToken?: string;
-    workspaceInviteHash?: string;
+    invitation?: AppToken;
+    workspace?: Workspace;
     firstName: string;
     lastName: string;
     picture?: string | null;
@@ -187,7 +180,6 @@ export class SignInUpService {
     passwordHash?: string;
     existingUser: User | null;
     fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
   }) {
     const maybeInvitation =
       fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash

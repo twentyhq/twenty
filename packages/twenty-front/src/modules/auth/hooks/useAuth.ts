@@ -395,9 +395,10 @@ export const useAuth = () => {
         );
       }
 
-      if (isDefined(workspaceSubdomain)) {
-        url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
-      }
+      url.searchParams.set(
+        'workspaceOrigin',
+        new URL(window.location.href).origin,
+      );
 
       return url.toString();
     },
