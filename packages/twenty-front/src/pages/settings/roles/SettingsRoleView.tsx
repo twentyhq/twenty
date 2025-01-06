@@ -16,12 +16,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useTranslation } from 'react-i18next';
-import { useMockRole } from '~/pages/settings/roles/useMockRoles';
 
 export const SettingsRoleView = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
-  const { updateRole } = useMockRole();
   const formMethods = useForm();
 
   const { roles } = useFindAllRoles();

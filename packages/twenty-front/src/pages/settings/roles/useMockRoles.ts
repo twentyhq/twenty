@@ -15,12 +15,22 @@ export type RoleItem = {
   // accessWorkspace: ; // Yes, No [True, False]
   // copyPermissions: ; // Role X
   isSystem?: any;
+  position: string;
   permissions?: Permissions[]; // arr - xyz function permissions table (for create, edit, view, delete)
+  users?: UserWorkspace[];
 };
 
+type UserWorkspace = {
+  id: string;
+}
+
 export type Permissions = {
-  type: 'create' | 'edit' | 'view' | 'delete';
-  allowed: boolean;
+  tableName: string;
+  id: string;
+  canCreate: boolean;
+  canView: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
 };
 
 const API_URL = 'https://66bd028a24da2de7ff6c7edd.mockapi.io/mock/role';

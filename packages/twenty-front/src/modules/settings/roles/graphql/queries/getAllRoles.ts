@@ -17,6 +17,9 @@ export const GET_ALL_ROLES = gql`
         id
         displayName
       }
+      users {
+        id
+      }
       permissions {
         id
         tableName
