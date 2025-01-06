@@ -27,7 +27,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 
 const StyledH1Title = styled(H1Title)`
@@ -35,7 +35,7 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const SettingsRoles = () => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { roles, loading, refetch } = useFindAllRoles();
@@ -84,8 +84,7 @@ export const SettingsRoles = () => {
           <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewRole)}>
             <Button
               Icon={IconPlus}
-              // title={t('newRole')}
-              title="newRole"
+              title={t('newRole')}
               accent="blue"
               size="small"
             />
@@ -94,22 +93,19 @@ export const SettingsRoles = () => {
         <div>
           <SettingsRoleCoverImage />
           <Section>
-            <H2Title title={('existingRoles')} />
+            <H2Title title={t('existingRoles')} />
             <Table>
               <StyledRoleTableRow>
-                {/* <TableHeader>{t('name')}</TableHeader>
+                <TableHeader>{t('name')}</TableHeader>
                 <TableHeader>{t('type')}</TableHeader>
-                <TableHeader align="right">{t('users')}</TableHeader> */}
-                <TableHeader>{('name')}</TableHeader>
-                <TableHeader>{('type')}</TableHeader>
-                <TableHeader align="right">{('users')}</TableHeader>
+                <TableHeader align="right">{t('users')}</TableHeader>
                 <TableHeader></TableHeader>
                 <TableHeader></TableHeader>
               </StyledRoleTableRow>
               {!loading && (
                 <>
                   {roles.some((role) => role.isActive) && (
-                    <TableSection title={('active')}>
+                    <TableSection title={t('active')}>
                       {roles
                         .filter((role) => role.isActive)
                         .map((roleItem) => (
@@ -133,7 +129,7 @@ export const SettingsRoles = () => {
                     </TableSection>
                   )}
                   {roles.some((role) => !role.isActive) && (
-                    <TableSection title={('inactive')}>
+                    <TableSection title={t('inactive')}>
                       {roles
                         .filter((role) => !role.isActive)
                         .map((roleItem) => (

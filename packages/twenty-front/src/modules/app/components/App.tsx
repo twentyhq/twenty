@@ -10,6 +10,8 @@ import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
 
+import '~/utils/i18n';
+
 export const App = () => {
   return (
     <RecoilRoot>

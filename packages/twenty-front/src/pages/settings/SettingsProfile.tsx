@@ -1,6 +1,7 @@
 import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ChangeLanguage } from '@/settings/profile/components/ChangeLanguage';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
@@ -9,8 +10,11 @@ import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePic
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 
-export const SettingsProfile = () => (
+export const SettingsProfile = () => { 
+  const { t } = useTranslation();
+  return (
   <SubMenuTopBarContainer
     title="Profile"
     links={[
@@ -38,6 +42,13 @@ export const SettingsProfile = () => (
         <EmailField />
       </Section>
       <Section>
+        <H2Title
+          title={t('language')}
+          description={t('languageDescription')}
+        />
+        <ChangeLanguage />
+      </Section>
+      <Section>
         <ChangePassword />
       </Section>
       <Section>
@@ -45,4 +56,4 @@ export const SettingsProfile = () => (
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
-);
+)};
