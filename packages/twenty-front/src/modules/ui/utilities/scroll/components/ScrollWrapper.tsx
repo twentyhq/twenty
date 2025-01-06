@@ -19,7 +19,6 @@ import 'overlayscrollbars/overlayscrollbars.css';
 type HeightMode = 'full' | 'fit-content';
 
 const StyledScrollWrapper = styled.div<{
-  scrollHide?: boolean;
   heightMode: HeightMode;
   scrollbarVariant: 'with-padding' | 'no-padding';
 }>`
@@ -33,6 +32,22 @@ const StyledScrollWrapper = styled.div<{
     }
   }};
   width: 100%;
+
+  .os-scrollbar-handle {
+    background-color: ${({ theme }) => theme.border.color.strong};
+  }
+
+  // Keep horizontal scrollbar always visible
+  .os-scrollbar-horizontal {
+    &.os-scrollbar-auto-hide {
+      opacity: 1;
+      visibility: visible;
+    }
+    .os-scrollbar-track {
+      visibility: visible !important;
+    }
+  }
+
   .os-scrollbar {
     transition:
       opacity 300ms,
@@ -41,9 +56,6 @@ const StyledScrollWrapper = styled.div<{
       right 300ms,
       bottom 300ms,
       left 300ms;
-  }
-  .os-scrollbar-handle {
-    background-color: ${({ theme }) => theme.border.color.strong};
   }
 
   ${({ scrollbarVariant }) =>
@@ -112,51 +124,12 @@ export const ScrollWrapper = ({
         autoHideDelay: 500,
       },
       overflow: {
-        x: defaultEnableXScroll ? 'scroll' : 'hidden',
-        y: defaultEnableYScroll ? 'scroll' : 'hidden',
+        x: defaultEnableXScroll ? undefined : 'hidden',
+        y: defaultEnableYScroll ? undefined : 'hidden',
       },
     },
     events: {
       scroll: (osInstance) => {
-        const {
-          scrollOffsetElement: target,
-          scrollbarHorizontal,
-          scrollbarVertical,
-        } = osInstance.elements();
-
-        // Hide scrollbars by default
-        [scrollbarHorizontal, scrollbarVertical].forEach((scrollbar) => {
-          if (scrollbar !== null) {
-            scrollbar.track.style.visibility = 'hidden';
-          }
-        });
-
-        // Show appropriate scrollbar based on scroll direction
-        const isHorizontalScroll =
-          target.scrollLeft !== Number(target.dataset.lastScrollLeft || '0');
-        const isVerticalScroll =
-          target.scrollTop !== Number(target.dataset.lastScrollTop || '0');
-
-        // Show scrollbar based on scroll direction only with explicit conditions
-        if (
-          isHorizontalScroll === true &&
-          scrollbarHorizontal !== null &&
-          target.scrollWidth > target.clientWidth
-        ) {
-          scrollbarHorizontal.track.style.visibility = 'visible';
-        }
-        if (
-          isVerticalScroll === true &&
-          scrollbarVertical !== null &&
-          target.scrollHeight > target.clientHeight
-        ) {
-          scrollbarVertical.track.style.visibility = 'visible';
-        }
-
-        // Update scroll positions
-        target.dataset.lastScrollLeft = target.scrollLeft.toString();
-        target.dataset.lastScrollTop = target.scrollTop.toString();
-
         handleScroll(osInstance);
       },
     },
@@ -168,15 +141,7 @@ export const ScrollWrapper = ({
     if (currentRef !== null) {
       initialize(currentRef);
     }
-
-    return () => {
-      // Reset all component-specific Recoil state
-      setScrollTop(0);
-      setScrollLeft(0);
-      setOverlayScrollbars(null);
-      instance()?.destroy();
-    };
-  }, [initialize, instance, setScrollTop, setScrollLeft, setOverlayScrollbars]);
+  }, [initialize, instance]);
 
   useEffect(() => {
     setOverlayScrollbars(instance());
