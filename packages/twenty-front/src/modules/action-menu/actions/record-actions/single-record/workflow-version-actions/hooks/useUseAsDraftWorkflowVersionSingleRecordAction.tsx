@@ -61,7 +61,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
 
     const ConfirmationModal = shouldBeRegistered ? (
       <OverrideWorkflowDraftConfirmationModal
-        workflowId={workflowVersion.workflow.id ?? ''}
+        workflowId={workflowVersion.workflow.id}
         workflowVersionIdToCopy={workflowVersion.id}
       />
     ) : undefined;
