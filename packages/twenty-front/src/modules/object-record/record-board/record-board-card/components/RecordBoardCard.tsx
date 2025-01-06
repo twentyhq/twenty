@@ -247,6 +247,13 @@ export const RecordBoardCard = () => {
     return [updateEntity, { loading: false }];
   };
 
+  const handleCardClick = () => {
+    if (!pendingRecord?.recordId) {
+      setIsCurrentCardSelected(!isCurrentCardSelected);
+      checkIfLastUnselectAndCloseDropdown();
+    }
+  };
+
   const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
 
   const { ref: cardRef } = useInView({
@@ -273,11 +280,7 @@ export const RecordBoardCard = () => {
           ref={cardRef}
           selected={isCurrentCardSelected}
           onMouseLeave={onMouseLeaveBoard}
-          onClick={() => {
-            if (!pendingRecord?.recordId) {
-              setIsCurrentCardSelected(!isCurrentCardSelected);
-            }
-          }}
+          onClick={handleCardClick}
         >
           <StyledBoardCardHeader showCompactView={isCompactModeActive}>
             {pendingRecord?.recordId === recordId ? (
@@ -290,7 +293,7 @@ export const RecordBoardCard = () => {
                   isLabelIdentifier:
                     labelIdentifierField?.isLabelIdentifier || false,
                   fieldDefinition: {
-                    disableTooltip: false,
+                    disableTooltip: true,
                     fieldMetadataId:
                       labelIdentifierField?.fieldMetadataId || '',
                     label: labelIdentifierField?.label || '',
@@ -299,12 +302,10 @@ export const RecordBoardCard = () => {
                     defaultValue: labelIdentifierField?.defaultValue || '',
                     metadata: labelIdentifierField?.metadata || {
                       fieldName:
-                        labelIdentifierField?.metadata?.fieldName || 'name',
-
+                        labelIdentifierField?.metadata?.fieldName || '',
                       ...labelIdentifierField?.metadata,
                     },
                   },
-
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
