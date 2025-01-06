@@ -4,7 +4,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useHandleResendEmailVerificationToken } from '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken';
 import { useTheme } from '@emotion/react';
-import { AnimatedEaseIn, IconMail, MainButton, RGBA } from 'twenty-ui';
+import { AnimatedEaseIn, IconMail, Loader, MainButton, RGBA } from 'twenty-ui';
 
 const StyledMailContainer = styled.div`
   align-items: center;
@@ -38,7 +38,7 @@ export const EmailVerificationSent = ({
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
-  const { handleResendEmailVerificationToken } =
+  const { handleResendEmailVerificationToken, loading: isLoading } =
     useHandleResendEmailVerificationToken();
 
   return (
@@ -70,6 +70,7 @@ export const EmailVerificationSent = ({
         <MainButton
           title="Click to resend"
           onClick={handleResendEmailVerificationToken(email)}
+          Icon={() => (isLoading ? <Loader /> : undefined)}
           width={200}
         />
       </StyledButtonContainer>
