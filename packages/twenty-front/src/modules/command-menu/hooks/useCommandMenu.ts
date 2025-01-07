@@ -10,7 +10,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { commandMenuViewableRecordIdState } from '@/command-menu/states/commandMenuViewableRecordIdState';
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -18,6 +19,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -213,7 +215,8 @@ export const useCommandMenu = () => {
         );
 
         if (isCommandMenuOpened) {
-          set(commandMenuViewableRecordIdState, null);
+          set(viewableRecordIdState, null);
+          set(commandMenuPageState, CommandMenuPages.Root);
           setIsCommandMenuOpened(false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
@@ -269,9 +272,21 @@ export const useCommandMenu = () => {
     [navigate, toggleCommandMenu],
   );
 
+  const openRecordInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (recordId: string) => {
+        openCommandMenu();
+        set(commandMenuPageState, CommandMenuPages.ViewRecord);
+        set(viewableRecordIdState, recordId);
+      };
+    },
+    [openCommandMenu],
+  );
+
   return {
     openCommandMenu,
     closeCommandMenu,
+    openRecordInCommandMenu,
     toggleCommandMenu,
     onItemClick,
   };
