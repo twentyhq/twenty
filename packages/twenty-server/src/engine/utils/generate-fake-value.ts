@@ -10,7 +10,7 @@ type FakeValueTypes =
   | { [key: string]: FakeValueTypes }
   | null;
 
-type TypeClassification = 'primitive' | 'FieldMetadataType';
+type TypeClassification = 'Primitive' | 'FieldMetadataType';
 
 const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
   if (valueType === 'string') {
@@ -40,7 +40,7 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
       objData[key] = generateFakeValue(valueType);
     });
 
-    return objData.toString();
+    return objData;
   } else {
     return null;
   }
@@ -78,10 +78,10 @@ const generateFieldMetadataTypeValue = (
 
 export const generateFakeValue = (
   valueType: string,
-  classification: TypeClassification = 'primitive',
+  classification: TypeClassification = 'Primitive',
 ): FakeValueTypes => {
   switch (classification) {
-    case 'primitive':
+    case 'Primitive':
       return generatePrimitiveValue(valueType);
     case 'FieldMetadataType':
       return generateFieldMetadataTypeValue(valueType);
