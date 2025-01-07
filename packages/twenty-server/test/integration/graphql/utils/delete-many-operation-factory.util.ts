@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-
 import { capitalize } from 'twenty-shared';
 
 type DeleteManyOperationFactoryParams = {
