@@ -81,7 +81,6 @@ export const SettingsDataRoleOverviewEffect = ({
           y: nodeWithPosition.y - node.height / 2,
         };
       });
-      console.log('OBJECT METADATA ITEMS', nodes, edges)
       setNodes(nodes);
       setEdges(edges);
     }

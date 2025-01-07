@@ -15,30 +15,30 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
-import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';

@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import {
-  useSendInvitationsMutation,
   SendInvitationsMutationVariables,
+  useSendInvitationsMutation,
 } from '~/generated/graphql';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
 
@@ -10,9 +10,9 @@ export const useCreateWorkspaceInvitation = () => {
 
   const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
 
-  const sendInvitation = async (emails: SendInvitationsMutationVariables) => {
+  const sendInvitation = async (params: SendInvitationsMutationVariables) => {
     return await sendInvitationsMutation({
-      variables: emails,
+      variables: params,
       onCompleted: (data) => {
         setWorkspaceInvitations((workspaceInvitations) => [
           ...workspaceInvitations,

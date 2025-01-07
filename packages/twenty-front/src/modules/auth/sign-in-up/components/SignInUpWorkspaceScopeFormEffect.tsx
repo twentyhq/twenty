@@ -16,7 +16,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
 
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
-
   const checkAuthProviders = useCallback(() => {
     if (
       signInUpStep === SignInUpStep.Init &&

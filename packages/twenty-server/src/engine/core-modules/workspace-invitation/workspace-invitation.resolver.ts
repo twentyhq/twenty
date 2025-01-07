@@ -73,6 +73,8 @@ export class WorkspaceInvitationResolver {
       sendInviteLinkInput.emails,
       { ...workspace, logo: workspaceLogoWithToken },
       user,
+      true,
+      sendInviteLinkInput.roleId,
     );
   }
 }

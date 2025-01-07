@@ -140,7 +140,7 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
-      const result = await sendInvitation({ emails });
+      const result = await sendInvitation({ emails, roleId: '' });
 
       setNextOnboardingStatus();
 

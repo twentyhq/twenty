@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
+  ID,
   Mutation,
   Parent,
   Query,
@@ -46,6 +47,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
+import { InvitedMembers } from 'src/engine/core-modules/invited-members/invited-members.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
@@ -233,5 +235,14 @@ export class WorkspaceResolver {
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);
     }
+  }
+
+  @Query(() => [InvitedMembers])
+  async getAllInvitedMembers(
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<InvitedMembers[]> {
+    return await this.workspaceService.getAllInvitedMembers(workspaceId);
   }
 }

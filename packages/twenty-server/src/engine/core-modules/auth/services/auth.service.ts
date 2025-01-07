@@ -160,6 +160,7 @@ export class AuthService {
     picture,
     fromSSO,
     authProvider,
+    roleId
   }: {
     email: string;
     password?: string;
@@ -172,6 +173,7 @@ export class AuthService {
     targetWorkspaceSubdomain?: string;
     authProvider?: WorkspaceAuthProvider;
     billingCheckoutSessionState?: string;
+    roleId?: string;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -184,6 +186,7 @@ export class AuthService {
       picture,
       fromSSO,
       authProvider,
+      roleId
     });
   }
 

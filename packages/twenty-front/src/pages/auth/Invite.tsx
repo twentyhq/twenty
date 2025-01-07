@@ -2,8 +2,10 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
+import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import styled from '@emotion/styled';
@@ -16,8 +18,6 @@ import {
   useAddUserToWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -37,6 +37,7 @@ export const Invite = () => {
   const { switchWorkspace } = useWorkspaceSwitching();
   const [searchParams] = useSearchParams();
   const workspaceInviteToken = searchParams.get('inviteToken');
+  const roleId = searchParams.get('roleId');
 
   const title = useMemo(() => {
     return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
@@ -73,7 +74,6 @@ export const Invite = () => {
   ) {
     return <></>;
   }
-
   return (
     <>
       <AnimatedEaseIn>

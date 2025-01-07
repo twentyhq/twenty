@@ -45,6 +45,7 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
+import { InvitedMembersModule } from 'src/engine/core-modules/invited-members/invited-members.module';
 import { PermissionModule } from 'src/engine/core-modules/permission/permission.module';
 import { RoleModule } from 'src/engine/core-modules/role/role.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -68,6 +69,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     RoleModule,
     PermissionModule,
+    InvitedMembersModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     PostgresCredentialsModule,

@@ -66,7 +66,11 @@ type FormInput = {
   emails: string;
 };
 
-export const WorkspaceInviteTeam = () => {
+type WorkspaceInviteTeamProps = {
+  roleId?: string
+}
+
+export const WorkspaceInviteTeam = ( { roleId } : WorkspaceInviteTeamProps ) => {
   const { enqueueSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
@@ -83,7 +87,7 @@ export const WorkspaceInviteTeam = () => {
 
   const submit = handleSubmit(async ({ emails }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
-    const { data } = await sendInvitation({ emails: emailsList });
+    const { data } = await sendInvitation({ emails: emailsList, roleId: roleId ?? "" });
     if (isDefined(data) && data.sendInvitations.result.length > 0) {
       enqueueSnackBar(
         `${data.sendInvitations.result.length} invitations sent`,

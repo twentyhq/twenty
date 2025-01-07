@@ -3,20 +3,20 @@ import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState } from 'recoil';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { AppPath } from '@/types/AppPath';
-import { useAuth } from '../../hooks/useAuth';
-import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilState } from 'recoil';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useAuth } from '../../hooks/useAuth';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
@@ -32,13 +32,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
+  const roleId = searchParams.get('roleId') ?? undefined;
   const {
     signInWithCredentials,
     signUpWithCredentials,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
-
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const { readCaptchaToken } = useReadCaptchaToken();
 
@@ -113,6 +112,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             workspaceInviteHash,
             workspacePersonalInviteToken,
             token,
+            roleId
           );
         }
       } catch (err: any) {

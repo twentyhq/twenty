@@ -148,7 +148,7 @@ export const SettingsRoleAboutForm = ({
   }))
     permissionsToCopy && setPermissions(permissionsToCopy)
   };
-  console.log('ROLES', roles)
+
   const roleOptions = roles ? roles.map((role) => ({
     Icon: getIcon(role.icon),
     label: role.name, 

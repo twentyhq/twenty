@@ -49,6 +49,7 @@ export type SignInUpServiceInput = {
   fromSSO: boolean;
   targetWorkspaceSubdomain?: string;
   authProvider?: WorkspaceAuthProvider;
+  roleId?: string;
 };
 
 @Injectable()
@@ -80,6 +81,7 @@ export class SignInUpService {
     fromSSO,
     targetWorkspaceSubdomain,
     authProvider,
+    roleId
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -134,6 +136,7 @@ export class SignInUpService {
       authProvider,
       passwordHash,
       existingUser,
+      roleId
     });
 
     if (isDefined(signInUpWithInvitationResult)) {
@@ -176,6 +179,7 @@ export class SignInUpService {
     authProvider,
     passwordHash,
     existingUser,
+    roleId
   }: {
     email: string;
     workspacePersonalInviteToken?: string;
@@ -188,6 +192,7 @@ export class SignInUpService {
     existingUser: User | null;
     fromSSO: boolean;
     targetWorkspaceSubdomain?: string;
+    roleId?: string;
   }) {
     const maybeInvitation =
       fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
@@ -222,6 +227,7 @@ export class SignInUpService {
         picture,
         existingUser,
         authProvider,
+        roleId
       });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -266,6 +272,7 @@ export class SignInUpService {
     picture,
     existingUser,
     authProvider,
+    roleId
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -275,6 +282,7 @@ export class SignInUpService {
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
     authProvider?: WorkspaceAuthProvider;
+    roleId?: string;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
@@ -325,6 +333,7 @@ export class SignInUpService {
     const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
       user,
       workspace,
+      roleId
     );
 
     await this.activateOnboardingForUser(user, workspace, {

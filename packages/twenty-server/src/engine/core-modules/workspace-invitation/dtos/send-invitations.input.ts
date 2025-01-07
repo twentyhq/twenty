@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { ArrayUnique, IsArray, IsEmail } from 'class-validator';
+import { ArrayUnique, IsArray, IsEmail, IsOptional, IsString } from 'class-validator';
 
 @ArgsType()
 export class SendInvitationsInput {
@@ -9,4 +9,9 @@ export class SendInvitationsInput {
   @IsEmail({}, { each: true })
   @ArrayUnique()
   emails: string[];
+
+  @Field(() => String)
+  @IsOptional()
+  @IsString()
+  roleId?: string;
 }

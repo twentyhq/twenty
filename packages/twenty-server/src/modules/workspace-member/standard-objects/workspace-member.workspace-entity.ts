@@ -60,6 +60,11 @@ registerEnumType(WorkspaceMemberDateFormatEnum, {
     'Date format as Month first, Day first, Year first or system as default',
 });
 
+export enum WorkspaceMemberStatusEnum {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
 const NAME_FIELD_NAME = 'name';
 const USER_EMAIL_FIELD_NAME = 'userEmail';
 
@@ -351,4 +356,37 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD.name]: any;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.roleId,
+    type: FieldMetadataType.TEXT,
+    label: 'Role Id',
+    description: 'Role identifier for the workspace member',
+    icon: 'IconKey',
+  })
+  roleId: string | null;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.status,
+    type: FieldMetadataType.SELECT,
+    label: 'Status',
+    description: "User's status",
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: WorkspaceMemberStatusEnum.ACTIVE,
+        label: 'Active',
+        position: 0,
+        color: 'sky',
+      },
+      {
+        value: WorkspaceMemberStatusEnum.SUSPENDED,
+        label: 'Suspended',
+        position: 1,
+        color: 'red',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberStatusEnum.ACTIVE}'`,
+  })
+  status: string;
 }

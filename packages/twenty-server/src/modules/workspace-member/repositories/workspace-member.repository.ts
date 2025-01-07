@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberStatusEnum, WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceMemberRepository {
@@ -64,5 +64,65 @@ export class WorkspaceMemberRepository {
       );
 
     return workspaceMembers;
+  }
+
+  public async toggleMemberStatus(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const [workspaceMember] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "id" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+      );
+
+    if (!workspaceMember) {
+      throw new NotFoundException(
+        `No workspace member found for user ${workspaceMemberId} in workspace ${workspaceId}`,
+      );
+    }
+
+    const newStatus =
+      workspaceMember.status === WorkspaceMemberStatusEnum.ACTIVE
+        ? WorkspaceMemberStatusEnum.SUSPENDED
+        : WorkspaceMemberStatusEnum.ACTIVE;
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."workspaceMember" SET "status" = $1 WHERE "id" = $2`,
+      [newStatus, workspaceMemberId],
+      workspaceId,
+    );
+  }
+
+  public async updateMemberRole(
+    workspaceMemberId: string,
+    workspaceId: string,
+    newRoleId: string,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const [workspaceMember] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "id" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+      );
+
+    if (!workspaceMember) {
+      throw new NotFoundException(
+        `No workspace member found for user ${workspaceMemberId} in workspace ${workspaceId}`,
+      );
+    }
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."workspaceMember" SET "roleId" = $1 WHERE "id" = $2`,
+      [newRoleId, workspaceMemberId],
+      workspaceId,
+    );
   }
 }

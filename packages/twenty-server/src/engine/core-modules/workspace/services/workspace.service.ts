@@ -10,6 +10,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { InvitedMembers } from 'src/engine/core-modules/invited-members/invited-members.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -42,6 +43,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
+    @InjectRepository(InvitedMembers, 'core')
+    private readonly invitedMembersRepository: Repository<InvitedMembers>,
   ) {
     super(workspaceRepository);
   }
@@ -169,5 +172,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     return !existingWorkspace;
+  }
+
+  async getAllInvitedMembers(workspaceId: string): Promise<InvitedMembers[]> {
+    return await this.invitedMembersRepository.find({
+      where: {
+        workspace: { id: workspaceId },
+      },
+      relations: ['workspace'],
+    });
   }
 }

@@ -11,6 +11,8 @@ import {
   IconMail,
   IconReload,
   IconTrash,
+  Radio,
+  RadioGroup,
   Section,
   Status,
   TooltipDelay,
@@ -22,6 +24,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useFindAllRoles } from '@/settings/roles/hooks/useFindAllRoles';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -31,9 +34,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
@@ -69,6 +72,19 @@ const StyledTextContainerWithEllipsis = styled.div`
   white-space: nowrap;
 `;
 
+const StyledRadioContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+
+  span {
+    color: ${({ theme }) => theme.font.color.light};
+    font-size: ${({ theme }) => theme.font.size.xs};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    margin-bottom: ${({ theme }) => theme.spacing(2)};
+  }
+`;
+
 export const SettingsWorkspaceMembers = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
@@ -76,6 +92,10 @@ export const SettingsWorkspaceMembers = () => {
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
   >();
+
+  const { t } = useTranslation();
+  const { roles } = useFindAllRoles();
+  const [selectedRole, setSelectedRole] = useState('');
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -148,18 +168,6 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
-        {currentWorkspace?.inviteHash &&
-          currentWorkspace?.isPublicInviteLinkEnabled && (
-            <Section>
-              <H2Title
-                title="Invite by link"
-                description="Share this link to invite users to join your workspace"
-              />
-              <WorkspaceInviteLink
-                inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
-              />
-            </Section>
-          )}
         <Section>
           <H2Title
             title="Manage Members"
@@ -234,11 +242,31 @@ export const SettingsWorkspaceMembers = () => {
           </Table>
         </Section>
         <Section>
+          <H2Title title={t('assignRole')} />
+          <RadioGroup
+            onValueChange={(value) => setSelectedRole(value)}
+            value={selectedRole}
+          >
+            {roles?.map((role) => (
+              <StyledRadioContainer key={role.id}>
+                <Radio
+                  name="assignRole"
+                  label={role.name}
+                  value={role.id.toString()}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                />
+                <span>{role.description}</span>
+              </StyledRadioContainer>
+            ))}
+          </RadioGroup>
+        </Section>
+        {selectedRole &&
+        <Section>
           <H2Title
             title="Invite by email"
             description="Send an invite email to your team"
           />
-          <WorkspaceInviteTeam />
+            <WorkspaceInviteTeam roleId={selectedRole} />
           {isNonEmptyArray(workspaceInvitations) && (
             <Table>
               <StyledTableHeaderRow>
@@ -303,7 +331,7 @@ export const SettingsWorkspaceMembers = () => {
               ))}
             </Table>
           )}
-        </Section>
+        </Section>}
       </SettingsPageContainer>
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
