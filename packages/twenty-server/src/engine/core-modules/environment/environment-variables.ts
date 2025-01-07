@@ -426,7 +426,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1d';
+  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
