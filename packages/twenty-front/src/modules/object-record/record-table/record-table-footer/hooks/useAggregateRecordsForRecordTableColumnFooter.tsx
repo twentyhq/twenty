@@ -8,6 +8,7 @@ import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/s
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { UserContext } from '@/users/contexts/UserContext';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -64,11 +65,16 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       !isAggregateQueryEnabled || !isDefined(aggregateOperationForViewField),
   });
 
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+
   const { value, label } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
     fieldMetadataId: fieldMetadataId,
     aggregateOperation: aggregateOperationForViewField,
+    dateFormat,
+    timeFormat,
+    timeZone,
   });
 
   return {
