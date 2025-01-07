@@ -49,9 +49,10 @@ export const SettingsObjectFieldEdit = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findObjectMetadataItemBySlug } = useFilteredObjectMetadataItems();
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
 
-  const objectMetadataItem = findObjectMetadataItemBySlug(objectSlug);
+  const objectMetadataItem = findObjectMetadataItemByNamePlural(objectSlug);
 
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();

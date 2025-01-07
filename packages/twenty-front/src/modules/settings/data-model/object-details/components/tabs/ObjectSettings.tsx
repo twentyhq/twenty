@@ -9,7 +9,6 @@ import { z, ZodError } from 'zod';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
   IS_LABEL_SYNCED_WITH_NAME_LABEL,
@@ -131,12 +130,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
         updatePayload.namePlural ?? objectMetadataItem.namePlural;
-      const objectSlug = getObjectSlug({
-        ...updatePayload,
-        namePlural: objectNamePluralForRedirection,
-      });
 
-      setUpdatedObjectSlugState(objectSlug);
+      setUpdatedObjectSlugState(objectNamePluralForRedirection);
 
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
@@ -154,7 +149,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         );
       }
 
-      navigate(`${settingsObjectsPagePath}/${objectSlug}`);
+      navigate(`${settingsObjectsPagePath}/${objectNamePluralForRedirection}`);
     } catch (error) {
       if (error instanceof ZodError) {
         enqueueSnackBar(error.issues[0].message, {

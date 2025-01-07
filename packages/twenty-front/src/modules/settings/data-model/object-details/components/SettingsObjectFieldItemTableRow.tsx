@@ -5,7 +5,6 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -246,7 +245,7 @@ export const SettingsObjectFieldItemTableRow = ({
           }
           to={
             isRelatedObjectLinkable
-              ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
+              ? `/settings/objects/${relationObjectMetadataItem.namePlural}`
               : undefined
           }
           value={fieldType}

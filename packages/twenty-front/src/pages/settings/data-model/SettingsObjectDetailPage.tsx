@@ -54,15 +54,15 @@ export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const [updatedObjectSlug, setUpdatedObjectSlug] = useRecoilState(
     updatedObjectSlugState,
   );
   const objectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug) ??
-    findActiveObjectMetadataItemBySlug(updatedObjectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectSlug) ??
+    findActiveObjectMetadataItemByNamePlural(updatedObjectSlug);
 
   const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,

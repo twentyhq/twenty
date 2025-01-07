@@ -48,10 +48,10 @@ export const SettingsObjectNewFieldConfigure = () => {
     FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
   const apolloClient = useApolloClient();
 

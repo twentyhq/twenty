@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
@@ -100,36 +99,38 @@ const StyledObjectLink = styled(Link)`
 `;
 
 export const SettingsDataModelOverviewObject = ({
-  data,
+  data: objectMetadataItem,
 }: SettingsDataModelOverviewObjectProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
   const { totalCount } = useFindManyRecords({
-    objectNameSingular: data.nameSingular,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const fields = data.fields.filter((x) => !x.isSystem);
+  const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
 
   const countNonRelation = fields.filter(
     (x) => x.type !== FieldMetadataType.Relation,
   ).length;
 
-  const Icon = getIcon(data.icon);
+  const Icon = getIcon(objectMetadataItem.icon);
 
   return (
     <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLink to={`/settings/objects/${getObjectSlug(data)}`}>
+          <StyledObjectLink
+            to={`/settings/objects/${objectMetadataItem.namePlural}`}
+          >
             {Icon && <Icon size={theme.icon.size.md} />}
-            {capitalize(data.namePlural)}
+            {capitalize(objectMetadataItem.namePlural)}
           </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
         <SettingsDataModelObjectTypeTag
-          objectTypeLabel={getObjectTypeLabel(data)}
+          objectTypeLabel={getObjectTypeLabel(objectMetadataItem)}
         ></SettingsDataModelObjectTypeTag>
       </StyledHeader>
 
