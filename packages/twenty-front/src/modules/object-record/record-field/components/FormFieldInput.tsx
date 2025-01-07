@@ -1,5 +1,6 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
+import { FormCurrencyFieldInput } from '@/object-record/record-field/form-types/components/FormCurrencyFieldInput';
 import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
@@ -9,10 +10,10 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
+import { FormRichTextFieldInput } from '@/object-record/record-field/form-types/components/FormRichTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
-import { FormCurrencyFieldInput } from '@/object-record/record-field/form-types/components/FormCurrencyFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
@@ -27,6 +28,7 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
+import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
@@ -36,10 +38,10 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
@@ -162,6 +164,13 @@ export const FormFieldInput = ({
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FormFieldCurrencyValue | null}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldRichText(field) ? (
+    <FormRichTextFieldInput
       label={field.label}
       defaultValue={defaultValue as FormFieldCurrencyValue | null}
       onPersist={onPersist}
