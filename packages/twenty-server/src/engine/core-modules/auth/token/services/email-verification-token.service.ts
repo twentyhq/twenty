@@ -17,7 +17,6 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class EmailVerificationTokenService {
@@ -25,7 +24,6 @@ export class EmailVerificationTokenService {
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly environmentService: EnvironmentService,
-    private readonly userService: UserService,
   ) {}
 
   async generateToken(userId: string, email: string): Promise<AuthToken> {
@@ -34,27 +32,37 @@ export class EmailVerificationTokenService {
     );
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
+    const plainToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(plainToken)
+      .digest('hex');
+
     const verificationToken = this.appTokenRepository.create({
       userId,
       expiresAt,
       type: AppTokenType.EmailVerificationToken,
-      value: crypto.randomBytes(32).toString('hex'),
+      value: hashedToken,
       context: { email },
     });
 
     await this.appTokenRepository.save(verificationToken);
 
     return {
-      token: verificationToken.id,
+      token: plainToken,
       expiresAt,
     };
   }
 
   async validateEmailVerificationTokenOrThrow(emailVerificationToken: string) {
-    // TODO9288: Hash the token and check if the hashed token is in the app token table
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(emailVerificationToken)
+      .digest('hex');
+
     const appToken = await this.appTokenRepository.findOne({
       where: {
-        id: emailVerificationToken,
+        value: hashedToken,
         type: AppTokenType.EmailVerificationToken,
       },
       relations: ['user'],
