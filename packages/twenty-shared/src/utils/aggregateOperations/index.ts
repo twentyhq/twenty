@@ -1,3 +1,1 @@
-export * from './getColumnNameForAggregateOperation.util';
-export * from './getSubFieldForAggregateOperation.util';
-
+export * from './getSubFieldsForAggregateOperation.util';

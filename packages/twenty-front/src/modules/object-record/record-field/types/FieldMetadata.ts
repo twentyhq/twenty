@@ -232,6 +232,10 @@ export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
 };
+export type FormFieldCurrencyValue = {
+  currencyCode: CurrencyCode | null;
+  amountMicros: number | string | null;
+};
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {
   addressStreet1: string;

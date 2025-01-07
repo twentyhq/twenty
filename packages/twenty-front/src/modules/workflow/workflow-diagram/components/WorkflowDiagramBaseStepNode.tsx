@@ -20,7 +20,7 @@ const StyledStepNodeType = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm}
     ${({ theme }) => theme.border.radius.sm} 0 0;
 
-  color: ${({ theme }) => theme.color.gray50};
+  color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
@@ -53,7 +53,7 @@ const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue10};
+    background-color: ${({ theme }) => theme.accent.quaternary};
     border-color: ${({ theme }) => theme.color.blue};
   }
 `;

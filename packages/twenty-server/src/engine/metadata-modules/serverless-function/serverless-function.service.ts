@@ -13,15 +13,23 @@ import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.se
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
+import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
+import {
+  BuildServerlessFunctionBatchEvent,
+  BuildServerlessFunctionJob,
+} from 'src/engine/metadata-modules/serverless-function/jobs/build-serverless-function.job';
 import {
   ServerlessFunctionEntity,
   ServerlessFunctionSyncStatus,
@@ -31,14 +39,6 @@ import {
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
-import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  BuildServerlessFunctionBatchEvent,
-  BuildServerlessFunctionJob,
-} from 'src/engine/metadata-modules/serverless-function/jobs/build-serverless-function.job';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -346,6 +346,68 @@ export class ServerlessFunctionService {
     return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
     });
+  }
+
+  async copyOneServerlessFunction({
+    serverlessFunctionToCopyId,
+    serverlessFunctionToCopyVersion,
+    workspaceId,
+  }: {
+    serverlessFunctionToCopyId: string;
+    serverlessFunctionToCopyVersion: string;
+    workspaceId: string;
+  }) {
+    const serverlessFunctionToCopy =
+      await this.serverlessFunctionRepository.findOneBy({
+        workspaceId,
+        id: serverlessFunctionToCopyId,
+        latestVersion: serverlessFunctionToCopyVersion,
+      });
+
+    if (!serverlessFunctionToCopy) {
+      throw new ServerlessFunctionException(
+        'Function does not exist',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
+      {
+        name: serverlessFunctionToCopy?.name,
+        description: serverlessFunctionToCopy?.description,
+        workspaceId,
+        layerVersion: LAST_LAYER_VERSION,
+      },
+    );
+
+    const copiedServerlessFunction =
+      await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
+
+    const serverlessFunctionToCopyFileFolder = getServerlessFolder({
+      serverlessFunction: serverlessFunctionToCopy,
+      version: 'latest',
+    });
+    const copiedServerlessFunctionFileFolder = getServerlessFolder({
+      serverlessFunction: copiedServerlessFunction,
+      version: 'draft',
+    });
+
+    await this.fileStorageService.copy({
+      from: {
+        folderPath: serverlessFunctionToCopyFileFolder,
+      },
+      to: {
+        folderPath: copiedServerlessFunctionFileFolder,
+      },
+    });
+
+    await this.buildServerlessFunction({
+      serverlessFunctionId: copiedServerlessFunction.id,
+      serverlessFunctionVersion: 'draft',
+      workspaceId,
+    });
+
+    return copiedServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {

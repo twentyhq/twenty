@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Injecting runtime environment variables into index.html..."
 

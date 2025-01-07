@@ -7,7 +7,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
 
@@ -35,7 +35,7 @@ const renderHooks = (
   act(() => {
     result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
     result.current.setCurrentWorkspace({
-      ...mockDefaultWorkspace,
+      ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
         ? { id: v4(), status: SubscriptionStatus.Active }
         : undefined,
