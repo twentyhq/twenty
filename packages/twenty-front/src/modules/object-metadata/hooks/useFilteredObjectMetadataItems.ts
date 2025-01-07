@@ -38,6 +38,12 @@ export const useFilteredObjectMetadataItems = () => {
         getObjectSlug(activeObjectMetadataItem) === slug,
     );
 
+  const findActiveObjectMetadataItemByNamePlural = (namePlural: string) =>
+    activeObjectMetadataItems.find(
+      (activeObjectMetadataItem) =>
+        activeObjectMetadataItem.namePlural === namePlural,
+    );
+
   const findObjectMetadataItemById = (id: string) =>
     objectMetadataItems.find(
       (objectMetadataItem) => objectMetadataItem.id === id,
@@ -53,6 +59,7 @@ export const useFilteredObjectMetadataItems = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
+    findActiveObjectMetadataItemByNamePlural,
     inactiveObjectMetadataItems,
     objectMetadataItems,
     findObjectMetadataItemBySlug,

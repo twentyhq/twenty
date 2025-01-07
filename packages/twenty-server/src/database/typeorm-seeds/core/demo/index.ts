@@ -21,7 +21,7 @@ export const seedCoreSchema = async (
   const schemaName = 'core';
 
   await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
-  await seedUsers(workspaceDataSource, schemaName, workspaceId);
+  await seedUsers(workspaceDataSource, schemaName);
   await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
 };
 

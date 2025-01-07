@@ -13,6 +13,7 @@ import {
   WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   applyEdgeChanges,
@@ -29,7 +30,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { GRAY_SCALE, isDefined, THEME_COMMON } from 'twenty-ui';
+import { isDefined, THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -87,6 +88,8 @@ export const WorkflowDiagramCanvasBase = ({
   >;
   children?: React.ReactNode;
 }) => {
+  const theme = useTheme();
+
   const reactflow = useReactFlow();
   const setWorkflowReactFlowRefState = useSetRecoilState(
     workflowReactFlowRefState,
@@ -219,7 +222,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesDraggable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
-        <Background color={GRAY_SCALE.gray25} size={2} />
+        <Background color={theme.border.color.medium} size={2} />
 
         {children}
       </ReactFlow>

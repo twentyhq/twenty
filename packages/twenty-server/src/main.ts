@@ -80,7 +80,7 @@ const bootstrap = async () => {
     }),
   );
 
-  // Create the env-config.js of the front at runtime
+  // Inject the server url in the frontend page
   generateFrontConfig();
 
   // Enable session - Today it's used only for SSO

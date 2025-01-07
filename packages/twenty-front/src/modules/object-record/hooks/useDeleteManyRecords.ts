@@ -14,10 +14,10 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { sleep } from '~/utils/sleep';
-import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteManyRecordProps = {
   objectNameSingular: string;

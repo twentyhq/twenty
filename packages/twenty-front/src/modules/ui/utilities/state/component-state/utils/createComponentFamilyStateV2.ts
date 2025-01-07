@@ -2,7 +2,14 @@ import { ComponentFamilyStateKeyV2 } from '@/ui/utilities/state/component-state/
 import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateV2';
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { AtomEffect, atomFamily, SerializableParam } from 'recoil';
+import {
+  AtomEffect,
+  atomFamily,
+  Loadable,
+  RecoilValue,
+  SerializableParam,
+  WrappedValue,
+} from 'recoil';
 
 import { isDefined } from 'twenty-ui';
 
@@ -11,7 +18,16 @@ type CreateComponentFamilyStateArgs<
   FamilyKey extends SerializableParam,
 > = {
   key: string;
-  defaultValue: ValueType;
+  defaultValue:
+    | ValueType
+    | ((
+        param: ComponentFamilyStateKeyV2<FamilyKey>,
+      ) =>
+        | ValueType
+        | RecoilValue<ValueType>
+        | Promise<ValueType>
+        | Loadable<ValueType>
+        | WrappedValue<ValueType>);
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
   effects?:
     | AtomEffect<ValueType>[]

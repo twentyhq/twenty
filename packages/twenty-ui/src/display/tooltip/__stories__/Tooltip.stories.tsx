@@ -25,7 +25,7 @@ export const Default: Story = {
     place: TooltipPosition.Bottom,
     delay: TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
-    isOpen: true,
+    hidden: false,
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
@@ -34,7 +34,7 @@ export const Default: Story = {
     className,
     content,
     delay,
-    isOpen,
+    hidden,
     noArrow,
     offset,
     place,
@@ -51,7 +51,7 @@ export const Default: Story = {
           className,
           content,
           delay,
-          isOpen,
+          hidden,
           noArrow,
           offset,
           place,
@@ -68,7 +68,7 @@ export const Hoverable: Story = {
     place: TooltipPosition.Bottom,
     delay: TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
-    isOpen: true,
+    hidden: false,
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
@@ -103,7 +103,7 @@ export const Hoverable: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Tooltip> = {
-  args: { isOpen: true, content: 'Tooltip Test' },
+  args: { hidden: false, content: 'Tooltip Test' },
   play: async ({ canvasElement }) => {
     Object.values(TooltipPosition).forEach((position) => {
       const element = canvasElement.querySelector(
