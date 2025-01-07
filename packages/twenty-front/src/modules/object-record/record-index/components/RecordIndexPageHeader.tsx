@@ -36,8 +36,8 @@ export const RecordIndexPageHeader = () => {
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const isObjectMetadataItemReadOnly =
@@ -45,7 +45,7 @@ export const RecordIndexPageHeader = () => {
     isObjectMetadataReadOnly(objectMetadataItem);
 
   const shouldDisplayAddButton =
-    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
     !isObjectMetadataItemReadOnly;
 
   const isTable = recordIndexViewType === ViewType.Table;
@@ -65,7 +65,7 @@ export const RecordIndexPageHeader = () => {
           <RecordIndexPageKanbanAddButton />
         ))}
 
-      {isPageHeaderV2Enabled && (
+      {isCommandMenuV2Enabled && (
         <>
           <RecordIndexActionMenu indexId={recordIndexId} />
           <PageHeaderOpenCommandMenuButton />
