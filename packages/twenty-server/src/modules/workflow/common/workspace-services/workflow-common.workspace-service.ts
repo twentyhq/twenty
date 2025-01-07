@@ -121,10 +121,11 @@ export class WorkflowCommonWorkspaceService {
       workflowVersions.map((workflowVersion) => {
         workflowVersion.steps?.map(async (step) => {
           if (step.type === WorkflowActionType.CODE) {
-            await this.serverlessFunctionService.deleteOneServerlessFunction(
-              step.settings.input.serverlessFunctionId,
+            await this.serverlessFunctionService.deleteOneServerlessFunction({
+              id: step.settings.input.serverlessFunctionId,
               workspaceId,
-            );
+              permanentlyDelete: false,
+            });
           }
         });
       }),
