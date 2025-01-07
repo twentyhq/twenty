@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import bcrypt from 'bcrypt';
 import { expect, jest } from '@jest/globals';
+import bcrypt from 'bcrypt';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuthService } from './auth.service';
 
@@ -28,6 +28,8 @@ const userWorkspaceServiceCheckUserWorkspaceExistsMock = jest.fn();
 const workspaceInvitationGetOneWorkspaceInvitationMock = jest.fn();
 const workspaceInvitationValidateInvitationMock = jest.fn();
 const userWorkspaceAddUserToWorkspaceMock = jest.fn();
+
+const environmentServiceGetMock = jest.fn();
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -56,7 +58,9 @@ describe('AuthService', () => {
         },
         {
           provide: EnvironmentService,
-          useValue: {},
+          useValue: {
+            get: environmentServiceGetMock,
+          },
         },
         {
           provide: DomainManagerService,
@@ -98,6 +102,10 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+  });
+
+  beforeEach(() => {
+    environmentServiceGetMock.mockReturnValue(false);
   });
 
   it('should be defined', async () => {
