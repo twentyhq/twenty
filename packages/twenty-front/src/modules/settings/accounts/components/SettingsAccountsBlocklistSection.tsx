@@ -7,10 +7,16 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
-import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { SettingAccountsBlocklistContainer } from '@/settings/accounts/components/SettingAccountsBlocklistContainer';
+import { BlocklistContext } from '@/settings/accounts/contexts/BlocklistContext';
+import { useState } from 'react';
+import { OptionalString } from '~/types/OptionalString';
 
 export const SettingsAccountsBlocklistSection = () => {
+  const [savedContactIdBeingUpdated, setSavedContactIdBeingUpdated] =
+    useState<OptionalString>(null);
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
@@ -26,14 +32,30 @@ export const SettingsAccountsBlocklistSection = () => {
     objectNameSingular: CoreObjectNameSingular.Blocklist,
   });
 
+  const { updateOneRecord: updateBlocklistEmail } =
+    useUpdateOneRecord<BlocklistItem>({
+      objectNameSingular: CoreObjectNameSingular.Blocklist,
+    });
+
   const handleBlockedEmailRemove = (id: string) => {
     deleteBlocklistItem(id);
   };
 
-  const updateBlockedEmailList = (handle: string) => {
+  const addNewBlockedEmail = (contact: BlocklistItem) => {
     createBlocklistItem({
-      handle,
+      levels: contact.levels,
+      handle: contact.handle,
       workspaceMemberId: currentWorkspaceMember?.id,
+    });
+  };
+
+  const updateBlockedEmail = (contact: BlocklistItem) => {
+    updateBlocklistEmail({
+      idToUpdate: contact.id,
+      updateOneRecordInput: {
+        levels: contact.levels,
+        handle: contact.handle,
+      },
     });
   };
 
@@ -43,14 +65,18 @@ export const SettingsAccountsBlocklistSection = () => {
         title="Blocklist"
         description="Exclude the following people and domains from my email sync"
       />
-      <SettingsAccountsBlocklistInput
-        blockedEmailOrDomainList={blocklist.map((item) => item.handle)}
-        updateBlockedEmailList={updateBlockedEmailList}
-      />
-      <SettingsAccountsBlocklistTable
-        blocklist={blocklist}
-        handleBlockedEmailRemove={handleBlockedEmailRemove}
-      />
+      <BlocklistContext.Provider
+        value={{
+          blocklist,
+          savedContactIdBeingUpdated,
+          setSavedContactIdBeingUpdated,
+          handleBlockedEmailRemove: () => {},
+          updateBlockedEmail: () => {},
+          addNewBlockedEmail: () => {},
+        }}
+      >
+        <SettingAccountsBlocklistContainer />
+      </BlocklistContext.Provider>
     </Section>
   );
 };
