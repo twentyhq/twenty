@@ -15,7 +15,6 @@ import { Keys } from 'react-hotkeys-hook';
 import { useDropdown } from '../hooks/useDropdown';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -150,7 +149,6 @@ export const Dropdown = ({
           />
         </>
       </DropdownScope>
-      <DropdownUnmountEffect dropdownId={dropdownId} />
     </DropdownComponentInstanceContext.Provider>
   );
 };
