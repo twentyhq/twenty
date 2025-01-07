@@ -73,23 +73,29 @@ export class DomainManagerService {
 
   buildWorkspaceURL({
     subdomain,
+    hostname,
     pathname,
     searchParams,
   }: {
     subdomain?: string;
+    hostname?: string;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getBaseUrl();
+    const url = hostname ? new URL(hostname) : this.getBaseUrl();
 
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      !subdomain
+      !subdomain &&
+      !hostname
     ) {
-      throw new Error('subdomain is required when multiworkspace is enable');
+      throw new Error(
+        'subdomain or hostname is required when multiworkspace is enable',
+      );
     }
 
     if (
+      !hostname &&
       subdomain &&
       subdomain.length > 0 &&
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
@@ -133,33 +139,23 @@ export class DomainManagerService {
     };
   };
 
-  async getWorkspaceBySubdomainOrHostnameOrDefaultWorkspace({
-    subdomain,
-    hostname,
-  }: {
-    subdomain?: string;
-    hostname?: string;
-  }) {
-    return subdomain
-      ? await this.workspaceRepository.findOne({
-          where: { subdomain },
-        })
-      : await this.getDefaultWorkspace();
-  }
-
   isDefaultSubdomain(subdomain: string) {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl({
-    errorMessage,
-    subdomain,
-  }: {
-    errorMessage: string;
-    subdomain?: string;
-  }) {
-    const url = this.buildWorkspaceURL({
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    {
       subdomain,
+      hostname,
+    }: {
+      subdomain?: string;
+      hostname?: string;
+    },
+  ) {
+    const url = this.buildWorkspaceURL({
+      subdomain: subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      hostname,
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -219,10 +215,12 @@ export class DomainManagerService {
       ? { hostname }
       : { subdomain, hostname: IsNull() };
 
-    return await this.workspaceRepository.findOne({
-      where,
-      relations: ['workspaceSSOIdentityProviders'],
-    });
+    return (
+      (await this.workspaceRepository.findOne({
+        where,
+        relations: ['workspaceSSOIdentityProviders'],
+      })) ?? undefined
+    );
   }
 
   private extractSubdomain(params?: { email?: string; displayName?: string }) {

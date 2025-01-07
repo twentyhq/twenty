@@ -44,8 +44,7 @@ export type SignInUpServiceInput = {
   password?: string;
   firstName?: string | null;
   lastName?: string | null;
-  workspaceInviteHash?: string;
-  workspacePersonalInviteToken?: string;
+  invitation?: AppToken;
   picture?: string | null;
   fromSSO: boolean;
   workspace?: Workspace;
@@ -72,9 +71,8 @@ export class SignInUpService {
 
   async signInUp({
     email,
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
     workspace,
+    invitation,
     password,
     firstName,
     lastName,
@@ -123,19 +121,18 @@ export class SignInUpService {
       }
     }
 
-    const signInUpWithInvitationResult = await this.signInUpWithInvitation({
-      email,
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-      workspace,
-      fromSSO,
-      firstName,
-      lastName,
-      picture,
-      authProvider,
-      passwordHash,
-      existingUser,
-    });
+    const signInUpWithInvitationResult = invitation
+      ? await this.signInUpWithInvitation({
+          email,
+          invitation,
+          firstName,
+          lastName,
+          picture,
+          authProvider,
+          passwordHash,
+          existingUser,
+        })
+      : undefined;
 
     if (isDefined(signInUpWithInvitationResult)) {
       return signInUpWithInvitationResult;
@@ -151,6 +148,14 @@ export class SignInUpService {
       });
     }
 
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
     return await this.validateSignIn({
       user: existingUser,
       workspace,
@@ -160,46 +165,28 @@ export class SignInUpService {
 
   private async signInUpWithInvitation({
     email,
-    workspace,
     invitation,
     firstName,
     lastName,
     picture,
-    fromSSO,
     authProvider,
     passwordHash,
     existingUser,
   }: {
     email: string;
-    invitation?: AppToken;
-    workspace?: Workspace;
+    invitation: AppToken;
     firstName: string;
     lastName: string;
     picture?: string | null;
     authProvider?: WorkspaceAuthProvider;
     passwordHash?: string;
     existingUser: User | null;
-    fromSSO: boolean;
   }) {
-    const maybeInvitation =
-      fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
-        ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
-            {
-              subdomain: targetWorkspaceSubdomain,
-              email,
-            },
-          )
-        : undefined;
-
     const invitationValidation =
-      workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
-        ? await this.workspaceInvitationService.validateInvitation({
-            workspacePersonalInviteToken:
-              workspacePersonalInviteToken ?? maybeInvitation?.value,
-            workspaceInviteHash,
-            email,
-          })
-        : null;
+      await this.workspaceInvitationService.validateInvitation({
+        workspacePersonalInviteToken: invitation.value,
+        email,
+      });
 
     if (
       invitationValidation?.isValid === true &&

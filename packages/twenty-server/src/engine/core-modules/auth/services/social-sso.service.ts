@@ -34,6 +34,10 @@ export class SocialSsoService {
       return 'isMicrosoftAuthEnabled';
     }
 
+    if (authProvider === 'password') {
+      return 'isPasswordAuthEnabled';
+    }
+
     throw new Error(`${authProvider} is not a valid auth provider.`);
   }
 
@@ -48,22 +52,21 @@ export class SocialSsoService {
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
       new URL(this.domainManagerService.getBaseUrl()).origin === origin
     ) {
-      const workspaceWithGoogleAuthActive =
-        await this.workspaceRepository.findOne({
-          where: {
-            [this.getAuthProviderColumnNameByProvider(authProvider)]: true,
-            workspaceUsers: {
-              user: {
-                email,
-              },
+      // Multi-workspace mode but on non workspace url.
+      // so get the first workspace with the current auth method enable
+      const workspace = await this.workspaceRepository.findOne({
+        where: {
+          [this.getAuthProviderColumnNameByProvider(authProvider)]: true,
+          workspaceUsers: {
+            user: {
+              email,
             },
           },
-          relations: ['workspaceUsers', 'workspaceUsers.user'],
-        });
+        },
+        relations: ['workspaceUsers', 'workspaceUsers.user'],
+      });
 
-      if (workspaceWithGoogleAuthActive) {
-        return workspaceWithGoogleAuthActive;
-      }
+      return workspace ?? undefined;
     }
 
     return await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -74,8 +77,8 @@ export class SocialSsoService {
   async findOneInvitation(params: {
     workspaceId: string;
     email: string;
-    inviteHash: string;
-    personalInviteToken: string;
+    inviteHash?: string;
+    personalInviteToken?: string;
   }) {
     const qr = this.appTokenRepository.createQueryBuilder('appToken');
 
@@ -104,6 +107,6 @@ export class SocialSsoService {
       });
     }
 
-    return await qr.getOne();
+    return (await qr.getOne()) ?? undefined;
   }
 }

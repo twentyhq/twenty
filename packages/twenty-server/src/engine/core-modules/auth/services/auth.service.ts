@@ -152,9 +152,8 @@ export class AuthService {
   async signInUp({
     email,
     password,
-    workspaceInviteHash,
-    workspacePersonalInviteToken,
-    targetWorkspaceSubdomain,
+    invitation,
+    workspace,
     firstName,
     lastName,
     picture,
@@ -165,11 +164,10 @@ export class AuthService {
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string;
-    workspacePersonalInviteToken?: string;
+    invitation?: AppToken;
     picture?: string | null;
     fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
+    workspace?: Workspace;
     authProvider?: WorkspaceAuthProvider;
     billingCheckoutSessionState?: string;
   }) {
@@ -178,9 +176,8 @@ export class AuthService {
       password,
       firstName,
       lastName,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain,
+      invitation,
+      workspace,
       picture,
       fromSSO,
       authProvider,
@@ -414,12 +411,19 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(
-    loginToken: string,
-    subdomain?: string,
-    billingCheckoutSessionState?: string,
-  ) {
+  computeRedirectURI({
+    loginToken,
+    subdomain,
+    hostname,
+    billingCheckoutSessionState,
+  }: {
+    loginToken: string;
+    subdomain?: string;
+    hostname?: string;
+    billingCheckoutSessionState?: string;
+  }) {
     const url = this.domainManagerService.buildWorkspaceURL({
+      hostname,
       subdomain,
       pathname: '/verify',
       searchParams: {

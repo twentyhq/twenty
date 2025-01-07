@@ -40,3 +40,4 @@ dump.rdb
 /devenv.nix
 /flake.lock
 /flake.nix
+/qodana.yaml

@@ -21,7 +21,7 @@ export type MicrosoftRequest = Omit<
     picture: string | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
-    workspaceOrigin?: string;
+    workspaceOrigin: string;
     billingCheckoutSessionState?: string;
   };
 };

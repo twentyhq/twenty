@@ -18,7 +18,6 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 @Controller('auth/google')
@@ -28,7 +27,6 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
     private readonly socialSsoService: SocialSsoService,
   ) {}
 
@@ -43,33 +41,35 @@ export class GoogleAuthController {
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    try {
-      const {
-        firstName,
-        lastName,
-        email,
-        picture,
-        workspaceInviteHash,
-        workspacePersonalInviteToken,
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      workspaceOrigin,
+      billingCheckoutSessionState,
+    } = req.user;
+
+    const currentWorkspace =
+      await this.socialSsoService.findWorkspaceFromOriginAndAuthProvider(
         workspaceOrigin,
-        billingCheckoutSessionState,
-      } = req.user;
+        {
+          email,
+          authProvider: 'google',
+        },
+      );
 
-      const currentWorkspace =
-        await this.socialSsoService.findWorkspaceFromOriginAndAuthProvider(
-          workspaceOrigin,
-          {
+    try {
+      const invitation = currentWorkspace
+        ? await this.socialSsoService.findOneInvitation({
+            workspaceId: currentWorkspace.id,
             email,
-            authProvider: 'google',
-          },
-        );
-
-      const invitation = this.socialSsoService.findOneInvitation({
-        workspaceId: currentWorkspace.id,
-        email,
-        inviteHash: workspaceInviteHash,
-        personalInviteToken: workspacePersonalInviteToken,
-      });
+            inviteHash: workspaceInviteHash,
+            personalInviteToken: workspacePersonalInviteToken,
+          })
+        : undefined;
 
       const { user, workspace } = await this.authService.signInUp({
         email,
@@ -79,7 +79,6 @@ export class GoogleAuthController {
         invitation,
         workspace: currentWorkspace,
         fromSSO: true,
-        isAuthEnabled: 'google',
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -88,20 +87,19 @@ export class GoogleAuthController {
       );
 
       return res.redirect(
-        this.authService.computeRedirectURI(
-          loginToken.token,
-          workspace.subdomain,
+        this.authService.computeRedirectURI({
+          loginToken: loginToken.token,
+          subdomain: workspace.subdomain,
+          hostname: workspace.hostname,
           billingCheckoutSessionState,
-        ),
+        }),
       );
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl({
-            subdomain:
-              req.user.targetWorkspaceSubdomain ??
-              this.environmentService.get('DEFAULT_SUBDOMAIN'),
-            errorMessage: err.message,
+          this.domainManagerService.computeRedirectErrorUrl(err.message, {
+            hostname: currentWorkspace?.hostname,
+            subdomain: currentWorkspace?.subdomain,
           }),
         );
       }
