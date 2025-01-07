@@ -4,6 +4,7 @@ import {
   FieldEmailsValue,
   FieldLinksValue,
   FieldPhonesValue,
+  FieldRichTextValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
@@ -36,6 +37,7 @@ export const buildRecordFromImportedStructuredRow = (
     LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
     EMAILS: { primaryEmailLabel },
     PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
+    RICH_TEXT: { blocknoteLabel, markdownLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {
@@ -158,6 +160,25 @@ export const buildRecordFromImportedStructuredRow = (
             ),
             additionalPhones: null,
           } satisfies FieldPhonesValue;
+        }
+        break;
+      }
+      case FieldMetadataType.RichText: {
+        if (
+          isDefined(
+            importedStructuredRow[`${blocknoteLabel} (${field.name})`] ||
+              importedStructuredRow[`${markdownLabel} (${field.name})`],
+          )
+        ) {
+          // TODO: Convert back and forth from blocknote here
+          recordToBuild[field.name] = {
+            blocknote: castToString(
+              importedStructuredRow[`${blocknoteLabel} (${field.name})`],
+            ),
+            markdown: castToString(
+              importedStructuredRow[`${markdownLabel} (${field.name})`],
+            ),
+          } satisfies FieldRichTextValue;
         }
         break;
       }

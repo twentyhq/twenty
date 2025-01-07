@@ -5,6 +5,7 @@ import {
   FieldFullNameValue,
   FieldLinksValue,
   FieldPhonesValue,
+  FieldRichTextValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { CompositeFieldLabels } from '@/object-record/spreadsheet-import/types/CompositeFieldLabels';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -39,6 +40,10 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     primaryPhoneCountryCodeLabel: 'Phone country code',
     primaryPhoneNumberLabel: 'Phone number',
   } satisfies Partial<CompositeFieldLabels<FieldPhonesValue>>,
+  [FieldMetadataType.RichText]: {
+    blocknoteLabel: 'BlockNote',
+    markdownLabel: 'Markdown',
+  } satisfies Partial<CompositeFieldLabels<FieldRichTextValue>>,
   [FieldMetadataType.Actor]: {
     sourceLabel: 'Source',
   },
