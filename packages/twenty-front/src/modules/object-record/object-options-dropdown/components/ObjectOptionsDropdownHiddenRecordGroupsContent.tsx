@@ -54,7 +54,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const viewGroupSettingsUrl = getSettingsPagePath(
     SettingsPath.ObjectFieldEdit,
     {
-      objectSlug: objectNamePlural,
+      objectNamePlural,
       fieldSlug: recordGroupFieldMetadata?.name ?? '',
     },
   );

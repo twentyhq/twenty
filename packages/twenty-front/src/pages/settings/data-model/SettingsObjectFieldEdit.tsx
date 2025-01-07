@@ -47,11 +47,12 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { objectSlug = '', fieldSlug = '' } = useParams();
+  const { objectNamePlural = '', fieldSlug = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const objectMetadataItem = findObjectMetadataItemByNamePlural(objectSlug);
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();
@@ -126,7 +127,7 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        navigate(`/settings/objects/${objectSlug}`);
+        navigate(`/settings/objects/${objectNamePlural}`);
 
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
@@ -143,12 +144,12 @@ export const SettingsObjectFieldEdit = () => {
 
   const handleDeactivate = async () => {
     await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigate(`/settings/objects/${objectSlug}`);
+    navigate(`/settings/objects/${objectNamePlural}`);
   };
 
   const handleActivate = async () => {
     await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigate(`/settings/objects/${objectSlug}`);
+    navigate(`/settings/objects/${objectNamePlural}`);
   };
 
   return (
@@ -168,7 +169,7 @@ export const SettingsObjectFieldEdit = () => {
             },
             {
               children: objectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectSlug}`,
+              href: `/settings/objects/${objectNamePlural}`,
             },
             {
               children: fieldMetadataItem.label,
@@ -178,7 +179,7 @@ export const SettingsObjectFieldEdit = () => {
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onCancel={() => navigate(`/settings/objects/${objectNamePlural}`)}
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }

@@ -13,8 +13,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsObjectFieldEdit,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/objects/:objectSlug/:fieldSlug',
-    routeParams: { ':objectSlug': 'companies', ':fieldSlug': 'name' },
+    routePath: '/settings/objects/:objectNamePlural/:fieldSlug',
+    routeParams: { ':objectNamePlural': 'companies', ':fieldSlug': 'name' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -30,7 +30,7 @@ export const StandardField: Story = {};
 export const CustomField: Story = {
   args: {
     routeParams: {
-      ':objectSlug': 'companies',
+      ':objectNamePlural': 'companies',
       ':fieldSlug': 'employees',
     },
   },

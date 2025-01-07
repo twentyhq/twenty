@@ -27,7 +27,7 @@ import styled from '@emotion/styled';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
-import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
+import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
@@ -56,7 +56,9 @@ const StyledFormSection = styled(Section)`
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
-  const setUpdatedObjectSlugState = useSetRecoilState(updatedObjectSlugState);
+  const setUpdatedObjectNamePluralState = useSetRecoilState(
+    updatedObjectNamePluralState,
+  );
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { lastVisitedObjectMetadataItemId } =
@@ -131,7 +133,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       const objectNamePluralForRedirection =
         updatePayload.namePlural ?? objectMetadataItem.namePlural;
 
-      setUpdatedObjectSlugState(objectNamePluralForRedirection);
+      setUpdatedObjectNamePluralState(objectNamePluralForRedirection);
 
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
