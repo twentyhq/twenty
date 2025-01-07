@@ -1,5 +1,5 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
 

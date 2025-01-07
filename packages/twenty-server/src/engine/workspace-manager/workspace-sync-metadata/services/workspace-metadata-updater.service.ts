@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize } from 'twenty-shared';
 import {
   EntityManager,
   EntityTarget,
@@ -29,7 +30,6 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspac
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
-import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {

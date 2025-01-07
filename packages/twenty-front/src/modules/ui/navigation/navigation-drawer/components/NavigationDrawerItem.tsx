@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import {
   IconComponent,
   MOBILE_VIEWPORT,
@@ -18,7 +19,6 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
