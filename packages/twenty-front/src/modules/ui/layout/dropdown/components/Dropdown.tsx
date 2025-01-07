@@ -17,11 +17,14 @@ import { useDropdown } from '../hooks/useDropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
+import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { flushSync } from 'react-dom';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { sleep } from '~/utils/sleep';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 const StyledDropdownFallbackAnchor = styled.div`
@@ -104,13 +107,25 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
 
-  const handleClickableComponentClick = (event: MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const handleClickableComponentClick = useRecoilCallback(
+    ({ set }) =>
+      async (event: MouseEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
 
-    toggleDropdown();
-    onClickOutside?.();
-  };
+        // TODO: refactor this when we have finished dropdown refactor with state and V1 + V2
+        set(
+          dropdownHotkeyComponentState({ scopeId: dropdownId }),
+          dropdownHotkeyScope,
+        );
+
+        await sleep(100);
+
+        toggleDropdown();
+        onClickOutside?.();
+      },
+    [dropdownId, dropdownHotkeyScope, onClickOutside, toggleDropdown],
+  );
 
   return (
     <DropdownComponentInstanceContext.Provider

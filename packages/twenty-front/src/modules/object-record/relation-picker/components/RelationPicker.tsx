@@ -9,6 +9,7 @@ import { SearchPickerInitialValueEffect } from '@/object-record/relation-picker/
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 
 export type RelationPickerProps = {
   selectedRecordId?: string;
@@ -29,7 +30,7 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
-  const recordPickerInstanceId = 'relation-picker';
+  const recordPickerInstanceId = RelationPickerHotkeyScope.RelationPicker;
 
   const handleRecordSelected = (
     selectedRecord: RecordForSelect | null | undefined,
