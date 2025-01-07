@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'src/types/FieldMetadataType';
-import { isCompositeFieldMetadataType } from 'src/utils/aggregateOperations/isCompositeFieldMetadataType.util';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const getSubfieldsForAggregateOperation = (
   fieldType: FieldMetadataType,

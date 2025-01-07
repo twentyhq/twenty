@@ -1,7 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { capitalize } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 type NameForAggregation = {
   [T in AGGREGATE_OPERATIONS]?: string;
