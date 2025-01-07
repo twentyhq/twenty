@@ -31,14 +31,14 @@ const draftWorkflowMock = {
   currentVersion: {
     ...baseWorkflowMock.currentVersion,
     status: 'DRAFT',
-    versions: [
-      {
-        __typename: 'WorkflowVersion',
-        id: 'currentVersionId',
-        status: 'DRAFT',
-      },
-    ],
   },
+  versions: [
+    {
+      __typename: 'WorkflowVersion',
+      id: 'currentVersionId',
+      status: 'DRAFT',
+    },
+  ],
 };
 
 const activeWorkflowMock = {
