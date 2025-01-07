@@ -36,7 +36,7 @@ export const StandardObject: Story = {
 
 export const CustomObject: Story = {
   args: {
-    routeParams: { ':objectNamePlural': 'my-customs' },
+    routeParams: { ':objectNamePlural': 'myCustoms' },
   },
 };
 
