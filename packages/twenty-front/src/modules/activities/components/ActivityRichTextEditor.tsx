@@ -161,10 +161,10 @@ export const ActivityRichTextEditor = ({
   const initialBody = useMemo(() => {
     if (
       isDefined(activity) &&
-      isNonEmptyString(activity.body) &&
-      activity?.body !== '{}'
+      isNonEmptyString(activity.body.blocknote) &&
+      activity?.body.blocknote !== '{}'
     ) {
-      return JSON.parse(activity.body);
+      return JSON.parse(activity.body.blocknote);
     }
   }, [activity]);
 

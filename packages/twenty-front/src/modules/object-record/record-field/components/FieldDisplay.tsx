@@ -8,6 +8,7 @@ import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/displ
 import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhonesFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
+import { RichTextDeprecatedFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextDeprecatedFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
@@ -19,6 +20,7 @@ import { isFieldPhones } from '@/object-record/record-field/types/guards/isField
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -89,6 +91,8 @@ export const FieldDisplay = () => {
   ) : isFieldRating(fieldDefinition) ? (
     <RatingFieldDisplay />
   ) : isFieldRichTextDeprecated(fieldDefinition) ? (
+    <RichTextDeprecatedFieldDisplay />
+  ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
     <ActorFieldDisplay />
