@@ -18,13 +18,13 @@ export class WorkflowDeleteOnePostQueryHook
   ) {}
 
   async execute(
-    _authContext: AuthContext,
+    authContext: AuthContext,
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
     this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
       payload.map((workflow) => workflow.id),
-      _authContext.workspace.id,
+      authContext.workspace.id,
     );
   }
 }

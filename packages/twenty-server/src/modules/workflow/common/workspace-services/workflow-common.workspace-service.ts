@@ -83,27 +83,25 @@ export class WorkflowCommonWorkspaceService {
         'workflowEventListener',
       );
 
-    Promise.all(
-      workflowIds.map((workflowId) => {
-        workflowEventListenerRepository.softDelete({
-          workflowId,
-        });
+    workflowIds.forEach((workflowId) => {
+      workflowEventListenerRepository.softDelete({
+        workflowId,
+      });
 
-        workflowRunRepository.softDelete({
-          workflowId,
-        });
+      workflowRunRepository.softDelete({
+        workflowId,
+      });
 
-        workflowVersionRepository.softDelete({
-          workflowId,
-        });
+      workflowVersionRepository.softDelete({
+        workflowId,
+      });
 
-        this.deleteServerlessFunctions(
-          workflowVersionRepository,
-          workflowId,
-          workspaceId,
-        );
-      }),
-    );
+      this.deleteServerlessFunctions(
+        workflowVersionRepository,
+        workflowId,
+        workspaceId,
+      );
+    });
   }
 
   private async deleteServerlessFunctions(
@@ -117,18 +115,16 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
-    Promise.all(
-      workflowVersions.map((workflowVersion) => {
-        workflowVersion.steps?.map(async (step) => {
-          if (step.type === WorkflowActionType.CODE) {
-            await this.serverlessFunctionService.deleteOneServerlessFunction({
-              id: step.settings.input.serverlessFunctionId,
-              workspaceId,
-              permanentlyDelete: false,
-            });
-          }
-        });
-      }),
-    );
+    workflowVersions.forEach((workflowVersion) => {
+      workflowVersion.steps?.forEach(async (step) => {
+        if (step.type === WorkflowActionType.CODE) {
+          await this.serverlessFunctionService.deleteOneServerlessFunction({
+            id: step.settings.input.serverlessFunctionId,
+            workspaceId,
+            isHardDeletion: false,
+          });
+        }
+      });
+    });
   }
 }
