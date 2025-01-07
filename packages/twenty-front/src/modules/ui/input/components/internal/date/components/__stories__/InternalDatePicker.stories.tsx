@@ -51,13 +51,13 @@ export const WithOpenMonthSelect: Story = {
       'October',
       'November',
       'December',
-    ].forEach((monthLabel) =>
-      expect(canvas.getByText(monthLabel)).toBeInTheDocument(),
+    ].forEach(async (monthLabel) =>
+      expect(await canvas.findByText(monthLabel)).toBeInTheDocument(),
     );
 
-    await userEvent.click(canvas.getByText('February'));
+    await userEvent.click(await canvas.findByText('February'));
 
-    expect(canvas.getByText('February')).toBeInTheDocument();
+    expect(await canvas.findByText('February')).toBeInTheDocument();
   },
 };
 
@@ -69,12 +69,12 @@ export const WithOpenYearSelect: Story = {
 
     await userEvent.click(yearSelect);
 
-    ['2024', '2025', '2026'].forEach((yearLabel) =>
-      expect(canvas.getByText(yearLabel)).toBeInTheDocument(),
+    ['2024', '2025', '2026'].forEach(async (yearLabel) =>
+      expect(await canvas.findByText(yearLabel)).toBeInTheDocument(),
     );
 
-    await userEvent.click(canvas.getByText('2024'));
+    await userEvent.click(await canvas.findByText('2024'));
 
-    expect(canvas.getByText('2024')).toBeInTheDocument();
+    expect(await canvas.findByText('2024')).toBeInTheDocument();
   },
 };
