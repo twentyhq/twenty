@@ -1,12 +1,12 @@
-import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
-import { AggregateOperationsOmittingCount } from '@/object-record/types/AggregateOperationsOmittingCount';
+import { FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldTypesAvailableForNonStandardAggregateOperation';
+import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const isFieldTypeValidForAggregateOperation = (
   fieldType: FieldMetadataType,
-  aggregateOperation: AggregateOperationsOmittingCount,
+  aggregateOperation: AggregateOperationsOmittingStandardOperations,
 ): boolean => {
-  return FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION[aggregateOperation].includes(
-    fieldType,
-  );
+  return FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION[
+    aggregateOperation
+  ].includes(fieldType);
 };

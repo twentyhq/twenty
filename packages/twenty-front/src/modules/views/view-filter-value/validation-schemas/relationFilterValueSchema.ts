@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export const relationFilterValueSchemaObject = z.object({
+  isCurrentWorkspaceMemberSelected: z.boolean().optional(),
+  selectedRecordIds: z.array(z.string()),
+});
+
 export const relationFilterValueSchema = z
   .string()
   .transform((value, ctx) => {
@@ -13,9 +18,4 @@ export const relationFilterValueSchema = z
       return z.NEVER;
     }
   })
-  .pipe(
-    z.object({
-      isCurrentWorkspaceMemberSelected: z.boolean(),
-      selectedRecordIds: z.array(z.string()),
-    }),
-  );
+  .pipe(relationFilterValueSchemaObject);

@@ -51,7 +51,6 @@ export const SpreadsheetImportStepper = ({
   const handleError = useCallback(
     (description: string) => {
       enqueueSnackBar(description, {
-        title: 'Error',
         variant: SnackBarVariant.Error,
       });
     },

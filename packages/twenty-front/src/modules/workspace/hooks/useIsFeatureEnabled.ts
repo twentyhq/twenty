@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { FeatureFlagKey } from '@/workspace/types/FeatureFlagKey';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useIsFeatureEnabled = (featureKey: FeatureFlagKey | null) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

@@ -46,6 +46,7 @@ type StepRunOutput = {
 
 export type WorkflowRunOutput = {
   steps: Record<string, StepRunOutput>;
+  error?: string;
 };
 
 @WorkspaceEntity({

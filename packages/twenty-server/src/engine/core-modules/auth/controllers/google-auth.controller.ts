@@ -9,6 +9,7 @@ import {
 
 import { Response } from 'express';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -16,9 +17,8 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 @Controller('auth/google')
@@ -52,6 +52,7 @@ export class GoogleAuthController {
         workspaceInviteHash,
         workspacePersonalInviteToken,
         workspaceOrigin,
+        billingCheckoutSessionState,
       } = req.user;
 
       const currentWorkspace =
@@ -90,6 +91,7 @@ export class GoogleAuthController {
         this.authService.computeRedirectURI(
           loginToken.token,
           workspace.subdomain,
+          billingCheckoutSessionState,
         ),
       );
     } catch (err) {

@@ -109,8 +109,8 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     onDropRejected: (fileRejections) => {
       setLoading(false);
       fileRejections.forEach((fileRejection) => {
-        enqueueSnackBar(fileRejection.errors[0].message, {
-          title: `${fileRejection.file.name} upload rejected`,
+        enqueueSnackBar(`${fileRejection.file.name} upload rejected`, {
+          detailedMessage: fileRejection.errors[0].message,
           variant: SnackBarVariant.Error,
         });
       });

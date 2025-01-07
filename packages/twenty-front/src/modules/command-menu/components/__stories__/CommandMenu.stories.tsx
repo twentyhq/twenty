@@ -10,7 +10,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
@@ -54,7 +54,7 @@ const meta: Meta<typeof CommandMenu> = {
         isCommandMenuOpenedState,
       );
 
-      setCurrentWorkspace(mockDefaultWorkspace);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
 

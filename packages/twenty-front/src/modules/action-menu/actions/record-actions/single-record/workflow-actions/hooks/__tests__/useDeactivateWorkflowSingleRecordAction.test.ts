@@ -104,10 +104,7 @@ describe('useDeactivateWorkflowSingleRecordAction', () => {
       () => deactivatedWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDeactivateWorkflowSingleRecordAction({
-          recordId: deactivatedWorkflowMock.id,
-        }),
+      () => useDeactivateWorkflowSingleRecordAction(),
       {
         wrapper: deactivatedWorkflowWrapper,
       },
@@ -121,10 +118,7 @@ describe('useDeactivateWorkflowSingleRecordAction', () => {
       () => activeWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDeactivateWorkflowSingleRecordAction({
-          recordId: activeWorkflowMock.id,
-        }),
+      () => useDeactivateWorkflowSingleRecordAction(),
       {
         wrapper: activeWorkflowWrapper,
       },
@@ -138,10 +132,7 @@ describe('useDeactivateWorkflowSingleRecordAction', () => {
       () => activeWorkflowMock,
     );
     const { result } = renderHook(
-      () =>
-        useDeactivateWorkflowSingleRecordAction({
-          recordId: activeWorkflowMock.id,
-        }),
+      () => useDeactivateWorkflowSingleRecordAction(),
       {
         wrapper: activeWorkflowWrapper,
       },

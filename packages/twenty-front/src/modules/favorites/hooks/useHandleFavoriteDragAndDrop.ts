@@ -1,6 +1,6 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
-import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,9 +15,20 @@ export const useHandleFavoriteDragAndDrop = () => {
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
-  const setActiveFavoriteFolderId = useSetRecoilState(
-    activeFavoriteFolderIdState,
+  const setOpenFavoriteFolderIds = useSetRecoilState(
+    openFavoriteFolderIdsState,
   );
+
+  const openDestinationFolder = (folderId: string | null) => {
+    if (!folderId) return;
+
+    setOpenFavoriteFolderIds((current) => {
+      if (!current.includes(folderId)) {
+        return [...current, folderId];
+      }
+      return current;
+    });
+  };
 
   const handleFavoriteDragAndDrop: OnDragEndResponder = (result) => {
     const { destination, source, draggableId } = result;
@@ -64,7 +75,7 @@ export const useHandleFavoriteDragAndDrop = () => {
         },
       });
 
-      setActiveFavoriteFolderId(destinationFolderId);
+      openDestinationFolder(destinationFolderId);
       return;
     }
 

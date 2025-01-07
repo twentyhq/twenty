@@ -50,7 +50,11 @@ export const RecordInlineCellEditMode = ({
       data-testid="inline-cell-edit-mode-container"
     >
       {createPortal(
-        <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
+        <OverlayContainer
+          ref={refs.setFloating}
+          style={floatingStyles}
+          borderRadius="sm"
+        >
           {children}
         </OverlayContainer>,
         document.body,

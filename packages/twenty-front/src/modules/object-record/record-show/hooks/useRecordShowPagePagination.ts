@@ -204,5 +204,6 @@ export const useRecordShowPagePagination = (
     navigateToIndexView,
     canNavigateToNextRecord,
     canNavigateToPreviousRecord,
+    objectMetadataItem,
   };
 };
