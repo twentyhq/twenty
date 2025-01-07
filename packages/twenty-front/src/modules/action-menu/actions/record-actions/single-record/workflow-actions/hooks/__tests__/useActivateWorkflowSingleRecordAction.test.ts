@@ -98,7 +98,13 @@ jest.mock('@/workflow/hooks/useActivateWorkflowVersion', () => ({
   }),
 }));
 
-const createWrapper = (workflow: any) =>
+const createWrapper = (workflow: {
+  __typename: string;
+  id: string;
+  currentVersion: {
+    id: string;
+  };
+}) =>
   getJestMetadataAndApolloMocksAndActionMenuWrapper({
     apolloMocks: [],
     componentInstanceId: '1',
