@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Injecting runtime environment variables into index.html..."
 
@@ -13,7 +13,7 @@ EOF
 )
 # Use sed to replace the config block in index.html
 # Using pattern space to match across multiple lines
-sed -i.bak '
+echo "$CONFIG_BLOCK" | sed -i.bak '
   /<!-- BEGIN: Twenty Config -->/,/<!-- END: Twenty Config -->/{
     /<!-- BEGIN: Twenty Config -->/!{
       /<!-- END: Twenty Config -->/!d
@@ -21,5 +21,5 @@ sed -i.bak '
     /<!-- BEGIN: Twenty Config -->/r /dev/stdin
     /<!-- END: Twenty Config -->/d
   }
-' build/index.html <<< "$CONFIG_BLOCK"
+' build/index.html
 rm -f build/index.html.bak
