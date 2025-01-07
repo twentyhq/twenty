@@ -35,7 +35,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useFilteredObjectMetadataItems', () => {
-  it('should findActiveObjectMetadataItemBySlug', async () => {
+  it('should findActiveObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
@@ -56,7 +56,7 @@ describe('useFilteredObjectMetadataItems', () => {
     });
   });
 
-  it('should findObjectMetadataItemBySlug', async () => {
+  it('should findObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
