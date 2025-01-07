@@ -170,7 +170,8 @@ export const buildRecordFromImportedStructuredRow = (
               importedStructuredRow[`${markdownLabel} (${field.name})`],
           )
         ) {
-          // TODO: Convert back and forth from blocknote here
+          // TODO: Convert back and forth from BlockNote.
+          // Has to happen server-side, because API shouldn't require both fields? How / where?
           recordToBuild[field.name] = {
             blocknote: castToString(
               importedStructuredRow[`${blocknoteLabel} (${field.name})`],
