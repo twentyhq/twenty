@@ -16,7 +16,6 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { castAppTokenToEmailVerification } from 'src/engine/core-modules/email-verification/utils/cast-app-token-to-email-verification.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
@@ -51,10 +50,11 @@ export class EmailVerificationTokenService {
     };
   }
 
-  async verifyToken(token: string) {
+  async validateEmailVerificationTokenOrThrow(emailVerificationToken: string) {
+    // TODO9288: Hash the token and check if the hashed token is in the app token table
     const appToken = await this.appTokenRepository.findOne({
       where: {
-        id: token,
+        id: emailVerificationToken,
         type: AppTokenType.EmailVerificationToken,
       },
       relations: ['user'],
@@ -62,20 +62,34 @@ export class EmailVerificationTokenService {
 
     if (!appToken) {
       throw new EmailVerificationException(
-        'Invalid token',
+        'Invalid email verification token',
         EmailVerificationExceptionCode.INVALID_TOKEN,
       );
     }
 
-    const { userId } = castAppTokenToEmailVerification(appToken);
+    if (appToken.type !== AppTokenType.EmailVerificationToken) {
+      throw new EmailVerificationException(
+        'Invalid email verification token type',
+        EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE,
+      );
+    }
 
-    const user = await this.userService.markEmailAsVerified(userId);
+    if (new Date() > appToken.expiresAt) {
+      throw new EmailVerificationException(
+        'Email verification token expired',
+        EmailVerificationExceptionCode.TOKEN_EXPIRED,
+      );
+    }
+
+    if (!appToken.context?.email) {
+      throw new EmailVerificationException(
+        'Email missing in email verification token context',
+        EmailVerificationExceptionCode.EMAIL_MISSING,
+      );
+    }
 
     await this.appTokenRepository.remove(appToken);
 
-    return {
-      success: true,
-      email: user.email,
-    };
+    return appToken.user;
   }
 }

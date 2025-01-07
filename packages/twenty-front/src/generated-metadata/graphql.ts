@@ -607,6 +607,7 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
@@ -636,7 +637,6 @@ export type Mutation = {
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
   verify: AuthTokens;
-  verifyEmail: VerifyEmailOutput;
 };
 
 
@@ -803,6 +803,12 @@ export type MutationGetAuthorizationUrlArgs = {
 };
 
 
+export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  emailVerificationToken: Scalars['String']['input'];
+};
+
+
 export type MutationImpersonateArgs = {
   userId: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
@@ -946,11 +952,6 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationVerifyArgs = {
   loginToken: Scalars['String']['input'];
-};
-
-
-export type MutationVerifyEmailArgs = {
-  emailVerificationToken: Scalars['String']['input'];
 };
 
 export type ObjectConnection = {
@@ -1719,12 +1720,6 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String']['output'];
   id: Scalars['String']['output'];
-};
-
-export type VerifyEmailOutput = {
-  __typename?: 'VerifyEmailOutput';
-  email: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
 };
 
 export type WorkflowAction = {

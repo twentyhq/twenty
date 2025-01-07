@@ -3,12 +3,13 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
-  const { verifyEmail } = useAuth();
+  const { getLoginTokenFromEmailVerificationToken } = useAuth();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -18,32 +19,32 @@ export const VerifyEmailEffect = () => {
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
   const navigate = useNavigate();
+  const { readCaptchaToken } = useReadCaptchaToken();
 
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        enqueueSnackBar(
-          `Invalid email verification link. No ${!email ? 'email' : 'token'} provided`,
-          {
-            variant: SnackBarVariant.Error,
-          },
-        );
+        enqueueSnackBar(`Invalid email verification link.`, {
+          variant: SnackBarVariant.Error,
+        });
         return navigate(AppPath.SignInUp);
       }
 
-      try {
-        await verifyEmail(emailVerificationToken);
+      const captchaToken = await readCaptchaToken();
 
-        enqueueSnackBar(
-          'Email verification successful. Please sign in to continue.',
-          {
-            variant: SnackBarVariant.Success,
-          },
+      try {
+        const { loginToken } = await getLoginTokenFromEmailVerificationToken(
+          emailVerificationToken,
+          captchaToken,
         );
 
-        navigate(`${AppPath.SignInUp}?email=${encodeURIComponent(email)}`);
+        enqueueSnackBar('Email verified.', {
+          variant: SnackBarVariant.Success,
+        });
+
+        navigate(`${AppPath.Verify}?loginToken=${loginToken.token}`);
       } catch (error) {
-        enqueueSnackBar('Email verification failed. Please try again.', {
+        enqueueSnackBar('Email verification failed.', {
           variant: SnackBarVariant.Error,
         });
         setIsError(true);
@@ -60,5 +61,5 @@ export const VerifyEmailEffect = () => {
     return <EmailVerificationSent email={email} isError={true} />;
   }
 
-  return null;
+  return <></>;
 };

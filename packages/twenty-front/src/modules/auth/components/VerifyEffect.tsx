@@ -13,7 +13,6 @@ import { isDefined } from 'twenty-ui';
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
-  const email = searchParams.get('email');
   const errorMessage = searchParams.get('errorMessage');
 
   const { enqueueSnackBar } = useSnackBar();
@@ -38,7 +37,7 @@ export const VerifyEffect = () => {
         navigate(AppPath.SignInUp);
       } else {
         setIsAppWaitingForFreshObjectMetadata(true);
-        await verify(loginToken, email ?? '');
+        await verify(loginToken);
       }
     };
 

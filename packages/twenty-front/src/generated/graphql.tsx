@@ -526,6 +526,7 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
@@ -551,7 +552,6 @@ export type Mutation = {
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
   verify: AuthTokens;
-  verifyEmail: VerifyEmailOutput;
 };
 
 
@@ -688,6 +688,12 @@ export type MutationGetAuthorizationUrlArgs = {
 };
 
 
+export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  emailVerificationToken: Scalars['String'];
+};
+
+
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
@@ -811,11 +817,6 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationVerifyArgs = {
   loginToken: Scalars['String'];
-};
-
-
-export type MutationVerifyEmailArgs = {
-  emailVerificationToken: Scalars['String'];
 };
 
 export type ObjectConnection = {
@@ -1491,12 +1492,6 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
-export type VerifyEmailOutput = {
-  __typename?: 'VerifyEmailOutput';
-  email: Scalars['String'];
-  success: Scalars['Boolean'];
-};
-
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID'];
@@ -1992,6 +1987,14 @@ export type GetAuthorizationUrlMutationVariables = Exact<{
 
 export type GetAuthorizationUrlMutation = { __typename?: 'Mutation', getAuthorizationUrl: { __typename?: 'GetAuthorizationUrlOutput', id: string, type: string, authorizationURL: string } };
 
+export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
+  emailVerificationToken: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetLoginTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getLoginTokenFromEmailVerificationToken: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['String'];
   workspaceId: Scalars['String'];
@@ -2046,13 +2049,6 @@ export type VerifyMutationVariables = Exact<{
 
 
 export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
-
-export type VerifyEmailMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String'];
-}>;
-
-
-export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: { __typename?: 'VerifyEmailOutput', success: boolean, email: string } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -2956,6 +2952,45 @@ export function useGetAuthorizationUrlMutation(baseOptions?: Apollo.MutationHook
 export type GetAuthorizationUrlMutationHookResult = ReturnType<typeof useGetAuthorizationUrlMutation>;
 export type GetAuthorizationUrlMutationResult = Apollo.MutationResult<GetAuthorizationUrlMutation>;
 export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
+    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
+  getLoginTokenFromEmailVerificationToken(
+    emailVerificationToken: $emailVerificationToken
+    captchaToken: $captchaToken
+  ) {
+    loginToken {
+      ...AuthTokenFragment
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
+
+/**
+ * __useGetLoginTokenFromEmailVerificationTokenMutation__
+ *
+ * To run a mutation, you first call `useGetLoginTokenFromEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetLoginTokenFromEmailVerificationTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getLoginTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetLoginTokenFromEmailVerificationTokenMutation({
+ *   variables: {
+ *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useGetLoginTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>(GetLoginTokenFromEmailVerificationTokenDocument, options);
+      }
+export type GetLoginTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetLoginTokenFromEmailVerificationTokenMutation>;
+export type GetLoginTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetLoginTokenFromEmailVerificationTokenMutation>;
+export type GetLoginTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: String!, $workspaceId: String!) {
   impersonate(userId: $userId, workspaceId: $workspaceId) {
@@ -3232,40 +3267,6 @@ export function useVerifyMutation(baseOptions?: Apollo.MutationHookOptions<Verif
 export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
 export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
-export const VerifyEmailDocument = gql`
-    mutation VerifyEmail($emailVerificationToken: String!) {
-  verifyEmail(emailVerificationToken: $emailVerificationToken) {
-    success
-    email
-  }
-}
-    `;
-export type VerifyEmailMutationFn = Apollo.MutationFunction<VerifyEmailMutation, VerifyEmailMutationVariables>;
-
-/**
- * __useVerifyEmailMutation__
- *
- * To run a mutation, you first call `useVerifyEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useVerifyEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [verifyEmailMutation, { data, loading, error }] = useVerifyEmailMutation({
- *   variables: {
- *      emailVerificationToken: // value for 'emailVerificationToken'
- *   },
- * });
- */
-export function useVerifyEmailMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailMutation, VerifyEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<VerifyEmailMutation, VerifyEmailMutationVariables>(VerifyEmailDocument, options);
-      }
-export type VerifyEmailMutationHookResult = ReturnType<typeof useVerifyEmailMutation>;
-export type VerifyEmailMutationResult = Apollo.MutationResult<VerifyEmailMutation>;
-export type VerifyEmailMutationOptions = Apollo.BaseMutationOptions<VerifyEmailMutation, VerifyEmailMutationVariables>;
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {

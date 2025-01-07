@@ -145,6 +145,17 @@ export class AuthService {
       );
     }
 
+    const isEmailVerificationRequired = this.environmentService.get(
+      'IS_EMAIL_VERIFICATION_REQUIRED',
+    );
+
+    if (isEmailVerificationRequired && !user.isEmailVerified) {
+      throw new AuthException(
+        'Email is not verified',
+        AuthExceptionCode.EMAIL_NOT_VERIFIED,
+      );
+    }
+
     return user;
   }
 

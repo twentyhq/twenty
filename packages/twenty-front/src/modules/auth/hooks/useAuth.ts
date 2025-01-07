@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
   snapshot_UNSTABLE,
@@ -25,8 +25,8 @@ import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
-  useVerifyEmailMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -89,7 +89,8 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
-  const [verifyEmail] = useVerifyEmailMutation();
+  const [getLoginTokenFromEmailVerificationToken] =
+    useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
   const { isOnAWorkspaceSubdomain } =
@@ -167,25 +168,59 @@ export const useAuth = () => {
 
   const handleChallenge = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      const challengeResult = await challenge({
+      try {
+        const challengeResult = await challenge({
+          variables: {
+            email,
+            password,
+            captchaToken,
+          },
+        });
+        if (isDefined(challengeResult.errors)) {
+          throw challengeResult.errors;
+        }
+
+        if (!challengeResult.data?.challenge) {
+          throw new Error('No login token');
+        }
+
+        return challengeResult.data.challenge;
+      } catch (error) {
+        // TODO: Get intellisense for graphql error extensions code (codegen?)
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+        ) {
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          throw error;
+        }
+        throw error;
+      }
+    },
+    [challenge, setSearchParams, setSignInUpStep],
+  );
+
+  const handleGetLoginTokenFromEmailVerificationToken = useCallback(
+    async (emailVerificationToken: string, captchaToken?: string) => {
+      const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
         variables: {
-          email,
-          password,
+          emailVerificationToken,
           captchaToken,
         },
       });
 
-      if (isDefined(challengeResult.errors)) {
-        throw challengeResult.errors;
+      if (isDefined(loginTokenResult.errors)) {
+        throw loginTokenResult.errors;
       }
 
-      if (!challengeResult.data?.challenge) {
+      if (!loginTokenResult.data?.getLoginTokenFromEmailVerificationToken) {
         throw new Error('No login token');
       }
 
-      return challengeResult.data.challenge;
+      return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
     },
-    [challenge],
+    [getLoginTokenFromEmailVerificationToken],
   );
 
   const loadCurrentUser = useCallback(async () => {
@@ -281,23 +316,7 @@ export const useAuth = () => {
   ]);
 
   const handleVerify = useCallback(
-    async (loginToken: string, email: string) => {
-      if (isEmailVerificationRequired) {
-        const maybeUser = await checkUserExistsQuery({
-          variables: { email },
-        });
-
-        if (maybeUser.data?.checkUserExists.__typename === 'UserNotExists') {
-          throw new Error('User with this email does not exist');
-        }
-
-        if (!maybeUser.data?.checkUserExists.isEmailVerified) {
-          setSearchParams({ email });
-          setSignInUpStep(SignInUpStep.EmailVerification);
-          return null;
-        }
-      }
-
+    async (loginToken: string) => {
       const verifyResult = await verify({
         variables: { loginToken },
       });
@@ -321,33 +340,7 @@ export const useAuth = () => {
         tokens: verifyResult.data?.verify.tokens,
       };
     },
-    [
-      verify,
-      setTokenPair,
-      loadCurrentUser,
-      checkUserExistsQuery,
-      isEmailVerificationRequired,
-      setSignInUpStep,
-      setSearchParams,
-    ],
-  );
-
-  const handleVerifyEmail = useCallback(
-    async (emailVerificationToken: string) => {
-      const verifyEmailResult = await verifyEmail({
-        variables: {
-          emailVerificationToken,
-        },
-      });
-
-      const email = verifyEmailResult.data?.verifyEmail.email;
-      if (!verifyEmailResult.data?.verifyEmail.success || !email) {
-        throw new Error('Failed to verify email');
-      }
-
-      return { email };
-    },
-    [verifyEmail],
+    [verify, setTokenPair, loadCurrentUser],
   );
 
   const handleCrendentialsSignIn = useCallback(
@@ -360,7 +353,7 @@ export const useAuth = () => {
 
       setIsVerifyPendingState(true);
 
-      const verifyResult = await handleVerify(loginToken.token, email);
+      const verifyResult = await handleVerify(loginToken.token);
 
       if (!verifyResult) return null;
 
@@ -430,7 +423,6 @@ export const useAuth = () => {
 
       const verifyResult = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
-        email,
       );
 
       if (!verifyResult) return null;
@@ -512,8 +504,9 @@ export const useAuth = () => {
 
   return {
     challenge: handleChallenge,
+    getLoginTokenFromEmailVerificationToken:
+      handleGetLoginTokenFromEmailVerificationToken,
     verify: handleVerify,
-    verifyEmail: handleVerifyEmail,
 
     loadCurrentUser,
 

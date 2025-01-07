@@ -20,6 +20,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
@@ -30,8 +31,6 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { VerifyEmailInput } from 'src/engine/core-modules/email-verification/dtos/verify-email.input';
-import { VerifyEmailOutput } from 'src/engine/core-modules/email-verification/dtos/verify-email.output';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -118,7 +117,42 @@ export class AuthResolver {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
+
     const user = await this.authService.challenge(challengeInput, workspace);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return { loginToken };
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Mutation(() => LoginToken)
+  async getLoginTokenFromEmailVerificationToken(
+    @Args()
+    getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
+    @OriginHeader() origin: string,
+  ) {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const user =
+      await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
+        getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
+      );
+
+    await this.userService.markEmailAsVerified(user.id);
+
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
@@ -217,15 +251,6 @@ export class AuthResolver {
     }
 
     return await this.authService.verify(email, workspace.id);
-  }
-
-  @Mutation(() => VerifyEmailOutput)
-  async verifyEmail(
-    @Args() verifyEmailInput: VerifyEmailInput,
-  ): Promise<VerifyEmailOutput> {
-    return await this.emailVerificationTokenService.verifyToken(
-      verifyEmailInput.emailVerificationToken,
-    );
   }
 
   @Mutation(() => AuthorizeApp)

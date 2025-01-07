@@ -48,7 +48,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'CheckUserExists',
       'Challenge',
       'Verify',
-      'VerifyEmail',
+      'GetLoginTokenFromEmailVerificationToken',
       'ResendEmailVerificationToken',
       'SignUp',
       'RenewToken',
