@@ -1,5 +1,4 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -54,7 +53,7 @@ export const useRecordGroupActions = ({
       throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 
-    const settingsPath = `/settings/objects/${objectMetadataItem.namePlural}/${getFieldSlug(recordGroupFieldMetadata)}`;
+    const settingsPath = `/settings/objects/${objectMetadataItem.namePlural}/${recordGroupFieldMetadata.name}`;
 
     navigate(settingsPath);
   }, [

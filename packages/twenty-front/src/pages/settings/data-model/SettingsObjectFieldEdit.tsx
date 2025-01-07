@@ -18,7 +18,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
-import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -58,7 +57,7 @@ export const SettingsObjectFieldEdit = () => {
     useFieldMetadataItem();
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
-    (fieldMetadataItem) => getFieldSlug(fieldMetadataItem) === fieldSlug,
+    (fieldMetadataItem) => fieldMetadataItem.name === fieldSlug,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
