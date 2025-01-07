@@ -55,7 +55,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
     SettingsPath.ObjectFieldEdit,
     {
       objectNamePlural,
-      fieldSlug: recordGroupFieldMetadata?.name ?? '',
+      fieldName: recordGroupFieldMetadata?.name ?? '',
     },
   );
 

@@ -13,7 +13,7 @@ export enum SettingsPath {
   ObjectDetail = 'objects/:objectNamePlural',
   ObjectNewFieldSelect = 'objects/:objectNamePlural/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
-  ObjectFieldEdit = 'objects/:objectNamePlural/:fieldSlug',
+  ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   NewObject = 'objects/new',
   NewServerlessFunction = 'functions/new',
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',

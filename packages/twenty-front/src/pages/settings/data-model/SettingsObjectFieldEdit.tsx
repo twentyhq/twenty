@@ -47,7 +47,7 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { objectNamePlural = '', fieldSlug = '' } = useParams();
+  const { objectNamePlural = '', fieldName = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
@@ -58,7 +58,7 @@ export const SettingsObjectFieldEdit = () => {
     useFieldMetadataItem();
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
-    (fieldMetadataItem) => fieldMetadataItem.name === fieldSlug,
+    (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
