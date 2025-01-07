@@ -205,7 +205,15 @@ export class ServerlessFunctionService {
     });
   }
 
-  async deleteOneServerlessFunction(id: string, workspaceId: string) {
+  async deleteOneServerlessFunction({
+    id,
+    workspaceId,
+    isHardDeletion = true,
+  }: {
+    id: string;
+    workspaceId: string;
+    isHardDeletion?: boolean;
+  }) {
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOneBy({
         id,
@@ -219,15 +227,16 @@ export class ServerlessFunctionService {
       );
     }
 
-    await this.serverlessFunctionRepository.delete(id);
+    if (isHardDeletion) {
+      await this.serverlessFunctionRepository.delete(id);
+      await this.fileStorageService.delete({
+        folderPath: getServerlessFolder({
+          serverlessFunction: existingServerlessFunction,
+        }),
+      });
+    }
 
     await this.serverlessService.delete(existingServerlessFunction);
-
-    await this.fileStorageService.delete({
-      folderPath: getServerlessFolder({
-        serverlessFunction: existingServerlessFunction,
-      }),
-    });
 
     return existingServerlessFunction;
   }
