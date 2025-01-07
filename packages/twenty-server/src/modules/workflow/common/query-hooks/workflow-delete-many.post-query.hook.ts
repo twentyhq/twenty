@@ -24,6 +24,7 @@ export class WorkflowDeleteManyPostQueryHook
   ): Promise<void> {
     this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
       payload.map((workflow) => workflow.id),
+      _authContext.workspace.id,
     );
   }
 }

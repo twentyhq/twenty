@@ -8,10 +8,16 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly serverlessFunctionService: ServerlessFunctionService,
+  ) {}
 
   async getWorkflowVersionOrFail(
     workflowVersionId: string,
@@ -58,7 +64,10 @@ export class WorkflowCommonWorkspaceService {
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
 
-  async cleanWorkflowsSubEntities(workflowIds: string[]): Promise<void> {
+  async cleanWorkflowsSubEntities(
+    workflowIds: string[],
+    workspaceId: string,
+  ): Promise<void> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -86,6 +95,37 @@ export class WorkflowCommonWorkspaceService {
 
         workflowVersionRepository.softDelete({
           workflowId,
+        });
+
+        this.deleteServerlessFunctions(
+          workflowVersionRepository,
+          workflowId,
+          workspaceId,
+        );
+      }),
+    );
+  }
+
+  private async deleteServerlessFunctions(
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workflowId: string,
+    workspaceId: string,
+  ) {
+    const workflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId,
+      },
+    });
+
+    Promise.all(
+      workflowVersions.map((workflowVersion) => {
+        workflowVersion.steps?.map(async (step) => {
+          if (step.type === WorkflowActionType.CODE) {
+            await this.serverlessFunctionService.deleteOneServerlessFunction(
+              step.settings.input.serverlessFunctionId,
+              workspaceId,
+            );
+          }
         });
       }),
     );
