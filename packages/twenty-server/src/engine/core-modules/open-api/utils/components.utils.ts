@@ -1,4 +1,5 @@
 import { OpenAPIV3_1 } from 'openapi-types';
+import { capitalize } from 'twenty-shared';
 
 import {
   computeDepthParameters,
@@ -15,7 +16,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
 
 type Property = OpenAPIV3_1.SchemaObject;
 

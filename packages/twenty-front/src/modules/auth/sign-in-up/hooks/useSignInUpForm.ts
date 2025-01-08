@@ -70,5 +70,5 @@ export const useSignInUpForm = () => {
     prefilledEmail,
     location.search,
   ]);
-  return { form: form, validationSchema };
+  return { form: form };
 };

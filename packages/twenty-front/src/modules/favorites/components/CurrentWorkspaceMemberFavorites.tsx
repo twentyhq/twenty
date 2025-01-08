@@ -22,6 +22,7 @@ import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
+  AnimatedExpandableContainer,
   IconFolder,
   IconFolderOpen,
   IconHeartOff,
@@ -158,7 +159,12 @@ export const CurrentWorkspaceMemberFavorites = ({
           </FavoritesDroppable>
         )}
 
-        {isOpen && (
+        <AnimatedExpandableContainer
+          isExpanded={isOpen}
+          dimension="height"
+          mode="fit-content"
+          containAnimation
+        >
           <Droppable droppableId={`folder-${folder.folderId}`}>
             {(provided) => (
               <div
@@ -202,7 +208,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               </div>
             )}
           </Droppable>
-        )}
+        </AnimatedExpandableContainer>
       </NavigationDrawerItemsCollapsableContainer>
 
       {createPortal(

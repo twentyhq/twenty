@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconSettings, MenuItem, UndecoratedLink, useIcons } from 'twenty-ui';
 
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
@@ -56,7 +55,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           fullWidth
-          to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
+          to={`/settings/objects/${objectMetadataItem.namePlural}`}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}

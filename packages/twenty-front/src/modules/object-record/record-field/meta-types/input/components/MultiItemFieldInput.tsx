@@ -192,6 +192,7 @@ export const MultiItemFieldInput = <T,>({
                   })
               : undefined
           }
+          onEscape={handleDropdownClose}
           onChange={(event) =>
             handleOnChange(
               turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
