@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
@@ -22,6 +23,8 @@ export const RecordTableCellCheckbox = () => {
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
+  const { hasPermission } = usePermissions();
+
   const handleClick = useCallback(() => {
     setCurrentRowSelected(!isSelected);
   }, [isSelected, setCurrentRowSelected]);
@@ -29,7 +32,7 @@ export const RecordTableCellCheckbox = () => {
   return (
     <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
       <StyledContainer onClick={handleClick}>
-        <Checkbox hoverable checked={isSelected} />
+      {hasPermission(['edit', 'delete']) && <Checkbox hoverable checked={isSelected} />}
       </StyledContainer>
     </RecordTableTd>
   );

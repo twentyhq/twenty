@@ -380,6 +380,8 @@
   
     "telephony": "Telephony",
     "telephonyExtension": "Telephony extension",
-    "telephonyDescription": "Manage your telephony extension settings here."
+    "telephonyDescription": "Manage your telephony extension settings here.",
+    "authorizationError": "Authorization Error!",
+    "permissionErrorDescription": "You are not authorized to access this content."
   }
   

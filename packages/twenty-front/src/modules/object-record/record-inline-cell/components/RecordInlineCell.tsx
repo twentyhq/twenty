@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
-import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
@@ -13,6 +12,9 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
@@ -31,13 +33,17 @@ type RecordInlineCellProps = {
 };
 
 export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
+  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight,  } =
     useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { hasPermission } = usePermissions();
+
+  const { objectNamePlural } = useObjectNamePluralFromSingular({objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular ?? ''});
+
+  const isFieldReadOnly = !hasPermission(['edit'], objectNamePlural) || useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
 
@@ -124,6 +130,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onClickOutside={handleClickOutside}
         isReadOnly={isFieldReadOnly}
       />
+   
     ),
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: isDisplayModeFixHeight,

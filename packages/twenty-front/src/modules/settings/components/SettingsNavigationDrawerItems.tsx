@@ -21,6 +21,7 @@ import {
   MAIN_COLORS,
 } from 'twenty-ui';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
@@ -98,6 +99,8 @@ export const SettingsNavigationDrawerItems = () => {
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
+  const { currentRole } = usePermissions();
+  
   const accountSubSettings: SettingsNavigationItem[] = [
     {
       label: 'Emails',
@@ -163,7 +166,8 @@ export const SettingsNavigationDrawerItems = () => {
           ))}
         </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
-      <NavigationDrawerSection>
+      {currentRole?.canAccessWorkspaceSettings && (
+        <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
           label="General"
@@ -230,7 +234,8 @@ export const SettingsNavigationDrawerItems = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </NavigationDrawerSection>
+        </NavigationDrawerSection>
+      )}
 
       <AnimatePresence>
         {isAdvancedModeEnabled && (

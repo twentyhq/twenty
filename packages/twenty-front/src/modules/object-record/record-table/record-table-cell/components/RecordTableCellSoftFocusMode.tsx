@@ -19,6 +19,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
@@ -151,8 +152,10 @@ export const RecordTableCellSoftFocusMode = ({
     ? IconArrowUpRight // IconLayoutSidebarRightExpand - Disabling sidepanel access for now
     : customButtonIcon;
 
+  const {hasPermission} = usePermissions();
+
   const showButton =
-    isDefined(buttonIcon) && !editModeContentOnly && !isFieldReadOnly;
+    isDefined(buttonIcon) && !editModeContentOnly && !isFieldReadOnly && hasPermission(['edit']) ;
 
   const dontShowContent = isEmpty && isFieldReadOnly;
 

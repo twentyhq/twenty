@@ -354,6 +354,8 @@
     "telephonyExtension": "Telefonia",
     "telephonyDescription": "Controle as configurações de telefonia aqui.",
     "telephonyManageDescription": "Controle os ramais por aqui.",
-    "addTelephonyExtension": "Adicionar extensão"
+    "addTelephonyExtension": "Adicionar extensão",
+    "authorizationError": "Erro de autorização",
+    "permissionErrorDescription": "Você não tem permissão para acessar esse conteúdo."
   }
   

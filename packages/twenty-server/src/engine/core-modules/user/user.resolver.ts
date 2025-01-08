@@ -20,6 +20,11 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -32,21 +37,16 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -93,7 +93,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: ['workspaces', 'workspaces.workspace', 'workspaces.role', 'workspaces.role.permissions'],
     });
 
     userValidator.assertIsDefinedOrThrow(

@@ -60,6 +60,25 @@ export const USER_QUERY_FRAGMENT = gql`
         domainName
         subdomain
       }
+      role {
+        id
+        name
+        description
+        canAccessWorkspaceSettings
+        isActive
+        isCustom
+        icon
+        createdAt       
+        updatedAt 
+        permissions {
+          id
+          tableName
+          canCreate
+          canEdit
+          canView
+          canDelete
+        }
+      }
     }
     userVars
   }

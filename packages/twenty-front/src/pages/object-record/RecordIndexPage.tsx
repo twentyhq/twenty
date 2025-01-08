@@ -3,8 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { PermissionErrorFallback } from '@/error-handler/components/PermissionErrorFallback';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
@@ -45,6 +47,8 @@ export const RecordIndexPage = () => {
     recordIndexId,
   });
 
+  const { currentRole, hasPermission } = usePermissions();
+
   const handleIndexRecordsLoaded = useRecoilCallback(
     ({ set }) =>
       () => {
@@ -82,6 +86,8 @@ export const RecordIndexPage = () => {
               <PageTitle title={`${capitalize(objectNamePlural)}`} />
               <RecordIndexPageHeader />
               <PageBody>
+              {currentRole &&
+                 hasPermission(['create', 'view', 'edit', 'delete']) ? (
                 <StyledIndexContainer>
                   <RecordIndexContainerContextStoreObjectMetadataEffect />
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
@@ -89,6 +95,9 @@ export const RecordIndexPage = () => {
 
                   <RecordIndexContainer />
                 </StyledIndexContainer>
+              ): (
+                <PermissionErrorFallback />
+              )}
               </PageBody>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>

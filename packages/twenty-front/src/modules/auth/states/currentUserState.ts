@@ -11,6 +11,7 @@ export type CurrentUser = Pick<
   | 'canImpersonate'
   | 'onboardingStatus'
   | 'userVars'
+  | 'workspaces'
 >;
 
 export const currentUserState = createState<CurrentUser | null>({

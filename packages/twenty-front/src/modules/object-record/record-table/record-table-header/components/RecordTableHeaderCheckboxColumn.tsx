@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -30,6 +31,8 @@ export const RecordTableHeaderCheckboxColumn = () => {
     allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
 
+  const { hasPermission } = usePermissions();
+  
   const onChange = () => {
     if (checked) {
       setHasUserSelectedAllRows(false);
@@ -43,12 +46,15 @@ export const RecordTableHeaderCheckboxColumn = () => {
   return (
     <StyledColumnHeaderCell>
       <StyledContainer>
-        <Checkbox
+        {hasPermission(['edit', 'delete']) && (
+          <Checkbox
           hoverable
           checked={checked}
           onChange={onChange}
           indeterminate={indeterminate}
         />
+        )}
+
       </StyledContainer>
     </StyledColumnHeaderCell>
   );

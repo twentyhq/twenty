@@ -1,3 +1,4 @@
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -35,6 +36,9 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 }) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
+    
+  const { hasPermission } = usePermissions();
+
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
 
   const sortedStandardObjectMetadataItems = [...objectMetadataItems]
@@ -79,7 +83,10 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
         </NavigationDrawerAnimatedCollapseWrapper>
         <StyledObjectsMetaDataItemsWrapper>
           {isNavigationSectionOpen &&
-            objectMetadataItemsForNavigationItems.map((objectMetadataItem) => (
+            objectMetadataItemsForNavigationItems.map((objectMetadataItem) => hasPermission(
+              ['create', 'view', 'edit', 'delete'],
+              objectMetadataItem.namePlural,
+            ) && (
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}

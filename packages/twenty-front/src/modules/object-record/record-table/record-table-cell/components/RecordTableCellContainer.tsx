@@ -4,6 +4,7 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableCellBaseContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer';
 import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 
@@ -22,9 +23,11 @@ export const RecordTableCellContainer = ({
 }: RecordTableCellContainerProps) => {
   const { hasSoftFocus, isInEditMode } = useContext(RecordTableCellContext);
 
+  const { hasPermission } = usePermissions();
+  
   return (
     <RecordTableCellBaseContainer>
-      {isInEditMode ? (
+      {isInEditMode && hasPermission(['edit']) ? (
         <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
       ) : hasSoftFocus ? (
         <RecordTableCellSoftFocusMode

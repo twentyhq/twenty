@@ -1,4 +1,5 @@
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { usePermissions } from '@/auth/contexts/PermissionContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
@@ -22,6 +23,8 @@ export const RecordIndexPageHeader = () => {
 
   const { objectNamePlural } = useRecordIndexContextOrThrow();
 
+  const { hasPermission } = usePermissions();
+  
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
@@ -44,9 +47,9 @@ export const RecordIndexPageHeader = () => {
     isDefined(objectMetadataItem) &&
     isObjectMetadataReadOnly(objectMetadataItem);
 
-  const shouldDisplayAddButton =
-    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
-    !isObjectMetadataItemReadOnly;
+  const shouldDisplayAddButton =  hasPermission(['create']) &&
+    ((numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    !isObjectMetadataItemReadOnly);
 
   const isTable = recordIndexViewType === ViewType.Table;
 
