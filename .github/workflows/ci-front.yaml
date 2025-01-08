@@ -65,6 +65,7 @@ jobs:
     needs: front-sb-build
     strategy:
       matrix:
+        shard: [1, 2, 3, 4]
         storybook_scope: [pages, modules]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -101,7 +102,9 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
+        # TODO double check behavior with --configuration and sharding
+        # Should we merge back all cov files ? we don't really consume them afterwards ?
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ strategy.job-total }}
   front-sb-test-performance:
     timeout-minutes: 30
     strategy:
