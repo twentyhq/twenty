@@ -8,8 +8,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import gql from 'graphql-tag';
 import pick from 'lodash.pick';
-import { ReactNode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -63,15 +61,9 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const JestWrapper = getJestMetadataAndApolloMocksWrapper({
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
-
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <BrowserRouter>
-    <JestWrapper>{children}</JestWrapper>
-  </BrowserRouter>
-);
 
 const mockObjectMetadataItems = generatedMockObjectMetadataItems;
 

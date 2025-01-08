@@ -1,7 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
 import { act } from 'react-dom/test-utils';
-import { BrowserRouter } from 'react-router-dom';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -20,14 +18,8 @@ jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
   useSetHotkeyScope: () => mockSetHotkeyScope,
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <BrowserRouter>{children}</BrowserRouter>
-);
-
 test('useOpenEmailThreadRightDrawer opens the email thread right drawer', () => {
-  const { result } = renderHook(() => useOpenEmailThreadRightDrawer(), {
-    wrapper: Wrapper,
-  });
+  const { result } = renderHook(() => useOpenEmailThreadRightDrawer());
 
   act(() => {
     result.current();
