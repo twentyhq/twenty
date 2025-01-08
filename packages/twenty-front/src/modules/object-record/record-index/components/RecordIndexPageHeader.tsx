@@ -12,9 +12,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import { isDefined, useIcons } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =

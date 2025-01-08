@@ -1,5 +1,5 @@
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const getNodeTypename = (objectNameSingular: string) => {
   return capitalize(getObjectTypename(objectNameSingular));

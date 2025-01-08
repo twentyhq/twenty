@@ -29,7 +29,7 @@ export const useLastVisitedView = () => {
     setLastVisitedViewPerObjectMetadataItem,
   ] = useRecoilState(lastVisitedViewPerObjectMetadataItemState);
 
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const setFallbackForLastVisitedView = (objectMetadataItemId: string) => {
@@ -49,7 +49,7 @@ export const useLastVisitedView = () => {
     viewId: string;
   }) => {
     const fallbackObjectMetadataItem =
-      findActiveObjectMetadataItemBySlug(objectNamePlural);
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
     if (isDefined(fallbackObjectMetadataItem)) {
       /* when both are equal meaning there was change in view else 
@@ -72,7 +72,7 @@ export const useLastVisitedView = () => {
     objectNamePlural: string,
   ) => {
     const objectMetadataItemId: string | undefined =
-      findActiveObjectMetadataItemBySlug(objectNamePlural)?.id;
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural)?.id;
     return objectMetadataItemId
       ? lastVisitedViewPerObjectMetadataItem?.[objectMetadataItemId]
       : undefined;

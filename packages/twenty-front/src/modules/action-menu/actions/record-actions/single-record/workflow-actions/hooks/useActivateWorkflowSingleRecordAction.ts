@@ -4,7 +4,7 @@ import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflow
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useActivateLastPublishedVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+export const useActivateWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
     const recordId = useSelectedRecordIdOrThrow();
 
@@ -13,13 +13,13 @@ export const useActivateLastPublishedVersionWorkflowSingleRecordAction: ActionHo
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const shouldBeRegistered =
-      isDefined(workflowWithCurrentVersion) &&
-      isDefined(workflowWithCurrentVersion.currentVersion.trigger) &&
-      isDefined(workflowWithCurrentVersion.lastPublishedVersionId) &&
-      workflowWithCurrentVersion.lastPublishedVersionId !== '' &&
-      !workflowWithCurrentVersion.statuses?.includes('ACTIVE') &&
+      isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
       isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
-      workflowWithCurrentVersion.currentVersion?.steps.length !== 0;
+      workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
+      (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
+        !workflowWithCurrentVersion.versions?.some(
+          (version) => version.status === 'ACTIVE',
+        ));
 
     const onClick = () => {
       if (!shouldBeRegistered) {
@@ -27,7 +27,7 @@ export const useActivateLastPublishedVersionWorkflowSingleRecordAction: ActionHo
       }
 
       activateWorkflowVersion({
-        workflowVersionId: workflowWithCurrentVersion.lastPublishedVersionId,
+        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
         workflowId: workflowWithCurrentVersion.id,
       });
     };

@@ -23,8 +23,12 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
   aggregateLabel,
   dropdownId,
 }: RecordBoardColumnHeaderAggregateDropdownProps) => {
-  const { currentContentId, handleContentChange, handleResetContent } =
-    useCurrentContentId<RecordBoardColumnHeaderAggregateContentId>();
+  const {
+    currentContentId,
+    handleContentChange,
+    handleResetContent,
+    previousContentId,
+  } = useCurrentContentId<RecordBoardColumnHeaderAggregateContentId>();
 
   return (
     <RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider
@@ -51,6 +55,7 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
               currentContentId,
               onContentChange: handleContentChange,
               resetContent: handleResetContent,
+              previousContentId,
               objectMetadataItem: objectMetadataItem,
               dropdownId: dropdownId,
             }}

@@ -7,6 +7,7 @@ export type RecordBoardColumnHeaderAggregateDropdownContextValue = {
   currentContentId: RecordBoardColumnHeaderAggregateContentId | null;
   onContentChange: (key: RecordBoardColumnHeaderAggregateContentId) => void;
   resetContent: () => void;
+  previousContentId: RecordBoardColumnHeaderAggregateContentId | null;
   dropdownId: string;
 };
 
