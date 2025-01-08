@@ -56,7 +56,7 @@ export const RightDrawerRecord = () => {
       <ActionMenuComponentInstanceContext.Provider
         value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <StyledRightDrawerRecord shouldReduceHeight={hasTopBar}>
+        <StyledRightDrawerRecord hasTopBar={hasTopBar}>
           <RecordFieldValueSelectorContextProvider>
             {!isNewViewableRecordLoading && (
               <RecordValueSetterEffect recordId={objectRecordId} />

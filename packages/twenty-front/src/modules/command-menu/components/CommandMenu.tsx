@@ -3,7 +3,7 @@ import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/Com
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
@@ -56,7 +56,7 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { onItemClick } = useCommandMenu();
+  const { onItemClick } = useCommandMenuOnItemClick();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 

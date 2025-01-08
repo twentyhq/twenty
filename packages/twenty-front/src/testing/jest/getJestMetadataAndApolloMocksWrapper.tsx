@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { BrowserRouter } from 'react-router-dom';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 export const getJestMetadataAndApolloMocksWrapper = ({
@@ -15,14 +16,16 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
 }) => {
   return ({ children }: { children: ReactNode }) => (
-    <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <MockedProvider mocks={apolloMocks} addTypename={false}>
-          <JestObjectMetadataItemSetter>
-            {children}
-          </JestObjectMetadataItemSetter>
-        </MockedProvider>
-      </SnackBarProviderScope>
-    </RecoilRoot>
+    <BrowserRouter>
+      <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          <MockedProvider mocks={apolloMocks} addTypename={false}>
+            <JestObjectMetadataItemSetter>
+              {children}
+            </JestObjectMetadataItemSetter>
+          </MockedProvider>
+        </SnackBarProviderScope>
+      </RecoilRoot>
+    </BrowserRouter>
   );
 };

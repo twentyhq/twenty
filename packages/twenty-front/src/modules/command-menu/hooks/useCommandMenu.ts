@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -243,35 +241,6 @@ export const useCommandMenu = () => {
     [closeCommandMenu, openCommandMenu],
   );
 
-  const onItemClick = useCallback(
-    ({
-      shouldCloseCommandMenuOnClick,
-      onClick,
-      to,
-    }: {
-      shouldCloseCommandMenuOnClick?: boolean;
-      onClick?: () => void;
-      to?: string;
-    }) => {
-      if (
-        isDefined(shouldCloseCommandMenuOnClick) &&
-        shouldCloseCommandMenuOnClick
-      ) {
-        toggleCommandMenu();
-      }
-
-      if (isDefined(onClick)) {
-        onClick();
-        return;
-      }
-      if (isNonEmptyString(to)) {
-        navigate(to);
-        return;
-      }
-    },
-    [navigate, toggleCommandMenu],
-  );
-
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (recordId: string) => {
@@ -288,6 +257,5 @@ export const useCommandMenu = () => {
     closeCommandMenu,
     openRecordInCommandMenu,
     toggleCommandMenu,
-    onItemClick,
   };
 };
