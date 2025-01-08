@@ -8,6 +8,7 @@
     "@aws-sdk/credential-providers": "^3.363.0",
     "@blocknote/mantine": "^0.22.0",
     "@blocknote/react": "^0.22.0",
+    "@blocknote/server-util": "^0.22.0",
     "@codesandbox/sandpack-react": "^2.13.5",
     "@dagrejs/dagre": "^1.1.2",
     "@emotion/react": "^11.11.1",

@@ -45113,7 +45113,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
-    "@blocknote/server-util": "npm:^0.22.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@langchain/mistralai": "npm:^0.0.24"
@@ -45232,6 +45231,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.24.6"
     "@blocknote/mantine": "npm:^0.22.0"
     "@blocknote/react": "npm:^0.22.0"
+    "@blocknote/server-util": "npm:^0.22.0"
     "@codesandbox/sandpack-react": "npm:^2.13.5"
     "@crxjs/vite-plugin": "npm:^1.0.14"
     "@dagrejs/dagre": "npm:^1.1.2"

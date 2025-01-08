@@ -173,21 +173,24 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.RICH_TEXT: {
           const richTextValue = richTextValueSchema.parse(value);
 
-          const { blocksToMarkdownLossy, tryParseMarkdownToBlocks } =
-            ServerBlockNoteEditor.create();
+          const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
           const valueInBothFormats: RichTextMetadata = {
             markdown: richTextValue.blocknote
-              ? await blocksToMarkdownLossy(JSON.parse(richTextValue.blocknote))
+              ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+                  JSON.parse(richTextValue.blocknote),
+                )
               : null,
             blocknote: richTextValue.markdown
               ? JSON.stringify(
-                  await tryParseMarkdownToBlocks(richTextValue.markdown),
+                  await serverBlockNoteEditor.tryParseMarkdownToBlocks(
+                    richTextValue.markdown,
+                  ),
                 )
               : null,
           };
 
-          return [key, richTextValue];
+          return [key, valueInBothFormats];
         }
         default:
           return [key, value];
