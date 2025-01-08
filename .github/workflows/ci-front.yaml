@@ -140,7 +140,8 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx run twenty-front:storybook:serve-and-test:static:performance --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        # Could factorize performance within the above matrix for sb-test ?
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=performance --shard=${{ matrix.shard }}/${{ strategy.job-total }}
   front-chromatic-deployment:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
