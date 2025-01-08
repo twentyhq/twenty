@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
-import { Key } from 'ts-key-enum';
 import {
   IconCalendarX,
   MenuItemLeftContent,
@@ -305,11 +304,8 @@ export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
-  onEnter,
-  onEscape,
   clearable = true,
   isDateTimeInput,
-  keyboardEventsDisabled,
   onClear,
   isRelative,
   relativeDate,
@@ -343,31 +339,6 @@ export const InternalDatePicker = ({
   const handleMouseSelect = (newDate: Date) => {
     closeDropdowns();
     onMouseSelect?.(newDate);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isDefined(keyboardEventsDisabled) && keyboardEventsDisabled) {
-      return;
-    }
-
-    switch (event.key) {
-      case Key.Enter: {
-        event.stopPropagation();
-        event.preventDefault();
-
-        closeDropdowns();
-        onEnter?.(internalDate);
-        break;
-      }
-      case Key.Escape: {
-        event.stopPropagation();
-        event.preventDefault();
-
-        closeDropdowns();
-        onEscape?.(internalDate);
-        break;
-      }
-    }
   };
 
   const handleChangeMonth = (month: number) => {
@@ -469,7 +440,7 @@ export const InternalDatePicker = ({
   const selectedDates = isRelative ? highlightedDates : [dateToUse];
 
   return (
-    <StyledContainer onKeyDown={handleKeyDown} calendarDisabled={isRelative}>
+    <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
