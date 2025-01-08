@@ -6,11 +6,14 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { BrowserRouter } from 'react-router-dom';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
-  </RecoilRoot>
+  <BrowserRouter>
+    <RecoilRoot>
+      <MockedProvider addTypename={false}>{children}</MockedProvider>
+    </RecoilRoot>
+  </BrowserRouter>
 );
 
 describe('useOpenActivityRightDrawer', () => {
