@@ -46,7 +46,7 @@ export const getEmptyRecordGqlOperationFilter = (
         const phonesFilter = generateILikeFiltersForCompositeFields(
           '',
           correspondingField.name,
-          ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+          ['primaryPhoneNumber'],
           true,
         );
 

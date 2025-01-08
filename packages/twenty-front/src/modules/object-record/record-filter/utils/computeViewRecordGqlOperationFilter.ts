@@ -10,6 +10,7 @@ import {
   EmailsFilter,
   FloatFilter,
   MultiSelectFilter,
+  PhonesFilter,
   RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
@@ -831,23 +832,34 @@ const computeFilterRecordGqlOperationFilter = (
           );
       }
     case 'PHONES': {
-      const phonesFilters = generateILikeFiltersForCompositeFields(
-        filter.value,
-        correspondingField.name,
-        ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
-      );
+      const filterValue = filter.value.replace(/[^0-9]/g, '');
+
       switch (filter.operand) {
         case ViewFilterOperand.Contains:
           return {
-            or: phonesFilters,
+            or: [
+              {
+                [correspondingField.name]: {
+                  primaryPhoneNumber: {
+                    ilike: `%${filterValue}%`,
+                  },
+                } as PhonesFilter,
+              },
+            ],
           };
         case ViewFilterOperand.DoesNotContain:
-          return {
-            and: phonesFilters.map((filter) => {
-              return {
-                not: filter,
-              };
-            }),
+         return {
+            and: [
+              {
+                not: {
+                  [correspondingField.name]: {
+                    primaryPhoneNumber: {
+                      ilike: `%${filterValue}%`,
+                    },
+                  } as PhonesFilter,
+                },
+              },
+            ],
           };
         case ViewFilterOperand.IsEmpty:
         case ViewFilterOperand.IsNotEmpty:

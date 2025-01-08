@@ -588,36 +588,16 @@ describe('should work as expected for the different field types', () => {
                 },
               },
             },
-            {
-              phones: {
-                primaryPhoneCountryCode: {
-                  ilike: '%1234567890%',
-                },
-              },
-            },
           ],
         },
         {
-          and: [
-            {
-              not: {
-                phones: {
-                  primaryPhoneNumber: {
-                    ilike: '%1234567890%',
-                  },
-                },
+          not: {
+            phones: {
+              primaryPhoneNumber: {
+                ilike: '%1234567890%',
               },
             },
-            {
-              not: {
-                phones: {
-                  primaryPhoneCountryCode: {
-                    ilike: '%1234567890%',
-                  },
-                },
-              },
-            },
-          ],
+          },
         },
         {
           and: [
@@ -633,24 +613,6 @@ describe('should work as expected for the different field types', () => {
                 {
                   phones: {
                     primaryPhoneNumber: {
-                      ilike: '',
-                    },
-                  },
-                },
-              ],
-            },
-            {
-              or: [
-                {
-                  phones: {
-                    primaryPhoneCountryCode: {
-                      is: 'NULL',
-                    },
-                  },
-                },
-                {
-                  phones: {
-                    primaryPhoneCountryCode: {
                       ilike: '',
                     },
                   },
@@ -674,24 +636,6 @@ describe('should work as expected for the different field types', () => {
                   {
                     phones: {
                       primaryPhoneNumber: {
-                        ilike: '',
-                      },
-                    },
-                  },
-                ],
-              },
-              {
-                or: [
-                  {
-                    phones: {
-                      primaryPhoneCountryCode: {
-                        is: 'NULL',
-                      },
-                    },
-                  },
-                  {
-                    phones: {
-                      primaryPhoneCountryCode: {
                         ilike: '',
                       },
                     },
