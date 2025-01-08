@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
-import styled from '@emotion/styled';
 
 import {
+  StyledIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
@@ -20,10 +20,6 @@ type MenuItemSelectAvatarProps = {
   hovered?: boolean;
   testId?: string;
 };
-
-const StyledIconCheck = styled(IconCheck)`
-    padding-right: 8px;
-`;
 
 export const MenuItemSelectAvatar = ({
   avatar,
