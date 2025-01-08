@@ -14,9 +14,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
+  PASSWORD_REGEX,
   compareHash,
   hashPassword,
-  PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
