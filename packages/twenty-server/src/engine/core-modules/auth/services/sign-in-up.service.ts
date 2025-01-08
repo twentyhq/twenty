@@ -122,19 +122,21 @@ export class SignInUpService {
       }
     }
 
-    const signInUpWithInvitationResult = await this.signInUpWithInvitation({
-      email,
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-      targetWorkspaceSubdomain,
-      fromSSO,
-      firstName,
-      lastName,
-      picture,
-      authProvider,
-      passwordHash,
-      existingUser,
-    });
+    const signInUpWithInvitationResult = targetWorkspaceSubdomain
+      ? await this.signInUpWithInvitation({
+          email,
+          workspacePersonalInviteToken,
+          workspaceInviteHash,
+          targetWorkspaceSubdomain,
+          fromSSO,
+          firstName,
+          lastName,
+          picture,
+          authProvider,
+          passwordHash,
+          existingUser,
+        })
+      : undefined;
 
     if (isDefined(signInUpWithInvitationResult)) {
       return signInUpWithInvitationResult;
@@ -187,7 +189,7 @@ export class SignInUpService {
     passwordHash?: string;
     existingUser: User | null;
     fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
+    targetWorkspaceSubdomain: string;
   }) {
     const maybeInvitation =
       fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
