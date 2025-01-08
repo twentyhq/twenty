@@ -104,7 +104,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         # TODO double check behavior with --configuration and sharding
         # Should we merge back all cov files ? we don't really consume them afterwards ?
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --args="--shard=${{ matrix.shard }}/${{ strategy.job-total }}"
   front-sb-test-performance:
     timeout-minutes: 30
     strategy:
@@ -140,7 +140,7 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        # Could factorize performance within the above matrix for sb-test ?
+        # Could factorize performance within the above job and matrix strategy
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=performance --shard=${{ matrix.shard }}/${{ strategy.job-total }}
   front-chromatic-deployment:
     timeout-minutes: 30
