@@ -13,145 +13,145 @@ export type MenuItemBaseProps = {
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
-    --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-    --vertical-padding: ${({ theme }) => theme.spacing(2)};
-    align-items: center;
+  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
+  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  align-items: center;
 
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    cursor: pointer;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  cursor: pointer;
 
-    display: flex;
+  display: flex;
 
-    flex-direction: row;
+  flex-direction: row;
 
-    font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.sm};
 
-    gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
 
-    height: calc(32px - 2 * var(--vertical-padding));
-    justify-content: space-between;
+  height: calc(32px - 2 * var(--vertical-padding));
+  justify-content: space-between;
 
-    padding: var(--vertical-padding) var(--horizontal-padding);
+  padding: var(--vertical-padding) var(--horizontal-padding);
 
-    ${({ theme, isKeySelected }) =>
-            isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
+  ${({ theme, isKeySelected }) =>
+    isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
 
-    ${({ isHoverBackgroundDisabled }) =>
-            isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
+  ${({ isHoverBackgroundDisabled }) =>
+    isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
 
-    ${({ theme, accent }) => {
-        switch (accent) {
-            case 'danger': {
-                return css`
-                    color: ${theme.font.color.danger};
+  ${({ theme, accent }) => {
+    switch (accent) {
+      case 'danger': {
+        return css`
+          color: ${theme.font.color.danger};
 
-                    &:hover {
-                        background: ${theme.background.transparent.danger};
-                    }
-                `;
-            }
-            case 'placeholder': {
-                return css`
-                    color: ${theme.font.color.tertiary};
-                `;
-            }
-            case 'default':
-            default: {
-                return css`
-                    color: ${theme.font.color.secondary};
-                `;
-            }
-        }
-    }}
+          &:hover {
+            background: ${theme.background.transparent.danger};
+          }
+        `;
+      }
+      case 'placeholder': {
+        return css`
+          color: ${theme.font.color.tertiary};
+        `;
+      }
+      case 'default':
+      default: {
+        return css`
+          color: ${theme.font.color.secondary};
+        `;
+      }
+    }
+  }}
 
-    position: relative;
-    user-select: none;
+  position: relative;
+  user-select: none;
 
-    width: calc(100% - 2 * var(--horizontal-padding));
+  width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
-    display: flex;
-    flex-direction: row;
-    font-size: ${({ theme }) => theme.font.size.md};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
+  display: flex;
+  flex-direction: row;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
 
-    overflow: hidden;
-    padding-left: ${({ theme, hasLeftIcon }) =>
-            hasLeftIcon ? '' : theme.spacing(1)};
+  overflow: hidden;
+  padding-left: ${({ theme, hasLeftIcon }) =>
+    hasLeftIcon ? '' : theme.spacing(1)};
 
-    white-space: nowrap;
+  white-space: nowrap;
 `;
 
 export const StyledNoIconFiller = styled.div`
-    width: ${({ theme }) => theme.spacing(1)};
+  width: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const StyledMenuItemLeftContent = styled.div`
-    align-items: center;
-    display: flex;
+  align-items: center;
+  display: flex;
 
-    flex-direction: row;
+  flex-direction: row;
 
-    gap: ${({ theme }) => theme.spacing(2)};
-    min-width: 0;
-    width: 100%;
+  gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
+  width: 100%;
 
-    & > svg {
-        flex-shrink: 0;
-    }
+  & > svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const StyledMenuItemRightContent = styled.div`
-    align-items: center;
-    display: flex;
-    flex-direction: row;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
 `;
 
 export const StyledDraggableItem = styled.div`
-    cursor: grab;
+  cursor: grab;
 
-    align-items: center;
-    display: flex;
+  align-items: center;
+  display: flex;
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
-    ${({ isIconDisplayedOnHoverOnly, theme }) =>
-            isIconDisplayedOnHoverOnly &&
-            css`
-                & .hoverable-buttons {
-                    opacity: 0;
-                    position: fixed;
-                    right: ${theme.spacing(2)};
-                }
+  ${({ isIconDisplayedOnHoverOnly, theme }) =>
+    isIconDisplayedOnHoverOnly &&
+    css`
+      & .hoverable-buttons {
+        opacity: 0;
+        position: fixed;
+        right: ${theme.spacing(2)};
+      }
 
-                &:hover {
-                    & .hoverable-buttons {
-                        opacity: 1;
-                        position: static;
-                    }
-                }
-            `};
-
-    & .hoverable-buttons {
-        transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
-    }
-
-    cursor: ${({ cursor }) => {
-        switch (cursor) {
-            case 'drag':
-                return 'grab';
-            case 'not-allowed':
-                return 'not-allowed';
-            default:
-                return 'pointer';
+      &:hover {
+        & .hoverable-buttons {
+          opacity: 1;
+          position: static;
         }
-    }};
+      }
+    `};
+
+  & .hoverable-buttons {
+    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+  }
+
+  cursor: ${({ cursor }) => {
+    switch (cursor) {
+      case 'drag':
+        return 'grab';
+      case 'not-allowed':
+        return 'not-allowed';
+      default:
+        return 'pointer';
+    }
+  }};
 `;
 
 export const StyledIconCheck = styled(IconCheck)`
-    padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
