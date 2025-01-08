@@ -76,6 +76,7 @@ type FormDateTimeFieldInputProps = {
   defaultValue: string | undefined;
   onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
+  readonly?: boolean;
 };
 
 export const FormDateTimeFieldInput = ({
@@ -84,6 +85,7 @@ export const FormDateTimeFieldInput = ({
   defaultValue,
   onPersist,
   VariablePicker,
+  readonly,
 }: FormDateTimeFieldInputProps) => {
   const { timeZone } = useContext(UserContext);
 
@@ -338,6 +340,7 @@ export const FormDateTimeFieldInput = ({
                 onFocus={handleInputFocus}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeydown}
+                disabled={readonly}
               />
 
               {draftValue.mode === 'edit' ? (
@@ -362,12 +365,12 @@ export const FormDateTimeFieldInput = ({
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </StyledInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

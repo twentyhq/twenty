@@ -1,19 +1,20 @@
-import { useMemo } from 'react';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { useMemo } from 'react';
 
 type FormCurrencyFieldInputProps = {
   label?: string;
   defaultValue?: FormFieldCurrencyValue | null;
   onPersist: (value: FormFieldCurrencyValue) => void;
   VariablePicker?: VariablePickerComponent;
+  readonly?: boolean;
 };
 
 export const FormCurrencyFieldInput = ({
@@ -21,6 +22,7 @@ export const FormCurrencyFieldInput = ({
   defaultValue,
   onPersist,
   VariablePicker,
+  readonly,
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
     return Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
@@ -59,6 +61,7 @@ export const FormCurrencyFieldInput = ({
           options={currencies}
           clearLabel={'Currency Code'}
           VariablePicker={VariablePicker}
+          readonly={readonly}
         />
         <FormNumberFieldInput
           label="Amount Micros"
@@ -66,6 +69,7 @@ export const FormCurrencyFieldInput = ({
           onPersist={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
           placeholder="Set 3210000 for 3.21$"
+          readonly={readonly}
         />
       </FormNestedFieldInputContainer>
     </FormFieldInputContainer>
