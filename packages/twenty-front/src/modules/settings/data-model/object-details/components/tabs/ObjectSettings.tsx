@@ -56,7 +56,7 @@ const StyledFormSection = styled(Section)`
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
-  const setUpdatedObjectNamePluralState = useSetRecoilState(
+  const setUpdatedObjectNamePlural = useSetRecoilState(
     updatedObjectNamePluralState,
   );
 
@@ -133,7 +133,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       const objectNamePluralForRedirection =
         updatePayload.namePlural ?? objectMetadataItem.namePlural;
 
-      setUpdatedObjectNamePluralState(objectNamePluralForRedirection);
+      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
