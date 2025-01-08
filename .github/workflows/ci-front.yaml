@@ -113,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
-          path: packages/twenty-front/coverage/storybook
+          path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports:
     timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
