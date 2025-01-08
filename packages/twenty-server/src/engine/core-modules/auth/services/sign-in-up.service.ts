@@ -391,9 +391,17 @@ export class SignInUpService {
       }
     }
 
-    const logo = isWorkEmail(email)
-      ? `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`
-      : undefined;
+    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
+    const isLogoUrlValid = async () => {
+      try {
+        return (await this.httpService.axiosRef.get(logoUrl)).status === 200;
+      } catch {
+        return false;
+      }
+    };
+
+    const logo =
+      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
