@@ -122,10 +122,10 @@ export class ServerlessFunctionResolver {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return await this.serverlessFunctionService.deleteOneServerlessFunction(
-        input.id,
+      return await this.serverlessFunctionService.deleteOneServerlessFunction({
+        id: input.id,
         workspaceId,
-      );
+      });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }

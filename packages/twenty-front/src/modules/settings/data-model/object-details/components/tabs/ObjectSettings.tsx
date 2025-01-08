@@ -9,7 +9,6 @@ import { z, ZodError } from 'zod';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
   IS_LABEL_SYNCED_WITH_NAME_LABEL,
@@ -28,7 +27,7 @@ import styled from '@emotion/styled';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
-import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
+import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
@@ -57,7 +56,9 @@ const StyledFormSection = styled(Section)`
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
-  const setUpdatedObjectSlugState = useSetRecoilState(updatedObjectSlugState);
+  const setUpdatedObjectNamePlural = useSetRecoilState(
+    updatedObjectNamePluralState,
+  );
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { lastVisitedObjectMetadataItemId } =
@@ -131,12 +132,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
         updatePayload.namePlural ?? objectMetadataItem.namePlural;
-      const objectSlug = getObjectSlug({
-        ...updatePayload,
-        namePlural: objectNamePluralForRedirection,
-      });
 
-      setUpdatedObjectSlugState(objectSlug);
+      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
@@ -154,7 +151,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         );
       }
 
-      navigate(`${settingsObjectsPagePath}/${objectSlug}`);
+      navigate(`${settingsObjectsPagePath}/${objectNamePluralForRedirection}`);
     } catch (error) {
       if (error instanceof ZodError) {
         enqueueSnackBar(error.issues[0].message, {

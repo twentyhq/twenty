@@ -16,7 +16,7 @@ import { NoteTarget } from '@/activities/types/NoteTarget';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const useCreateActivityInDB = ({
   activityObjectNameSingular,
