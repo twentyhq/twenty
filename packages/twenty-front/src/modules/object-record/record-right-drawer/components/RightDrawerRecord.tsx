@@ -14,14 +14,18 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-const StyledRightDrawerRecord = styled.div`
-  height: ${({ theme }) =>
-    useIsFeatureEnabled(FeatureFlagKey.IsCommandMenuV2Enabled) || useIsMobile()
-      ? `calc(100% - ${theme.spacing(16)})`
-      : '100%'};
+const StyledRightDrawerRecord = styled.div<{ hasTopBar: boolean }>`
+  height: ${({ theme, hasTopBar }) =>
+    hasTopBar ? `calc(100% - ${theme.spacing(16)})` : '100%'};
 `;
 
 export const RightDrawerRecord = () => {
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+  const isMobile = useIsMobile();
+  const hasTopBar = isCommandMenuV2Enabled || isMobile;
+
   const viewableRecordNameSingular = useRecoilValue(
     viewableRecordNameSingularState,
   );
@@ -52,7 +56,7 @@ export const RightDrawerRecord = () => {
       <ActionMenuComponentInstanceContext.Provider
         value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <StyledRightDrawerRecord>
+        <StyledRightDrawerRecord shouldReduceHeight={hasTopBar}>
           <RecordFieldValueSelectorContextProvider>
             {!isNewViewableRecordLoading && (
               <RecordValueSetterEffect recordId={objectRecordId} />
