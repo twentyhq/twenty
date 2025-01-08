@@ -55,6 +55,14 @@ export const getAvailableAggregationsFromObjectFields = (
       };
     }
 
+    if (field.type === FieldMetadataType.DateTime) {
+      acc[field.name] = {
+        ...acc[field.name],
+        [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
+        [AGGREGATE_OPERATIONS.max]: `max${capitalize(field.name)}`,
+      };
+    }
+
     if (acc[field.name] === undefined) {
       acc[field.name] = {};
     }

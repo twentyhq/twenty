@@ -1,6 +1,9 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
-export const getAggregateOperationLabel = (operation: AGGREGATE_OPERATIONS) => {
+export const getAggregateOperationLabel = (
+  operation: ExtendedAggregateOperations,
+) => {
   switch (operation) {
     case AGGREGATE_OPERATIONS.min:
       return 'Min';
@@ -22,6 +25,10 @@ export const getAggregateOperationLabel = (operation: AGGREGATE_OPERATIONS) => {
       return 'Percent empty';
     case AGGREGATE_OPERATIONS.percentageNotEmpty:
       return 'Percent not empty';
+    case 'EARLIEST':
+      return 'Earliest date';
+    case 'LATEST':
+      return 'Latest date';
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);
   }

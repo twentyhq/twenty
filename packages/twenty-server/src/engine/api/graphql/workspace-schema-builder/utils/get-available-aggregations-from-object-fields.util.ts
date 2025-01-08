@@ -79,7 +79,7 @@ export const getAvailableAggregationsFromObjectFields = (
         case FieldMetadataType.DATE_TIME:
           acc[`min${capitalize(field.name)}`] = {
             type: GraphQLISODateTime,
-            description: `Oldest date contained in the field ${field.name}`,
+            description: `Earliest date contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
             aggregateOperation: AGGREGATE_OPERATIONS.min,
@@ -87,7 +87,7 @@ export const getAvailableAggregationsFromObjectFields = (
 
           acc[`max${capitalize(field.name)}`] = {
             type: GraphQLISODateTime,
-            description: `Most recent date contained in the field ${field.name}`,
+            description: `Latest date contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
             aggregateOperation: AGGREGATE_OPERATIONS.max,

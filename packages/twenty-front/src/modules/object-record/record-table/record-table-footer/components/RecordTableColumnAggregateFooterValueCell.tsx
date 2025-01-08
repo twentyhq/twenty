@@ -29,6 +29,7 @@ const StyledIcon = styled(IconChevronDown)`
   height: 20px;
   justify-content: center;
   flex-grow: 0;
+  flex-shrink: 0;
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 

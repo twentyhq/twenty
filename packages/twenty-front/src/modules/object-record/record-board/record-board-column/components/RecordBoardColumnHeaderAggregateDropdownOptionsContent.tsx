@@ -8,6 +8,7 @@ import { aggregateOperationComponentState } from '@/object-record/record-board/r
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -69,7 +70,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                     availableAggregationOperation !== AGGREGATE_OPERATIONS.count
                   ) {
                     setAggregateOperation(
-                      availableAggregationOperation as AGGREGATE_OPERATIONS,
+                      availableAggregationOperation as ExtendedAggregateOperations,
                     );
 
                     setAvailableFieldsForAggregateOperation(
@@ -87,7 +88,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                   }
                 }}
                 text={getAggregateOperationLabel(
-                  availableAggregationOperation as AGGREGATE_OPERATIONS,
+                  availableAggregationOperation as ExtendedAggregateOperations,
                 )}
                 hasSubMenu={
                   availableAggregationOperation === AGGREGATE_OPERATIONS.count
