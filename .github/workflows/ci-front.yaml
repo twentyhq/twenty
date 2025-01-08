@@ -105,6 +105,37 @@ jobs:
         # TODO double check behavior with --configuration and sharding
         # Should we merge back all cov files ? we don't really consume them afterwards ?
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+      - name: Rename coverage file
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: mv coverage/coverage-final.json coverage/coverage-shard-${{matrix.shard}}.json
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
+          path: coverage/
+  merge-reports:
+    timeout-minutes: 30
+    runs-on: shipfox-8vcpu-ubuntu-2204
+    needs: front-sb-test
+    strategy:
+      matrix:
+        storybook_scope: [pages, modules, performance]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
+          path: coverage/
+      - name: Merge coverage reports
+        run: |
+          jq 'reduce inputs as $i (.; . * $i)' coverage/coverage-shard-*.json > coverage-merged.json
+      - name: TMP counting lines
+        # Find programmatic way to run check coverage using storybook
+        run: cat coverage-merged.json | wc -l
   front-chromatic-deployment:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
