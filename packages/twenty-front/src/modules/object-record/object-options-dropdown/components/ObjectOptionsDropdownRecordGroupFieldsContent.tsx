@@ -69,7 +69,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const newSelectFieldSettingsUrl = getSettingsPagePath(
     SettingsPath.ObjectNewFieldConfigure,
     {
-      objectSlug: objectNamePlural,
+      objectNamePlural,
     },
     {
       fieldType: FieldMetadataType.Select,

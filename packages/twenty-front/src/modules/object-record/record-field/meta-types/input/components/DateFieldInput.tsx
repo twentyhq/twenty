@@ -24,7 +24,7 @@ export const DateFieldInput = ({
   onClear,
   onSubmit,
 }: DateFieldInputProps) => {
-  const { fieldValue, setDraftValue } = useDateField();
+  const { fieldValue, setDraftValue, hotkeyScope } = useDateField();
 
   const persistField = usePersistField();
 
@@ -77,6 +77,7 @@ export const DateFieldInput = ({
       onChange={handleChange}
       onClear={handleClear}
       onSubmit={handleSubmit}
+      hotkeyScope={hotkeyScope}
     />
   );
 };

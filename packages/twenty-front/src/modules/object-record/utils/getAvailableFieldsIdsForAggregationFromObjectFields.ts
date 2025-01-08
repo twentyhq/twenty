@@ -1,32 +1,30 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
-import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
+import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
-import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
+import { isDefined } from '~/utils/isDefined';
 
 export const getAvailableFieldsIdsForAggregationFromObjectFields = (
   fields: FieldMetadataItem[],
+  targetAggregateOperations: AGGREGATE_OPERATIONS[],
 ): AvailableFieldsForAggregateOperation => {
-  const aggregationMap = initializeAvailableFieldsForAggregateOperationMap();
+  const aggregationMap = initializeAvailableFieldsForAggregateOperationMap(
+    targetAggregateOperations,
+  );
+
+  const allAggregations = getAvailableAggregationsFromObjectFields(fields);
 
   return fields.reduce((acc, field) => {
-    Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION).forEach(
-      (aggregateOperation) => {
-        const typedAggregateOperation =
-          aggregateOperation as AggregateOperationsOmittingStandardOperations;
+    if (isDefined(allAggregations[field.name])) {
+      Object.keys(allAggregations[field.name]).forEach((aggregation) => {
+        const typedAggregateOperation = aggregation as AGGREGATE_OPERATIONS;
 
-        if (
-          isFieldTypeValidForAggregateOperation(
-            field.type,
-            typedAggregateOperation,
-          )
-        ) {
+        if (targetAggregateOperations.includes(typedAggregateOperation)) {
           acc[typedAggregateOperation]?.push(field.id);
         }
-      },
-    );
-
+      });
+    }
     return acc;
   }, aggregationMap);
 };

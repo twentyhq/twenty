@@ -1,5 +1,5 @@
-import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 
 export type AvailableFieldsForAggregateOperation = {
-  [T in AggregateOperationsOmittingStandardOperations]?: string[];
+  [T in AGGREGATE_OPERATIONS]?: string[];
 };

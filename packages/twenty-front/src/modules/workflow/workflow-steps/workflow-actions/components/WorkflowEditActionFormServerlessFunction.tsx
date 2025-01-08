@@ -77,9 +77,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const theme = useTheme();
-  const { activeTabId, setActiveTabId } = useTabList(
-    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
-  );
+  const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
+  const { activeTabId, setActiveTabId } = useTabList(tabListId);
   const { updateOneServerlessFunction, isReady } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
@@ -269,9 +268,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
       <StyledContainer>
         <StyledTabListContainer>
           <TabList
-            tabListInstanceId={
-              WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
-            }
+            tabListInstanceId={tabListId}
             tabs={tabs}
             behaveAsLinks={false}
           />

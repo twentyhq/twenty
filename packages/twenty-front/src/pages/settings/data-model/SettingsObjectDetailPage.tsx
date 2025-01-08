@@ -32,7 +32,7 @@ import {
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
-import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
+import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -53,16 +53,16 @@ const StyledTitleContainer = styled.div`
 export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
 
-  const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug } =
+  const { objectNamePlural = '' } = useParams();
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const [updatedObjectSlug, setUpdatedObjectSlug] = useRecoilState(
-    updatedObjectSlugState,
+  const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilState(
+    updatedObjectNamePluralState,
   );
   const objectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug) ??
-    findActiveObjectMetadataItemBySlug(updatedObjectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
+    findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
   const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
@@ -74,14 +74,15 @@ export const SettingsObjectDetailPage = () => {
   );
 
   useEffect(() => {
-    if (objectSlug === updatedObjectSlug) setUpdatedObjectSlug('');
+    if (objectNamePlural === updatedObjectNamePlural)
+      setUpdatedObjectNamePlural('');
     if (!isDefined(objectMetadataItem)) navigate(AppPath.NotFound);
   }, [
     objectMetadataItem,
     navigate,
-    objectSlug,
-    updatedObjectSlug,
-    setUpdatedObjectSlug,
+    objectNamePlural,
+    updatedObjectNamePlural,
+    setUpdatedObjectNamePlural,
   ]);
 
   if (!isDefined(objectMetadataItem)) return <></>;
