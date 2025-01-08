@@ -38,6 +38,8 @@ const StyledTotalRow = styled.span`
 const StyledRecordGroupSection = styled(RecordTableTd)`
   border-right: none;
   height: 32px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledEmptyTd = styled.td`
