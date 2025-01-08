@@ -2,7 +2,6 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum FileExceptionCode {
   UNAUTHENTICATED = 'UNAUTHENTICATED',
-  INVALID_INPUT = 'INVALID_INPUT',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
 }

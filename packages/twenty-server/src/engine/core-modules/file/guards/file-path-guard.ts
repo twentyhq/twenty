@@ -14,12 +14,16 @@ export class FilePathGuard implements CanActivate {
       return false;
     }
 
-    const payload = await this.jwtWrapperService.verifyWorkspaceToken(
-      query['token'],
-      'FILE',
-    );
+    try {
+      const payload = await this.jwtWrapperService.verifyWorkspaceToken(
+        query['token'],
+        'FILE',
+      );
 
-    if (!payload.workspaceId) {
+      if (!payload.workspaceId) {
+        return false;
+      }
+    } catch (error) {
       return false;
     }
 

@@ -172,7 +172,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  FILE_TOKEN_EXPIRES_IN = '1d';
+  FILE_TOKEN_EXPIRES_IN = '1m';
 
   @IsDuration()
   @IsOptional()
