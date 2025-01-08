@@ -19,16 +19,30 @@ const StyledText = styled.span`
 const StyledValueContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 0;
   gap: 4px;
   height: 32px;
   justify-content: flex-end;
   padding: 0 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledValue = styled.div`
   color: ${({ theme }) => theme.color.gray60};
-  flex: 1 0 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({
