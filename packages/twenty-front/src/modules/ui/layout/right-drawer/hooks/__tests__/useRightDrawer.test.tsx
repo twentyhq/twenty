@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isRightDrawerOpenState } from '../../states/isRightDrawerOpenState';
@@ -24,7 +25,11 @@ describe('useRightDrawer', () => {
     };
 
     const { result } = renderHook(() => useCombinedHooks(), {
-      wrapper: RecoilRoot,
+      wrapper: ({ children }) => (
+        <BrowserRouter>
+          <RecoilRoot>{children}</RecoilRoot>
+        </BrowserRouter>
+      ),
     });
 
     expect(result.current.rightDrawerPage).toBeNull();
