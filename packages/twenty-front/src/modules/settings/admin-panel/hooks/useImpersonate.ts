@@ -1,20 +1,24 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 
 export const useImpersonate = () => {
   const [currentUser] = useRecoilState(currentUserState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
+  );
+
+  const { verify } = useAuth();
+
   const [impersonate] = useImpersonateMutation();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { clearSession } = useAuth();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -44,16 +48,11 @@ export const useImpersonate = () => {
 
       const { loginToken, workspace } = impersonateResult.data.impersonate;
 
-      if (!isMultiWorkspaceEnabled) {
-        await clearSession();
-
-        return (window.location.href = buildWorkspaceUrl(
-          undefined,
-          AppPath.Verify,
-          {
-            loginToken: loginToken.token,
-          },
-        ));
+      if (workspace.id === currentWorkspace?.id) {
+        setIsAppWaitingForFreshObjectMetadata(true);
+        await verify(loginToken.token);
+        setIsAppWaitingForFreshObjectMetadata(false);
+        return;
       }
 
       return redirectToWorkspaceDomain(workspace.subdomain, AppPath.Verify, {
