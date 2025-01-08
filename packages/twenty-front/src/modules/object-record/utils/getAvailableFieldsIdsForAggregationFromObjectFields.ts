@@ -30,10 +30,10 @@ export const getAvailableFieldsIdsForAggregationFromObjectFields = (
               aggregation as AGGREGATE_OPERATIONS,
               field.type,
             );
-          if (acc[convertedAggregateOperation] === undefined) {
+          if (!isDefined(acc[convertedAggregateOperation])) {
             acc[convertedAggregateOperation] = [];
           }
-          acc[convertedAggregateOperation].push(field.id);
+          (acc[convertedAggregateOperation] as string[]).push(field.id);
         }
       });
     }
