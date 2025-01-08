@@ -112,7 +112,8 @@ jobs:
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
+          retention-days: 1
+          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports:
     timeout-minutes: 30
@@ -129,7 +130,8 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
+          pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
+          merge-multiple: true
           path: coverage/
       - name: Merge coverage reports
         run: |
