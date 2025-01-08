@@ -1,6 +1,6 @@
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { z } from 'zod';
 
 export const richTextCompositeType: CompositeType = {
   type: FieldMetadataType.RICH_TEXT,
@@ -20,7 +20,9 @@ export const richTextCompositeType: CompositeType = {
   ],
 };
 
-export type RichTextMetadata = {
-  blocknote: string;
-  markdown: string;
-};
+export const richTextValueSchema = z.object({
+  blocknote: z.string().nullable(),
+  markdown: z.string().nullable(),
+});
+
+export type RichTextMetadata = z.infer<typeof richTextValueSchema>;

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ServerBlockNoteEditor } from '@blocknote/server-util';
+
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -16,6 +18,10 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import {
+  RichTextMetadata,
+  richTextValueSchema,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
@@ -129,47 +135,66 @@ export class QueryRunnerArgsFactory {
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMapByNameByName: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
-  ) {
+  ): Promise<Partial<ObjectRecord>> {
     if (!data) {
-      return;
+      return Promise.resolve({});
     }
 
     let isFieldPositionPresent = false;
 
-    const createArgPromiseByArgKey = Object.entries(data).map(
-      async ([key, value]) => {
-        const fieldMetadata = fieldMetadataMapByNameByName[key];
+    const createArgByArgKeyPromises: Promise<[string, any]>[] = Object.entries(
+      data,
+    ).map(async ([key, value]): Promise<[string, any]> => {
+      const fieldMetadata = fieldMetadataMapByNameByName[key];
 
-        if (!fieldMetadata) {
-          return [key, await Promise.resolve(value)];
+      if (!fieldMetadata) {
+        return [key, value];
+      }
+
+      switch (fieldMetadata.type) {
+        case FieldMetadataType.POSITION: {
+          isFieldPositionPresent = true;
+
+          const newValue = await this.recordPositionFactory.create(
+            value,
+            {
+              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+              nameSingular:
+                options.objectMetadataItemWithFieldMaps.nameSingular,
+            },
+            options.authContext.workspace.id,
+            argPositionBackfillInput.argIndex,
+          );
+
+          return [key, newValue];
         }
+        case FieldMetadataType.NUMBER:
+          return [key, Number(value)] as const;
+        case FieldMetadataType.RICH_TEXT: {
+          const richTextValue = richTextValueSchema.parse(value);
 
-        switch (fieldMetadata.type) {
-          case FieldMetadataType.POSITION:
-            isFieldPositionPresent = true;
+          const { blocksToMarkdownLossy, tryParseMarkdownToBlocks } =
+            ServerBlockNoteEditor.create();
 
-            return [
-              key,
-              await this.recordPositionFactory.create(
-                value,
-                {
-                  isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-                  nameSingular:
-                    options.objectMetadataItemWithFieldMaps.nameSingular,
-                },
-                options.authContext.workspace.id,
-                argPositionBackfillInput.argIndex,
-              ),
-            ];
-          case FieldMetadataType.NUMBER:
-            return [key, Number(value)];
-          default:
-            return [key, await Promise.resolve(value)];
+          const valueInBothFormats: RichTextMetadata = {
+            markdown: richTextValue.blocknote
+              ? await blocksToMarkdownLossy(JSON.parse(richTextValue.blocknote))
+              : null,
+            blocknote: richTextValue.markdown
+              ? JSON.stringify(
+                  await tryParseMarkdownToBlocks(richTextValue.markdown),
+                )
+              : null,
+          };
+
+          return [key, richTextValue];
         }
-      },
-    );
+        default:
+          return [key, value];
+      }
+    });
 
-    const newArgEntries = await Promise.all(createArgPromiseByArgKey);
+    const newArgEntries = await Promise.all(createArgByArgKeyPromises);
 
     if (
       !isFieldPositionPresent &&
