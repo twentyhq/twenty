@@ -10,11 +10,15 @@ import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordSh
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledRightDrawerRecord = styled.div`
   height: ${({ theme }) =>
-    useIsMobile() ? `calc(100% - ${theme.spacing(16)})` : '100%'};
+    useIsFeatureEnabled(FeatureFlagKey.IsCommandMenuV2Enabled) || useIsMobile()
+      ? `calc(100% - ${theme.spacing(16)})`
+      : '100%'};
 `;
 
 export const RightDrawerRecord = () => {
