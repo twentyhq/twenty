@@ -108,13 +108,12 @@ jobs:
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          ls coverage/storybook
-          mv coverage/storybook/coverage-storybook.json coverage/storybook/coverage-shard-${{matrix.shard}}.json
+          mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}
-          path: coverage/storybook
+          path: packages/twenty-front/coverage/storybook
   merge-reports:
     timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
