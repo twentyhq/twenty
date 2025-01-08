@@ -5,25 +5,26 @@ import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/co
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { getSettingsIntegrationAll } from '@/settings/integrations/utils/getSettingsIntegrationAll';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useSettingsIntegrationCategories =
   (): SettingsIntegrationCategory[] => {
     const isAirtableIntegrationEnabled = useIsFeatureEnabled(
-      'IS_AIRTABLE_INTEGRATION_ENABLED',
+      FeatureFlagKey.IsAirtableIntegrationEnabled,
     );
     const isAirtableIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'airtable',
     )?.isActive;
 
     const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-      'IS_POSTGRESQL_INTEGRATION_ENABLED',
+      FeatureFlagKey.IsPostgreSqlIntegrationEnabled,
     );
     const isPostgresqlIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'postgresql',
     )?.isActive;
 
     const isStripeIntegrationEnabled = useIsFeatureEnabled(
-      'IS_STRIPE_INTEGRATION_ENABLED',
+      FeatureFlagKey.IsStripeIntegrationEnabled,
     );
     const isStripeIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'stripe',

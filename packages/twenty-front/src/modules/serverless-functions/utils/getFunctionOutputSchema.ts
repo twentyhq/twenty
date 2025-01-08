@@ -1,6 +1,6 @@
-import { BaseOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
-import { isObject } from '@sniptt/guards';
 import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
 
 const getValueType = (value: any): InputSchemaPropertyType => {

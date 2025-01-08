@@ -31,6 +31,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const {
@@ -41,7 +43,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
     closeDropdown,
   } = useOptionsDropdown();
 
-  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
 
   const { getIcon } = useIcons();
   const { currentViewWithCombinedFiltersAndSorts: currentView } =
@@ -98,7 +102,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
         <>
-          <DropdownMenuItemsContainer withoutScrollWrapper>
+          <DropdownMenuItemsContainer scrollable={false}>
             <MenuItem
               onClick={() => onContentChange('viewSettings')}
               LeftIcon={IconLayout}
@@ -109,7 +113,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
           <DropdownMenuSeparator />
         </>
       )}
-      <DropdownMenuItemsContainer withoutScrollWrapper>
+      <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('fields')}
           LeftIcon={IconTag}
@@ -117,15 +121,20 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {(viewType === ViewType.Kanban || isViewGroupEnabled) && (
-          <MenuItem
-            onClick={() => onContentChange('recordGroups')}
-            LeftIcon={IconLayoutList}
-            text="Group by"
-            contextualText={recordGroupFieldMetadata?.label}
-            hasSubMenu
-          />
-        )}
+        {(viewType === ViewType.Kanban || isViewGroupEnabled) &&
+          currentView?.key !== 'INDEX' && (
+            <MenuItem
+              onClick={() =>
+                isDefined(recordGroupFieldMetadata)
+                  ? onContentChange('recordGroups')
+                  : onContentChange('recordGroupFields')
+              }
+              LeftIcon={IconLayoutList}
+              text="Group by"
+              contextualText={recordGroupFieldMetadata?.label}
+              hasSubMenu
+            />
+          )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>

@@ -5,7 +5,7 @@ import { TextVariableEditor } from '@/object-record/record-field/form-types/comp
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-ui';
 

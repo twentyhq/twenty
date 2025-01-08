@@ -7,12 +7,13 @@ import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { useFormContext } from 'react-hook-form';
 
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
   >;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
@@ -26,11 +27,18 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
+  const { watch } = useFormContext();
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
-          fieldMetadataItem={fieldMetadataItem}
+          fieldMetadataItem={{
+            icon: watch('icon'),
+            label: watch('label') || 'New Field',
+            settings: watch('settings') || null,
+            type: fieldMetadataItem.type,
+          }}
           objectMetadataItem={objectMetadataItem}
         />
       }

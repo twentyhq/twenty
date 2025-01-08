@@ -1,4 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { FilterValueDependencies } from '@/object-record/record-filter/types/FilterValueDependencies';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -13,6 +14,10 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
+
+const mockFilterValueDependencies: FilterValueDependencies = {
+  currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
+};
 
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
@@ -38,6 +43,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [nameFilter],
       companyMockObjectMetadataItem.fields,
       [],
@@ -90,6 +96,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [nameFilter, employeesFilter],
       companyMockObjectMetadataItem.fields,
       [],
@@ -176,6 +183,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         addressFilterContains,
         addressFilterDoesNotContain,
@@ -558,6 +566,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         phonesFilterContains,
         phonesFilterDoesNotContain,
@@ -759,6 +768,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         emailsFilterContains,
         emailsFilterDoesNotContain,
@@ -914,6 +924,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         dateFilterIsAfter,
         dateFilterIsBefore,
@@ -1030,6 +1041,7 @@ describe('should work as expected for the different field types', () => {
     };
 
     const result = computeViewRecordGqlOperationFilter(
+      mockFilterValueDependencies,
       [
         employeesFilterIsGreaterThan,
         employeesFilterIsLessThan,

@@ -155,11 +155,11 @@ export class SSOService {
   }
 
   buildCallbackUrl(
-    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type'>,
+    identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type' | 'id'>,
   ) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
-    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
+    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback/${identityProvider.id}`;
 
     return callbackURL.toString();
   }

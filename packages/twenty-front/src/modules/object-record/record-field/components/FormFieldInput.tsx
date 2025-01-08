@@ -1,15 +1,18 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
+import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
+import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
+import { FormCurrencyFieldInput } from '@/object-record/record-field/form-types/components/FormCurrencyFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
@@ -19,19 +22,24 @@ import {
   FieldLinksValue,
   FieldMetadata,
   FieldMultiSelectValue,
+  FieldPhonesValue,
+  FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
+import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
+import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
@@ -107,8 +115,22 @@ export const FormFieldInput = ({
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
+  ) : isFieldPhones(field) ? (
+    <FormPhoneFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldPhonesValue | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
   ) : isFieldDate(field) ? (
     <FormDateFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldDateTime(field) ? (
+    <FormDateTimeFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
@@ -136,6 +158,13 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | null | undefined}
       onPersist={onPersist}
       placeholder={field.label}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldCurrency(field) ? (
+    <FormCurrencyFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FormFieldCurrencyValue | null}
+      onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
   ) : null;

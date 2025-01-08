@@ -1,4 +1,5 @@
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
+import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionMonitoringTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionMonitoringTab';
@@ -20,10 +21,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
-import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
-import { useDebouncedCallback } from 'use-debounce';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -122,7 +123,9 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
 
-  const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
+  const isAnalyticsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsAnalyticsV2Enabled,
+  );
 
   const tabs = [
     { id: 'editor', title: 'Editor', Icon: IconCode },

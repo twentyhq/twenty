@@ -10,6 +10,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
@@ -69,12 +70,14 @@ export const ViewBarFilterEffect = ({
             filterDefinitionUsedInDropdown?.fieldMetadataId,
         );
 
-      const viewFilterSelectedRecords = isNonEmptyString(
-        viewFilterUsedInDropdown?.value,
-      )
-        ? JSON.parse(viewFilterUsedInDropdown.value)
-        : [];
-      setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecords);
+      const { selectedRecordIds } = relationFilterValueSchema
+        .catch({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: [],
+        })
+        .parse(viewFilterUsedInDropdown?.value);
+
+      setObjectFilterDropdownSelectedRecordIds(selectedRecordIds);
     } else if (
       isDefined(filterDefinitionUsedInDropdown) &&
       ['SELECT', 'MULTI_SELECT'].includes(filterDefinitionUsedInDropdown.type)

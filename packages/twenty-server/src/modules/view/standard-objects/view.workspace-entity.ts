@@ -218,6 +218,36 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
         position: 4,
         color: 'yellow',
       },
+      {
+        value: AGGREGATE_OPERATIONS.countEmpty,
+        label: 'Count empty',
+        position: 5,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countNotEmpty,
+        label: 'Count not empty',
+        position: 6,
+        color: 'purple',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countUniqueValues,
+        label: 'Count unique values',
+        position: 7,
+        color: 'sky',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.percentageEmpty,
+        label: 'Percent empty',
+        position: 8,
+        color: 'turquoise',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.percentageNotEmpty,
+        label: 'Percent not empty',
+        position: 9,
+        color: 'yellow',
+      },
     ],
     defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
   })

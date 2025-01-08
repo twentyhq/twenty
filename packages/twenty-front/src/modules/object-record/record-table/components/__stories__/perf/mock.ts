@@ -663,7 +663,8 @@ export const mockPerformance = {
     id: '20202020-2d40-4e49-8df4-9c6a049191df',
     email: 'lorie.vladim@google.com',
     phones: {
-      primaryPhoneCountryCode: '+33',
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneCallingCode: '+33',
       primaryPhoneNumber: '788901235',
     },
     linkedinLink: {

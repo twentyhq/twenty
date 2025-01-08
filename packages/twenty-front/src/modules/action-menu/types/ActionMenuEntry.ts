@@ -1,4 +1,5 @@
-import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
+import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ConfirmationModalProps } from '@/ui/layout/modal/components/ConfirmationModal';
 import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
@@ -22,7 +23,7 @@ export type ActionMenuEntry = {
   Icon: IconComponent;
   isPinned?: boolean;
   accent?: MenuItemAccent;
-  availableOn?: ActionAvailableOn[];
+  availableOn?: ActionViewType[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
-  ConfirmationModal?: ReactElement;
+  ConfirmationModal?: ReactElement<ConfirmationModalProps>;
 };

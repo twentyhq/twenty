@@ -15,9 +15,21 @@ import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/stat
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import 'overlayscrollbars/overlayscrollbars.css';
 
-const StyledScrollWrapper = styled.div<{ scrollHide?: boolean }>`
+type HeightMode = 'full' | 'fit-content';
+
+const StyledScrollWrapper = styled.div<{
+  scrollHide?: boolean;
+  heightMode: HeightMode;
+}>`
   display: flex;
-  height: 100%;
+  height: ${({ heightMode }) => {
+    switch (heightMode) {
+      case 'full':
+        return '100%';
+      case 'fit-content':
+        return 'fit-content';
+    }
+  }};
   width: 100%;
 
   .os-scrollbar-handle {
@@ -33,6 +45,7 @@ const StyledInnerContainer = styled.div`
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
+  heightMode?: HeightMode;
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
@@ -44,6 +57,7 @@ export const ScrollWrapper = ({
   componentInstanceId,
   children,
   className,
+  heightMode = 'full',
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
@@ -75,22 +89,76 @@ export const ScrollWrapper = ({
 
   const [initialize, instance] = useOverlayScrollbars({
     options: {
-      scrollbars: { autoHide: 'scroll' },
+      scrollbars: {
+        autoHide: 'scroll',
+        autoHideDelay: 500,
+      },
       overflow: {
-        x: defaultEnableXScroll ? undefined : 'hidden',
-        y: defaultEnableYScroll ? undefined : 'hidden',
+        x: defaultEnableXScroll ? 'scroll' : 'hidden',
+        y: defaultEnableYScroll ? 'scroll' : 'hidden',
       },
     },
     events: {
-      scroll: handleScroll,
+      scroll: (osInstance) => {
+        const {
+          scrollOffsetElement: target,
+          scrollbarHorizontal,
+          scrollbarVertical,
+        } = osInstance.elements();
+
+        // Hide scrollbars by default
+        [scrollbarHorizontal, scrollbarVertical].forEach((scrollbar) => {
+          if (scrollbar !== null) {
+            scrollbar.track.style.visibility = 'hidden';
+          }
+        });
+
+        // Show appropriate scrollbar based on scroll direction
+        const isHorizontalScroll =
+          target.scrollLeft !== Number(target.dataset.lastScrollLeft || '0');
+        const isVerticalScroll =
+          target.scrollTop !== Number(target.dataset.lastScrollTop || '0');
+
+        // Show scrollbar based on scroll direction only with explicit conditions
+        if (
+          isHorizontalScroll === true &&
+          scrollbarHorizontal !== null &&
+          target.scrollWidth > target.clientWidth
+        ) {
+          scrollbarHorizontal.track.style.visibility = 'visible';
+        }
+        if (
+          isVerticalScroll === true &&
+          scrollbarVertical !== null &&
+          target.scrollHeight > target.clientHeight
+        ) {
+          scrollbarVertical.track.style.visibility = 'visible';
+        }
+
+        // Update scroll positions
+        target.dataset.lastScrollLeft = target.scrollLeft.toString();
+        target.dataset.lastScrollTop = target.scrollTop.toString();
+
+        handleScroll(osInstance);
+      },
     },
   });
 
   useEffect(() => {
-    if (scrollableRef?.current !== null) {
-      initialize(scrollableRef.current);
+    const currentRef = scrollableRef.current;
+
+    if (currentRef !== null) {
+      initialize(currentRef);
     }
-  }, [initialize, scrollableRef]);
+
+    return () => {
+      // Reset all component-specific Recoil state
+      setScrollTop(0);
+      setScrollLeft(0);
+      setOverlayScrollbars(null);
+      instance()?.destroy();
+    };
+  }, [initialize, instance, setScrollTop, setScrollLeft, setOverlayScrollbars]);
 
   useEffect(() => {
     setOverlayScrollbars(instance());
@@ -110,6 +178,7 @@ export const ScrollWrapper = ({
           ref={scrollableRef}
           className={className}
           scrollHide={scrollHide}
+          heightMode={heightMode}
         >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>

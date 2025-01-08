@@ -18,6 +18,7 @@ import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -41,6 +42,7 @@ import { UserService } from './services/user.service';
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
     UserVarsModule,
     AnalyticsModule,
+    DomainManagerModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],

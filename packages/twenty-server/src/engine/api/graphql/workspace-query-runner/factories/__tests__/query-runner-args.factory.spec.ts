@@ -22,34 +22,34 @@ describe('QueryRunnerArgsFactory', () => {
         {
           type: FieldMetadataType.POSITION,
           isCustom: true,
-          nameSingular: 'position',
+          name: 'position',
         },
         {
           type: FieldMetadataType.NUMBER,
           isCustom: true,
-          nameSingular: 'testNumber',
+          name: 'testNumber',
         },
         {
           type: FieldMetadataType.TEXT,
           isCustom: true,
-          nameSingular: 'otherField',
+          name: 'otherField',
         },
       ],
       fieldsByName: {
         position: {
           type: FieldMetadataType.POSITION,
           isCustom: true,
-          nameSingular: 'position',
+          name: 'position',
         },
         testNumber: {
           type: FieldMetadataType.NUMBER,
           isCustom: true,
-          nameSingular: 'testNumber',
+          name: 'testNumber',
         },
         otherField: {
           type: FieldMetadataType.TEXT,
           isCustom: true,
-          nameSingular: 'otherField',
+          name: 'otherField',
         },
       } as unknown as FieldMetadataMap,
     },

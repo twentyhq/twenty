@@ -1,6 +1,7 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RecordIndexPageTableAddButtonInGroup } from '@/object-record/record-index/components/RecordIndexPageTableAddButtonInGroup';
+import { RecordIndexAddRecordInGroupDropdown } from '@/object-record/record-index/components/RecordIndexAddRecordInGroupDropdown';
 import { RecordIndexPageTableAddButtonNoGroup } from '@/object-record/record-index/components/RecordIndexPageTableAddButtonNoGroup';
+import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordIndexPageTableAddButton = () => {
@@ -12,5 +13,10 @@ export const RecordIndexPageTableAddButton = () => {
     return <RecordIndexPageTableAddButtonNoGroup />;
   }
 
-  return <RecordIndexPageTableAddButtonInGroup />;
+  return (
+    <RecordIndexAddRecordInGroupDropdown
+      dropdownId="record-index-page-table-add-button-dropdown"
+      clickableComponent={<PageAddButton />}
+    />
+  );
 };

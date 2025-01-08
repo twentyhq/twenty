@@ -6,11 +6,12 @@ import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import {
   IconComponent,
   MOBILE_VIEWPORT,
@@ -26,11 +27,12 @@ export type NavigationDrawerItemIndentationLevel = 1 | 2;
 export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
+  objectName?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
   onClick?: () => void;
-  Icon: IconComponent | ((props: TablerIconsProps) => JSX.Element);
+  Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
@@ -38,12 +40,13 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDragging?: boolean;
+  isRightOptionsDropdownOpen?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
-> & { isNavigationDrawerExpanded: boolean };
+> & { isNavigationDrawerExpanded: boolean; hasRightOptions: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
@@ -77,7 +80,8 @@ const StyledItem = styled('button', {
 
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-right: ${({ theme, hasRightOptions }) =>
+    hasRightOptions ? theme.spacing(0.5) : theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
@@ -87,13 +91,15 @@ const StyledItem = styled('button', {
 
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
-      ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
-      : '100%'};
+      ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
+      : `calc(100% - ${props.theme.spacing(2)})`};
+
   ${({ isDragging }) =>
     isDragging &&
-    ` 
-          cursor: grabbing;
-        `}
+    `
+    cursor: grabbing;
+  `}
+
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
@@ -111,17 +117,34 @@ const StyledItem = styled('button', {
   }
 `;
 
-const StyledItemElementsContainer = styled.span`
+const StyledItemElementsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledLabelParent = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  min-width: 0px;
+  overflow: hidden;
+  text-overflow: clip;
+`;
+const StyledEllipsisContainer = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  text-overflow: ellipsis;
-  white-space: nowrap;
+`;
+
+const StyledItemObjectName = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
 const StyledItemCount = styled.span`
@@ -149,7 +172,7 @@ const StyledKeyBoardShortcut = styled.span`
   visibility: hidden;
 `;
 
-const StyledNavigationDrawerItemContainer = styled.span`
+const StyledNavigationDrawerItemContainer = styled.div`
   display: flex;
   width: 100%;
 `;
@@ -158,30 +181,62 @@ const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
 
-const StyledRightOptionsContainer = styled.div<{
-  isMobile: boolean;
-  active: boolean;
-}>`
-  margin-left: auto;
-  visibility: ${({ isMobile, active }) =>
-    isMobile || active ? 'visible' : 'hidden'};
+const StyledIcon = styled.div`
+  flex-shrink: 0;
+  flex-grow: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  :hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
-  width: ${({ theme }) => theme.spacing(6)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledRightOptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  flex-grow: 0;
   height: ${({ theme }) => theme.spacing(6)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+`;
+
+const visibleStateStyles = css`
+  clip-path: unset;
+  display: flex;
+  height: unset;
+  opacity: 1;
+  overflow: unset;
+  position: unset;
+  width: unset;
+`;
+
+const StyledRightOptionsVisbility = styled.div<{
+  isMobile: boolean;
+  isRightOptionsDropdownOpen?: boolean;
+}>`
+  display: block;
+  opacity: 0;
+  transition: opacity 150ms;
+  position: absolute;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
+  clip-path: inset(1px);
+  white-space: nowrap;
+  height: 1px;
+  width: 1px;
+
+  ${({ isMobile, isRightOptionsDropdownOpen }) =>
+    (isMobile || isRightOptionsDropdownOpen) && visibleStateStyles}
+
   .navigation-drawer-item:hover & {
-    visibility: visible;
+    ${visibleStateStyles}
   }
 `;
 
 export const NavigationDrawerItem = ({
   className,
   label,
+  objectName,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   to,
@@ -194,6 +249,7 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDragging,
+  isRightOptionsDropdownOpen,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -201,6 +257,7 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
+  const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
 
   const handleItemClick = () => {
     if (isMobile) {
@@ -227,31 +284,45 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDragging={isDragging}
+        hasRightOptions={!!rightOptions}
       >
-        {showBreadcrumb && (
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <NavigationDrawerItemBreadcrumb state={subItemState} />
-          </NavigationDrawerAnimatedCollapseWrapper>
-        )}
         <StyledItemElementsContainer>
-          {Icon && (
-            <Icon
-              style={{ minWidth: theme.icon.size.md }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.md}
-              color={
-                showBreadcrumb && !isSettingsPage && !isNavigationDrawerExpanded
-                  ? theme.font.color.light
-                  : 'currentColor'
-              }
-            />
+          {showBreadcrumb && (
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <NavigationDrawerItemBreadcrumb state={subItemState} />
+            </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledItemLabel>{label}</StyledItemLabel>
-          </NavigationDrawerAnimatedCollapseWrapper>
+          {Icon && (
+            <StyledIcon>
+              <Icon
+                style={{ minWidth: theme.icon.size.md }}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.md}
+                color={
+                  showBreadcrumb &&
+                  !isSettingsPage &&
+                  !isNavigationDrawerExpanded
+                    ? theme.font.color.light
+                    : 'currentColor'
+                }
+              />
+            </StyledIcon>
+          )}
 
-          <StyledSpacer />
+          <StyledLabelParent>
+            <StyledEllipsisContainer>
+              <StyledItemLabel>{label}</StyledItemLabel>
+              {objectName && (
+                <StyledItemObjectName>
+                  {' · '}
+                  {capitalize(objectName)}
+                </StyledItemObjectName>
+              )}
+            </StyledEllipsisContainer>
+          </StyledLabelParent>
+
+          {showStyledSpacer && <StyledSpacer />}
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
@@ -272,20 +343,26 @@ export const NavigationDrawerItem = ({
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
-          <NavigationDrawerAnimatedCollapseWrapper>
-            {rightOptions && (
+
+          {rightOptions && (
+            <NavigationDrawerAnimatedCollapseWrapper>
               <StyledRightOptionsContainer
-                isMobile={isMobile}
-                active={active || false}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                 }}
               >
-                {rightOptions}
+                <StyledRightOptionsVisbility
+                  isMobile={isMobile}
+                  isRightOptionsDropdownOpen={
+                    isRightOptionsDropdownOpen || false
+                  }
+                >
+                  {rightOptions}
+                </StyledRightOptionsVisbility>
               </StyledRightOptionsContainer>
-            )}
-          </NavigationDrawerAnimatedCollapseWrapper>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
         </StyledItemElementsContainer>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>

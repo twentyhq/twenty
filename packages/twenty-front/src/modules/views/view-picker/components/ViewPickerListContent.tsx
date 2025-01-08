@@ -97,7 +97,7 @@ export const ViewPickerListContent = () => {
         />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <StyledBoldDropdownMenuItemsContainer>
+      <StyledBoldDropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={handleAddViewButtonClick}
           LeftIcon={IconPlus}

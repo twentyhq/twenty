@@ -1,7 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import { createState } from 'twenty-ui';
+import { createState } from '@ui/utilities/state/utils/createState';
 
 export const dateTimeFormatState = createState<{
   timeZone: string;

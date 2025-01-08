@@ -30,7 +30,7 @@ import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetReco
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
-import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -42,6 +42,7 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -126,7 +127,7 @@ export const RecordIndexContainer = () => {
         for (const viewField of viewFields) {
           const aggregateOperationForViewField = snapshot
             .getLoadable(
-              aggregateOperationForViewFieldState({
+              viewFieldAggregateOperationState({
                 viewFieldId: viewField.id,
               }),
             )
@@ -134,7 +135,7 @@ export const RecordIndexContainer = () => {
 
           if (aggregateOperationForViewField !== viewField.aggregateOperation) {
             set(
-              aggregateOperationForViewFieldState({
+              viewFieldAggregateOperationState({
                 viewFieldId: viewField.id,
               }),
               viewField.aggregateOperation,
@@ -162,7 +163,7 @@ export const RecordIndexContainer = () => {
   );
 
   const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+    FeatureFlagKey.IsPageHeaderV2Enabled,
   );
 
   return (
@@ -255,7 +256,9 @@ export const RecordIndexContainer = () => {
               <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
             </StyledContainerWithPadding>
           )}
-          {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
+          {!isPageHeaderV2Enabled && (
+            <RecordIndexActionMenu indexId={recordIndexId} />
+          )}
         </RecordFieldValueSelectorContextProvider>
       </StyledContainer>
     </>

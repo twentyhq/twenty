@@ -13,7 +13,6 @@ export const DEMO_SEED_USER_IDS = {
 export const seedUsers = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -24,7 +23,6 @@ export const seedUsers = async (
       'lastName',
       'email',
       'passwordHash',
-      'defaultWorkspaceId',
     ])
     .orIgnore()
     .values([
@@ -35,7 +33,6 @@ export const seedUsers = async (
         email: 'noah@demo.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
       },
       {
         id: DEMO_SEED_USER_IDS.HUGO,
@@ -44,7 +41,6 @@ export const seedUsers = async (
         email: 'hugo@demo.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
       },
       {
         id: DEMO_SEED_USER_IDS.TIM,
@@ -53,23 +49,28 @@ export const seedUsers = async (
         email: 'tim@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: workspaceId,
       },
     ])
     .execute();
 };
 
 export const deleteUsersByWorkspace = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  const user = await dataSource
+    .createQueryBuilder(`${schemaName}.${tableName}`, 'user')
+    .leftJoinAndSelect('user.workspaces', 'userWorkspace')
+    .where(`userWorkspace."workspaceId" = :workspaceId`, {
+      workspaceId,
+    })
+    .getMany();
+
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)
-    .where(`"${tableName}"."defaultWorkspaceId" = :workspaceId`, {
-      workspaceId,
-    })
+    .where(`"${tableName}"."id" IN (:...ids)`, { ids: user.map((u) => u.id) })
     .execute();
 };

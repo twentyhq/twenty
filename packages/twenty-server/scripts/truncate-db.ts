@@ -8,32 +8,30 @@ async function dropSchemasSequentially() {
   try {
     await rawDataSource.initialize();
 
-    // Fetch all schemas
+    // Fetch all schemas excluding the ones we want to keep
     const schemas = await performQuery(
       `
       SELECT n.nspname AS "schema_name"
-      FROM pg_catalog.pg_namespace n
-      WHERE n.nspname !~ '^pg_' AND n.nspname <> 'information_schema'
+      FROM pg_catalog.pg_namespace n 
+      WHERE n.nspname !~ '^pg_' 
+        AND n.nspname <> 'information_schema'
+        AND n.nspname NOT IN ('metric_helpers', 'user_management', 'public')
     `,
       'Fetching schemas...',
     );
 
-    // Iterate over each schema and drop it
-    // This is to avoid dropping all schemas at once, which would cause an out of shared memory error
-    for (const schema of schemas) {
-      if (
-        schema.schema_name === 'metric_helpers' ||
-        schema.schema_name === 'user_management' ||
-        schema.schema_name === 'public'
-      ) {
-        continue;
-      }
+    const batchSize = 10;
 
-      await performQuery(
-        `
-        DROP SCHEMA IF EXISTS "${schema.schema_name}" CASCADE;
-      `,
-        `Dropping schema ${schema.schema_name}...`,
+    for (let i = 0; i < schemas.length; i += batchSize) {
+      const batch = schemas.slice(i, i + batchSize);
+
+      await Promise.all(
+        batch.map((schema) =>
+          performQuery(
+            `DROP SCHEMA IF EXISTS "${schema.schema_name}" CASCADE;`,
+            `Dropping schema ${schema.schema_name}...`,
+          ),
+        ),
       );
     }
 
