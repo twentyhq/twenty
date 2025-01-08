@@ -35,7 +35,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   });
 
   const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
-    objectSlug: objectNamePlural,
+    objectNamePlural,
   });
 
   const { handleColumnVisibilityChange, hiddenTableColumns } =
