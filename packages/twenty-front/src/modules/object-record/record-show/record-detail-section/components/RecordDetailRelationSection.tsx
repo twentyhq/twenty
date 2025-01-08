@@ -78,7 +78,7 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${recordId}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
 
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
@@ -138,6 +138,7 @@ export const RecordDetailRelationSection = ({
     },
     view: indexView?.id,
   };
+
   const filterLinkHref = `/objects/${
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;

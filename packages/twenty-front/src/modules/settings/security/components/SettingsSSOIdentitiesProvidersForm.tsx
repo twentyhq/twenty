@@ -7,7 +7,7 @@ import { SettingsSSOSAMLForm } from '@/settings/security/components/SettingsSSOS
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconComponent, IconKey, Section } from 'twenty-ui';
 import { IdentityProviderType } from '~/generated/graphql';
@@ -27,7 +27,7 @@ const StyledInputsContainer = styled.div`
 `;
 
 export const SettingsSSOIdentitiesProvidersForm = () => {
-  const { control, getValues } =
+  const { control, watch } =
     useFormContext<SettingSecurityNewSSOIdentityFormValues>();
 
   const IdentitiesProvidersMap: Record<
@@ -62,8 +62,10 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
     },
   };
 
-  const getFormByType = (type: Uppercase<IdentityProviderType> | undefined) => {
-    switch (type) {
+  const selectedType = watch('type');
+
+  const formByType = useMemo(() => {
+    switch (selectedType) {
       case IdentityProviderType.Oidc:
         return IdentitiesProvidersMap.OIDC.form;
       case IdentityProviderType.Saml:
@@ -71,7 +73,11 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
       default:
         return null;
     }
-  };
+  }, [
+    IdentitiesProvidersMap.OIDC.form,
+    IdentitiesProvidersMap.SAML.form,
+    selectedType,
+  ]);
 
   return (
     <SettingsPageContainer>
@@ -115,7 +121,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
           />
         </StyledInputsContainer>
       </Section>
-      {getFormByType(getValues().type)}
+      {formByType}
     </SettingsPageContainer>
   );
 };

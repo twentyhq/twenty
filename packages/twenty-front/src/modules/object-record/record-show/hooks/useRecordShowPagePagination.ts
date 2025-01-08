@@ -10,8 +10,8 @@ import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-s
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,

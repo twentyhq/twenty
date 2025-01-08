@@ -54,7 +54,7 @@ export const WithActivate: Story = {
 
     await expect(handleActivateMockFunction).toHaveBeenCalledTimes(0);
 
-    const activateMenuItem = await canvas.getByText('Activate');
+    const activateMenuItem = await canvas.findByText('Activate');
 
     await userEvent.click(activateMenuItem);
 
@@ -75,7 +75,7 @@ export const WithDelete: Story = {
 
     await expect(handleDeleteMockFunction).toHaveBeenCalledTimes(0);
 
-    const deleteMenuItem = await canvas.getByText('Delete');
+    const deleteMenuItem = await canvas.findByText('Delete');
 
     await userEvent.click(deleteMenuItem);
 

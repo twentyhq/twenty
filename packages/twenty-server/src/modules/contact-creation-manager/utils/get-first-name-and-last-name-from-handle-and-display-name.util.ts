@@ -1,4 +1,4 @@
-import { capitalize } from 'src/utils/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export function getFirstNameAndLastNameFromHandleAndDisplayName(
   handle: string,

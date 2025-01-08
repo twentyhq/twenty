@@ -3,7 +3,7 @@ import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import styled from '@emotion/styled';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 const StyledChip = styled.div`
   align-items: center;

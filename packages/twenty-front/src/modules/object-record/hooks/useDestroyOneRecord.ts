@@ -9,8 +9,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
+import { capitalize } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { capitalize } from '~/utils/string/capitalize';
 
 type useDestroyOneRecordProps = {
   objectNameSingular: string;

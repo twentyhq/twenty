@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Nullable } from 'twenty-ui';
 
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
   InternalDatePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
@@ -8,7 +9,6 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 export type DateInputProps = {
   value: Nullable<Date>;
@@ -24,6 +24,7 @@ export type DateInputProps = {
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
+  hotkeyScope: string;
 };
 
 export const DateInput = ({
@@ -37,6 +38,7 @@ export const DateInput = ({
   onClear,
   onSubmit,
   hideHeaderInput,
+  hotkeyScope,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -65,17 +67,39 @@ export const DateInput = ({
     MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
   );
 
-  useListenClickOutside({
-    refs: [wrapperRef],
-    listenerId: 'DateInput',
-    callback: (event) => {
-      event.stopImmediatePropagation();
+  const handleEnter = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
 
-      closeDropdownYearSelect();
-      closeDropdownMonthSelect();
-      closeDropdown();
-      onClickOutside(event, internalValue);
-    },
+    onEnter?.(internalValue);
+  };
+
+  const handleEscape = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+
+    onEscape?.(internalValue);
+  };
+
+  const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+    event.stopImmediatePropagation();
+
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+
+    onClickOutside(event, internalValue);
+  };
+
+  useRegisterInputEvents({
+    inputRef: wrapperRef,
+    inputValue: internalValue,
+    onEnter: handleEnter,
+    onEscape: handleEscape,
+    onClickOutside: handleClickOutside,
+    hotkeyScope: hotkeyScope,
   });
 
   return (

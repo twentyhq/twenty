@@ -3,8 +3,8 @@ import {
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {

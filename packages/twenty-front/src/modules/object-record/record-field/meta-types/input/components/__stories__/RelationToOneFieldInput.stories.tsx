@@ -13,7 +13,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
@@ -32,7 +32,7 @@ const RelationWorkspaceSetterEffect = () => {
   );
 
   useEffect(() => {
-    setCurrentWorkspace(mockDefaultWorkspace);
+    setCurrentWorkspace(mockCurrentWorkspace);
     setCurrentWorkspaceMember(mockedWorkspaceMemberData);
   }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
 
