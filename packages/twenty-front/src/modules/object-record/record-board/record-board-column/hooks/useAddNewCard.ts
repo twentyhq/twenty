@@ -21,7 +21,7 @@ export const useAddNewCard = () => {
   const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
   const { resetSearchFilter } = useRecordSelectSearch({
-    recordPickerInstanceId: 'record-picker',
+    recordPickerInstanceId: RelationPickerHotkeyScope.RelationPicker,
   });
 
   const {

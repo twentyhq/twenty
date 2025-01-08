@@ -13,13 +13,14 @@ import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/state
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { css } from '@emotion/react';
 import 'overlayscrollbars/overlayscrollbars.css';
 
 type HeightMode = 'full' | 'fit-content';
 
 const StyledScrollWrapper = styled.div<{
-  scrollHide?: boolean;
   heightMode: HeightMode;
+  scrollbarVariant: 'with-padding' | 'no-padding';
 }>`
   display: flex;
   height: ${({ heightMode }) => {
@@ -33,9 +34,38 @@ const StyledScrollWrapper = styled.div<{
   width: 100%;
 
   .os-scrollbar-handle {
-    background-color: ${({ theme, scrollHide }) =>
-      scrollHide ? 'transparent' : theme.border.color.medium};
+    background-color: ${({ theme }) => theme.border.color.strong};
   }
+
+  // Keep horizontal scrollbar always visible
+  .os-scrollbar-horizontal {
+    &.os-scrollbar-auto-hide {
+      opacity: 1;
+      visibility: visible;
+    }
+    .os-scrollbar-track {
+      visibility: visible !important;
+    }
+  }
+
+  .os-scrollbar {
+    transition:
+      opacity 300ms,
+      visibility 300ms,
+      top 300ms,
+      right 300ms,
+      bottom 300ms,
+      left 300ms;
+  }
+
+  ${({ scrollbarVariant }) =>
+    scrollbarVariant === 'no-padding' &&
+    css`
+      .os-scrollbar {
+        --os-size: 6px;
+        padding: 0px;
+      }
+    `}
 `;
 
 const StyledInnerContainer = styled.div`
@@ -49,8 +79,8 @@ export type ScrollWrapperProps = {
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
-  scrollHide?: boolean;
   componentInstanceId: string;
+  scrollbarVariant?: 'with-padding' | 'no-padding';
 };
 
 export const ScrollWrapper = ({
@@ -61,7 +91,7 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
-  scrollHide = false,
+  scrollbarVariant = 'with-padding',
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -94,39 +124,23 @@ export const ScrollWrapper = ({
         autoHideDelay: 500,
       },
       overflow: {
-        x: defaultEnableXScroll ? 'scroll' : 'hidden',
-        y: defaultEnableYScroll ? 'scroll' : 'hidden',
+        x: defaultEnableXScroll ? undefined : 'hidden',
+        y: defaultEnableYScroll ? undefined : 'hidden',
       },
     },
     events: {
       scroll: (osInstance) => {
-        const {
-          scrollOffsetElement: target,
-          scrollbarHorizontal,
-          scrollbarVertical,
-        } = osInstance.elements();
+        const { scrollOffsetElement: target, scrollbarVertical } =
+          osInstance.elements();
+        // Hide vertical scrollbar by default
+        if (scrollbarVertical !== null) {
+          scrollbarVertical.track.style.visibility = 'hidden';
+        }
 
-        // Hide scrollbars by default
-        [scrollbarHorizontal, scrollbarVertical].forEach((scrollbar) => {
-          if (scrollbar !== null) {
-            scrollbar.track.style.visibility = 'hidden';
-          }
-        });
-
-        // Show appropriate scrollbar based on scroll direction
-        const isHorizontalScroll =
-          target.scrollLeft !== Number(target.dataset.lastScrollLeft || '0');
+        // Show vertical scrollbar based on scroll direction
         const isVerticalScroll =
           target.scrollTop !== Number(target.dataset.lastScrollTop || '0');
 
-        // Show scrollbar based on scroll direction only with explicit conditions
-        if (
-          isHorizontalScroll === true &&
-          scrollbarHorizontal !== null &&
-          target.scrollWidth > target.clientWidth
-        ) {
-          scrollbarHorizontal.track.style.visibility = 'visible';
-        }
         if (
           isVerticalScroll === true &&
           scrollbarVertical !== null &&
@@ -134,9 +148,7 @@ export const ScrollWrapper = ({
         ) {
           scrollbarVertical.track.style.visibility = 'visible';
         }
-
-        // Update scroll positions
-        target.dataset.lastScrollLeft = target.scrollLeft.toString();
+        // Update vertical scroll positions
         target.dataset.lastScrollTop = target.scrollTop.toString();
 
         handleScroll(osInstance);
@@ -146,19 +158,16 @@ export const ScrollWrapper = ({
 
   useEffect(() => {
     const currentRef = scrollableRef.current;
-
     if (currentRef !== null) {
       initialize(currentRef);
     }
-
     return () => {
-      // Reset all component-specific Recoil state
+      // Reset vertical scroll component-specific Recoil state
       setScrollTop(0);
-      setScrollLeft(0);
       setOverlayScrollbars(null);
       instance()?.destroy();
     };
-  }, [initialize, instance, setScrollTop, setScrollLeft, setOverlayScrollbars]);
+  }, [initialize, instance, setScrollTop, setOverlayScrollbars]);
 
   useEffect(() => {
     setOverlayScrollbars(instance());
@@ -177,8 +186,8 @@ export const ScrollWrapper = ({
         <StyledScrollWrapper
           ref={scrollableRef}
           className={className}
-          scrollHide={scrollHide}
           heightMode={heightMode}
+          scrollbarVariant={scrollbarVariant}
         >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>

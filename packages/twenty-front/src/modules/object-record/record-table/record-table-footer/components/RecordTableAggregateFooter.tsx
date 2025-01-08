@@ -62,7 +62,21 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
   tr {
     position: sticky;
     z-index: 5;
-    ${({ endOfTableSticky }) => endOfTableSticky && `bottom: 0;`}
+    background: ${({ theme }) => theme.background.primary};
+    ${({ endOfTableSticky }) =>
+      endOfTableSticky &&
+      `
+        bottom: 10px;
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -10px;
+          left: 0;
+          right: 0;
+          height: 10px;
+          background: inherit;
+        }
+      `}
   }
 `;
 

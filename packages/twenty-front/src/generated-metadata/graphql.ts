@@ -199,6 +199,13 @@ export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
 };
 
+export type CreateDraftFromWorkflowVersionInput = {
+  /** Workflow ID */
+  workflowId: Scalars['String']['input'];
+  /** Workflow version ID */
+  workflowVersionIdToCopy: Scalars['String']['input'];
+};
+
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -221,10 +228,8 @@ export type CreateFieldInput = {
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
-  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isRemote?: InputMaybe<Scalars['Boolean']['input']>;
-  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   labelPlural: Scalars['String']['input'];
   labelSingular: Scalars['String']['input'];
   namePlural: Scalars['String']['input'];
@@ -579,6 +584,7 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   computeStepOutputSchema: Scalars['JSON']['output'];
+  createDraftFromWorkflowVersion: Scalars['Boolean']['output'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -682,6 +688,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateDraftFromWorkflowVersionArgs = {
+  input: CreateDraftFromWorkflowVersionInput;
 };
 
 

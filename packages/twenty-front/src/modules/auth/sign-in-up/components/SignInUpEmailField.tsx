@@ -2,7 +2,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { isDefined } from '~/utils/isDefined';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
@@ -13,13 +12,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const SignInUpEmailField = ({
-  showErrors,
-  onChange: onChangeFromProps,
-}: {
-  showErrors: boolean;
-  onChange?: (value: string) => void;
-}) => {
+export const SignInUpEmailField = ({ showErrors }: { showErrors: boolean }) => {
   const form = useFormContext<Form>();
 
   return (
@@ -45,10 +38,7 @@ export const SignInUpEmailField = ({
               value={value}
               placeholder="Email"
               onBlur={onBlur}
-              onChange={(value: string) => {
-                onChange(value);
-                if (isDefined(onChangeFromProps)) onChangeFromProps(value);
-              }}
+              onChange={onChange}
               error={showErrors ? error?.message : undefined}
               fullWidth
             />

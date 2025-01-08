@@ -36,10 +36,11 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
     [fieldMetadataId, objectMetadataItem.fields],
   );
 
-  const otherAvailableAggregateOperation = availableAggregateOperation.filter(
-    (aggregateOperation) =>
-      !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
-  );
+  const nonStandardAvailableAggregateOperation =
+    availableAggregateOperation.filter(
+      (aggregateOperation) =>
+        !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+    );
 
   const fieldIsRelation =
     objectMetadataItem.fields.find((field) => field.id === fieldMetadataId)
@@ -64,7 +65,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             hasSubMenu
           />
         )}
-        {otherAvailableAggregateOperation.length > 0 ? (
+        {nonStandardAvailableAggregateOperation.length > 0 ? (
           <MenuItem
             onClick={() => {
               onContentChange('moreAggregateOperationOptions');

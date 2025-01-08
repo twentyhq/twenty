@@ -20,7 +20,7 @@ export const useLastVisitedObjectMetadataItem = () => {
     useRecoilState(lastVisitedObjectMetadataItemIdState);
 
   const {
-    findActiveObjectMetadataItemBySlug,
+    findActiveObjectMetadataItemByNamePlural,
     alphaSortedActiveObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
@@ -51,7 +51,7 @@ export const useLastVisitedObjectMetadataItem = () => {
 
   const setLastVisitedObjectMetadataItem = (objectNamePlural: string) => {
     const fallbackObjectMetadataItem =
-      findActiveObjectMetadataItemBySlug(objectNamePlural);
+      findActiveObjectMetadataItemByNamePlural(objectNamePlural);
 
     if (isDefined(fallbackObjectMetadataItem)) {
       setLastVisitedObjectMetadataItemId(fallbackObjectMetadataItem.id);
