@@ -1,13 +1,7 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -61,16 +55,6 @@ export class CreateObjectInput {
 
   @HideField()
   workspaceId: string;
-
-  @IsUUID()
-  @IsOptional()
-  @Field({ nullable: true })
-  labelIdentifierFieldMetadataId?: string;
-
-  @IsUUID()
-  @IsOptional()
-  @Field({ nullable: true })
-  imageIdentifierFieldMetadataId?: string;
 
   @IsBoolean()
   @IsOptional()
