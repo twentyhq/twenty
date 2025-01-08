@@ -8,7 +8,6 @@ export const initializeAvailableFieldsForAggregateOperationMap = (
   return aggregateOperations.reduce(
     (acc, operation) => ({
       ...acc,
-      [operation]: [],
       [convertAggregateOperationToExtendedAggregateOperation(operation)]: [],
     }),
     {},

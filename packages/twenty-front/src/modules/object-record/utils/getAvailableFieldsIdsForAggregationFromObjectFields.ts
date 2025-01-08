@@ -33,7 +33,7 @@ export const getAvailableFieldsIdsForAggregationFromObjectFields = (
           if (acc[convertedAggregateOperation] === undefined) {
             acc[convertedAggregateOperation] = [];
           }
-          acc[convertedAggregateOperation]?.push(field.id);
+          acc[convertedAggregateOperation].push(field.id);
         }
       });
     }

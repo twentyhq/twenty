@@ -16,13 +16,7 @@ const StyledText = styled.span`
   z-index: 1;
 `;
 
-const StyledValueContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  height: 32px;
-  justify-content: flex-end;
-  padding: 0 8px;
+const StyledScrollableContainer = styled.div`
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
@@ -33,16 +27,17 @@ const StyledValueContainer = styled.div`
   }
 `;
 
-const StyledValue = styled.div`
-  color: ${({ theme }) => theme.color.gray60};
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+const StyledValueContainer = styled(StyledScrollableContainer)`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  height: 32px;
+  justify-content: flex-end;
+  padding: 0 8px;
+`;
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+const StyledValue = styled(StyledScrollableContainer)`
+  color: ${({ theme }) => theme.color.gray60};
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({
