@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
+import styled from '@emotion/styled';
 
 import {
   StyledMenuItemLabel,
@@ -19,6 +20,10 @@ type MenuItemSelectAvatarProps = {
   hovered?: boolean;
   testId?: string;
 };
+
+const StyledIconCheck = styled(IconCheck)`
+    padding-right: 8px;
+`;
 
 export const MenuItemSelectAvatar = ({
   avatar,
@@ -50,7 +55,7 @@ export const MenuItemSelectAvatar = ({
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      {selected && <StyledIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };
