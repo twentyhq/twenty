@@ -4,8 +4,6 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
-import { ReactNode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 
 describe('useOpenCalendarEventRightDrawer', () => {
   it('opens the right drawer with the calendar event', () => {
@@ -19,13 +17,7 @@ describe('useOpenCalendarEventRightDrawer', () => {
           viewableRecordId,
         };
       },
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <BrowserRouter>
-            <RecoilRoot>{children}</RecoilRoot>
-          </BrowserRouter>
-        ),
-      },
+      { wrapper: RecoilRoot },
     );
 
     expect(result.current.isRightDrawerOpen).toBe(false);
