@@ -44,7 +44,6 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
       case 'danger': {
         return css`
           color: ${theme.font.color.danger};
-
           &:hover {
             background: ${theme.background.transparent.danger};
           }
