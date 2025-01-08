@@ -2,31 +2,36 @@ import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import {
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
 
-@Catch(AuthException)
-export class AuthFileApiExceptionFilter implements ExceptionFilter {
+@Catch(FileException)
+export class FileApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(exception: AuthException, host: ArgumentsHost) {
+  catch(exception: FileException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
     switch (exception.code) {
-      case AuthExceptionCode.UNAUTHENTICATED:
-      case AuthExceptionCode.INVALID_INPUT:
+      case FileExceptionCode.UNAUTHENTICATED:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
           403,
         );
-      case AuthExceptionCode.INTERNAL_SERVER_ERROR:
+      case FileExceptionCode.FILE_NOT_FOUND:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          404,
+        );
+      case FileExceptionCode.INTERNAL_SERVER_ERROR:
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,

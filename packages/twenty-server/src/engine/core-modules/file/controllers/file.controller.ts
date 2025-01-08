@@ -16,20 +16,19 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { AuthFileApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-file-api-exception.filter';
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
 import {
   checkFilePath,
   checkFilename,
 } from 'src/engine/core-modules/file/file.utils';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
-// TODO: Add cookie authentication
 @Controller('files')
-@UseFilters(AuthFileApiExceptionFilter)
+@UseFilters(FileApiExceptionFilter)
 @UseGuards(FilePathGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
@@ -46,9 +45,9 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {
-      throw new AuthException(
-        'Unauthorized, missing workspaceId',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      throw new FileException(
+        'Unauthorized: missing workspaceId',
+        FileExceptionCode.UNAUTHENTICATED,
       );
     }
 
@@ -60,7 +59,10 @@ export class FileController {
       );
 
       fileStream.on('error', () => {
-        res.status(500).send({ error: 'Error streaming file from storage' });
+        throw new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       });
 
       fileStream.pipe(res);
@@ -69,12 +71,16 @@ export class FileController {
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
-        return res.status(404).send({ error: 'File not found' });
+        throw new FileException(
+          'File not found',
+          FileExceptionCode.FILE_NOT_FOUND,
+        );
       }
 
-      return res
-        .status(500)
-        .send({ error: `Error retrieving file: ${error.message}` });
+      throw new FileException(
+        `Error retrieving file: ${error.message}`,
+        FileExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
