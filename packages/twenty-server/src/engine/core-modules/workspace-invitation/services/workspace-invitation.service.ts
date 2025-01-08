@@ -135,23 +135,6 @@ export class WorkspaceInvitationService {
     );
   }
 
-  async findInvitationByWorkspaceSubdomainOrHostnameAndUserEmail({
-    subdomain,
-    email,
-  }: {
-    subdomain?: string;
-    email: string;
-  }) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
-        subdomain,
-      );
-
-    if (!workspace) return;
-
-    return await this.getOneWorkspaceInvitation(workspace.id, email);
-  }
-
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')

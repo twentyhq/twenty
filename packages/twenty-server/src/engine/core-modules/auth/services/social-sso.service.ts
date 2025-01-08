@@ -52,7 +52,7 @@ export class SocialSsoService {
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
       new URL(this.domainManagerService.getBaseUrl()).origin === origin
     ) {
-      // Multi-workspace mode but on non workspace url.
+      // Multi-workspace enable mode but on non workspace url.
       // so get the first workspace with the current auth method enable
       const workspace = await this.workspaceRepository.findOne({
         where: {

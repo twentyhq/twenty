@@ -60,7 +60,6 @@ export const SettingsHostname = () => {
   });
 
   useEffect(() => {
-    console.log('>>>>>>>>>>>>>>');
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
     if (isDefined(currentWorkspace?.hostname)) {
       pollIntervalFn = setInterval(async () => {
@@ -68,7 +67,6 @@ export const SettingsHostname = () => {
           const { data } = await getHostnameDetailsQuery({
             fetchPolicy: 'no-cache',
           });
-          console.log('>>>>>>>>>>>>>>', data);
           if (isDefined(data)) {
             console.log('Hostname details updated:', data);
             // Optionally, handle the data or stop polling based on conditions.

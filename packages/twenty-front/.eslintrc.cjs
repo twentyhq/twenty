@@ -25,10 +25,10 @@ module.exports = {
       },
       plugins: ['project-structure'],
       settings: {
-        'project-structure/folder-structure-config-path':path.resolve(
+        'project-structure/folder-structure-config-path': path.resolve(
           __dirname,
-          'folderStructure.json'
-        )
+          'folderStructure.json',
+        ),
       },
       rules: {
         'project-structure/folder-structure': 'error',
