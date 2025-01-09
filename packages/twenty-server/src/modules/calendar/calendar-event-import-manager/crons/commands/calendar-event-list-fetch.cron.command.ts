@@ -4,7 +4,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
-import { CALENDAR_EVENTS_IMPORT_CRON_PATTERN } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 
 @Command({
   name: 'cron:calendar:calendar-event-list-fetch',
@@ -23,7 +22,9 @@ export class CalendarEventListFetchCronCommand extends CommandRunner {
       CalendarEventListFetchCronJob.name,
       undefined,
       {
-        repeat: { pattern: CALENDAR_EVENTS_IMPORT_CRON_PATTERN },
+        repeat: {
+          pattern: '*/5 * * * *',
+        },
       },
     );
   }
