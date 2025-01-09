@@ -1569,17 +1569,10 @@ export type WorkspaceEdge = {
   node: Workspace;
 };
 
-export type WorkspaceFeatureFlag = {
-  __typename?: 'WorkspaceFeatureFlag';
-  key: Scalars['String'];
-  value: Scalars['Boolean'];
-};
-
 export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
   allowImpersonation: Scalars['Boolean'];
-  canManageFeatureFlags: Scalars['Boolean'];
-  featureFlags: Array<WorkspaceFeatureFlag>;
+  featureFlags: Array<FeatureFlag>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -2110,7 +2103,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 }>;
 
 
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'WorkspaceFeatureFlag', key: string, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;

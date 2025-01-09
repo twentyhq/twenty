@@ -9,7 +9,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -27,15 +26,7 @@ export class AdminPanelService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly environmentService: EnvironmentService,
   ) {}
-
-  private async canManageFeatureFlags(): Promise<boolean> {
-    return (
-      this.environmentService.get('DEBUG_MODE') ||
-      this.environmentService.get('IS_BILLING_ENABLED')
-    );
-  }
 
   async impersonate(userId: string, workspaceId: string) {
     const user = await this.userRepository.findOne({
@@ -99,8 +90,6 @@ export class AdminPanelService {
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
 
-    const canManageFeatureFlags = await this.canManageFeatureFlags();
-
     return {
       user: {
         id: targetUser.id,
@@ -120,16 +109,13 @@ export class AdminPanelService {
           firstName: workspaceUser.user.firstName,
           lastName: workspaceUser.user.lastName,
         })),
-        canManageFeatureFlags,
-        featureFlags: canManageFeatureFlags
-          ? allFeatureFlagKeys.map((key) => ({
-              key,
-              value:
-                userWorkspace.workspace.featureFlags?.find(
-                  (flag) => flag.key === key,
-                )?.value ?? false,
-            }))
-          : [],
+        featureFlags: allFeatureFlagKeys.map((key) => ({
+          key,
+          value:
+            userWorkspace.workspace.featureFlags?.find(
+              (flag) => flag.key === key,
+            )?.value ?? false,
+        })) as FeatureFlagEntity[],
       })),
     };
   }
