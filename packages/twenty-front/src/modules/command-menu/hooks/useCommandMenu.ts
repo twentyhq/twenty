@@ -250,10 +250,39 @@ export const useCommandMenu = () => {
     [openCommandMenu],
   );
 
+  const resetCommandMenuContext = useRecoilCallback(({ set }) => {
+    return () => {
+      set(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        {
+          mode: 'selection',
+          selectedRecordIds: [],
+        },
+      );
+
+      set(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        0,
+      );
+
+      set(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        null,
+      );
+    };
+  }, []);
+
   return {
     openCommandMenu,
     closeCommandMenu,
     openRecordInCommandMenu,
     toggleCommandMenu,
+    resetCommandMenuContext,
   };
 };
