@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ComponentProps, MouseEvent } from 'react';
-import { IconComponent, LightIconButton } from 'twenty-ui';
+import { IconComponent, isDefined, LightIconButton } from 'twenty-ui';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -43,6 +43,24 @@ const StyledChildrenWrapper = styled.span`
   padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledNonClickableStartIcon = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
+
+  display: flex;
+  flex-direction: row;
+
+  font-family: ${({ theme }) => theme.font.family};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+
+  white-space: nowrap;
+  height: 24px;
+  width: 24px;
+`;
+
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   StartIcon?: IconComponent;
   EndIcon?: IconComponent;
@@ -76,13 +94,22 @@ export const DropdownMenuHeader = ({
       )}
       {StartIcon && (
         <StyledHeader data-testid={testId} className={className}>
-          <LightIconButton
-            testId="dropdown-menu-header-end-icon"
-            Icon={StartIcon}
-            accent="tertiary"
-            size="small"
-            onClick={onClick}
-          />
+          {isDefined(onClick) ? (
+            <LightIconButton
+              testId="dropdown-menu-header-end-icon"
+              Icon={StartIcon}
+              accent="tertiary"
+              size="small"
+              onClick={onClick}
+            />
+          ) : (
+            <StyledNonClickableStartIcon>
+              <StartIcon
+                size={theme.icon.size.sm}
+                color={theme.font.color.tertiary}
+              />
+            </StyledNonClickableStartIcon>
+          )}
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
         </StyledHeader>
       )}
