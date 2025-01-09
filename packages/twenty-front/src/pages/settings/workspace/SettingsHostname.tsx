@@ -18,7 +18,7 @@ const validationSchema = z
     hostname: z
       .string()
       .regex(
-        /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/,
+        /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
         {
           message:
             'Hostname invalid. Use letters, numbers and dashes only and a valid first level domain. Example: twenty.app',

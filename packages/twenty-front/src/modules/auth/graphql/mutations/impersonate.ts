@@ -6,6 +6,7 @@ export const IMPERSONATE = gql`
     impersonate(userId: $userId, workspaceId: $workspaceId) {
       workspace {
         subdomain
+        hostname
         id
       }
       loginToken {

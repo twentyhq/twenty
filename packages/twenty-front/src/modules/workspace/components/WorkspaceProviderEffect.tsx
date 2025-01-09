@@ -48,7 +48,10 @@ export const WorkspaceProviderEffect = () => {
 
   useEffect(() => {
     if (isWorkspaceSubdomainDifferFromCurrentWorkspaceSubdomain) {
-      return redirectToWorkspaceDomain(getPublicWorkspaceData.subdomain);
+      return redirectToWorkspaceDomain(
+        getPublicWorkspaceData.subdomain,
+        getPublicWorkspaceData.hostname,
+      );
     }
 
     if (isWorkspaceDefaultDomainWithLastAuthenticatedParamsExist) {

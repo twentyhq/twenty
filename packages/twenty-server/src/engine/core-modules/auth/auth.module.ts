@@ -17,7 +17,6 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -101,7 +100,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
-    SwitchWorkspaceService,
     TransientTokenService,
     ApiKeyService,
     SocialSsoService,

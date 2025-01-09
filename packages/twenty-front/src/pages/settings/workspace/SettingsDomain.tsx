@@ -99,7 +99,7 @@ export const SettingsDomain = () => {
         subdomain: values.subdomain,
       });
 
-      redirectToWorkspaceDomain(values.subdomain);
+      redirectToWorkspaceDomain(values.subdomain, currentWorkspace.hostname);
     } catch (error) {
       if (
         error instanceof Error &&
@@ -145,42 +145,44 @@ export const SettingsDomain = () => {
     >
       <SettingsPageContainer>
         <SettingsHostname />
-        <Section>
-          <H2Title
-            title="Subdomain"
-            description="Set the name of your subdomain"
-          />
-          {currentWorkspace?.subdomain && (
-            <StyledDomainFromWrapper>
-              <Controller
-                name="subdomain"
-                control={control}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <>
-                    <TextInputV2
-                      value={value}
-                      type="text"
-                      onChange={onChange}
-                      error={error?.message}
-                      fullWidth
-                    />
-                    {isDefined(domainConfiguration.frontDomain) && (
-                      <StyledDomain>
-                        {`.${
-                          currentWorkspace.hostname ??
-                          domainConfiguration.frontDomain
-                        }`}
-                      </StyledDomain>
-                    )}
-                  </>
-                )}
-              />
-            </StyledDomainFromWrapper>
-          )}
-        </Section>
+        {!currentWorkspace?.hostname && (
+          <Section>
+            <H2Title
+              title="Subdomain"
+              description="Set the name of your subdomain"
+            />
+            {currentWorkspace?.subdomain && (
+              <StyledDomainFromWrapper>
+                <Controller
+                  name="subdomain"
+                  control={control}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <>
+                      <TextInputV2
+                        value={value}
+                        type="text"
+                        onChange={onChange}
+                        error={error?.message}
+                        fullWidth
+                      />
+                      {isDefined(domainConfiguration.frontDomain) && (
+                        <StyledDomain>
+                          {`.${
+                            currentWorkspace.hostname ??
+                            domainConfiguration.frontDomain
+                          }`}
+                        </StyledDomain>
+                      )}
+                    </>
+                  )}
+                />
+              </StyledDomainFromWrapper>
+            )}
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

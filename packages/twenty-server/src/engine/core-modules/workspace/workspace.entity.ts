@@ -141,7 +141,7 @@ export class Workspace {
 
   @Field({ nullable: true })
   @Column({ unique: true, nullable: true })
-  hostname: string;
+  hostname?: string;
 
   @Field()
   @Column({ default: true })

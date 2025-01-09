@@ -16,7 +16,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
-import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
@@ -28,8 +27,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
-import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import {
   AuthException,
   AuthExceptionCode,
@@ -61,7 +58,6 @@ export class AuthResolver {
     private apiKeyService: ApiKeyService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
-    private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
@@ -104,12 +100,14 @@ export class AuthResolver {
         origin,
       );
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
+
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -125,10 +123,22 @@ export class AuthResolver {
     @Args() signUpInput: SignUpInput,
     @OriginHeader() origin: string,
   ): Promise<SignUpOutput> {
+    const currentWorkspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      currentWorkspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
     const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
-      targetWorkspaceSubdomain:
-        this.domainManagerService.getSubdomainAndHostnameByOrigin(origin),
+      workspace: currentWorkspace,
       fromSSO: false,
       authProvider: 'password',
     });
@@ -143,6 +153,7 @@ export class AuthResolver {
       workspace: {
         id: workspace.id,
         subdomain: workspace.subdomain,
+        hostname: workspace.hostname,
       },
     };
   }
@@ -216,18 +227,6 @@ export class AuthResolver {
       authorizeAppInput,
       user,
       workspace,
-    );
-  }
-
-  @Mutation(() => PublicWorkspaceDataOutput)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  async switchWorkspace(
-    @AuthUser() user: User,
-    @Args() args: SwitchWorkspaceInput,
-  ): Promise<PublicWorkspaceDataOutput> {
-    return await this.switchWorkspaceService.switchWorkspace(
-      user,
-      args.workspaceId,
     );
   }
 

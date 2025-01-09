@@ -39,9 +39,14 @@ export const useImpersonate = () => {
 
       const { loginToken, workspace } = impersonateResult.data.impersonate;
 
-      return redirectToWorkspaceDomain(workspace.subdomain, AppPath.Verify, {
-        loginToken: loginToken.token,
-      });
+      return redirectToWorkspaceDomain(
+        workspace.subdomain,
+        workspace.hostname,
+        AppPath.Verify,
+        {
+          loginToken: loginToken.token,
+        },
+      );
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);

@@ -6,13 +6,21 @@ export const useBuildWorkspaceUrl = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
 
   const buildWorkspaceUrl = (
-    subdomain?: string,
+    subdomain: string,
+    hostname?: string | null,
     pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
-    const url = new URL(window.location.href);
+    const currentLocation = new URL(window.location.href);
 
-    if (isDefined(subdomain) && subdomain.length !== 0) {
+    const url = hostname
+      ? // We assume that the protocol and port are the same as those of the current domain.
+        new URL(
+          `${currentLocation.protocol}//${hostname}${currentLocation.port ? `:${currentLocation.port}` : ''}`,
+        )
+      : new URL(window.location.href);
+
+    if (!isDefined(hostname) && subdomain.length !== 0) {
       url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
     }
 

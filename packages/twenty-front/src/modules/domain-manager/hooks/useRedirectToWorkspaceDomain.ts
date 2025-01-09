@@ -10,11 +10,12 @@ export const useRedirectToWorkspaceDomain = () => {
 
   const redirectToWorkspaceDomain = (
     subdomain: string,
+    hostname?: string | null,
     pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
     if (!isMultiWorkspaceEnabled) return;
-    redirect(buildWorkspaceUrl(subdomain, pathname, searchParams));
+    redirect(buildWorkspaceUrl(subdomain, hostname, pathname, searchParams));
   };
 
   return {

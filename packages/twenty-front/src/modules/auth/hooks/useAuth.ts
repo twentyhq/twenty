@@ -353,6 +353,7 @@ export const useAuth = () => {
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
           signUpResult.data.signUp.workspace.subdomain,
+          signUpResult.data.signUp.workspace.hostname,
           AppPath.Verify,
           {
             loginToken: signUpResult.data.signUp.loginToken.token,

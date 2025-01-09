@@ -102,6 +102,7 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']>;
+  hostname?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   sso: Array<SsoConnection>;
@@ -443,7 +444,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceSubdomainHostnameAndId;
 };
 
 export type IndexConnection = {
@@ -549,7 +550,6 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
-  switchWorkspace: PublicWorkspaceDataOutput;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
@@ -746,11 +746,6 @@ export type MutationSignUpArgs = {
 };
 
 
-export type MutationSwitchWorkspaceArgs = {
-  workspaceId: Scalars['String'];
-};
-
-
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
@@ -917,7 +912,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
-  hostname: Scalars['String'];
+  hostname?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   subdomain: Scalars['String'];
@@ -1224,7 +1219,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceSubdomainHostnameAndId;
 };
 
 /** Sort Directions */
@@ -1647,8 +1642,9 @@ export type WorkspaceNameAndId = {
   id: Scalars['String'];
 };
 
-export type WorkspaceSubdomainAndId = {
-  __typename?: 'WorkspaceSubdomainAndId';
+export type WorkspaceSubdomainHostnameAndId = {
+  __typename?: 'WorkspaceSubdomainHostnameAndId';
+  hostname?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   subdomain: Scalars['String'];
 };
@@ -2010,7 +2006,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainAndId', subdomain: string, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainHostnameAndId', subdomain: string, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -2028,14 +2024,7 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceSubdomainAndId', id: string, subdomain: string } } };
-
-export type SwitchWorkspaceMutationVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
-
-
-export type SwitchWorkspaceMutation = { __typename?: 'Mutation', switchWorkspace: { __typename?: 'PublicWorkspaceDataOutput', id: string, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
+export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceSubdomainHostnameAndId', id: string, subdomain: string, hostname?: string | null } } };
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -2058,12 +2047,12 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, hostname?: string | null, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
 export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, hostname: string, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
+export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, hostname?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -2313,7 +2302,7 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
+export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subdomain: string, hostname?: string | null } };
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
     fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
@@ -3056,6 +3045,7 @@ export const SignUpDocument = gql`
     workspace {
       id
       subdomain
+      hostname
     }
   }
 }
@@ -3090,53 +3080,6 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
-export const SwitchWorkspaceDocument = gql`
-    mutation SwitchWorkspace($workspaceId: String!) {
-  switchWorkspace(workspaceId: $workspaceId) {
-    id
-    subdomain
-    authProviders {
-      sso {
-        id
-        name
-        type
-        status
-        issuer
-      }
-      google
-      magicLink
-      password
-      microsoft
-    }
-  }
-}
-    `;
-export type SwitchWorkspaceMutationFn = Apollo.MutationFunction<SwitchWorkspaceMutation, SwitchWorkspaceMutationVariables>;
-
-/**
- * __useSwitchWorkspaceMutation__
- *
- * To run a mutation, you first call `useSwitchWorkspaceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSwitchWorkspaceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [switchWorkspaceMutation, { data, loading, error }] = useSwitchWorkspaceMutation({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useSwitchWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<SwitchWorkspaceMutation, SwitchWorkspaceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SwitchWorkspaceMutation, SwitchWorkspaceMutationVariables>(SwitchWorkspaceDocument, options);
-      }
-export type SwitchWorkspaceMutationHookResult = ReturnType<typeof useSwitchWorkspaceMutation>;
-export type SwitchWorkspaceMutationResult = Apollo.MutationResult<SwitchWorkspaceMutation>;
-export type SwitchWorkspaceMutationOptions = Apollo.BaseMutationOptions<SwitchWorkspaceMutation, SwitchWorkspaceMutationVariables>;
 export const UpdatePasswordViaResetTokenDocument = gql`
     mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
   updatePasswordViaResetToken(
@@ -3219,6 +3162,7 @@ export const CheckUserExistsDocument = gql`
         id
         displayName
         subdomain
+        hostname
         logo
         sso {
           type
@@ -4649,6 +4593,8 @@ export const GetWorkspaceFromInviteHashDocument = gql`
     displayName
     logo
     allowImpersonation
+    subdomain
+    hostname
   }
 }
     `;
