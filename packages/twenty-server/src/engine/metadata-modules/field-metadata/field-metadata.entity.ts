@@ -49,8 +49,7 @@ export class FieldMetadataEntity<
 
   @Column({
     nullable: false,
-    type: 'enum',
-    enum: FieldMetadataType,
+    type: 'text',
   })
   type: FieldMetadataType;
 
