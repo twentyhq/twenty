@@ -20,12 +20,6 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
     try {
       const request = context.switchToHttp().getRequest();
 
-      const RelayState =
-        'RelayState' in request.body ? JSON.parse(request.body.RelayState) : {};
-
-      request.params.identityProviderId =
-        request.params.identityProviderId ?? RelayState.identityProviderId;
-
       if (!request.params.identityProviderId) {
         throw new AuthException(
           'Invalid SAML identity provider',

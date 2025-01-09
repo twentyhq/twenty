@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -16,7 +16,7 @@ import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { hasPendingRecordComponentSelector } from '@/object-record/record-table/states/selectors/hasPendingRecordComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -54,8 +54,8 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const pendingRecordId = useRecoilComponentValueV2(
-    recordTablePendingRecordIdComponentState,
+  const hasPendingRecord = useRecoilComponentValueV2(
+    hasPendingRecordComponentSelector,
     recordTableId,
   );
 
@@ -67,7 +67,7 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
     allRecordIds.length === 0 &&
-    isNull(pendingRecordId);
+    !hasPendingRecord;
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,

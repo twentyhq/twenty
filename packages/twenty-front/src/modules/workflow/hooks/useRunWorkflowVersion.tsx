@@ -4,12 +4,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
+import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import {
   RunWorkflowVersionMutation,
   RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const useRunWorkflowVersion = () => {
   const apolloMetadataClient = useApolloMetadataClient();

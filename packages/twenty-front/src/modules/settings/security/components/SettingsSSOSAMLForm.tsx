@@ -56,7 +56,7 @@ const StyledButtonCopy = styled.div`
 export const SettingsSSOSAMLForm = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
-  const { setValue, getValues, watch } = useFormContext();
+  const { setValue, getValues, watch, trigger } = useFormContext();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -72,11 +72,12 @@ export const SettingsSSOSAMLForm = () => {
       setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
       setValue('certificate', samlMetadataParsed.data.certificate);
       setValue('issuer', samlMetadataParsed.data.entityID);
+      trigger();
     }
   };
 
   const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/saml/login/${getValues('id')}`;
-  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback`;
+  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback/${getValues('id')}`;
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 

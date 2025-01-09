@@ -1,5 +1,5 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
@@ -7,10 +7,11 @@ import { RecordTableBodyDroppable } from '@/object-record/record-table/record-ta
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
-import { RecordTableRecordGroupEmptyRow } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupEmptyRow';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -26,8 +27,9 @@ export const RecordTableRecordGroupsBody = () => {
     isRecordTableInitialLoadingComponentState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    ViewType.Table,
   );
 
   if (isRecordTableInitialLoading && allRecordIds.length === 0) {
@@ -37,14 +39,13 @@ export const RecordTableRecordGroupsBody = () => {
   return (
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
-        {visibleRecordGroupIds.map((recordGroupId, index) => (
+        {visibleRecordGroupIds.map((recordGroupId) => (
           <RecordTableRecordGroupBodyContextProvider
             key={recordGroupId}
             recordGroupId={recordGroupId}
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBodyDroppable recordGroupId={recordGroupId}>
-                {index > 0 && <RecordTableRecordGroupEmptyRow />}
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
               </RecordTableBodyDroppable>

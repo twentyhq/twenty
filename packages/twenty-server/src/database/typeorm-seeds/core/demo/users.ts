@@ -13,7 +13,6 @@ export const DEMO_SEED_USER_IDS = {
 export const seedUsers = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -56,16 +55,22 @@ export const seedUsers = async (
 };
 
 export const deleteUsersByWorkspace = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  const user = await dataSource
+    .createQueryBuilder(`${schemaName}.${tableName}`, 'user')
+    .leftJoinAndSelect('user.workspaces', 'userWorkspace')
+    .where(`userWorkspace."workspaceId" = :workspaceId`, {
+      workspaceId,
+    })
+    .getMany();
+
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)
-    .where(`"${tableName}"."defaultWorkspaceId" = :workspaceId`, {
-      workspaceId,
-    })
+    .where(`"${tableName}"."id" IN (:...ids)`, { ids: user.map((u) => u.id) })
     .execute();
 };

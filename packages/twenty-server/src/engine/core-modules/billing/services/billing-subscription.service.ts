@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { User } from '@sentry/node';
 import Stripe from 'stripe';
 import { Not, Repository } from 'typeorm';
 
@@ -17,6 +16,7 @@ import { StripePriceService } from 'src/engine/core-modules/billing/stripe/servi
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -123,9 +123,9 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async applyBillingSubscription(user: User) {
+  async applyBillingSubscription(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId: user.defaultWorkspaceId },
+      { workspaceId: workspace.id },
     );
 
     const newInterval =
@@ -134,9 +134,7 @@ export class BillingSubscriptionService {
         : SubscriptionInterval.Year;
 
     const billingSubscriptionItem =
-      await this.getCurrentBillingSubscriptionItemOrThrow(
-        user.defaultWorkspaceId,
-      );
+      await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
 
     const productPrice = await this.stripePriceService.getStripePrice(
       AvailableProduct.BasePlan,

@@ -32,6 +32,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const {
@@ -120,15 +121,20 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {(viewType === ViewType.Kanban || isViewGroupEnabled) && (
-          <MenuItem
-            onClick={() => onContentChange('recordGroups')}
-            LeftIcon={IconLayoutList}
-            text="Group by"
-            contextualText={recordGroupFieldMetadata?.label}
-            hasSubMenu
-          />
-        )}
+        {(viewType === ViewType.Kanban || isViewGroupEnabled) &&
+          currentView?.key !== 'INDEX' && (
+            <MenuItem
+              onClick={() =>
+                isDefined(recordGroupFieldMetadata)
+                  ? onContentChange('recordGroups')
+                  : onContentChange('recordGroupFields')
+              }
+              LeftIcon={IconLayoutList}
+              text="Group by"
+              contextualText={recordGroupFieldMetadata?.label}
+              hasSubMenu
+            />
+          )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
