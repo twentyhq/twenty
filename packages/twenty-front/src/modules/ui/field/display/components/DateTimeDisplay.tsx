@@ -1,7 +1,6 @@
-import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
-import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
@@ -15,11 +14,13 @@ export const DateTimeDisplay = ({
 }: DateTimeDisplayProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const formattedDate = value
-    ? displayAsRelativeDate
-      ? formatDateISOStringToRelativeDate(value)
-      : formatDateISOStringToDateTime(value, timeZone, dateFormat, timeFormat)
-    : '';
+  const formattedDate = formatDateTimeString({
+    value,
+    displayAsRelativeDate,
+    timeZone,
+    dateFormat,
+    timeFormat,
+  });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;
 };

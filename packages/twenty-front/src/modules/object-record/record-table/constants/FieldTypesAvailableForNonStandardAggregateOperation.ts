@@ -5,10 +5,14 @@ export const FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION = {
   [AGGREGATE_OPERATIONS.min]: [
     FieldMetadataType.Number,
     FieldMetadataType.Currency,
+    FieldMetadataType.DateTime,
+    FieldMetadataType.Date,
   ],
   [AGGREGATE_OPERATIONS.max]: [
     FieldMetadataType.Number,
     FieldMetadataType.Currency,
+    FieldMetadataType.DateTime,
+    FieldMetadataType.Date,
   ],
   [AGGREGATE_OPERATIONS.avg]: [
     FieldMetadataType.Number,

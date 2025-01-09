@@ -53,8 +53,8 @@ export const ShowPageAddButton = ({
     closeDropdown();
   };
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   if (
@@ -72,7 +72,7 @@ export const ShowPageAddButton = ({
       <Dropdown
         dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
-          isPageHeaderV2Enabled ? (
+          isCommandMenuV2Enabled ? (
             <Button
               Icon={IconPlus}
               dataTestId="add-button"

@@ -16,6 +16,7 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -43,7 +44,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
-  component: CommandMenu,
+  component: CommandMenuRouter,
   decorators: [
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
