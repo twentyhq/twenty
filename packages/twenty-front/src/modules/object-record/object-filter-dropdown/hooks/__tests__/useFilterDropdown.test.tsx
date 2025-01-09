@@ -2,6 +2,7 @@ import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
@@ -261,19 +262,26 @@ describe('useFilterDropdown', () => {
 
   it('should reset filter', async () => {
     const { result } = renderHook(() => {
-      const { resetFilter, selectFilter } = useFilterDropdown({
+      const { resetFilter } = useFilterDropdown({
         filterDropdownId,
       });
+
+      const { applyRecordFilter } = useApplyRecordFilter(filterDropdownId);
 
       const { selectedFilterState } = useFilterDropdownStates(filterDropdownId);
 
       const [selectedFilter, setSelectedFilter] =
         useRecoilState(selectedFilterState);
-      return { selectedFilter, setSelectedFilter, selectFilter, resetFilter };
+      return {
+        selectedFilter,
+        setSelectedFilter,
+        applyRecordFilter,
+        resetFilter,
+      };
     }, renderHookConfig);
 
     act(() => {
-      result.current.selectFilter(mockFilter);
+      result.current.applyRecordFilter(mockFilter);
     });
 
     await waitFor(() => {
@@ -291,12 +299,13 @@ describe('useFilterDropdown', () => {
 
   it('should call onFilterSelect when a filter option is set', async () => {
     const { result } = renderHook(() => {
-      const { selectFilter } = useFilterDropdown({ filterDropdownId });
+      const { applyRecordFilter } = useApplyRecordFilter(filterDropdownId);
+
       const { onFilterSelectState } = useFilterDropdownStates(filterDropdownId);
 
       const [onFilterSelect, setOnFilterSelect] =
         useRecoilState(onFilterSelectState);
-      return { onFilterSelect, setOnFilterSelect, selectFilter };
+      return { onFilterSelect, setOnFilterSelect, applyRecordFilter };
     }, renderHookConfig);
     const onFilterSelectMock = jest.fn();
 
@@ -304,7 +313,7 @@ describe('useFilterDropdown', () => {
 
     act(() => {
       result.current.setOnFilterSelect(onFilterSelectMock);
-      result.current.selectFilter(mockFilter);
+      result.current.applyRecordFilter(mockFilter);
     });
 
     await waitFor(() => {

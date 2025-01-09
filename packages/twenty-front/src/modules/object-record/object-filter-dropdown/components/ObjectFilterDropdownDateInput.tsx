@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
@@ -21,8 +22,9 @@ export const ObjectFilterDropdownDateInput = () => {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -51,7 +53,7 @@ export const ObjectFilterDropdownDateInput = () => {
 
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
-    selectFilter?.({
+    applyRecordFilter({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value: newDate?.toISOString() ?? '',
@@ -83,7 +85,7 @@ export const ObjectFilterDropdownDateInput = () => {
         )
       : '';
 
-    selectFilter?.({
+    applyRecordFilter({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value,

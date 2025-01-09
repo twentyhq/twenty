@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -34,7 +35,6 @@ export const ObjectFilterDropdownRatingInput = () => {
     selectedOperandInDropdownState,
     filterDefinitionUsedInDropdownState,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
@@ -45,6 +45,8 @@ export const ObjectFilterDropdownRatingInput = () => {
   );
 
   const selectedFilter = useRecoilValue(selectedFilterState);
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   return (
     filterDefinitionUsedInDropdown &&
@@ -57,7 +59,7 @@ export const ObjectFilterDropdownRatingInput = () => {
               return;
             }
 
-            selectFilter?.({
+            applyRecordFilter?.({
               id: selectedFilter?.id ? selectedFilter.id : v4(),
               fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
               value: convertFieldRatingValueToNumber(newValue),
