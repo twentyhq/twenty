@@ -27,7 +27,7 @@ export const createDefaultButton = (
     borderRadius: '20px',
     backgroundColor: 'black',
     color: 'white',
-    fontWeight: '600',
+    fontWeight: '500',
     fontSize: '1.5rem',
     display: 'flex',
     alignItems: 'center',

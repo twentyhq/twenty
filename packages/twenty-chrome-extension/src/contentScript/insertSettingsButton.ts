@@ -16,7 +16,7 @@ if (!isDefined(btn)) {
     borderRadius: '50%',
     backgroundColor: 'black',
     color: 'white',
-    fontWeight: '600',
+    fontWeight: '500',
     fontSize: '1.5rem',
     display: 'flex',
     alignItems: 'center',
