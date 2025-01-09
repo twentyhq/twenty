@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
@@ -37,8 +38,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     selectedOperandInDropdownState,
     selectedFilterState,
     objectFilterDropdownSelectedRecordIdsState,
-    selectFilter,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
@@ -187,7 +189,7 @@ export const ObjectFilterDropdownRecordSelect = ({
 
       const filterId = viewFilter?.id ?? fieldId;
 
-      selectFilter({
+      applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,

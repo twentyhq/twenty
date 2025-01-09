@@ -1,16 +1,12 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { isDefined } from 'twenty-ui';
-import { Filter } from '../types/Filter';
 
 type UseFilterDropdownProps = {
   filterDropdownId?: string;
@@ -33,23 +29,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     advancedFilterViewFilterGroupIdState,
     advancedFilterViewFilterIdState,
   } = useFilterDropdownStates(componentInstanceId);
-
-  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
-
-  const selectFilter = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (filter: Filter | null) => {
-        set(selectedFilterState, filter);
-        const onFilterSelect = getSnapshotValue(snapshot, onFilterSelectState);
-
-        if (isDefined(filter)) {
-          upsertCombinedViewFilter(filter);
-        }
-
-        onFilterSelect?.(filter);
-      },
-    [selectedFilterState, onFilterSelectState, upsertCombinedViewFilter],
-  );
 
   const emptyFilterButKeepDefinition = useRecoilCallback(
     ({ set }) =>
@@ -129,7 +108,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
 
   return {
     componentInstanceId,
-    selectFilter,
     resetFilter,
     setSelectedFilter,
     setSelectedOperandInDropdown,

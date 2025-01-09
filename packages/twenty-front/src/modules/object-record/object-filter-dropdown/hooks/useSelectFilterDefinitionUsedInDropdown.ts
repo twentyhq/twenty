@@ -1,3 +1,4 @@
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
@@ -12,12 +13,11 @@ type SelectFilterParams = {
   filterDefinition: FilterDefinition;
 };
 
-export const useSelectFilter = () => {
+export const useSelectFilterDefinitionUsedInDropdown = () => {
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
-    selectFilter: filterDropdownSelectFilter,
     advancedFilterViewFilterGroupIdState,
     advancedFilterViewFilterIdState,
   } = useFilterDropdown();
@@ -31,7 +31,11 @@ export const useSelectFilter = () => {
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const selectFilter = ({ filterDefinition }: SelectFilterParams) => {
+  const { applyRecordFilter } = useApplyRecordFilter();
+
+  const selectFilterDefinitionUsedInDropdown = ({
+    filterDefinition,
+  }: SelectFilterParams) => {
     setFilterDefinitionUsedInDropdown(filterDefinition);
 
     if (
@@ -53,7 +57,7 @@ export const useSelectFilter = () => {
     const isAdvancedFilter = isDefined(advancedFilterViewFilterId);
 
     if (isAdvancedFilter || value !== '') {
-      filterDropdownSelectFilter({
+      applyRecordFilter({
         id: advancedFilterViewFilterId ?? v4(),
         fieldMetadataId: filterDefinition.fieldMetadataId,
         displayValue,
@@ -68,6 +72,6 @@ export const useSelectFilter = () => {
   };
 
   return {
-    selectFilter,
+    selectFilterDefinitionUsedInDropdown,
   };
 };
