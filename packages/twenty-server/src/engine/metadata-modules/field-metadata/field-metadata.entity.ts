@@ -49,7 +49,7 @@ export class FieldMetadataEntity<
 
   @Column({
     nullable: false,
-    type: 'text',
+    type: 'varchar',
   })
   type: FieldMetadataType;
 
