@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -106,6 +107,7 @@ export const ImageInput = ({
   className,
 }: ImageInputProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
@@ -172,7 +174,7 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your best PNGs, JPEGs and GIFs portraits under 10MB
+          {t('supportedFilesDescription')}
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

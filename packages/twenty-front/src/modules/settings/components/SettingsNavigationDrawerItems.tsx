@@ -42,6 +42,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { IconIdBadge2 } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -100,6 +101,7 @@ export const SettingsNavigationDrawerItems = () => {
   const currentPathName = useLocation().pathname;
 
   const { currentRole } = usePermissions();
+  const { t } = useTranslation();
   
   const accountSubSettings: SettingsNavigationItem[] = [
     {
@@ -134,18 +136,18 @@ export const SettingsNavigationDrawerItems = () => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
         <SettingsNavigationDrawerItem
-          label="Profile"
+          label={t('profile')}
           path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
         />
         <SettingsNavigationDrawerItem
-          label="Experience"
+          label={t('experience')}
           path={SettingsPath.Appearance}
           Icon={IconColorSwatch}
         />
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
-            label="Accounts"
+            label={t('accounts')}
             path={SettingsPath.Accounts}
             Icon={IconAt}
             matchSubPages={false}
@@ -170,34 +172,34 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <SettingsNavigationDrawerItem
-          label="General"
+          label={t('general')}
           path={SettingsPath.Workspace}
           Icon={IconSettings}
         />
         <SettingsNavigationDrawerItem
-          label="Members"
+          label={t('members')}
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
         <SettingsNavigationDrawerItem
-          label="Roles"
+          label={t('roles')}
           path={SettingsPath.MembersRoles}
           Icon={IconIdBadge2}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Billing"
+            label={t('billing')}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Data model"
+          label={t('dataModel')}
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
         />
         <SettingsNavigationDrawerItem
-          label="Integrations"
+          label={t('integrations')}
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
@@ -226,7 +228,7 @@ export const SettingsNavigationDrawerItems = () => {
                   />
                 </StyledIconContainer>
                 <SettingsNavigationDrawerItem
-                  label="Security"
+                  label={t('security')}
                   path={SettingsPath.Security}
                   Icon={IconKey}
                 />
@@ -294,7 +296,7 @@ export const SettingsNavigationDrawerItems = () => {
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Releases"
+          label={t('releases')}
           path={SettingsPath.Releases}
           Icon={IconRocket}
         />

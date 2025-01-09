@@ -16,7 +16,7 @@ export const SettingsProfile = () => {
   const { t } = useTranslation();
   return (
   <SubMenuTopBarContainer
-    title="Profile"
+    title={t('profile')}
     links={[
       {
         children: 'User',
@@ -27,17 +27,17 @@ export const SettingsProfile = () => {
   >
     <SettingsPageContainer>
       <Section>
-        <H2Title title="Picture" />
+        <H2Title title={t('picture')} />
         <ProfilePictureUploader />
       </Section>
       <Section>
-        <H2Title title="Name" description="Your name as it will be displayed" />
+        <H2Title title={t('name')} description={t('nameProfileDescription')} />
         <NameFields />
       </Section>
       <Section>
         <H2Title
-          title="Email"
-          description="The email associated to your account"
+          title={t('email')}
+          description={t('emailProfileDescription')}
         />
         <EmailField />
       </Section>

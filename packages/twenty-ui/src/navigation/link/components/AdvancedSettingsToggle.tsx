@@ -38,11 +38,13 @@ const StyledIconPoint = styled(IconPoint)`
 `;
 
 type AdvancedSettingsToggleProps = {
+  label?: string;
   isAdvancedModeEnabled: boolean;
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
 };
 
 export const AdvancedSettingsToggle = ({
+  label,
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
 }: AdvancedSettingsToggleProps) => {
@@ -61,7 +63,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={inputId}>
-        <StyledText>Advanced:</StyledText>
+        <StyledText>{label ? label : 'Advanced'}</StyledText>
 
         <Toggle
           id={inputId}

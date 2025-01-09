@@ -18,7 +18,7 @@
     "settings": "Settings",
     "user": "User",
     "profile": "Profile",
-    "appearance": "Appearance",
+    "experience": "Experience",
   
     "theme": "Theme",
     "light": "Light",
@@ -32,6 +32,8 @@
     "integrations": "Integrations",
     "other": "Other",
     "releases": "Releases",
+    "security": "Security",
+    "advanced": "Advanced",
     "logout": "Logout",
   
     "nameProfileDescription": "Your name as it will be displayed",
