@@ -13,6 +13,7 @@ import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 import { isDefined } from '~/utils/isDefined';
 import { formatDateString } from '~/utils/string/formatDateString';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 export const computeAggregateValueAndLabel = ({
   data,
@@ -87,12 +88,23 @@ export const computeAggregateValueAndLabel = ({
 
       case FieldMetadataType.DateTime: {
         value = aggregateValue as string;
-        value = formatDateString({
+        value = formatDateTimeString({
           value,
           displayAsRelativeDate,
           timeZone,
           dateFormat,
           timeFormat,
+        });
+        break;
+      }
+
+      case FieldMetadataType.Date: {
+        value = aggregateValue as string;
+        value = formatDateString({
+          value,
+          displayAsRelativeDate,
+          timeZone,
+          dateFormat,
         });
         break;
       }

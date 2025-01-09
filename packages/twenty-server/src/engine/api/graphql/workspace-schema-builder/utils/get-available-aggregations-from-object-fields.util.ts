@@ -1,7 +1,7 @@
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
-import { capitalize } from 'twenty-shared';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -75,24 +75,25 @@ export const getAvailableAggregationsFromObjectFields = (
         aggregateOperation: AGGREGATE_OPERATIONS.percentageNotEmpty,
       };
 
-      switch (field.type) {
-        case FieldMetadataType.DATE_TIME:
-          acc[`min${capitalize(field.name)}`] = {
-            type: GraphQLISODateTime,
-            description: `Earliest date contained in the field ${field.name}`,
-            fromField: field.name,
-            fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.min,
-          };
+      if (isFieldMetadataDateKind(field.type)) {
+        acc[`min${capitalize(field.name)}`] = {
+          type: GraphQLISODateTime,
+          description: `Earliest date contained in the field ${field.name}`,
+          fromField: field.name,
+          fromFieldType: field.type,
+          aggregateOperation: AGGREGATE_OPERATIONS.min,
+        };
 
-          acc[`max${capitalize(field.name)}`] = {
-            type: GraphQLISODateTime,
-            description: `Latest date contained in the field ${field.name}`,
-            fromField: field.name,
-            fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.max,
-          };
-          break;
+        acc[`max${capitalize(field.name)}`] = {
+          type: GraphQLISODateTime,
+          description: `Latest date contained in the field ${field.name}`,
+          fromField: field.name,
+          fromFieldType: field.type,
+          aggregateOperation: AGGREGATE_OPERATIONS.max,
+        };
+      }
+
+      switch (field.type) {
         case FieldMetadataType.NUMBER:
           acc[`min${capitalize(field.name)}`] = {
             type: GraphQLFloat,
