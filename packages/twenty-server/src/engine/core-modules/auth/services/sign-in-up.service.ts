@@ -394,7 +394,10 @@ export class SignInUpService {
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
       try {
-        return (await this.httpService.axiosRef.get(logoUrl)).status === 200;
+        return (
+          (await this.httpService.axiosRef.get(logoUrl, { timeout: 600 }))
+            .status === 200
+        );
       } catch {
         return false;
       }
