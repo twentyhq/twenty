@@ -1,24 +1,20 @@
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { H2Title, Section } from 'twenty-ui';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isDefined } from '~/utils/isDefined';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
+import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 
 const validationSchema = z
   .object({
@@ -33,26 +29,10 @@ const validationSchema = z
   })
   .required();
 
-type Form = z.infer<typeof validationSchema>;
-
-const StyledDomainFromWrapper = styled.div`
-  align-items: center;
-  display: flex;
-`;
-
-const StyledDomain = styled.h2`
-  align-self: flex-start;
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin: ${({ theme }) => theme.spacing(2)};
-  white-space: nowrap;
-`;
+export type Form = z.infer<typeof validationSchema>;
 
 export const SettingsDomain = () => {
   const navigate = useNavigate();
-
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -145,44 +125,7 @@ export const SettingsDomain = () => {
     >
       <SettingsPageContainer>
         <SettingsHostname />
-        {!currentWorkspace?.hostname && (
-          <Section>
-            <H2Title
-              title="Subdomain"
-              description="Set the name of your subdomain"
-            />
-            {currentWorkspace?.subdomain && (
-              <StyledDomainFromWrapper>
-                <Controller
-                  name="subdomain"
-                  control={control}
-                  render={({
-                    field: { onChange, value },
-                    fieldState: { error },
-                  }) => (
-                    <>
-                      <TextInputV2
-                        value={value}
-                        type="text"
-                        onChange={onChange}
-                        error={error?.message}
-                        fullWidth
-                      />
-                      {isDefined(domainConfiguration.frontDomain) && (
-                        <StyledDomain>
-                          {`.${
-                            currentWorkspace.hostname ??
-                            domainConfiguration.frontDomain
-                          }`}
-                        </StyledDomain>
-                      )}
-                    </>
-                  )}
-                />
-              </StyledDomainFromWrapper>
-            )}
-          </Section>
-        )}
+        {!currentWorkspace?.hostname && <SettingsSubdomain />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

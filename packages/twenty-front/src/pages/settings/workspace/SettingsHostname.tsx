@@ -12,6 +12,7 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { useEffect } from 'react';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const validationSchema = z
   .object({
@@ -39,6 +40,7 @@ export const SettingsHostname = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [getHostnameDetailsQuery, { data: getHostnameDetailsData }] =
     useGetHostnameDetailsLazyQuery();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -90,7 +92,7 @@ export const SettingsHostname = () => {
         throw new Error('Invalid form values');
       }
 
-      const result = await updateWorkspace({
+      await updateWorkspace({
         variables: {
           input: {
             hostname: null,
@@ -98,12 +100,7 @@ export const SettingsHostname = () => {
         },
       });
 
-      console.log('>>>>>>>>>>>>>>', result);
-
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        hostname: undefined,
-      });
+      redirectToWorkspaceDomain(currentWorkspace.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
