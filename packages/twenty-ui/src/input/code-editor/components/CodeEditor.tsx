@@ -50,7 +50,10 @@ export const CodeEditor = ({
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
 
-  const setModelMarkers = () => {
+  const setModelMarkers = (
+    editor: editor.IStandaloneCodeEditor | undefined,
+    monaco: Monaco | undefined,
+  ) => {
     const model = editor?.getModel();
     if (!isDefined(model)) {
       return;
@@ -73,15 +76,16 @@ export const CodeEditor = ({
         monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
         monaco.editor.setTheme('codeEditorTheme');
         onMount?.(editor, monaco);
+        setModelMarkers(editor, monaco);
       }}
       onChange={(value) => {
         if (isDefined(value)) {
           onChange?.(value);
+          setModelMarkers(editor, monaco);
         }
       }}
       onValidate={(markers) => {
         onValidate?.(markers);
-        setModelMarkers();
       }}
       options={{
         overviewRulerLanes: 0,

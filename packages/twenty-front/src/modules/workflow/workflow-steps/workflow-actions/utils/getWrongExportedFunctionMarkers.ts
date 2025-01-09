@@ -24,9 +24,11 @@ export const getWrongExportedFunctionMarkers = (
   value: string,
 ): editor.IMarkerData[] => {
   const validRegex = /export\s+const\s+main\s*=/g;
-  const validMatch = value.match(validRegex);
   const invalidRegex = /export\s+const\s+\S*/g;
+  const exportRegex = /export\s+const/g;
+  const validMatch = value.match(validRegex);
   const invalidMatch = value.match(invalidRegex);
+  const exportMatch = value.match(exportRegex);
   const markers: editor.IMarkerData[] = [];
 
   if (!validMatch && !!invalidMatch) {
@@ -35,7 +37,7 @@ export const getWrongExportedFunctionMarkers = (
       const endColumn = invalidMatch[0].length + coordinates.column;
       markers.push({
         severity: MarkerSeverity.Error,
-        message: 'An exported "main" arrow function is required.',
+        message: 'Exported arrow function should be named "main"',
         code: 'export const main',
         startLineNumber: coordinates.line,
         startColumn: coordinates.column,
@@ -43,6 +45,18 @@ export const getWrongExportedFunctionMarkers = (
         endColumn,
       });
     }
+  }
+
+  if (!exportMatch) {
+    markers.push({
+      severity: MarkerSeverity.Error,
+      message: 'An exported "main" arrow function is required.',
+      code: 'export const main',
+      startLineNumber: 1,
+      startColumn: 1,
+      endLineNumber: 1,
+      endColumn: 1,
+    });
   }
 
   return markers;
