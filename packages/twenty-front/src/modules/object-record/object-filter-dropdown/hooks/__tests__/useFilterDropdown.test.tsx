@@ -313,7 +313,7 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should handle scopeId undefined on initial values', () => {
+  it('should handle componentInstanceId undefined on initial values', () => {
     global.console.error = jest.fn();
 
     const renderFunction = () => {
@@ -322,16 +322,16 @@ describe('useFilterDropdown', () => {
 
     expect(renderFunction).toThrow(Error);
     expect(renderFunction).toThrow(
-      'Scope id is not provided and cannot be found in context.',
+      'Instance id is not provided and cannot be found in context.',
     );
   });
 
-  it('should scopeId have been defined on initial values', () => {
+  it('should componentInstanceId have been defined on initial values', () => {
     const { result } = renderHook(
       () => useFilterDropdown({ filterDropdownId }),
       renderHookConfig,
     );
 
-    expect(result.current.scopeId).toBeDefined();
+    expect(result.current.componentInstanceId).toBeDefined();
   });
 });
