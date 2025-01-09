@@ -1,5 +1,5 @@
 import { useTheme, css } from '@emotion/react';
-import Editor, { EditorProps, useMonaco } from '@monaco-editor/react';
+import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { codeEditorTheme } from '@ui/input';
 import { isDefined } from '@ui/utilities';
 import styled from '@emotion/styled';
@@ -45,10 +45,21 @@ export const CodeEditor = ({
   options,
 }: CodeEditorProps) => {
   const theme = useTheme();
-  const monaco = useMonaco();
-  const [model, setModel] = useState<editor.ITextModel | undefined | null>(
-    undefined,
-  );
+  const [monaco, setMonaco] = useState<Monaco | undefined>(undefined);
+  const [editor, setEditor] = useState<
+    editor.IStandaloneCodeEditor | undefined
+  >(undefined);
+
+  const setModelMarkers = () => {
+    const model = editor?.getModel();
+    if (!isDefined(model)) {
+      return;
+    }
+    const customMarkers = setMarkers?.(model.getValue());
+    if (isDefined(customMarkers)) {
+      monaco?.editor.setModelMarkers(model, 'customMarker', customMarkers);
+    }
+  };
 
   return (
     <StyledEditor
@@ -57,9 +68,10 @@ export const CodeEditor = ({
       value={value}
       language={language}
       onMount={(editor, monaco) => {
+        setMonaco(monaco);
+        setEditor(editor);
         monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
         monaco.editor.setTheme('codeEditorTheme');
-        setModel(editor.getModel());
         onMount?.(editor, monaco);
       }}
       onChange={(value) => {
@@ -69,13 +81,7 @@ export const CodeEditor = ({
       }}
       onValidate={(markers) => {
         onValidate?.(markers);
-        if (!isDefined(model)) {
-          return;
-        }
-        const customMarkers = setMarkers?.(model.getValue());
-        if (isDefined(customMarkers)) {
-          monaco?.editor.setModelMarkers(model, 'customMarker', customMarkers);
-        }
+        setModelMarkers();
       }}
       options={{
         overviewRulerLanes: 0,
