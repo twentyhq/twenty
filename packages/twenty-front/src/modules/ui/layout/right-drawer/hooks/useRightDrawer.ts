@@ -28,11 +28,15 @@ export const useRightDrawer = () => {
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
       (rightDrawerPage: RightDrawerPages) => {
-        if (
-          isCommandMenuV2Enabled &&
-          rightDrawerPage === RightDrawerPages.ViewRecord
-        ) {
-          set(commandMenuPageState, CommandMenuPages.ViewRecord);
+        if (isCommandMenuV2Enabled) {
+          const commandMenuPage =
+            rightDrawerPage === RightDrawerPages.ViewRecord
+              ? CommandMenuPages.ViewRecord
+              : rightDrawerPage === RightDrawerPages.ViewEmailThread
+                ? CommandMenuPages.ViewEmailThread
+                : CommandMenuPages.ViewCalendarEvent;
+
+          set(commandMenuPageState, commandMenuPage);
           openCommandMenu();
           return;
         }
