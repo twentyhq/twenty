@@ -923,6 +923,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
+  getFeatureFlagManagementCapability: Scalars['Boolean'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -1568,10 +1569,16 @@ export type WorkspaceEdge = {
   node: Workspace;
 };
 
+export type WorkspaceFeatureFlag = {
+  __typename?: 'WorkspaceFeatureFlag';
+  key: Scalars['String'];
+  value: Scalars['Boolean'];
+};
+
 export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
   allowImpersonation: Scalars['Boolean'];
-  featureFlags: Array<FeatureFlag>;
+  featureFlags: Array<WorkspaceFeatureFlag>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -2102,7 +2109,12 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 }>;
 
 
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'WorkspaceFeatureFlag', key: string, value: boolean }> }> } };
+
+export type GetFeatureFlagManagementCapabilityQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFeatureFlagManagementCapabilityQuery = { __typename?: 'Query', getFeatureFlagManagementCapability: boolean };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3668,6 +3680,38 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
+export const GetFeatureFlagManagementCapabilityDocument = gql`
+    query GetFeatureFlagManagementCapability {
+  getFeatureFlagManagementCapability
+}
+    `;
+
+/**
+ * __useGetFeatureFlagManagementCapabilityQuery__
+ *
+ * To run a query within a React component, call `useGetFeatureFlagManagementCapabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFeatureFlagManagementCapabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFeatureFlagManagementCapabilityQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFeatureFlagManagementCapabilityQuery(baseOptions?: Apollo.QueryHookOptions<GetFeatureFlagManagementCapabilityQuery, GetFeatureFlagManagementCapabilityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFeatureFlagManagementCapabilityQuery, GetFeatureFlagManagementCapabilityQueryVariables>(GetFeatureFlagManagementCapabilityDocument, options);
+      }
+export function useGetFeatureFlagManagementCapabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFeatureFlagManagementCapabilityQuery, GetFeatureFlagManagementCapabilityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFeatureFlagManagementCapabilityQuery, GetFeatureFlagManagementCapabilityQueryVariables>(GetFeatureFlagManagementCapabilityDocument, options);
+        }
+export type GetFeatureFlagManagementCapabilityQueryHookResult = ReturnType<typeof useGetFeatureFlagManagementCapabilityQuery>;
+export type GetFeatureFlagManagementCapabilityLazyQueryHookResult = ReturnType<typeof useGetFeatureFlagManagementCapabilityLazyQuery>;
+export type GetFeatureFlagManagementCapabilityQueryResult = Apollo.QueryResult<GetFeatureFlagManagementCapabilityQuery, GetFeatureFlagManagementCapabilityQueryVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {

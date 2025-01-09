@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-
 @ObjectType()
 class UserInfo {
   @Field(() => String)
@@ -15,6 +13,15 @@ class UserInfo {
 
   @Field(() => String, { nullable: true })
   lastName?: string;
+}
+
+@ObjectType()
+class WorkspaceFeatureFlag {
+  @Field(() => String)
+  key: string;
+
+  @Field(() => Boolean)
+  value: boolean;
 }
 
 @ObjectType()
@@ -37,8 +44,8 @@ class WorkspaceInfo {
   @Field(() => [UserInfo])
   users: UserInfo[];
 
-  @Field(() => [FeatureFlagEntity])
-  featureFlags: FeatureFlagEntity[];
+  @Field(() => [WorkspaceFeatureFlag])
+  featureFlags: WorkspaceFeatureFlag[];
 }
 
 @ObjectType()

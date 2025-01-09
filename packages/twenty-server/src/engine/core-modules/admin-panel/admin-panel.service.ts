@@ -8,13 +8,14 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Injectable()
 export class AdminPanelService {
@@ -26,7 +27,15 @@ export class AdminPanelService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly environmentService: EnvironmentService,
   ) {}
+
+  private async canManageFeatureFlags(): Promise<boolean> {
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') ||
+      this.environmentService.get('DEBUG_MODE')
+    );
+  }
 
   async impersonate(userId: string, workspaceId: string) {
     const user = await this.userRepository.findOne({
@@ -69,8 +78,13 @@ export class AdminPanelService {
     };
   }
 
+  async getFeatureFlagManagementCapability(): Promise<boolean> {
+    return await this.canManageFeatureFlags();
+  }
+
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
+    const canManageFlags = await this.canManageFeatureFlags();
 
     const targetUser = await this.userRepository.findOne({
       where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
@@ -79,7 +93,7 @@ export class AdminPanelService {
         'workspaces.workspace',
         'workspaces.workspace.workspaceUsers',
         'workspaces.workspace.workspaceUsers.user',
-        'workspaces.workspace.featureFlags',
+        ...(canManageFlags ? ['workspaces.workspace.featureFlags'] : []),
       ],
     });
 
@@ -109,13 +123,15 @@ export class AdminPanelService {
           firstName: workspaceUser.user.firstName,
           lastName: workspaceUser.user.lastName,
         })),
-        featureFlags: allFeatureFlagKeys.map((key) => ({
-          key,
-          value:
-            userWorkspace.workspace.featureFlags?.find(
-              (flag) => flag.key === key,
-            )?.value ?? false,
-        })) as FeatureFlagEntity[],
+        featureFlags: canManageFlags
+          ? allFeatureFlagKeys.map((key) => ({
+              key,
+              value:
+                userWorkspace.workspace.featureFlags?.find(
+                  (flag) => flag.key === key,
+                )?.value ?? false,
+            }))
+          : [],
       })),
     };
   }
