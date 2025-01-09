@@ -121,6 +121,8 @@ jobs:
     timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
     needs: front-sb-test
+    env:
+      PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
     strategy:
       matrix:
         storybook_scope: [pages, performance]
@@ -134,12 +136,12 @@ jobs:
         with:
           pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
           merge-multiple: true
-          path: coverage/storybook
+          path: coverage-artifacts
       - name: Merge coverage reports
         run: |
-          jq 'reduce inputs as $i (.; . * $i)' coverage/coverage-shard-*.json > coverage-merged.json
+          mkdir -p ${{ env.PATH_TO_COVERAGE }}
+          jq 'reduce inputs as $i (.; . * $i)' coverage-artifacts/coverage-shard-*.json > ${{ env.PATH_TO_COVERAGE }}/coverage-merged.json
       - name: TMP counting lines
-        # Find programmatic way to run check coverage using storybook
         run: cat coverage-merged.json | wc -l
       - name: Checking coverage
         run: npx nx storybook:coverage twenty-front
