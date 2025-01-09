@@ -2,12 +2,12 @@ import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
+import {
+  MultiItemBaseInput,
+  MultiItemBaseInputProps,
+} from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import {
-  DropdownMenuInput,
-  DropdownMenuInputProps,
-} from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -34,7 +34,7 @@ type MultiItemFieldInputProps<T> = {
   hotkeyScope: string;
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
-  renderInput?: DropdownMenuInputProps['renderInput'];
+  renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
@@ -176,7 +176,7 @@ export const MultiItemFieldInput = <T,>({
         </>
       )}
       {isInputDisplayed || !items.length ? (
-        <DropdownMenuInput
+        <MultiItemBaseInput
           autoFocus
           placeholder={placeholder}
           value={inputValue}

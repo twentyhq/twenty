@@ -8,7 +8,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const getActionConfig = (
   objectMetadataItem: ObjectMetadataItem,
-  isPageHeaderV2Enabled: boolean,
+  isCommandMenuV2Enabled: boolean,
 ) => {
   switch (objectMetadataItem.nameSingular) {
     case CoreObjectNameSingular.Workflow:
@@ -18,7 +18,7 @@ export const getActionConfig = (
     case CoreObjectNameSingular.WorkflowRun:
       return WORKFLOW_RUNS_ACTIONS_CONFIG;
     default:
-      return isPageHeaderV2Enabled
+      return isCommandMenuV2Enabled
         ? DEFAULT_ACTIONS_CONFIG_V2
         : DEFAULT_ACTIONS_CONFIG_V1;
   }

@@ -1,6 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -10,6 +7,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -17,10 +16,10 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
-  const navigate = useNavigate();
   const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const { resetSelectedItem } = useSelectableList('command-menu-list');
   const {
@@ -212,6 +211,8 @@ export const useCommandMenu = () => {
         );
 
         if (isCommandMenuOpened) {
+          set(viewableRecordIdState, null);
+          set(commandMenuPageState, CommandMenuPages.Root);
           setIsCommandMenuOpened(false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
@@ -238,39 +239,21 @@ export const useCommandMenu = () => {
     [closeCommandMenu, openCommandMenu],
   );
 
-  const onItemClick = useCallback(
-    ({
-      shouldCloseCommandMenuOnClick,
-      onClick,
-      to,
-    }: {
-      shouldCloseCommandMenuOnClick?: boolean;
-      onClick?: () => void;
-      to?: string;
-    }) => {
-      if (
-        isDefined(shouldCloseCommandMenuOnClick) &&
-        shouldCloseCommandMenuOnClick
-      ) {
-        toggleCommandMenu();
-      }
-
-      if (isDefined(onClick)) {
-        onClick();
-        return;
-      }
-      if (isNonEmptyString(to)) {
-        navigate(to);
-        return;
-      }
+  const openRecordInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (recordId: string) => {
+        openCommandMenu();
+        set(commandMenuPageState, CommandMenuPages.ViewRecord);
+        set(viewableRecordIdState, recordId);
+      };
     },
-    [navigate, toggleCommandMenu],
+    [openCommandMenu],
   );
 
   return {
     openCommandMenu,
     closeCommandMenu,
+    openRecordInCommandMenu,
     toggleCommandMenu,
-    onItemClick,
   };
 };
