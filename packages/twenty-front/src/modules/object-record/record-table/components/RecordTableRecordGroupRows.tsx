@@ -1,6 +1,7 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
@@ -8,10 +9,16 @@ import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-ta
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRecordGroupRows = () => {
+  const isAggregateQueryEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsAggregateQueryEnabled,
+  );
+
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const allRecordIds = useRecoilComponentValueV2(
@@ -59,6 +66,12 @@ export const RecordTableRecordGroupRows = () => {
       <RecordTablePendingRecordGroupRow />
       <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
+      {isAggregateQueryEnabled && (
+        <RecordTableAggregateFooter
+          key={currentRecordGroupId}
+          currentRecordGroupId={currentRecordGroupId}
+        />
+      )}
     </>
   );
 };
