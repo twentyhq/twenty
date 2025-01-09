@@ -44,6 +44,7 @@ export type WorkflowUpdateRecordActionSettings = BaseWorkflowActionSettings & {
     objectName: string;
     objectRecord: ObjectRecord;
     objectRecordId: string;
+    fieldsToUpdate: string[];
   };
 };
 
@@ -166,6 +167,7 @@ type StepRunOutput = {
 
 export type WorkflowRunOutput = {
   steps: Record<string, StepRunOutput>;
+  error?: string;
 };
 
 export type WorkflowRun = {

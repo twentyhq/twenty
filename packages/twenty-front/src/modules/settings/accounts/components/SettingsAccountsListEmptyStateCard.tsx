@@ -1,6 +1,8 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import {
   Button,
   Card,
@@ -9,8 +11,7 @@ import {
   IconGoogle,
   IconMicrosoft,
 } from 'twenty-ui';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -34,7 +35,7 @@ export const SettingsAccountsListEmptyStateCard = ({
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isMicrosoftSyncEnabled = useIsFeatureEnabled(
-    'IS_MICROSOFT_SYNC_ENABLED',
+    FeatureFlagKey.IsMicrosoftSyncEnabled,
   );
 
   return (

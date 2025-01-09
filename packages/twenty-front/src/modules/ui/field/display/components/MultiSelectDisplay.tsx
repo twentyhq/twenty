@@ -40,6 +40,7 @@ export const MultiSelectDisplay = ({
           key={index}
           color={selectedOption.color ?? 'transparent'}
           text={selectedOption.label}
+          Icon={selectedOption.icon ?? undefined}
         />
       ))}
     </StyledContainer>

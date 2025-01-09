@@ -61,6 +61,8 @@ export const useHandleRecordGroupField = ({
             (option) =>
               !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
           )
+          // Alphabetically sort the options by default
+          .sort((a, b) => a.value.localeCompare(b.value))
           .map(
             (option, index) =>
               ({
@@ -72,6 +74,20 @@ export const useHandleRecordGroupField = ({
                 fieldMetadataId: fieldMetadataItem.id,
               }) satisfies ViewGroup,
           );
+
+        if (
+          !existingGroupKeys.has(`${fieldMetadataItem.id}:`) &&
+          fieldMetadataItem.isNullable === true
+        ) {
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            isVisible: true,
+            position: fieldMetadataItem.options.length,
+            fieldMetadataId: fieldMetadataItem.id,
+          } satisfies ViewGroup);
+        }
 
         const viewGroupsToDelete = view.viewGroups.filter(
           (group) => group.fieldMetadataId !== fieldMetadataItem.id,

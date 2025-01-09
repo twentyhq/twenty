@@ -5,6 +5,7 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -40,6 +41,8 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFiltersComponentState,
     );
 
+    const { filterValueDependencies } = useFilterValueDependencies();
+
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,
       recordGqlFields: {
@@ -49,6 +52,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
         contextStoreTargetedRecordsRule,
         contextStoreFilters,
         objectMetadataItem,
+        filterValueDependencies,
       ),
       limit: 1,
       skip: contextStoreTargetedRecordsRule.mode === 'selection',

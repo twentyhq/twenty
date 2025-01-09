@@ -1,3 +1,4 @@
+import { capitalize } from 'twenty-shared';
 import { WhereExpressionBuilder } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -11,7 +12,6 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
-import { capitalize } from 'src/utils/capitalize';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 

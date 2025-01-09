@@ -27,8 +27,8 @@ export const RecordIndexActionMenuButtons = () => {
           size="small"
           variant="secondary"
           accent="default"
-          title={entry.label}
-          onClick={() => entry.onClick?.()}
+          title={entry.shortLabel}
+          onClick={entry.onClick}
           ariaLabel={entry.label}
         />
       ))}

@@ -12,7 +12,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,20 +31,19 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
     ),
   });
 
-  const selectedType = formConfig.watch('type');
-
-  useEffect(
-    () =>
-      formConfig.reset({
-        ...sSOIdentityProviderDefaultValues[selectedType](),
-        name: formConfig.getValues('name'),
-      }),
-    [formConfig, selectedType],
-  );
-
   const handleSave = async () => {
     try {
-      await createSSOIdentityProvider(formConfig.getValues());
+      const type = formConfig.getValues('type');
+
+      await createSSOIdentityProvider(
+        SSOIdentitiesProvidersParamsSchema.parse(
+          pick(
+            formConfig.getValues(),
+            Object.keys(sSOIdentityProviderDefaultValues[type]()),
+          ),
+        ),
+      );
+
       navigate(getSettingsPagePath(SettingsPath.Security));
     } catch (error) {
       enqueueSnackBar((error as Error).message, {

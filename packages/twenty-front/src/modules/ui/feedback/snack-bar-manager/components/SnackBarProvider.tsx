@@ -46,7 +46,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
       <StyledSnackBarContainer>
         <AnimatePresence>
           {snackBarInternal.queue.map(
-            ({ duration, icon, id, message, title, variant }) => (
+            ({ duration, icon, id, message, detailedMessage, variant }) => (
               <motion.div
                 key={id}
                 variants={variants}
@@ -57,7 +57,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
                 layout
               >
                 <SnackBar
-                  {...{ duration, icon, message, title, variant }}
+                  {...{ duration, icon, message, detailedMessage, variant }}
                   onClose={() => handleSnackBarClose(id)}
                 />
               </motion.div>

@@ -1,8 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
-import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { ReactNode, act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
@@ -15,6 +14,7 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { renderHook } from '@testing-library/react';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
@@ -59,6 +59,7 @@ describe('useAuth', () => {
     });
 
     expect(mocks[1].result).toHaveBeenCalled();
+    expect(mocks[3].result).toHaveBeenCalled();
   });
 
   it('should handle credential sign-in', async () => {

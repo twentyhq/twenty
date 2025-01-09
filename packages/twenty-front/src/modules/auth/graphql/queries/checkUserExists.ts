@@ -6,7 +6,6 @@ export const CHECK_USER_EXISTS = gql`
       __typename
       ... on UserExists {
         exists
-        defaultWorkspaceId
         availableWorkspaces {
           id
           displayName

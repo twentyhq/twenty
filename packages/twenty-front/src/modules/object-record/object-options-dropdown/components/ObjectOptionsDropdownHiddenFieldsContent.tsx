@@ -35,7 +35,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   });
 
   const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
-    objectSlug: objectNamePlural,
+    objectNamePlural,
   });
 
   const { handleColumnVisibilityChange, hiddenTableColumns } =
@@ -87,7 +87,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
           closeDropdown();
         }}
       >
-        <DropdownMenuItemsContainer withoutScrollWrapper>
+        <DropdownMenuItemsContainer scrollable={false}>
           <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>

@@ -1,13 +1,15 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
-import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import {
   Button,
@@ -72,11 +74,14 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
 
   const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
     openOverrideWorkflowDraftConfirmationModalState,
   );
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -90,13 +95,17 @@ export const RecordShowPageWorkflowVersionHeader = ({
             if (hasAlreadyDraftVersion) {
               setOpenOverrideWorkflowDraftConfirmationModal(true);
             } else {
-              await createNewWorkflowVersion({
+              await createDraftFromWorkflowVersion({
                 workflowId: workflowVersion.workflow.id,
-                name: `v${workflowVersion.workflow.versions.length + 1}`,
-                status: 'DRAFT',
-                trigger: workflowVersion.trigger,
-                steps: workflowVersion.steps,
+                workflowVersionIdToCopy: workflowVersion.id,
               });
+
+              navigate(
+                buildShowPageURL(
+                  CoreObjectNameSingular.Workflow,
+                  workflowVersion.workflow.id,
+                ),
+              );
             }
           }}
         />
@@ -130,12 +139,8 @@ export const RecordShowPageWorkflowVersionHeader = ({
 
       {isDefined(workflowVersion) && isDefined(draftWorkflowVersion) ? (
         <OverrideWorkflowDraftConfirmationModal
-          draftWorkflowVersionId={draftWorkflowVersion.id}
           workflowId={workflowVersion.workflowId}
-          workflowVersionUpdateInput={{
-            steps: workflowVersion.steps,
-            trigger: workflowVersion.trigger,
-          }}
+          workflowVersionIdToCopy={workflowVersionId}
         />
       ) : null}
     </>

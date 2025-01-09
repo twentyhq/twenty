@@ -46,6 +46,8 @@ export type FieldDateMetadata = {
   };
 };
 
+export type FieldNumberVariant = 'number' | 'percentage';
+
 export type FieldNumberMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -53,7 +55,7 @@ export type FieldNumberMetadata = {
   isPositive?: boolean;
   settings?: {
     decimals?: number;
-    type?: 'percentage' | 'number';
+    type?: FieldNumberVariant;
   };
 };
 
@@ -209,6 +211,7 @@ export type FieldMetadata =
   | FieldActorMetadata
   | FieldArrayMetadata
   | FieldTsVectorMetadata;
+
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
 export type FieldDateTimeValue = string | null;
@@ -228,6 +231,10 @@ export type FieldLinksValue = {
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
+};
+export type FormFieldCurrencyValue = {
+  currencyCode: CurrencyCode | null;
+  amountMicros: number | string | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {
@@ -255,7 +262,7 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextValue = Record<string, Json> | Json[] | null;
+export type FieldRichTextValue = null | string;
 
 export type FieldActorValue = {
   source: string;
@@ -265,10 +272,15 @@ export type FieldActorValue = {
 
 export type FieldArrayValue = string[];
 
-export type PhoneRecord = { number: string; callingCode: string };
+export type PhoneRecord = {
+  number: string;
+  callingCode: string;
+  countryCode: string;
+};
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };

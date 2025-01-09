@@ -28,12 +28,12 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
   UserExists,
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -42,7 +42,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -57,7 +56,6 @@ export class AuthService {
     private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly userService: UserService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
@@ -173,6 +171,7 @@ export class AuthService {
     fromSSO: boolean;
     targetWorkspaceSubdomain?: string;
     authProvider?: WorkspaceAuthProvider;
+    billingCheckoutSessionState?: string;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -188,7 +187,7 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId?: string): Promise<Verify> {
+  async verify(email: string, workspaceId: string): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -196,31 +195,8 @@ export class AuthService {
       );
     }
 
-    const userWithIdAndDefaultWorkspaceId = await this.userRepository.findOne({
-      select: ['defaultWorkspaceId', 'id'],
-      where: { email },
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      userWithIdAndDefaultWorkspaceId,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    if (
-      workspaceId &&
-      userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
-    ) {
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        userWithIdAndDefaultWorkspaceId.id,
-        workspaceId,
-      );
-    }
-
     const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      where: { email },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -233,15 +209,14 @@ export class AuthService {
 
     const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
     const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
 
     return {
-      user,
       tokens: {
         accessToken,
         refreshToken,
@@ -257,7 +232,6 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
-        defaultWorkspaceId: user.defaultWorkspaceId,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
       };
     }
@@ -278,6 +252,7 @@ export class AuthService {
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
     user: User,
+    workspace: Workspace,
   ): Promise<AuthorizeApp> {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -329,14 +304,14 @@ export class AuthService {
           value: codeChallenge,
           type: AppTokenType.CodeChallenge,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
         {
           value: authorizationCode,
           type: AppTokenType.AuthorizationCode,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
       ]);
@@ -347,7 +322,7 @@ export class AuthService {
         value: authorizationCode,
         type: AppTokenType.AuthorizationCode,
         userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
         expiresAt,
       });
 
@@ -439,11 +414,18 @@ export class AuthService {
     return workspace;
   }
 
-  async computeRedirectURI(loginToken: string, subdomain?: string) {
+  computeRedirectURI(
+    loginToken: string,
+    subdomain?: string,
+    billingCheckoutSessionState?: string,
+  ) {
     const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',
-      searchParams: { loginToken },
+      searchParams: {
+        loginToken,
+        ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+      },
     });
 
     return url.toString();

@@ -1,19 +1,20 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Button, IconButton, IconPlus, useIsMobile } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type PageAddButtonProps = {
   onClick?: () => void;
 };
 
 export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
   const isMobile = useIsMobile();
 
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={IconPlus}
           dataTestId="add-button"

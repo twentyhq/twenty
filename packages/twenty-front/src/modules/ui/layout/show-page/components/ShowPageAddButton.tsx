@@ -18,8 +18,8 @@ import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constant
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { Dropdown } from '../../dropdown/components/Dropdown';
-import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
 const StyledContainer = styled.div`
   z-index: 1;
@@ -53,8 +53,8 @@ export const ShowPageAddButton = ({
     closeDropdown();
   };
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   if (
@@ -72,7 +72,7 @@ export const ShowPageAddButton = ({
       <Dropdown
         dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
-          isPageHeaderV2Enabled ? (
+          isCommandMenuV2Enabled ? (
             <Button
               Icon={IconPlus}
               dataTestId="add-button"
@@ -93,22 +93,20 @@ export const ShowPageAddButton = ({
           )
         }
         dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                onClick={() => handleSelect(CoreObjectNameSingular.Note)}
-                accent="default"
-                LeftIcon={IconNotes}
-                text="Note"
-              />
-              <MenuItem
-                onClick={() => handleSelect(CoreObjectNameSingular.Task)}
-                accent="default"
-                LeftIcon={IconCheckbox}
-                text="Task"
-              />
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              onClick={() => handleSelect(CoreObjectNameSingular.Note)}
+              accent="default"
+              LeftIcon={IconNotes}
+              text="Note"
+            />
+            <MenuItem
+              onClick={() => handleSelect(CoreObjectNameSingular.Task)}
+              accent="default"
+              LeftIcon={IconCheckbox}
+              text="Task"
+            />
+          </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{
           scope: PageHotkeyScope.ShowPage,

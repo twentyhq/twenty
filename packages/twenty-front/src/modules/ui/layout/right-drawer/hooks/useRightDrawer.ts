@@ -3,10 +3,15 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
-import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 
 export const useRightDrawer = () => {
   const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
@@ -14,14 +19,29 @@ export const useRightDrawer = () => {
 
   const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
+  const { openCommandMenu } = useCommandMenu();
+
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
       (rightDrawerPage: RightDrawerPages) => {
+        if (
+          isCommandMenuV2Enabled &&
+          rightDrawerPage === RightDrawerPages.ViewRecord
+        ) {
+          set(commandMenuPageState, CommandMenuPages.ViewRecord);
+          openCommandMenu();
+          return;
+        }
+
         set(rightDrawerPageState, rightDrawerPage);
         set(isRightDrawerOpenState, true);
         set(isRightDrawerMinimizedState, false);
       },
-    [],
+    [isCommandMenuV2Enabled, openCommandMenu],
   );
 
   const closeRightDrawer = useRecoilCallback(

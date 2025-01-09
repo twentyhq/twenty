@@ -15,6 +15,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -34,6 +35,7 @@ const EnvironmentServiceGetMock = jest.fn();
 const WorkspaceCountMock = jest.fn();
 const WorkspaceCreateMock = jest.fn();
 const WorkspaceSaveMock = jest.fn();
+const WorkspaceFindOneMock = jest.fn();
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -56,6 +58,7 @@ describe('SignInUpService', () => {
             count: WorkspaceCountMock,
             create: WorkspaceCreateMock,
             save: WorkspaceSaveMock,
+            findOne: WorkspaceFindOneMock,
           },
         },
         {
@@ -117,6 +120,15 @@ describe('SignInUpService', () => {
           provide: DomainManagerService,
           useValue: {
             generateSubdomain: jest.fn().mockReturnValue('testSubDomain'),
+            getWorkspaceBySubdomainOrDefaultWorkspace: jest
+              .fn()
+              .mockReturnValue({}),
+          },
+        },
+        {
+          provide: UserService,
+          useValue: {
+            hasUserAccessToWorkspaceOrThrow: jest.fn(),
           },
         },
       ],
@@ -139,7 +151,10 @@ describe('SignInUpService', () => {
 
     const spy = jest
       .spyOn(service, 'signUpOnNewWorkspace')
-      .mockResolvedValueOnce({} as User);
+      .mockResolvedValueOnce({ user: {}, workspace: {} } as {
+        user: User;
+        workspace: Workspace;
+      });
 
     await service.signInUp({
       email: 'test@test.com',
@@ -163,13 +178,15 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
     workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
       undefined,
     );
+    WorkspaceFindOneMock.mockReturnValueOnce({
+      id: 'another-workspace',
+    });
 
     const result = await service.signInUp({
       email,
@@ -177,7 +194,7 @@ describe('SignInUpService', () => {
       targetWorkspaceSubdomain: 'testSubDomain',
     });
 
-    expect(result).toEqual(existingUser);
+    expect(result).toEqual({ user: existingUser, workspace: {} });
   });
   it('signInUp - sso - new user - existing invitation', async () => {
     const email = 'newuser@test.com';
@@ -236,7 +253,11 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
+    };
+
+    const workspace = {
+      id: workspaceId,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
@@ -247,10 +268,7 @@ describe('SignInUpService', () => {
     );
     workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
       isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
+      workspace,
     });
 
     workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
@@ -265,7 +283,7 @@ describe('SignInUpService', () => {
       targetWorkspaceSubdomain: 'testSubDomain',
     });
 
-    expect(result).toEqual(existingUser);
+    expect(result).toEqual({ user: existingUser, workspace });
     expect(userWorkspaceServiceAddUserToWorkspaceMock).toHaveBeenCalledTimes(1);
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
@@ -275,15 +293,16 @@ describe('SignInUpService', () => {
     const email = 'newuser@test.com';
     const workspaceId = 'workspace-id';
     const workspacePersonalInviteToken = 'personal-token-value';
+    const workspace = {
+      id: workspaceId,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+    };
 
     UserFindOneMock.mockReturnValueOnce(null);
 
     workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
       isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
+      workspace,
     });
 
     workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
@@ -333,7 +352,6 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: undefined,
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
@@ -367,12 +385,15 @@ describe('SignInUpService', () => {
       id: 'user-id',
       email,
       passwordHash: 'hash-of-validPassword123',
-      defaultWorkspace: { id: 'workspace-id' },
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
 
     EnvironmentServiceGetMock.mockReturnValueOnce(false);
+
+    WorkspaceFindOneMock.mockReturnValueOnce({
+      id: 'another-workspace',
+    });
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
 
@@ -477,6 +498,7 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
+      targetWorkspaceSubdomain: 'testSubDomain',
       workspaceInviteHash,
     });
 

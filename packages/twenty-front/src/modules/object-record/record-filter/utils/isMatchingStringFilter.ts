@@ -1,4 +1,5 @@
 import { StringFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import escapeRegExp from 'lodash.escaperegexp';
 
 export const isMatchingStringFilter = ({
   stringFilter,
@@ -15,13 +16,15 @@ export const isMatchingStringFilter = ({
       return value !== stringFilter.neq;
     }
     case stringFilter.like !== undefined: {
-      const regexPattern = stringFilter.like.replace(/%/g, '.*');
+      const escapedPattern = escapeRegExp(stringFilter.like);
+      const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseSensitive = new RegExp(`^${regexPattern}$`);
 
       return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
-      const regexPattern = stringFilter.ilike.replace(/%/g, '.*');
+      const escapedPattern = escapeRegExp(stringFilter.ilike);
+      const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
       return regexCaseInsensitive.test(value);

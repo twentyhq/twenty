@@ -58,6 +58,7 @@ export class SSOAuthController {
         type: IdentityProviderType.SAML,
       }),
       callbackUrl: this.ssoService.buildCallbackUrl({
+        id: req.params.identityProviderId,
         type: IdentityProviderType.SAML,
       }),
     });
@@ -86,7 +87,7 @@ export class SSOAuthController {
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
           identityProvider.workspace.subdomain,
         ),
@@ -104,7 +105,7 @@ export class SSOAuthController {
     }
   }
 
-  @Post('saml/callback')
+  @Post('saml/callback/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
   async samlAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
@@ -113,7 +114,7 @@ export class SSOAuthController {
       );
 
       return res.redirect(
-        await this.authService.computeRedirectURI(
+        this.authService.computeRedirectURI(
           loginToken.token,
           identityProvider.workspace.subdomain,
         ),
@@ -183,7 +184,10 @@ export class SSOAuthController {
 
     return {
       identityProvider,
-      loginToken: await this.loginTokenService.generateLoginToken(user.email),
+      loginToken: await this.loginTokenService.generateLoginToken(
+        user.email,
+        identityProvider.workspace.id,
+      ),
     };
   }
 }

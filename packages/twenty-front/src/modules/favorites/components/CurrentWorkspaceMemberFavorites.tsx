@@ -5,7 +5,7 @@ import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext'
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
-import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -22,6 +22,7 @@ import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
+  AnimatedExpandableContainer,
   IconFolder,
   IconFolderOpen,
   IconHeartOff,
@@ -50,13 +51,20 @@ export const CurrentWorkspaceMemberFavorites = ({
     folder.folderName,
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [activeFavoriteFolderId, setActiveFavoriteFolderId] = useRecoilState(
-    activeFavoriteFolderIdState,
+
+  const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useRecoilState(
+    openFavoriteFolderIdsState,
   );
-  const isOpen = activeFavoriteFolderId === folder.folderId;
+  const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
-    setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
+    setOpenFavoriteFolderIds((currentOpenFolders) => {
+      if (isOpen) {
+        return currentOpenFolders.filter((id) => id !== folder.folderId);
+      } else {
+        return [...currentOpenFolders, folder.folderId];
+      }
+    });
   };
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();
@@ -146,21 +154,23 @@ export const CurrentWorkspaceMemberFavorites = ({
               onClick={handleToggle}
               rightOptions={rightOptions}
               className="navigation-drawer-item"
-              active={isFavoriteFolderEditDropdownOpen}
+              isRightOptionsDropdownOpen={isFavoriteFolderEditDropdownOpen}
             />
           </FavoritesDroppable>
         )}
 
-        {isOpen && (
+        <AnimatedExpandableContainer
+          isExpanded={isOpen}
+          dimension="height"
+          mode="fit-content"
+          containAnimation
+        >
           <Droppable droppableId={`folder-${folder.folderId}`}>
             {(provided) => (
               <div
                 ref={provided.innerRef}
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...provided.droppableProps}
-                style={{
-                  marginBottom: 15,
-                }}
                 // TODO: (Drag Drop Bug) Adding bottom margin to ensure drag-to-last-position works. Need to find better solution that doesn't affect spacing.
                 // Issue: Without margin, dragging to last position triggers next folder drop area
               >
@@ -173,6 +183,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                     itemComponent={
                       <NavigationDrawerSubItem
                         label={favorite.labelIdentifier}
+                        objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={favorite.link}
                         active={index === selectedFavoriteIndex}
@@ -197,7 +208,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               </div>
             )}
           </Droppable>
-        )}
+        </AnimatedExpandableContainer>
       </NavigationDrawerItemsCollapsableContainer>
 
       {createPortal(

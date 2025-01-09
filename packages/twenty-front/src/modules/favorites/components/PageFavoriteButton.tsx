@@ -1,5 +1,6 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Button, IconButton, IconHeart, IconHeartOff } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;
@@ -12,13 +13,13 @@ export const PageFavoriteButton = ({
 }: PageFavoriteButtonProps) => {
   const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={isFavorite ? IconHeartOff : IconHeart}
           dataTestId="favorite-button"

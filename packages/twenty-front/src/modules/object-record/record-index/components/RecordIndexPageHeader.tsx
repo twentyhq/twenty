@@ -12,8 +12,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import { isDefined, useIcons } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
@@ -29,12 +30,14 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const numberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const isObjectMetadataItemReadOnly =
@@ -42,7 +45,7 @@ export const RecordIndexPageHeader = () => {
     isObjectMetadataReadOnly(objectMetadataItem);
 
   const shouldDisplayAddButton =
-    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
     !isObjectMetadataItemReadOnly;
 
   const isTable = recordIndexViewType === ViewType.Table;
@@ -62,9 +65,9 @@ export const RecordIndexPageHeader = () => {
           <RecordIndexPageKanbanAddButton />
         ))}
 
-      {isPageHeaderV2Enabled && (
+      {isCommandMenuV2Enabled && (
         <>
-          <RecordIndexActionMenu />
+          <RecordIndexActionMenu indexId={recordIndexId} />
           <PageHeaderOpenCommandMenuButton />
         </>
       )}

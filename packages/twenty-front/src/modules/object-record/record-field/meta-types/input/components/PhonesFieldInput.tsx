@@ -9,17 +9,23 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
-import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-export const DEFAULT_PHONE_COUNTRY_CODE = '1';
+export const DEFAULT_PHONE_CALLING_CODE = '1';
+
+const StyledCustomPhoneInputContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  height: 30px;
+`;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  font-family: ${({ theme }) => theme.font.family};
   ${TEXT_INPUT_STYLE}
   padding: 0;
+  height: 100%;
 
   .PhoneInputInput {
     background: none;
@@ -60,22 +66,22 @@ export const PhonesFieldInput = ({
 
   const phones = createPhonesFromFieldValue(fieldValue);
 
-  const defaultCallingCode =
-    stripSimpleQuotesFromString(
-      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? DEFAULT_PHONE_COUNTRY_CODE;
-  // TODO : improve once we store the real country code
-  const defaultCountry = useCountries().find(
-    (obj) => `+${obj.callingCode}` === defaultCallingCode,
-  )?.countryCode;
+  const defaultCountry = stripSimpleQuotesFromString(
+    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+  );
 
   const handlePersistPhones = (
-    updatedPhones: { number: string; callingCode: string }[],
+    updatedPhones: {
+      number: string;
+      countryCode: string;
+      callingCode: string;
+    }[],
   ) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = updatedPhones;
     persistPhonesField({
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
-      primaryPhoneCountryCode: nextPrimaryPhone?.callingCode ?? '',
+      primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
+      primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     });
   };
@@ -96,11 +102,13 @@ export const PhonesFieldInput = ({
           return {
             number: phone.nationalNumber,
             callingCode: `+${phone.countryCallingCode}`,
+            countryCode: phone.country as string,
           };
         }
         return {
           number: '',
           callingCode: '',
+          countryCode: '',
         };
       }}
       renderItem={({
@@ -122,16 +130,18 @@ export const PhonesFieldInput = ({
       )}
       renderInput={({ value, onChange, autoFocus, placeholder }) => {
         return (
-          <StyledCustomPhoneInput
-            autoFocus={autoFocus}
-            placeholder={placeholder}
-            value={value as E164Number}
-            onChange={onChange as unknown as (newValue: E164Number) => void}
-            international={true}
-            withCountryCallingCode={true}
-            countrySelectComponent={PhoneCountryPickerDropdownButton}
-            defaultCountry={defaultCountry}
-          />
+          <StyledCustomPhoneInputContainer>
+            <StyledCustomPhoneInput
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+              value={value as E164Number}
+              onChange={onChange as unknown as (newValue: E164Number) => void}
+              international={true}
+              withCountryCallingCode={true}
+              countrySelectComponent={PhoneCountryPickerDropdownButton}
+              defaultCountry={defaultCountry}
+            />
+          </StyledCustomPhoneInputContainer>
         );
       }}
       hotkeyScope={hotkeyScope}
