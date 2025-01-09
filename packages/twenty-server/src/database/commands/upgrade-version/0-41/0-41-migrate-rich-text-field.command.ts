@@ -70,7 +70,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
       );
 
-      // eslint-disable-next-line
       try {
         const richTextFields = await this.fieldMetadataRepository.find({
           where: {
@@ -173,11 +172,10 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           chalk.green(`Command completed for workspace ${workspaceId}`),
         );
       } catch (error) {
-        throw error;
-        /* this.logger.error(
+        this.logger.error(
           chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
         );
-        workspaceIterator++; */
+        workspaceIterator++;
       }
     }
 
