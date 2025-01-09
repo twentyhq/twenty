@@ -104,7 +104,7 @@ export const FormNumberFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
@@ -124,7 +124,7 @@ export const FormNumberFieldInput = ({
           )}
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}
