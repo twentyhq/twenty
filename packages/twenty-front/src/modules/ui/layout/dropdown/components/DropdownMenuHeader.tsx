@@ -41,6 +41,8 @@ const StyledEndIcon = styled.div`
 const StyledChildrenWrapper = styled.span`
   overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const StyledNonClickableStartIcon = styled.div`
