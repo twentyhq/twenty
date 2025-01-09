@@ -94,7 +94,7 @@ export const RecordTableRecordGroupSection = () => {
           <IconChevronDown size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
-      <StyledRecordGroupSection>
+      <StyledRecordGroupSection className="disable-shadow">
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue
