@@ -65,6 +65,7 @@ export const SettingsRoles = () => {
     refetch();
   };
 
+  console.log('ROLES', roles)
   return (
     <SubMenuTopBarContainer 
         links={[

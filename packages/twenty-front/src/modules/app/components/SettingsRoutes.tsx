@@ -117,6 +117,12 @@ const SettingsWorkspaceMembers = lazy(() =>
   })),
 );
 
+const SettingsNewMember = lazy(() =>
+  import('~/pages/settings/workspace-members/SettingsNewMember').then((module) => ({
+    default: module.SettingsNewMember,
+  })),
+);
+
 const SettingsRoles = lazy(() =>
   import('~/pages/settings/roles/SettingsRoles').then((module) => ({
     default: module.SettingsRoles,
@@ -323,6 +329,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
+      />
+      <Route
+        path={SettingsPath.NewMember}
+        element={<SettingsNewMember />}
       />
       <Route
         path={SettingsPath.MembersRoles}

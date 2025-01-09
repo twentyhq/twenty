@@ -50,6 +50,8 @@ import { Workspace } from './workspace.entity';
 import { InvitedMembers } from 'src/engine/core-modules/invited-members/invited-members.entity';
 import { WorkspaceService } from './services/workspace.service';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+
 @Resolver(() => Workspace)
 @UseFilters(GraphqlValidationExceptionFilter)
 export class WorkspaceResolver {
@@ -61,6 +63,7 @@ export class WorkspaceResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly typeORMService: TypeORMService,
   ) {}
 
   @Query(() => Workspace)
@@ -87,7 +90,21 @@ export class WorkspaceResolver {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    return await this.workspaceService.activateWorkspace(user, workspace, data);
+    const result = await this.workspaceService.activateWorkspace(user, workspace, data);
+
+    const dataSourceMetadata = await this.workspaceService.getDataSourceMetadata(workspace.id);
+    const defaultRole = await this.workspaceService.getDefaultRole(workspace.id);
+    if(dataSourceMetadata && defaultRole){
+      const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      await workspaceDataSource?.query(
+        `UPDATE ${dataSourceMetadata.schema}."workspaceMember"
+            SET "roleId" = $1
+            WHERE "userId" = $2`,
+        [defaultRole.id, user.id],
+      );
+    }
+    return result
   }
 
   @Mutation(() => Workspace)

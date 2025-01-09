@@ -43,4 +43,5 @@ export enum SettingsPath {
   EditRole = 'roles/:roleSlug/edit',
   ViewRole = 'roles/:roleSlug/view',
   RoleOverview = 'roles/overview',
+  NewMember = 'workspace-members/new',
 }

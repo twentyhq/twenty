@@ -11,6 +11,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InvitedMembers } from 'src/engine/core-modules/invited-members/invited-members.entity';
+import { Role } from 'src/engine/core-modules/role/role.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -24,6 +25,8 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 
@@ -45,6 +48,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(InvitedMembers, 'core')
     private readonly invitedMembersRepository: Repository<InvitedMembers>,
+    private readonly dataSourceService: DataSourceService,
+    @InjectRepository(Role, 'core')
+    private readonly roleRepository: Repository<Role>
   ) {
     super(workspaceRepository);
   }
@@ -181,5 +187,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       },
       relations: ['workspace'],
     });
+  }
+
+  async getDataSourceMetadata(workspaceId: string): Promise<DataSourceEntity | null>{
+    return await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(workspaceId);
+  }
+
+  async getDefaultRole(workspaceId: string): Promise<Role | null>{
+    return await this.roleRepository.findOne({
+        where: {
+          name: 'Manager',
+          workspace: { id: workspaceId }
+        },
+        relations: ['workspace']
+    })   
   }
 }

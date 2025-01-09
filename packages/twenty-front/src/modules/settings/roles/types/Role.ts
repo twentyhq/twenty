@@ -1,4 +1,5 @@
 import { Permission, PermissionWithoutId } from "@/settings/roles/types/Permission";
+import { UserWorkspace } from "~/generated/graphql";
 
   
   export type Role = {
@@ -17,6 +18,7 @@ import { Permission, PermissionWithoutId } from "@/settings/roles/types/Permissi
       id: string;
       displayName: string;
     };
+    users: UserWorkspace[]
   };
   
   export interface CreateRoleInput {

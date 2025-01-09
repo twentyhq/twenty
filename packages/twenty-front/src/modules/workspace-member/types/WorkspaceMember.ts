@@ -1,4 +1,5 @@
 import {
+  MemberWorkspaceToggleStatusResponse,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
@@ -20,6 +21,8 @@ export type WorkspaceMember = {
   updatedAt: string;
   userEmail: string;
   userId: string;
+  status: MemberWorkspaceToggleStatusResponse;
+  roleId: string;
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;

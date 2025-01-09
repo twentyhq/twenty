@@ -1,0 +1,170 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useMemo, useRef, useState } from 'react';
+import { IconChevronDown, IconComponent } from 'twenty-ui';
+
+import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+
+export type SelectOption<Value extends string | number | null> = {
+  value: Value;
+  label: string;
+  Icon?: IconComponent;
+};
+
+export type MemberSelectRoleProps<Value extends string | number | null> = {
+  className?: string;
+  disabled?: boolean;
+  disableBlur?: boolean;
+  dropdownId: string;
+  dropdownWidth?: `${string}px` | 'auto' | number;
+  emptyOption?: SelectOption<Value>;
+  fullWidth?: boolean;
+  label?: string;
+  onChange?: (value: Value) => void;
+  onBlur?: () => void;
+  options: SelectOption<Value>[];
+  value?: Value;
+  withSearchInput?: boolean;
+};
+
+const StyledContainer = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+`;
+
+const StyledControlContainer = styled.div<{ disabled?: boolean }>`
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.font.color.tertiary : theme.font.color.primary};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  height: ${({ theme }) => theme.spacing(8)};
+  justify-content: space-between;
+  padding: 0 ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledControlLabel = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+`;
+
+export const MemberSelectRole = <Value extends string | number | null>({
+  className,
+  disabled: disabledFromProps,
+  disableBlur = false,
+  dropdownId,
+  dropdownWidth = 176,
+  emptyOption,
+  fullWidth,
+  label,
+  onChange,
+  onBlur,
+  options,
+  value,
+  withSearchInput,
+}: MemberSelectRoleProps<Value>) => {
+  const selectContainerRef = useRef<HTMLDivElement>(null);
+
+  const theme = useTheme();
+  const [searchInputValue, setSearchInputValue] = useState('');
+
+  const selectedOption =
+    options?.find(({ value: key }) => key === value) ||
+     options?.length > 0 && options[0] ||
+    emptyOption;
+  const filteredOptions = useMemo(
+    () =>
+      searchInputValue
+        ? options.filter(({ label }) =>
+            label.toLowerCase().includes(searchInputValue.toLowerCase()),
+          )
+        : options,
+    [options, searchInputValue],
+  );
+
+  const isDisabled = disabledFromProps || options.length <= 1;
+
+  const { closeDropdown } = useDropdown(dropdownId);
+
+  const selectControl = (
+    <StyledControlContainer disabled={isDisabled}>
+      <StyledControlLabel>{selectedOption?.label}</StyledControlLabel>
+      <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
+    </StyledControlContainer>
+  );
+
+  return (
+    <StyledContainer
+      className={className}
+      fullWidth={fullWidth}
+      tabIndex={0}
+      onBlur={onBlur}
+      ref={selectContainerRef}
+    >
+      {!!label && <StyledLabel>{label}</StyledLabel>}
+      {isDisabled ? (
+        selectControl
+      ) : (
+        <Dropdown
+          dropdownId={dropdownId}
+          dropdownMenuWidth={dropdownWidth}
+          dropdownPlacement="bottom-start"
+          clickableComponent={selectControl}
+          dropdownComponents={
+            <>
+              {!!withSearchInput && (
+                <DropdownMenuSearchInput
+                  autoFocus
+                  value={searchInputValue}
+                  onChange={(event) => setSearchInputValue(event.target.value)}
+                />
+              )}
+              {!!withSearchInput && !!filteredOptions.length && (
+                <DropdownMenuSeparator />
+              )}
+              {!!filteredOptions.length && (
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  {filteredOptions.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      LeftIcon={option.Icon}
+                      text={option.label}
+                      onClick={() => {
+                        onChange?.(option.value);
+                        onBlur?.();
+                        closeDropdown();
+                      }}
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              )}
+            </>
+          }
+          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+        />
+      )}
+    </StyledContainer>
+  );
+};

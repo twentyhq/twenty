@@ -49,7 +49,7 @@ export const SettingsRoleItemTableRow = ({
         <SettingsRoleTypeTag roleTypeLabel={roleTypeLabel} />
       </TableCell>
       {/* Change count when inserting role assignment to members */}
-      <TableCell align="right">{0}</TableCell>
+      <TableCell align="right">{roleItem?.users?.length ?? 0}</TableCell>
       <TableCell></TableCell>
       <TableCell>{actions}</TableCell>
     </StyledRoleTableRow>

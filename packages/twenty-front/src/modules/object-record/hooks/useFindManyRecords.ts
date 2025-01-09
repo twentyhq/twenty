@@ -67,7 +67,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
   };
 
-  const { data, loading, error, fetchMore } =
+  const { data, loading, error, fetchMore, refetch } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem,
       variables: {
@@ -110,5 +110,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     queryStateIdentifier: queryIdentifier,
     hasNextPage,
     pageInfo,
+    refetch
   };
 };
