@@ -11,7 +11,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -121,7 +124,7 @@ export class GoogleAuthController {
           }),
         );
       }
-      throw err;
+      throw new AuthException(AuthExceptionCode.INTERNAL_SERVER_ERROR, err);
     }
   }
 }
