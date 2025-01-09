@@ -14,6 +14,7 @@
       "!{projectRoot}/**/tsconfig.spec.json",
       "!{projectRoot}/**/*.test.(ts|tsx)",
       "!{projectRoot}/**/*.spec.(ts|tsx)",
+      "!{projectRoot}/**/*.integration-spec.ts",
       "!{projectRoot}/**/__tests__/*"
     ],
     "production": [
