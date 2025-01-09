@@ -250,7 +250,7 @@ export const useCommandMenu = () => {
     [openCommandMenu],
   );
 
-  const resetCommandMenuContext = useRecoilCallback(({ set }) => {
+  const setGlobalCommandMenuContext = useRecoilCallback(({ set }) => {
     return () => {
       set(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
@@ -283,6 +283,6 @@ export const useCommandMenu = () => {
     closeCommandMenu,
     openRecordInCommandMenu,
     toggleCommandMenu,
-    resetCommandMenuContext,
+    resetCommandMenuContext: setGlobalCommandMenuContext,
   };
 };
