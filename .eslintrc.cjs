@@ -29,6 +29,10 @@ module.exports = {
             sourceTag: 'scope:frontend',
             onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
           },
+          {
+            sourceTag: 'scope:zapier',
+            onlyDependOnLibsWithTags: ['scope:shared'],
+          },
         ],
       },
     ],
