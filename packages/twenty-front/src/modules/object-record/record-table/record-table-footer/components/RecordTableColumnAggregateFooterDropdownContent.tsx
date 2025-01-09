@@ -3,7 +3,8 @@ import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
+import { DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS } from '@/object-record/record-table/record-table-footer/constants/datesAggregateOperationOptionsWithLabels';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 
@@ -52,6 +53,20 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
           title="Percent"
+        />
+      );
+    }
+    case 'datesAggregateOperationsOptions': {
+      const aggregateOperations = availableAggregateOperations.filter(
+        (aggregateOperation) =>
+          Object.keys(DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS).includes(
+            aggregateOperation,
+          ),
+      );
+      return (
+        <RecordTableColumnAggregateFooterDropdownSubmenuContent
+          aggregateOperations={aggregateOperations}
+          title="Dates"
         />
       );
     }

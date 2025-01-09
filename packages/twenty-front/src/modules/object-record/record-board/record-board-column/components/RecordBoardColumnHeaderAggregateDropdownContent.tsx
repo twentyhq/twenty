@@ -3,9 +3,12 @@ import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record
 import { RecordBoardColumnHeaderAggregateDropdownFieldsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownFieldsContent';
 import { RecordBoardColumnHeaderAggregateDropdownMenuContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent';
 import { RecordBoardColumnHeaderAggregateDropdownOptionsContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownOptionsContent';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
+import { DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS } from '@/object-record/record-table/record-table-footer/constants/datesAggregateOperationOptionsWithLabels';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
 
@@ -41,15 +44,52 @@ export const AggregateDropdownContent = () => {
         />
       );
     }
-    case 'moreAggregateOperationOptions': {
-      const availableAggregations: AvailableFieldsForAggregateOperation =
-        getAvailableFieldsIdsForAggregationFromObjectFields(
-          objectMetadataItem.fields,
-          NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
-        );
+    case 'datesAggregateOperationOptions': {
+      const datesAvailableAggregations: AvailableFieldsForAggregateOperation =
+        Object.entries(
+          getAvailableFieldsIdsForAggregationFromObjectFields(
+            objectMetadataItem.fields,
+            Object.keys(
+              DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS,
+            ) as AGGREGATE_OPERATIONS[],
+          ),
+        ).reduce((acc, [key, value]) => {
+          if (
+            Object.values(
+              DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS,
+            ).includes(key)
+          ) {
+            acc[key as ExtendedAggregateOperations] = value;
+          }
+          return acc;
+        }, {} as AvailableFieldsForAggregateOperation);
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
-          availableAggregations={availableAggregations}
+          availableAggregations={datesAvailableAggregations}
+          title="Dates"
+        />
+      );
+    }
+    case 'moreAggregateOperationOptions': {
+      const availableAggregationsWithoutDates: AvailableFieldsForAggregateOperation =
+        Object.entries(
+          getAvailableFieldsIdsForAggregationFromObjectFields(
+            objectMetadataItem.fields,
+            NON_STANDARD_AGGREGATE_OPERATION_OPTIONS,
+          ),
+        ).reduce((acc, [key, value]) => {
+          if (
+            !Object.values(
+              DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS,
+            ).includes(key)
+          ) {
+            acc[key as ExtendedAggregateOperations] = value;
+          }
+          return acc;
+        }, {} as AvailableFieldsForAggregateOperation);
+      return (
+        <RecordBoardColumnHeaderAggregateDropdownOptionsContent
+          availableAggregations={availableAggregationsWithoutDates}
           title="More options"
         />
       );
