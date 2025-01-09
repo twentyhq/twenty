@@ -99,12 +99,10 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             continue;
           }
 
-          const deprecatedField: Partial<FieldMetadataEntity> = {
+          const deprecatedRichTextField: Partial<FieldMetadataEntity> = {
             ...richTextField,
             type: FieldMetadataType.RICH_TEXT_DEPRECATED,
           };
-
-          await this.fieldMetadataRepository.save(deprecatedField);
 
           const newRichTextField: Partial<FieldMetadataEntity> = {
             ...richTextField,
@@ -113,7 +111,16 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             defaultValue: null,
           };
 
-          await this.fieldMetadataRepository.save(newRichTextField);
+          if (!deprecatedRichTextField.id) {
+            throw new Error('Missing deprecated rich textfield id');
+          }
+
+          await this.fieldMetadataRepository.update(
+            deprecatedRichTextField.id,
+            deprecatedRichTextField,
+          );
+
+          await this.fieldMetadataRepository.create(newRichTextField);
 
           await this.workspaceMigrationService.createCustomMigration(
             generateMigrationName(
