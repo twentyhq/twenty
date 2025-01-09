@@ -106,6 +106,8 @@ export class GoogleAuthController {
         workspace.id,
       );
 
+      throw new Error('toto');
+
       return res.redirect(
         this.authService.computeRedirectURI(
           loginToken.token,
@@ -124,10 +126,7 @@ export class GoogleAuthController {
           }),
         );
       }
-      throw new AuthException(
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-        err.message,
-      );
+      throw new AuthException(AuthExceptionCode.INTERNAL_SERVER_ERROR, err);
     }
   }
 }
