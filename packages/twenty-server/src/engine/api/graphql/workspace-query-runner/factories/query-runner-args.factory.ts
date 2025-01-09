@@ -15,6 +15,8 @@ import {
   FindOneResolverArgs,
   ResolverArgs,
   ResolverArgsType,
+  UpdateManyResolverArgs,
+  UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -82,6 +84,41 @@ export class QueryRunnerArgsFactory {
             ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
+      case ResolverArgsType.UpdateOne:
+        return {
+          ...args,
+          id: (args as UpdateOneResolverArgs).id,
+          data: await this.overrideDataByFieldMetadata(
+            (args as UpdateOneResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition,
+            },
+          ),
+        } satisfies UpdateOneResolverArgs;
+      case ResolverArgsType.UpdateMany:
+        return {
+          ...args,
+          filter: await this.overrideFilterByFieldMetadata(
+            (args as UpdateManyResolverArgs).filter,
+            fieldMetadataMapByNameByName,
+          ),
+          data: await Promise.all(
+            (args as UpdateManyResolverArgs).data?.map((arg, index) =>
+              this.overrideDataByFieldMetadata(
+                arg,
+                options,
+                fieldMetadataMapByNameByName,
+                {
+                  argIndex: index,
+                  shouldBackfillPosition,
+                },
+              ),
+            ) ?? [],
+          ),
+        } satisfies UpdateManyResolverArgs;
       case ResolverArgsType.FindOne:
         return {
           ...args,
@@ -175,19 +212,23 @@ export class QueryRunnerArgsFactory {
 
           const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
+          const convertedMarkdown = richTextValue.blocknote
+            ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+                JSON.parse(richTextValue.blocknote),
+              )
+            : null;
+
+          const convertedBlocknote = richTextValue.markdown
+            ? JSON.stringify(
+                await serverBlockNoteEditor.tryParseMarkdownToBlocks(
+                  richTextValue.markdown,
+                ),
+              )
+            : null;
+
           const valueInBothFormats: RichTextMetadata = {
-            markdown: richTextValue.blocknote
-              ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-                  JSON.parse(richTextValue.blocknote),
-                )
-              : null,
-            blocknote: richTextValue.markdown
-              ? JSON.stringify(
-                  await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-                    richTextValue.markdown,
-                  ),
-                )
-              : null,
+            markdown: richTextValue.markdown || convertedMarkdown,
+            blocknote: richTextValue.blocknote || convertedBlocknote,
           };
 
           return [key, valueInBothFormats];
