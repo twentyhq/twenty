@@ -2,7 +2,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
 import { AppModule } from 'src/app.module';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
+import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -24,29 +25,12 @@ export const createApp = async (
     appInitHook?: TestingAppCreatePreHook;
   } = {},
 ): Promise<NestExpressApplication> => {
+  const stripeSDKMockService = new StripeSDKMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule],
   })
-    .overrideProvider(StripeService)
-    .useValue({
-      constructEventFromPayload: (signature: string, payload: Buffer) => {
-        if (signature === 'correct-signature') {
-          const body = JSON.parse(payload.toString());
-
-          return {
-            type: body.type,
-            data: body.data,
-          };
-        }
-        throw new Error('Invalid signature');
-      },
-      updateCustomerMetadataWorkspaceId: (
-        _customerId: string,
-        _workspaceId: string,
-      ) => {
-        return;
-      },
-    });
+    .overrideProvider(StripeSDKService)
+    .useValue(stripeSDKMockService);
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);

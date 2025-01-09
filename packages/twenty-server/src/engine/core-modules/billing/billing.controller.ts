@@ -23,14 +23,14 @@ import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billin
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 @Controller('billing')
 @UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
 
   constructor(
-    private readonly stripeService: StripeService,
+    private readonly stripeWebhookService: StripeWebhookService,
     private readonly billingWebhookSubscriptionService: BillingWebhookSubscriptionService,
     private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -49,7 +49,7 @@ export class BillingController {
 
       return;
     }
-    const event = this.stripeService.constructEventFromPayload(
+    const event = this.stripeWebhookService.constructEventFromPayload(
       signature,
       req.rawBody,
     );
