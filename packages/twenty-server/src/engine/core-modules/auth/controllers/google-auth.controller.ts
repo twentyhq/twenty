@@ -124,7 +124,7 @@ export class GoogleAuthController {
           }),
         );
       }
-      throw new AuthException(AuthExceptionCode.INTERNAL_SERVER_ERROR, err);
+      throw new AuthException(err, AuthExceptionCode.INTERNAL_SERVER_ERROR);
     }
   }
 }
