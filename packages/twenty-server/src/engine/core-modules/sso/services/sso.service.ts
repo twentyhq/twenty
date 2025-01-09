@@ -159,7 +159,11 @@ export class SSOService {
   ) {
     const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
 
-    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback/${identityProvider.id}`;
+    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
+
+    if (identityProvider.type === IdentityProviderType.SAML) {
+      callbackURL.pathname += `/${identityProvider.id}`;
+    }
 
     return callbackURL.toString();
   }

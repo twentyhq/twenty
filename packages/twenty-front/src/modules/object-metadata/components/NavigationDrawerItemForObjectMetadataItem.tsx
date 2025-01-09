@@ -9,7 +9,7 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
-import { useIcons } from 'twenty-ui';
+import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -66,8 +66,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         Icon={getIcon(objectMetadataItem.icon)}
         active={isActive}
       />
-      {shouldSubItemsBeDisplayed &&
-        sortedObjectMetadataViews.map((view, index) => (
+
+      <AnimatedExpandableContainer
+        isExpanded={shouldSubItemsBeDisplayed}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+      >
+        {sortedObjectMetadataViews.map((view, index) => (
           <NavigationDrawerSubItem
             label={view.name}
             to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
@@ -81,6 +87,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             key={view.id}
           />
         ))}
+      </AnimatedExpandableContainer>
     </NavigationDrawerItemsCollapsableContainer>
   );
 };

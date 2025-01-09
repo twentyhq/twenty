@@ -72,7 +72,7 @@ export const DateInput = ({
     closeDropdownMonthSelect();
     closeDropdown();
 
-    onEnter?.(internalValue);
+    onEnter(internalValue);
   };
 
   const handleEscape = () => {
@@ -80,7 +80,7 @@ export const DateInput = ({
     closeDropdownMonthSelect();
     closeDropdown();
 
-    onEscape?.(internalValue);
+    onEscape(internalValue);
   };
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {

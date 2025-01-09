@@ -4,6 +4,7 @@ import { aggregateOperationComponentState } from '@/object-record/record-board/r
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -47,6 +48,8 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   if (!isDefined(aggregateOperation)) return <></>;
 
+  const convertedAggregateOperation =
+    convertExtendedAggregateOperationToAggregateOperation(aggregateOperation);
   return (
     <>
       <DropdownMenuHeader
@@ -72,7 +75,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               onClick={() => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
-                  kanbanAggregateOperation: aggregateOperation,
+                  kanbanAggregateOperation: convertedAggregateOperation,
                 });
                 closeDropdown();
               }}
@@ -82,7 +85,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
                 recordIndexKanbanAggregateOperation?.fieldMetadataId ===
                   fieldId &&
                 recordIndexKanbanAggregateOperation?.operation ===
-                  aggregateOperation
+                  convertedAggregateOperation
                   ? IconCheck
                   : undefined
               }

@@ -162,8 +162,8 @@ export const RecordIndexContainer = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
@@ -256,7 +256,7 @@ export const RecordIndexContainer = () => {
               <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
             </StyledContainerWithPadding>
           )}
-          {!isPageHeaderV2Enabled && (
+          {!isCommandMenuV2Enabled && (
             <RecordIndexActionMenu indexId={recordIndexId} />
           )}
         </RecordFieldValueSelectorContextProvider>

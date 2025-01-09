@@ -92,7 +92,7 @@ const StyledItem = styled('button', {
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
       ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
-      : `calc(100% - ${props.theme.spacing(2)})`};
+      : `calc(100% - ${props.theme.spacing(1.5)})`};
 
   ${({ isDragging }) =>
     isDragging &&
