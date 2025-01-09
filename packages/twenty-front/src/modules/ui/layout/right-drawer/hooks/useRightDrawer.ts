@@ -3,10 +3,10 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 
-import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/utils/mapRightDrawerPageToCommandMenuPage';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -28,11 +28,11 @@ export const useRightDrawer = () => {
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
       (rightDrawerPage: RightDrawerPages) => {
-        if (
-          isCommandMenuV2Enabled &&
-          rightDrawerPage === RightDrawerPages.ViewRecord
-        ) {
-          set(commandMenuPageState, CommandMenuPages.ViewRecord);
+        if (isCommandMenuV2Enabled) {
+          const commandMenuPage =
+            mapRightDrawerPageToCommandMenuPage(rightDrawerPage);
+
+          set(commandMenuPageState, commandMenuPage);
           openCommandMenu();
           return;
         }
