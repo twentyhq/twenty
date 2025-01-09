@@ -1,8 +1,7 @@
+import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
-import { useFeatureFlagManagementCapability } from '@/settings/admin-panel/hooks/useFeatureFlagManagementCapability';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -14,6 +13,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
@@ -89,12 +89,7 @@ export const SettingsAdminContent = () => {
     error,
   } = useFeatureFlagsManagement();
 
-  const { canManageFeatureFlags, isLoading: isLoadingCapability } =
-    useFeatureFlagManagementCapability();
-
-  if (isLoadingCapability) {
-    return <SettingsSkeletonLoader />;
-  }
+  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');

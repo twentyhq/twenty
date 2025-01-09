@@ -32,8 +32,8 @@ export class AdminPanelService {
 
   private async canManageFeatureFlags(): Promise<boolean> {
     return (
-      this.environmentService.get('IS_BILLING_ENABLED') ||
-      this.environmentService.get('DEBUG_MODE')
+      this.environmentService.get('DEBUG_MODE') ||
+      this.environmentService.get('IS_BILLING_ENABLED')
     );
   }
 
@@ -78,13 +78,8 @@ export class AdminPanelService {
     };
   }
 
-  async getFeatureFlagManagementCapability(): Promise<boolean> {
-    return await this.canManageFeatureFlags();
-  }
-
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
-    const canManageFlags = await this.canManageFeatureFlags();
 
     const targetUser = await this.userRepository.findOne({
       where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
@@ -93,7 +88,7 @@ export class AdminPanelService {
         'workspaces.workspace',
         'workspaces.workspace.workspaceUsers',
         'workspaces.workspace.workspaceUsers.user',
-        ...(canManageFlags ? ['workspaces.workspace.featureFlags'] : []),
+        'workspaces.workspace.featureFlags',
       ],
     });
 
@@ -103,6 +98,8 @@ export class AdminPanelService {
     );
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
+
+    const canManageFeatureFlags = await this.canManageFeatureFlags();
 
     return {
       user: {
@@ -123,7 +120,8 @@ export class AdminPanelService {
           firstName: workspaceUser.user.firstName,
           lastName: workspaceUser.user.lastName,
         })),
-        featureFlags: canManageFlags
+        canManageFeatureFlags,
+        featureFlags: canManageFeatureFlags
           ? allFeatureFlagKeys.map((key) => ({
               key,
               value:

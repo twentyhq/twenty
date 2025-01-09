@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
@@ -45,11 +45,5 @@ export class AdminPanelResolver {
     );
 
     return true;
-  }
-
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Query(() => Boolean)
-  async getFeatureFlagManagementCapability(): Promise<boolean> {
-    return await this.adminService.getFeatureFlagManagementCapability();
   }
 }

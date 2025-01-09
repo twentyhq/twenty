@@ -44,6 +44,9 @@ class WorkspaceInfo {
   @Field(() => [UserInfo])
   users: UserInfo[];
 
+  @Field(() => Boolean)
+  canManageFeatureFlags: boolean;
+
   @Field(() => [WorkspaceFeatureFlag])
   featureFlags: WorkspaceFeatureFlag[];
 }
