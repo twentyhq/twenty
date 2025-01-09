@@ -2,6 +2,7 @@ import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/cons
 import { useFeatureFlagManagementCapability } from '@/settings/admin-panel/hooks/useFeatureFlagManagementCapability';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -92,7 +93,7 @@ export const SettingsAdminContent = () => {
     useFeatureFlagManagementCapability();
 
   if (isLoadingCapability) {
-    return null; // Or a loading component
+    return <SettingsSkeletonLoader />;
   }
 
   const handleSearch = async () => {
