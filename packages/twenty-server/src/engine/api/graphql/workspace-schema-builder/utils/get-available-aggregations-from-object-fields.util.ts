@@ -1,7 +1,7 @@
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
-import { capitalize, isFieldMetadataDate } from 'twenty-shared';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -75,7 +75,7 @@ export const getAvailableAggregationsFromObjectFields = (
         aggregateOperation: AGGREGATE_OPERATIONS.percentageNotEmpty,
       };
 
-      if (isFieldMetadataDate(field.type)) {
+      if (isFieldMetadataDateKind(field.type)) {
         acc[`min${capitalize(field.name)}`] = {
           type: GraphQLISODateTime,
           description: `Earliest date contained in the field ${field.name}`,

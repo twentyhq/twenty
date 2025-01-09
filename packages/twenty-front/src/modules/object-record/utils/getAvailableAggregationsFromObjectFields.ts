@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { capitalize, isFieldMetadataDate } from 'twenty-shared';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type NameForAggregation = {
@@ -55,7 +55,7 @@ export const getAvailableAggregationsFromObjectFields = (
       };
     }
 
-    if (isFieldMetadataDate(field.type) === true) {
+    if (isFieldMetadataDateKind(field.type) === true) {
       acc[field.name] = {
         ...acc[field.name],
         [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
