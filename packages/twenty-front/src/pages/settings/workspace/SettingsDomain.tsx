@@ -3,7 +3,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
@@ -11,10 +11,14 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  useUpdateWorkspaceMutation,
+} from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const validationSchema = z
   .object({
@@ -38,16 +42,15 @@ export const SettingsDomain = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
+  const isCustomDomainEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCustomDomainEnabled,
+  );
+
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
 
-  const {
-    control,
-    watch,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
+  const form = useForm<Form>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {
@@ -56,13 +59,13 @@ export const SettingsDomain = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const subdomainValue = watch('subdomain');
+  const subdomainValue = form.watch('subdomain');
 
   const handleSave = async () => {
     try {
-      const values = getValues();
+      const values = form.getValues();
 
-      if (!values || !isValid || !currentWorkspace) {
+      if (!values || !form.formState.isValid || !currentWorkspace) {
         throw new Error('Invalid form values');
       }
 
@@ -86,7 +89,7 @@ export const SettingsDomain = () => {
         (error.message === 'Subdomain already taken' ||
           error.message.endsWith('not allowed'))
       ) {
-        control.setError('subdomain', {
+        form.control.setError('subdomain', {
           type: 'manual',
           message: (error as Error).message,
         });
@@ -116,7 +119,8 @@ export const SettingsDomain = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
-            !isValid || subdomainValue === currentWorkspace?.subdomain
+            !form.formState.isValid ||
+            subdomainValue === currentWorkspace?.subdomain
           }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
@@ -124,8 +128,11 @@ export const SettingsDomain = () => {
       }
     >
       <SettingsPageContainer>
-        <SettingsHostname />
-        {!currentWorkspace?.hostname && <SettingsSubdomain />}
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>
+          {isCustomDomainEnabled && <SettingsHostname />}
+          {!currentWorkspace?.hostname && <SettingsSubdomain />}
+        </FormProvider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

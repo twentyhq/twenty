@@ -335,6 +335,7 @@ export enum FeatureFlagKey {
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
+  IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsFreeAccessEnabled = 'IsFreeAccessEnabled',
   IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
@@ -2006,7 +2007,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainHostnameAndId', subdomain: string, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainHostnameAndId', subdomain: string, hostname?: string | null, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -2960,6 +2961,7 @@ export const ImpersonateDocument = gql`
   impersonate(userId: $userId, workspaceId: $workspaceId) {
     workspace {
       subdomain
+      hostname
       id
     }
     loginToken {

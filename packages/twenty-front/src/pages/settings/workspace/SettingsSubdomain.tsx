@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { isDefined } from '~/utils/isDefined';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { Form } from './SettingsDomain';
 
 const StyledDomainFromWrapper = styled.div`
   align-items: center;
@@ -24,37 +24,34 @@ const StyledDomain = styled.h2`
 
 export const SettingsSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { control } = useFormContext<Form>();
 
   return (
     <Section>
       <H2Title title="Subdomain" description="Set the name of your subdomain" />
-      {currentWorkspace?.subdomain && (
-        <StyledDomainFromWrapper>
-          <Controller
-            name="subdomain"
-            control={control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <>
-                <TextInputV2
-                  value={value}
-                  type="text"
-                  onChange={onChange}
-                  error={error?.message}
-                  fullWidth
-                />
-                {isDefined(domainConfiguration.frontDomain) && (
-                  <StyledDomain>
-                    {`.${domainConfiguration.frontDomain}`}
-                  </StyledDomain>
-                )}
-              </>
-            )}
-          />
-        </StyledDomainFromWrapper>
-      )}
+      <StyledDomainFromWrapper>
+        <Controller
+          name="subdomain"
+          control={control}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <>
+              <TextInputV2
+                value={value}
+                type="text"
+                onChange={onChange}
+                error={error?.message}
+                fullWidth
+              />
+              {isDefined(domainConfiguration.frontDomain) && (
+                <StyledDomain>
+                  {`.${domainConfiguration.frontDomain}`}
+                </StyledDomain>
+              )}
+            </>
+          )}
+        />
+      </StyledDomainFromWrapper>
     </Section>
   );
 };

@@ -17,4 +17,5 @@ export enum FeatureFlagKey {
   IsPageHeaderV2Enabled = 'IS_PAGE_HEADER_V2_ENABLED',
   IsCrmMigrationEnabled = 'IS_CRM_MIGRATION_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
+  IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
 }
