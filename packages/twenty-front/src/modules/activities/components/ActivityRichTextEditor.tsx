@@ -26,9 +26,12 @@ import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -45,6 +48,10 @@ export const ActivityRichTextEditor = ({
 
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
@@ -245,7 +252,9 @@ export const ActivityRichTextEditor = ({
       editor.setTextCursorPosition(newBlockId, 'end');
       editor.focus();
     },
-    RightDrawerHotkeyScope.RightDrawer,
+    isCommandMenuV2Enabled
+      ? AppHotkeyScope.CommandMenuOpen
+      : RightDrawerHotkeyScope.RightDrawer,
     [],
     {
       preventDefault: false,

@@ -35,8 +35,8 @@ export const RecordActionMenuEntriesSetter = () => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   if (
@@ -53,7 +53,7 @@ export const RecordActionMenuEntriesSetter = () => {
 
   const actionConfig = getActionConfig(
     objectMetadataItem,
-    isPageHeaderV2Enabled,
+    isCommandMenuV2Enabled,
   );
 
   const actionsToRegister = isDefined(viewType)
