@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 
 export const isObjectFilterDropdownUnfoldedComponentState =
   createComponentStateV2<boolean>({
-    key: 'isObjectFilterDropdownUnfoldedScopedState',
+    key: 'isObjectFilterDropdownUnfoldedComponentState',
     defaultValue: false,
     componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
   });
