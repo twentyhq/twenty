@@ -15,7 +15,6 @@ import { Keys } from 'react-hotkeys-hook';
 import { useDropdown } from '../hooks/useDropdown';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
@@ -137,6 +136,10 @@ export const Dropdown = ({
             <div
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
+              aria-controls={`${dropdownId}-options`}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup={true}
+              role="button"
             >
               {clickableComponent}
             </div>
@@ -165,7 +168,6 @@ export const Dropdown = ({
           />
         </>
       </DropdownScope>
-      <DropdownUnmountEffect dropdownId={dropdownId} />
     </DropdownComponentInstanceContext.Provider>
   );
 };

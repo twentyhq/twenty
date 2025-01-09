@@ -17,6 +17,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = ({
@@ -58,6 +61,10 @@ export const useOpenCreateActivityDrawer = ({
   );
   const setIsUpsertingActivityInDB = useSetRecoilState(
     isUpsertingActivityInDBState,
+  );
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const openCreateActivityDrawer = async ({
@@ -108,7 +115,12 @@ export const useOpenCreateActivityDrawer = ({
       setActivityTargetableEntityArray([]);
     }
 
-    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    if (isCommandMenuV2Enabled) {
+      setHotkeyScope(AppHotkeyScope.CommandMenuOpen, { goto: false });
+    } else {
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    }
+
     setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);

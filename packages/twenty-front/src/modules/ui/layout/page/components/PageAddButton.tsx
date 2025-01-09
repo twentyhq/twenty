@@ -7,14 +7,14 @@ type PageAddButtonProps = {
 };
 
 export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
   const isMobile = useIsMobile();
 
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={IconPlus}
           dataTestId="add-button"

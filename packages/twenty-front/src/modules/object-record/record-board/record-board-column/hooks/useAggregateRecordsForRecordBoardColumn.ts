@@ -9,6 +9,7 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { UserContext } from '@/users/contexts/UserContext';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -80,12 +81,17 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     skip: !isAggregateQueryEnabled,
   });
 
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+
   const { value, labelWithFieldName } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
     fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
     aggregateOperation: recordIndexKanbanAggregateOperation?.operation,
     fallbackFieldName: kanbanFieldName,
+    dateFormat,
+    timeFormat,
+    timeZone,
   });
 
   return {

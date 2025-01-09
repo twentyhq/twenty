@@ -139,7 +139,7 @@ export class WorkspaceInvitationService {
     subdomain,
     email,
   }: {
-    subdomain?: string;
+    subdomain: string;
     email: string;
   }) {
     const workspace =
