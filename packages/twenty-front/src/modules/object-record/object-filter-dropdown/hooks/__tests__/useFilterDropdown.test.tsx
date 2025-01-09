@@ -5,6 +5,7 @@ import { RecoilRoot, useRecoilState } from 'recoil';
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
+import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -262,9 +263,7 @@ describe('useFilterDropdown', () => {
 
   it('should reset filter', async () => {
     const { result } = renderHook(() => {
-      const { resetFilter } = useFilterDropdown({
-        filterDropdownId,
-      });
+      const { resetFilterDropdown } = useResetFilterDropdown(filterDropdownId);
 
       const { applyRecordFilter } = useApplyRecordFilter(filterDropdownId);
 
@@ -272,11 +271,12 @@ describe('useFilterDropdown', () => {
 
       const [selectedFilter, setSelectedFilter] =
         useRecoilState(selectedFilterState);
+
       return {
         selectedFilter,
         setSelectedFilter,
         applyRecordFilter,
-        resetFilter,
+        resetFilterDropdown,
       };
     }, renderHookConfig);
 
@@ -289,7 +289,7 @@ describe('useFilterDropdown', () => {
     });
 
     act(() => {
-      result.current.resetFilter();
+      result.current.resetFilterDropdown();
     });
 
     await waitFor(() => {

@@ -3,10 +3,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 type UseFilterDropdownProps = {
   filterDropdownId?: string;
@@ -44,43 +41,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     ],
   );
 
-  const setObjectFilterDropdownFilterIsSelectedCallbackState =
-    useRecoilComponentCallbackStateV2(
-      objectFilterDropdownFilterIsSelectedComponentState,
-      props?.filterDropdownId,
-    );
-
-  const setObjectFilterDropdownIsSelectingCompositeFieldCallbackState =
-    useRecoilComponentCallbackStateV2(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      props?.filterDropdownId,
-    );
-
-  const resetFilter = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(objectFilterDropdownSearchInputState, '');
-        set(objectFilterDropdownSelectedRecordIdsState, []);
-        set(selectedFilterState, undefined);
-        set(filterDefinitionUsedInDropdownState, null);
-        set(selectedOperandInDropdownState, null);
-        set(setObjectFilterDropdownFilterIsSelectedCallbackState, false);
-        set(
-          setObjectFilterDropdownIsSelectingCompositeFieldCallbackState,
-          false,
-        );
-      },
-    [
-      filterDefinitionUsedInDropdownState,
-      objectFilterDropdownSearchInputState,
-      objectFilterDropdownSelectedRecordIdsState,
-      selectedFilterState,
-      selectedOperandInDropdownState,
-      setObjectFilterDropdownFilterIsSelectedCallbackState,
-      setObjectFilterDropdownIsSelectingCompositeFieldCallbackState,
-    ],
-  );
-
   const setSelectedFilter = useSetRecoilState(selectedFilterState);
   const setSelectedOperandInDropdown = useSetRecoilState(
     selectedOperandInDropdownState,
@@ -108,7 +68,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
 
   return {
     componentInstanceId,
-    resetFilter,
     setSelectedFilter,
     setSelectedOperandInDropdown,
     setFilterDefinitionUsedInDropdown,
