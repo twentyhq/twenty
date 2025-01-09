@@ -55,9 +55,9 @@ export const useUploadAttachmentFile = () => {
       updatedAt: new Date().toISOString(),
     } as Partial<Attachment>;
 
-    const createdAttachement = await createOneAttachment(attachmentToCreate);
+    const createdAttachment = await createOneAttachment(attachmentToCreate);
 
-    return { attachementAbsoluteURL: createdAttachement.fullPath };
+    return { attachmentAbsoluteURL: createdAttachment.fullPath };
   };
 
   return { uploadAttachmentFile };

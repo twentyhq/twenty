@@ -137,7 +137,11 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             />
           ) : (
             <StyledLinkContainer>
-              <StyledLink href={attachment.fullPath} target="__blank">
+              <StyledLink
+                href={attachment.fullPath}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <OverflowingTextWithTooltip text={attachment.name} />
               </StyledLink>
             </StyledLinkContainer>
