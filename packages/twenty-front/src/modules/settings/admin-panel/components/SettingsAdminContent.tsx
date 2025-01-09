@@ -203,7 +203,7 @@ export const SettingsAdminContent = () => {
           }
           description={
             canManageFeatureFlags
-              ? 'Look up users and manage their workspace feature flags or impersonate it.'
+              ? 'Look up users and manage their workspace feature flags or impersonate them.'
               : 'Look up users to impersonate them.'
           }
         />
