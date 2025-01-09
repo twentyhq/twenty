@@ -47,7 +47,11 @@ export class FieldMetadataEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   object: Relation<ObjectMetadataEntity>;
 
-  @Column({ nullable: false })
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: FieldMetadataType,
+  })
   type: FieldMetadataType;
 
   @Column({ nullable: false })
