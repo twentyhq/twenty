@@ -1,23 +1,19 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
-@Catch(AuthException)
+@Catch()
 export class AuthOAuthExceptionFilter implements ExceptionFilter {
-  constructor(private readonly domainManagerService: DomainManagerService) {}
+  constructor(
+    private readonly domainManagerService: DomainManagerService,
+    private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
+  ) {}
 
-  catch(exception: AuthException, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
@@ -28,7 +24,11 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
           .redirect(this.domainManagerService.getBaseUrl().toString());
         break;
       default:
-        throw new InternalServerErrorException(exception.message);
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          500,
+        );
     }
   }
 }
