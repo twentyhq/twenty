@@ -5,10 +5,10 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
+import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
 
@@ -33,8 +33,7 @@ export const RecordIndexTableContainerEffect = () => {
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { setRecordCountInCurrentView } =
-    useSetRecordCountInCurrentView(viewBarId);
+  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewBarId);
 
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);
@@ -68,9 +67,10 @@ export const RecordIndexTableContainerEffect = () => {
 
   useEffect(() => {
     setOnEntityCountChange(
-      () => (entityCount: number) => setRecordCountInCurrentView(entityCount),
+      () => (entityCount: number, currentRecordGroupId?: string) =>
+        setRecordIndexEntityCount(entityCount, currentRecordGroupId),
     );
-  }, [setRecordCountInCurrentView, setOnEntityCountChange]);
+  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   const setViewFieldAggregateOperation = useRecoilCallback(
     ({ set, snapshot }) =>
