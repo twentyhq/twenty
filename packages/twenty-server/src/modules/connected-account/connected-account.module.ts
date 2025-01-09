@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { DeleteWorkspaceMemberConnectedAccountsCleanupJob } from 'src/modules/connected-account/jobs/delete-workspace-member-connected-accounts.job';
-import { WorkspaceMemberConnectedAccountListener } from 'src/modules/connected-account/listeners/connected-account-workspace-member.listener';
+import { ConnectedAccountWorkspaceMemberListener } from 'src/modules/connected-account/listeners/connected-account-workspace-member.listener';
 import { ConnectedAccountListener } from 'src/modules/connected-account/listeners/connected-account.listener';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
@@ -12,7 +12,7 @@ import { AccountsToReconnectService } from 'src/modules/connected-account/servic
     AccountsToReconnectService,
     ConnectedAccountListener,
     DeleteWorkspaceMemberConnectedAccountsCleanupJob,
-    WorkspaceMemberConnectedAccountListener,
+    ConnectedAccountWorkspaceMemberListener,
   ],
   exports: [AccountsToReconnectService],
 })

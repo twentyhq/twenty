@@ -15,7 +15,7 @@ import {
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-export class WorkspaceMemberConnectedAccountListener {
+export class ConnectedAccountWorkspaceMemberListener {
   constructor(
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
