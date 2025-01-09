@@ -1,4 +1,6 @@
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -27,6 +29,8 @@ export const useCommandMenuHotKeys = () => {
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
@@ -49,7 +53,10 @@ export const useCommandMenuHotKeys = () => {
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
-      if (!isNonEmptyString(commandMenuSearch)) {
+      if (
+        commandMenuPage === CommandMenuPages.Root &&
+        !isNonEmptyString(commandMenuSearch)
+      ) {
         setContextStoreTargetedRecordsRule({
           mode: 'selection',
           selectedRecordIds: [],
