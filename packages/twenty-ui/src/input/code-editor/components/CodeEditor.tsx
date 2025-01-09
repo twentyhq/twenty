@@ -1,11 +1,14 @@
 import { useTheme, css } from '@emotion/react';
-import Editor, { EditorProps } from '@monaco-editor/react';
+import Editor, { EditorProps, useMonaco } from '@monaco-editor/react';
 import { codeEditorTheme } from '@ui/input';
 import { isDefined } from '@ui/utilities';
 import styled from '@emotion/styled';
+import { useState } from 'react';
+import { editor } from 'monaco-editor';
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   onChange?: (value: string) => void;
+  setMarkers?: (value: string) => editor.IMarkerData[];
   withHeader?: boolean;
 };
 
@@ -35,12 +38,17 @@ export const CodeEditor = ({
   language,
   onMount,
   onChange,
+  setMarkers,
   onValidate,
   height = 450,
   withHeader = false,
   options,
 }: CodeEditorProps) => {
   const theme = useTheme();
+  const monaco = useMonaco();
+  const [model, setModel] = useState<editor.ITextModel | undefined | null>(
+    undefined,
+  );
 
   return (
     <StyledEditor
@@ -51,7 +59,7 @@ export const CodeEditor = ({
       onMount={(editor, monaco) => {
         monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
         monaco.editor.setTheme('codeEditorTheme');
-
+        setModel(editor.getModel());
         onMount?.(editor, monaco);
       }}
       onChange={(value) => {
@@ -59,7 +67,16 @@ export const CodeEditor = ({
           onChange?.(value);
         }
       }}
-      onValidate={onValidate}
+      onValidate={(markers) => {
+        onValidate?.(markers);
+        if (!isDefined(model)) {
+          return;
+        }
+        const customMarkers = setMarkers?.(model.getValue());
+        if (isDefined(customMarkers)) {
+          monaco?.editor.setModelMarkers(model, 'customMarker', customMarkers);
+        }
+      }}
       options={{
         overviewRulerLanes: 0,
         scrollbar: {
