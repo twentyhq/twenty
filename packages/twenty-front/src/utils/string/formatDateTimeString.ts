@@ -1,22 +1,25 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 
-export const formatDateString = ({
+export const formatDateTimeString = ({
   value,
   timeZone,
   dateFormat,
+  timeFormat,
   displayAsRelativeDate,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
+  timeFormat: TimeFormat;
   value?: string | null;
   displayAsRelativeDate?: boolean;
 }) => {
   const formattedDate = value
     ? displayAsRelativeDate
       ? formatDateISOStringToRelativeDate(value)
-      : formatDateISOStringToDate(value, timeZone, dateFormat)
+      : formatDateISOStringToDateTime(value, timeZone, dateFormat, timeFormat)
     : '';
 
   return formattedDate;

@@ -1,15 +1,17 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { DateTime } from 'luxon';
-import { formatDateString } from '~/utils/string/formatDateString';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
-describe('formatDateString', () => {
+describe('formatDateTimeString', () => {
   const defaultParams = {
     timeZone: 'UTC',
     dateFormat: DateFormat.DAY_FIRST,
+    timeFormat: TimeFormat.HOUR_24,
   };
 
   it('should return empty string for null value', () => {
-    const result = formatDateString({
+    const result = formatDateTimeString({
       ...defaultParams,
       value: null,
     });
@@ -18,7 +20,7 @@ describe('formatDateString', () => {
   });
 
   it('should return empty string for undefined value', () => {
-    const result = formatDateString({
+    const result = formatDateTimeString({
       ...defaultParams,
       value: undefined,
     });
@@ -36,7 +38,7 @@ describe('formatDateString', () => {
         .mockReturnValue(mockRelativeDate),
     }));
 
-    const result = formatDateString({
+    const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
       displayAsRelativeDate: true,
@@ -47,7 +49,7 @@ describe('formatDateString', () => {
 
   it('should format date as datetime when displayAsRelativeDate is false', () => {
     const mockDate = '2023-01-01T12:00:00Z';
-    const mockFormattedDate = '1 Jan, 2023';
+    const mockFormattedDate = '1 Jan, 2023 12:00';
 
     jest.mock('@/localization/utils/formatDateISOStringToDateTime', () => ({
       formatDateISOStringToDateTime: jest
@@ -55,7 +57,7 @@ describe('formatDateString', () => {
         .mockReturnValue(mockFormattedDate),
     }));
 
-    const result = formatDateString({
+    const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
       displayAsRelativeDate: false,
@@ -66,7 +68,7 @@ describe('formatDateString', () => {
 
   it('should format date as datetime by default when displayAsRelativeDate is not provided', () => {
     const mockDate = '2023-01-01T12:00:00Z';
-    const mockFormattedDate = '1 Jan, 2023';
+    const mockFormattedDate = '1 Jan, 2023 12:00';
 
     jest.mock('@/localization/utils/formatDateISOStringToDateTime', () => ({
       formatDateISOStringToDateTime: jest
@@ -74,7 +76,7 @@ describe('formatDateString', () => {
         .mockReturnValue(mockFormattedDate),
     }));
 
-    const result = formatDateString({
+    const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
     });
