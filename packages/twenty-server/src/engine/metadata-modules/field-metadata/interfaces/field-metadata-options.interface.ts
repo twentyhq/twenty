@@ -1,8 +1,9 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type FieldMetadataOptionsMapping = {
   [FieldMetadataType.RATING]: FieldMetadataDefaultOption[];
