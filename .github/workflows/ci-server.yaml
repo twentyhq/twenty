@@ -184,6 +184,15 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
+      - name: Update .env.test for billing
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+         sed -i '$ a\
+IS_BILLING_ENABLED=true\
+BILLING_STRIPE_API_KEY=test-api-key\
+BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id\
+BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret' .env.test
+         
       - name: Server / Restore Task Cache
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
