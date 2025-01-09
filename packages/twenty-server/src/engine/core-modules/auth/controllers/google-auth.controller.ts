@@ -106,8 +106,6 @@ export class GoogleAuthController {
         workspace.id,
       );
 
-      throw new Error('toto');
-
       return res.redirect(
         this.authService.computeRedirectURI(
           loginToken.token,
