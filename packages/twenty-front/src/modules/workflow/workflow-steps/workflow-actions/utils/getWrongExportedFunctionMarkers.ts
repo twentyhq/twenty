@@ -1,5 +1,4 @@
 import { isDefined } from 'twenty-ui';
-import { editor, MarkerSeverity } from 'monaco-editor';
 
 const getSubstringCoordinate = (
   text: string,
@@ -20,23 +19,21 @@ const getSubstringCoordinate = (
   return null;
 };
 
-export const getWrongExportedFunctionMarkers = (
-  value: string,
-): editor.IMarkerData[] => {
+export const getWrongExportedFunctionMarkers = (value: string) => {
   const validRegex = /export\s+const\s+main\s*=/g;
   const invalidRegex = /export\s+const\s+\S*/g;
   const exportRegex = /export\s+const/g;
   const validMatch = value.match(validRegex);
   const invalidMatch = value.match(invalidRegex);
   const exportMatch = value.match(exportRegex);
-  const markers: editor.IMarkerData[] = [];
+  const markers = [];
 
   if (!validMatch && !!invalidMatch) {
     const coordinates = getSubstringCoordinate(value, invalidMatch[0]);
     if (isDefined(coordinates)) {
       const endColumn = invalidMatch[0].length + coordinates.column;
       markers.push({
-        severity: MarkerSeverity.Error,
+        severity: 8, //MarkerSeverity.Error,
         message: 'Exported arrow function should be named "main"',
         code: 'export const main',
         startLineNumber: coordinates.line,
@@ -49,7 +46,7 @@ export const getWrongExportedFunctionMarkers = (
 
   if (!exportMatch) {
     markers.push({
-      severity: MarkerSeverity.Error,
+      severity: 8, //MarkerSeverity.Error,
       message: 'An exported "main" arrow function is required.',
       code: 'export const main',
       startLineNumber: 1,
