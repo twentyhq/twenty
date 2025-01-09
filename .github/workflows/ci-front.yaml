@@ -140,9 +140,13 @@ jobs:
       - name: Merge coverage reports
         run: |
           mkdir -p ${{ env.PATH_TO_COVERAGE }}
-          jq 'reduce inputs as $i (.; . * $i)' coverage-artifacts/coverage-shard-*.json > ${{ env.PATH_TO_COVERAGE }}/coverage-merged.json
-      - name: TMP counting lines
-        run: cat coverage-merged.json | wc -l
+          npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: coverage-final-${{ matrix.storybook_scope }}.json
+          path: ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
       - name: Checking coverage
         run: npx nx storybook:coverage twenty-front
   front-chromatic-deployment:
