@@ -29,6 +29,9 @@ const StyledCommandMenu = styled.div`
   top: 0%;
   width: ${() => (useIsMobile() ? '100%' : '500px')};
   z-index: 30;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 export const CommandMenuContainer = ({

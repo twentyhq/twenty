@@ -3,4 +3,5 @@ export enum CommandMenuPages {
   ViewRecord = 'view-record',
   ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
+  Copilot = 'copilot',
 }
