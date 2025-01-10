@@ -8,7 +8,6 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -41,7 +40,7 @@ export class AdminPanelResolver {
   ): Promise<boolean> {
     await this.adminService.updateWorkspaceFeatureFlags(
       updateFlagInput.workspaceId,
-      FeatureFlagKey[updateFlagInput.featureFlag],
+      updateFlagInput.featureFlag,
       updateFlagInput.value,
     );
 
