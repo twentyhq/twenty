@@ -9,6 +9,10 @@ export const StyledTextInput = styled.input`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
+
+  &:disabled {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
 `;
 
 type TextInputProps = {
