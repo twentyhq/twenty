@@ -18,6 +18,10 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
+
+export const EMPTY_FILTER_VALUE = '[]';
+export const MAX_ITEMS_TO_DISPLAY = 3;
+
 type ObjectFilterDropdownSourceSelectProps = {
   viewComponentId?: string;
 };
