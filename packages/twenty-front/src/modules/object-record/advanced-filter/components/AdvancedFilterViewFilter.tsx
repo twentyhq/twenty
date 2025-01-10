@@ -2,7 +2,7 @@ import { AdvancedFilterViewFilterFieldSelect } from '@/object-record/advanced-fi
 import { AdvancedFilterViewFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterOperandSelect';
 import { AdvancedFilterViewFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterValueInput';
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import styled from '@emotion/styled';
 
@@ -32,7 +32,9 @@ export const AdvancedFilterViewFilter = ({
   }
 
   return (
-    <ObjectFilterDropdownScope filterScopeId={filter.id}>
+    <ObjectFilterDropdownComponentInstanceContext.Provider
+      value={{ instanceId: filter.id }}
+    >
       <StyledRow>
         <AdvancedFilterViewFilterFieldSelect viewFilterId={filter.id} />
         <AdvancedFilterViewFilterOperandSelect viewFilterId={filter.id} />
@@ -42,6 +44,6 @@ export const AdvancedFilterViewFilter = ({
           )}
         </StyledValueDropdownContainer>
       </StyledRow>
-    </ObjectFilterDropdownScope>
+    </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
