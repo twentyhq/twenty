@@ -78,6 +78,7 @@ jobs:
     runs-on: shipfox-8vcpu-ubuntu-2204
     needs: front-sb-build
     strategy:
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
         storybook_scope: [modules, pages, performance]
