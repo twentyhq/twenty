@@ -1,5 +1,5 @@
-import { CommandMenuAnimationVariant } from '@/command-menu/constants/CommandMenuAnimationVariant';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { RightDrawerAnimationVariant } from '@/ui/layout/right-drawer/types/RightDrawerAnimationVariant';
