@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
+import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -30,7 +31,6 @@ export const ObjectFilterDropdownSourceSelect = ({
     selectedFilterState,
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIdsState,
-    emptyFilterButKeepDefinition,
   } = useFilterDropdown();
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
@@ -65,6 +65,8 @@ export const ObjectFilterDropdownSourceSelect = ({
     objectFilterDropdownSelectedRecordIds.includes(option.id),
   );
 
+  const { emptyRecordFilter } = useEmptyRecordFilter();
+
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
@@ -76,7 +78,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         );
 
     if (newSelectedItemIds.length === 0) {
-      emptyFilterButKeepDefinition();
+      emptyRecordFilter();
       deleteCombinedViewFilter(fieldId);
       return;
     }
