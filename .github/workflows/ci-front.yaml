@@ -13,7 +13,7 @@ concurrency:
 jobs:
   front-sb-build:
     timeout-minutes: 30
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -92,12 +92,12 @@ jobs:
       - name: Install Playwright
         if: steps.changed-files.outputs.any_changed == 'true'
         run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
+      # - name: Front / Restore Storybook Task Cache
+      #   if: steps.changed-files.outputs.any_changed == 'true'
+      #   uses: ./.github/workflows/actions/task-cache
+      #   with:
+      #     tag: scope:frontend
+      #     tasks: storybook:build
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -124,7 +124,7 @@ jobs:
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: ci-8-cores
     needs: front-sb-test
     env:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
