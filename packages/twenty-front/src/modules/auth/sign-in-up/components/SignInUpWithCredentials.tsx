@@ -1,20 +1,21 @@
+import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
+import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import styled from '@emotion/styled';
+import { useMemo, useState } from 'react';
+import { FormProvider } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import { Loader, MainButton } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
-import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
-import { useState, useMemo } from 'react';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { FormProvider } from 'react-hook-form';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -25,7 +26,7 @@ const StyledForm = styled.form`
 
 export const SignInUpWithCredentials = () => {
   const { form, validationSchema } = useSignInUpForm();
-
+  const { t } = useTranslation();
   const signInUpStep = useRecoilValue(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
   const captchaProvider = useRecoilValue(captchaProviderState);
@@ -63,24 +64,24 @@ export const SignInUpWithCredentials = () => {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return t('continueWithEmail');
     }
 
     if (
       signInUpMode === SignInUpMode.SignIn &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign in';
+      return t('signIn');
     }
 
     if (
       signInUpMode === SignInUpMode.SignUp &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign up';
+      return t('signUp');
     }
 
-    return 'Continue';
+    return t('continue');
   }, [signInUpMode, signInUpStep]);
 
   const shouldWaitForCaptchaToken =

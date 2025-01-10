@@ -16,6 +16,7 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useTranslation } from 'react-i18next';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export const StyledInput = styled.input`
@@ -76,6 +77,8 @@ export const ObjectSortDropdownButton = ({
     resetSearchInput,
   } = useObjectSortDropdown();
 
+  const { t } = useTranslation(); 
+
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
@@ -94,6 +97,7 @@ export const ObjectSortDropdownButton = ({
   );
 
   const { getIcon } = useIcons();
+
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -145,7 +149,7 @@ export const ObjectSortDropdownButton = ({
             isUnfolded={isDropdownOpen}
             onClick={handleButtonClick}
           >
-            Sort
+            {t('sort')}
           </StyledHeaderDropdownButton>
         }
         dropdownComponents={
@@ -160,7 +164,7 @@ export const ObjectSortDropdownButton = ({
                         setSelectedSortDirection(sortOrder);
                         setIsSortDirectionMenuUnfolded(false);
                       }}
-                      text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                      text={sortOrder === 'asc' ? t('ascending') : t('descending')}
                     />
                   ))}
                 </DropdownMenuItemsContainer>
@@ -172,12 +176,12 @@ export const ObjectSortDropdownButton = ({
                 setIsSortDirectionMenuUnfolded(!isSortDirectionMenuUnfolded)
               }
             >
-              {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+              {selectedSortDirection === 'asc' ? t('ascending') : t('descending')}
             </DropdownMenuHeader>
             <StyledInput
               autoFocus
               value={objectSortDropdownSearchInput}
-              placeholder="Search fields"
+              placeholder={t('searchFields')}
               onChange={(event) =>
                 setObjectSortDropdownSearchInput(event.target.value)
               }

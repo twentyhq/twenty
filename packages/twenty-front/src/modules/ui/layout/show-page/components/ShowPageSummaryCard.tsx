@@ -1,7 +1,9 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { TFunctionNonStrict } from 'i18next';
 import { ChangeEvent, ReactNode, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
@@ -110,6 +112,7 @@ export const ShowPageSummaryCard = ({
   loading,
   isMobile = false,
 }: ShowPageSummaryCardProps) => {
+  const { t } = useTranslation();
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
@@ -129,6 +132,40 @@ export const ShowPageSummaryCard = ({
         <StyledShowPageSummaryCardSkeletonLoader />
       </StyledShowPageSummaryCard>
     );
+
+  const localizeTime = (timeString: string, t: TFunctionNonStrict<"translation", undefined>) => {
+    const timeUnits = [
+      { unit: "now", translation: t("now") },
+      { unit: "second", translation: t("second") },
+      { unit: "seconds ago", translation: t("secondsAgo") },
+      { unit: "minute", translation: t("minute") },
+      { unit: "minutes ago", translation: t("minutesAgo") },
+      { unit: "hour", translation: t("hour") },
+      { unit: "hours ago", translation: t("hoursAgo") },
+      { unit: "day", translation: t("day") },
+      { unit: "days ago", translation: t("daysAgo") },
+      { unit: "month", translation: t("month") },
+      { unit: "months ago", translation: t("monthsAgo") },
+      { unit: "year", translation: t("year") },
+      { unit: "years ago", translation: t("yearsAgo") },
+    ];
+
+    let localizedTime = timeString;
+      
+    timeUnits.forEach(({ unit, translation }) => {
+      localizedTime = localizedTime.replace(unit, translation);
+    })
+
+    return localizedTime;
+  };
+
+  const timeDisplay = (beautifiedCreatedAt: string) => {
+    const { t } = useTranslation();
+  
+    const localizedTime = localizeTime(beautifiedCreatedAt, t);
+  
+    return `${t("added")} ${localizedTime}`
+  };
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
@@ -153,7 +190,8 @@ export const ShowPageSummaryCard = ({
         <StyledTitle isMobile={isMobile}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
           <StyledDate isMobile={isMobile} id={dateElementId}>
-            Added {beautifiedCreatedAt}
+            {timeDisplay(beautifiedCreatedAt)}
+            {/* {t('added')} {beautifiedCreatedAt.replace("days ago", t('daysAgo'))} */}
           </StyledDate>
         )}
         <AppTooltip

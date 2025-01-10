@@ -5,6 +5,7 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -35,6 +36,8 @@ export const Notes = ({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
+  const { t } = useTranslation();
+
   const isNotesEmpty = !notes || notes.length === 0;
 
   if (loading && isNotesEmpty) {
@@ -50,15 +53,15 @@ export const Notes = ({
         <AnimatedPlaceholder type="noNote" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No notes
+            {t('noNotes')}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no associated notes with this record.
+            {t('noNotesDescription')}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
-          title="New note"
+          title={t('newNote')}
           variant="secondary"
           onClick={() =>
             openCreateActivity({
@@ -73,14 +76,14 @@ export const Notes = ({
   return (
     <StyledNotesContainer>
       <NoteList
-        title="All"
+        title={t('all')}
         notes={notes}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add note"
+            title={t('addNote')}
             onClick={() =>
               openCreateActivity({
                 targetableObjects: [targetableObject],

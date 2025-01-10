@@ -6,6 +6,7 @@ import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useTranslation } from 'react-i18next';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -72,6 +73,8 @@ export const NoteCard = ({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
   const body = getActivityPreview(note.body);
+  
+  const { t } = useTranslation();
 
   const { FieldContextProvider: NoteTargetsContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Note,
@@ -85,7 +88,7 @@ export const NoteCard = ({
       <StyledCardDetailsContainer
         onClick={() => openActivityRightDrawer(note.id)}
       >
-        <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+        <StyledNoteTitle>{note.title ?? t('taskTitle')}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
       <StyledFooter>

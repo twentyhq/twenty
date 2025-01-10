@@ -22,6 +22,7 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTranslation } from 'react-i18next';
 import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -90,6 +91,8 @@ export const Calendar = ({
     updateCurrentCalendarEvent,
   } = useCalendarEvents(timelineCalendarEvents || []);
 
+  const { t } = useTranslation();
+
   if (firstQueryLoading) {
     return <SkeletonLoader />;
   }
@@ -104,11 +107,11 @@ export const Calendar = ({
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No Events
+            {t('noEvents')}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No events have been scheduled with this{' '}
-            {targetableObject.targetObjectNameSingular} yet.
+            {t('noEventsDescription')}{' '}
+            {targetableObject.targetObjectNameSingular} {t('yet')}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

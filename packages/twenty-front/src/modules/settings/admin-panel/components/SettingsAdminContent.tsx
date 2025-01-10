@@ -1,5 +1,6 @@
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
+import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -11,6 +12,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
@@ -24,7 +26,6 @@ import {
   Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -87,6 +88,8 @@ export const SettingsAdminContent = () => {
     error,
   } = useFeatureFlagsManagement();
 
+  const { t } = useTranslation();
+
   const handleSearch = async () => {
     setActiveTabId('');
 
@@ -129,19 +132,19 @@ export const SettingsAdminContent = () => {
 
     return (
       <>
-        <H2Title title={activeWorkspace.name} description={'Workspace Name'} />
+        <H2Title title={activeWorkspace.name} description={t('workspaceName')} />
         <H2Title
           title={`${activeWorkspace.totalUsers} ${
-            activeWorkspace.totalUsers > 1 ? 'Users' : 'User'
+            activeWorkspace.totalUsers > 1 ? t('users') : t('user')
           }`}
-          description={'Total Users'}
+          description={t('totalUsers')}
         />
         {canImpersonate && (
           <Button
             Icon={IconUser}
             variant="primary"
             accent="blue"
-            title={'Impersonate'}
+            title={t('impersonate')}
             onClick={() => handleImpersonate(userId, activeWorkspace.id)}
             disabled={
               isImpersonateLoading ||
@@ -156,7 +159,7 @@ export const SettingsAdminContent = () => {
             gridAutoColumns="1fr 100px"
             mobileGridAutoColumns="1fr 80px"
           >
-            <TableHeader>Feature Flag</TableHeader>
+            <TableHeader>{t('featureFlag')}</TableHeader>
             <TableHeader align="right">Status</TableHeader>
           </TableRow>
 
@@ -190,8 +193,8 @@ export const SettingsAdminContent = () => {
     <>
       <Section>
         <H2Title
-          title="Feature Flags & Impersonation"
-          description="Look up users and manage their workspace feature flags or impersonate it."
+          title={t('featureFlagsImpersonation')}
+          description={t('featureFlagsImpersonationDescription')}
         />
 
         <StyledContainer>
@@ -200,7 +203,7 @@ export const SettingsAdminContent = () => {
               value={userIdentifier}
               onChange={setUserIdentifier}
               onInputEnter={handleSearch}
-              placeholder="Enter user ID or email address"
+              placeholder={t('enterUserIdOrEmail')}
               fullWidth
               disabled={isLoading}
             />
@@ -209,7 +212,7 @@ export const SettingsAdminContent = () => {
             Icon={IconSearch}
             variant="primary"
             accent="blue"
-            title="Search"
+            title={t('search')}
             onClick={handleSearch}
             disabled={!userIdentifier.trim() || isLoading}
           />
@@ -223,18 +226,18 @@ export const SettingsAdminContent = () => {
       {shouldShowUserData && (
         <Section>
           <StyledUserInfo>
-            <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
+            <H1Title title={t('userInfo')} fontColor={H1TitleFontColor.Primary} />
             <H2Title
               title={`${userLookupResult.user.firstName || ''} ${
                 userLookupResult.user.lastName || ''
               }`.trim()}
-              description="User Name"
+              description={t('userName')}
             />
             <H2Title
               title={userLookupResult.user.email}
-              description="User Email"
+              description={t('userEmail')}
             />
-            <H2Title title={userLookupResult.user.id} description="User ID" />
+            <H2Title title={userLookupResult.user.id} description={t('userId')} />
           </StyledUserInfo>
 
           <H1Title title="Workspaces" fontColor={H1TitleFontColor.Primary} />

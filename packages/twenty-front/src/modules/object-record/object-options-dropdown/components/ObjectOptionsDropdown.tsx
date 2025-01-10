@@ -10,6 +10,7 @@ import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/Tabl
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { ViewType } from '@/views/types/ViewType';
+import { useTranslation } from 'react-i18next';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -25,6 +26,8 @@ export const ObjectOptionsDropdown = ({
   const { currentContentId, handleContentChange, handleResetContent } =
     useCurrentContentId<ObjectOptionsContentId>();
 
+  const { t } = useTranslation();
+
   return (
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
@@ -32,7 +35,7 @@ export const ObjectOptionsDropdown = ({
       dropdownMenuWidth={DROPDOWN_WIDTH}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
-        <StyledHeaderDropdownButton>Options</StyledHeaderDropdownButton>
+        <StyledHeaderDropdownButton>{t('options')}</StyledHeaderDropdownButton>
       }
       onClose={handleResetContent}
       dropdownComponents={

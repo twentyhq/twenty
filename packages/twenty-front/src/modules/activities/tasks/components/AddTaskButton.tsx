@@ -4,6 +4,7 @@ import { Button, IconPlus } from 'twenty-ui';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTranslation } from 'react-i18next';
 
 export const AddTaskButton = ({
   activityTargetableObjects,
@@ -14,6 +15,8 @@ export const AddTaskButton = ({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
+  const { t } = useTranslation();
+
   if (!isNonEmptyArray(activityTargetableObjects)) {
     return <></>;
   }
@@ -23,7 +26,7 @@ export const AddTaskButton = ({
       Icon={IconPlus}
       size="small"
       variant="secondary"
-      title="Add task"
+      title={t('addTask')}
       onClick={() =>
         openCreateActivity({
           targetableObjects: activityTargetableObjects,

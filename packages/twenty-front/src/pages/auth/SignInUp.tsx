@@ -18,6 +18,7 @@ import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hook
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -30,7 +31,7 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-
+  const { t } = useTranslation();
   const signInUpForm = useMemo(() => {
     if (loading) return null;
 
@@ -74,7 +75,7 @@ export const SignInUp = () => {
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>
-        {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
+        {`${t('welcomeTo')} ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}

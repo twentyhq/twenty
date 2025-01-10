@@ -17,6 +17,7 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useTranslation } from 'react-i18next';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`
@@ -40,6 +41,7 @@ export const Attachments = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { t } = useTranslation();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { attachments, loading } = useAttachments(targetableObject);
   const { uploadAttachmentFile } = useUploadAttachmentFile();
@@ -80,10 +82,10 @@ export const Attachments = ({
             <AnimatedPlaceholder type="noFile" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>
-                No Files
+                {t('noFiles')}
               </AnimatedPlaceholderEmptyTitle>
               <AnimatedPlaceholderEmptySubTitle>
-                There are no associated files with this record.
+                {t('noFilesDescription')}
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
@@ -93,7 +95,7 @@ export const Attachments = ({
             />
             <Button
               Icon={IconPlus}
-              title="Add file"
+              title={t('addFile')}
               variant="secondary"
               onClick={handleUploadFileClick}
             />
@@ -112,14 +114,14 @@ export const Attachments = ({
       />
       <AttachmentList
         targetableObject={targetableObject}
-        title="All"
+        title={t('all')}
         attachments={attachments ?? []}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add file"
+            title={t('addFile')}
             onClick={handleUploadFileClick}
           ></Button>
         }

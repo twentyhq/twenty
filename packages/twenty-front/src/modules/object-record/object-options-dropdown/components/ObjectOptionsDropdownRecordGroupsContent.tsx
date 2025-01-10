@@ -26,6 +26,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useTranslation } from 'react-i18next';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const {
@@ -77,6 +78,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     viewType,
   });
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -89,7 +92,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        Group by
+        {t('groupBy')}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {currentView?.key !== 'INDEX' && (
@@ -97,14 +100,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <MenuItem
               onClick={() => onContentChange('recordGroupFields')}
               LeftIcon={IconLayoutList}
-              text="Group by"
+              text={t('groupBy')}
               contextualText={recordGroupFieldMetadata?.label}
               hasSubMenu
             />
             <MenuItem
               onClick={() => onContentChange('recordGroupSort')}
               LeftIcon={IconSortDescending}
-              text="Sort"
+              text={t('sort')}
               contextualText={recordGroupSort}
               hasSubMenu
             />

@@ -34,7 +34,7 @@ export const AppNavigationDrawer = ({
   const { currentRole } = usePermissions();
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
-        title: 'Exit Settings',
+        title: t('exitSettings'),
         children: <SettingsNavigationDrawerItems />,
         footer: (
           currentRole?.canAccessWorkspaceSettings ?

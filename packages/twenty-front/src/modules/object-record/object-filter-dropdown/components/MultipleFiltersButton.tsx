@@ -2,6 +2,7 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useTranslation } from 'react-i18next';
 
 export const MultipleFiltersButton = () => {
   const { resetFilter } = useFilterDropdown();
@@ -9,6 +10,8 @@ export const MultipleFiltersButton = () => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(
     OBJECT_FILTER_DROPDOWN_ID,
   );
+
+  const { t } = useTranslation();
 
   const handleClick = () => {
     toggleDropdown();
@@ -20,7 +23,7 @@ export const MultipleFiltersButton = () => {
       isUnfolded={isDropdownOpen}
       onClick={handleClick}
     >
-      Filter
+      {t('filter')}
     </StyledHeaderDropdownButton>
   );
 };

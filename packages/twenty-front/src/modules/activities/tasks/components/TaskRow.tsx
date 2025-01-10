@@ -16,6 +16,7 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useTranslation } from 'react-i18next';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -78,6 +79,7 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Task,
   });
@@ -111,7 +113,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
           />
         </StyledCheckboxContainer>
         <StyledTaskTitle completed={task.status === 'DONE'}>
-          {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
+          {task.title || <StyledPlaceholder>{t('taskTitle')}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
           <OverflowingTextWithTooltip text={body} />

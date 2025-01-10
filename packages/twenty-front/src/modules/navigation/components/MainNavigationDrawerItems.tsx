@@ -15,6 +15,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
@@ -34,18 +35,20 @@ export const MainNavigationDrawerItems = () => {
     navigationDrawerExpandedMemorizedState,
   );
 
+  const { t } = useTranslation();
+
   return (
     <>
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem
-            label="Search"
+            label={t('search')}
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
           />
           <NavigationDrawerItem
-            label="Settings"
+            label={t('settings')}
             to={'/settings/profile'}
             onClick={() => {
               setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);

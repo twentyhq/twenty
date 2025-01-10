@@ -30,6 +30,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -131,6 +132,8 @@ export const SettingsDataModelFieldSelectForm = ({
     watch: watchFormValue,
     getValues,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
+
+  const { t } = useTranslation();
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
@@ -265,7 +268,7 @@ export const SettingsDataModelFieldSelectForm = ({
                 <StyledOptionsLabel
                   isAdvancedModeEnabled={isAdvancedModeEnabled}
                 >
-                  Options
+                  {t('options')}
                 </StyledOptionsLabel>
               </StyledLabelContainer>
               <DraggableList

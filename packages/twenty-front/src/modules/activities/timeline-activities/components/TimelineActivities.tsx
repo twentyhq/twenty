@@ -6,6 +6,7 @@ import { EventList } from '@/activities/timeline-activities/components/EventList
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTranslation } from 'react-i18next';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -43,6 +44,7 @@ export const TimelineActivities = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { t } = useTranslation();
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetableObject);
 
@@ -62,10 +64,10 @@ export const TimelineActivities = ({
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No activity yet
+           {t('noActivityYet')}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There is no activity associated with this record.
+           {t('noActivityYetDescription')}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

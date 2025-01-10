@@ -30,6 +30,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
+import { useTranslation } from 'react-i18next';
 import { isDefined } from '~/utils/isDefined';
 
 export const ObjectOptionsDropdownMenuContent = () => {
@@ -88,10 +89,17 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewType,
   });
 
+  const { t, i18n } = useTranslation();
+
+  const result = i18n.language === 'en' 
+  ? `${t('deleted')} ${objectNamePlural}`
+  : `${objectNamePlural} ${t('deleted').toLowerCase()}`;
+  const resultWithCapitallize = `${result.charAt(0).toUpperCase()}${result.slice(1)}`;
+
   return (
     <>
       <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
-        {currentView?.name}
+        {currentView?.name === 'All' ? t('all') : currentView?.name}
       </DropdownMenuHeader>
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
@@ -111,7 +119,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
         <MenuItem
           onClick={() => onContentChange('fields')}
           LeftIcon={IconTag}
-          text="Fields"
+          text={t('fields')}
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
@@ -123,7 +131,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
                 : onContentChange('recordGroupFields')
             }
             LeftIcon={IconLayoutList}
-            text="Group by"
+            text={t('groupBy')}
             contextualText={recordGroupFieldMetadata?.label}
             hasSubMenu
           />
@@ -134,12 +142,12 @@ export const ObjectOptionsDropdownMenuContent = () => {
         <MenuItem
           onClick={download}
           LeftIcon={IconFileExport}
-          text={displayedExportProgress(progress)}
+          text={t(displayedExportProgress(progress).toLowerCase())}
         />
         <MenuItem
           onClick={() => openObjectRecordsSpreasheetImportDialog()}
           LeftIcon={IconFileImport}
-          text="Import"
+          text={t('import')}
         />
         <MenuItem
           onClick={() => {
@@ -148,7 +156,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             closeDropdown();
           }}
           LeftIcon={IconRotate2}
-          text={`Deleted ${objectNamePlural}`}
+          text={resultWithCapitallize}
         />
       </DropdownMenuItemsContainer>
     </>

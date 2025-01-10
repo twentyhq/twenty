@@ -8,6 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { useTranslation } from 'react-i18next';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const {
@@ -17,6 +18,8 @@ export const ObjectOptionsDropdownFieldsContent = () => {
     onContentChange,
     resetContent,
   } = useOptionsDropdown();
+
+  const { t } = useTranslation();
 
   const {
     handleColumnVisibilityChange,
@@ -50,7 +53,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        Fields
+        {t('fields')}
       </DropdownMenuHeader>
       <ViewFieldsVisibilityDropdownSection
         title="Visible"
@@ -66,7 +69,7 @@ export const ObjectOptionsDropdownFieldsContent = () => {
         <MenuItemNavigate
           onClick={() => onContentChange('hiddenFields')}
           LeftIcon={IconEyeOff}
-          text="Hidden Fields"
+          text={t('hiddenFields')}
         />
       </DropdownMenuItemsContainer>
     </>

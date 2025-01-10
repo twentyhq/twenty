@@ -19,6 +19,7 @@ import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import groupBy from 'lodash.groupby';
+import { useTranslation } from 'react-i18next';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -41,6 +42,8 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
+  
+  const { t } = useTranslation();
 
   const { activeTabId } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
 
@@ -65,15 +68,15 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Mission accomplished!
+            {t('missionAccomplished')}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            All tasks addressed. Maintain the momentum.
+            {t('allTasksAddressedDescription')}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
-          title="New task"
+          title={t('newTask')}
           variant={'secondary'}
           onClick={() =>
             openCreateActivity({

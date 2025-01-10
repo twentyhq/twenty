@@ -6,13 +6,14 @@ import {
   IconUser,
 } from 'twenty-ui';
 
+import i18n from '~/utils/i18n';
 import { Command, CommandType } from '../types/Command';
 
 export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {
     id: 'go-to-people',
     to: '/objects/people',
-    label: 'Go to People',
+    label: `${i18n.t('goTo')} People`,
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'P',
@@ -22,7 +23,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   companies: {
     id: 'go-to-companies',
     to: '/objects/companies',
-    label: 'Go to Companies',
+    label: `${i18n.t('goTo')} Companies`,
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'C',
@@ -32,7 +33,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   opportunities: {
     id: 'go-to-activities',
     to: '/objects/opportunities',
-    label: 'Go to Opportunities',
+    label: `${i18n.t('goTo')} Opportunities`,
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'O',
@@ -42,7 +43,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   settings: {
     id: 'go-to-settings',
     to: '/settings/profile',
-    label: 'Go to Settings',
+    label: `${i18n.t('goTo')} Settings`,
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'S',
@@ -52,7 +53,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   tasks: {
     id: 'go-to-tasks',
     to: '/objects/tasks',
-    label: 'Go to Tasks',
+    label: `${i18n.t('goTo')} Tasks`,
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'T',

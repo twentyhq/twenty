@@ -21,6 +21,7 @@ import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/quer
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTranslation } from 'react-i18next';
 import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -46,6 +47,7 @@ export const EmailThreads = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { t } = useTranslation();
   const [query, queryName] =
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
@@ -85,10 +87,10 @@ export const EmailThreads = ({
         <AnimatedPlaceholder type="emptyInbox" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Empty Inbox
+            {t('emptyInbox')}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No email exchange has occurred with this record yet.
+            {t('emptyInboxDescription')}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,24 +18,26 @@ const StyledContainer = styled.div`
   }
 `;
 
-export const FooterNote = () => (
+export const FooterNote = () => {
+  const { t } = useTranslation();
+  return (
   <StyledContainer>
-    By using Twenty, you agree to the{' '}
+    {t('youAgreeWith')}{' '}
     <a
       href="https://twenty.com/legal/terms"
       target="_blank"
       rel="noopener noreferrer"
     >
-      Terms of Service
+      {t('termsOfService')}
     </a>{' '}
-    and{' '}
+    {t('and')}{' '}
     <a
       href="https://twenty.com/legal/privacy"
       target="_blank"
       rel="noopener noreferrer"
     >
-      Privacy Policy
+      {t('privacyPolicy')}
     </a>
     .
   </StyledContainer>
-);
+)};

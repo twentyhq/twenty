@@ -290,7 +290,7 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label="Other" />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Server Admin Panel"
+            label={t('serverAdminPanel')}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />
@@ -301,7 +301,7 @@ export const SettingsNavigationDrawerItems = () => {
           Icon={IconRocket}
         />
         <NavigationDrawerItem
-          label="Logout"
+          label={t('logout')}
           onClick={signOut}
           Icon={IconDoorEnter}
         />
