@@ -1,5 +1,5 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS } from '@/object-record/record-table/record-table-footer/constants/datesAggregateOperationOptionsWithLabels';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { isFieldMetadataDateKind } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -9,11 +9,12 @@ export const convertAggregateOperationToExtendedAggregateOperation = (
   fieldType?: FieldMetadataType,
 ): ExtendedAggregateOperations => {
   if (isFieldMetadataDateKind(fieldType) === true) {
-    return (
-      (DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS[
-        aggregateOperation as 'MIN' | 'MAX'
-      ] as ExtendedAggregateOperations) ?? aggregateOperation
-    );
+    if (aggregateOperation === AGGREGATE_OPERATIONS.min) {
+      return DATE_AGGREGATE_OPERATIONS.earliest;
+    }
+    if (aggregateOperation === AGGREGATE_OPERATIONS.max) {
+      return DATE_AGGREGATE_OPERATIONS.latest;
+    }
   }
   return aggregateOperation;
 };

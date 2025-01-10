@@ -1,9 +1,11 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
-import { DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS } from '@/object-record/record-table/record-table-footer/constants/datesAggregateOperationOptionsWithLabels';
+import { DATE_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/dateAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
@@ -22,7 +24,9 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     case 'moreAggregateOperationOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
-          !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+          !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
+            aggregateOperation as AGGREGATE_OPERATIONS,
+          ),
       );
 
       return (
@@ -35,7 +39,9 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     case 'countAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
-          COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+          COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
+            aggregateOperation as AGGREGATE_OPERATIONS,
+          ),
       );
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
@@ -47,7 +53,9 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     case 'percentAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
-          PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation),
+          PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
+            aggregateOperation as AGGREGATE_OPERATIONS,
+          ),
       );
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
@@ -59,8 +67,8 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     case 'datesAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
-          Object.keys(DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS).includes(
-            aggregateOperation,
+          DATE_AGGREGATE_OPERATION_OPTIONS.includes(
+            aggregateOperation as DATE_AGGREGATE_OPERATIONS,
           ),
       );
       return (
