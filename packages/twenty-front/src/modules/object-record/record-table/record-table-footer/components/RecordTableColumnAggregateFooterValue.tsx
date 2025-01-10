@@ -36,8 +36,9 @@ const StyledValueContainer = styled(StyledScrollableContainer)`
   padding: 0 8px;
 `;
 
-const StyledValue = styled(StyledScrollableContainer)`
-  color: ${({ theme }) => theme.color.gray60};
+const StyledValue = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  max-width: 100%;
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({

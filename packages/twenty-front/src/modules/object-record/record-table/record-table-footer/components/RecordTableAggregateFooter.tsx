@@ -104,20 +104,22 @@ export const RecordTableAggregateFooter = ({
       <tr>
         <StyledTh />
         <StyledTh />
-        {visibleTableColumns.map((column, index) => (
-          <RecordTableColumnAggregateFooterCellContext.Provider
-            key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
-            value={{
-              viewFieldId: column.viewFieldId || '',
-              fieldMetadataId: column.fieldMetadataId,
-            }}
-          >
-            <RecordTableAggregateFooterCell
-              currentRecordGroupId={currentRecordGroupId}
-              isFirstCell={index === 0}
-            />
-          </RecordTableColumnAggregateFooterCellContext.Provider>
-        ))}
+        {visibleTableColumns.map((column, index) => {
+          return (
+            <RecordTableColumnAggregateFooterCellContext.Provider
+              key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+              value={{
+                viewFieldId: column.viewFieldId || '',
+                fieldMetadataId: column.fieldMetadataId,
+              }}
+            >
+              <RecordTableAggregateFooterCell
+                currentRecordGroupId={currentRecordGroupId}
+                isFirstCell={index === 0}
+              />
+            </RecordTableColumnAggregateFooterCellContext.Provider>
+          );
+        })}
       </tr>
     </StyledTableFoot>
   );

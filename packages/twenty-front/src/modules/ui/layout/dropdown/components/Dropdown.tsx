@@ -36,7 +36,7 @@ type StyledHeaderDivProps = {
 };
 
 const StyledHeaderDiv = styled.div<StyledHeaderDivProps>`
-  & > * {
+  & button {
     background: ${({ theme, isUnfolded }) =>
       isUnfolded
         ? theme.background.transparent.light

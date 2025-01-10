@@ -9,9 +9,11 @@ export const convertAggregateOperationToExtendedAggregateOperation = (
   fieldType?: FieldMetadataType,
 ): ExtendedAggregateOperations => {
   if (isFieldMetadataDateKind(fieldType) === true) {
-    return DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS[
-      aggregateOperation as 'MIN' | 'MAX'
-    ] as ExtendedAggregateOperations;
+    return (
+      (DATES_AGGREGATE_OPERATION_OPTIONS_WITH_LABELS[
+        aggregateOperation as 'MIN' | 'MAX'
+      ] as ExtendedAggregateOperations) ?? aggregateOperation
+    );
   }
   return aggregateOperation;
 };
