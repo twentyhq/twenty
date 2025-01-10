@@ -58,6 +58,7 @@ export const BASE_OBJECT_STANDARD_FIELD_IDS = {
 
 export const BLOCKLIST_STANDARD_FIELD_IDS = {
   handle: '20202020-eef3-44ed-aa32-4641d7fd4a3e',
+  levels: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5b',
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
 };
 

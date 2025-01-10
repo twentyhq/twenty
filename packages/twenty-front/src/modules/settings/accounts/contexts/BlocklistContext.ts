@@ -1,11 +1,11 @@
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { createContext } from 'react';
-import { OptionalString } from '~/types/OptionalString';
+import { NullableString } from '~/types/NullableString';
 
 export type BlocklistContextType = {
   blocklist: BlocklistItem[];
-  savedContactIdBeingUpdated: OptionalString;
-  setSavedContactIdBeingUpdated: (id: OptionalString) => void;
+  savedContactIdBeingUpdated: NullableString;
+  setSavedContactIdBeingUpdated: (id: NullableString) => void;
   handleBlockedEmailRemove: (id: string) => void;
   updateBlockedEmail: (contact: BlocklistItem) => void;
   addNewBlockedEmail: (contact: BlocklistItem) => void;

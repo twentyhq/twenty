@@ -1,6 +1,6 @@
 export enum BlocklistContactLevel {
   ALL = 'All',
-  FROMTO = 'From/To',
+  FROM_TO = 'From/To',
   CC = 'Cc',
   BCC = 'Bcc',
 }

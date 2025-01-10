@@ -75,7 +75,7 @@ const blocklistLevelDropdownItems: {
   label: string;
 }[] = [
   {
-    id: BlocklistContactLevel.FROMTO,
+    id: BlocklistContactLevel.FROM_TO,
     label: 'From/To',
   },
   {
@@ -129,6 +129,7 @@ export const SettingsAccountsBlocklistContactRow = ({
   item,
 }: SettingsAccountsBlocklistContactRowProps) => {
   const [dropdownSearchText, setDropdownSearchText] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const [dropdownValue, setDropdownValue] = useState<string>(
     !item?.id
       ? ''
@@ -146,7 +147,7 @@ export const SettingsAccountsBlocklistContactRow = ({
 
   const [selectedBlocklistLevels, setSelectedBlocklistLevels] = useState<
     BlocklistContactLevel[]
-  >([]);
+  >(item?.levels || []);
 
   const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
@@ -164,8 +165,9 @@ export const SettingsAccountsBlocklistContactRow = ({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === Key.Enter) {
-      submit();
       setSelectedBlocklistLevels([]);
+      setDropdownValue('');
+      submit();
     }
   };
 
@@ -203,9 +205,13 @@ export const SettingsAccountsBlocklistContactRow = ({
     );
   };
 
-  const handleOnDropdownClickOutside = () => {
+  const resetDropdownSearchText = () => {
     setDropdownSearchText('');
-    if (isDefined(item?.id)) {
+  };
+
+  const handleOnDropdownClickOutside = () => {
+    resetDropdownSearchText();
+    if (isDefined(item?.id) && isUpdating) {
       updateBlockedEmail({
         id: item?.id as string,
         handle: item?.handle as string,
@@ -256,6 +262,12 @@ export const SettingsAccountsBlocklistContactRow = ({
             </DropdownMenuItemsContainer>
           }
           onClickOutside={handleOnDropdownClickOutside}
+          onClose={() =>
+            item?.id ? setIsUpdating(false) : resetDropdownSearchText()
+          }
+          onOpen={() =>
+            item?.id ? setIsUpdating(true) : resetDropdownSearchText()
+          }
         />
         <StyledLinkContainer>
           <Controller

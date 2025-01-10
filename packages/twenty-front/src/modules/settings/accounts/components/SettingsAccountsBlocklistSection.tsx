@@ -11,11 +11,11 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingAccountsBlocklistContainer } from '@/settings/accounts/components/SettingAccountsBlocklistContainer';
 import { BlocklistContext } from '@/settings/accounts/contexts/BlocklistContext';
 import { useState } from 'react';
-import { OptionalString } from '~/types/OptionalString';
+import { NullableString } from '~/types/NullableString';
 
 export const SettingsAccountsBlocklistSection = () => {
   const [savedContactIdBeingUpdated, setSavedContactIdBeingUpdated] =
-    useState<OptionalString>(null);
+    useState<NullableString>(null);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -70,9 +70,9 @@ export const SettingsAccountsBlocklistSection = () => {
           blocklist,
           savedContactIdBeingUpdated,
           setSavedContactIdBeingUpdated,
-          handleBlockedEmailRemove: () => {},
-          updateBlockedEmail: () => {},
-          addNewBlockedEmail: () => {},
+          handleBlockedEmailRemove,
+          updateBlockedEmail,
+          addNewBlockedEmail,
         }}
       >
         <SettingAccountsBlocklistContainer />
