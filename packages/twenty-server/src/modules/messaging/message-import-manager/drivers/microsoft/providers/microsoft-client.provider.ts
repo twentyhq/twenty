@@ -14,7 +14,7 @@ export class MicrosoftClientProvider {
   public async getMicrosoftClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'refreshToken' | 'id'
     >,
   ): Promise<Client> {
     try {
@@ -23,8 +23,9 @@ export class MicrosoftClientProvider {
       );
     } catch (error) {
       throw new Error(
-        'Failed to get Microsoft client: ' +
-          (error instanceof Error ? error.message : 'Unknown error'),
+        `Failed to get Microsoft client: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       );
     }
   }

@@ -11,7 +11,7 @@ import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-ma
 import { GetFullMessageListResponse } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 // Microsoft API limit is 1000 messages per request on this endpoint
-const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 1;
+const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 1000;
 
 @Injectable()
 export class MicrosoftGetMessageListService {

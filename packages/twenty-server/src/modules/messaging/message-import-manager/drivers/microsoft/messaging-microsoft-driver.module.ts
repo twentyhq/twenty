@@ -1,4 +1,3 @@
-// import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
@@ -26,9 +25,6 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftGetMessageListService,
     MicrosoftOAuth2ClientManagerService,
   ],
-  exports: [
-    MicrosoftGetMessageListService,
-    // MicrosoftClientProvider
-  ],
+  exports: [MicrosoftGetMessageListService, MicrosoftClientProvider],
 })
 export class MessagingMicrosoftDriverModule {}
