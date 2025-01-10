@@ -29,7 +29,6 @@ export class ClientConfigResolver {
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       },
-      isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
       isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',

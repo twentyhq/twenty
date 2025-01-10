@@ -9,7 +9,6 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -30,7 +29,6 @@ export const ClientConfigProviderEffect = () => {
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
   );
-  const setIsSSOEnabledState = useSetRecoilState(isSSOEnabledState);
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -107,7 +105,6 @@ export const ClientConfigProviderEffect = () => {
 
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
-    setIsSSOEnabledState(data?.clientConfig?.isSSOEnabled);
     setDomainConfiguration({
       defaultSubdomain: data?.clientConfig?.defaultSubdomain,
       frontDomain: data?.clientConfig?.frontDomain,
@@ -129,7 +126,6 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled,
     error,
     setDomainConfiguration,
-    setIsSSOEnabledState,
     setAuthProviders,
     setCanManageFeatureFlags,
   ]);
