@@ -1,6 +1,7 @@
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -44,6 +45,10 @@ export const ClientConfigProviderEffect = () => {
   const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
 
   const setApiConfig = useSetRecoilState(apiConfigState);
+
+  const setCanManageFeatureFlags = useSetRecoilState(
+    canManageFeatureFlagsState,
+  );
 
   const { data, loading, error } = useGetClientConfigQuery({
     skip: clientConfigApiStatus.isLoaded,
@@ -107,6 +112,7 @@ export const ClientConfigProviderEffect = () => {
       defaultSubdomain: data?.clientConfig?.defaultSubdomain,
       frontDomain: data?.clientConfig?.frontDomain,
     });
+    setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
   }, [
     data,
     setIsDebugMode,
@@ -125,6 +131,7 @@ export const ClientConfigProviderEffect = () => {
     setDomainConfiguration,
     setIsSSOEnabledState,
     setAuthProviders,
+    setCanManageFeatureFlags,
   ]);
 
   return <></>;
