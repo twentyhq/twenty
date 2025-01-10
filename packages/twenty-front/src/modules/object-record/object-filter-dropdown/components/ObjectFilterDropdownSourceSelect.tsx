@@ -4,10 +4,14 @@ import { v4 } from 'uuid';
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
+import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
@@ -18,10 +22,6 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
-
-export const EMPTY_FILTER_VALUE = '[]';
-export const MAX_ITEMS_TO_DISPLAY = 3;
-
 type ObjectFilterDropdownSourceSelectProps = {
   viewComponentId?: string;
 };
