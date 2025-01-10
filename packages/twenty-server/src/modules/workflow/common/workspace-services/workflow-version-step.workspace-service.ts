@@ -511,10 +511,10 @@ export class WorkflowVersionStepWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.deleteOneServerlessFunction(
-          step.settings.input.serverlessFunctionId,
+        await this.serverlessFunctionService.deleteOneServerlessFunction({
+          id: step.settings.input.serverlessFunctionId,
           workspaceId,
-        );
+        });
 
         break;
       }

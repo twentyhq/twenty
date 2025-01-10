@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { SubscriptionCardPrice } from '@/billing/components/SubscriptionCardPrice';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 type SubscriptionCardProps = {
   type?: string;

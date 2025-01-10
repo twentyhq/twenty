@@ -68,7 +68,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const { closeDropdown } = useDropdown(dropdownId);
   const navigate = useNavigate();
   const location = useLocation();
-  const { objectSlug = '' } = useParams();
+  const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
   const theme = useTheme();
 
@@ -78,11 +78,11 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
   const handleClick = (step: 'select' | 'configure') => {
     if (step === 'configure' && isDefined(fieldType)) {
       navigate(
-        `/settings/objects/${objectSlug}/new-field/configure?fieldType=${fieldType}`,
+        `/settings/objects/${objectNamePlural}/new-field/configure?fieldType=${fieldType}`,
       );
     } else {
       navigate(
-        `/settings/objects/${objectSlug}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
+        `/settings/objects/${objectNamePlural}/new-field/select${fieldType ? `?fieldType=${fieldType}` : ''}`,
       );
     }
     closeDropdown();

@@ -25,10 +25,12 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    ServerlessFunctionModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,

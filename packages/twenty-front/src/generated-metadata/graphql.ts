@@ -229,10 +229,8 @@ export type CreateFieldInput = {
 export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
-  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isRemote?: InputMaybe<Scalars['Boolean']['input']>;
-  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   labelPlural: Scalars['String']['input'];
   labelSingular: Scalars['String']['input'];
   namePlural: Scalars['String']['input'];
@@ -403,6 +401,7 @@ export enum FeatureFlagKey {
   IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
@@ -412,7 +411,6 @@ export enum FeatureFlagKey {
   IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
-  IsPageHeaderV2Enabled = 'IsPageHeaderV2Enabled',
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsSsoEnabled = 'IsSSOEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',

@@ -15,10 +15,17 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 
 export const DEFAULT_PHONE_CALLING_CODE = '1';
 
+const StyledCustomPhoneInputContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  height: 30px;
+`;
+
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  font-family: ${({ theme }) => theme.font.family};
   ${TEXT_INPUT_STYLE}
   padding: 0;
+  height: 100%;
 
   .PhoneInputInput {
     background: none;
@@ -123,16 +130,18 @@ export const PhonesFieldInput = ({
       )}
       renderInput={({ value, onChange, autoFocus, placeholder }) => {
         return (
-          <StyledCustomPhoneInput
-            autoFocus={autoFocus}
-            placeholder={placeholder}
-            value={value as E164Number}
-            onChange={onChange as unknown as (newValue: E164Number) => void}
-            international={true}
-            withCountryCallingCode={true}
-            countrySelectComponent={PhoneCountryPickerDropdownButton}
-            defaultCountry={defaultCountry}
-          />
+          <StyledCustomPhoneInputContainer>
+            <StyledCustomPhoneInput
+              autoFocus={autoFocus}
+              placeholder={placeholder}
+              value={value as E164Number}
+              onChange={onChange as unknown as (newValue: E164Number) => void}
+              international={true}
+              withCountryCallingCode={true}
+              countrySelectComponent={PhoneCountryPickerDropdownButton}
+              defaultCountry={defaultCountry}
+            />
+          </StyledCustomPhoneInputContainer>
         );
       }}
       hotkeyScope={hotkeyScope}

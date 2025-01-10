@@ -1,17 +1,18 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useCallback } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
 export const useDropdown = (dropdownId?: string) => {
   const {
     scopeId,
-    dropdownHotkeyScopeState,
     dropdownWidthState,
     isDropdownOpenState,
     dropdownPlacementState,
@@ -29,8 +30,6 @@ export const useDropdown = (dropdownId?: string) => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
-
-  const [dropdownHotkeyScope] = useRecoilState(dropdownHotkeyScopeState);
 
   const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
 
@@ -54,18 +53,37 @@ export const useDropdown = (dropdownId?: string) => {
     goBackToPreviousDropdownFocusId,
   ]);
 
-  const openDropdown = () => {
-    if (!isDropdownOpen) {
-      setIsDropdownOpen(true);
-      setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
-      if (isDefined(dropdownHotkeyScope)) {
-        setHotkeyScopeAndMemorizePreviousScope(
-          dropdownHotkeyScope.scope,
-          dropdownHotkeyScope.customScopes,
-        );
-      }
-    }
-  };
+  const openDropdown = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        if (!isDropdownOpen) {
+          setIsDropdownOpen(true);
+          setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
+
+          const dropdownHotkeyScope = getSnapshotValue(
+            snapshot,
+            dropdownHotkeyComponentState({
+              scopeId: dropdownId ?? scopeId,
+            }),
+          );
+
+          if (isDefined(dropdownHotkeyScope)) {
+            setHotkeyScopeAndMemorizePreviousScope(
+              dropdownHotkeyScope.scope,
+              dropdownHotkeyScope.customScopes,
+            );
+          }
+        }
+      },
+    [
+      dropdownId,
+      isDropdownOpen,
+      scopeId,
+      setHotkeyScopeAndMemorizePreviousScope,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      setIsDropdownOpen,
+    ],
+  );
 
   const toggleDropdown = () => {
     if (isDropdownOpen) {

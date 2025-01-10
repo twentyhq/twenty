@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
@@ -12,7 +13,6 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     objectFilterDropdownSearchInputState,
     setObjectFilterDropdownSearchInput,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
 
   const [filterId] = useState(v4());
@@ -28,6 +28,8 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     objectFilterDropdownSearchInputState,
   );
   const selectedFilter = useRecoilValue(selectedFilterState);
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const handleInputRef = useCallback(
     (node: HTMLInputElement | null) => {
@@ -51,7 +53,7 @@ export const ObjectFilterDropdownTextSearchInput = () => {
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setObjectFilterDropdownSearchInput(event.target.value);
 
-          selectFilter?.({
+          applyRecordFilter({
             id: selectedFilter?.id ?? filterId,
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: event.target.value,

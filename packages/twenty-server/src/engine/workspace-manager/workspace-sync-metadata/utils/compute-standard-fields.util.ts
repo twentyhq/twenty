@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import {
   ComputedPartialFieldMetadata,
   PartialComputedFieldMetadata,
@@ -5,7 +7,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
