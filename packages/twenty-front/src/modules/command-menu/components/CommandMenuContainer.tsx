@@ -11,6 +11,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -48,10 +49,15 @@ export const CommandMenuContainer = ({
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
+  const workflowReactFlowRef = useRecoilValue(workflowReactFlowRefState);
+
   useCommandMenuHotKeys();
 
   useListenClickOutside({
-    refs: [commandMenuRef],
+    refs: [
+      commandMenuRef,
+      ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
+    ],
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,

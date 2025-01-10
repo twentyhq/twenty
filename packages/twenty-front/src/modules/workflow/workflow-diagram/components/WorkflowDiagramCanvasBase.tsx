@@ -1,9 +1,7 @@
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
-import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
+import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
@@ -16,21 +14,21 @@ import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrgani
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  applyEdgeChanges,
-  applyNodeChanges,
   Background,
   EdgeChange,
   FitViewOptions,
-  getNodesBounds,
   NodeChange,
   NodeProps,
   ReactFlow,
+  applyEdgeChanges,
+  applyNodeChanges,
+  getNodesBounds,
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined, THEME_COMMON } from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
+import { THEME_COMMON, isDefined } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -100,17 +98,7 @@ export const WorkflowDiagramCanvasBase = ({
     [diagram],
   );
 
-  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
-  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
-  const isMobile = useIsMobile();
-
-  const rightDrawerState = !isRightDrawerOpen
-    ? 'closed'
-    : isRightDrawerMinimized
-      ? 'minimized'
-      : isMobile
-        ? 'fullScreen'
-        : 'normal';
+  const { rightDrawerState } = useRightDrawerState();
 
   const rightDrawerWidth = Number(
     THEME_COMMON.rightDrawerWidth.replace('px', ''),
