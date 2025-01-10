@@ -5,7 +5,6 @@ import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightD
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
-  WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
@@ -27,7 +26,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { THEME_COMMON, isDefined } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
@@ -66,12 +65,10 @@ const defaultFitViewOptions = {
 } satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
-  diagram,
   status,
   nodeTypes,
   children,
 }: {
-  diagram: WorkflowDiagram;
   status: WorkflowVersionStatus;
   nodeTypes: Partial<
     Record<
@@ -93,9 +90,14 @@ export const WorkflowDiagramCanvasBase = ({
     workflowReactFlowRefState,
   );
 
+  const workflowDiagram = useRecoilValue(workflowDiagramState);
+
   const { nodes, edges } = useMemo(
-    () => getOrganizedDiagram(diagram),
-    [diagram],
+    () =>
+      isDefined(workflowDiagram)
+        ? getOrganizedDiagram(workflowDiagram)
+        : { nodes: [], edges: [] },
+    [workflowDiagram],
   );
 
   const { rightDrawerState } = useRightDrawerState();
