@@ -6,8 +6,8 @@ import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks
 import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
@@ -17,13 +17,14 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
+import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 export const StyledInput = styled.input`
   background: transparent;
   border: none;
@@ -59,22 +60,20 @@ export const ObjectFilterDropdownFilterSelect = ({
 }: ObjectFilterDropdownFilterSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const {
-    setObjectFilterDropdownSearchInput,
-    objectFilterDropdownSearchInputState,
-    advancedFilterViewFilterIdState,
-  } = useFilterDropdown();
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
+    objectFilterDropdownSearchInputComponentState,
+  );
 
-  const advancedFilterViewFilterId = useRecoilValue(
-    advancedFilterViewFilterIdState,
+  const advancedFilterViewFilterId = useRecoilComponentValueV2(
+    advancedFilterViewFilterIdComponentState,
+  );
+
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+    objectFilterDropdownSearchInputComponentState,
   );
 
   const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
     advancedFilterViewFilterId,
-  );
-
-  const objectFilterDropdownSearchInput = useRecoilValue(
-    objectFilterDropdownSearchInputState,
   );
 
   const availableFilterDefinitions = useRecoilComponentValueV2(

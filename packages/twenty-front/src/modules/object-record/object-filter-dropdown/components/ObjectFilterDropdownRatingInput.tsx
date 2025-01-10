@@ -1,13 +1,15 @@
-import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
 ): string => {
@@ -31,20 +33,17 @@ export const convertRatingToRatingValue = (rating: number) => {
 };
 
 export const ObjectFilterDropdownRatingInput = () => {
-  const {
-    selectedOperandInDropdownState,
-    filterDefinitionUsedInDropdownState,
-    selectedFilterState,
-  } = useFilterDropdown();
-
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
-  const selectedOperandInDropdown = useRecoilValue(
-    selectedOperandInDropdownState,
+  const selectedOperandInDropdown = useRecoilComponentValueV2(
+    selectedOperandInDropdownComponentState,
   );
 
-  const selectedFilter = useRecoilValue(selectedFilterState);
+  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
+    filterDefinitionUsedInDropdownComponentState,
+  );
+
+  const selectedFilter = useRecoilComponentValueV2(
+    selectedFilterComponentState,
+  );
 
   const { applyRecordFilter } = useApplyRecordFilter();
 

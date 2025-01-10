@@ -24,7 +24,6 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
@@ -231,11 +230,6 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  AUTH_SSO_ENABLED = false;
 
   @IsString()
   @IsOptional()
@@ -459,16 +453,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  @AssertOrWarn(
-    (env, value) =>
-      !env.AUTH_SSO_ENABLED ||
-      (env.AUTH_SSO_ENABLED &&
-        value !== 'replace_me_with_a_random_string_session'),
-    {
-      message:
-        'SESSION_STORE_SECRET should be changed to a secure, random string.',
-    },
-  )
   SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()

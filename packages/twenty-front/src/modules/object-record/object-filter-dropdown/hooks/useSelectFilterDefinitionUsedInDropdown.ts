@@ -1,11 +1,16 @@
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
+import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilValue } from 'recoil';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -14,19 +19,24 @@ type SelectFilterParams = {
 };
 
 export const useSelectFilterDefinitionUsedInDropdown = () => {
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-    advancedFilterViewFilterGroupIdState,
-    advancedFilterViewFilterIdState,
-  } = useFilterDropdown();
-
-  const advancedFilterViewFilterId = useRecoilValue(
-    advancedFilterViewFilterIdState,
+  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
+    filterDefinitionUsedInDropdownComponentState,
   );
-  const advancedFilterViewFilterGroupId = useRecoilValue(
-    advancedFilterViewFilterGroupIdState,
+
+  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
+    objectFilterDropdownSearchInputComponentState,
+  );
+
+  const advancedFilterViewFilterGroupId = useRecoilComponentValueV2(
+    advancedFilterViewFilterGroupIdComponentState,
+  );
+
+  const advancedFilterViewFilterId = useRecoilComponentValueV2(
+    advancedFilterViewFilterIdComponentState,
   );
 
   const setHotkeyScope = useSetHotkeyScope();
