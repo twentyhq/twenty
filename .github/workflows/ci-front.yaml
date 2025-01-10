@@ -123,7 +123,7 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --coverageCheck=false
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
         run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
@@ -171,7 +171,7 @@ jobs:
           npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
       - name: Checking coverage
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:coverage twenty-front
+        run: npx nx storybook:coverage twenty-front --coverageCheck=true
   front-chromatic-deployment:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
