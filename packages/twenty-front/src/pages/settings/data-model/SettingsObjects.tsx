@@ -24,6 +24,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   H2Title,
@@ -45,6 +46,7 @@ const StyledSearchInput = styled(TextInput)`
 `;
 export const SettingsObjects = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -131,12 +133,12 @@ export const SettingsObjects = () => {
   );
   return (
     <SubMenuTopBarContainer
-      title="Data model"
+      title={t('dataModel')}
       actionButton={
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
-            title="Add object"
+            title={t('addObject')}
             accent="blue"
             size="small"
           />
@@ -148,7 +150,7 @@ export const SettingsObjects = () => {
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: 'Objects',
+          children: t('objects'),
         },
       ]}
     >
@@ -156,11 +158,11 @@ export const SettingsObjects = () => {
         <>
           <SettingsObjectCoverImage />
           <Section>
-            <H2Title title="Existing objects" />
+            <H2Title title={t('existingObjects')} />
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder="Search an object..."
+              placeholder={t('searchAnObject')}
               value={searchTerm}
               onChange={setSearchTerm}
             />
@@ -172,7 +174,7 @@ export const SettingsObjects = () => {
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={settingsObjectsTableMetadataField.fieldLabel}
+                      label={t(settingsObjectsTableMetadataField.fieldLabel.toLowerCase())}
                       tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
                       initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}

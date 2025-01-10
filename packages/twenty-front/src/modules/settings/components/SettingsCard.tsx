@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, Pill, Card, CardContent } from 'twenty-ui';
+import { Card, CardContent, IconChevronRight, Pill } from 'twenty-ui';
 
 import { ReactNode } from 'react';
 
@@ -27,6 +27,8 @@ const StyledCard = styled(Card)<{
     background-color: ${({ theme }) => theme.background.quaternary};
     cursor: pointer;
   }
+  background-color: 'tomato';
+  height: 300;
 `;
 
 const StyledCardContent = styled(CardContent)<object>`
@@ -34,6 +36,8 @@ const StyledCardContent = styled(CardContent)<object>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2, 2)};
+  height: 300;
+  background-color: 'green';
 `;
 
 const StyledHeader = styled.div`

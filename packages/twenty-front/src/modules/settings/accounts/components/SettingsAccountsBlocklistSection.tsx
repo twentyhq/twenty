@@ -9,6 +9,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
+import { useTranslation } from 'react-i18next';
 
 export const SettingsAccountsBlocklistSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -26,6 +27,7 @@ export const SettingsAccountsBlocklistSection = () => {
     objectNameSingular: CoreObjectNameSingular.Blocklist,
   });
 
+  const { t } = useTranslation();
   const handleBlockedEmailRemove = (id: string) => {
     deleteBlocklistItem(id);
   };
@@ -40,8 +42,8 @@ export const SettingsAccountsBlocklistSection = () => {
   return (
     <Section>
       <H2Title
-        title="Blocklist"
-        description="Exclude the following people and domains from my email sync"
+        title={t('blocklist')}
+        description={t('blocklistDescription')}
       />
       <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}

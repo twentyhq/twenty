@@ -9,6 +9,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTableBody = styled(TableBody)`
@@ -34,12 +35,13 @@ export const SettingsApiKeysTable = () => {
     objectNameSingular: CoreObjectNameSingular.ApiKey,
     filter: { revokedAt: { is: 'NULL' } },
   });
+  const { t } = useTranslation();
 
   return (
     <Table>
       <StyledTableRow>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Expiration</TableHeader>
+        <TableHeader>{t('name')}</TableHeader>
+        <TableHeader>{t('expiration')}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       {!!apiKeys.length && (

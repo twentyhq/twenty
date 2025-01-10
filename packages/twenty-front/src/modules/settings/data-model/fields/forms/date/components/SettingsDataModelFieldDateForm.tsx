@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
+import { useTranslation } from 'react-i18next';
 import { IconSlash } from 'twenty-ui';
 
 export const settingsDataModelFieldDateFormSchema = z.object({
@@ -34,6 +35,8 @@ export const SettingsDataModelFieldDateForm = ({
       fieldMetadataItem,
     });
 
+  const { t } = useTranslation();
+
   return (
     <Controller
       name="settings.displayAsRelativeDate"
@@ -42,7 +45,7 @@ export const SettingsDataModelFieldDateForm = ({
       render={({ field: { onChange, value } }) => (
         <SettingsOptionCardContentToggle
           Icon={IconSlash}
-          title="Display as relative date"
+          title={t('displayRelativeDate')}
           checked={value ?? false}
           disabled={disabled}
           onChange={onChange}

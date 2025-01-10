@@ -169,7 +169,7 @@ export const ImageInput = ({
             Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
-            title="Remove"
+            title={t('remove')}
             disabled={!pictureURI || disabled}
           />
         </StyledButtonContainer>

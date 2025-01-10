@@ -21,6 +21,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
+import { useTranslation } from 'react-i18next';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
@@ -98,6 +99,8 @@ export const IconPicker = ({
   } = usePreviousHotkeyScope();
 
   const { closeDropdown } = useDropdown(dropdownId);
+
+  const { t } = useTranslation();
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
@@ -182,7 +185,7 @@ export const IconPicker = ({
           >
             <DropdownMenu width={176}>
               <DropdownMenuSearchInput
-                placeholder="Search icon"
+                placeholder={t('searchIcon')}
                 autoFocus
                 onChange={(event) => {
                   setSearchString(event.target.value);

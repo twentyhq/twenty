@@ -7,6 +7,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 import { IconCurrencyDollar } from 'twenty-ui';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
@@ -41,6 +42,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
   const { initialAmountMicrosValue, initialCurrencyCodeValue } =
     useCurrencySettingsFormInitialValues({ fieldMetadataItem });
 
+  const { t } = useTranslation();
+
   return (
     <>
       <Controller
@@ -56,8 +59,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => (
           <SettingsOptionCardContentSelect
             Icon={IconCurrencyDollar}
-            title="Default Value"
-            description="Choose the default currency that will apply"
+            title={t('defaultValue')}
+            description={t('defaultValueDescription')}
           >
             <Select<string>
               dropdownWidth={220}

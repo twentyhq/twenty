@@ -5,31 +5,41 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { useTranslation } from 'react-i18next';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 
 export const SettingsAppearance = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
 
+  const { t } = useTranslation();
+
   return (
     <SubMenuTopBarContainer
-      title="Experience"
+      title={t('experience')}
       links={[
         {
-          children: 'User',
+          children: t('user'),
           href: getSettingsPagePath(SettingsPath.ProfilePage),
         },
-        { children: 'Experience' },
+        { children: t('experience') },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Appearance" />
-          <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
+          <H2Title title={t('appearance')} />
+          <ColorSchemePicker 
+            value={colorScheme} 
+            onChange={setColorScheme} 
+            labelsColorSchemePickerProps={{
+              dark: t('dark'),
+              light: t('light'),
+              systemSettings: t('systemSettings')
+            }} />
         </Section>
         <Section>
           <H2Title
-            title="Date and time"
-            description="Configure how dates are displayed across the app"
+            title={t('dateTime')}
+            description={t('dateTimeDescription')}
           />
           <DateTimeSettings />
         </Section>

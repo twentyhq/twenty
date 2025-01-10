@@ -52,8 +52,8 @@ export const SettingsWorkspaceMembers = () => {
         </StyledAddNewMemberButtonContainer>
         <Section>
           <H2Title
-            title="Manage Members"
-            description="Manage the members of your space here"
+            title={t('manageMembers')}
+            description={t('membersDescription')}
           />
           <ShowMemberTabs />
         </Section>

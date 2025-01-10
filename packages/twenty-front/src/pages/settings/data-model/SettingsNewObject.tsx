@@ -18,6 +18,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
@@ -26,6 +27,8 @@ type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+
+  const { t } = useTranslation();
 
   const { createOneObjectMetadataItem, findManyRecordsCache } =
     useCreateOneObjectMetadataItem();
@@ -68,17 +71,17 @@ export const SettingsNewObject = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
-        title="New Object"
+        title={t('newObject')}
         links={[
           {
             children: 'Workspace',
             href: getSettingsPagePath(SettingsPath.Workspace),
           },
           {
-            children: 'Objects',
+            children: t('objects'),
             href: settingsObjectsPagePath,
           },
-          { children: 'New' },
+          { children: t('new') },
         ]}
         actionButton={
           <SaveAndCancelButtons
@@ -92,8 +95,8 @@ export const SettingsNewObject = () => {
         <SettingsPageContainer>
           <Section>
             <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              title={t('about')}
+              description={t('nameSingularPluralDescription')}
             />
             <SettingsDataModelObjectAboutForm />
           </Section>

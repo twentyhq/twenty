@@ -15,6 +15,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
@@ -35,6 +36,8 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
+
+  const { t } = useTranslation();
 
   const handleSave = async () => {
     const expiresAt = DateTime.now()
@@ -71,10 +74,10 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: 'Developers',
+          children: t('developers'),
           href: getSettingsPagePath(SettingsPath.Developers),
         },
-        { children: 'New Key' },
+        { children: t('newKey') },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -88,9 +91,9 @@ export const SettingsDevelopersApiKeysNew = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Name" description="Name of your API key" />
+          <H2Title title={t('name')} description={t('apiKeyNameDescription')} />
           <TextInput
-            placeholder="E.g. backoffice integration"
+            placeholder={t('egBackoffice')}
             value={formValues.name}
             onKeyDown={(e) => {
               if (e.key === Key.Enter) {
@@ -108,8 +111,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         </Section>
         <Section>
           <H2Title
-            title="Expiration Date"
-            description="When the API key will expire."
+            title={t('expirationDate')}
+            description={t('expirationDateDescription')}
           />
           <Select
             dropdownId="object-field-type-select"

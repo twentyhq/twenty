@@ -1,12 +1,14 @@
+import { useRecoilValue } from 'recoil';
 import {
   GithubVersionLink,
   H2Title,
-  Section,
   IconWorld,
+  Section,
   UndecoratedLink,
 } from 'twenty-ui';
-import { useRecoilValue } from 'recoil';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -15,48 +17,48 @@ import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImperso
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import packageJson from '../../../package.json';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { t } = useTranslation();
   return (
     <SubMenuTopBarContainer
-      title="General"
+      title={t("general")}
       links={[
         {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'General' },
+        { children: t('general') },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Picture" />
+          <H2Title title={t('picture')} />
           <WorkspaceLogoUploader />
         </Section>
         <Section>
-          <H2Title title="Name" description="Name of your workspace" />
+          <H2Title title={t('name')} description={t('nameProfileDescription')} />
           <NameField />
         </Section>
         {isMultiWorkspaceEnabled && (
           <>
             <Section>
               <H2Title
-                title="Domain"
-                description="Edit your subdomain name or set a custom domain."
+                title={t('domain')}
+                description={t('subdomainSettingsWorkspaceDescription')}
               />
               <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
-                <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
+                <SettingsCard title={t('customizeDomain')} Icon={<IconWorld />} />
               </UndecoratedLink>
             </Section>
             <Section>
               <H2Title
-                title="Support"
+                title={t('support')}
                 adornment={<ToggleImpersonate />}
-                description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+                description={t('supportDescription')}
               />
             </Section>
           </>

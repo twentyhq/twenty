@@ -11,6 +11,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
@@ -27,6 +28,8 @@ export const SettingsDevelopersWebhooksNew = () => {
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
+
+  const { t } = useTranslation();
 
   const handleValidate = async (value: string) => {
     const trimmedUrl = value.trim();
@@ -88,13 +91,13 @@ export const SettingsDevelopersWebhooksNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Endpoint URL"
-            description="We will send POST requests to this endpoint for every new event"
+            title={t('endpointUrl')}
+            description={t('endpointDescription')}
           />
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
-            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
+            error={!isTargetUrlValid ? t('pleaseEnterValidUrl') : undefined}
             onKeyDown={handleKeyDown}
             onChange={handleChange}
             fullWidth

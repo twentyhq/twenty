@@ -16,6 +16,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTranslation } from 'react-i18next';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
@@ -124,6 +125,8 @@ export const SettingsDataModelFieldRelationForm = ({
 
   const isMobile = useIsMobile();
 
+  const { t } = useTranslation();
+
   return (
     <StyledContainer>
       <StyledSelectsContainer isMobile={isMobile}>
@@ -133,7 +136,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationType}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Relation type"
+              label={t('relationType')}
               dropdownId="relation-type-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -149,7 +152,7 @@ export const SettingsDataModelFieldRelationForm = ({
           defaultValue={initialRelationObjectMetadataItem.id}
           render={({ field: { onChange, value } }) => (
             <Select
-              label="Object destination"
+              label={t('objectDestination')}
               dropdownId="object-destination-select"
               fullWidth
               disabled={disableRelationEdition}
@@ -167,7 +170,7 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on{' '}
+        {t('fieldOn')}{' '}
         {selectedRelationType === RelationDefinitionType.ManyToOne
           ? selectedObjectMetadataItem?.labelSingular
           : selectedObjectMetadataItem?.labelPlural}
@@ -194,7 +197,7 @@ export const SettingsDataModelFieldRelationForm = ({
           render={({ field: { onChange, value } }) => (
             <TextInput
               disabled={disableFieldEdition}
-              placeholder="Field name"
+              placeholder={t('fieldName')}
               value={value}
               onChange={onChange}
               fullWidth

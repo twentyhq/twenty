@@ -15,9 +15,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 
 export const SettingsAccounts = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { t } = useTranslation();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -35,13 +38,13 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="Account"
+      title={t('account')}
       links={[
         {
-          children: 'User',
+          children: t('user'),
           href: getSettingsPagePath(SettingsPath.ProfilePage),
         },
-        { children: 'Account' },
+        { children: t('account') },
       ]}
     >
       <SettingsPageContainer>
@@ -51,8 +54,8 @@ export const SettingsAccounts = () => {
           <>
             <Section>
               <H2Title
-                title="Connected accounts"
-                description="Manage your internet accounts."
+                title={t('accountTitle')}
+                description={t('accountDescription')}
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={accounts}

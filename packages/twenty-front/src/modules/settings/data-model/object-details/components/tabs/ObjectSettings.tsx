@@ -27,6 +27,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import styled from '@emotion/styled';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
+import { useTranslation } from 'react-i18next';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
@@ -63,6 +64,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
+
+  const { t } = useTranslation();
 
   const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
@@ -182,8 +185,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         <StyledContentContainer>
           <StyledFormSection>
             <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              title={t('about')}
+              description={t('nameSingularPluralDescription')}
             />
             <SettingsDataModelObjectAboutForm
               disableEdition={!objectMetadataItem.isCustom}
@@ -196,8 +199,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           <StyledFormSection>
             <Section>
               <H2Title
-                title="Options"
-                description="Choose the fields that will identify your records"
+                title={t('options')}
+                description={t('dataModelSettingsDescription')}
               />
               <SettingsDataModelObjectSettingsFormCard
                 objectMetadataItem={objectMetadataItem}
@@ -206,10 +209,10 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           </StyledFormSection>
           <StyledFormSection>
             <Section>
-              <H2Title title="Danger zone" description="Deactivate object" />
+              <H2Title title={t('dangerZone')} description={t('deactivateObject')} />
               <Button
                 Icon={IconArchive}
-                title="Deactivate"
+                title={t('deactivate')}
                 size="small"
                 onClick={handleDisable}
               />

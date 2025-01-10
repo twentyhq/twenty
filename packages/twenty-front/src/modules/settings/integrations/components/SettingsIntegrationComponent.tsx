@@ -12,6 +12,7 @@ import {
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
 import { isDefined } from '~/utils/isDefined';
 
 interface SettingsIntegrationComponentProps {
@@ -65,6 +66,7 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
+  const { t } = useTranslation();
   return (
     <StyledContainer
       to={integration.type === 'Active' ? integration.link : undefined}
@@ -83,14 +85,14 @@ export const SettingsIntegrationComponent = ({
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
-        <StyledSoonPill label="Soon" />
+        <StyledSoonPill label={t('soon')} />
       ) : integration.type === 'Active' ? (
-        <Status color="green" text="Active" />
+        <Status color="green" text={t('active')} />
       ) : integration.type === 'Add' ? (
         <Button
           to={integration.link}
           Icon={IconPlus}
-          title="Add"
+          title={t('add')}
           size="small"
         />
       ) : integration.type === 'Use' ? (
@@ -98,7 +100,7 @@ export const SettingsIntegrationComponent = ({
           to={integration.link}
           target="_blank"
           Icon={IconBolt}
-          title="Use"
+          title={t('use')}
           size="small"
         />
       ) : (

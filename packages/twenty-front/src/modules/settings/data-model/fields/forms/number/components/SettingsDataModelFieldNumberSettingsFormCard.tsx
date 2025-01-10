@@ -8,6 +8,7 @@ import {
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
@@ -28,6 +29,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
   objectMetadataItem,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
   const { watch } = useFormContext();
+  const { t } = useTranslation();
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -35,7 +37,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={{
             icon: watch('icon'),
-            label: watch('label') || 'New Field',
+            label: watch('label') || t('newField'),
             settings: watch('settings') || null,
             type: fieldMetadataItem.type,
           }}

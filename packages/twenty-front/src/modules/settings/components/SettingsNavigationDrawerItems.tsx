@@ -147,7 +147,7 @@ export const SettingsNavigationDrawerItems = () => {
         />
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
-            label={t('accounts')}
+            label={t('account')}
             path={SettingsPath.Accounts}
             Icon={IconAt}
             matchSubPages={false}
@@ -155,7 +155,7 @@ export const SettingsNavigationDrawerItems = () => {
           {accountSubSettings.map((navigationItem, index) => (
             <SettingsNavigationDrawerItem
               key={index}
-              label={navigationItem.label}
+              label={t(navigationItem.label.toLowerCase())}
               path={navigationItem.path}
               Icon={navigationItem.Icon}
               indentationLevel={navigationItem.indentationLevel}

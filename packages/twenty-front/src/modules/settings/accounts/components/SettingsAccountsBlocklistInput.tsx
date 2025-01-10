@@ -6,6 +6,7 @@ import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'twenty-ui';
 import { isDomain } from '~/utils/is-domain';
 
@@ -62,6 +63,8 @@ export const SettingsAccountsBlocklistInput = ({
     },
   });
 
+  const { t } = useTranslation();
+
   const submit = handleSubmit((data) => {
     updateBlockedEmailList(data.emailOrDomain);
   });
@@ -99,7 +102,7 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title="Add to blocklist" type="submit" />
+        <Button title={t('blocklistAddButton')} type="submit" />
       </StyledContainer>
     </form>
   );

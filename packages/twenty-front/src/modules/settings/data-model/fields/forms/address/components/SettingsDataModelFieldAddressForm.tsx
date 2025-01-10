@@ -5,6 +5,7 @@ import { addressSchema as addressFieldDefaultValueSchema } from '@/object-record
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
@@ -47,6 +48,8 @@ export const SettingsDataModelFieldAddressForm = ({
       })),
   ];
 
+  const { t } = useTranslation();
+
   const defaultDefaultValue = {
     addressStreet1: "''",
     addressStreet2: null,
@@ -71,8 +74,8 @@ export const SettingsDataModelFieldAddressForm = ({
         return (
           <SettingsOptionCardContentSelect
             Icon={IconMap}
-            title="Default Country"
-            description="The default country for new addresses"
+            title={t('defaultCountry')}
+            description={t('defaultCountryDescription')}
           >
             <Select<string>
               dropdownWidth={220}

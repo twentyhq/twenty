@@ -7,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 
 const StyledButtonContainer = styled.div`
@@ -27,30 +28,31 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   return (
     <SubMenuTopBarContainer
-      title="Developers"
+      title={t('developers')}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Developers' },
+        { children: t('developers')},
       ]}
     >
       <SettingsPageContainer>
         <StyledContainer isMobile={isMobile}>
           <Section>
             <H2Title
-              title="API keys"
-              description="Active APIs keys created by you or your team."
+              title={t('apiKeys')}
+              description={t('apiKeysDescription')}
             />
             <SettingsApiKeysTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title="Create API key"
+                title={t('createApiKey')}
                 size="small"
                 variant="secondary"
                 to={'/settings/developers/api-keys/new'}
@@ -59,14 +61,14 @@ export const SettingsDevelopers = () => {
           </Section>
           <Section>
             <H2Title
-              title="Webhooks"
-              description="Establish Webhook endpoints for notifications on asynchronous events."
+              title={t('webhooks')}
+              description={t('webhookDescription')}
             />
             <SettingsWebhooksTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title="Create Webhook"
+                title={t('createWebhook')}
                 size="small"
                 variant="secondary"
                 to={'/settings/developers/webhooks/new'}

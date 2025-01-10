@@ -5,6 +5,7 @@ import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdent
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Card,
@@ -27,7 +28,7 @@ export const SettingsSecurityOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValue(authProvidersState);
-
+  const { t } = useTranslation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -129,7 +130,7 @@ export const SettingsSecurityOptionsList = () => {
               <SettingsOptionCardContentToggle
                 Icon={IconGoogle}
                 title="Google"
-                description="Allow logins through Google's single sign-on functionality."
+                description={t('securityGoogleLogin')}
                 checked={currentWorkspace.isGoogleAuthEnabled}
                 advancedMode
                 divider
@@ -140,7 +141,7 @@ export const SettingsSecurityOptionsList = () => {
               <SettingsOptionCardContentToggle
                 Icon={IconMicrosoft}
                 title="Microsoft"
-                description="Allow logins through Microsoft's single sign-on functionality."
+                description={t('securityMicrosoftLogin')}
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
                 advancedMode
                 divider
@@ -151,7 +152,7 @@ export const SettingsSecurityOptionsList = () => {
               <SettingsOptionCardContentToggle
                 Icon={IconPassword}
                 title="Password"
-                description="Allow users to sign in with an email and password."
+                description={t('securityEmailPasswordLogin')}
                 checked={currentWorkspace.isPasswordAuthEnabled}
                 advancedMode
                 onChange={() => toggleAuthMethod('password')}
@@ -162,7 +163,7 @@ export const SettingsSecurityOptionsList = () => {
             <SettingsOptionCardContentToggle
               Icon={IconLink}
               title="Invite by Link"
-              description="Allow the invitation of new users by sharing an invite link."
+              description={t('securityInvitationLink')}
               checked={currentWorkspace.isPublicInviteLinkEnabled}
               advancedMode
               onChange={() =>

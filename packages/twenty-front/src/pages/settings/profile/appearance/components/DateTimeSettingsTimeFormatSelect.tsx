@@ -4,6 +4,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 
 type DateTimeSettingsTimeFormatSelectProps = {
   value: TimeFormat;
@@ -22,17 +23,19 @@ export const DateTimeSettingsTimeFormatSelect = ({
 
   const systemTimeFormat = TimeFormat[detectTimeFormat()];
 
+  const { t } = useTranslation();
+
   return (
     <Select
       dropdownId="datetime-settings-time-format"
       dropdownWidth={218}
-      label="Time format"
+      label={t('timeFormat')}
       dropdownWidthAuto
       fullWidth
       value={value}
       options={[
         {
-          label: `System Settings - ${formatInTimeZone(
+          label: `${t('systemSettings')} - ${formatInTimeZone(
             Date.now(),
             usedTimeZone,
             systemTimeFormat,

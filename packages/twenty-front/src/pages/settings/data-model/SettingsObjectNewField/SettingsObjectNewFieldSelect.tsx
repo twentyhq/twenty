@@ -10,6 +10,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 import { z } from 'zod';
@@ -30,6 +31,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
@@ -63,10 +65,10 @@ export const SettingsObjectNewFieldSelect = () => {
         {...formMethods}
       >
         <SubMenuTopBarContainer
-          title="1. Select a field type"
+          title={`1. ${t('selectFieldType')}`}
           links={[
             { children: 'Workspace', href: '/settings/workspace' },
-            { children: 'Objects', href: '/settings/objects' },
+            { children: t('objects'), href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
               href: `/settings/objects/${objectSlug}`,

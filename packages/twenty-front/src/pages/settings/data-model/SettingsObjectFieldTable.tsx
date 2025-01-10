@@ -14,6 +14,7 @@ import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -106,6 +107,8 @@ export const SettingsObjectFieldTable = ({
     }),
   );
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     setSettingsObjectFields(objectMetadataItem.fields);
   }, [objectMetadataItem, setSettingsObjectFields]);
@@ -176,7 +179,7 @@ export const SettingsObjectFieldTable = ({
     <>
       <StyledSearchInput
         LeftIcon={IconSearch}
-        placeholder="Search a field..."
+        placeholder={t('searchField')}
         value={searchTerm}
         onChange={setSearchTerm}
       />
@@ -186,7 +189,7 @@ export const SettingsObjectFieldTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={item.fieldLabel}
+              label={t(item.fieldLabel.toLowerCase().replace(" ", ""))}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}
             />
@@ -194,7 +197,7 @@ export const SettingsObjectFieldTable = ({
           <TableHeader></TableHeader>
         </StyledObjectFieldTableRow>
         {isNonEmptyArray(filteredActiveItems) && (
-          <TableSection title="Active">
+          <TableSection title={t('active')}>
             {filteredActiveItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
                 key={objectSettingsDetailItem.fieldMetadataItem.id}
@@ -208,7 +211,7 @@ export const SettingsObjectFieldTable = ({
         {isNonEmptyArray(filteredDisabledItems) && (
           <TableSection
             isInitiallyExpanded={mode === 'new-field' ? true : false}
-            title="Inactive"
+            title={t('inactive')}
           >
             {filteredDisabledItems.map((objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow

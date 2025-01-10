@@ -11,6 +11,7 @@ import {
   SettingsDataModelObjectIdentifiersForm,
   SettingsDataModelObjectIdentifiersFormValues,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
@@ -40,6 +41,8 @@ export const SettingsDataModelObjectSettingsFormCard = ({
 }: SettingsDataModelObjectSettingsFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
+  
+  const { t } = useTranslation();
 
   const labelIdentifierFieldMetadataIdFormValue = watchFormValue(
     'labelIdentifierFieldMetadataId',
@@ -57,7 +60,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   return (
     <Card fullWidth>
       <StyledTopCardContent divider>
-        <SettingsDataModelCardTitle>Preview</SettingsDataModelCardTitle>
+        <SettingsDataModelCardTitle>{t('preview')}</SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
             objectMetadataItem={objectMetadataItem}

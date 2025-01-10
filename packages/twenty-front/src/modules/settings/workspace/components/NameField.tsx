@@ -6,6 +6,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import isEmpty from 'lodash.isempty';
+import { useTranslation } from 'react-i18next';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -34,6 +35,8 @@ export const NameField = ({
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',
   );
+
+  const { t } = useTranslation();
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -86,7 +89,7 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="Name"
+        label={t('name')}
         value={displayName}
         onChange={setDisplayName}
         placeholder="Apple"

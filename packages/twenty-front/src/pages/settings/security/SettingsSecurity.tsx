@@ -10,6 +10,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -32,17 +33,17 @@ export const SettingsSecurity = () => {
   const isSSOEnabled = useRecoilValue(isSSOEnabledState);
   const isSSOSectionDisplay =
     useIsFeatureEnabled(FeatureFlagKey.IsSsoEnabled) && isSSOEnabled;
-
+  const { t } = useTranslation();
   return (
     <SubMenuTopBarContainer
-      title="Security"
+      title={t('security')}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Security' },
+        { children: t('security') },
       ]}
     >
       <SettingsPageContainer>
@@ -51,7 +52,7 @@ export const SettingsSecurity = () => {
             <StyledSSOSection>
               <H2Title
                 title="SSO"
-                description="Configure an SSO connection"
+                description={t('configureSSOConnection')}
                 adornment={
                   <Tag
                     text={'Enterprise'}
@@ -67,8 +68,8 @@ export const SettingsSecurity = () => {
           <Section>
             <StyledContainer>
               <H2Title
-                title="Authentication"
-                description="Customize your workspace security"
+                title={t('authentication')}
+                description={t('customizeWorkspaceSecurity')}
               />
               <SettingsSecurityOptionsList />
             </StyledContainer>

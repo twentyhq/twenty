@@ -12,6 +12,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -25,11 +26,12 @@ const StyledCardsContainer = styled.div`
 
 export const SettingsAccountsSettingsSection = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <Section>
       <H2Title
-        title="Settings"
-        description="Configure your emails and calendar settings."
+        title={t('settings')}
+        description={t('accountSettingsDescription')}
       />
       <StyledCardsContainer>
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
@@ -40,8 +42,8 @@ export const SettingsAccountsSettingsSection = () => {
                 stroke={theme.icon.stroke.sm}
               />
             }
-            title="Emails"
-            description="Set email visibility, manage your blocklist and more."
+            title={t('emails')}
+            description={t('emailsDescription')}
           />
         </UndecoratedLink>
         <UndecoratedLink
@@ -54,8 +56,8 @@ export const SettingsAccountsSettingsSection = () => {
                 stroke={theme.icon.stroke.sm}
               />
             }
-            title="Calendar"
-            description="Configure and customize your calendar preferences."
+            title={t('calendar')}
+            description={t('calendarDescription')}
           />
         </UndecoratedLink>
       </StyledCardsContainer>

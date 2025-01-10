@@ -5,11 +5,13 @@ import { Button, H2Title, IconTrash } from 'twenty-ui';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useTranslation } from 'react-i18next';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
     useState(false);
 
+  const { t } = useTranslation();
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
@@ -23,11 +25,11 @@ export const DeleteWorkspace = () => {
 
   return (
     <>
-      <H2Title title="Danger zone" description="Delete your whole workspace" />
+      <H2Title title={t('dangerZone')} description={t('dangerZoneDescription')} />
       <Button
         accent="danger"
         variant="secondary"
-        title="Delete workspace"
+        title={t('deleteWorkspace')}
         Icon={IconTrash}
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
       />
@@ -37,15 +39,14 @@ export const DeleteWorkspace = () => {
         confirmationValue={userEmail}
         isOpen={isDeleteWorkSpaceModalOpen}
         setIsOpen={setIsDeleteWorkSpaceModalOpen}
-        title="Workspace Deletion"
+        title={t('deleteWorkspaceTitle')}
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire workspace. <br /> Please type in your email to confirm.
+            {t('deleteWorkspaceWarning')} <br /> {t('confirmEmail')}.
           </>
         }
         onConfirmClick={deleteWorkspace}
-        deleteButtonText="Delete workspace"
+        deleteButtonText={t('deleteWorkspace')}
       />
     </>
   );

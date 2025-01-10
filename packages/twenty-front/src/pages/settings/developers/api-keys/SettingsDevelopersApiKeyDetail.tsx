@@ -24,6 +24,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useTranslation } from 'react-i18next';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
@@ -68,6 +69,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       setApiKeyName(record.name);
     },
   });
+  const { t } = useTranslation();
   const developerPath = getSettingsPagePath(SettingsPath.Developers);
 
   const deleteIntegration = async (redirect = true) => {
@@ -149,7 +151,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               children: 'Workspace',
               href: getSettingsPagePath(SettingsPath.Workspace),
             },
-            { children: 'Developers', href: developerPath },
+            { children: t('Developers'), href: developerPath },
             { children: `${apiKeyName} API Key` },
           ]}
         >
@@ -158,8 +160,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               {apiKeyToken ? (
                 <>
                   <H2Title
-                    title="API Key"
-                    description="Copy this key as it will only be visible this one time"
+                    title={t('apiKey')}
+                    description={t('apiKeyDescription')}
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
                   <StyledInfo>
@@ -169,12 +171,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
               ) : (
                 <>
                   <H2Title
-                    title="API Key"
-                    description="Regenerate an API key"
+                    title={t('apiKey')}
+                    description={t('regenerateApiKey')}
                   />
                   <StyledInputContainer>
                     <Button
-                      title="Regenerate Key"
+                      title={t('regenerateKey')}
                       Icon={IconRepeat}
                       onClick={() => setIsRegenerateKeyModalOpen(true)}
                     />
@@ -190,7 +192,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               )}
             </Section>
             <Section>
-              <H2Title title="Name" description="Name of your API key" />
+              <H2Title title={t('name')} description={t('apiKeyNameDescription')} />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKeyData?.id}
@@ -200,11 +202,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Expiration"
-                description="When the key will be disabled"
+                title={t('expiration')}
+                description={t('disableKeyDescription')}
               />
               <TextInput
-                placeholder="E.g. backoffice integration"
+                placeholder={t('egBackoffice')}
                 value={formatExpiration(
                   apiKeyData?.expiresAt || '',
                   true,
@@ -216,13 +218,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Danger zone"
-                description="Delete this integration"
+                title={t('dangerZone')}
+                description={t('deleteIntegration')}
               />
               <Button
                 accent="danger"
                 variant="secondary"
-                title="Delete"
+                title={t('delete')}
                 Icon={IconTrash}
                 onClick={() => setIsDeleteApiKeyModalOpen(true)}
               />

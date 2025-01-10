@@ -1,7 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
-import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
@@ -14,6 +13,7 @@ import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { H2Title, IconSearch, UndecoratedLink } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
@@ -61,6 +61,7 @@ export const SettingsObjectNewFieldSelector = ({
   objectSlug,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,13 +99,19 @@ export const SettingsObjectNewFieldSelector = ({
     }
   };
 
+  const categoryTranslationMap = {
+    Basic: "basicTypeDescription",
+    Advanced: "advancedTypeDescription",
+    Relation: "relationTypeDescription"
+  };
+  
   return (
     <>
       {' '}
       <Section>
         <StyledSearchInput
           LeftIcon={IconSearch}
-          placeholder="Search a type"
+          placeholder={t('searchType')}
           value={searchQuery}
           onChange={setSearchQuery}
         />
@@ -117,9 +124,9 @@ export const SettingsObjectNewFieldSelector = ({
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section key={category}>
                 <H2Title
-                  title={category}
+                  title={t(category.toLowerCase())}
                   description={
-                    SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
+                    t(categoryTranslationMap[category])
                   }
                 />
                 <StyledContainer>

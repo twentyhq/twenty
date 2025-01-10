@@ -1,9 +1,10 @@
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import i18n from '~/utils/i18n/index';
 
 export const SETTINGS_INTEGRATION_WINDMILL_CATEGORY: SettingsIntegrationCategory =
   {
     key: 'windmill',
-    title: 'With Windmill',
+    title: i18n.t('withWindmill'),
     hyperlink: null,
     integrations: [
       {
@@ -13,9 +14,9 @@ export const SETTINGS_INTEGRATION_WINDMILL_CATEGORY: SettingsIntegrationCategory
         },
         to: null,
         type: 'Goto',
-        text: 'Create a workflow with Windmill',
+        text: i18n.t('windmillText'),
         link: 'https://www.windmill.dev',
-        linkText: 'Go to Windmill',
+        linkText: i18n.t('goToWindmill'),
       },
     ],
   };

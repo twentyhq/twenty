@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 import { IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -31,6 +32,8 @@ export const SettingsDataModelFieldTextForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldTextFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
+  const { t } = useTranslation();
+
   return (
     <Controller
       name="settings"
@@ -45,8 +48,8 @@ export const SettingsDataModelFieldTextForm = ({
           <>
             <SettingsOptionCardContentSelect
               Icon={IconTextWrap}
-              title="Wrap on record pages"
-              description="Display text on multiple lines"
+              title={t('wrapOnRecordPages')}
+              description={t('displayTextMultipleLines')}
             >
               <Select<number>
                 dropdownId="text-wrap"
@@ -55,23 +58,23 @@ export const SettingsDataModelFieldTextForm = ({
                 disabled={disabled}
                 options={[
                   {
-                    label: 'Deactivated',
+                    label: t('deactivated'),
                     value: 0,
                   },
                   {
-                    label: 'First 2 lines',
+                    label: `${t('first')} 2 ${t('lines')}`,
                     value: 2,
                   },
                   {
-                    label: 'First 5 lines',
+                    label: `${t('first')} 5 ${t('lines')}`,
                     value: 5,
                   },
                   {
-                    label: 'First 10 lines',
+                    label: `${t('first')} 10 ${t('lines')}`,
                     value: 10,
                   },
                   {
-                    label: 'All lines',
+                    label: `${t('allLines')} ${t('lines')}`,
                     value: 99,
                   },
                 ]}

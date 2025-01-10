@@ -19,10 +19,10 @@ export const SettingsProfile = () => {
     title={t('profile')}
     links={[
       {
-        children: 'User',
+        children: t('user'),
         href: getSettingsPagePath(SettingsPath.ProfilePage),
       },
-      { children: 'Profile' },
+      { children: t('profile') },
     ]}
   >
     <SettingsPageContainer>

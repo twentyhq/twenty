@@ -6,6 +6,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
+import { useTranslation } from 'react-i18next';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -28,6 +29,8 @@ export const SettingsDataModelFieldBooleanForm = ({
     fieldMetadataItem,
   });
 
+  const { t } = useTranslation();
+
   return (
     <Controller
       name="defaultValue"
@@ -36,8 +39,8 @@ export const SettingsDataModelFieldBooleanForm = ({
       render={({ field: { onChange, value } }) => (
         <SettingsOptionCardContentSelect
           Icon={IconCheck}
-          title="Default Value"
-          description="Select the default value for this boolean field"
+          title={t('defaultValue')}
+          description={t('defaultValueBooleanField')}
         >
           <Select<boolean>
             value={value}

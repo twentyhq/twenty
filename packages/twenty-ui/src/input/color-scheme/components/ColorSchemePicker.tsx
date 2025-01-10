@@ -27,16 +27,24 @@ const StyledLabel = styled.span`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+type LabelsColorSchemePickerProps = {
+  light: string;
+  dark: string;
+  systemSettings: string;
+}
+
 export type ColorSchemePickerProps = {
   value: ColorScheme;
   className?: string;
   onChange: (value: ColorScheme) => void;
+  labelsColorSchemePickerProps?: LabelsColorSchemePickerProps
 };
 
 export const ColorSchemePicker = ({
   value,
   onChange,
   className,
+  labelsColorSchemePickerProps
 }: ColorSchemePickerProps) => (
   <StyledContainer className={className}>
     <StyledCardContainer>
@@ -45,7 +53,7 @@ export const ColorSchemePicker = ({
         variant="Light"
         selected={value === 'Light'}
       />
-      <StyledLabel>Light</StyledLabel>
+      <StyledLabel>{labelsColorSchemePickerProps?.light ?? "Light"}</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -53,7 +61,7 @@ export const ColorSchemePicker = ({
         variant="Dark"
         selected={value === 'Dark'}
       />
-      <StyledLabel>Dark</StyledLabel>
+      <StyledLabel>{labelsColorSchemePickerProps?.dark ?? "Dark"}</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
@@ -61,7 +69,7 @@ export const ColorSchemePicker = ({
         variant="System"
         selected={value === 'System'}
       />
-      <StyledLabel>System settings</StyledLabel>
+      <StyledLabel>{labelsColorSchemePickerProps?.systemSettings ?? "System settings"}</StyledLabel>
     </StyledCardContainer>
   </StyledContainer>
 );

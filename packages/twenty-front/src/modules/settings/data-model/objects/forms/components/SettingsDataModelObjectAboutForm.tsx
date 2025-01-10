@@ -10,6 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import {
   AppTooltip,
   Card,
@@ -98,6 +99,7 @@ export const SettingsDataModelObjectAboutForm = ({
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const isLabelSyncedWithName =
     watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
@@ -169,7 +171,7 @@ export const SettingsDataModelObjectAboutForm = ({
           render={({ field: { onChange, value } }) => (
             <TextInput
               label={'Singular'}
-              placeholder={'Listing'}
+              placeholder={t('listing')}
               value={value}
               onChange={(value) => {
                 onChange(value);
@@ -193,7 +195,7 @@ export const SettingsDataModelObjectAboutForm = ({
           render={({ field: { onChange, value } }) => (
             <TextInput
               label={'Plural'}
-              placeholder={'Listings'}
+              placeholder={t('listings')}
               value={value}
               onChange={(value) => {
                 onChange(value);
@@ -214,7 +216,7 @@ export const SettingsDataModelObjectAboutForm = ({
         defaultValue={objectMetadataItem?.description ?? null}
         render={({ field: { onChange, value } }) => (
           <TextArea
-            placeholder="Write a description"
+            placeholder={t('writeDescription')}
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
