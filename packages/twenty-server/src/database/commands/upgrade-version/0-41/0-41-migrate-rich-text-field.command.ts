@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
@@ -26,6 +27,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { isDefined } from 'src/utils/is-defined';
@@ -42,6 +44,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -78,13 +81,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           },
         });
 
-        this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
-
         if (!richTextFields.length) {
           this.logger.log('No RICH_TEXT fields found in this workspace');
           workspaceIterator++;
           continue;
         }
+
+        this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
 
         for (const richTextField of richTextFields) {
           const objectMetadata = await this.objectMetadataRepository.findOne({
@@ -97,29 +100,6 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             );
             continue;
           }
-
-          const deprecatedRichTextField: Partial<FieldMetadataEntity> = {
-            ...richTextField,
-            type: FieldMetadataType.RICH_TEXT_DEPRECATED,
-          };
-
-          const newRichTextField: Partial<FieldMetadataEntity> = {
-            ...richTextField,
-            id: undefined,
-            type: FieldMetadataType.RICH_TEXT,
-            defaultValue: null,
-          };
-
-          if (!deprecatedRichTextField.id) {
-            throw new Error('Missing deprecated rich textfield id');
-          }
-
-          await this.fieldMetadataRepository.update(
-            deprecatedRichTextField.id,
-            deprecatedRichTextField,
-          );
-
-          await this.fieldMetadataRepository.create(newRichTextField);
 
           await this.workspaceMigrationService.createCustomMigration(
             generateMigrationName(
@@ -166,6 +146,46 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
         );
+
+        const serverBlockNoteEditor = ServerBlockNoteEditor.create();
+
+        for (const richTextField of richTextFields) {
+          const objectMetadata = await this.objectMetadataRepository.findOne({
+            where: { id: richTextField.objectMetadataId },
+          });
+
+          if (!isDefined(objectMetadata)) {
+            this.logger.log(
+              `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
+            );
+            continue;
+          }
+
+          const repository =
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              workspaceId,
+              objectMetadata.nameSingular,
+              false,
+            );
+
+          const records = await repository.find();
+
+          this.logger.log(`Generating markdown for ${records.length} records`);
+
+          for (const record of records) {
+            const recordRichTextField = record[richTextField.name];
+            const blocknoteValue = recordRichTextField.blocknote;
+            const markdown = blocknoteValue
+              ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+                  JSON.parse(blocknoteValue),
+                )
+              : null;
+
+            await repository.update(record.id, {
+              [`${richTextField.name}Markdown`]: markdown,
+            });
+          }
+        }
 
         workspaceIterator++;
         this.logger.log(
