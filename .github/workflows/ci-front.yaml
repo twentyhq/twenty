@@ -36,8 +36,6 @@ jobs:
             packages/twenty-front/**
             packages/twenty-ui/**
             packages/twenty-shared/**
-      - name: TEMP STEP pwd
-        run: pwd
       - name: Skip if no relevant changes
         if: steps.changed-files.outputs.any_changed == 'false'
         run: echo "No relevant changes. Skipping CI."
@@ -56,9 +54,9 @@ jobs:
             .nx/cache
             node_modules/.cache
             packages/*/node_modules/.cache
-          key: tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-${{ github.sha }}
+          key: storybook-build-shipfox-runner-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-
+            storybook-build-shipfox-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -116,18 +114,15 @@ jobs:
             .nx/cache
             node_modules/.cache
             packages/*/node_modules/.cache
-          key: tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-${{ github.sha }}
+          key: storybook-build-shipfox-runner-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-
+            storybook-build-shipfox-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: |
-          pwd
-          ls -al /home/runner
-          npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
         # Could be refactor to use storybook cli args output coverage
@@ -151,7 +146,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: pwd
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
       - uses: actions/download-artifact@v4
@@ -163,12 +157,6 @@ jobs:
         run: |
           mkdir -p ${{ env.PATH_TO_COVERAGE }}
           npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          retention-days: 1
-          name: coverage-final-${{ matrix.storybook_scope }}.json
-          path: ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
       - name: Checking coverage
         run: npx nx storybook:coverage twenty-front
   front-chromatic-deployment:
