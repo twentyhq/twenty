@@ -100,7 +100,9 @@ export const RecordTable = () => {
             {isAggregateQueryEnabled &&
               !hasRecordGroups &&
               !isRecordTableInitialLoading &&
-              allRecordIds.length > 0 && <RecordTableAggregateFooter />}
+              allRecordIds.length > 0 && (
+                <RecordTableAggregateFooter endOfTableSticky />
+              )}
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}
