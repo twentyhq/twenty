@@ -59,6 +59,9 @@ export class ClientConfigResolver {
         ),
       },
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
+      canManageFeatureFlags:
+        this.environmentService.get('DEBUG_MODE') ||
+        this.environmentService.get('IS_BILLING_ENABLED'),
     };
 
     return Promise.resolve(clientConfig);

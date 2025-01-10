@@ -44,6 +44,7 @@ export const GET_CLIENT_CONFIG = gql`
         mutationMaximumAffectedRecords
       }
       chromeExtensionId
+      canManageFeatureFlags
     }
   }
 `;

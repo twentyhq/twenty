@@ -268,6 +268,8 @@ export const useAuth = () => {
 
   const handleVerify = useCallback(
     async (loginToken: string) => {
+      setIsVerifyPendingState(true);
+
       const verifyResult = await verify({
         variables: { loginToken },
       });
@@ -282,16 +284,11 @@ export const useAuth = () => {
 
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      const { user, workspaceMember, workspace } = await loadCurrentUser();
+      await loadCurrentUser();
 
-      return {
-        user,
-        workspaceMember,
-        workspace,
-        tokens: verifyResult.data?.verify.tokens,
-      };
+      setIsVerifyPendingState(false);
     },
-    [verify, setTokenPair, loadCurrentUser],
+    [setIsVerifyPendingState, verify, setTokenPair, loadCurrentUser],
   );
 
   const handleCrendentialsSignIn = useCallback(
@@ -301,21 +298,9 @@ export const useAuth = () => {
         password,
         captchaToken,
       );
-      setIsVerifyPendingState(true);
-
-      const { user, workspaceMember, workspace } = await handleVerify(
-        loginToken.token,
-      );
-
-      setIsVerifyPendingState(false);
-
-      return {
-        user,
-        workspaceMember,
-        workspace,
-      };
+      await handleVerify(loginToken.token);
     },
-    [handleChallenge, handleVerify, setIsVerifyPendingState],
+    [handleChallenge, handleVerify],
   );
 
   const handleSignOut = useCallback(async () => {
@@ -360,13 +345,7 @@ export const useAuth = () => {
         );
       }
 
-      const { user, workspace, workspaceMember } = await handleVerify(
-        signUpResult.data?.signUp.loginToken.token,
-      );
-
-      setIsVerifyPendingState(false);
-
-      return { user, workspaceMember, workspace };
+      await handleVerify(signUpResult.data?.signUp.loginToken.token);
     },
     [
       setIsVerifyPendingState,

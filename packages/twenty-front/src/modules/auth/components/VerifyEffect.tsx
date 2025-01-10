@@ -27,22 +27,17 @@ export const VerifyEffect = () => {
   );
 
   useEffect(() => {
-    const getTokens = async () => {
-      if (isDefined(errorMessage)) {
-        enqueueSnackBar(errorMessage, {
-          variant: SnackBarVariant.Error,
-        });
-      }
-      if (!loginToken) {
-        navigate(AppPath.SignInUp);
-      } else {
-        setIsAppWaitingForFreshObjectMetadata(true);
-        await verify(loginToken);
-      }
-    };
+    if (isDefined(errorMessage)) {
+      enqueueSnackBar(errorMessage, {
+        variant: SnackBarVariant.Error,
+      });
+    }
 
-    if (!isLogged) {
-      getTokens();
+    if (isDefined(loginToken)) {
+      setIsAppWaitingForFreshObjectMetadata(true);
+      verify(loginToken);
+    } else if (!isLogged) {
+      navigate(AppPath.SignInUp);
     }
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
