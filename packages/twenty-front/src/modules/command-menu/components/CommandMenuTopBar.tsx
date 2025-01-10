@@ -28,6 +28,7 @@ const StyledInputContainer = styled.div`
 
   padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
   gap: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 0;
 `;
 
 const StyledInput = styled.input`

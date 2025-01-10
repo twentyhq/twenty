@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-ui';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
+  overflow-y: auto;
 `;
 
 export const CommandMenuRouter = () => {
