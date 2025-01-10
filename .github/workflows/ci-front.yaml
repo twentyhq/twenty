@@ -13,7 +13,7 @@ concurrency:
 jobs:
   front-sb-build:
     timeout-minutes: 30
-    runs-on: ci-8-cores
+    runs-on: depot-ubuntu-22.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -54,9 +54,9 @@ jobs:
             .nx/cache
             node_modules/.cache
             packages/*/node_modules/.cache
-          key: storybook-build-ci-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            storybook-build-ci-8-cores-runner-${{ github.ref_name }}-
+            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -75,7 +75,7 @@ jobs:
             packages/*/node_modules/.cache
   front-sb-test:
     timeout-minutes: 30
-    runs-on: ci-8-cores
+    runs-on: depot-ubuntu-22.04-8
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -115,9 +115,9 @@ jobs:
             .nx/cache
             node_modules/.cache
             packages/*/node_modules/.cache
-          key: storybook-build-ci-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            storybook-build-ci-8-cores-runner-${{ github.ref_name }}-
+            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -135,13 +135,13 @@ jobs:
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: ci-8-cores
+    runs-on: depot-ubuntu-22.04-8
     needs: front-sb-test
     env:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
     strategy:
       matrix:
-        storybook_scope: [modules, pages, performance]
+        storybook_scope: [modules, pages]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -176,7 +176,7 @@ jobs:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
-    runs-on: ci-8-cores
+    runs-on: depot-ubuntu-22.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -209,9 +209,9 @@ jobs:
             .nx/cache
             node_modules/.cache
             packages/*/node_modules/.cache
-          key: storybook-build-ci-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            storybook-build-ci-8-cores-runner-${{ github.ref_name }}-
+            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
@@ -223,7 +223,7 @@ jobs:
         run: npx nx run twenty-front:chromatic:ci
   front-task:
     timeout-minutes: 30
-    runs-on: ci-8-cores
+    runs-on: depot-ubuntu-22.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     strategy:

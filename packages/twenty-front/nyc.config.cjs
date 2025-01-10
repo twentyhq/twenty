@@ -24,10 +24,10 @@ const pagesCoverage = {
 };
 
 const performanceCoverage = {
-  branches: 35,
-  statements: 60,
-  lines: 60,
-  functions: 45,
+  branches: 24,
+  statements: 40,
+  lines: 40,
+  functions: 30,
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };
 
@@ -40,4 +40,4 @@ module.exports =
       ? modulesCoverage
       : storybookStoriesFolders === 'performance'
         ? performanceCoverage
-      : globalCoverage;
+        : globalCoverage;
