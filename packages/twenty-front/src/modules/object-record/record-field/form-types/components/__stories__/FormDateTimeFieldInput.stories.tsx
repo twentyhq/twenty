@@ -352,7 +352,9 @@ export const SwitchesToStandaloneVariable: Story = {
     const variableTag = await canvas.findByText('test');
     expect(variableTag).toBeVisible();
 
-    const removeVariableButton = canvas.getByTestId(/^remove-icon/);
+    const removeVariableButton = canvasElement.querySelector(
+      'button .tabler-icon-x',
+    );
 
     await Promise.all([
       userEvent.click(removeVariableButton),
