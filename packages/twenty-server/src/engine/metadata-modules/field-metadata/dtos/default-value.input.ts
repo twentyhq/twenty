@@ -1,16 +1,16 @@
 import {
-    IsArray,
-    IsBoolean,
-    IsDate,
-    IsNotEmpty,
-    IsNumber,
-    IsNumberString,
-    IsObject,
-    IsOptional,
-    IsString,
-    IsUUID,
-    Matches,
-    ValidateIf,
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+  ValidateIf,
 } from 'class-validator';
 
 import { IsQuotedString } from 'src/engine/metadata-modules/field-metadata/validators/is-quoted-string.validator';

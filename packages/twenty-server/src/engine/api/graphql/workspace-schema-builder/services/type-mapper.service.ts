@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import {
-    GraphQLBoolean,
-    GraphQLEnumType,
-    GraphQLID,
-    GraphQLInputObjectType,
-    GraphQLInputType,
-    GraphQLList,
-    GraphQLNonNull,
-    GraphQLScalarType,
-    GraphQLString,
-    GraphQLType,
+  GraphQLBoolean,
+  GraphQLEnumType,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLInputType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLScalarType,
+  GraphQLString,
+  GraphQLType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared';
 
@@ -19,20 +19,20 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
-    ArrayFilterType,
-    BigFloatFilterType,
-    BooleanFilterType,
-    DateFilterType,
-    FloatFilterType,
-    RawJsonFilterType,
-    StringFilterType,
+  ArrayFilterType,
+  BigFloatFilterType,
+  BooleanFilterType,
+  DateFilterType,
+  FloatFilterType,
+  RawJsonFilterType,
+  StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import {
-    BigFloatScalarType,
-    UUIDScalarType,
+  BigFloatScalarType,
+  UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';

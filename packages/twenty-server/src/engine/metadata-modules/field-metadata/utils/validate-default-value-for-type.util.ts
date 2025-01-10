@@ -3,28 +3,28 @@ import { ValidationError, validateSync } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared';
 
 import {
-    FieldMetadataClassValidation,
-    FieldMetadataDefaultValue,
+  FieldMetadataClassValidation,
+  FieldMetadataDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
-    FieldMetadataDefaultActor,
-    FieldMetadataDefaultValueAddress,
-    FieldMetadataDefaultValueBoolean,
-    FieldMetadataDefaultValueCurrency,
-    FieldMetadataDefaultValueDate,
-    FieldMetadataDefaultValueDateTime,
-    FieldMetadataDefaultValueEmails,
-    FieldMetadataDefaultValueFullName,
-    FieldMetadataDefaultValueLinks,
-    FieldMetadataDefaultValueNowFunction,
-    FieldMetadataDefaultValueNumber,
-    FieldMetadataDefaultValuePhones,
-    FieldMetadataDefaultValueRawJson,
-    FieldMetadataDefaultValueRichText,
-    FieldMetadataDefaultValueString,
-    FieldMetadataDefaultValueStringArray,
-    FieldMetadataDefaultValueUuidFunction,
+  FieldMetadataDefaultActor,
+  FieldMetadataDefaultValueAddress,
+  FieldMetadataDefaultValueBoolean,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueDate,
+  FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
+  FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValuePhones,
+  FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichText,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 

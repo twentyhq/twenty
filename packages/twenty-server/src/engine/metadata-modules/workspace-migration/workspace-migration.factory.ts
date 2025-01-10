@@ -11,12 +11,12 @@ import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/worksp
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import {
-    WorkspaceMigrationColumnAction,
-    WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
-    WorkspaceMigrationException,
-    WorkspaceMigrationExceptionCode,
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 @Injectable()
