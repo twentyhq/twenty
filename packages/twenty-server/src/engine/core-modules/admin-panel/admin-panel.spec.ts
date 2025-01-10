@@ -77,7 +77,11 @@ describe('AdminPanelService', () => {
     const workspaceId = 'workspace-id';
     const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
     const value = true;
-    const existingFlag = { id: 'flag-id', key: featureFlag, value: false };
+    const existingFlag = {
+      id: 'flag-id',
+      key: 'IS_FLAG_ENABLED',
+      value: false,
+    };
 
     WorkspaceFindOneMock.mockReturnValueOnce({
       id: workspaceId,
@@ -105,7 +109,7 @@ describe('AdminPanelService', () => {
     await service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value);
 
     expect(FeatureFlagSaveMock).toHaveBeenCalledWith({
-      key: featureFlag,
+      key: 'IS_FLAG_ENABLED',
       value,
       workspaceId,
     });
