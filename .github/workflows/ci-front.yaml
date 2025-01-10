@@ -187,12 +187,18 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore storybook build cache
+        id: storybook-build-cache-restore
+        uses: actions/cache/restore@v4
         with:
-          tag: scope:frontend
-          tasks: storybook:build
+          path: |
+            .cache
+            .nx/cache
+            node_modules/.cache
+            packages/*/node_modules/.cache
+          key: storybook-build-shipfox-runner-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            storybook-build-shipfox-runner-${{ github.ref_name }}-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
