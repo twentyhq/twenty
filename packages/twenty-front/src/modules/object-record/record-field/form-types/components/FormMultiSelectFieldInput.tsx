@@ -27,7 +27,7 @@ type FormMultiSelectFieldInputProps = {
   readonly?: boolean;
 };
 
-const StyledDisplayModeReadonlyContainer = styled.button`
+const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
