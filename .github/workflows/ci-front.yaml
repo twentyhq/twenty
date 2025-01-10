@@ -61,11 +61,11 @@ jobs:
         run: npx nx storybook:build twenty-front
   front-sb-test:
     timeout-minutes: 30
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: ci-8-cores
     needs: front-sb-build
     strategy:
       matrix:
-        # shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4]
         storybook_scope: [pages, performance]
     env:
       SHARD_COUNTER: 4
@@ -106,7 +106,9 @@ jobs:
         # TODO double check behavior with --configuration and sharding
         # Should we merge back all cov files ? we don't really consume them afterwards ?
         # run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
+        run: |
+          pwd
+          npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
         # Could be refactor to use storybook cli args output coverage
