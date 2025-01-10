@@ -126,7 +126,6 @@ jobs:
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
-        # Could be refactor to use storybook cli args output coverage
         run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
