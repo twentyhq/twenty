@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -9,10 +10,7 @@ import {
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { SEARCH_FIELDS_FOR_CUSTOM_OBJECT } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';

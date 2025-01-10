@@ -1,9 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { Relation } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';

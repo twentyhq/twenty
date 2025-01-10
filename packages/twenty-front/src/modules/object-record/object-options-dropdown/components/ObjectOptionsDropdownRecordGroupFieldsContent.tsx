@@ -24,6 +24,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -33,6 +34,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { getIcon } = useIcons();
 
   const {
+    viewType,
     currentContentId,
     recordIndexId,
     objectMetadataItem,
@@ -121,11 +123,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          text="None"
-          selected={!isDefined(recordGroupFieldMetadata)}
-          onClick={handleResetRecordGroupField}
-        />
+        {viewType === ViewType.Table && (
+          <MenuItemSelect
+            text="None"
+            selected={!isDefined(recordGroupFieldMetadata)}
+            onClick={handleResetRecordGroupField}
+          />
+        )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}

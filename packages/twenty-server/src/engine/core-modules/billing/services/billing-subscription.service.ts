@@ -12,7 +12,9 @@ import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -20,7 +22,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
-    private readonly stripeService: StripeService,
+    private readonly stripeSubscriptionService: StripeSubscriptionService,
+    private readonly stripePriceService: StripePriceService,
+    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
@@ -78,7 +82,7 @@ export class BillingSubscriptionService {
       });
 
     if (subscriptionToCancel) {
-      await this.stripeService.cancelSubscription(
+      await this.stripeSubscriptionService.cancelSubscription(
         subscriptionToCancel.stripeSubscriptionId,
       );
       await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
@@ -91,10 +95,15 @@ export class BillingSubscriptionService {
     );
 
     if (billingSubscription?.status === 'unpaid') {
-      await this.stripeService.collectLastInvoice(
+      await this.stripeSubscriptionService.collectLastInvoice(
         billingSubscription.stripeSubscriptionId,
       );
     }
+
+    return {
+      handleUnpaidInvoiceStripeSubscriptionId:
+        billingSubscription.stripeSubscriptionId,
+    };
   }
 
   async getWorkspaceEntitlementByKey(
@@ -127,7 +136,7 @@ export class BillingSubscriptionService {
     const billingSubscriptionItem =
       await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
 
-    const productPrice = await this.stripeService.getStripePrice(
+    const productPrice = await this.stripePriceService.getStripePrice(
       AvailableProduct.BasePlan,
       newInterval,
     );
@@ -138,7 +147,7 @@ export class BillingSubscriptionService {
       );
     }
 
-    await this.stripeService.updateBillingSubscriptionItem(
+    await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
       billingSubscriptionItem,
       productPrice.stripePriceId,
     );

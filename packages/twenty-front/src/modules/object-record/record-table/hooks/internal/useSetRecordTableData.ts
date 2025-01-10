@@ -13,7 +13,10 @@ import { isDefined } from '~/utils/isDefined';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (entityCount?: number) => void;
+  onEntityCountChange: (
+    entityCount?: number,
+    currentRecordGroupId?: string,
+  ) => void;
 };
 
 export const useSetRecordTableData = ({
@@ -93,7 +96,7 @@ export const useSetRecordTableData = ({
             set(recordIndexAllRecordIdsSelector, recordIds);
           }
 
-          onEntityCountChange(totalCount);
+          onEntityCountChange(totalCount, currentRecordGroupId);
         }
       },
     [

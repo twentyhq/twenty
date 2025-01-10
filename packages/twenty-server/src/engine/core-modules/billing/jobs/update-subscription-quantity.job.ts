@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -18,7 +18,7 @@ export class UpdateSubscriptionQuantityJob {
 
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly stripeService: StripeService,
+    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -41,7 +41,7 @@ export class UpdateSubscriptionQuantityJob {
           data.workspaceId,
         );
 
-      await this.stripeService.updateSubscriptionItem(
+      await this.stripeSubscriptionItemService.updateSubscriptionItem(
         billingSubscriptionItem.stripeSubscriptionItemId,
         workspaceMembersCount,
       );

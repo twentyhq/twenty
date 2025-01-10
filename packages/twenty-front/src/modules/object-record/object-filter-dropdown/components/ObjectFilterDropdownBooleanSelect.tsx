@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
@@ -40,8 +41,9 @@ export const ObjectFilterDropdownBooleanSelect = () => {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
 
@@ -69,7 +71,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       return;
     }
 
-    selectFilter({
+    applyRecordFilter({
       id: selectedFilter?.id ?? v4(),
       definition: filterDefinitionUsedInDropdown,
       operand: selectedOperandInDropdown,
