@@ -1,7 +1,9 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
@@ -53,6 +55,10 @@ export const RecordTableColumnAggregateFooterValueCell = ({
     }),
   );
 
+  const hasRecordGroups = useRecoilComponentValueV2(
+    hasRecordGroupsComponentSelector,
+  );
+
   return (
     <div
       onMouseEnter={() => {
@@ -64,7 +70,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
         {isHovered ||
         isDropdownOpen ||
         hasAggregateOperationForViewField ||
-        isFirstCell ? (
+        (isFirstCell && !hasRecordGroups) ? (
           <>
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}

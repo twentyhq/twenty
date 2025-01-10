@@ -1,4 +1,5 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
@@ -55,10 +56,11 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
-    selectFilter,
     advancedFilterViewFilterIdState,
     advancedFilterViewFilterGroupIdState,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const advancedFilterViewFilterId = useRecoilValue(
     advancedFilterViewFilterIdState,
@@ -84,7 +86,8 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           definition.type,
           operand,
         );
-        selectFilter({
+
+        applyRecordFilter({
           id: advancedFilterViewFilterId,
           fieldMetadataId: definition.fieldMetadataId,
           value,

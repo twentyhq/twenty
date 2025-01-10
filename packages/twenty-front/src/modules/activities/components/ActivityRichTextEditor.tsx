@@ -173,9 +173,9 @@ export const ActivityRichTextEditor = ({
   }, [activity]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
-    const { attachementAbsoluteURL } = await handleUploadAttachment(file);
+    const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
 
-    return attachementAbsoluteURL;
+    return attachmentAbsoluteURL;
   };
 
   const editor = useCreateBlockNote({

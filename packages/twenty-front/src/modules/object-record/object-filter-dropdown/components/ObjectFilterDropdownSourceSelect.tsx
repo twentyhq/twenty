@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -29,9 +30,10 @@ export const ObjectFilterDropdownSourceSelect = ({
     selectedFilterState,
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIdsState,
-    selectFilter,
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
   const { deleteCombinedViewFilter } =
     useDeleteCombinedViewFilters(viewComponentId);
@@ -108,7 +110,7 @@ export const ObjectFilterDropdownSourceSelect = ({
 
       const filterId = viewFilter?.id ?? fieldId;
 
-      selectFilter({
+      applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown || ViewFilterOperand.Is,
