@@ -387,6 +387,7 @@ export const Disabled: Story = {
     expect(input).toBeDisabled();
   },
 };
+
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
