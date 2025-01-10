@@ -1,5 +1,5 @@
 prod-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty . && cd -
+	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag anedot-twenty . && cd -
 
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty

@@ -1,5 +1,5 @@
 # Base image for common dependencies
-FROM node:18.17.1-alpine as common-deps
+FROM node:18.20-alpine as common-deps
 
 WORKDIR /app
 
@@ -48,7 +48,7 @@ RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
-FROM node:18.17.1-alpine as twenty
+FROM node:18.20-alpine as twenty
 
 # Used to run healthcheck in docker
 RUN apk add --no-cache curl jq
