@@ -177,6 +177,10 @@ export const useAuth = () => {
   const loadCurrentUser = useCallback(async () => {
     const currentUserResult = await getCurrentUser();
 
+    if (isDefined(currentUserResult.error)) {
+      throw new Error(currentUserResult.error.message);
+    }
+
     const user = currentUserResult.data?.currentUser;
 
     if (!user) {
