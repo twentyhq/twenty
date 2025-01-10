@@ -7,7 +7,7 @@ import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/com
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
@@ -121,7 +121,8 @@ export const ObjectFilterDropdownFilterSelect = ({
     (item) => item.fieldMetadataId,
   );
 
-  const { selectFilter } = useSelectFilter();
+  const { selectFilterDefinitionUsedInDropdown } =
+    useSelectFilterDefinitionUsedInDropdown();
 
   const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
@@ -135,7 +136,11 @@ export const ObjectFilterDropdownFilterSelect = ({
     }
 
     resetSelectedItem();
-    selectFilter({ filterDefinition: selectedFilterDefinition });
+
+    selectFilterDefinitionUsedInDropdown({
+      filterDefinition: selectedFilterDefinition,
+    });
+
     closeAdvancedFilterDropdown();
   };
 

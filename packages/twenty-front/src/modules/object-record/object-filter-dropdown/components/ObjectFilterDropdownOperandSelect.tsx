@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,8 +23,9 @@ export const ObjectFilterDropdownOperandSelect = () => {
     filterDefinitionUsedInDropdownState,
     setSelectedOperandInDropdown,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
 
@@ -49,7 +51,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
 
     if (isValuelessOperand && isDefined(filterDefinitionUsedInDropdown)) {
-      selectFilter?.({
+      applyRecordFilter({
         id: v4(),
         fieldMetadataId: filterDefinitionUsedInDropdown?.fieldMetadataId ?? '',
         displayValue: '',
@@ -71,7 +73,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         selectedFilter.displayValue,
       );
 
-      selectFilter?.({
+      applyRecordFilter({
         id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue,

@@ -1,16 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 import { filterDefinitionUsedInDropdownComponentState } from '../states/filterDefinitionUsedInDropdownComponentState';
 import { FilterDefinition } from '../types/FilterDefinition';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useSetFilterDefinitionUsedInDropdownInScope = () => {
   const setFilterDefinitionUsedInDropdownInScope = useRecoilCallback(
     ({ set }) =>
-      (scopeId: string, filterDefinition: FilterDefinition | null) => {
-        const filterDefinitionUsedInDropdownState = extractComponentState(
-          filterDefinitionUsedInDropdownComponentState,
-          scopeId,
-        );
+      (
+        componentInstanceId: string,
+        filterDefinition: FilterDefinition | null,
+      ) => {
+        const filterDefinitionUsedInDropdownState =
+          filterDefinitionUsedInDropdownComponentState.atomFamily({
+            instanceId: componentInstanceId,
+          });
+
         set(filterDefinitionUsedInDropdownState, filterDefinition);
       },
     [],
