@@ -125,6 +125,10 @@ export class AdminPanelService {
     featureFlag: FeatureFlagKey,
     value: boolean,
   ) {
+    const featureFlagValue = Object.entries(FeatureFlagKey).find(
+      ([key]) => key === featureFlag,
+    )?.[1] as FeatureFlagKey;
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['featureFlags'],
@@ -136,14 +140,14 @@ export class AdminPanelService {
     );
 
     const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === featureFlag,
+      (flag) => flag.key === featureFlagValue,
     );
 
     if (existingFlag) {
       await this.featureFlagRepository.update(existingFlag.id, { value });
     } else {
       await this.featureFlagRepository.save({
-        key: featureFlag,
+        key: featureFlagValue,
         value,
         workspaceId: workspace.id,
       });
