@@ -7,7 +7,6 @@ import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTr
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import console from 'console';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -20,7 +19,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      console.log('nodes', nodes);
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
 
