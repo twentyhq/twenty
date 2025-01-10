@@ -8,7 +8,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
@@ -22,7 +22,7 @@ export class BillingWebhookSubscriptionService {
     BillingWebhookSubscriptionService.name,
   );
   constructor(
-    private readonly stripeService: StripeService,
+    private readonly stripeCustomerService: StripeCustomerService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem, 'core')
@@ -45,7 +45,7 @@ export class BillingWebhookSubscriptionService {
     });
 
     if (!workspace) {
-      return;
+      return { noWorkspace: true };
     }
 
     await this.billingCustomerRepository.upsert(
@@ -106,9 +106,14 @@ export class BillingWebhookSubscriptionService {
       });
     }
 
-    await this.stripeService.updateCustomerMetadataWorkspaceId(
+    await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(
       String(data.object.customer),
       workspaceId,
     );
+
+    return {
+      stripeSubscriptionId: data.object.id,
+      stripeCustomerId: data.object.customer,
+    };
   }
 }

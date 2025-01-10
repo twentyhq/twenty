@@ -4,7 +4,6 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 const ORDERED_STANDARD_OBJECTS = [
@@ -14,15 +13,6 @@ const ORDERED_STANDARD_OBJECTS = [
   'task',
   'note',
 ];
-
-const StyledObjectsMetaDataItemsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
-  width: 100%;
-  flex: 1;
-  overflow-y: auto;
-`;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
@@ -77,15 +67,13 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             onClick={() => toggleNavigationSection()}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
-        <StyledObjectsMetaDataItemsWrapper>
-          {isNavigationSectionOpen &&
-            objectMetadataItemsForNavigationItems.map((objectMetadataItem) => (
-              <NavigationDrawerItemForObjectMetadataItem
-                key={`navigation-drawer-item-${objectMetadataItem.id}`}
-                objectMetadataItem={objectMetadataItem}
-              />
-            ))}
-        </StyledObjectsMetaDataItemsWrapper>
+        {isNavigationSectionOpen &&
+          objectMetadataItemsForNavigationItems.map((objectMetadataItem) => (
+            <NavigationDrawerItemForObjectMetadataItem
+              key={`navigation-drawer-item-${objectMetadataItem.id}`}
+              objectMetadataItem={objectMetadataItem}
+            />
+          ))}
       </NavigationDrawerSection>
     )
   );

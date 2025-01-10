@@ -13,13 +13,13 @@ export const PageFavoriteButton = ({
 }: PageFavoriteButtonProps) => {
   const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={isFavorite ? IconHeartOff : IconHeart}
           dataTestId="favorite-button"

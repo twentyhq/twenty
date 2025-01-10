@@ -29,6 +29,10 @@ module.exports = {
             sourceTag: 'scope:frontend',
             onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
           },
+          {
+            sourceTag: 'scope:zapier',
+            onlyDependOnLibsWithTags: ['scope:shared'],
+          },
         ],
       },
     ],
@@ -96,7 +100,11 @@ module.exports = {
       rules: {},
     },
     {
-      files: ['*.spec.@(ts|tsx|js|jsx)', '*.test.@(ts|tsx|js|jsx)'],
+      files: [
+        '*.spec.@(ts|tsx|js|jsx)',
+        '*.integration-spec.@(ts|tsx|js|jsx)',
+        '*.test.@(ts|tsx|js|jsx)',
+      ],
       env: {
         jest: true,
       },

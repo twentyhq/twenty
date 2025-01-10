@@ -212,7 +212,10 @@ export const RecordDetailRelationSection = ({
                       <>
                         <RelationFromManyFieldInputMultiRecordsEffect />
                         <MultiRecordSelect
-                          onCreate={createNewRecordAndOpenRightDrawer}
+                          onCreate={() => {
+                            closeDropdown();
+                            createNewRecordAndOpenRightDrawer?.();
+                          }}
                           onChange={updateRelation}
                           onSubmit={closeDropdown}
                           dropdownPlacement={dropdownPlacement}
