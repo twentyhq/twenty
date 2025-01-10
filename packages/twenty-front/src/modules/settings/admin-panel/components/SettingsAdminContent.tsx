@@ -1,3 +1,4 @@
+import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
@@ -13,6 +14,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
@@ -48,7 +50,7 @@ const StyledUserInfo = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(0.5)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledTabListContainer = styled.div`
@@ -89,6 +91,7 @@ export const SettingsAdminContent = () => {
   } = useFeatureFlagsManagement();
 
   const { t } = useTranslation();
+  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');
@@ -154,37 +157,39 @@ export const SettingsAdminContent = () => {
           />
         )}
 
-        <StyledTable>
-          <TableRow
-            gridAutoColumns="1fr 100px"
-            mobileGridAutoColumns="1fr 80px"
-          >
-            <TableHeader>{t('featureFlag')}</TableHeader>
-            <TableHeader align="right">Status</TableHeader>
-          </TableRow>
-
-          {activeWorkspace.featureFlags.map((flag) => (
+        {canManageFeatureFlags && (
+          <StyledTable>
             <TableRow
               gridAutoColumns="1fr 100px"
               mobileGridAutoColumns="1fr 80px"
-              key={flag.key}
             >
-              <TableCell>{flag.key}</TableCell>
-              <TableCell align="right">
-                <Toggle
-                  value={flag.value}
-                  onChange={(newValue) =>
-                    handleFeatureFlagUpdate(
-                      activeWorkspace.id,
-                      flag.key,
-                      newValue,
-                    )
-                  }
-                />
-              </TableCell>
+              <TableHeader>{t('featureFlag')}</TableHeader>
+              <TableHeader align="right">Status</TableHeader>
             </TableRow>
-          ))}
-        </StyledTable>
+
+            {activeWorkspace.featureFlags.map((flag) => (
+              <TableRow
+                gridAutoColumns="1fr 100px"
+                mobileGridAutoColumns="1fr 80px"
+                key={flag.key}
+              >
+                <TableCell>{flag.key}</TableCell>
+                <TableCell align="right">
+                  <Toggle
+                    value={flag.value}
+                    onChange={(newValue) =>
+                      handleFeatureFlagUpdate(
+                        activeWorkspace.id,
+                        flag.key,
+                        newValue,
+                      )
+                    }
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </StyledTable>
+        )}
       </>
     );
   };
@@ -193,8 +198,16 @@ export const SettingsAdminContent = () => {
     <>
       <Section>
         <H2Title
-          title={t('featureFlagsImpersonation')}
-          description={t('featureFlagsImpersonationDescription')}
+          title={
+            canManageFeatureFlags
+              ? t('featureFlagsImpersonation')
+              : t('userImpersonation')
+          }
+          description={
+            canManageFeatureFlags
+              ? t('featureFlagsImpersonationDescription')
+              : t('lookUpUsersToImpersonate')
+          }
         />
 
         <StyledContainer>

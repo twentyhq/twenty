@@ -11,7 +11,7 @@ import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRe
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
+import { capitalize } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -22,7 +23,6 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { capitalize } from 'src/utils/capitalize';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;

@@ -475,6 +475,8 @@
     "signIn": "Entrar",
     "signUp": "Criar Conta",
     "continueWithEmail": "Continuar com o E-mail",
-    "forgotYourPassword": "Esqueceu sua senha?"
+    "forgotYourPassword": "Esqueceu sua senha?",
+    "userImpersonation": "Impersonificação de Usuário",
+    "lookUpUsersToImpersonate": "Procure usuários para impersoná-los"
   }
   

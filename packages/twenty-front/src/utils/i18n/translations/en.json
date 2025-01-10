@@ -500,6 +500,8 @@
     "signIn": "Sign in",
     "signUp": "Sign up",
     "continueWithEmail": "Continue With E-mail",
-    "forgotYourPassword": "Forgot your password?"
+    "forgotYourPassword": "Forgot your password?",
+    "userImpersonation": "User Impersonation",
+    "lookUpUsersToImpersonate": "Look up users to impersonate them"
   }
   

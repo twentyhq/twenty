@@ -33,10 +33,10 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   padding-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 
-  border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
 
   &:hover {
-    filter: brightness(0.95);
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 

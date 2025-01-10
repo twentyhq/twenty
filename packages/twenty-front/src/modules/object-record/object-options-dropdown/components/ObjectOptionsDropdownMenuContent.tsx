@@ -30,7 +30,9 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTranslation } from 'react-i18next';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const ObjectOptionsDropdownMenuContent = () => {
@@ -41,6 +43,10 @@ export const ObjectOptionsDropdownMenuContent = () => {
     onContentChange,
     closeDropdown,
   } = useOptionsDropdown();
+
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
 
   const { getIcon } = useIcons();
   const { currentViewWithCombinedFiltersAndSorts: currentView } =
@@ -123,19 +129,20 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {viewType === ViewType.Kanban && currentView?.key !== 'INDEX' && (
-          <MenuItem
-            onClick={() =>
-              isDefined(recordGroupFieldMetadata)
-                ? onContentChange('recordGroups')
-                : onContentChange('recordGroupFields')
-            }
-            LeftIcon={IconLayoutList}
-            text={t('groupBy')}
-            contextualText={recordGroupFieldMetadata?.label}
-            hasSubMenu
-          />
-        )}
+        {(viewType === ViewType.Kanban || isViewGroupEnabled) &&
+          currentView?.key !== 'INDEX' && (
+            <MenuItem
+              onClick={() =>
+                isDefined(recordGroupFieldMetadata)
+                  ? onContentChange('recordGroups')
+                  : onContentChange('recordGroupFields')
+              }
+              LeftIcon={IconLayoutList}
+              text={t('groupBy')}
+              contextualText={recordGroupFieldMetadata?.label}
+              hasSubMenu
+            />
+          )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>

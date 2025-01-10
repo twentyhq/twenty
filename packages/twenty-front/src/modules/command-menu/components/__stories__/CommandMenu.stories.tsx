@@ -10,12 +10,13 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import {
-  mockDefaultWorkspace,
+  mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -43,7 +44,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
-  component: CommandMenu,
+  component: CommandMenuRouter,
   decorators: [
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -54,7 +55,7 @@ const meta: Meta<typeof CommandMenu> = {
         isCommandMenuOpenedState,
       );
 
-      setCurrentWorkspace(mockDefaultWorkspace);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
 

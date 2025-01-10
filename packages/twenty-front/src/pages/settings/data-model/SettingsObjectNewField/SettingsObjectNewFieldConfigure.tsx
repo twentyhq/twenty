@@ -42,17 +42,17 @@ const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
   const navigate = useNavigate();
-  const { objectSlug = '' } = useParams();
+  const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType =
     (searchParams.get('fieldType') as SettingsFieldType) ||
     FieldMetadataType.Text;
   const { enqueueSnackBar } = useSnackBar();
 
-  const { findActiveObjectMetadataItemBySlug } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const { createMetadataField } = useFieldMetadataItem();
   const apolloClient = useApolloClient();
   const { t } = useTranslation();
@@ -165,7 +165,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         });
       }
 
-      navigate(`/settings/objects/${objectSlug}`);
+      navigate(`/settings/objects/${objectNamePlural}`);
 
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
@@ -192,7 +192,7 @@ export const SettingsObjectNewFieldConfigure = () => {
             { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectSlug}`,
+              href: `/settings/objects/${objectNamePlural}`,
             },
 
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
@@ -203,7 +203,7 @@ export const SettingsObjectNewFieldConfigure = () => {
               isCancelDisabled={isSubmitting}
               onCancel={() =>
                 navigate(
-                  `/settings/objects/${objectSlug}/new-field/select?fieldType=${fieldType}`,
+                  `/settings/objects/${objectNamePlural}/new-field/select?fieldType=${fieldType}`,
                 )
               }
               onSave={formConfig.handleSubmit(handleSave)}

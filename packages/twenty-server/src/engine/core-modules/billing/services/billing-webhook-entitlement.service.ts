@@ -48,5 +48,9 @@ export class BillingWebhookEntitlementService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    return {
+      stripeEntitlementCustomerId: data.object.customer,
+    };
   }
 }

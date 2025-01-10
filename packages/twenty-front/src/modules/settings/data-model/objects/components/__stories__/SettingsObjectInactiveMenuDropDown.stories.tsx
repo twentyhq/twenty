@@ -38,7 +38,9 @@ export const Open: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
   },
@@ -48,13 +50,15 @@ export const WithActivate: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
 
     await expect(handleActivateMockFunction).toHaveBeenCalledTimes(0);
 
-    const activateMenuItem = await canvas.getByText('Activate');
+    const activateMenuItem = await canvas.findByText('Activate');
 
     await userEvent.click(activateMenuItem);
 
@@ -69,13 +73,15 @@ export const WithDelete: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
 
     await expect(handleDeleteMockFunction).toHaveBeenCalledTimes(0);
 
-    const deleteMenuItem = await canvas.getByText('Delete');
+    const deleteMenuItem = await canvas.findByText('Delete');
 
     await userEvent.click(deleteMenuItem);
 

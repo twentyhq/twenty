@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
@@ -68,21 +68,5 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(false);
-  });
-
-  it('onItemClick', () => {
-    const { result } = renderHooks();
-    const onClickMock = jest.fn();
-
-    act(() => {
-      result.current.commandMenu.onItemClick({
-        shouldCloseCommandMenuOnClick: true,
-        onClick: onClickMock,
-        to: '/test',
-      });
-    });
-
-    expect(result.current.isCommandMenuOpened).toBe(true);
-    expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 });

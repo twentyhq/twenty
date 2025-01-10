@@ -14,9 +14,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
+  PASSWORD_REGEX,
   compareHash,
   hashPassword,
-  PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -124,20 +124,22 @@ export class SignInUpService {
       }
     }
 
-    const signInUpWithInvitationResult = await this.signInUpWithInvitation({
-      email,
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-      targetWorkspaceSubdomain,
-      fromSSO,
-      firstName,
-      lastName,
-      picture,
-      authProvider,
-      passwordHash,
-      existingUser,
-      roleId
-    });
+    const signInUpWithInvitationResult = targetWorkspaceSubdomain
+      ? await this.signInUpWithInvitation({
+          email,
+          workspacePersonalInviteToken,
+          workspaceInviteHash,
+          targetWorkspaceSubdomain,
+          fromSSO,
+          firstName,
+          lastName,
+          picture,
+          authProvider,
+          passwordHash,
+          existingUser,
+          roleId
+        })
+      : undefined;
 
     if (isDefined(signInUpWithInvitationResult)) {
       return signInUpWithInvitationResult;
@@ -191,7 +193,7 @@ export class SignInUpService {
     passwordHash?: string;
     existingUser: User | null;
     fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
+    targetWorkspaceSubdomain: string;
     roleId?: string;
   }) {
     const maybeInvitation =
@@ -400,9 +402,20 @@ export class SignInUpService {
       }
     }
 
-    const logo = isWorkEmail(email)
-      ? `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`
-      : undefined;
+    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
+    const isLogoUrlValid = async () => {
+      try {
+        return (
+          (await this.httpService.axiosRef.get(logoUrl, { timeout: 600 }))
+            .status === 200
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    const logo =
+      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),

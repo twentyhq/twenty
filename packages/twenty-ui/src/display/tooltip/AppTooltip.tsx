@@ -1,5 +1,5 @@
-import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
 
 import { RGBA } from '@ui/theme/constants/Rgba';
 
@@ -44,7 +44,7 @@ export type AppTooltipProps = {
   children?: React.ReactNode;
   offset?: number;
   noArrow?: boolean;
-  isOpen?: boolean;
+  hidden?: boolean;
   place?: PlacesType;
   delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
@@ -55,7 +55,7 @@ export const AppTooltip = ({
   anchorSelect,
   className,
   content,
-  isOpen,
+  hidden = false,
   noArrow,
   offset,
   delay = TooltipDelay.mediumDelay,
@@ -78,8 +78,8 @@ export const AppTooltip = ({
         className,
         content,
         delayShow: delayInMs,
-        delayHide: delayInMs,
-        isOpen,
+        delayHide: 20,
+        hidden,
         noArrow,
         offset,
         place,

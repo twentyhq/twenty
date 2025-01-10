@@ -20,6 +20,9 @@ import { useTranslation } from 'react-i18next';
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
+const StyledInnerContainer = styled.div`
+  height: 100%;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -63,12 +66,14 @@ export const MainNavigationDrawerItems = () => {
         contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollHide={true}
+        scrollbarVariant="no-padding"
       >
-        <NavigationDrawerOpenedSection />
-        <CurrentWorkspaceMemberFavoritesFolders />
-        <WorkspaceFavorites />
-        <RemoteNavigationDrawerSection />
+        <StyledInnerContainer>
+          <NavigationDrawerOpenedSection />
+          <CurrentWorkspaceMemberFavoritesFolders />
+          <WorkspaceFavorites />
+          <RemoteNavigationDrawerSection />
+        </StyledInnerContainer>
       </ScrollWrapper>
     </>
   );

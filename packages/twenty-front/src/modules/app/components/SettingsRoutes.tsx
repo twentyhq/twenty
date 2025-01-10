@@ -296,7 +296,6 @@ type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
-  isSSOEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
@@ -304,7 +303,6 @@ export const SettingsRoutes = ({
   isBillingEnabled,
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
-  isSSOEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
@@ -441,12 +439,10 @@ export const SettingsRoutes = ({
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
       <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-      {isSSOEnabled && (
-        <Route
-          path={SettingsPath.NewSSOIdentityProvider}
-          element={<SettingsSecuritySSOIdentifyProvider />}
-        />
-      )}
+      <Route
+        path={SettingsPath.NewSSOIdentityProvider}
+        element={<SettingsSecuritySSOIdentifyProvider />}
+      />
       {isAdminPageEnabled && (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />

@@ -1,7 +1,5 @@
 import { DataSource } from 'typeorm';
 
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
-
 const tableName = 'user';
 
 export const DEV_SEED_USER_IDS = {
@@ -13,7 +11,6 @@ export const DEV_SEED_USER_IDS = {
 export const seedUsers = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -52,20 +49,5 @@ export const seedUsers = async (
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
       },
     ])
-    .execute();
-};
-
-export const deleteUsersByWorkspace = async (
-  workspaceDataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await workspaceDataSource
-    .createQueryBuilder()
-    .delete()
-    .from(`${schemaName}.${tableName}`)
-    .where(`"${tableName}"."defaultWorkspaceId" = :workspaceId`, {
-      workspaceId,
-    })
     .execute();
 };

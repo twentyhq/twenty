@@ -8,6 +8,7 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import styled from '@emotion/styled';
+import { FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
@@ -21,6 +22,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const { form } = useSignInUpForm();
+
   const { handleResetPassword } = useHandleResetPassword();
 
   const { signInUpStep } = useSignInUp(form);
@@ -42,8 +44,12 @@ export const SignInUpWorkspaceScopeForm = () => {
         workspaceAuthProviders.password ? (
           <HorizontalSeparator />
         ) : null}
-
-        {workspaceAuthProviders.password && <SignInUpWithCredentials />}
+        {workspaceAuthProviders.password && (
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          <FormProvider {...form}>
+            <SignInUpWithCredentials />
+          </FormProvider>
+        )}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>

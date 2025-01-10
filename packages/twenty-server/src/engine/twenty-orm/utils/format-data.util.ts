@@ -1,11 +1,11 @@
+import { capitalize, FieldMetadataType } from 'twenty-shared';
+
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
-import { capitalize } from 'src/utils/capitalize';
 
 export function formatData<T>(
   data: T,
@@ -82,7 +82,10 @@ function formatFieldMetadataValue(
   value: any,
   fieldMetadata: FieldMetadataInterface,
 ) {
-  if (fieldMetadata.type === FieldMetadataType.RAW_JSON) {
+  if (
+    fieldMetadata.type === FieldMetadataType.RAW_JSON &&
+    typeof value === 'string'
+  ) {
     return JSON.parse(value as string);
   }
 

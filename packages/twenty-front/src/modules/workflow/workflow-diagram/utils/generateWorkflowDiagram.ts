@@ -9,9 +9,9 @@ import {
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { MarkerType } from '@xyflow/react';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const generateWorkflowDiagram = ({
   trigger,

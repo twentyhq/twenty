@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useSetFilterDefinitionUsedInDropdownInScope } from '@/object-record/object-filter-dropdown/hooks/useSetFilterDefinitionUsedInDropdownInScope';
+import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -50,8 +50,8 @@ export const useHandleToggleColumnFilter = ({
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const { setFilterDefinitionUsedInDropdownInScope } =
-    useSetFilterDefinitionUsedInDropdownInScope();
+  const { selectFilterDefinitionUsedInDropdown } =
+    useSelectFilterDefinitionUsedInDropdown(viewBarId);
 
   const handleToggleColumnFilter = useCallback(
     async (fieldMetadataId: string) => {
@@ -94,10 +94,7 @@ export const useHandleToggleColumnFilter = ({
 
         await upsertCombinedViewFilter(newFilter);
 
-        setFilterDefinitionUsedInDropdownInScope(
-          newFilter.id,
-          filterDefinition,
-        );
+        selectFilterDefinitionUsedInDropdown({ filterDefinition });
       }
 
       openDropdown(existingViewFilter?.id ?? newFilterId);
@@ -106,7 +103,7 @@ export const useHandleToggleColumnFilter = ({
       openDropdown,
       columnDefinitions,
       upsertCombinedViewFilter,
-      setFilterDefinitionUsedInDropdownInScope,
+      selectFilterDefinitionUsedInDropdown,
       currentViewWithCombinedFiltersAndSorts,
       availableFilterDefinitions,
     ],

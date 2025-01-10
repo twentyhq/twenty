@@ -26,7 +26,7 @@ type SettingsObjectNewFieldSelectorProps = {
     'defaultValue' | 'options' | 'type'
   >;
 
-  objectSlug: string;
+  objectNamePlural: string;
 };
 
 const StyledTypeSelectContainer = styled.div`
@@ -58,7 +58,7 @@ const StyledSearchInput = styled(TextInput)`
 export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   fieldMetadataItem,
-  objectSlug,
+  objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -135,7 +135,7 @@ export const SettingsObjectNewFieldSelector = ({
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink
-                          to={`/settings/objects/${objectSlug}/new-field/configure?fieldType=${key}`}
+                          to={`/settings/objects/${objectNamePlural}/new-field/configure?fieldType=${key}`}
                           fullWidth
                           onClick={() => {
                             setValue('type', key as SettingsFieldType);

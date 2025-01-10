@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import {
   IconComponent,
   MOBILE_VIEWPORT,
@@ -18,7 +19,6 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -92,7 +92,7 @@ const StyledItem = styled('button', {
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
       ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(5.5)})`
-      : `calc(100% - ${props.theme.spacing(2)})`};
+      : `calc(100% - ${props.theme.spacing(1.5)})`};
 
   ${({ isDragging }) =>
     isDragging &&
@@ -133,16 +133,15 @@ const StyledLabelParent = styled.div`
   text-overflow: clip;
 `;
 const StyledEllipsisContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
+
 const StyledItemObjectName = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};

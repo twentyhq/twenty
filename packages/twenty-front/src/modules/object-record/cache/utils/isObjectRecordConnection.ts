@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
-import { capitalize } from '~/utils/string/capitalize';
+import { capitalize } from 'twenty-shared';
 
 export const isObjectRecordConnection = (
   objectNameSingular: string,

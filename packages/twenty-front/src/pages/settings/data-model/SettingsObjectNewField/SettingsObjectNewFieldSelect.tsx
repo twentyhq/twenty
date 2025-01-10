@@ -32,11 +32,11 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug } =
+  const { objectNamePlural = '' } = useParams();
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {
@@ -71,14 +71,14 @@ export const SettingsObjectNewFieldSelect = () => {
             { children: t('objects'), href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectSlug}`,
+              href: `/settings/objects/${objectNamePlural}`,
             },
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
           ]}
         >
           <SettingsPageContainer>
             <SettingsObjectNewFieldSelector
-              objectSlug={objectSlug}
+              objectNamePlural={objectNamePlural}
               excludedFieldTypes={excludedFieldTypes}
             />
           </SettingsPageContainer>

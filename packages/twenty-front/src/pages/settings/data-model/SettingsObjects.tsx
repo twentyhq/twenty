@@ -1,7 +1,6 @@
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -199,9 +198,9 @@ export const SettingsObjects = () => {
                             stroke={theme.icon.stroke.sm}
                           />
                         }
-                        link={`/settings/objects/${getObjectSlug(
-                          objectSettingsItem.objectMetadataItem,
-                        )}`}
+                        link={`/settings/objects/${
+                          objectSettingsItem.objectMetadataItem.namePlural
+                        }`}
                       />
                     ),
                   )}
