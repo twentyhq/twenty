@@ -20,6 +20,7 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
   }
   th:nth-of-type(2) {
     border-right-color: ${({ theme }) => theme.background.primary};
+    border-top: 1px solid ${({ theme }) => theme.border.color.light};
   }
   &.first-columns-sticky {
     th:nth-of-type(1) {
