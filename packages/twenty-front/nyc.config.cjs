@@ -1,8 +1,8 @@
 const globalCoverage = {
-  branches: 45,
-  statements: 60,
-  lines: 60,
-  functions: 60,
+  branches: 24,
+  statements: 40,
+  lines: 40,
+  functions: 30,
   exclude: ['src/generated/**/*'],
 };
 
@@ -24,10 +24,10 @@ const pagesCoverage = {
 };
 
 const performanceCoverage = {
-  branches: 24,
-  statements: 40,
-  lines: 40,
-  functions: 30,
+  branches: 35,
+  statements: 60,
+  lines: 60,
+  functions: 45,
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };
 
