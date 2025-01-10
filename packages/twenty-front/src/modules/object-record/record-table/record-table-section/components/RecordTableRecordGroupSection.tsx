@@ -38,6 +38,8 @@ const StyledTotalRow = styled.span`
 const StyledRecordGroupSection = styled(RecordTableTd)`
   border-right: none;
   height: 32px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledEmptyTd = styled.td`
@@ -92,7 +94,7 @@ export const RecordTableRecordGroupSection = () => {
           <IconChevronDown size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
-      <StyledRecordGroupSection>
+      <StyledRecordGroupSection className="disable-shadow">
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue

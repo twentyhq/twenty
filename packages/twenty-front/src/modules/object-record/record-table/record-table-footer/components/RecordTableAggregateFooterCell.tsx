@@ -34,6 +34,7 @@ const StyledColumnFooterCell = styled.th<{
     };
     `;
   }};
+  height: 32px;
 
   user-select: none;
   overflow: auto;
