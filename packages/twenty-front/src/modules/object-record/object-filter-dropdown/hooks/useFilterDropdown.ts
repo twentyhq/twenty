@@ -1,4 +1,4 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
 
@@ -26,20 +26,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     advancedFilterViewFilterGroupIdState,
     advancedFilterViewFilterIdState,
   } = useFilterDropdownStates(componentInstanceId);
-
-  const emptyFilterButKeepDefinition = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(objectFilterDropdownSearchInputState, '');
-        set(objectFilterDropdownSelectedRecordIdsState, []);
-        set(selectedFilterState, undefined);
-      },
-    [
-      objectFilterDropdownSearchInputState,
-      objectFilterDropdownSelectedRecordIdsState,
-      selectedFilterState,
-    ],
-  );
 
   const setSelectedFilter = useSetRecoilState(selectedFilterState);
   const setSelectedOperandInDropdown = useSetRecoilState(
@@ -77,7 +63,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setOnFilterSelect,
     setAdvancedFilterViewFilterGroupId,
     setAdvancedFilterViewFilterId,
-    emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
     objectFilterDropdownSelectedRecordIdsState,
