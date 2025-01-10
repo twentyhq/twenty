@@ -47,19 +47,34 @@ jobs:
       - name: Diagnostic disk space issue
         if: steps.changed-files.outputs.any_changed == 'true'
         run: df -h
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore storybook build cache
+        id: storybook-build-cache-restore
+        uses: actions/cache/restore@v4
         with:
-          tag: scope:frontend
-          tasks: storybook:build
-          suffix: shipfox
+          path: |
+            .cache
+            .nx/cache
+            node_modules/.cache
+            packages/*/node_modules/.cache
+          key: tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-${{ github.sha }}
+          restore-keys: |
+            tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
+      - name: Save storybook build cache
+        if: steps.storybook-build-cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.storybook-build-cache-restore.outputs.cache-primary-key }}
+          path: |
+            .cache
+            .nx/cache
+            node_modules/.cache
+            packages/*/node_modules/.cache
   front-sb-test:
     timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
@@ -93,13 +108,17 @@ jobs:
       - name: Install Playwright
         if: steps.changed-files.outputs.any_changed == 'true'
         run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore Storybook build cache
+        uses: actions/cache/restore@v4
         with:
-          tag: scope:frontend
-          tasks: storybook:build
-          suffix: shipfox
+          path: |
+            .cache
+            .nx/cache
+            node_modules/.cache
+            packages/*/node_modules/.cache
+          key: tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-${{ github.sha }}
+          restore-keys: |
+            tasks-cache-${{ github.ref_name }}-scope:frontend-storybook:build-shipfox-
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
