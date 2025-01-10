@@ -47,12 +47,13 @@ jobs:
       - name: Diagnostic disk space issue
         if: steps.changed-files.outputs.any_changed == 'true'
         run: df -h
-      # - name: Front / Restore Storybook Task Cache
-      #   if: steps.changed-files.outputs.any_changed == 'true'
-      #   uses: ./.github/workflows/actions/task-cache
-      #   with:
-      #     tag: scope:frontend
-      #     tasks: storybook:build
+      - name: Front / Restore Storybook Task Cache
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: storybook:build
+          suffix: shipfox
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -92,20 +93,18 @@ jobs:
       - name: Install Playwright
         if: steps.changed-files.outputs.any_changed == 'true'
         run: cd packages/twenty-front && npx playwright install
-      # - name: Front / Restore Storybook Task Cache
-      #   if: steps.changed-files.outputs.any_changed == 'true'
-      #   uses: ./.github/workflows/actions/task-cache
-      #   with:
-      #     tag: scope:frontend
-      #     tasks: storybook:build
+      - name: Front / Restore Storybook Task Cache
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: storybook:build
+          suffix: shipfox
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        # TODO double check behavior with --configuration and sharding
-        # Should we merge back all cov files ? we don't really consume them afterwards ?
-        # run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
         run: |
           pwd
           ls -al /home/runner
@@ -113,9 +112,7 @@ jobs:
       - name: Rename coverage file
         if: steps.changed-files.outputs.any_changed == 'true'
         # Could be refactor to use storybook cli args output coverage
-        run: |
-          sed -i 's/_work/work/' packages/twenty-front/coverage/storybook/coverage-storybook.json
-          mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+        run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
