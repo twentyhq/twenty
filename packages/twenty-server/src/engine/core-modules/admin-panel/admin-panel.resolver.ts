@@ -11,6 +11,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -40,7 +41,7 @@ export class AdminPanelResolver {
   ): Promise<boolean> {
     await this.adminService.updateWorkspaceFeatureFlags(
       updateFlagInput.workspaceId,
-      updateFlagInput.featureFlag,
+      FeatureFlagKey[updateFlagInput.featureFlag],
       updateFlagInput.value,
     );
 
