@@ -29,7 +29,6 @@ export class ClientConfigResolver {
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       },
-      isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
       isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',
@@ -59,6 +58,9 @@ export class ClientConfigResolver {
         ),
       },
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
+      canManageFeatureFlags:
+        this.environmentService.get('DEBUG_MODE') ||
+        this.environmentService.get('IS_BILLING_ENABLED'),
     };
 
     return Promise.resolve(clientConfig);

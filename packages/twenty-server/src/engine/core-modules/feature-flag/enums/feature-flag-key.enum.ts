@@ -7,7 +7,6 @@ export enum FeatureFlagKey {
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
-  IsSSOEnabled = 'IS_SSO_ENABLED',
   IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
