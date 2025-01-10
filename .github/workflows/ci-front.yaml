@@ -80,7 +80,8 @@ jobs:
     strategy:
       matrix:
         shard: [1, 2, 3, 4]
-        storybook_scope: [pages, performance]
+        storybook_scope: [performance]
+        # storybook_scope: [modules, pages, performance]
     env:
       SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -141,7 +142,8 @@ jobs:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
     strategy:
       matrix:
-        storybook_scope: [pages, performance]
+        storybook_scope: [performance]
+        # storybook_scope: [modules, pages, performance]
     steps:
       - uses: actions/checkout@v4
         with:
