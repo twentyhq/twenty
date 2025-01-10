@@ -13,7 +13,6 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(12)};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
-
   position: relative;
   width: ${({ theme }) => theme.spacing(12)};
 `;
@@ -32,40 +31,63 @@ const StyledSecondaryLogoContainer = styled.div`
   display: flex;
   height: ${({ theme }) => theme.spacing(7)};
   justify-content: center;
-
   position: absolute;
   right: ${({ theme }) => `-${theme.spacing(3)}`};
   width: ${({ theme }) => theme.spacing(7)};
 `;
 
-const StyledPrimaryLogo = styled.div<{ src: string }>`
-  background: url(${(props) => props.src});
-  background-size: cover;
+const StyledPrimaryLogo = styled.img`
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   height: 100%;
   width: 100%;
 `;
 
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
 export const Logo = (props: LogoProps) => {
-  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
+  const defaultPrimaryLogoUrl = 'https://via.placeholder.com/150';
 
-  const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
-    baseUrl: REACT_APP_SERVER_BASE_URL,
-  });
+  const primaryLogoUrl =
+    props.primaryLogo && isValidUrl(props.primaryLogo)
+      ? getImageAbsoluteURI({
+          imageUrl: props.primaryLogo,
+          baseUrl: REACT_APP_SERVER_BASE_URL,
+        })
+      : defaultPrimaryLogoUrl;
 
-  const secondaryLogoUrl = isNonEmptyString(props.secondaryLogo)
-    ? getImageAbsoluteURI({
-        imageUrl: props.secondaryLogo,
-        baseUrl: REACT_APP_SERVER_BASE_URL,
-      })
-    : null;
+  const secondaryLogoUrl =
+    isNonEmptyString(props.secondaryLogo) && isValidUrl(props.secondaryLogo)
+      ? getImageAbsoluteURI({
+          imageUrl: props.secondaryLogo,
+          baseUrl: REACT_APP_SERVER_BASE_URL,
+        })
+      : null;
 
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+      <StyledPrimaryLogo
+        src={primaryLogoUrl}
+        alt="Primary Logo "
+        onError={(e) => {
+          e.currentTarget.src = defaultPrimaryLogoUrl;
+        }}
+      />
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
-          <StyledSecondaryLogo src={secondaryLogoUrl} />
+          <StyledSecondaryLogo
+            src={secondaryLogoUrl}
+            alt="Secondary Logo"
+            onError={(e) => {
+              e.currentTarget.src = defaultPrimaryLogoUrl;
+            }}
+          />
         </StyledSecondaryLogoContainer>
       )}
     </StyledContainer>
