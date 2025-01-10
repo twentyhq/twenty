@@ -46,6 +46,10 @@ const StyledDateInputAbsoluteContainer = styled.div`
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
   ${TEXT_INPUT_STYLE}
 
+  &:disabled {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
+
   ${({ hasError, theme }) =>
     hasError &&
     css`
