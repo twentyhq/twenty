@@ -8,13 +8,14 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Injectable()
 export class AdminPanelService {
@@ -44,14 +45,9 @@ export class AdminPanelService {
 
     userValidator.assertIsDefinedOrThrow(
       user,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
-    );
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      user.workspaces[0].workspace,
       new AuthException(
-        'Impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        'User not found or impersonation not enable on workspace',
+        AuthExceptionCode.INVALID_INPUT,
       ),
     );
 
@@ -122,9 +118,17 @@ export class AdminPanelService {
 
   async updateWorkspaceFeatureFlags(
     workspaceId: string,
-    featureFlag: FeatureFlagKey,
+    featureFlag: string,
     value: boolean,
   ) {
+    featureFlagValidator.assertIsFeatureFlagKey(
+      featureFlag,
+      new AuthException(
+        'Invalid feature flag key',
+        AuthExceptionCode.INVALID_INPUT,
+      ),
+    );
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['featureFlags'],

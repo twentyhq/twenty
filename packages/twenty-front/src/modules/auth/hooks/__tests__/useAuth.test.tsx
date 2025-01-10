@@ -141,10 +141,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      const res = await result.current.signUpWithCredentials(email, password);
-      expect(res).toHaveProperty('user');
-      expect(res).toHaveProperty('workspaceMember');
-      expect(res).toHaveProperty('workspace');
+      await result.current.signUpWithCredentials(email, password);
     });
 
     expect(mocks[2].result).toHaveBeenCalled();

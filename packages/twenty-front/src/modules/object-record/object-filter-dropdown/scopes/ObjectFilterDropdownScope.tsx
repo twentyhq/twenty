@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { ObjectFilterDropdownScopeInternalContext } from './scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 
 type ObjectFilterDropdownScopeProps = {
   children: ReactNode;
@@ -16,11 +15,7 @@ export const ObjectFilterDropdownScope = ({
     <ObjectFilterDropdownComponentInstanceContext.Provider
       value={{ instanceId: filterScopeId }}
     >
-      <ObjectFilterDropdownScopeInternalContext.Provider
-        value={{ scopeId: filterScopeId }}
-      >
-        {children}
-      </ObjectFilterDropdownScopeInternalContext.Provider>
+      {children}
     </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
