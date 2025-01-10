@@ -39,4 +39,5 @@ export const mockedClientConfig: ClientConfig = {
     __typename: 'Captcha',
   },
   api: { mutationMaximumAffectedRecords: 100 },
+  canManageFeatureFlags: true,
 };

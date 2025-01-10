@@ -91,4 +91,7 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  @Field(() => Boolean)
+  canManageFeatureFlags: boolean;
 }
