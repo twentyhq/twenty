@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Avatar, IconArrowUpRight, IconComponent, MenuItemCommand } from 'twenty-ui';
-
+import { useMemo } from 'react';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
@@ -37,15 +37,18 @@ export const CommandMenuItem = ({
   const { isSelectedItemIdSelector } = useSelectableList();
   const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(id));
 
-  const AvatarIcon: IconComponent | undefined = avatarUrl
-  ? () => (
+  const AvatarIcon: IconComponent | undefined = useMemo(() => {
+  if (avatarUrl) {
+    return () => (
       <Avatar
         avatarUrl={avatarUrl}
         size="sm"
-        placeholder={label.charAt(0)} 
+        placeholder={label.charAt(0)}
       />
-    )
-  : undefined;
+    );
+  }
+  return undefined;
+}, [avatarUrl, label]);
 
   return (
     <MenuItemCommand
