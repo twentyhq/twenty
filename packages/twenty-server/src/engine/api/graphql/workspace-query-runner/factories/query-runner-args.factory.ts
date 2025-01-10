@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { FieldMetadataType } from 'twenty-shared';
 
 import {
   ObjectRecord,
@@ -24,7 +25,6 @@ import {
   RichTextMetadata,
   richTextValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 import { RecordPositionFactory } from './record-position.factory';

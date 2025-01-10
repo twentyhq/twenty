@@ -7,15 +7,15 @@ import { FeatureFlagKey } from '~/generated/graphql';
 export const PageHeaderOpenCommandMenuButton = () => {
   const { openCommandMenu } = useCommandMenu();
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const isMobile = useIsMobile();
 
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={IconDotsVertical}
           dataTestId="page-header-open-command-menu-button"

@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
+import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const useLimitPerMetadataItem = ({
   objectMetadataItems,

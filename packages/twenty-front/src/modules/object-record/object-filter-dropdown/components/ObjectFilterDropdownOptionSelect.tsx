@@ -14,6 +14,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
@@ -32,8 +33,9 @@ export const ObjectFilterDropdownOptionSelect = () => {
     selectedOperandInDropdownState,
     objectFilterDropdownSelectedOptionValuesState,
     selectedFilterState,
-    selectFilter,
   } = useFilterDropdown();
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
 
@@ -128,7 +130,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
           ? JSON.stringify(selectedOptions.map((option) => option.value))
           : EMPTY_FILTER_VALUE;
 
-      selectFilter({
+      applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : v4(),
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,

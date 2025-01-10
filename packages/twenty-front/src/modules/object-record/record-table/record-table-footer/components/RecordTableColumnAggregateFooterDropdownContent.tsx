@@ -1,5 +1,4 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
@@ -9,19 +8,13 @@ import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tab
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 
 export const RecordTableColumnAggregateFooterDropdownContent = () => {
-  const { currentContentId, fieldMetadataId } = useDropdown({
+  const { currentContentId, fieldMetadataType } = useDropdown({
     context: RecordTableColumnAggregateFooterDropdownContext,
   });
 
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
-
-  const fieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === fieldMetadataId,
-  );
-
   const availableAggregateOperations =
     getAvailableAggregateOperationsForFieldMetadataType({
-      fieldMetadataType: fieldMetadata?.type,
+      fieldMetadataType: fieldMetadataType,
     });
 
   switch (currentContentId) {

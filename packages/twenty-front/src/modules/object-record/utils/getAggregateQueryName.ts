@@ -1,5 +1,5 @@
+import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const getAggregateQueryName = (
   objectMetadataNamePlural: string,

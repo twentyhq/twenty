@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { actorCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -8,7 +10,6 @@ import { fullNameCompositeType } from 'src/engine/metadata-modules/field-metadat
 import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { phonesCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { richTextCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const compositeTypeDefinitions = new Map<
   FieldMetadataType,

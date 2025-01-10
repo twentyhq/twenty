@@ -6,12 +6,14 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
+
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
   position,
@@ -62,7 +64,7 @@ export const RecordBoardColumnNewOpportunity = ({
       {newRecord.isCreating && newRecord.position === position && (
         <OverlayContainer>
           <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: 'relation-picker' }}
+            value={{ instanceId: RelationPickerHotkeyScope.RelationPicker }}
           >
             <SingleRecordSelect
               onCancel={() => handleCreateSuccess(position, columnId, false)}

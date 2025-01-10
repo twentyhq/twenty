@@ -188,6 +188,13 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export type CreateDraftFromWorkflowVersionInput = {
+  /** Workflow ID */
+  workflowId: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionIdToCopy: Scalars['String'];
+};
+
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -317,6 +324,7 @@ export enum FeatureFlagKey {
   IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
@@ -325,11 +333,11 @@ export enum FeatureFlagKey {
   IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
-  IsPageHeaderV2Enabled = 'IsPageHeaderV2Enabled',
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsSsoEnabled = 'IsSSOEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
+  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
@@ -502,6 +510,7 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   computeStepOutputSchema: Scalars['JSON'];
+  createDraftFromWorkflowVersion: Scalars['Boolean'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -597,6 +606,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
+};
+
+
+export type MutationCreateDraftFromWorkflowVersionArgs = {
+  input: CreateDraftFromWorkflowVersionInput;
 };
 
 
@@ -2177,6 +2191,13 @@ export type DeleteWorkflowVersionStepMutationVariables = Exact<{
 
 
 export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
+
+export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
+  input: CreateDraftFromWorkflowVersionInput;
+}>;
+
+
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: boolean };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -4094,6 +4115,37 @@ export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export const CreateDraftFromWorkflowVersionDocument = gql`
+    mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
+  createDraftFromWorkflowVersion(input: $input)
+}
+    `;
+export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
+
+/**
+ * __useCreateDraftFromWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useCreateDraftFromWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDraftFromWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDraftFromWorkflowVersionMutation, { data, loading, error }] = useCreateDraftFromWorkflowVersionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>(CreateDraftFromWorkflowVersionDocument, options);
+      }
+export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
 export const RunWorkflowVersionDocument = gql`
     mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
   runWorkflowVersion(input: $input) {
