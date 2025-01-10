@@ -33,6 +33,8 @@ const StyledCommandMenu = styled(motion.div)`
   right: 0%;
   top: 0%;
   z-index: 30;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const CommandMenuContainer = ({
