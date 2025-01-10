@@ -33,7 +33,7 @@ const StyledTbody = styled.tbody`
         }
       }
 
-      &::after {
+      &:not(.disable-shadow)::after {
         content: '';
         position: absolute;
         top: -1px;

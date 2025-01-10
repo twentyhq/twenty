@@ -13,7 +13,7 @@ concurrency:
 jobs:
   front-sb-build:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: shipfox-8vcpu-ubuntu-2204
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0

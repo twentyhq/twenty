@@ -2,8 +2,10 @@ import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
+import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
+import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -261,19 +263,25 @@ describe('useFilterDropdown', () => {
 
   it('should reset filter', async () => {
     const { result } = renderHook(() => {
-      const { resetFilter, selectFilter } = useFilterDropdown({
-        filterDropdownId,
-      });
+      const { resetFilterDropdown } = useResetFilterDropdown(filterDropdownId);
+
+      const { applyRecordFilter } = useApplyRecordFilter(filterDropdownId);
 
       const { selectedFilterState } = useFilterDropdownStates(filterDropdownId);
 
       const [selectedFilter, setSelectedFilter] =
         useRecoilState(selectedFilterState);
-      return { selectedFilter, setSelectedFilter, selectFilter, resetFilter };
+
+      return {
+        selectedFilter,
+        setSelectedFilter,
+        applyRecordFilter,
+        resetFilterDropdown,
+      };
     }, renderHookConfig);
 
     act(() => {
-      result.current.selectFilter(mockFilter);
+      result.current.applyRecordFilter(mockFilter);
     });
 
     await waitFor(() => {
@@ -281,7 +289,7 @@ describe('useFilterDropdown', () => {
     });
 
     act(() => {
-      result.current.resetFilter();
+      result.current.resetFilterDropdown();
     });
 
     await waitFor(() => {
@@ -291,12 +299,13 @@ describe('useFilterDropdown', () => {
 
   it('should call onFilterSelect when a filter option is set', async () => {
     const { result } = renderHook(() => {
-      const { selectFilter } = useFilterDropdown({ filterDropdownId });
+      const { applyRecordFilter } = useApplyRecordFilter(filterDropdownId);
+
       const { onFilterSelectState } = useFilterDropdownStates(filterDropdownId);
 
       const [onFilterSelect, setOnFilterSelect] =
         useRecoilState(onFilterSelectState);
-      return { onFilterSelect, setOnFilterSelect, selectFilter };
+      return { onFilterSelect, setOnFilterSelect, applyRecordFilter };
     }, renderHookConfig);
     const onFilterSelectMock = jest.fn();
 
@@ -304,7 +313,7 @@ describe('useFilterDropdown', () => {
 
     act(() => {
       result.current.setOnFilterSelect(onFilterSelectMock);
-      result.current.selectFilter(mockFilter);
+      result.current.applyRecordFilter(mockFilter);
     });
 
     await waitFor(() => {
@@ -313,7 +322,7 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should handle scopeId undefined on initial values', () => {
+  it('should handle componentInstanceId undefined on initial values', () => {
     global.console.error = jest.fn();
 
     const renderFunction = () => {
@@ -322,16 +331,16 @@ describe('useFilterDropdown', () => {
 
     expect(renderFunction).toThrow(Error);
     expect(renderFunction).toThrow(
-      'Scope id is not provided and cannot be found in context.',
+      'Instance id is not provided and cannot be found in context.',
     );
   });
 
-  it('should scopeId have been defined on initial values', () => {
+  it('should componentInstanceId have been defined on initial values', () => {
     const { result } = renderHook(
       () => useFilterDropdown({ filterDropdownId }),
       renderHookConfig,
     );
 
-    expect(result.current.scopeId).toBeDefined();
+    expect(result.current.componentInstanceId).toBeDefined();
   });
 });

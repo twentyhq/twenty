@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -20,32 +21,6 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-
-export enum FieldMetadataType {
-  UUID = 'UUID',
-  TEXT = 'TEXT',
-  PHONES = 'PHONES',
-  EMAILS = 'EMAILS',
-  DATE_TIME = 'DATE_TIME',
-  DATE = 'DATE',
-  BOOLEAN = 'BOOLEAN',
-  NUMBER = 'NUMBER',
-  NUMERIC = 'NUMERIC',
-  LINKS = 'LINKS',
-  CURRENCY = 'CURRENCY',
-  FULL_NAME = 'FULL_NAME',
-  RATING = 'RATING',
-  SELECT = 'SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-  RELATION = 'RELATION',
-  POSITION = 'POSITION',
-  ADDRESS = 'ADDRESS',
-  RAW_JSON = 'RAW_JSON',
-  RICH_TEXT = 'RICH_TEXT',
-  ACTOR = 'ACTOR',
-  ARRAY = 'ARRAY',
-  TS_VECTOR = 'TS_VECTOR',
-}
 
 @Entity('fieldMetadata')
 @Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
@@ -72,7 +47,10 @@ export class FieldMetadataEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   object: Relation<ObjectMetadataEntity>;
 
-  @Column({ nullable: false })
+  @Column({
+    nullable: false,
+    type: 'varchar',
+  })
   type: FieldMetadataType;
 
   @Column({ nullable: false })

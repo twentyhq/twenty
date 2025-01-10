@@ -1,19 +1,15 @@
 {
   "name": "twenty-zapier",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-zapier node ../../node_modules/nx/bin/nx.js",
     "format": "prettier . --write \"!build\"",
     "test": "yarn build && jest --testTimeout 10000 --rootDir ./lib/test",
-    "build": "yarn clean && tsc",
-    "deploy": "yarn build && zapier push",
     "validate": "yarn build && zapier validate",
     "versions": "yarn build && zapier versions",
-    "clean": "rimraf ./lib ./build",
-    "watch": "yarn clean && tsc --watch",
-    "_zapier-build": "yarn build"
+    "watch": "yarn clean && npx tsc --watch"
   },
   "engines": {
     "node": "^18.17.1",

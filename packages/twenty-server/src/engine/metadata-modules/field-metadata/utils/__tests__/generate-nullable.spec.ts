@@ -1,4 +1,5 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 
 describe('generateNullable', () => {
