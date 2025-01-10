@@ -23,7 +23,7 @@ export const useRightDrawer = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { openCommandMenu } = useCommandMenu();
 
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>

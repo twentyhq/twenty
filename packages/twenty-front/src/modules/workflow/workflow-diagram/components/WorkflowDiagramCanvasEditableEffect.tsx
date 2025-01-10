@@ -58,10 +58,11 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
-      setHotkeyScope,
-      closeRightDrawer,
-      openRightDrawer,
       setWorkflowSelectedNode,
+      setHotkeyScope,
+      openRightDrawer,
+      closeRightDrawer,
+      closeCommandMenu,
       startNodeCreation,
     ],
   );

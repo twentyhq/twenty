@@ -33,10 +33,11 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       openRightDrawer(RightDrawerPages.WorkflowStepView);
     },
     [
-      closeRightDrawer,
-      openRightDrawer,
       setWorkflowSelectedNode,
       setHotkeyScope,
+      openRightDrawer,
+      closeRightDrawer,
+      closeCommandMenu,
     ],
   );
 
