@@ -15,6 +15,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/feature-flag.validate';
 
 @Injectable()
 export class AdminPanelService {
@@ -122,9 +123,17 @@ export class AdminPanelService {
 
   async updateWorkspaceFeatureFlags(
     workspaceId: string,
-    featureFlag: FeatureFlagKey,
+    featureFlag: string,
     value: boolean,
   ) {
+    featureFlagValidator.assertIsFeatureFlagKey(
+      featureFlag,
+      new AuthException(
+        'Invalid feature flag key',
+        AuthExceptionCode.INVALID_INPUT,
+      ),
+    );
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['featureFlags'],
