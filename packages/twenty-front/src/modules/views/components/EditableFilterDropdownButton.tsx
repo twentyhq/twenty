@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,6 +10,10 @@ import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
@@ -26,13 +29,20 @@ export const EditableFilterDropdownButton = ({
   viewFilter,
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setSelectedFilter,
-  } = useFilterDropdown({
-    filterDropdownId: viewFilterDropdownId,
-  });
+  const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
+    filterDefinitionUsedInDropdownComponentState,
+    viewFilterDropdownId,
+  );
+
+  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+    selectedOperandInDropdownComponentState,
+    viewFilterDropdownId,
+  );
+
+  const setSelectedFilter = useSetRecoilComponentStateV2(
+    selectedFilterComponentState,
+    viewFilterDropdownId,
+  );
 
   // TODO: verify this instance id works
   const availableFilterDefinitions = useRecoilComponentValueV2(

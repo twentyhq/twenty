@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -24,14 +29,29 @@ type ObjectFilterDropdownSourceSelectProps = {
 export const ObjectFilterDropdownSourceSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownSourceSelectProps) => {
-  const {
-    filterDefinitionUsedInDropdownState,
-    objectFilterDropdownSearchInputState,
-    selectedOperandInDropdownState,
-    selectedFilterState,
-    setObjectFilterDropdownSelectedRecordIds,
-    objectFilterDropdownSelectedRecordIdsState,
-  } = useFilterDropdown();
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+    objectFilterDropdownSearchInputComponentState,
+  );
+
+  const setObjectFilterDropdownSelectedRecordIds = useSetRecoilComponentStateV2(
+    objectFilterDropdownSelectedRecordIdsComponentState,
+  );
+
+  const objectFilterDropdownSelectedRecordIds = useRecoilComponentValueV2(
+    objectFilterDropdownSelectedRecordIdsComponentState,
+  );
+
+  const selectedFilter = useRecoilComponentValueV2(
+    selectedFilterComponentState,
+  );
+
+  const selectedOperandInDropdown = useRecoilComponentValueV2(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
+    filterDefinitionUsedInDropdownComponentState,
+  );
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
@@ -41,21 +61,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
-  const objectFilterDropdownSearchInput = useRecoilValue(
-    objectFilterDropdownSearchInputState,
-  );
-  const selectedOperandInDropdown = useRecoilValue(
-    selectedOperandInDropdownState,
-  );
-  const objectFilterDropdownSelectedRecordIds = useRecoilValue(
-    objectFilterDropdownSelectedRecordIdsState,
-  );
   const [fieldId] = useState(v4());
-
-  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,

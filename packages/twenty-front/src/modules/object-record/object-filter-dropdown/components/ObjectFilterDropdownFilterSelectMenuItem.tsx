@@ -1,11 +1,12 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
+import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
 
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
@@ -15,6 +16,8 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
 import { MenuItemSelect, useIcons } from 'twenty-ui';
 
@@ -56,14 +59,15 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const isACompositeField = isCompositeField(filterDefinition.type);
 
-  const { setSelectedOperandInDropdown, advancedFilterViewFilterIdState } =
-    useFilterDropdown();
+  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const advancedFilterViewFilterId = useRecoilComponentValueV2(
+    advancedFilterViewFilterIdComponentState,
+  );
 
   const setHotkeyScope = useSetHotkeyScope();
-
-  const advancedFilterViewFilterId = useRecoilValue(
-    advancedFilterViewFilterIdState,
-  );
 
   const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
     advancedFilterViewFilterId,
