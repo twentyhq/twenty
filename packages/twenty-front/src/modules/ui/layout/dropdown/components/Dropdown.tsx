@@ -39,9 +39,7 @@ const StyledHeaderDiv = styled.div<StyledHeaderDivProps>`
   & button,
   & > * {
     background: ${({ theme, isUnfolded }) =>
-      isUnfolded
-        ? theme.background.transparent.light
-        : theme.background.primary};
+      isUnfolded ? theme.background.transparent.light : 'none'};
 
     &:hover {
       background: ${({ theme, isUnfolded }) =>
