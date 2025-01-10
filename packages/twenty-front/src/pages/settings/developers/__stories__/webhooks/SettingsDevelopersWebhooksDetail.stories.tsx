@@ -51,7 +51,7 @@ export const Default: Story = {
     await canvas.findByText(
       'We will send POST requests to this endpoint for every new event',
       undefined,
-      { timeout: 10000 }
+      { timeout: 10000 },
     );
     await canvas.findByText('Delete this integration');
   },
