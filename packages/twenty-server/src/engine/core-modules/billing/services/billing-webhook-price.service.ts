@@ -11,14 +11,14 @@ import {
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
 import { transformStripePriceEventToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-event-to-price-repository-data.util';
 @Injectable()
 export class BillingWebhookPriceService {
   protected readonly logger = new Logger(BillingWebhookPriceService.name);
   constructor(
-    private readonly stripeService: StripeService,
+    private readonly stripeBillingMeterService: StripeBillingMeterService,
     @InjectRepository(BillingPrice, 'core')
     private readonly billingPriceRepository: Repository<BillingPrice>,
     @InjectRepository(BillingMeter, 'core')
@@ -45,7 +45,7 @@ export class BillingWebhookPriceService {
     const meterId = data.object.recurring?.meter;
 
     if (meterId) {
-      const meterData = await this.stripeService.getMeter(meterId);
+      const meterData = await this.stripeBillingMeterService.getMeter(meterId);
 
       await this.billingMeterRepository.upsert(
         transformStripeMeterDataToMeterRepositoryData(meterData),
@@ -63,5 +63,10 @@ export class BillingWebhookPriceService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    return {
+      stripePriceId: data.object.id,
+      stripeMeterId: meterId,
+    };
   }
 }

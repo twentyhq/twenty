@@ -1,25 +1,26 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
+
+const StyledTh = styled.th`
+  background-color: ${({ theme }) => theme.background.primary};
+`;
 
 const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
   cursor: pointer;
-
   th:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
   }
-
   th:nth-of-type(2) {
     border-right-color: ${({ theme }) => theme.background.primary};
   }
-
   &.first-columns-sticky {
     th:nth-of-type(1) {
       position: sticky;
@@ -27,20 +28,17 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
       z-index: 5;
       transition: 0.3s ease;
     }
-
     th:nth-of-type(2) {
       position: sticky;
       left: 11px;
       z-index: 5;
       transition: 0.3s ease;
     }
-
     th:nth-of-type(3) {
       position: sticky;
       left: 43px;
       z-index: 5;
       transition: 0.3s ease;
-
       &::after {
         content: '';
         position: absolute;
@@ -51,14 +49,12 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
         box-shadow: ${({ theme }) => theme.boxShadow.light};
         clip-path: inset(0px -4px 0px 0px);
       }
-
       @media (max-width: ${MOBILE_VIEWPORT}px) {
         width: 34px;
         max-width: 34px;
       }
     }
   }
-
   tr {
     position: sticky;
     z-index: 5;
@@ -80,15 +76,12 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
   }
 `;
 
-const StyledTh = styled.th`
-  background-color: ${({ theme }) => theme.background.primary};
-`;
-
 export const RecordTableAggregateFooter = ({
   currentRecordGroupId,
   endOfTableSticky,
 }: {
   currentRecordGroupId?: string;
+
   endOfTableSticky?: boolean;
 }) => {
   const visibleTableColumns = useRecoilComponentValueV2(

@@ -1,7 +1,7 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
+import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
@@ -25,7 +25,8 @@ export type ObjectFilterDropdownFilterSelectMenuItemProps = {
 export const ObjectFilterDropdownFilterSelectMenuItem = ({
   filterDefinition,
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
-  const { selectFilter } = useSelectFilter();
+  const { selectFilterDefinitionUsedInDropdown } =
+    useSelectFilterDefinitionUsedInDropdown();
 
   const [, setObjectFilterDropdownFirstLevelFilterDefinition] =
     useRecoilComponentStateV2(
@@ -55,12 +56,8 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const isACompositeField = isCompositeField(filterDefinition.type);
 
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-    advancedFilterViewFilterIdState,
-  } = useFilterDropdown();
+  const { setSelectedOperandInDropdown, advancedFilterViewFilterIdState } =
+    useFilterDropdown();
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -72,11 +69,14 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     advancedFilterViewFilterId,
   );
 
-  const handleSelectFilter = (availableFilterDefinition: FilterDefinition) => {
+  const handleSelectFilterDefinition = (
+    availableFilterDefinition: FilterDefinition,
+  ) => {
     closeAdvancedFilterDropdown();
-    selectFilter({ filterDefinition: availableFilterDefinition });
 
-    setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+    selectFilterDefinitionUsedInDropdown({
+      filterDefinition: availableFilterDefinition,
+    });
 
     if (
       availableFilterDefinition.type === 'RELATION' ||
@@ -88,8 +88,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     setSelectedOperandInDropdown(
       getOperandsForFilterDefinition(availableFilterDefinition)[0],
     );
-
-    setObjectFilterDropdownSearchInput('');
 
     setObjectFilterDropdownFilterIsSelected(true);
   };
@@ -107,7 +105,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
       setObjectFilterDropdownFirstLevelFilterDefinition(filterDefinition);
       setObjectFilterDropdownIsSelectingCompositeField(true);
     } else {
-      handleSelectFilter(filterDefinition);
+      handleSelectFilterDefinition(filterDefinition);
     }
   };
 
