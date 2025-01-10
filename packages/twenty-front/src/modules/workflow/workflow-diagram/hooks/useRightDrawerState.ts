@@ -6,7 +6,7 @@ import { RightDrawerAnimationVariant } from '@/ui/layout/right-drawer/types/Righ
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRightDrawerState = (): {
   rightDrawerState: RightDrawerAnimationVariant | CommandMenuAnimationVariant;
