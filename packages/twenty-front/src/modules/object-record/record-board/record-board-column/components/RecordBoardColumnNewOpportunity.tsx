@@ -14,12 +14,10 @@ import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
-<<<<<<< HEAD
+
 import { RecordBoardContext } from '../../contexts/RecordBoardContext';
 import { useCreateNewBoardRecord } from '../../hooks/useCreateNewBoardRecord';
 import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../../states/recordBoardPendingRecordIdByColumnComponentFamilyState';
-=======
->>>>>>> upstream/main
 
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
