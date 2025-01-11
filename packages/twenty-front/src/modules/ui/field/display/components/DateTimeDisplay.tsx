@@ -1,6 +1,6 @@
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { formatDateString } from '~/utils/string/formatDateString';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
@@ -14,7 +14,7 @@ export const DateTimeDisplay = ({
 }: DateTimeDisplayProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const formattedDate = formatDateString({
+  const formattedDate = formatDateTimeString({
     value,
     displayAsRelativeDate,
     timeZone,

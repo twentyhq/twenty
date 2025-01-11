@@ -33,8 +33,8 @@ export const RecordShowActionMenu = ({
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   // TODO: refactor RecordShowPageBaseHeader to use the context store
@@ -48,7 +48,7 @@ export const RecordShowActionMenu = ({
             onActionExecutedCallback: () => {},
           }}
         >
-          {isPageHeaderV2Enabled ? (
+          {isCommandMenuV2Enabled ? (
             <RecordShowActionMenuButtons />
           ) : (
             <RecordShowPageBaseHeader

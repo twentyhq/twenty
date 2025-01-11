@@ -65,9 +65,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   isMultiWorkspaceEnabled: boolean;
 
-  @Field(() => Boolean)
-  isSSOEnabled: boolean;
-
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
@@ -94,4 +91,7 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  @Field(() => Boolean)
+  canManageFeatureFlags: boolean;
 }
