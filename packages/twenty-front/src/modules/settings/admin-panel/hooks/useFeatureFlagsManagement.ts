@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-ui';
 import {
   useUpdateWorkspaceFeatureFlagMutation,
   useUserLookupAdminPanelMutation,
+  FeatureFlagKey,
 } from '~/generated/graphql';
 
 export const useFeatureFlagsManagement = () => {
@@ -42,7 +43,7 @@ export const useFeatureFlagsManagement = () => {
 
   const handleFeatureFlagUpdate = async (
     workspaceId: string,
-    featureFlag: string,
+    featureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
     setError(null);
