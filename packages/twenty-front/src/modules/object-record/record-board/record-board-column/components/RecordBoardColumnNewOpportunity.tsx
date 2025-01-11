@@ -5,6 +5,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -13,9 +14,12 @@ import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
+<<<<<<< HEAD
 import { RecordBoardContext } from '../../contexts/RecordBoardContext';
 import { useCreateNewBoardRecord } from '../../hooks/useCreateNewBoardRecord';
 import { recordBoardPendingRecordIdByColumnComponentFamilyState } from '../../states/recordBoardPendingRecordIdByColumnComponentFamilyState';
+=======
+>>>>>>> upstream/main
 
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
@@ -76,7 +80,7 @@ export const RecordBoardColumnNewOpportunity = ({
       {shouldDisplayCompanyPicker && (
         <OverlayContainer>
           <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: 'relation-picker' }}
+            value={{ instanceId: RelationPickerHotkeyScope.RelationPicker }}
           >
             <SingleRecordSelect
               onCancel={() => createNewBoardRecord(columnId, position)}

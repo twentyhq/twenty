@@ -1,4 +1,3 @@
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -33,13 +32,11 @@ export const ObjectFilterDropdownButton = ({
     <ObjectFilterDropdownComponentInstanceContext.Provider
       value={{ instanceId: filterDropdownId }}
     >
-      <ObjectFilterDropdownScope filterScopeId={filterDropdownId}>
-        {hasOnlyOneEntityFilter ? (
-          <SingleEntityObjectFilterDropdownButton hotkeyScope={hotkeyScope} />
-        ) : (
-          <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
-        )}
-      </ObjectFilterDropdownScope>
+      {hasOnlyOneEntityFilter ? (
+        <SingleEntityObjectFilterDropdownButton hotkeyScope={hotkeyScope} />
+      ) : (
+        <MultipleFiltersDropdownButton hotkeyScope={hotkeyScope} />
+      )}
     </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };

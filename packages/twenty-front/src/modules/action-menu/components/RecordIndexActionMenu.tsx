@@ -25,8 +25,8 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const isMobile = useIsMobile();
@@ -54,7 +54,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             },
           }}
         >
-          {isPageHeaderV2Enabled ? (
+          {isCommandMenuV2Enabled ? (
             <>{!isMobile && <RecordIndexActionMenuButtons />}</>
           ) : (
             <RecordIndexActionMenuBar />

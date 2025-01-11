@@ -58,6 +58,7 @@ export class SSOAuthController {
         type: IdentityProviderType.SAML,
       }),
       callbackUrl: this.ssoService.buildCallbackUrl({
+        id: req.params.identityProviderId,
         type: IdentityProviderType.SAML,
       }),
     });
@@ -104,7 +105,7 @@ export class SSOAuthController {
     }
   }
 
-  @Post('saml/callback')
+  @Post('saml/callback/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
   async samlAuthCallback(@Req() req: any, @Res() res: Response) {
     try {

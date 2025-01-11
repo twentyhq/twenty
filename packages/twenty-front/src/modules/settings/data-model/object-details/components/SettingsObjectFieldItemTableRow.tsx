@@ -4,8 +4,6 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -110,7 +108,7 @@ export const SettingsObjectFieldItemTableRow = ({
     !isLabelIdentifier &&
     LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type);
 
-  const linkToNavigate = `./${getFieldSlug(fieldMetadataItem)}`;
+  const linkToNavigate = `./${fieldMetadataItem.name}`;
 
   const {
     activateMetadataField,
@@ -246,7 +244,7 @@ export const SettingsObjectFieldItemTableRow = ({
           }
           to={
             isRelatedObjectLinkable
-              ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
+              ? `/settings/objects/${relationObjectMetadataItem.namePlural}`
               : undefined
           }
           value={fieldType}

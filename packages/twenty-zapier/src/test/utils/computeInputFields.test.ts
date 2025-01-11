@@ -1,5 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared';
 import { computeInputFields } from '../../utils/computeInputFields';
-import { FieldMetadataType, InputField } from '../../utils/data.types';
+import { InputField } from '../../utils/data.types';
 
 describe('computeInputFields', () => {
   test('should create Person input fields properly', () => {
@@ -91,34 +92,12 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: FieldMetadataType.LINK,
-              name: 'xLink',
-              label: 'X',
-              description: 'Contact’s X/Twitter account',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
               type: FieldMetadataType.LINKS,
               name: 'whatsapp',
               label: 'Whatsapp',
               description: 'Contact’s Whatsapp account',
               isNullable: true,
               defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.EMAIL,
-              name: 'email',
-              label: 'Email',
-              description: 'Contact’s Email',
-              isNullable: false,
-              defaultValue: {
-                value: '',
-              },
             },
           },
           {

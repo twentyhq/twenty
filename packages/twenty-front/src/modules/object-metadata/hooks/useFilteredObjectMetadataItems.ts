@@ -2,8 +2,6 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 
-import { getObjectSlug } from '../utils/getObjectSlug';
-
 export const useFilteredObjectMetadataItems = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -27,15 +25,10 @@ export const useFilteredObjectMetadataItems = () => {
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
-  const findObjectMetadataItemBySlug = (slug: string) =>
-    objectMetadataItems.find(
-      (objectMetadataItem) => getObjectSlug(objectMetadataItem) === slug,
-    );
-
-  const findActiveObjectMetadataItemBySlug = (slug: string) =>
+  const findActiveObjectMetadataItemByNamePlural = (namePlural: string) =>
     activeObjectMetadataItems.find(
       (activeObjectMetadataItem) =>
-        getObjectSlug(activeObjectMetadataItem) === slug,
+        activeObjectMetadataItem.namePlural === namePlural,
     );
 
   const findObjectMetadataItemById = (id: string) =>
@@ -50,12 +43,11 @@ export const useFilteredObjectMetadataItems = () => {
 
   return {
     activeObjectMetadataItems,
-    findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
+    findActiveObjectMetadataItemByNamePlural,
     inactiveObjectMetadataItems,
     objectMetadataItems,
-    findObjectMetadataItemBySlug,
     alphaSortedActiveObjectMetadataItems,
   };
 };

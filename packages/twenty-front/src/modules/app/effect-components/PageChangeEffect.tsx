@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import {
@@ -8,6 +13,8 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
@@ -38,6 +45,13 @@ export const PageChangeEffect = () => {
 
   const eventTracker = useEventTracker();
 
+  //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
+  // - replace CoreObjectNamePlural.Person
+  const objectNamePlural =
+    useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
+
+  const resetTableSelections = useResetTableRowSelection(objectNamePlural);
+
   useEffect(() => {
     cleanRecoilState();
   }, [cleanRecoilState]);
@@ -55,6 +69,17 @@ export const PageChangeEffect = () => {
       navigate(pageChangeEffectNavigateLocation);
     }
   }, [navigate, pageChangeEffectNavigateLocation]);
+
+  useEffect(() => {
+    const isLeavingRecordIndexPage = !!matchPath(
+      AppPath.RecordIndexPage,
+      previousLocation,
+    );
+
+    if (isLeavingRecordIndexPage) {
+      resetTableSelections();
+    }
+  }, [isMatchingLocation, previousLocation, resetTableSelections]);
 
   useEffect(() => {
     switch (true) {

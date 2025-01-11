@@ -7,6 +7,7 @@ import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 export const RightDrawerCalendarEvent = () => {
@@ -26,10 +27,10 @@ export const RightDrawerCalendarEvent = () => {
   }
 
   return (
-    <>
+    <RecordFieldValueSelectorContextProvider>
       <CalendarEventDetailsEffect record={calendarEvent} />
       <RecordValueSetterEffect recordId={calendarEvent.id} />
       <CalendarEventDetails calendarEvent={calendarEvent} />
-    </>
+    </RecordFieldValueSelectorContextProvider>
   );
 };
