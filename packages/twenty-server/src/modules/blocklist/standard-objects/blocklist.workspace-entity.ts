@@ -45,10 +45,10 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
   handle: string;
 
   @WorkspaceField({
-    standardId: BLOCKLIST_STANDARD_FIELD_IDS.levels,
+    standardId: BLOCKLIST_STANDARD_FIELD_IDS.scopes,
     type: FieldMetadataType.ARRAY,
-    label: 'Levels',
-    description: 'Blocklist Levels',
+    label: 'Scopes',
+    description: 'Blocklist Scopes',
     icon: 'IconMail',
   })
   @WorkspaceIsNullable()
