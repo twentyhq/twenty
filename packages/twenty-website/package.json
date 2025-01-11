@@ -1,6 +1,6 @@
 {
   "name": "twenty-website",
-  "version": "0.40.0-canary",
+  "version": "0.35.4",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",

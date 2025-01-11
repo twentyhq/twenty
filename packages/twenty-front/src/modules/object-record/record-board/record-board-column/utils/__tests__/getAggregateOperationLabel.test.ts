@@ -1,5 +1,6 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { expect } from '@storybook/test';
 
 describe('getAggregateOperationLabel', () => {
@@ -9,8 +10,12 @@ describe('getAggregateOperationLabel', () => {
     expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.avg)).toBe(
       'Average',
     );
-    expect(getAggregateOperationLabel('EARLIEST')).toBe('Earliest date');
-    expect(getAggregateOperationLabel('LATEST')).toBe('Latest date');
+    expect(getAggregateOperationLabel(DATE_AGGREGATE_OPERATIONS.earliest)).toBe(
+      'Earliest date',
+    );
+    expect(getAggregateOperationLabel(DATE_AGGREGATE_OPERATIONS.latest)).toBe(
+      'Latest date',
+    );
     expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.sum)).toBe('Sum');
     expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)).toBe(
       'Count all',

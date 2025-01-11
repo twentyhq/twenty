@@ -5,8 +5,8 @@ import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords'
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
-import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
@@ -28,7 +28,7 @@ export const computeAggregateValueAndLabel = ({
   data: AggregateRecordsData;
   objectMetadataItem: ObjectMetadataItem;
   fieldMetadataId?: string | null;
-  aggregateOperation?: AGGREGATE_OPERATIONS | null;
+  aggregateOperation?: ExtendedAggregateOperations | null;
   fallbackFieldName?: string;
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
@@ -62,11 +62,19 @@ export const computeAggregateValueAndLabel = ({
 
   const displayAsRelativeDate = field?.settings?.displayAsRelativeDate;
 
-  if (COUNT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation)) {
+  if (
+    COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
+      aggregateOperation as AGGREGATE_OPERATIONS,
+    )
+  ) {
     value = aggregateValue;
   } else if (!isDefined(aggregateValue)) {
     value = '-';
-  } else if (PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(aggregateOperation)) {
+  } else if (
+    PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
+      aggregateOperation as AGGREGATE_OPERATIONS,
+    )
+  ) {
     value = `${formatNumber(Number(aggregateValue) * 100)}%`;
   } else {
     switch (field.type) {
@@ -110,16 +118,11 @@ export const computeAggregateValueAndLabel = ({
       }
     }
   }
-  const convertedAggregateOperation =
-    convertAggregateOperationToExtendedAggregateOperation(
-      aggregateOperation,
-      field.type,
-    );
-  const label = getAggregateOperationLabel(convertedAggregateOperation);
+  const label = getAggregateOperationLabel(aggregateOperation);
   const labelWithFieldName =
     aggregateOperation === AGGREGATE_OPERATIONS.count
       ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`
-      : `${getAggregateOperationLabel(convertedAggregateOperation)} of ${field.label}`;
+      : `${getAggregateOperationLabel(aggregateOperation)} of ${field.label}`;
 
   return {
     value,

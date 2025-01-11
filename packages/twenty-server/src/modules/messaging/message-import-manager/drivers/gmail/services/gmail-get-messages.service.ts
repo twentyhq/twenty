@@ -81,6 +81,8 @@ export class GmailGetMessagesService {
           response.error,
           messageIds[index],
         );
+
+        return undefined;
       }
 
       return parseAndFormatGmailMessage(

@@ -4,7 +4,6 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
@@ -115,9 +114,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
               value={{ instanceId: instanceId, onColumnsChange: () => {} }}
             >
               <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <ObjectFilterDropdownScope filterScopeId={instanceId}>
-                  <Story />
-                </ObjectFilterDropdownScope>
+                <Story />
               </ViewComponentInstanceContext.Provider>
             </RecordTableComponentInstanceContext.Provider>
           </ObjectFilterDropdownComponentInstanceContext.Provider>
