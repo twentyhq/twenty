@@ -146,7 +146,11 @@ export const useCommandMenuCommands = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          {
+            body: {
+              blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+            },
+          },
         ])
       : undefined,
     limit: 3,
@@ -158,7 +162,11 @@ export const useCommandMenuCommands = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          {
+            body: {
+              blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+            },
+          },
         ])
       : undefined,
     limit: 3,
