@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
-import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
+import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/blocklist/SettingsAccountsBlocklistInput';
+import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/blocklist/SettingsAccountsBlocklistSection';
 
 const meta: Meta<typeof SettingsAccountsBlocklistSection> = {
   title: 'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistSection',

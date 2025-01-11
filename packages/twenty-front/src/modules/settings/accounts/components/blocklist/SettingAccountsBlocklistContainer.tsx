@@ -1,7 +1,6 @@
-import { SettingsAccountsBlocklistContactRow } from '@/settings/accounts/components/SettingAccountBlocklistContactRow';
-import { BlocklistContext } from '@/settings/accounts/contexts/BlocklistContext';
+import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { SettingsAccountsBlocklistContactRow } from '@/settings/accounts/components/blocklist/SettingAccountBlocklistContactRow';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -9,8 +8,13 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingAccountsBlocklistContainer = () => {
-  const { blocklist } = useContext(BlocklistContext);
+type SettingAccountsBlocklistContainerProps = {
+  blocklist: BlocklistItem[];
+};
+
+export const SettingAccountsBlocklistContainer = ({
+  blocklist,
+}: SettingAccountsBlocklistContainerProps) => {
   return (
     <StyledContainer>
       <SettingsAccountsBlocklistContactRow />

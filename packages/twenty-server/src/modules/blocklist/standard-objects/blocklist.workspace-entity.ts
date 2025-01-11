@@ -16,7 +16,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-export enum BlocklistContactLevel {
+export enum BlocklistItemScope {
   ALL = 'All',
   FROM_TO = 'From/To',
   CC = 'Cc',
@@ -52,7 +52,7 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMail',
   })
   @WorkspaceIsNullable()
-  levels: BlocklistContactLevel[];
+  scopes: BlocklistItemScope[];
 
   @WorkspaceRelation({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,

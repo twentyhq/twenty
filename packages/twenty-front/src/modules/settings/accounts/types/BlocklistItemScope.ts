@@ -1,4 +1,4 @@
-export enum BlocklistContactLevel {
+export enum BlocklistItemScope {
   ALL = 'All',
   FROM_TO = 'From/To',
   CC = 'Cc',

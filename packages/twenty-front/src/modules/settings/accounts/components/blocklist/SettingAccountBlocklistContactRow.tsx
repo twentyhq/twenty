@@ -1,18 +1,25 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { BLOCKLIST_CONTEXT_DROPDOWN_ID } from '@/settings/accounts/constants/BlocklistContextDropdownId';
-import { BlocklistContext } from '@/settings/accounts/contexts/BlocklistContext';
-import { BlocklistContactLevel } from '@/settings/accounts/types/BlocklistContactLevel';
+import { BLOCKLIST_SCOPE_DROPDOWN_ITEMS } from '@/settings/accounts/constants/BlocklistScopeDropdownItems';
+import { BlocklistItemScope } from '@/settings/accounts/types/BlocklistItemScope';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilValue } from 'recoil';
 import { IconChevronDown, IconTrash, MenuItemMultiSelect } from 'twenty-ui';
 import { isDomain } from '~/utils/is-domain';
 import { isDefined } from '~/utils/isDefined';
@@ -57,7 +64,6 @@ const StyledClickableComponent = styled.div`
 const StyledInputButton = styled(TextInput)`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
-  z-index: -1;
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)`
@@ -69,35 +75,6 @@ const StyledIconChevronDown = styled(IconChevronDown)`
   top: 50%;
   transform: translateY(-50%);
 `;
-
-const blocklistLevelDropdownItems: {
-  id: BlocklistContactLevel;
-  label: string;
-}[] = [
-  {
-    id: BlocklistContactLevel.FROM_TO,
-    label: 'From/To',
-  },
-  {
-    id: BlocklistContactLevel.CC,
-    label: 'Cc',
-  },
-  {
-    id: BlocklistContactLevel.BCC,
-    label: 'Bcc',
-  },
-];
-
-const computeBlocklistItemHandle = (
-  blocklist: BlocklistItem[],
-  handle: string,
-) => {
-  if (!handle) {
-    return true;
-  }
-
-  return !blocklist.some((item) => item.handle === handle);
-};
 
 const validationSchema = (blocklist: BlocklistItem[]) =>
   z
@@ -115,7 +92,7 @@ const validationSchema = (blocklist: BlocklistItem[]) =>
             ),
         )
         .refine(
-          (value) => computeBlocklistItemHandle(blocklist, value),
+          (value) => !blocklist.map((item) => item.handle).includes(value),
           'Email or domain is already in blocklist',
         ),
     })
@@ -133,21 +110,56 @@ export const SettingsAccountsBlocklistContactRow = ({
   const [dropdownValue, setDropdownValue] = useState<string>(
     !item?.id
       ? ''
-      : !item?.levels ||
-          item?.levels.length === blocklistLevelDropdownItems.length
-        ? BlocklistContactLevel.ALL
-        : item?.levels?.join(', '),
+      : !item?.scopes ||
+          item?.scopes.length === BLOCKLIST_SCOPE_DROPDOWN_ITEMS.length
+        ? BlocklistItemScope.ALL
+        : item?.scopes?.join(', '),
   );
-  const {
-    blocklist,
-    updateBlockedEmail,
-    handleBlockedEmailRemove,
-    addNewBlockedEmail,
-  } = useContext(BlocklistContext);
 
-  const [selectedBlocklistLevels, setSelectedBlocklistLevels] = useState<
-    BlocklistContactLevel[]
-  >(item?.levels || []);
+  const [selectedBlocklistScopes, setSelectedBlocklistScopes] = useState<
+    BlocklistItemScope[]
+  >(item?.scopes || []);
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { records: blocklist } = useFindManyRecords<BlocklistItem>({
+    objectNameSingular: CoreObjectNameSingular.Blocklist,
+  });
+
+  const { createOneRecord: createBlocklistItem } =
+    useCreateOneRecord<BlocklistItem>({
+      objectNameSingular: CoreObjectNameSingular.Blocklist,
+    });
+
+  const { deleteOneRecord: deleteBlocklistItem } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Blocklist,
+  });
+
+  const { updateOneRecord: updateBlocklistEmail } =
+    useUpdateOneRecord<BlocklistItem>({
+      objectNameSingular: CoreObjectNameSingular.Blocklist,
+    });
+
+  const handleBlockedEmailRemove = (id: string) => {
+    deleteBlocklistItem(id);
+  };
+
+  const addNewBlockedEmail = (contact: BlocklistItem) => {
+    createBlocklistItem({
+      scopes: contact.scopes,
+      handle: contact.handle,
+      workspaceMemberId: currentWorkspaceMember?.id,
+    });
+  };
+
+  const updateBlockedEmail = (contact: BlocklistItem) => {
+    updateBlocklistEmail({
+      idToUpdate: contact.id,
+      updateOneRecordInput: {
+        scopes: contact.scopes,
+      },
+    });
+  };
 
   const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
@@ -158,14 +170,14 @@ export const SettingsAccountsBlocklistContactRow = ({
   });
   const submit = handleSubmit((data) => {
     addNewBlockedEmail({
-      levels: selectedBlocklistLevels,
+      scopes: selectedBlocklistScopes,
       handle: data.emailOrDomain,
     } as BlocklistItem);
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === Key.Enter) {
-      setSelectedBlocklistLevels([]);
+      setSelectedBlocklistScopes([]);
       setDropdownValue('');
       submit();
     }
@@ -179,8 +191,8 @@ export const SettingsAccountsBlocklistContactRow = ({
     }
   }, [isSubmitSuccessful, reset]);
 
-  const handleMultiSelectChange = (id: BlocklistContactLevel) => {
-    const getNewSelectedBlocklistLevels = (prev: BlocklistContactLevel[]) => {
+  const handleMultiSelectChange = (id: BlocklistItemScope) => {
+    const getNewselectedBlocklistScopes = (prev: BlocklistItemScope[]) => {
       if (!prev || !prev.length) {
         return [id];
       }
@@ -192,16 +204,17 @@ export const SettingsAccountsBlocklistContactRow = ({
       return [...prev, id];
     };
 
-    const newSelectedBlocklistLevels = getNewSelectedBlocklistLevels(
-      selectedBlocklistLevels,
+    const newselectedBlocklistScopes = getNewselectedBlocklistScopes(
+      selectedBlocklistScopes,
     );
 
-    setSelectedBlocklistLevels(newSelectedBlocklistLevels);
+    setSelectedBlocklistScopes(newselectedBlocklistScopes);
 
     setDropdownValue(
-      newSelectedBlocklistLevels.length === blocklistLevelDropdownItems.length
-        ? BlocklistContactLevel.ALL
-        : newSelectedBlocklistLevels.join(', '),
+      newselectedBlocklistScopes.length ===
+        BLOCKLIST_SCOPE_DROPDOWN_ITEMS.length
+        ? BlocklistItemScope.ALL
+        : newselectedBlocklistScopes.join(', '),
     );
   };
 
@@ -215,7 +228,7 @@ export const SettingsAccountsBlocklistContactRow = ({
       updateBlockedEmail({
         id: item?.id as string,
         handle: item?.handle as string,
-        levels: selectedBlocklistLevels,
+        scopes: selectedBlocklistScopes,
       } as BlocklistItem);
     }
   };
@@ -232,7 +245,11 @@ export const SettingsAccountsBlocklistContactRow = ({
           dropdownHotkeyScope={{ scope: BLOCKLIST_CONTEXT_DROPDOWN_ID }}
           clickableComponent={
             <StyledClickableComponent>
-              <StyledInputButton value={dropdownValue} placeholder="From/To" />
+              <StyledInputButton
+                value={dropdownValue}
+                placeholder="From/To"
+                readOnly
+              />
               <StyledIconChevronDown />
             </StyledClickableComponent>
           }
@@ -246,19 +263,17 @@ export const SettingsAccountsBlocklistContactRow = ({
                   setDropdownSearchText(event.target.value.toLowerCase());
                 }}
               />
-              {blocklistLevelDropdownItems
-                .filter((item) =>
-                  item.label.toLowerCase().includes(dropdownSearchText),
-                )
-                .map((item) => (
-                  <MenuItemMultiSelect
-                    key={item.id}
-                    onSelectChange={() => handleMultiSelectChange(item.id)}
-                    text={item.label}
-                    selected={selectedBlocklistLevels.includes(item.id)}
-                    className={''}
-                  />
-                ))}
+              {BLOCKLIST_SCOPE_DROPDOWN_ITEMS.filter((item) =>
+                item.label.toLowerCase().includes(dropdownSearchText),
+              ).map((item) => (
+                <MenuItemMultiSelect
+                  key={item.id}
+                  onSelectChange={() => handleMultiSelectChange(item.id)}
+                  text={item.label}
+                  selected={selectedBlocklistScopes.includes(item.id)}
+                  className={''}
+                />
+              ))}
             </DropdownMenuItemsContainer>
           }
           onClickOutside={handleOnDropdownClickOutside}

@@ -1,9 +1,9 @@
-import { BlocklistContactLevel } from '@/settings/accounts/types/BlocklistContactLevel';
+import { BlocklistItemScope } from '@/settings/accounts/types/BlocklistItemScope';
 
 export type BlocklistItem = {
   id: string;
   handle: string;
-  levels?: BlocklistContactLevel[];
+  scopes?: BlocklistItemScope[];
   workspaceMemberId: string;
   createdAt: string;
   __typename: 'BlocklistItem';

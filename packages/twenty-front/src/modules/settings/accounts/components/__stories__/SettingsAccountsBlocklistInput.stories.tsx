@@ -2,7 +2,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
+import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/blocklist/SettingsAccountsBlocklistInput';
 
 const updateBlockedEmailListJestFn = fn();
 
