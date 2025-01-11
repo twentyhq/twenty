@@ -2,35 +2,31 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldRichTextValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRichTextV2Value } from '@/object-record/record-field/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
-import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import { PartialBlock } from '@blocknote/core';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { parseJson } from '~/utils/parseJson';
 import { FieldContext } from '../../contexts/FieldContext';
 
-export const useRichTextFieldDisplay = () => {
+export const useRichTextV2FieldDisplay = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichText,
-    isFieldRichText,
+    FieldMetadataType.RichTextV2,
+    isFieldRichTextV2,
     fieldDefinition,
   );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldRichTextValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldRichTextV2Value | undefined>(
     recordId,
     fieldName,
   );
 
-  const fieldValueParsed = parseJson<PartialBlock[]>(fieldValue);
-
   return {
     fieldDefinition,
-    fieldValue: fieldValueParsed,
+    fieldValue,
     hotkeyScope,
   };
 };

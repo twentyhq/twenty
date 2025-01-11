@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-export const richTextCompositeType: CompositeType = {
-  type: FieldMetadataType.RICH_TEXT,
+export const richTextV2CompositeType: CompositeType = {
+  type: FieldMetadataType.RICH_TEXT_V2,
   properties: [
     {
       name: 'blocknote',
@@ -21,9 +21,9 @@ export const richTextCompositeType: CompositeType = {
   ],
 };
 
-export const richTextValueSchema = z.object({
+export const richTextV2ValueSchema = z.object({
   blocknote: z.string().nullable(),
   markdown: z.string().nullable(),
 });
 
-export type RichTextMetadata = z.infer<typeof richTextValueSchema>;
+export type RichTextV2Metadata = z.infer<typeof richTextV2ValueSchema>;

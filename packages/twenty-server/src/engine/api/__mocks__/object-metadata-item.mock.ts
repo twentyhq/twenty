@@ -193,9 +193,9 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
-const fieldRichTextDeprecatedMock = {
-  name: 'fieldRichTextDeprecated',
-  type: FieldMetadataType.RICH_TEXT_DEPRECATED,
+const fieldRichTextMock = {
+  name: 'fieldRichText',
+  type: FieldMetadataType.RICH_TEXT,
   isNullable: true,
   defaultValue: null,
 };
@@ -258,7 +258,7 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
-  fieldRichTextDeprecatedMock,
+  fieldRichTextMock,
   fieldActorMock,
   fieldArrayMock,
 ];

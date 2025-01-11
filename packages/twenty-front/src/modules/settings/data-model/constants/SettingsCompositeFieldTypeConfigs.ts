@@ -7,7 +7,7 @@ import {
   FieldFullNameValue,
   FieldLinksValue,
   FieldPhonesValue,
-  FieldRichTextValue,
+  FieldRichTextV2Value,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -180,7 +180,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     exampleValue: { source: 'source', name: 'name', workspaceMemberId: 'id' },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
-  [FieldMetadataType.RichText]: {
+  [FieldMetadataType.RichTextV2]: {
     label: 'Rich Text',
     Icon: IllustrationIconText,
     subFields: ['blocknote', 'markdown'],
@@ -194,5 +194,5 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       markdown: 'TODO',
     },
     category: 'Basic',
-  } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextValue>,
+  } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

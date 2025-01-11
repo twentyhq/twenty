@@ -7,7 +7,7 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { RichTextMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
+import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -39,7 +39,7 @@ const BODY_FIELD_NAME = 'body';
 
 export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  // { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT }, // TODO: Check later if and how this works
+  // { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 }, // TODO: Check later if and how this works
 ];
 
 @WorkspaceEntity({
@@ -75,13 +75,13 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
+    type: FieldMetadataType.RICH_TEXT_V2,
     label: 'Body',
     description: 'Task body',
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: RichTextMetadata | null;
+  [BODY_FIELD_NAME]: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,

@@ -2,15 +2,12 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import {
-  FieldRichTextDeprecatedValue,
-  FieldRichTextValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRichTextValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -22,28 +19,23 @@ export const useRichTextField = () => {
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichTextDeprecated,
-    isFieldRichTextDeprecated,
+    FieldMetadataType.RichText,
+    isFieldRichText,
     fieldDefinition,
   );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] =
-    useRecoilState<FieldRichTextDeprecatedValue>(
-      recordStoreFamilySelector({
-        recordId,
-        fieldName: fieldName,
-      }),
-    );
-  const fieldRichTextValue = isFieldRichTextValue(fieldValue)
-    ? fieldValue
-    : ({ blocknote: null, markdown: null } as FieldRichTextValue);
+  const [fieldValue, setFieldValue] = useRecoilState<FieldRichTextValue>(
+    recordStoreFamilySelector({
+      recordId,
+      fieldName: fieldName,
+    }),
+  );
+  const fieldRichTextValue = isFieldRichTextValue(fieldValue) ? fieldValue : '';
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextDeprecatedValue>(
-      `${recordId}-${fieldName}`,
-    );
+    useRecordFieldInput<FieldRichTextValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

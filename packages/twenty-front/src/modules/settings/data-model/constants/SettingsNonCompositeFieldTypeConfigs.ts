@@ -25,7 +25,7 @@ import {
   FieldNumberValue,
   FieldRatingValue,
   FieldRelationValue,
-  FieldRichTextDeprecatedValue,
+  FieldRichTextValue,
   FieldSelectValue,
   FieldTextValue,
   FieldUUidValue,
@@ -122,12 +122,12 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       exampleValue: { key: 'value' },
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
-    [FieldMetadataType.RichTextDeprecated]: {
+    [FieldMetadataType.RichText]: {
       label: 'Rich Text Deprecated',
       Icon: IllustrationIconSetting,
       exampleValue: "{ key: 'value' }",
       category: 'Basic',
-    } as const satisfies SettingsFieldTypeConfig<FieldRichTextDeprecatedValue>,
+    } as const satisfies SettingsFieldTypeConfig<FieldRichTextValue>,
     [FieldMetadataType.Array]: {
       label: 'Array',
       Icon: IllustrationIconArray,

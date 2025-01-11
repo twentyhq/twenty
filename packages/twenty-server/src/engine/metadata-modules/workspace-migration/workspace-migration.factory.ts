@@ -57,10 +57,7 @@ export class WorkspaceMigrationFactory {
       [FieldMetadataType.NUMBER, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.POSITION, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.RAW_JSON, { factory: this.basicColumnActionFactory }],
-      [
-        FieldMetadataType.RICH_TEXT_DEPRECATED,
-        { factory: this.basicColumnActionFactory },
-      ],
+      [FieldMetadataType.RICH_TEXT, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.BOOLEAN, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.DATE_TIME, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.DATE, { factory: this.basicColumnActionFactory }],
@@ -98,7 +95,7 @@ export class WorkspaceMigrationFactory {
         { factory: this.tsVectorColumnActionFactory },
       ],
       [
-        FieldMetadataType.RICH_TEXT,
+        FieldMetadataType.RICH_TEXT_V2,
         { factory: this.compositeColumnActionFactory },
       ],
     ]);

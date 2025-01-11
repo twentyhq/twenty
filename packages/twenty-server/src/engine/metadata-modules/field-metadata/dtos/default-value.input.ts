@@ -35,7 +35,7 @@ export class FieldMetadataDefaultValueRawJson {
   value: object | null;
 }
 
-export class FieldMetadataDefaultValueRichText {
+export class FieldMetadataDefaultValueRichTextV2 {
   @ValidateIf((object, value) => value !== null)
   @IsQuotedString()
   blocknote: string | null;
@@ -45,7 +45,7 @@ export class FieldMetadataDefaultValueRichText {
   markdown: string | null;
 }
 
-export class FieldMetadataDefaultValueRichTextDeprecated {
+export class FieldMetadataDefaultValueRichText {
   @ValidateIf((_object, value) => value !== null)
   @IsString()
   value: string | null;

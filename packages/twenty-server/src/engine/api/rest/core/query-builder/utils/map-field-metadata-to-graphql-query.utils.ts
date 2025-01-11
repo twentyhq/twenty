@@ -29,7 +29,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
-    FieldMetadataType.RICH_TEXT_DEPRECATED,
+    FieldMetadataType.RICH_TEXT,
     FieldMetadataType.ARRAY,
     FieldMetadataType.TS_VECTOR,
   ].includes(fieldType);
@@ -155,7 +155,7 @@ export const mapFieldMetadataToGraphqlQuery = (
         additionalPhones
       }
     `;
-  } else if (fieldType === FieldMetadataType.RICH_TEXT) {
+  } else if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
     return `
       ${field.name}
       {

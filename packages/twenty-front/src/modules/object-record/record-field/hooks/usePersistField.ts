@@ -28,8 +28,8 @@ import { RecordForSelect } from '@/object-record/relation-picker/types/RecordFor
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
-import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
-import { isFieldRichTextDeprecatedValue } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecatedValue';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
+import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -113,9 +113,9 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
-        const fieldIsRichTextDeprecated =
-          isFieldRichTextDeprecated(fieldDefinition) &&
-          isFieldRichTextDeprecatedValue(valueToPersist);
+        const fieldIsRichText =
+          isFieldRichTextV2(fieldDefinition) &&
+          isFieldRichTextV2Value(valueToPersist);
 
         const fieldIsArray =
           isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
@@ -138,7 +138,7 @@ export const usePersistField = () => {
           fieldIsAddress ||
           fieldIsRawJson ||
           fieldIsArray ||
-          fieldIsRichTextDeprecated;
+          fieldIsRichText;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;

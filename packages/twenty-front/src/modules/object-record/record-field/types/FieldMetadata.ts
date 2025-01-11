@@ -127,13 +127,13 @@ export type FieldRawJsonMetadata = {
   settings?: null;
 };
 
-export type FieldRichTextMetadata = {
+export type FieldRichTextV2Metadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   settings?: null;
 };
 
-export type FieldRichTextDeprecatedMetadata = {
+export type FieldRichTextMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   settings?: null;
@@ -217,8 +217,8 @@ export type FieldMetadata =
   | FieldActorMetadata
   | FieldArrayMetadata
   | FieldTsVectorMetadata
-  | FieldRichTextMetadata
-  | FieldRichTextDeprecatedMetadata;
+  | FieldRichTextV2Metadata
+  | FieldRichTextMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
@@ -270,12 +270,12 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextValue = {
+export type FieldRichTextV2Value = {
   blocknote: string | null; // TODO: Can these be null?
   markdown: string | null;
 };
 
-export type FieldRichTextDeprecatedValue = null | string;
+export type FieldRichTextValue = null | string;
 
 export type FieldActorValue = {
   source: string;

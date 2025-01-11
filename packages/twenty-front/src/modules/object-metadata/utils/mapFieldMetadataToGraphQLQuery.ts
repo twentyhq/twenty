@@ -35,7 +35,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataType.MultiSelect,
     FieldMetadataType.Position,
     FieldMetadataType.RawJson,
-    FieldMetadataType.RichTextDeprecated,
+    FieldMetadataType.RichText,
     FieldMetadataType.Array,
   ].includes(fieldType);
 
@@ -162,7 +162,7 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
-  if (fieldType === FieldMetadataType.RichText) {
+  if (fieldType === FieldMetadataType.RichTextV2) {
     return `${field.name}
 {
   blocknote

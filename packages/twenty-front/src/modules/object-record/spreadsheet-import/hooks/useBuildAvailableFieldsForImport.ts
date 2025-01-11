@@ -211,9 +211,9 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.RichText) {
+      } else if (fieldMetadataItem.type === FieldMetadataType.RichTextV2) {
         Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.RichText],
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.RichTextV2],
         ).forEach(([_, fieldLabel]) => {
           availableFieldsForImport.push({
             icon: getIcon(fieldMetadataItem.icon),

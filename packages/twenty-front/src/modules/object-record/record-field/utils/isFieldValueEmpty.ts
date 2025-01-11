@@ -29,8 +29,8 @@ import { isFieldRating } from '@/object-record/record-field/types/guards/isField
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import { isFieldRichTextDeprecated } from '@/object-record/record-field/types/guards/isFieldRichTextDeprecated';
-import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
+import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -61,7 +61,7 @@ export const isFieldValueEmpty = ({
     isFieldRating(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
-    isFieldRichTextDeprecated(fieldDefinition) ||
+    isFieldRichText(fieldDefinition) ||
     isFieldPosition(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);
@@ -144,9 +144,9 @@ export const isFieldValueEmpty = ({
     return false;
   }
 
-  if (isFieldRichText(fieldDefinition)) {
+  if (isFieldRichTextV2(fieldDefinition)) {
     return (
-      !isFieldRichTextValue(fieldValue) ||
+      !isFieldRichTextV2Value(fieldValue) ||
       (isValueEmpty(fieldValue?.blocknote) &&
         isValueEmpty(fieldValue?.markdown))
     );

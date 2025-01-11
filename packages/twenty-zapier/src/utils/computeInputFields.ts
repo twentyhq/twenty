@@ -11,7 +11,7 @@ const getTypeFromFieldMetadataType = (
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT_DEPRECATED:
+    case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.RATING:
       return 'string';
@@ -200,7 +200,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       return [primaryLinkLabel, primaryLinkUrl, secondaryLinks];
     }
-    case FieldMetadataType.RICH_TEXT: {
+    case FieldMetadataType.RICH_TEXT_V2: {
       const blocknote: NodeField = {
         type: FieldMetadataType.TEXT,
         name: 'blocknote',
@@ -242,7 +242,7 @@ export const computeInputFields = (
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.LINKS:
       case FieldMetadataType.ADDRESS:
-      case FieldMetadataType.RICH_TEXT:
+      case FieldMetadataType.RICH_TEXT_V2:
         for (const subNodeField of get_subfieldsFromField(nodeField)) {
           const field = {
             key: `${nodeField.name}__${subNodeField.name}`,
@@ -258,7 +258,7 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
-      case FieldMetadataType.RICH_TEXT_DEPRECATED:
+      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.DATE_TIME:
       case FieldMetadataType.DATE:
       case FieldMetadataType.BOOLEAN:

@@ -6,8 +6,8 @@ const SEARCHABLE_FIELD_TYPES = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.ADDRESS,
   FieldMetadataType.LINKS,
-  FieldMetadataType.RICH_TEXT_DEPRECATED,
   FieldMetadataType.RICH_TEXT,
+  FieldMetadataType.RICH_TEXT_V2,
 ] as const;
 
 export type SearchableFieldType = (typeof SEARCHABLE_FIELD_TYPES)[number];
