@@ -18,8 +18,8 @@ const StyledIconContainer = styled.div`
   background: transparent;
   height: 24px;
   width: 24px;
-  justify-content: center;
   display: flex;
+  justify-content: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
