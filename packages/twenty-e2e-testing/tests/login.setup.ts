@@ -11,38 +11,32 @@ const test = base.extend<{ loginPage: LoginPage }>({
 });
 
 test('Login test', async ({ loginPage, page }) => {
-  console.log('Starting login test');
-
-  await page.goto('/');
-  console.log('Navigated to homepage');
-  await page.waitForLoadState('networkidle'); // wait as a precaution for environments with multi-workspace enabled
-  if (page.url().includes('demo.twenty.com') || !page.url().includes('app.localhost:3001')) {
-    await loginPage.clickLoginWithEmail();
-  }
-
-  console.log('Default login', process.env.DEFAULT_LOGIN);
-  await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
-  console.log('Filled email field');
-
-  await loginPage.clickContinueButton();
-  console.log('Clicked continue button');
-
-  await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
-  console.log('Filled password field');
-
-  await loginPage.clickSignInButton();
-  console.log('Clicked sign in button');
-
-  await page.waitForLoadState('networkidle');
-  console.log('Waited for network to be idle');
-
-  await expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
-  console.log('Verified welcome message not visible');
-
-  await page.context().storageState({
-    path: path.resolve(__dirname, '..', '.auth', 'user.json'),
+  await test.step('Navigated to login page', () => {
+    page.goto('/');
+    page.waitForLoadState('networkidle'); // wait as a precaution for environments with multi-workspace enabled
   });
-  console.log('Saved auth state');
+  await test.step(
+    'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
+    () => {
+      if (
+        page.url().includes('demo.twenty.com') ||
+        !page.url().includes('app.localhost:3001')
+      ) {
+        loginPage.clickLoginWithEmail();
+      }
+      loginPage.typeEmail(process.env.DEFAULT_LOGIN);
+      loginPage.clickContinueButton();
+      loginPage.typePassword(process.env.DEFAULT_PASSWORD);
+      loginPage.clickSignInButton();
+      page.waitForLoadState('networkidle');
+      expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
+    },
+  );
 
-  process.env.LINK = page.url();
+  await test.step('Saved auth state', () => {
+    page.context().storageState({
+      path: path.resolve(__dirname, '..', '.auth', 'user.json'),
+    });
+    process.env.LINK = page.url();
+  });
 });
