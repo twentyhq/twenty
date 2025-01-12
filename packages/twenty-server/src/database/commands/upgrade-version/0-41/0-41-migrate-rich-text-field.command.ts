@@ -23,10 +23,11 @@ import {
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -42,9 +43,9 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
@@ -171,29 +172,32 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             continue;
           }
 
-          const repository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          const schemaName =
+            this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+          const workspaceDataSource =
+            await this.twentyORMGlobalManager.getDataSourceForWorkspace(
               workspaceId,
-              objectMetadata.nameSingular,
-              false,
             );
 
-          const records = await repository.find();
+          const rows = await workspaceDataSource.query(
+            `SELECT id, "${richTextField.name}Blocknote" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}"`,
+          );
 
-          this.logger.log(`Generating markdown for ${records.length} records`);
+          this.logger.log(`Generating markdown for ${rows.length} records`);
 
-          for (const record of records) {
-            const recordRichTextField = record[richTextField.name];
-            const blocknoteValue = recordRichTextField.blocknote;
+          for (const row of rows) {
+            const blocknoteValue = row[`${richTextField.name}Blocknote`];
             const markdown = blocknoteValue
               ? await serverBlockNoteEditor.blocksToMarkdownLossy(
                   JSON.parse(blocknoteValue),
                 )
               : null;
 
-            await repository.update(record.id, {
-              [`${richTextField.name}Markdown`]: markdown,
-            });
+            await workspaceDataSource.query(
+              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}Markdown" = $1 WHERE id = $2`,
+              [markdown, row.id],
+            );
           }
         }
 
