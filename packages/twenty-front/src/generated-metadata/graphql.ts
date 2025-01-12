@@ -406,6 +406,7 @@ export enum FeatureFlagKey {
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsViewGroupsEnabled = 'IsViewGroupsEnabled',
+  IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
