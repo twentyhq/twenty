@@ -88,6 +88,18 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
 
         for (const richTextField of richTextFields) {
+          const newRichTextField: Partial<FieldMetadataEntity> = {
+            ...richTextField,
+            id: undefined,
+            type: FieldMetadataType.RICH_TEXT_V2,
+            defaultValue: null,
+          };
+
+          await this.fieldMetadataRepository.update(
+            richTextField.id,
+            newRichTextField,
+          );
+
           const objectMetadata = await this.objectMetadataRepository.findOne({
             where: { id: richTextField.objectMetadataId },
           });
