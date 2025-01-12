@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
@@ -36,9 +35,9 @@ export const useGetAvailableFieldsForKanban = () => {
 
     if (isDefined(objectMetadataItem?.namePlural)) {
       navigate(
-        `/settings/objects/${getObjectSlug(
-          objectMetadataItem,
-        )}/new-field/configure?fieldType=${FieldMetadataType.Select}`,
+        `/settings/objects/${
+          objectMetadataItem.namePlural
+        }/new-field/configure?fieldType=${FieldMetadataType.Select}`,
       );
     } else {
       navigate(`/settings/objects`);

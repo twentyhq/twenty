@@ -26,8 +26,14 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
+  const isViewGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsViewGroupsEnabled,
+  );
+
   const {
     viewType,
     currentContentId,
@@ -92,7 +98,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         Group by
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        {currentView?.key !== 'INDEX' && (
+        {isViewGroupEnabled && currentView?.key !== 'INDEX' && (
           <>
             <MenuItem
               onClick={() => onContentChange('recordGroupFields')}

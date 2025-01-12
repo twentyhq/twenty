@@ -6,6 +6,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared';
 import {
   Card,
   IconGoogle,
@@ -15,7 +16,6 @@ import {
 } from 'twenty-ui';
 import { AuthProviders } from '~/generated-metadata/graphql';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;

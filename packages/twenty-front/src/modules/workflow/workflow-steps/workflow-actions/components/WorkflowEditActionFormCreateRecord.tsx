@@ -3,6 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -36,6 +37,25 @@ type CreateRecordFormData = {
   [field: string]: unknown;
 };
 
+const sortByViewFieldPosition = (
+  a: { viewFieldPosition?: number },
+  b: { viewFieldPosition?: number },
+) => {
+  if (isDefined(a.viewFieldPosition) && isDefined(b.viewFieldPosition)) {
+    return a.viewFieldPosition - b.viewFieldPosition;
+  }
+
+  if (isDefined(a.viewFieldPosition)) {
+    return -1;
+  }
+
+  if (isDefined(b.viewFieldPosition)) {
+    return 1;
+  }
+
+  return 0;
+};
+
 export const WorkflowEditActionFormCreateRecord = ({
   action,
   actionOptions,
@@ -64,6 +84,13 @@ export const WorkflowEditActionFormCreateRecord = ({
     objectNameSingular,
   });
 
+  const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
+    objectMetadataItemId: objectMetadataItem.id ?? '',
+    viewId: undefined,
+  });
+
+  const viewFields = indexView?.viewFields ?? [];
+
   const inlineFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
@@ -71,9 +98,16 @@ export const WorkflowEditActionFormCreateRecord = ({
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive,
     )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    );
+    .map((fieldMetadataItem) => {
+      const viewField = viewFields.find(
+        (viewField) => viewField.fieldMetadataId === fieldMetadataItem.id,
+      );
+      return {
+        ...fieldMetadataItem,
+        viewFieldPosition: viewField?.position,
+      };
+    })
+    .sort(sortByViewFieldPosition);
 
   const inlineFieldDefinitions = inlineFieldMetadataItems.map(
     (fieldMetadataItem) =>

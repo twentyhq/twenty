@@ -16,10 +16,20 @@ const StyledText = styled.span`
   z-index: 1;
 `;
 
-const StyledValueContainer = styled.div`
+const StyledScrollableContainer = styled.div`
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const StyledValueContainer = styled(StyledScrollableContainer)`
   align-items: center;
   display: flex;
-  flex: 1 0 0;
   gap: 4px;
   height: 32px;
   justify-content: flex-end;
@@ -27,8 +37,8 @@ const StyledValueContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-  color: ${({ theme }) => theme.color.gray60};
-  flex: 1 0 0;
+  color: ${({ theme }) => theme.font.color.primary};
+  max-width: 100%;
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({

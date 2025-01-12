@@ -51,11 +51,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsSSOEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -81,7 +76,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsPageHeaderV2Enabled,
+        key: FeatureFlagKey.IsCommandMenuV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

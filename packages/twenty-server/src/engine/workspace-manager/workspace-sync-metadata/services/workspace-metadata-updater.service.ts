@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize, FieldMetadataType } from 'twenty-shared';
 import {
   EntityManager,
   EntityTarget,
@@ -16,10 +17,7 @@ import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-syn
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -29,7 +27,6 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspac
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
-import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {

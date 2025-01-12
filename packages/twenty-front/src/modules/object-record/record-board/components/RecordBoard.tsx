@@ -4,7 +4,9 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
@@ -22,6 +24,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -65,6 +68,23 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
+  const { toggleClickOutsideListener } = useClickOutsideListener(
+    RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
+  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const { closeActionMenuDropdown } = useActionMenu(actionMenuId);
+
+  const handleDragSelectionStart = () => {
+    closeActionMenuDropdown();
+
+    toggleClickOutsideListener(false);
+  };
+
+  const handleDragSelectionEnd = () => {
+    toggleClickOutsideListener(true);
+  };
+
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
@@ -89,10 +109,13 @@ export const RecordBoard = () => {
       'command-menu',
       'modal-backdrop',
       'page-action-container',
+      'record-board-card',
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
-    refs: [boardRef],
-    callback: resetRecordSelection,
+    refs: [],
+    callback: () => {
+      resetRecordSelection();
+    },
   });
 
   const selectAll = useRecoilCallback(
@@ -219,8 +242,9 @@ export const RecordBoard = () => {
               <RecordBoardScrollRestoreEffect />
               <DragSelect
                 dragSelectable={boardRef}
-                onDragSelectionStart={resetRecordSelection}
+                onDragSelectionEnd={handleDragSelectionEnd}
                 onDragSelectionChange={setRecordAsSelected}
+                onDragSelectionStart={handleDragSelectionStart}
               />
             </StyledBoardContentContainer>
           </StyledContainerContainer>
