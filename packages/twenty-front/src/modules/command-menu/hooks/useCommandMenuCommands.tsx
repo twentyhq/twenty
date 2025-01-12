@@ -35,6 +35,9 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const useCommandMenuCommands = () => {
+  const isRichTextV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsRichTextV2Enabled,
+  );
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
@@ -147,9 +150,11 @@ export const useCommandMenuCommands = () => {
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
           {
-            body: {
-              blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
-            },
+            body: isRichTextV2Enabled
+              ? {
+                  blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+                }
+              : { ilike: `%${deferredCommandMenuSearch}%` },
           },
         ])
       : undefined,
@@ -163,9 +168,11 @@ export const useCommandMenuCommands = () => {
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
           {
-            body: {
-              blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
-            },
+            body: isRichTextV2Enabled
+              ? {
+                  blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+                }
+              : { ilike: `%${deferredCommandMenuSearch}%` },
           },
         ])
       : undefined,
