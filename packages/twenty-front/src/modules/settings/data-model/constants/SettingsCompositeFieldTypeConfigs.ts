@@ -190,8 +190,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       markdown: 'Markdown',
     },
     exampleValue: {
-      blocknote: 'TODO', // TODO
-      markdown: 'TODO',
+      blocknote: '[{"type":"heading","content":"Hello"}]',
+      markdown: '# Hello',
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
