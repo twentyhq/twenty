@@ -271,7 +271,7 @@ export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
 export type FieldRichTextV2Value = {
-  blocknote: string | null; // TODO: Can these be null?
+  blocknote: string | null;
   markdown: string | null;
 };
 
