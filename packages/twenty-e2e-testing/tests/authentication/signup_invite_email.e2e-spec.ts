@@ -13,29 +13,28 @@ test.describe('Authentication test', () => {
     membersSection,
     settingsPage,
   }) => {
-    await test.step('Go to Settings and copy invite link', () => {
-      page.goto(process.env.LINK); // skip login page (and redirect) when running on environments with multi-workspace enabled
-      leftMenu.goToSettings();
-      settingsPage.goToMembersSection();
-      membersSection.copyInviteLink();
+    const inviteLink: string =
+      await test.step('Go to Settings and copy invite link', async () => {
+        await page.goto(process.env.LINK); // skip login page (and redirect) when running on environments with multi-workspace enabled
+        await leftMenu.goToSettings();
+        await settingsPage.goToMembersSection();
+        await membersSection.copyInviteLink();
+        return await page.evaluate('navigator.clipboard.readText()');
+      });
+    await test.step('Go to invite link', async () => {
+      await settingsPage.logout();
+      await page.goto(inviteLink);
     });
-    const inviteLink: string = await page.evaluate(
-      'navigator.clipboard.readText()',
-    );
-    await test.step('Go to invite link', () => {
-      settingsPage.logout();
-      page.goto(inviteLink);
-    });
-    await test.step('Create new account', () => {
-      loginPage.clickLoginWithEmail();
-      loginPage.typeEmail(email);
-      loginPage.clickContinueButton();
-      loginPage.typePassword(process.env.DEFAULT_PASSWORD);
-      loginPage.clickSignUpButton();
-      loginPage.typeFirstName(firstName);
-      loginPage.typeLastName(lastName);
-      loginPage.clickContinueButton();
-      loginPage.noSyncWithGoogle();
+    await test.step('Create new account', async () => {
+      await loginPage.clickLoginWithEmail();
+      await loginPage.typeEmail(email);
+      await loginPage.clickContinueButton();
+      await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
+      await loginPage.clickSignUpButton();
+      await loginPage.typeFirstName(firstName);
+      await loginPage.typeLastName(lastName);
+      await loginPage.clickContinueButton();
+      await loginPage.noSyncWithGoogle();
       testCompleted = true;
     });
   });
@@ -51,12 +50,12 @@ test.describe('Authentication test', () => {
       if (testCompleted) {
         // security measurement to clean up only after test is completed,
         // otherwise default account used for tests may be deleted and resetting database will be necessary
-        await test.step('Cleanup - deleting account', () => {
-          leftMenu.goToSettings();
-          settingsPage.goToProfileSection();
-          profileSection.deleteAccount();
-          confirmationModal.typePlaceholderToInput();
-          confirmationModal.clickConfirmButton();
+        await test.step('Cleanup - deleting account', async () => {
+          await leftMenu.goToSettings();
+          await settingsPage.goToProfileSection();
+          await profileSection.deleteAccount();
+          await confirmationModal.typePlaceholderToInput();
+          await confirmationModal.clickConfirmButton();
           expect(page.url()).toContain('/welcome');
         });
       }
