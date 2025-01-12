@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
-import { z } from 'zod';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -12,16 +11,15 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
+import { SettingsAccountsBlocklistDropdownComponent } from '@/settings/accounts/components/blocklist/components/SettingAccountsBlocklistDropdownComponent';
+import { useValidateForm } from '@/settings/accounts/components/blocklist/hooks/useValidateForm';
 import { BLOCKLIST_CONTEXT_DROPDOWN_ID } from '@/settings/accounts/constants/BlocklistContextDropdownId';
 import { BLOCKLIST_SCOPE_DROPDOWN_ITEMS } from '@/settings/accounts/constants/BlocklistScopeDropdownItems';
 import { BlocklistItemScope } from '@/settings/accounts/types/BlocklistItemScope';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, IconTrash, MenuItemMultiSelect } from 'twenty-ui';
-import { isDomain } from '~/utils/is-domain';
+import { IconChevronDown, IconTrash } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsAccountsBlocklistContactRowProps = {
@@ -76,28 +74,6 @@ const StyledIconChevronDown = styled(IconChevronDown)`
   transform: translateY(-50%);
 `;
 
-const validationSchema = (blocklist: BlocklistItem[]) =>
-  z
-    .object({
-      emailOrDomain: z
-        .string()
-        .trim()
-        .email('Invalid email or domain')
-        .or(
-          z
-            .string()
-            .refine(
-              (value) => value.startsWith('@') && isDomain(value.slice(1)),
-              'Invalid email or domain',
-            ),
-        )
-        .refine(
-          (value) => !blocklist.map((item) => item.handle).includes(value),
-          'Email or domain is already in blocklist',
-        ),
-    })
-    .required();
-
 type FormInput = {
   emailOrDomain: string;
 };
@@ -119,6 +95,8 @@ export const SettingsAccountsBlocklistContactRow = ({
   const [selectedBlocklistScopes, setSelectedBlocklistScopes] = useState<
     BlocklistItemScope[]
   >(item?.scopes || []);
+
+  const { validationSchema } = useValidateForm();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -168,6 +146,7 @@ export const SettingsAccountsBlocklistContactRow = ({
       emailOrDomain: '',
     },
   });
+
   const submit = handleSubmit((data) => {
     addNewBlockedEmail({
       scopes: selectedBlocklistScopes,
@@ -254,27 +233,12 @@ export const SettingsAccountsBlocklistContactRow = ({
             </StyledClickableComponent>
           }
           dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <StyledInput
-                value={dropdownSearchText}
-                autoFocus
-                placeholder="Search"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDropdownSearchText(event.target.value.toLowerCase());
-                }}
-              />
-              {BLOCKLIST_SCOPE_DROPDOWN_ITEMS.filter((item) =>
-                item.label.toLowerCase().includes(dropdownSearchText),
-              ).map((item) => (
-                <MenuItemMultiSelect
-                  key={item.id}
-                  onSelectChange={() => handleMultiSelectChange(item.id)}
-                  text={item.label}
-                  selected={selectedBlocklistScopes.includes(item.id)}
-                  className={''}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
+            <SettingsAccountsBlocklistDropdownComponent
+              handleMultiSelectChange={handleMultiSelectChange}
+              selectedBlocklistScopes={selectedBlocklistScopes}
+              dropdownSearchText={dropdownSearchText}
+              setDropdownSearchText={setDropdownSearchText}
+            />
           }
           onClickOutside={handleOnDropdownClickOutside}
           onClose={() =>

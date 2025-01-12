@@ -1,7 +1,7 @@
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingAccountsBlocklistContainer } from '@/settings/accounts/components/blocklist/SettingAccountsBlocklistContainer';
+import { SettingAccountsBlocklistContainer } from '@/settings/accounts/components/blocklist/components/SettingAccountsBlocklistContainer';
 import { H2Title, Section } from 'twenty-ui';
 
 export const SettingsAccountsBlocklistSection = () => {

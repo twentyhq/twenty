@@ -1,5 +1,5 @@
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/blocklist/SettingsAccountsBlocklistTableRow';
+import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/blocklist/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
