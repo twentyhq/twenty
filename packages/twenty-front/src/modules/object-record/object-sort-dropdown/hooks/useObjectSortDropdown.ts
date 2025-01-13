@@ -1,27 +1,25 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
-import isSortDirectionMenuUnfoldedState from '@/object-record/object-sort-dropdown/states/isSortDirectionMenuUnfoldedState';
-import selectedSortDirectionState from '@/object-record/object-sort-dropdown/states/selectedSortDirectionState';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
+import { isSortDirectionMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isSortDirectionMenuUnfoldedState';
+import { selectedSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedSortDirectionState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
-import {
-  OBJECT_SORT_DROPDOWN_ID,
-  VIEW_SORT_DROPDOWN_ID,
-} from '../constants/ObjectSortDropdownId';
+import { OBJECT_SORT_DROPDOWN_ID } from '../constants/ObjectSortDropdownId';
 
 // TODO: merge this with useSortDropdown
 export const useObjectSortDropdown = () => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
-    useRecoilState(isSortDirectionMenuUnfoldedState);
+    useRecoilComponentStateV2(isSortDirectionMenuUnfoldedComponentState);
 
-  const [selectedSortDirection, setSelectedSortDirection] = useRecoilState(
-    selectedSortDirectionState,
-  );
+  const [selectedSortDirection, setSelectedSortDirection] =
+    useRecoilComponentStateV2(selectedSortDirectionComponentState);
 
   const resetState = useCallback(() => {
     setIsSortDirectionMenuUnfolded(false);
