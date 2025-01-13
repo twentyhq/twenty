@@ -11,6 +11,8 @@ export const mapRightDrawerPageToCommandMenuPage = (
       return CommandMenuPages.ViewEmailThread;
     case RightDrawerPages.ViewCalendarEvent:
       return CommandMenuPages.ViewCalendarEvent;
+    case RightDrawerPages.Copilot:
+      return CommandMenuPages.Copilot;
     case RightDrawerPages.WorkflowStepSelectTriggerType:
       return CommandMenuPages.WorkflowStepSelectTriggerType;
     case RightDrawerPages.WorkflowStepSelectAction:

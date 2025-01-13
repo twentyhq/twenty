@@ -1,4 +1,5 @@
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
+import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
@@ -16,6 +17,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.ViewRecord, <RightDrawerRecord />],
   [CommandMenuPages.ViewEmailThread, <RightDrawerEmailThread />],
   [CommandMenuPages.ViewCalendarEvent, <RightDrawerCalendarEvent />],
+  [CommandMenuPages.Copilot, <RightDrawerAIChat />],
   [
     CommandMenuPages.WorkflowStepSelectTriggerType,
     <RightDrawerWorkflowSelectTriggerType />,
