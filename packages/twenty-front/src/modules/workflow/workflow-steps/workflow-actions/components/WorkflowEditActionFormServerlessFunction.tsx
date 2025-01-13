@@ -8,6 +8,7 @@ import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/utils/setNestedValue';
 
+import { Monaco } from '@monaco-editor/react';
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
@@ -26,13 +27,13 @@ import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/w
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CodeEditor, IconCode, IconPlayerPlay, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,6 +77,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const serverlessFunctionVersion =
+    action.settings.input.serverlessFunctionVersion;
   const theme = useTheme();
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
@@ -98,7 +101,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
     );
 
   const { formValues, setFormValues, loading } =
-    useServerlessFunctionUpdateFormState(serverlessFunctionId);
+    useServerlessFunctionUpdateFormState({
+      serverlessFunctionId,
+      serverlessFunctionVersion,
+    });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
@@ -111,10 +117,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const { testServerlessFunction } = useTestServerlessFunction(
+  const { testServerlessFunction } = useTestServerlessFunction({
     serverlessFunctionId,
-    updateOutputSchemaFromTestResult,
-  );
+    serverlessFunctionVersion,
+    callback: updateOutputSchemaFromTestResult,
+  });
 
   const handleSave = useDebouncedCallback(async () => {
     await updateOneServerlessFunction({
@@ -299,6 +306,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
                   language={'typescript'}
                   onChange={handleCodeChange}
                   onMount={handleEditorDidMount}
+                  setMarkers={getWrongExportedFunctionMarkers}
                   options={{
                     readOnly: actionOptions.readonly,
                     domReadOnly: actionOptions.readonly,
@@ -312,7 +320,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
               <WorkflowEditActionFormServerlessFunctionFields
                 functionInput={serverlessFunctionTestData.input}
                 onInputChange={handleTestInputChange}
-                readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
                 <InputLabel>Result</InputLabel>

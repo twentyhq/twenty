@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
+import { MicrosoftGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service';
 import {
   MessageImportException,
   MessageImportExceptionCode,
@@ -22,6 +23,7 @@ export type GetPartialMessageListResponse = {
 export class MessagingGetMessageListService {
   constructor(
     private readonly gmailGetMessageListService: GmailGetMessageListService,
+    private readonly microsoftGetMessageListService: MicrosoftGetMessageListService,
   ) {}
 
   public async getFullMessageList(
@@ -36,11 +38,9 @@ export class MessagingGetMessageListService {
           connectedAccount,
         );
       case 'microsoft':
-        // TODO: Placeholder
-        return {
-          messageExternalIds: [],
-          nextSyncCursor: '',
-        };
+        return this.microsoftGetMessageListService.getFullMessageList(
+          connectedAccount,
+        );
       default:
         throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,

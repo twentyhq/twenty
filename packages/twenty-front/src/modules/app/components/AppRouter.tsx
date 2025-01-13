@@ -14,7 +14,6 @@ export const AppRouter = () => {
   const isCRMMigrationEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCrmMigrationEnabled,
   );
-  const isSSOEnabled = useIsFeatureEnabled(FeatureFlagKey.IsSsoEnabled);
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFunctionSettingsEnabled,
   );
@@ -32,7 +31,6 @@ export const AppRouter = () => {
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
-        isSSOEnabled,
         isAdminPageEnabled,
       )}
     />

@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -22,9 +23,11 @@ export const useDeleteStep = ({
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeRightDrawer } = useRightDrawer();
+  const { closeCommandMenu } = useCommandMenu();
 
   const deleteStep = async (stepId: string) => {
     closeRightDrawer();
+    closeCommandMenu();
     const workflowVersion = await getUpdatableWorkflowVersion(workflow);
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({

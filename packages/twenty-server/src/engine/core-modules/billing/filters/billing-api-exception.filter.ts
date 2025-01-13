@@ -26,6 +26,12 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
           response,
           404,
         );
+      case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          404,
+        );
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,

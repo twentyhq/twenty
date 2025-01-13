@@ -24,17 +24,21 @@ type FormMultiSelectFieldInputProps = {
   options: SelectOption[];
   onPersist: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
+  readonly?: boolean;
 };
 
-const StyledDisplayModeContainer = styled.button`
-  width: 100%;
+const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
-  display: flex;
-  cursor: pointer;
-  border: none;
   background: transparent;
+  border: none;
+  display: flex;
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+  cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
@@ -54,6 +58,7 @@ export const FormMultiSelectFieldInput = ({
   options,
   onPersist,
   VariablePicker,
+  readonly,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -164,26 +169,37 @@ export const FormMultiSelectFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            <StyledDisplayModeContainer
-              data-open={draftValue.editingMode === 'edit'}
-              onClick={handleDisplayModeClick}
-            >
-              <VisibilityHidden>Edit</VisibilityHidden>
+            readonly ? (
+              <StyledDisplayModeReadonlyContainer>
+                {isDefined(selectedOptions) && (
+                  <MultiSelectDisplay
+                    values={selectedNames}
+                    options={selectedOptions}
+                  />
+                )}
+              </StyledDisplayModeReadonlyContainer>
+            ) : (
+              <StyledDisplayModeContainer
+                data-open={draftValue.editingMode === 'edit'}
+                onClick={handleDisplayModeClick}
+              >
+                <VisibilityHidden>Edit</VisibilityHidden>
 
-              {isDefined(selectedOptions) ? (
-                <MultiSelectDisplay
-                  values={selectedNames}
-                  options={selectedOptions}
-                />
-              ) : null}
-            </StyledDisplayModeContainer>
+                {isDefined(selectedOptions) && (
+                  <MultiSelectDisplay
+                    values={selectedNames}
+                    options={selectedOptions}
+                  />
+                )}
+              </StyledDisplayModeContainer>
+            )
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
@@ -202,7 +218,7 @@ export const FormMultiSelectFieldInput = ({
             )}
         </StyledSelectInputContainer>
 
-        {VariablePicker && (
+        {VariablePicker && !readonly && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

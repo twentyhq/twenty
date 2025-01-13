@@ -18,6 +18,7 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
+import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
@@ -68,12 +69,16 @@ export const ViewBar = ({
                 scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
               }}
             />
-            <ObjectSortDropdownButton
-              sortDropdownId={sortDropdownId}
-              hotkeyScope={{
-                scope: FiltersHotkeyScope.ObjectSortDropdownButton,
-              }}
-            />
+            <ObjectSortDropdownComponentInstanceContext.Provider
+              value={{ instanceId: sortDropdownId }}
+            >
+              <ObjectSortDropdownButton
+                sortDropdownId={sortDropdownId}
+                hotkeyScope={{
+                  scope: FiltersHotkeyScope.ObjectSortDropdownButton,
+                }}
+              />
+            </ObjectSortDropdownComponentInstanceContext.Provider>
             {optionsDropdownButton}
           </>
         }
