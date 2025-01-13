@@ -58,6 +58,7 @@ export const FormCountrySelectInput = ({
       options={options}
       defaultValue={selectedCountryName}
       VariablePicker={VariablePicker}
+      removeDisplayValueHorizontalPadding
     />
   );
 };

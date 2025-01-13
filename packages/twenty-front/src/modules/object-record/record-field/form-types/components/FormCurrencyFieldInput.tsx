@@ -62,6 +62,7 @@ export const FormCurrencyFieldInput = ({
           clearLabel={'Currency Code'}
           VariablePicker={VariablePicker}
           readonly={readonly}
+          removeDisplayValueHorizontalPadding
         />
         <FormNumberFieldInput
           label="Amount Micros"

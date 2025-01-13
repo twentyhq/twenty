@@ -27,6 +27,7 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   clearLabel?: string;
   readonly?: boolean;
+  removeDisplayValueHorizontalPadding?: boolean;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -62,6 +63,7 @@ export const FormSelectFieldInput = ({
   options,
   clearLabel,
   readonly,
+  removeDisplayValueHorizontalPadding,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -225,6 +227,9 @@ export const FormSelectFieldInput = ({
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
+                    removeHorizontalPadding={
+                      removeDisplayValueHorizontalPadding
+                    }
                   />
                 )}
               </StyledDisplayModeReadonlyContainer>
@@ -240,6 +245,9 @@ export const FormSelectFieldInput = ({
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
+                    removeHorizontalPadding={
+                      removeDisplayValueHorizontalPadding
+                    }
                   />
                 )}
               </StyledDisplayModeContainer>
