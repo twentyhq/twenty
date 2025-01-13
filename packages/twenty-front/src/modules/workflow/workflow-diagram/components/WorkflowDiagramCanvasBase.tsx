@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
@@ -177,6 +178,8 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
+  const { closeCommandMenu } = useCommandMenu();
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <ReactFlow
@@ -210,6 +213,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
+        onPaneClick={closeCommandMenu}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
         <Background color={theme.border.color.medium} size={2} />
