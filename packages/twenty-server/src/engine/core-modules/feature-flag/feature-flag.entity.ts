@@ -2,7 +2,6 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
-  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -28,16 +27,6 @@ export class FeatureFlagEntity {
   @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
   key: FeatureFlagKey;
-
-  @AfterLoad()
-  validateFeatureFlag() {
-    if (!Object.values(FeatureFlagKey).includes(this.key)) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Invalid feature flag key: ${this.key}, key needs to be deleted from database`,
-      );
-    }
-  }
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })
