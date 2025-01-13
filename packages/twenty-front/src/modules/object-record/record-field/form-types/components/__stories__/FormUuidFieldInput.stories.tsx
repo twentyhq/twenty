@@ -212,3 +212,33 @@ export const ReplaceStaticValueWithVariable: Story = {
     ]);
   },
 };
+
+export const Disabled: Story = {
+  args: {
+    label: 'UUID field',
+    placeholder: 'Enter UUID',
+    readonly: true,
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('Enter UUID');
+
+    expect(input).toBeDisabled();
+
+    const variablePicker = canvas.queryByText('Add variable');
+
+    expect(variablePicker).not.toBeInTheDocument();
+  },
+};
