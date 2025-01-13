@@ -15,7 +15,7 @@ import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/wo
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
@@ -89,23 +89,21 @@ export const CommandMenuContainer = ({
           <RecordActionMenuEntriesSetter />
           {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
           <ActionMenuConfirmationModals />
-          <AnimatePresence>
-            {isCommandMenuOpened && (
-              <StyledCommandMenu
-                ref={commandMenuRef}
-                className="command-menu"
-                animate={targetVariantForAnimation}
-                initial="closed"
-                exit="closed"
-                variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                transition={{
-                  duration: theme.animation.duration.normal,
-                }}
-              >
-                {children}
-              </StyledCommandMenu>
-            )}
-          </AnimatePresence>
+          {isCommandMenuOpened && (
+            <StyledCommandMenu
+              ref={commandMenuRef}
+              className="command-menu"
+              animate={targetVariantForAnimation}
+              initial="closed"
+              exit="closed"
+              variants={COMMAND_MENU_ANIMATION_VARIANTS}
+              transition={{
+                duration: theme.animation.duration.normal,
+              }}
+            >
+              {children}
+            </StyledCommandMenu>
+          )}
         </ActionMenuContext.Provider>
       </ActionMenuComponentInstanceContext.Provider>
     </ContextStoreComponentInstanceContext.Provider>

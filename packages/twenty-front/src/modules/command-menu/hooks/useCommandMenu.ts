@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -21,7 +21,6 @@ import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRi
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
-  const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const { resetSelectedItem } = useSelectableList('command-menu-list');
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -142,13 +141,12 @@ export const useCommandMenu = () => {
           actionMenuEntries,
         );
 
-        setIsCommandMenuOpened(true);
+        set(isCommandMenuOpenedState, true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
       },
     [
       mainContextStoreComponentInstanceId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setIsCommandMenuOpened,
     ],
   );
 
@@ -214,14 +212,14 @@ export const useCommandMenu = () => {
 
           set(viewableRecordIdState, null);
           set(commandMenuPageState, CommandMenuPages.Root);
-          setIsCommandMenuOpened(false);
+          set(isCommandMenuOpenedState, false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
 
           emitRightDrawerCloseEvent();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [goBackToPreviousHotkeyScope, resetSelectedItem],
   );
 
   const toggleCommandMenu = useRecoilCallback(
