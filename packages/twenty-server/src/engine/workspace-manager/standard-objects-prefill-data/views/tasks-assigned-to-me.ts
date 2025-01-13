@@ -10,7 +10,7 @@ export const tasksAssignedToMeView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'Assigned to me',
+    name: 'Assigned to Me',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].id,
     type: 'table',
