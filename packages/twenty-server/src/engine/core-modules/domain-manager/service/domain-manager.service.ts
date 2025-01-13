@@ -46,13 +46,14 @@ export class DomainManagerService {
     return baseUrl;
   }
 
-  getBaseUrl(
-    subdomain = this.environmentService.get('DEFAULT_SUBDOMAIN'),
-  ): URL {
+  getBaseUrl(): URL {
     const baseUrl = this.getFrontUrl();
 
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') && subdomain) {
-      baseUrl.hostname = `${subdomain}.${baseUrl.hostname}`;
+    if (
+      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      this.environmentService.get('DEFAULT_SUBDOMAIN')
+    ) {
+      baseUrl.hostname = `${this.environmentService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
     }
 
     return baseUrl;
