@@ -149,6 +149,7 @@ export class SSOAuthController {
     await this.authService.signInUp({
       ...user,
       workspace: identityProvider.workspace,
+      invitationFlow: 'none',
       authProvider: 'sso',
     });
 

@@ -1,5 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -55,6 +58,8 @@ import { AuthService } from './services/auth.service';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -123,27 +128,16 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => SignUpOutput)
-  async signUp(
-    @Args() signUpInput: SignUpInput,
-    @OriginHeader() origin: string,
-  ): Promise<SignUpOutput> {
-    const currentWorkspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      currentWorkspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
+  async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
+    const currentWorkspace = signUpInput.workspaceInviteHash
+      ? await this.workspaceRepository.findOneBy({
+          inviteHash: signUpInput.workspaceInviteHash,
+        })
+      : undefined;
 
     const invitation = currentWorkspace
       ? await this.authService.findOneInvitationBySignUpParams({
           workspaceId: currentWorkspace.id,
-          inviteHash: signUpInput.workspaceInviteHash,
           personalInviteToken: signUpInput.workspacePersonalInviteToken,
         })
       : undefined;
@@ -151,7 +145,12 @@ export class AuthResolver {
     const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
       invitation,
-      workspace: currentWorkspace,
+      invitationFlow: invitation
+        ? 'personal'
+        : signUpInput.workspaceInviteHash
+          ? 'global'
+          : 'none',
+      workspace: currentWorkspace ?? undefined,
       authProvider: 'password',
     });
 

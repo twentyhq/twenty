@@ -6,8 +6,10 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -21,6 +23,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 @Controller('auth/google')
@@ -31,6 +34,8 @@ export class GoogleAuthController {
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
     private readonly socialSsoService: SocialSsoService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   @Get()
@@ -51,25 +56,27 @@ export class GoogleAuthController {
       picture,
       workspaceInviteHash,
       workspacePersonalInviteToken,
-      workspaceOrigin,
+      workspaceId,
       billingCheckoutSessionState,
     } = req.user;
 
-    const currentWorkspace =
-      await this.socialSsoService.findWorkspaceFromOriginAndAuthProvider(
-        workspaceOrigin,
-        {
-          email,
-          authProvider: 'google',
-        },
-      );
+    const currentWorkspace = workspaceInviteHash
+      ? await this.workspaceRepository.findOneBy({
+          inviteHash: workspaceInviteHash,
+        })
+      : await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+          {
+            email,
+            authProvider: 'google',
+          },
+          workspaceId,
+        );
 
     try {
       const invitation = currentWorkspace
         ? await this.authService.findOneInvitationBySignUpParams({
             workspaceId: currentWorkspace.id,
             email,
-            inviteHash: workspaceInviteHash,
             personalInviteToken: workspacePersonalInviteToken,
           })
         : undefined;
@@ -80,7 +87,12 @@ export class GoogleAuthController {
         lastName,
         picture,
         invitation,
-        workspace: currentWorkspace,
+        invitationFlow: invitation
+          ? 'personal'
+          : workspaceInviteHash
+            ? 'global'
+            : 'none',
+        workspace: currentWorkspace ?? undefined,
         authProvider: 'google',
       });
 

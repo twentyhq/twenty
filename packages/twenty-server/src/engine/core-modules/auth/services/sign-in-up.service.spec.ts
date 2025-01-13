@@ -156,6 +156,7 @@ describe('SignInUpService', () => {
         service.signInUp({
           email: 'test@test.com',
           authProvider: 'google',
+          invitationFlow: 'none',
           workspace: {
             id: 'workspaceId',
           } as Workspace,
@@ -188,6 +189,7 @@ describe('SignInUpService', () => {
         invitation: {
           workspaceId: workspace.id,
         } as AppToken,
+        invitationFlow: 'personal',
         authProvider: 'microsoft',
         workspace,
       });
@@ -214,6 +216,7 @@ describe('SignInUpService', () => {
       const result = await service.signInUp({
         email,
         authProvider: 'google',
+        invitationFlow: 'none',
         workspace: {
           id: 'a-workspace',
           activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -249,6 +252,7 @@ describe('SignInUpService', () => {
         await service.signInUp({
           email: 'test@test.com',
           authProvider: 'google',
+          invitationFlow: 'none',
         });
 
         expect(spy).toHaveBeenCalledWith(
@@ -296,6 +300,7 @@ describe('SignInUpService', () => {
           invitation: {
             workspaceId,
           } as AppToken,
+          invitationFlow: 'personal',
           authProvider: 'google',
         });
 
@@ -345,6 +350,7 @@ describe('SignInUpService', () => {
         const result = await service.signInUp({
           email,
           invitation: {} as AppToken,
+          invitationFlow: 'personal',
           authProvider: 'sso',
         });
 
@@ -384,6 +390,7 @@ describe('SignInUpService', () => {
           service.signInUp({
             email,
             workspace,
+            invitationFlow: 'none',
             authProvider: 'google',
           }),
         ).rejects.toThrow(AuthException);
@@ -404,6 +411,7 @@ describe('SignInUpService', () => {
           service.signInUp({
             email,
             workspace,
+            invitationFlow: 'none',
             authProvider: 'google',
           }),
         ).rejects.toThrow(AuthException);
@@ -426,6 +434,7 @@ describe('SignInUpService', () => {
         const result = await service.signInUp({
           email,
           authProvider: 'google',
+          invitationFlow: 'none',
           workspace: workspace as Workspace,
         });
 

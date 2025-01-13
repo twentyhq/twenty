@@ -35,7 +35,10 @@ import {
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import {
+  SignInUpService,
+  SignInUpServiceInput,
+} from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
@@ -152,14 +155,9 @@ export class AuthService {
   async findOneInvitationBySignUpParams(params: {
     workspaceId: string;
     email?: string;
-    inviteHash?: string;
     personalInviteToken?: string;
   }) {
     const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    if (params.inviteHash) {
-      qr.leftJoin('appToken.workspace', 'workspace');
-    }
 
     qr.where('"appToken"."workspaceId" = :workspaceId', {
       workspaceId: params.workspaceId,
@@ -167,13 +165,8 @@ export class AuthService {
       type: AppTokenType.InvitationToken,
     });
 
-    if (params.inviteHash) {
-      qr.andWhere('workspace.inviteHash = :inviteHash', {
-        inviteHash: params.inviteHash,
-      });
-    }
-
-    // Find invitation by email + workspaceId only is safe with pre authenticate signup. So SSO, google connect... only
+    // Find invitation by email + workspaceId only, is safe with pre authenticated signup. So SSO, google connect...
+    // Don't set email params in credential flow.
     if (params.email) {
       qr.andWhere('"appToken".context->>\'email\' = :email', {
         email: params.email,
@@ -194,6 +187,7 @@ export class AuthService {
     password,
     invitation,
     workspace,
+    invitationFlow,
     firstName,
     lastName,
     picture,
@@ -204,8 +198,9 @@ export class AuthService {
     firstName?: string | null;
     lastName?: string | null;
     invitation?: AppToken;
+    invitationFlow: SignInUpServiceInput['invitationFlow'];
     picture?: string | null;
-    workspace?: Workspace;
+    workspace?: Workspace | null;
     authProvider: WorkspaceAuthProvider;
     billingCheckoutSessionState?: string;
   }) {
@@ -215,6 +210,7 @@ export class AuthService {
       firstName,
       lastName,
       invitation,
+      invitationFlow,
       workspace,
       picture,
       authProvider,

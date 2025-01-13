@@ -206,7 +206,6 @@ describe('AuthService', () => {
       const params = {
         workspaceId: 'workspace1',
         email: 'test@example.com',
-        inviteHash: 'test-invite-hash',
       };
 
       await service.findOneInvitationBySignUpParams(params);
@@ -215,11 +214,6 @@ describe('AuthService', () => {
       expect(
         appTokenRepository.createQueryBuilder().leftJoin,
       ).toHaveBeenCalledWith('appToken.workspace', 'workspace');
-      expect(
-        appTokenRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('workspace.inviteHash = :inviteHash', {
-        inviteHash: params.inviteHash,
-      });
       expect(
         appTokenRepository.createQueryBuilder().where,
       ).toHaveBeenCalledWith('"appToken"."workspaceId" = :workspaceId', {

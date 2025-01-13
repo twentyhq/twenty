@@ -6,8 +6,10 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -17,6 +19,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 @Controller('auth/microsoft')
@@ -27,6 +30,8 @@ export class MicrosoftAuthController {
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
     private readonly socialSsoService: SocialSsoService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   @Get()
@@ -49,25 +54,27 @@ export class MicrosoftAuthController {
       picture,
       workspaceInviteHash,
       workspacePersonalInviteToken,
-      workspaceOrigin,
+      workspaceId,
       billingCheckoutSessionState,
     } = req.user;
 
-    const currentWorkspace =
-      await this.socialSsoService.findWorkspaceFromOriginAndAuthProvider(
-        workspaceOrigin,
-        {
-          email,
-          authProvider: 'microsoft',
-        },
-      );
+    const currentWorkspace = workspaceInviteHash
+      ? await this.workspaceRepository.findOneBy({
+          inviteHash: workspaceInviteHash,
+        })
+      : await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+          {
+            email,
+            authProvider: 'microsoft',
+          },
+          workspaceId,
+        );
 
     try {
       const invitation = currentWorkspace
         ? await this.authService.findOneInvitationBySignUpParams({
             workspaceId: currentWorkspace.id,
             email,
-            inviteHash: workspaceInviteHash,
             personalInviteToken: workspacePersonalInviteToken,
           })
         : undefined;
@@ -78,7 +85,12 @@ export class MicrosoftAuthController {
         lastName,
         picture,
         invitation,
-        workspace: currentWorkspace,
+        invitationFlow: invitation
+          ? 'personal'
+          : workspaceInviteHash
+            ? 'global'
+            : 'none',
+        workspace: currentWorkspace ?? undefined,
         authProvider: 'microsoft',
       });
 

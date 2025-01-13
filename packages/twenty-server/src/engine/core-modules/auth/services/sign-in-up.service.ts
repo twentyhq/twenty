@@ -46,8 +46,9 @@ export type SignInUpServiceInput = {
   lastName?: string | null;
   invitation?: AppToken;
   picture?: string | null;
-  workspace?: Workspace;
+  workspace?: Workspace | null;
   authProvider: WorkspaceAuthProvider;
+  invitationFlow: 'personal' | 'global' | 'none';
 };
 
 @Injectable()
@@ -72,6 +73,7 @@ export class SignInUpService {
     email,
     workspace,
     invitation,
+    invitationFlow,
     password,
     firstName,
     lastName,
@@ -119,30 +121,45 @@ export class SignInUpService {
       }
     }
 
-    if (invitation && invitation.workspaceId !== workspace?.id) {
-      throw new AuthException(
-        'Invitation is not valid for this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    // with personal invitation flow
+    if (invitationFlow === 'personal') {
+      return this.signInUpWithPersonalInvitation({
+        email,
+        invitation,
+        firstName,
+        lastName,
+        picture,
+        authProvider,
+        passwordHash,
+        existingUser,
+      });
+    }
+
+    // with global invitation flow
+    if (invitationFlow === 'global') {
+      workspaceValidator.assertIsDefinedOrThrow(
+        workspace,
+        new AuthException(
+          'Workspace not found',
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        ),
       );
+
+      const updatedUser = await this.signInUpOnExistingWorkspace({
+        email,
+        passwordHash,
+        workspace,
+        firstName,
+        lastName,
+        picture,
+        existingUser,
+        authProvider,
+      });
+
+      return { user: updatedUser, workspace };
     }
 
-    const signInUpWithInvitationResult = invitation
-      ? await this.signInUpWithInvitation({
-          email,
-          invitation,
-          firstName,
-          lastName,
-          picture,
-          authProvider,
-          passwordHash,
-          existingUser,
-        })
-      : undefined;
-
-    if (isDefined(signInUpWithInvitationResult)) {
-      return signInUpWithInvitationResult;
-    }
-
+    // without invitation flow
     if (!existingUser && workspace) {
       throw new AuthException(
         "You're not member of this workspace",
@@ -175,7 +192,7 @@ export class SignInUpService {
     });
   }
 
-  private async signInUpWithInvitation({
+  private async signInUpWithPersonalInvitation({
     email,
     invitation,
     firstName,
@@ -186,7 +203,7 @@ export class SignInUpService {
     existingUser,
   }: {
     email: string;
-    invitation: AppToken;
+    invitation?: AppToken;
     firstName: string;
     lastName: string;
     picture?: string | null;
@@ -194,6 +211,13 @@ export class SignInUpService {
     passwordHash?: string;
     existingUser: User | null;
   }) {
+    if (!invitation) {
+      throw new AuthException(
+        'Invitation not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const invitationValidation =
       await this.workspaceInvitationService.validateInvitation({
         workspacePersonalInviteToken: invitation.value,

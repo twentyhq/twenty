@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class SocialSsoService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: EnvironmentService,
-    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   private getAuthProviderColumnNameByProvider(
@@ -35,16 +33,16 @@ export class SocialSsoService {
     throw new Error(`${authProvider} is not a valid auth provider.`);
   }
 
-  async findWorkspaceFromOriginAndAuthProvider(
-    origin: string,
+  async findWorkspaceFromWorkspaceIdOrAuthProvider(
     {
       authProvider,
       email,
     }: { authProvider: WorkspaceAuthProvider; email: string },
+    workspaceId?: string,
   ) {
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      new URL(this.domainManagerService.getBaseUrl()).origin === origin
+      !workspaceId
     ) {
       // Multi-workspace enable mode but on non workspace url.
       // so get the first workspace with the current auth method enable
@@ -63,8 +61,8 @@ export class SocialSsoService {
       return workspace ?? undefined;
     }
 
-    return await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-      origin,
-    );
+    return await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
   }
 }
