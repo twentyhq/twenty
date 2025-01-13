@@ -8,7 +8,6 @@ import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/utils/setNestedValue';
 
-import { Monaco } from '@monaco-editor/react';
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
@@ -24,16 +23,17 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverl
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CodeEditor, IconCode, IconPlayerPlay, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -178,7 +178,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
               isLeaf: true,
               icon: 'IconVariable',
               tab: 'test',
-              label: 'Generate Function Input',
+              label: 'Generate Function Output',
             },
             _outputSchemaType: 'LINK',
           },
