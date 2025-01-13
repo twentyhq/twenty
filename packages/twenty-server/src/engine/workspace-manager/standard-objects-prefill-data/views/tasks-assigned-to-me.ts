@@ -14,7 +14,7 @@ export const tasksAssignedToMeView = (
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].id,
     type: 'table',
-    key: 'INDEX',
+    key: null,
     position: 2,
     icon: 'IconUserCircle',
     kanbanFieldMetadataId: '',
