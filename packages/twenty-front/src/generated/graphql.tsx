@@ -313,12 +313,6 @@ export type FeatureFlag = {
   workspaceId: Scalars['String'];
 };
 
-export type FeatureFlagFilter = {
-  and?: InputMaybe<Array<FeatureFlagFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<FeatureFlagFilter>>;
-};
-
 export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
@@ -336,16 +330,6 @@ export enum FeatureFlagKey {
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
-}
-
-export type FeatureFlagSort = {
-  direction: SortDirection;
-  field: FeatureFlagSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum FeatureFlagSortFields {
-  Id = 'id'
 }
 
 export type FieldConnection = {
@@ -1542,12 +1526,6 @@ export type WorkspaceBillingEntitlementsArgs = {
 export type WorkspaceBillingSubscriptionsArgs = {
   filter?: BillingSubscriptionFilter;
   sorting?: Array<BillingSubscriptionSort>;
-};
-
-
-export type WorkspaceFeatureFlagsArgs = {
-  filter?: FeatureFlagFilter;
-  sorting?: Array<FeatureFlagSort>;
 };
 
 export enum WorkspaceActivationStatus {

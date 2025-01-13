@@ -92,7 +92,7 @@ export class WorkflowVersionStepWorkspaceService {
                 isLeaf: true,
                 icon: 'IconVariable',
                 tab: 'test',
-                label: 'Generate Function Input',
+                label: 'Generate Function Output',
               },
               _outputSchemaType: 'LINK',
             },

@@ -18,7 +18,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { IconUserCircle } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -63,10 +64,12 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const [fieldId] = useState(v4());
 
-  const { isCurrentWorkspaceMemberSelected } = relationFilterValueSchema
+  const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: [],
+      selectedRecordIds: simpleRelationFilterValueSchema.parse(
+        selectedFilter?.value,
+      ),
     })
     .parse(selectedFilter?.value);
 
