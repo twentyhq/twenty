@@ -23,7 +23,7 @@ export const getAggregateOperationShortLabel = (
     case AGGREGATE_OPERATIONS.percentageNotEmpty:
       return 'Not empty';
     case AGGREGATE_OPERATIONS.countUniqueValues:
-      return 'Unique values';
+      return 'Unique';
     case DATE_AGGREGATE_OPERATIONS.earliest:
       return 'Earliest';
     case DATE_AGGREGATE_OPERATIONS.latest:
