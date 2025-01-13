@@ -174,12 +174,12 @@ export const FormMultiSelectFieldInput = ({
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOptions) ? (
+                {isDefined(selectedOptions) && (
                   <MultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
-                ) : null}
+                )}
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
@@ -188,12 +188,12 @@ export const FormMultiSelectFieldInput = ({
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOptions) ? (
+                {isDefined(selectedOptions) && (
                   <MultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
-                ) : null}
+                )}
               </StyledDisplayModeContainer>
             )
           ) : (

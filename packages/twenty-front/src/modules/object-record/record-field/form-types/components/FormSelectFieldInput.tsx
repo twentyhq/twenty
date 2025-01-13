@@ -220,13 +220,13 @@ export const FormSelectFieldInput = ({
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOption) ? (
+                {isDefined(selectedOption) && (
                   <SelectDisplay
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
                   />
-                ) : null}
+                )}
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
@@ -235,13 +235,13 @@ export const FormSelectFieldInput = ({
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOption) ? (
+                {isDefined(selectedOption) && (
                   <SelectDisplay
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
                   />
-                ) : null}
+                )}
               </StyledDisplayModeContainer>
             )
           ) : (
