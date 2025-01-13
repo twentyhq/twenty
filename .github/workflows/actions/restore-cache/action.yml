@@ -12,8 +12,8 @@ outputs:
     description: actions/cache/restore cache-primary-key outputs proxy
     value: ${{ steps.restore-cache.outputs.cache-primary-key }}
   cache-hit:
-    description: actions/cache/restore cache-hit outputs proxy
-    value: ${{ steps.restore-cache.outputs.cache-hit }}
+    description: String bool indicating whereas cache has been direct hit or hit 
+    value: ${{ steps.restore-cache.outputs.cache-hit != 'false' || steps.restore-cache.outputs.cache-matched-key != '' }}
 
 runs:
   using: "composite"
