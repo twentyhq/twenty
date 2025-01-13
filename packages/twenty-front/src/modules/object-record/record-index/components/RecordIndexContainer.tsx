@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
@@ -31,6 +32,7 @@ import { RecordIndexTableContainerEffect } from '@/object-record/record-index/co
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -125,6 +127,9 @@ export const RecordIndexContainer = () => {
         }
 
         for (const viewField of viewFields) {
+          const viewFieldMetadataType = objectMetadataItem.fields?.find(
+            (field) => field.id === viewField.fieldMetadataId,
+          )?.type;
           const aggregateOperationForViewField = snapshot
             .getLoadable(
               viewFieldAggregateOperationState({
@@ -133,17 +138,29 @@ export const RecordIndexContainer = () => {
             )
             .getValue();
 
-          if (aggregateOperationForViewField !== viewField.aggregateOperation) {
+          const convertedViewFieldAggregateOperation = isDefined(
+            viewField.aggregateOperation,
+          )
+            ? convertAggregateOperationToExtendedAggregateOperation(
+                viewField.aggregateOperation,
+                viewFieldMetadataType,
+              )
+            : viewField.aggregateOperation;
+
+          if (
+            aggregateOperationForViewField !==
+            convertedViewFieldAggregateOperation
+          ) {
             set(
               viewFieldAggregateOperationState({
                 viewFieldId: viewField.id,
               }),
-              viewField.aggregateOperation,
+              convertedViewFieldAggregateOperation,
             );
           }
         }
       },
-    [columnDefinitions, setTableColumns],
+    [columnDefinitions, objectMetadataItem.fields, setTableColumns],
   );
 
   const onViewGroupsChange = useCallback(
@@ -220,8 +237,18 @@ export const RecordIndexContainer = () => {
                 setRecordIndexViewKanbanFieldMetadataIdState(
                   view.kanbanFieldMetadataId,
                 );
+                const kanbanAggregateOperationFieldMetadataType =
+                  objectMetadataItem.fields?.find(
+                    (field) =>
+                      field.id === view.kanbanAggregateOperationFieldMetadataId,
+                  )?.type;
                 setRecordIndexViewKanbanAggregateOperationState({
-                  operation: view.kanbanAggregateOperation,
+                  operation: isDefined(view.kanbanAggregateOperation)
+                    ? convertAggregateOperationToExtendedAggregateOperation(
+                        view.kanbanAggregateOperation,
+                        kanbanAggregateOperationFieldMetadataType,
+                      )
+                    : view.kanbanAggregateOperation,
                   fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
                 });
                 setRecordIndexIsCompactModeActive(view.isCompact);

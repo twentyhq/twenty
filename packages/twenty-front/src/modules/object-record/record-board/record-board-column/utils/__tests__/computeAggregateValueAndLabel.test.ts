@@ -5,6 +5,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { FieldMetadataType } from '~/generated/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
@@ -154,17 +155,17 @@ describe('computeAggregateValueAndLabel', () => {
       ],
     } as ObjectMetadataItem;
 
-    const mockData = {
+    const mockFormattedData = {
       createdAt: {
-        [AGGREGATE_OPERATIONS.min]: '2023-01-01T12:00:00Z',
+        [DATE_AGGREGATE_OPERATIONS.earliest]: '2023-01-01T12:00:00Z',
       },
     } as AggregateRecordsData;
 
     const result = computeAggregateValueAndLabel({
-      data: mockData,
+      data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.min,
+      aggregateOperation: DATE_AGGREGATE_OPERATIONS.earliest,
       fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
@@ -189,17 +190,17 @@ describe('computeAggregateValueAndLabel', () => {
       ],
     } as ObjectMetadataItem;
 
-    const mockData = {
+    const mockFormattedData = {
       updatedAt: {
-        [AGGREGATE_OPERATIONS.max]: '2023-12-31T23:59:59Z',
+        [DATE_AGGREGATE_OPERATIONS.latest]: '2023-12-31T23:59:59Z',
       },
     } as AggregateRecordsData;
 
     const result = computeAggregateValueAndLabel({
-      data: mockData,
+      data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.max,
+      aggregateOperation: DATE_AGGREGATE_OPERATIONS.latest,
       fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });

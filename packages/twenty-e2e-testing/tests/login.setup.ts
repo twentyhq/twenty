@@ -1,38 +1,42 @@
-import { expect, test as setup } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
+import { LoginPage } from '../lib/pom/loginPage';
 import path from 'path';
 
-setup('Login test', async ({ page }) => {
-  console.log('Starting login test');
+// fixture
+const test = base.extend<{ loginPage: LoginPage }>({
+  loginPage: async ({ page }, use) => {
+    const loginPage = new LoginPage(page);
+    await use(loginPage);
+  },
+});
 
-  await page.goto('/');
-  console.log('Navigated to homepage');
-
-  await page.getByRole('button', { name: 'Continue With Email' }).click();
-  console.log('Clicked email login button');
-
-  console.log('Default login', process.env.DEFAULT_LOGIN);
-  await page.getByPlaceholder('Email').fill(process.env.DEFAULT_LOGIN ?? '');
-  console.log('Filled email field');
-
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  console.log('Clicked continue button');
-
-  await page
-    .getByPlaceholder('Password')
-    .fill(process.env.DEFAULT_PASSWORD ?? '');
-  console.log('Filled password field');
-
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  console.log('Clicked sign in button');
-
-  await page.waitForLoadState('networkidle');
-  console.log('Waited for network to be idle');
-
-  await expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
-  console.log('Verified welcome message not visible');
-
-  await page.context().storageState({
-    path: path.resolve(__dirname, '..', '.auth', 'user.json'),
+test('Login test', async ({ loginPage, page }) => {
+  await test.step('Navigated to login page', async () => {
+    await page.goto('/');
   });
-  console.log('Saved auth state');
+  await test.step(
+    'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
+    async () => {
+      await page.waitForLoadState('networkidle');
+      if (
+        page.url().includes('demo.twenty.com') ||
+        !page.url().includes('app.localhost:3001')
+      ) {
+        await loginPage.clickLoginWithEmail();
+      }
+      await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
+      await loginPage.clickContinueButton();
+      await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
+      await page.waitForLoadState('networkidle');
+      await loginPage.clickSignInButton();
+      await expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
+    },
+  );
+
+  await test.step('Saved auth state', async () => {
+    await page.context().storageState({
+      path: path.resolve(__dirname, '..', '.auth', 'user.json'),
+    });
+    process.env.LINK = page.url();
+  });
 });

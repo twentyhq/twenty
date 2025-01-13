@@ -12,7 +12,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledRightDrawerRecord = styled.div<{ hasTopBar: boolean }>`
   height: ${({ theme, hasTopBar }) =>
