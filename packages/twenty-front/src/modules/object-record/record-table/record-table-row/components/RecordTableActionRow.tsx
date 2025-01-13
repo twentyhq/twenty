@@ -70,7 +70,7 @@ export const RecordTableActionRow = ({
           color={theme.font.color.tertiary}
         />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer>
+      <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
       <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />
