@@ -12,9 +12,7 @@ import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-b
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -103,10 +101,6 @@ export const RecordBoardColumnHeader = () => {
     columnDefinition.id ?? '',
   );
 
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
-
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
@@ -141,18 +135,12 @@ export const RecordBoardColumnHeader = () => {
                   : 'medium'
               }
             />
-            {isAggregateQueryEnabled ? (
-              <RecordBoardColumnHeaderAggregateDropdown
-                aggregateValue={aggregateValue}
-                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-                objectMetadataItem={objectMetadataItem}
-                aggregateLabel={aggregateLabel}
-              />
-            ) : (
-              <StyledRecordCountChildren>
-                {aggregateValue}
-              </StyledRecordCountChildren>
-            )}
+            <RecordBoardColumnHeaderAggregateDropdown
+              aggregateValue={aggregateValue}
+              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+              objectMetadataItem={objectMetadataItem}
+              aggregateLabel={aggregateLabel}
+            />
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (

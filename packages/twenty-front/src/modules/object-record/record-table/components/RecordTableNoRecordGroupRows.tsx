@@ -4,8 +4,6 @@ import { RecordTableAggregateFooter } from '@/object-record/record-table/record-
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordTableNoRecordGroupRows = () => {
   const allRecordIds = useRecoilComponentValueV2(
@@ -14,10 +12,6 @@ export const RecordTableNoRecordGroupRows = () => {
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
-  );
-
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   return (
@@ -33,11 +27,9 @@ export const RecordTableNoRecordGroupRows = () => {
         );
       })}
       <RecordTableBodyFetchMoreLoader />
-      {isAggregateQueryEnabled &&
-        !isRecordTableInitialLoading &&
-        allRecordIds.length > 0 && (
-          <RecordTableAggregateFooter endOfTableSticky />
-        )}
+      {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
+        <RecordTableAggregateFooter endOfTableSticky />
+      )}
     </>
   );
 };
