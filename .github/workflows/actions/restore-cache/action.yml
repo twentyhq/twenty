@@ -10,7 +10,7 @@ inputs:
 outputs:
   cache-primary-key:
     description: actions/cache/restore cache-primary-key outputs proxy
-    value: ${{ steps.restore-cache-proxy.outputs.cache-primary-key }}
+    value: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
 runs:
   using: "composite"
@@ -27,7 +27,3 @@ runs:
           ${{ inputs.additional-paths }}
         key: ${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
         restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-
-    - name: Proxy restore cache-primary-key
-      id: restore-cache-proxy
-      shell: bash
-      run: echo "cache-primary-key=${{steps.restore-cache.outputs.cache-primary-key}}" >> $GITHUB_OUTPUT
