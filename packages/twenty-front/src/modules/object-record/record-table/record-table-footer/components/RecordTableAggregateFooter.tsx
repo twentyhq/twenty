@@ -8,38 +8,41 @@ import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/state
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-const StyledTh = styled.th`
+const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-const StyledTableFoot = styled.thead<{
+const StyledTableRow = styled.tr<{
   endOfTableSticky?: boolean;
   hasHorizontalOverflow?: boolean;
 }>`
+  td {
+    border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  }
   cursor: pointer;
-  th:nth-of-type(1) {
+  td:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
+    border-top: none;
   }
-  th:nth-of-type(2) {
+  td:nth-of-type(2) {
     border-right-color: ${({ theme }) => theme.background.primary};
-    border-top: 1px solid ${({ theme }) => theme.border.color.light};
   }
   &.first-columns-sticky {
-    th:nth-of-type(1) {
+    td:nth-of-type(1) {
       position: sticky;
       left: 0;
       z-index: 5;
       transition: 0.3s ease;
     }
-    th:nth-of-type(2) {
+    td:nth-of-type(2) {
       position: sticky;
       left: 11px;
       z-index: 5;
       transition: 0.3s ease;
     }
-    th:nth-of-type(3) {
+    td:nth-of-type(3) {
       position: sticky;
       left: 43px;
       z-index: 5;
@@ -60,13 +63,12 @@ const StyledTableFoot = styled.thead<{
       }
     }
   }
-  tr {
-    position: sticky;
-    z-index: 5;
-    background: ${({ theme }) => theme.background.primary};
-    ${({ endOfTableSticky, hasHorizontalOverflow }) =>
-      endOfTableSticky &&
-      `
+  position: sticky;
+  z-index: 5;
+  background: ${({ theme }) => theme.background.primary};
+  ${({ endOfTableSticky, hasHorizontalOverflow }) =>
+    endOfTableSticky &&
+    `
       bottom: ${hasHorizontalOverflow ? '10px' : '0'};
       ${
         hasHorizontalOverflow &&
@@ -83,7 +85,6 @@ const StyledTableFoot = styled.thead<{
       `
       }
     `}
-  }
 `;
 
 export const RecordTableAggregateFooter = ({
@@ -108,32 +109,30 @@ export const RecordTableAggregateFooter = ({
     : false;
 
   return (
-    <StyledTableFoot
+    <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       endOfTableSticky={endOfTableSticky}
       hasHorizontalOverflow={hasHorizontalOverflow}
     >
-      <tr>
-        <StyledTh />
-        <StyledTh />
-        {visibleTableColumns.map((column, index) => {
-          return (
-            <RecordTableColumnAggregateFooterCellContext.Provider
-              key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
-              value={{
-                viewFieldId: column.viewFieldId || '',
-                fieldMetadataId: column.fieldMetadataId,
-              }}
-            >
-              <RecordTableAggregateFooterCell
-                currentRecordGroupId={currentRecordGroupId}
-                isFirstCell={index === 0}
-              />
-            </RecordTableColumnAggregateFooterCellContext.Provider>
-          );
-        })}
-      </tr>
-    </StyledTableFoot>
+      <StyledTd />
+      <StyledTd />
+      {visibleTableColumns.map((column, index) => {
+        return (
+          <RecordTableColumnAggregateFooterCellContext.Provider
+            key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+            value={{
+              viewFieldId: column.viewFieldId || '',
+              fieldMetadataId: column.fieldMetadataId,
+            }}
+          >
+            <RecordTableAggregateFooterCell
+              currentRecordGroupId={currentRecordGroupId}
+              isFirstCell={index === 0}
+            />
+          </RecordTableColumnAggregateFooterCellContext.Provider>
+        );
+      })}
+    </StyledTableRow>
   );
 };

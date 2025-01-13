@@ -389,7 +389,6 @@ export type FeatureFlagFilter = {
 
 export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
-  IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',

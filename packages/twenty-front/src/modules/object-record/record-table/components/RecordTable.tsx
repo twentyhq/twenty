@@ -13,16 +13,13 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
-import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { hasPendingRecordComponentSelector } from '@/object-record/record-table/states/selectors/hasPendingRecordComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRef } from 'react';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -35,10 +32,6 @@ export const RecordTable = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
-
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
 
   const { toggleClickOutsideListener } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -97,12 +90,6 @@ export const RecordTable = () => {
               <RecordTableRecordGroupsBody />
             )}
             <RecordTableStickyEffect />
-            {isAggregateQueryEnabled &&
-              !hasRecordGroups &&
-              !isRecordTableInitialLoading &&
-              allRecordIds.length > 0 && (
-                <RecordTableAggregateFooter endOfTableSticky />
-              )}
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}
