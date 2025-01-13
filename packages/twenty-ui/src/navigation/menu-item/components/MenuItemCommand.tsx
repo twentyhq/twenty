@@ -98,9 +98,7 @@ export const MenuItemCommand = ({
             <LeftIcon size={theme.icon.size.sm} />
           </StyledBigIconContainer>
         )}
-        <StyledMenuItemLabelText hasLeftIcon={!!LeftIcon}>
-          {text}
-        </StyledMenuItemLabelText>
+        <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
       </StyledMenuItemLeftContent>
       {!isMobile && (
         <MenuItemCommandHotKeys
