@@ -16,15 +16,18 @@ const StyledTableRow = styled.tr<{
   endOfTableSticky?: boolean;
   hasHorizontalOverflow?: boolean;
 }>`
+  td {
+    border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  }
   cursor: pointer;
   td:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
+    border-top: none;
   }
   td:nth-of-type(2) {
     border-right-color: ${({ theme }) => theme.background.primary};
-    border-top: 1px solid ${({ theme }) => theme.border.color.light};
   }
   &.first-columns-sticky {
     td:nth-of-type(1) {

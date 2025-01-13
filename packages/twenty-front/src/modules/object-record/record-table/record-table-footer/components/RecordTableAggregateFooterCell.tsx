@@ -43,7 +43,6 @@ const StyledColumnFooterCell = styled.td<{
   *::-webkit-scrollbar {
     display: none;
   }
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledColumnFootContainer = styled.div`
