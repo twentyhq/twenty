@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 
 import deepEqual from 'deep-equal';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -59,12 +59,12 @@ export class ServerlessFunctionService {
   }
 
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
-    const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneBy({
+    return await this.serverlessFunctionRepository.exists({
+      where: {
         id: serverlessFunctionId,
-      });
-
-    return serverlessFunction?.latestVersion !== null;
+        latestVersion: Not(IsNull()),
+      },
+    });
   }
 
   async getServerlessFunctionSourceCode(
