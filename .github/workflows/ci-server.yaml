@@ -12,11 +12,6 @@ concurrency:
 
 env:
   SERVER_SETUP_CACHE_KEY: server-setup
-  PATHS_TO_CACHE: |
-    .cache
-    .nx/cache
-    node_modules/.cache
-    packages/*/node_modules/.cache
 
 jobs:
   server-setup:
