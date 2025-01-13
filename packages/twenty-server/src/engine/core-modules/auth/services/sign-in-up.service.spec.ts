@@ -640,4 +640,25 @@ describe('SignInUpService', () => {
       );
     });
   });
+  it('signInUp - credentials - new user - existing workspace - without invitation', async () => {
+    const email = 'newuser@test.com';
+    const password = 'validPassword123';
+
+    UserFindOneMock.mockReturnValueOnce(null);
+    workspaceInvitationValidateInvitationMock.mockReturnValueOnce(null);
+
+    await expect(
+      service.signInUp({
+        email,
+        password,
+        fromSSO: false,
+        targetWorkspaceSubdomain: 'testSubDomain',
+      }),
+    ).rejects.toThrowError(
+      new AuthException(
+        'Invitation not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+  });
 });

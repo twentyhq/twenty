@@ -54,6 +54,59 @@ Register the following recurring jobs:
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-event-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+```
+
+## For Outlook and Outlook Calendar (Microsoft 365)
+
+### Create a project in Microsoft Azure
+
+You will need to create a project in [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) and get the credentials.
+
+Then you can set the following environment variables:
+
+- `AUTH_MICROSOFT_ENABLED=true`
+- `AUTH_MICROSOFT_CLIENT_ID=<client-id>`
+- `AUTH_MICROSOFT_TENANT_ID=<tenant-id>`
+- `AUTH_MICROSOFT_CLIENT_SECRET=<client-secret>`
+- `AUTH_MICROSOFT_CALLBACK_URL=https://<your-domain>/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://<your-domain>/auth/microsoft-apis/get-access-token`
+
+### Enable APIs
+
+On Microsoft Azure Console enable the following APIs in "Permissions":
+
+- Microsoft Graph: Mail.Read
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read.All
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+### Authorized redirect URIs
+
+You need to add the following redirect URIs to your project:
+- `https://<your-domain>/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://<your-domain>/auth/microsoft-apis/get-access-token`
+
+### If your app is in test mode
+
+If your app is in test mode, you will need to add test users to your project.
+
+Add your test users to the "Users and groups" section.
+
+### Start the cron jobs
+
+Register the following recurring jobs:
+```
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-event-import
 yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 ```

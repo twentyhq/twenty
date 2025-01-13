@@ -5,13 +5,13 @@ import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGq
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-ui';
 
 export type AggregateRecordsData = {
   [fieldName: string]: {
-    [operation in AGGREGATE_OPERATIONS]?: string | number | undefined;
+    [operation in ExtendedAggregateOperations]?: string | number | undefined;
   };
 };
 

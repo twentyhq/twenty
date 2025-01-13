@@ -12,6 +12,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const UserFindOneMock = jest.fn();
 const WorkspaceFindOneMock = jest.fn();
@@ -74,9 +75,13 @@ describe('AdminPanelService', () => {
 
   it('should update an existing feature flag if it exists', async () => {
     const workspaceId = 'workspace-id';
-    const featureFlag = 'IsFlagEnabled';
+    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
     const value = true;
-    const existingFlag = { id: 'flag-id', key: featureFlag, value: false };
+    const existingFlag = {
+      id: 'flag-id',
+      key: 'IS_FLAG_ENABLED',
+      value: false,
+    };
 
     WorkspaceFindOneMock.mockReturnValueOnce({
       id: workspaceId,
@@ -93,7 +98,7 @@ describe('AdminPanelService', () => {
 
   it('should create a new feature flag if it does not exist', async () => {
     const workspaceId = 'workspace-id';
-    const featureFlag = 'IsFlagEnabled';
+    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
     const value = true;
 
     WorkspaceFindOneMock.mockReturnValueOnce({
@@ -104,7 +109,7 @@ describe('AdminPanelService', () => {
     await service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value);
 
     expect(FeatureFlagSaveMock).toHaveBeenCalledWith({
-      key: featureFlag,
+      key: 'IS_FLAG_ENABLED',
       value,
       workspaceId,
     });
@@ -113,7 +118,7 @@ describe('AdminPanelService', () => {
 
   it('should throw an exception if the workspace is not found', async () => {
     const workspaceId = 'non-existent-workspace';
-    const featureFlag = 'IsFlagEnabled';
+    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
     const value = true;
 
     WorkspaceFindOneMock.mockReturnValueOnce(null);
@@ -127,7 +132,7 @@ describe('AdminPanelService', () => {
 
   it('should throw an exception if the flag is not found', async () => {
     const workspaceId = 'non-existent-workspace';
-    const featureFlag = 'IsUnknownFlagEnabled';
+    const featureFlag = 'IsUnknownFlagEnabled' as FeatureFlagKey;
     const value = true;
 
     WorkspaceFindOneMock.mockReturnValueOnce(null);

@@ -10,16 +10,23 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
+import { css } from '@emotion/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const DEFAULT_PHONE_CALLING_CODE = '1';
 
-const StyledCustomPhoneInputContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: 30px;
+const StyledCustomPhoneInputContainer = styled.div<{
+  hasItem: boolean;
+}>`
+  ${({ hasItem, theme }) =>
+    hasItem &&
+    css`
+      background-color: ${theme.background.transparent.lighter};
+      border-radius: 4px;
+      border: 1px solid ${theme.border.color.medium};
+      height: 30px;
+    `}
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
@@ -130,7 +137,7 @@ export const PhonesFieldInput = ({
       )}
       renderInput={({ value, onChange, autoFocus, placeholder }) => {
         return (
-          <StyledCustomPhoneInputContainer>
+          <StyledCustomPhoneInputContainer hasItem={!!phones.length}>
             <StyledCustomPhoneInput
               autoFocus={autoFocus}
               placeholder={placeholder}

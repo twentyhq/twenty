@@ -3,7 +3,7 @@ import { ReactNode, useMemo } from 'react';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -226,9 +226,9 @@ export const ViewBarDetails = ({
             defaultViewFilters,
             availableFilterDefinitions,
           ).map((viewFilter) => (
-            <ObjectFilterDropdownScope
+            <ObjectFilterDropdownComponentInstanceContext.Provider
               key={viewFilter.id}
-              filterScopeId={viewFilter.id}
+              value={{ instanceId: viewFilter.id }}
             >
               <DropdownScope dropdownScopeId={viewFilter.id}>
                 <ViewBarFilterEffect filterDropdownId={viewFilter.id} />
@@ -240,7 +240,7 @@ export const ViewBarDetails = ({
                   viewFilterDropdownId={viewFilter.id}
                 />
               </DropdownScope>
-            </ObjectFilterDropdownScope>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
           ))}
         </StyledChipcontainer>
         {hasFilterButton && (
