@@ -211,31 +211,33 @@ export class SignInUpService {
           })
         : null;
 
-    if (
-      invitationValidation?.isValid === true &&
-      invitationValidation.workspace
-    ) {
-      const updatedUser = await this.signInUpOnExistingWorkspace({
-        email,
-        passwordHash,
-        workspace: invitationValidation.workspace,
-        firstName,
-        lastName,
-        picture,
-        existingUser,
-        authProvider,
-      });
-
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-        invitationValidation.workspace.id,
-        email,
+    if (!invitationValidation?.isValid) {
+      throw new AuthException(
+        'Invitation not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
-
-      return {
-        user: updatedUser,
-        workspace: invitationValidation.workspace,
-      };
     }
+
+    const updatedUser = await this.signInUpOnExistingWorkspace({
+      email,
+      passwordHash,
+      workspace: invitationValidation.workspace,
+      firstName,
+      lastName,
+      picture,
+      existingUser,
+      authProvider,
+    });
+
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      invitationValidation.workspace.id,
+      email,
+    );
+
+    return {
+      user: updatedUser,
+      workspace: invitationValidation.workspace,
+    };
   }
 
   private async validateSignIn({
