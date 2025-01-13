@@ -199,6 +199,7 @@ export const MultiItemFieldInput = <T,>({
             )
           }
           onEnter={handleSubmitInput}
+          hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton

@@ -18,30 +18,37 @@ type SelectFilterParams = {
   filterDefinition: FilterDefinition;
 };
 
-export const useSelectFilterDefinitionUsedInDropdown = () => {
+export const useSelectFilterDefinitionUsedInDropdown = (
+  componentInstanceId?: string,
+) => {
   const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
     filterDefinitionUsedInDropdownComponentState,
+    componentInstanceId,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
+    componentInstanceId,
   );
 
   const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
+    componentInstanceId,
   );
 
   const advancedFilterViewFilterGroupId = useRecoilComponentValueV2(
     advancedFilterViewFilterGroupIdComponentState,
+    componentInstanceId,
   );
 
   const advancedFilterViewFilterId = useRecoilComponentValueV2(
     advancedFilterViewFilterIdComponentState,
+    componentInstanceId,
   );
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const { applyRecordFilter } = useApplyRecordFilter();
+  const { applyRecordFilter } = useApplyRecordFilter(componentInstanceId);
 
   const selectFilterDefinitionUsedInDropdown = ({
     filterDefinition,

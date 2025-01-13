@@ -1,4 +1,6 @@
+import { FeatureFlagKey } from '~/generated/graphql';
+
 export type FeatureFlag = {
-  key: string;
+  key: FeatureFlagKey;
   value: boolean;
 };

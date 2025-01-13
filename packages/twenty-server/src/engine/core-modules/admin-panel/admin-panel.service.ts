@@ -118,7 +118,7 @@ export class AdminPanelService {
 
   async updateWorkspaceFeatureFlags(
     workspaceId: string,
-    featureFlag: string,
+    featureFlag: FeatureFlagKey,
     value: boolean,
   ) {
     featureFlagValidator.assertIsFeatureFlagKey(
@@ -140,14 +140,14 @@ export class AdminPanelService {
     );
 
     const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === featureFlag,
+      (flag) => flag.key === FeatureFlagKey[featureFlag],
     );
 
     if (existingFlag) {
       await this.featureFlagRepository.update(existingFlag.id, { value });
     } else {
       await this.featureFlagRepository.save({
-        key: featureFlag,
+        key: FeatureFlagKey[featureFlag],
         value,
         workspaceId: workspace.id,
       });
