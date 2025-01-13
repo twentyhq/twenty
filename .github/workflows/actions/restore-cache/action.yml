@@ -11,6 +11,9 @@ outputs:
   cache-primary-key:
     description: actions/cache/restore cache-primary-key outputs proxy
     value: ${{ steps.restore-cache.outputs.cache-primary-key }}
+  cache-hit:
+    description: actions/cache/restore cache-hit outputs proxy
+    value: ${{ steps.restore-cache.outputs.cache-hit }}
 
 runs:
   using: "composite"

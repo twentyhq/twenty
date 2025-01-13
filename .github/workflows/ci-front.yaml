@@ -259,7 +259,7 @@ jobs:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
       - name: Save storybook build cache
-        if: steps.restore-task-cache.outputs.cache-hit != 'true'
+        if: steps.restore-cache.outputs.cache-hit != 'true'
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-cache.outputs.cache-primary-key }}
