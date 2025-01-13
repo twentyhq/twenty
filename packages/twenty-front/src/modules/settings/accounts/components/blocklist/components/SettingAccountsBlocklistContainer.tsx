@@ -1,5 +1,5 @@
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { SettingsAccountsBlocklistContactRow } from '@/settings/accounts/components/blocklist/components/SettingAccountBlocklistContactRow';
+import { SettingsAccountsBlocklistContactRow } from '@/settings/accounts/components/blocklist/components/SettingAccountsBlocklistContactRow';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`

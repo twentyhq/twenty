@@ -2,7 +2,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
+import { mockedBlocklist } from '@/settings/accounts/components/blocklist/__stories__/mockedBlocklist';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/blocklist/components/SettingsAccountsBlocklistTable';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 

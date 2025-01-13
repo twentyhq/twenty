@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { BlocklistItemScope } from '@/settings/accounts/types/BlocklistItemScope';
 
 export const mockedBlocklist: BlocklistItem[] = [
   {
@@ -22,6 +23,7 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: 'test3@twenty.com',
     workspaceMemberId: '1',
     createdAt: DateTime.now().minus({ days: 3 }).toISO() ?? '',
+    scopes: [BlocklistItemScope.CC],
     __typename: 'BlocklistItem',
   },
   {
@@ -29,6 +31,11 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: '@twenty.com',
     workspaceMemberId: '1',
     createdAt: DateTime.now().minus({ days: 4 }).toISO() ?? '',
+    scopes: [
+      BlocklistItemScope.BCC,
+      BlocklistItemScope.CC,
+      BlocklistItemScope.FROM_TO,
+    ],
     __typename: 'BlocklistItem',
   },
 ];
