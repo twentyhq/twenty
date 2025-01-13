@@ -14,10 +14,11 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined, VisibilityHidden } from 'twenty-ui';
+import { IconChevronDown, isDefined, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -37,6 +38,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  justify-content: space-between;
 `;
 
 const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
@@ -46,6 +48,7 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
   &[data-open='true'] {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
   }
+  justify-content: space-between;
 `;
 
 const StyledSelectInputContainer = styled.div`
@@ -66,6 +69,7 @@ export const FormSelectFieldInput = ({
   const inputId = useId();
 
   const hotkeyScope = InlineCellHotkeyScope.InlineCell;
+  const theme = useTheme();
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -227,6 +231,10 @@ export const FormSelectFieldInput = ({
                     Icon={selectedOption.icon ?? undefined}
                   />
                 )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
@@ -242,6 +250,10 @@ export const FormSelectFieldInput = ({
                     Icon={selectedOption.icon ?? undefined}
                   />
                 )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               </StyledDisplayModeContainer>
             )
           ) : (
