@@ -10,6 +10,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PATHS_TO_CACHE: |
+    .cache
+    .nx/cache
+    node_modules/.cache
+    packages/*/node_modules/.cache
+
 jobs:
   server-setup:
     timeout-minutes: 30
@@ -57,11 +64,15 @@ jobs:
       - name: Build twenty-shared
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx build twenty-shared
-      - name: Server / Restore Task Cache
+      - name: Restore server setup
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+        id: restore-server-setup
+        uses: actions/cache/restore@v4
         with:
-          tag: scope:backend
+          path: ${{ env.PATHS_TO_CACHE }}
+          key: server-setup-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            server-setup-${{ github.ref_name }}-
       - name: Server / Run lint & typecheck
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
@@ -103,6 +114,12 @@ jobs:
             
             exit 1
           fi
+      - name: Save storybook build cache
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.restore-server-setup.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.restore-server-setup.outputs.cache-primary-key }}
+          path: ${{ env.PATHS_TO_CACHE }}
 
   server-test:
     timeout-minutes: 30
@@ -129,11 +146,14 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Restore Task Cache
+      - name: Restore server setup
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+        uses: actions/cache/restore@v4
         with:
-          tag: scope:backend
+          path: ${{ env.PATHS_TO_CACHE }}
+          key: server-setup-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            server-setup-${{ github.ref_name }}-
       - name:  Server / Run Tests
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
