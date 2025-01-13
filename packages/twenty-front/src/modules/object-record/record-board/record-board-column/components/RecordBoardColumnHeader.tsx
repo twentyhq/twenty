@@ -40,16 +40,6 @@ const StyledLeftContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRecordCountChildren = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  width: 22px;
-`;
-
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
