@@ -13,7 +13,6 @@ export enum FeatureFlagKey {
   IsMicrosoftSyncEnabled = 'IS_MICROSOFT_SYNC_ENABLED',
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsAggregateQueryEnabled = 'IS_AGGREGATE_QUERY_ENABLED',
-  IsViewGroupsEnabled = 'IS_VIEW_GROUPS_ENABLED',
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
   IsCrmMigrationEnabled = 'IS_CRM_MIGRATION_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
