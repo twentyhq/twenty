@@ -33,4 +33,5 @@ runs:
         restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-
     - name: Proxy restore cache-primary-key
       id: restore-cache-proxy
+      shell: bash
       run: echo "cache-primary-key=${{steps.restore-cache.outputs.cache-primary-key}}" >> $GITHUB_OUTPUT
