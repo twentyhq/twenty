@@ -165,8 +165,6 @@ export class AuthService {
       type: AppTokenType.InvitationToken,
     });
 
-    // Find invitation by email + workspaceId only, is safe with pre authenticated signup. So SSO, google connect...
-    // Don't set email params in credential flow.
     if (params.email) {
       qr.andWhere('"appToken".context->>\'email\' = :email', {
         email: params.email,
@@ -451,7 +449,6 @@ export class AuthService {
   }: {
     loginToken: string;
     subdomain?: string;
-    hostname?: string;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

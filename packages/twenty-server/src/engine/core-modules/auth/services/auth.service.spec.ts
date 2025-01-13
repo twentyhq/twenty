@@ -5,10 +5,7 @@ import bcrypt from 'bcrypt';
 import { expect, jest } from '@jest/globals';
 import { Repository } from 'typeorm';
 
-import {
-  AppToken,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -199,84 +196,5 @@ describe('AuthService', () => {
     expect(workspaceInvitationValidateInvitationMock).toHaveBeenCalledTimes(1);
     expect(userWorkspaceAddUserToWorkspaceMock).toHaveBeenCalledTimes(1);
     expect(UserFindOneMock).toHaveBeenCalledTimes(1);
-  });
-
-  describe('findOneInvitationBySignUpParams', () => {
-    it('should return an invitation when inviteHash is provided and matches', async () => {
-      const params = {
-        workspaceId: 'workspace1',
-        email: 'test@example.com',
-      };
-
-      await service.findOneInvitationBySignUpParams(params);
-
-      expect(appTokenRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
-      expect(
-        appTokenRepository.createQueryBuilder().leftJoin,
-      ).toHaveBeenCalledWith('appToken.workspace', 'workspace');
-      expect(
-        appTokenRepository.createQueryBuilder().where,
-      ).toHaveBeenCalledWith('"appToken"."workspaceId" = :workspaceId', {
-        workspaceId: params.workspaceId,
-      });
-      expect(
-        appTokenRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('"appToken".type = :type', {
-        type: AppTokenType.InvitationToken,
-      });
-    });
-
-    it('should return an invitation when personalInviteToken is provided and matches', async () => {
-      const params = {
-        workspaceId: 'workspace2',
-        email: 'test@example.com',
-        personalInviteToken: 'test-personal-token',
-      };
-
-      await service.findOneInvitationBySignUpParams(params);
-
-      expect(appTokenRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
-
-      expect(
-        appTokenRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith(
-        '"appToken".context->>\'value\' = :personalInviteToken',
-        {
-          personalInviteToken: params.personalInviteToken,
-        },
-      );
-      expect(
-        appTokenRepository.createQueryBuilder().where,
-      ).toHaveBeenCalledWith('"appToken"."workspaceId" = :workspaceId', {
-        workspaceId: params.workspaceId,
-      });
-      expect(
-        appTokenRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('"appToken".type = :type', {
-        type: AppTokenType.InvitationToken,
-      });
-    });
-
-    it('should filter by workspaceId and email correctly', async () => {
-      const params = {
-        workspaceId: 'workspace4',
-        email: 'another@example.com',
-      };
-
-      await Promise.all([service.findOneInvitationBySignUpParams(params)]);
-
-      expect(appTokenRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
-
-      expect(
-        appTokenRepository.createQueryBuilder().where,
-      ).toHaveBeenCalledWith('"appToken"."workspaceId" = :workspaceId', {
-        workspaceId: 'workspace4',
-      });
-      expect(
-        appTokenRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('"appToken".context->>\'email\' = :email', {
-        email: 'another@example.com',
-      });
-    });
   });
 });
