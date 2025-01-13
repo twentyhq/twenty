@@ -36,7 +36,9 @@ export class BillingPortalWorkspaceService {
     plan?: BillingPlanKey,
     requirePaymentMethod?: boolean,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const frontBaseUrl = this.domainManagerService.getBaseUrl(
+      workspace.subdomain,
+    );
     const cancelUrl = frontBaseUrl.toString();
 
     if (successUrlPath) {
