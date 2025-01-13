@@ -147,7 +147,7 @@ export class WorkspaceResolver {
     );
 
     const filteredFeatureFlags = featureFlags.filter((flag) =>
-      Object.values(FeatureFlagKey).includes(flag.key as FeatureFlagKey),
+      Object.values(FeatureFlagKey).includes(flag.key),
     );
 
     return filteredFeatureFlags;

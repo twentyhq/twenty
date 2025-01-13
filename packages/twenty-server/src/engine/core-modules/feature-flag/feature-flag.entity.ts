@@ -27,11 +27,11 @@ export class FeatureFlagEntity {
 
   @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
-  key: `${FeatureFlagKey}`;
+  key: FeatureFlagKey;
 
   @AfterLoad()
   validateFeatureFlag() {
-    if (!Object.values(FeatureFlagKey).includes(this.key as FeatureFlagKey)) {
+    if (!Object.values(FeatureFlagKey).includes(this.key)) {
       // eslint-disable-next-line no-console
       console.warn(
         `Invalid feature flag key: ${this.key}, key needs to be deleted from database`,
