@@ -215,7 +215,7 @@ export const FormSelectFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
