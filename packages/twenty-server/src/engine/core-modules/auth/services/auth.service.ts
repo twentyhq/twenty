@@ -149,28 +149,64 @@ export class AuthService {
     return user;
   }
 
+  async findOneInvitationBySignUpParams(params: {
+    workspaceId: string;
+    email?: string;
+    inviteHash?: string;
+    personalInviteToken?: string;
+  }) {
+    const qr = this.appTokenRepository.createQueryBuilder('appToken');
+
+    if (params.inviteHash) {
+      qr.leftJoin('appToken.workspace', 'workspace');
+    }
+
+    qr.where('"appToken"."workspaceId" = :workspaceId', {
+      workspaceId: params.workspaceId,
+    }).andWhere('"appToken".type = :type', {
+      type: AppTokenType.InvitationToken,
+    });
+
+    if (params.inviteHash) {
+      qr.andWhere('workspace.inviteHash = :inviteHash', {
+        inviteHash: params.inviteHash,
+      });
+    }
+
+    // Find invitation by email + workspaceId only is safe with pre authenticate signup. So SSO, google connect... only
+    if (params.email) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email: params.email,
+      });
+    }
+
+    if (params.personalInviteToken) {
+      qr.andWhere('"appToken".context->>\'value\' = :personalInviteToken', {
+        personalInviteToken: params.personalInviteToken,
+      });
+    }
+
+    return (await qr.getOne()) ?? undefined;
+  }
+
   async signInUp({
     email,
     password,
-    workspaceInviteHash,
-    workspacePersonalInviteToken,
-    targetWorkspaceSubdomain,
+    invitation,
+    workspace,
     firstName,
     lastName,
     picture,
-    fromSSO,
     authProvider,
   }: {
     email: string;
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string;
-    workspacePersonalInviteToken?: string;
+    invitation?: AppToken;
     picture?: string | null;
-    fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
-    authProvider?: WorkspaceAuthProvider;
+    workspace?: Workspace;
+    authProvider: WorkspaceAuthProvider;
     billingCheckoutSessionState?: string;
   }) {
     return await this.signInUpService.signInUp({
@@ -178,11 +214,9 @@ export class AuthService {
       password,
       firstName,
       lastName,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain,
+      invitation,
+      workspace,
       picture,
-      fromSSO,
       authProvider,
     });
   }
@@ -414,11 +448,16 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(
-    loginToken: string,
-    subdomain?: string,
-    billingCheckoutSessionState?: string,
-  ) {
+  computeRedirectURI({
+    loginToken,
+    subdomain,
+    billingCheckoutSessionState,
+  }: {
+    loginToken: string;
+    subdomain?: string;
+    hostname?: string;
+    billingCheckoutSessionState?: string;
+  }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',

@@ -104,12 +104,14 @@ export class AuthResolver {
         origin,
       );
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
+
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -125,11 +127,31 @@ export class AuthResolver {
     @Args() signUpInput: SignUpInput,
     @OriginHeader() origin: string,
   ): Promise<SignUpOutput> {
+    const currentWorkspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      currentWorkspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    const invitation = currentWorkspace
+      ? await this.authService.findOneInvitationBySignUpParams({
+          workspaceId: currentWorkspace.id,
+          inviteHash: signUpInput.workspaceInviteHash,
+          personalInviteToken: signUpInput.workspacePersonalInviteToken,
+        })
+      : undefined;
+
     const { user, workspace } = await this.authService.signInUp({
       ...signUpInput,
-      targetWorkspaceSubdomain:
-        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
-      fromSSO: false,
+      invitation,
+      workspace: currentWorkspace,
       authProvider: 'password',
     });
 
