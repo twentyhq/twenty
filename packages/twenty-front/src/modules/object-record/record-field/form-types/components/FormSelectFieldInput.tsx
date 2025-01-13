@@ -14,10 +14,11 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined, VisibilityHidden } from 'twenty-ui';
+import { IconChevronDown, isDefined, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -26,22 +27,28 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   clearLabel?: string;
+  readonly?: boolean;
 };
 
-const StyledDisplayModeContainer = styled.button`
-  width: 100%;
+const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
-  display: flex;
-  cursor: pointer;
-  border: none;
   background: transparent;
+  border: none;
+  display: flex;
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+  cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
   }
+  justify-content: space-between;
 `;
 
 const StyledSelectInputContainer = styled.div`
@@ -57,10 +64,12 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   clearLabel,
+  readonly,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
   const hotkeyScope = InlineCellHotkeyScope.InlineCell;
+  const theme = useTheme();
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -213,32 +222,50 @@ export const FormSelectFieldInput = ({
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
-            <>
+            readonly ? (
+              <StyledDisplayModeReadonlyContainer>
+                {isDefined(selectedOption) && (
+                  <SelectDisplay
+                    color={selectedOption.color ?? 'transparent'}
+                    label={selectedOption.label}
+                    Icon={selectedOption.icon ?? undefined}
+                  />
+                )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledDisplayModeReadonlyContainer>
+            ) : (
               <StyledDisplayModeContainer
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOption) ? (
+                {isDefined(selectedOption) && (
                   <SelectDisplay
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
-                    isUsedInForm
                   />
-                ) : null}
+                )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               </StyledDisplayModeContainer>
-            </>
+            )
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
         <StyledSelectInputContainer>
-          {draftValue.type === 'static' &&
+          {!readonly &&
+            draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>
                 <SelectInput
@@ -258,7 +285,7 @@ export const FormSelectFieldInput = ({
             )}
         </StyledSelectInputContainer>
 
-        {VariablePicker && (
+        {VariablePicker && !readonly && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

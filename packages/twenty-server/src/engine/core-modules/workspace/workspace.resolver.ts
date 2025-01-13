@@ -16,6 +16,9 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -59,6 +62,7 @@ export class WorkspaceResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => Workspace)
@@ -132,6 +136,21 @@ export class WorkspaceResolver {
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
+  }
+
+  @ResolveField(() => [FeatureFlagEntity], { nullable: true })
+  async featureFlags(
+    @Parent() workspace: Workspace,
+  ): Promise<FeatureFlagEntity[]> {
+    const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
+      workspace.id,
+    );
+
+    const filteredFeatureFlags = featureFlags.filter((flag) =>
+      Object.values(FeatureFlagKey).includes(flag.key),
+    );
+
+    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)

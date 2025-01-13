@@ -73,7 +73,7 @@ export class WorkspaceSyncMetadataService {
 
       // Retrieve feature flags
       const workspaceFeatureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlags(
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
           context.workspaceId,
         );
 

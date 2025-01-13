@@ -10,20 +10,12 @@ import { recordIndexKanbanAggregateOperationState } from '@/object-record/record
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateRecordsForRecordBoardColumn = () => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
-
-  const { columnDefinition, recordCount } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
@@ -78,7 +70,6 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter,
-    skip: !isAggregateQueryEnabled,
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
@@ -95,7 +86,7 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
   });
 
   return {
-    aggregateValue: isAggregateQueryEnabled ? value : recordCount,
+    aggregateValue: value,
     aggregateLabel: isDefined(value) ? labelWithFieldName : undefined,
   };
 };
