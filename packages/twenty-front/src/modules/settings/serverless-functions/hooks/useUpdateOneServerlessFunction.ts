@@ -9,6 +9,8 @@ import {
 import { useEffect, useState } from 'react';
 import { FIND_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunction';
 import { sleep } from '~/utils/sleep';
+import { getOperationName } from '@apollo/client/utilities';
+import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 
 export const useUpdateOneServerlessFunction = (
   serverlessFunctionId: string,
@@ -29,6 +31,9 @@ export const useUpdateOneServerlessFunction = (
       variables: {
         input: { ...input, id: serverlessFunctionId },
       },
+      refetchQueries: [
+        getOperationName(FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE) ?? '',
+      ],
     });
     setIsReady(false);
     return result;
