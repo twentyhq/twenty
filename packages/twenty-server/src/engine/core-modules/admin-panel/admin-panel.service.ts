@@ -8,14 +8,14 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class AdminPanelService {
@@ -118,7 +118,7 @@ export class AdminPanelService {
 
   async updateWorkspaceFeatureFlags(
     workspaceId: string,
-    featureFlag: string,
+    featureFlag: FeatureFlagKey,
     value: boolean,
   ) {
     featureFlagValidator.assertIsFeatureFlagKey(
@@ -140,14 +140,14 @@ export class AdminPanelService {
     );
 
     const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === featureFlag,
+      (flag) => flag.key === FeatureFlagKey[featureFlag],
     );
 
     if (existingFlag) {
       await this.featureFlagRepository.update(existingFlag.id, { value });
     } else {
       await this.featureFlagRepository.save({
-        key: featureFlag,
+        key: FeatureFlagKey[featureFlag],
         value,
         workspaceId: workspace.id,
       });
