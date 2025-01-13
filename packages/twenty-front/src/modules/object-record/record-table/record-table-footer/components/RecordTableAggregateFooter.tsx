@@ -60,13 +60,12 @@ const StyledTableRow = styled.tr<{
       }
     }
   }
-  tr {
-    position: sticky;
-    z-index: 5;
-    background: ${({ theme }) => theme.background.primary};
-    ${({ endOfTableSticky, hasHorizontalOverflow }) =>
-      endOfTableSticky &&
-      `
+  position: sticky;
+  z-index: 5;
+  background: ${({ theme }) => theme.background.primary};
+  ${({ endOfTableSticky, hasHorizontalOverflow }) =>
+    endOfTableSticky &&
+    `
       bottom: ${hasHorizontalOverflow ? '10px' : '0'};
       ${
         hasHorizontalOverflow &&
@@ -83,7 +82,6 @@ const StyledTableRow = styled.tr<{
       `
       }
     `}
-  }
 `;
 
 export const RecordTableAggregateFooter = ({
