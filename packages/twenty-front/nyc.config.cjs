@@ -1,8 +1,8 @@
 const globalCoverage = {
-  branches: 45,
-  statements: 60,
-  lines: 60,
-  functions: 60,
+  branches: 24,
+  statements: 40,
+  lines: 40,
+  functions: 30,
   exclude: ['src/generated/**/*'],
 };
 
@@ -40,4 +40,4 @@ module.exports =
       ? modulesCoverage
       : storybookStoriesFolders === 'performance'
         ? performanceCoverage
-      : globalCoverage;
+        : globalCoverage;

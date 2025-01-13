@@ -10,7 +10,7 @@ import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -23,12 +23,13 @@ export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
-    private readonly stripeService: StripeService,
+    private readonly stripePriceService: StripePriceService,
   ) {}
 
   @Query(() => ProductPricesEntity)
   async getProductPrices(@Args() { product }: ProductInput) {
-    const productPrices = await this.stripeService.getStripePrices(product);
+    const productPrices =
+      await this.stripePriceService.getStripePrices(product);
 
     return {
       totalNumberOfPrices: productPrices.length,
@@ -63,7 +64,7 @@ export class BillingResolver {
       requirePaymentMethod,
     }: CheckoutSessionInput,
   ) {
-    const productPrice = await this.stripeService.getStripePrice(
+    const productPrice = await this.stripePriceService.getStripePrice(
       AvailableProduct.BasePlan,
       recurringInterval,
     );

@@ -156,13 +156,13 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const onEntityCountChange = useRecoilCallback(
     ({ snapshot }) =>
-      (count?: number) => {
+      (count?: number, currentRecordGroupId?: string) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
           onEntityCountChangeState,
         );
 
-        onEntityCountChange?.(count);
+        onEntityCountChange?.(count, currentRecordGroupId);
       },
     [onEntityCountChangeState],
   );

@@ -8,7 +8,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/utils/mapRightDrawerPageToCommandMenuPage';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';

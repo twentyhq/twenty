@@ -4,7 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 
 const tasks = [
   {
@@ -46,9 +46,11 @@ jest.mock('@/activities/hooks/useActivities', () => ({
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
+    <ObjectFilterDropdownComponentInstanceContext.Provider
+      value={{ instanceId: 'entity-tasks-filter-scope' }}
+    >
       {children}
-    </ObjectFilterDropdownScope>
+    </ObjectFilterDropdownComponentInstanceContext.Provider>
   </RecoilRoot>
 );
 

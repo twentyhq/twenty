@@ -3,4 +3,5 @@ export type RecordBoardColumnHeaderAggregateContentId =
   | 'aggregateFields'
   | 'countAggregateOperationsOptions'
   | 'percentAggregateOperationsOptions'
+  | 'datesAggregateOperationOptions'
   | 'moreAggregateOperationOptions';

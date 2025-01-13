@@ -16,9 +16,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordTableRecordGroupsBody = () => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
   const allRecordIds = useRecoilComponentValueV2(
     recordIndexAllRecordIdsComponentSelector,
   );
@@ -30,6 +27,10 @@ export const RecordTableRecordGroupsBody = () => {
   const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Table,
+  );
+
+  const isAggregateQueryEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsAggregateQueryEnabled,
   );
 
   if (isRecordTableInitialLoading && allRecordIds.length === 0) {
