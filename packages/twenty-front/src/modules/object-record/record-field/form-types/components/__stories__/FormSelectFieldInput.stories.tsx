@@ -1,23 +1,23 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
-import { FormMultiSelectFieldInput } from '../FormMultiSelectFieldInput';
+import { FormSelectFieldInput } from '../FormSelectFieldInput';
 
-const meta: Meta<typeof FormMultiSelectFieldInput> = {
-  title: 'UI/Data/Field/Form/Input/FormMultiSelectFieldInput',
-  component: FormMultiSelectFieldInput,
+const meta: Meta<typeof FormSelectFieldInput> = {
+  title: 'UI/Data/Field/Form/Input/FormSelectFieldInput',
+  component: FormSelectFieldInput,
   args: {},
   argTypes: {},
 };
 
 export default meta;
 
-type Story = StoryObj<typeof FormMultiSelectFieldInput>;
+type Story = StoryObj<typeof FormSelectFieldInput>;
 
 export const Default: Story = {
   args: {
     label: 'Work Policy',
-    defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
+    defaultValue: 'WORK_POLICY_1',
     options: [
       {
         label: 'Work Policy 1',
@@ -44,16 +44,16 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Work Policy');
-    await canvas.findByText('Work Policy 1');
-    await canvas.findByText('Work Policy 2');
+    const selectedOption = await canvas.findByText('Work Policy');
+
+    expect(selectedOption).toBeVisible();
   },
 };
 
 export const WithVariablePicker: Story = {
   args: {
     label: 'Work Policy',
-    defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
+    defaultValue: 'WORK_POLICY_1',
     options: [
       {
         label: 'Work Policy 1',
@@ -75,7 +75,7 @@ export const WithVariablePicker: Story = {
 export const Disabled: Story = {
   args: {
     label: 'Work Policy',
-    defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
+    defaultValue: 'WORK_POLICY_1',
     options: [
       {
         label: 'Work Policy 1',
@@ -118,6 +118,28 @@ export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
     defaultValue: `{{a.b.c}}`,
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+      {
+        label: 'Work Policy 3',
+        value: 'WORK_POLICY_3',
+        color: 'red',
+      },
+      {
+        label: 'Work Policy 4',
+        value: 'WORK_POLICY_4',
+        color: 'yellow',
+      },
+    ],
     onPersist: fn(),
     readonly: true,
   },

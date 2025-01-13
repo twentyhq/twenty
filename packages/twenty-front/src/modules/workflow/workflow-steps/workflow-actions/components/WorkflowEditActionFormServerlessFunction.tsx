@@ -77,6 +77,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const serverlessFunctionVersion =
+    action.settings.input.serverlessFunctionVersion;
   const theme = useTheme();
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
@@ -99,7 +101,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
     );
 
   const { formValues, setFormValues, loading } =
-    useServerlessFunctionUpdateFormState(serverlessFunctionId);
+    useServerlessFunctionUpdateFormState({
+      serverlessFunctionId,
+      serverlessFunctionVersion,
+    });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
@@ -112,10 +117,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const { testServerlessFunction } = useTestServerlessFunction(
+  const { testServerlessFunction } = useTestServerlessFunction({
     serverlessFunctionId,
-    updateOutputSchemaFromTestResult,
-  );
+    serverlessFunctionVersion,
+    callback: updateOutputSchemaFromTestResult,
+  });
 
   const handleSave = useDebouncedCallback(async () => {
     await updateOneServerlessFunction({
@@ -314,7 +320,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
               <WorkflowEditActionFormServerlessFunctionFields
                 functionInput={serverlessFunctionTestData.input}
                 onInputChange={handleTestInputChange}
-                readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
                 <InputLabel>Result</InputLabel>
