@@ -324,8 +324,7 @@ export const isRecordMatchingFilter = ({
         const phonesFilter = filterValue as PhonesFilter;
 
         const keys: (keyof PhonesFilter)[] = [
-          'primaryPhoneNumber',
-          'primaryPhoneCountryCode',
+          'primaryPhoneNumber'
         ];
 
         return keys.some((key) => {

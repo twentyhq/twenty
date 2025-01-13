@@ -68,15 +68,13 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
+export const StyledMenuItemLabel = styled.div`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
   overflow: hidden;
-  padding-left: ${({ theme, hasLeftIcon }) =>
-    hasLeftIcon ? '' : theme.spacing(1)};
 
   white-space: nowrap;
 `;
