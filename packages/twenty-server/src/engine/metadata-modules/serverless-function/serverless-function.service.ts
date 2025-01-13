@@ -58,6 +58,15 @@ export class ServerlessFunctionService {
     return this.serverlessFunctionRepository.findBy(where);
   }
 
+  async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneBy({
+        id: serverlessFunctionId,
+      });
+
+    return serverlessFunction?.latestVersion !== null;
+  }
+
   async getServerlessFunctionSourceCode(
     workspaceId: string,
     id: string,
