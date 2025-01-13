@@ -143,6 +143,13 @@ export class SignInUpService {
       return signInUpWithInvitationResult;
     }
 
+    if (!existingUser && workspace) {
+      throw new AuthException(
+        "You're not member of this workspace",
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     if (!existingUser) {
       return await this.signUpOnNewWorkspace({
         email,
