@@ -12,13 +12,6 @@ outputs:
     description: actions/cache/restore cache-primary-key outputs proxy
     value: ${{ steps.restore-cache-proxy.outputs.cache-primary-key }}
 
-env:
-  PATHS_TO_CACHE: |
-    .cache
-    .nx/cache
-    node_modules/.cache
-    packages/*/node_modules/.cache
-
 runs:
   using: "composite"
   steps:
@@ -27,7 +20,10 @@ runs:
       id: restore-cache
       with:
         path: |
-          ${{ env.PATHS_TO_CACHE }}
+          .cache
+          .nx/cache
+          node_modules/.cache
+          packages/*/node_modules/.cache
           ${{ inputs.additional-paths }}
         key: ${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
         restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-

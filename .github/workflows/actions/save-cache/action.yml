@@ -8,13 +8,6 @@ inputs:
     required: false
     type: string
 
-env:
-  PATHS_TO_CACHE: |
-    .cache
-    .nx/cache
-    node_modules/.cache
-    packages/*/node_modules/.cache
-
 runs:
   using: "composite"
   steps:
@@ -23,5 +16,8 @@ runs:
     with:
       key: ${{ inputs.key }}
       path: |
-        ${{ env.PATHS_TO_CACHE }}
+        .cache
+        .nx/cache
+        node_modules/.cache
+        packages/*/node_modules/.cache
         ${{ inputs.additional-paths }}
