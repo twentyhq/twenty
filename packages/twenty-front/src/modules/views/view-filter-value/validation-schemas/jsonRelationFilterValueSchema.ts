@@ -5,7 +5,7 @@ export const relationFilterValueSchemaObject = z.object({
   selectedRecordIds: z.array(z.string()),
 });
 
-export const relationFilterValueSchema = z
+export const jsonRelationFilterValueSchema = z
   .string()
   .transform((value, ctx) => {
     try {
