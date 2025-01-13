@@ -57,6 +57,7 @@ export const FormCountryCodeSelectInput = ({
       onPersist={onChange}
       options={options}
       defaultValue={selectedCountryCode}
+      readonly={readonly}
       VariablePicker={VariablePicker}
     />
   );
