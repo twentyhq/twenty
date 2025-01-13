@@ -29,14 +29,11 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
@@ -307,22 +304,6 @@ export class WorkflowTriggerWorkspaceService {
         { status: WorkflowVersionStatus.ARCHIVED },
         manager,
       );
-
-      const workflowVersion = await workflowVersionRepository.findOne({
-        where: {
-          id: workflow.lastPublishedVersionId,
-        },
-      });
-
-      workflowVersion?.steps?.forEach((step) => {
-        if (step.type === WorkflowActionType.CODE) {
-          this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            workspaceId: this.getWorkspaceId(),
-            isHardDeletion: false,
-          });
-        }
-      });
     }
 
     await workflowRepository.update(

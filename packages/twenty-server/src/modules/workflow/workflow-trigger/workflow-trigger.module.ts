@@ -9,14 +9,12 @@ import { DatabaseEventTriggerModule } from 'src/modules/workflow/workflow-trigge
 import { WorkflowEventTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-event-trigger.job';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 
 @Module({
   imports: [
     WorkflowCommonModule,
     WorkflowRunnerModule,
     DatabaseEventTriggerModule,
-    ServerlessFunctionModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
   ],
   providers: [
