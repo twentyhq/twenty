@@ -848,7 +848,7 @@ const computeFilterRecordGqlOperationFilter = (
             ],
           };
         case ViewFilterOperand.DoesNotContain:
-         return {
+          return {
             and: [
               {
                 not: {

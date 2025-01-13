@@ -4,6 +4,7 @@ import { RecordTableAggregateFooterCell } from '@/object-record/record-table/rec
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -11,7 +12,10 @@ const StyledTh = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
+const StyledTableFoot = styled.thead<{
+  endOfTableSticky?: boolean;
+  hasHorizontalOverflow?: boolean;
+}>`
   cursor: pointer;
   th:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
@@ -60,10 +64,13 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
     position: sticky;
     z-index: 5;
     background: ${({ theme }) => theme.background.primary};
-    ${({ endOfTableSticky }) =>
+    ${({ endOfTableSticky, hasHorizontalOverflow }) =>
       endOfTableSticky &&
       `
-        bottom: 10px;
+      bottom: ${hasHorizontalOverflow ? '10px' : '0'};
+      ${
+        hasHorizontalOverflow &&
+        `
         &::after {
           content: '';
           position: absolute;
@@ -73,7 +80,9 @@ const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
           height: 10px;
           background: inherit;
         }
-      `}
+      `
+      }
+    `}
   }
 `;
 
@@ -89,11 +98,21 @@ export const RecordTableAggregateFooter = ({
     visibleTableColumnsComponentSelector,
   );
 
+  const overlayScrollbarsInstance = useRecoilComponentValueV2(
+    scrollWrapperInstanceComponentState,
+  );
+
+  const hasHorizontalOverflow = overlayScrollbarsInstance
+    ? overlayScrollbarsInstance.elements().scrollOffsetElement.scrollWidth >
+      overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
+    : false;
+
   return (
     <StyledTableFoot
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       endOfTableSticky={endOfTableSticky}
+      hasHorizontalOverflow={hasHorizontalOverflow}
     >
       <tr>
         <StyledTh />

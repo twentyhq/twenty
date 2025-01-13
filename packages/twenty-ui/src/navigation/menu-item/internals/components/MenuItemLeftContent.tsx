@@ -71,7 +71,7 @@ export const MenuItemLeftContent = ({
       {LeftIcon && (
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
-      <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
+      <StyledMenuItemLabel>
         {isString(text) ? (
           <StyledMainText>
             <OverflowingTextWithTooltip text={text} />
