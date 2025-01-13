@@ -1,0 +1,36 @@
+name: Restore cache
+inputs:
+  key:
+    required: true
+    description: Prefix to the cache key
+    type: string
+  additional-paths:
+    required: false
+    type: string
+outputs:
+  cache-primary-key:
+    description: actions/cache/restore cache-primary-key outputs proxy
+    value: ${{ steps.restore-cache-proxy.outputs.cache-primary-key }}
+
+env:
+  PATHS_TO_CACHE: |
+    .cache
+    .nx/cache
+    node_modules/.cache
+    packages/*/node_modules/.cache
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore Storybook build cache
+      uses: actions/cache/restore@v4
+      id: restore-cache
+      with:
+        path: |
+          ${{ env.PATHS_TO_CACHE }}
+          ${{ inputs.additional-paths }}
+        key: ${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
+        restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-
+    - name: Proxy restore cache-primary-key
+      id: restore-cache-proxy
+      run: echo "cache-primary-key=${{steps.restore-cache.outputs.cache-primary-key}}" >> $GITHUB_OUTPUT

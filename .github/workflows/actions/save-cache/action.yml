@@ -1,0 +1,27 @@
+name: Save cache
+inputs:
+  key:
+    required: true
+    description: Prefix to the cache key, should be retrieve from `cache-restore` composite action.
+    type: string
+  additional-paths:
+    required: false
+    type: string
+
+env:
+  PATHS_TO_CACHE: |
+    .cache
+    .nx/cache
+    node_modules/.cache
+    packages/*/node_modules/.cache
+
+runs:
+  using: "composite"
+  steps:
+    - name: Save cache
+    uses: actions/cache/save@v4
+    with:
+      key: ${{ inputs.key }}
+      path: |
+        ${{ env.PATHS_TO_CACHE }}
+        ${{ inputs.additional-paths }}

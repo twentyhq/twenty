@@ -10,13 +10,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  PATHS_TO_CACHE: |
-    .cache
-    .nx/cache
-    node_modules/.cache
-    packages/*/node_modules/.cache
-
 jobs:
   front-sb-build:
     timeout-minutes: 30
@@ -247,15 +240,11 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Restore task cache
-        id: restore-task-cache
+      - name: Install dependencies
+        id: restore-cache
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.PATHS_TO_CACHE }}
-          key: front-task-${{ matrix.task }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            front-task-${{ matrix.task }}-${{ github.ref_name }}-
+        uses: ./.github/workflows/actions/restore-cache
+        with: front-task-${{ matrix.task }}
       - name: Reset .env
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
@@ -270,7 +259,6 @@ jobs:
           tasks: ${{ matrix.task }}
       - name: Save storybook build cache
         if: steps.restore-task-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: ./.github/workflows/actions/save-cache
         with:
-          key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
-          path: ${{ env.PATHS_TO_CACHE }}
+          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
