@@ -591,13 +591,17 @@ describe('should work as expected for the different field types', () => {
           ],
         },
         {
-          not: {
-            phones: {
-              primaryPhoneNumber: {
-                ilike: '%1234567890%',
+          and: [
+            {
+              not: {
+                phones: {
+                  primaryPhoneNumber: {
+                    ilike: '%1234567890%',
+                  },
+                },
               },
             },
-          },
+          ],
         },
         {
           and: [

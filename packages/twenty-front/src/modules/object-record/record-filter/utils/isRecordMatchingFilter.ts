@@ -323,9 +323,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.Phones: {
         const phonesFilter = filterValue as PhonesFilter;
 
-        const keys: (keyof PhonesFilter)[] = [
-          'primaryPhoneNumber'
-        ];
+        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
 
         return keys.some((key) => {
           const value = phonesFilter[key];
