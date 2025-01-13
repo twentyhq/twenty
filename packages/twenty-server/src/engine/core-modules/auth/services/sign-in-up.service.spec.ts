@@ -20,6 +20,10 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 jest.mock('bcrypt');
 
@@ -508,5 +512,26 @@ describe('SignInUpService', () => {
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
+  });
+  it('signInUp - credentials - new user - existing workspace - without invitation', async () => {
+    const email = 'newuser@test.com';
+    const password = 'validPassword123';
+
+    UserFindOneMock.mockReturnValueOnce(null);
+    workspaceInvitationValidateInvitationMock.mockReturnValueOnce(null);
+
+    await expect(
+      service.signInUp({
+        email,
+        password,
+        fromSSO: false,
+        targetWorkspaceSubdomain: 'testSubDomain',
+      }),
+    ).rejects.toThrowError(
+      new AuthException(
+        'Invitation not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
   });
 });
