@@ -194,7 +194,9 @@ export const ReplaceStaticValueWithVariable: Story = {
       }),
     ]);
 
-    const removeVariableButton = await canvas.findByTestId(/^remove-icon/);
+    const removeVariableButton = canvasElement.querySelector(
+      'button .tabler-icon-x',
+    );
 
     await Promise.all([
       userEvent.click(removeVariableButton),

@@ -352,7 +352,9 @@ export const SwitchesToStandaloneVariable: Story = {
     const variableTag = await canvas.findByText('test');
     expect(variableTag).toBeVisible();
 
-    const removeVariableButton = canvas.getByTestId(/^remove-icon/);
+    const removeVariableButton = canvasElement.querySelector(
+      'button .tabler-icon-x',
+    );
 
     await Promise.all([
       userEvent.click(removeVariableButton),
@@ -399,5 +401,37 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
     expect(args.onPersist).not.toHaveBeenCalled();
 
     expect(input).toHaveDisplayValue(defaultValueAsDisplayString.slice(0, -2));
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Created At',
+    defaultValue: `${currentYear}-12-09T13:20:19.631Z`,
+    onPersist: fn(),
+    readonly: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByDisplayValue(
+      new RegExp(`12/09/${currentYear} \\d{2}:20`),
+    );
+    expect(input).toBeDisabled();
+  },
+};
+
+export const DisabledWithVariable: Story = {
+  args: {
+    label: 'Created At',
+    defaultValue: `{{a.b.c}}`,
+    onPersist: fn(),
+    readonly: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const variableChip = await canvas.findByText('c');
+    expect(variableChip).toBeVisible();
   },
 };

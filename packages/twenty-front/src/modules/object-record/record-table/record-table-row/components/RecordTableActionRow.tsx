@@ -64,9 +64,13 @@ export const RecordTableActionRow = ({
     >
       <td aria-hidden />
       <StyledIconContainer>
-        <LeftIcon size={theme.icon.size.sm} color={theme.font.color.tertiary} />
+        <LeftIcon
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.sm}
+          color={theme.font.color.tertiary}
+        />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer>
+      <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
       <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />

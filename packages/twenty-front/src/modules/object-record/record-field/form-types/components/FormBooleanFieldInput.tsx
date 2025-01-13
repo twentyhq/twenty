@@ -85,7 +85,7 @@ export const FormBooleanFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledBooleanInputContainer>
@@ -98,12 +98,12 @@ export const FormBooleanFieldInput = ({
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}
