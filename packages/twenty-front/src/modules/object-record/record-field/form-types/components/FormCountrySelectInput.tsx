@@ -57,6 +57,7 @@ export const FormCountrySelectInput = ({
       onPersist={onChange}
       options={options}
       defaultValue={selectedCountryName}
+      readonly={readonly}
       VariablePicker={VariablePicker}
       removeDisplayValueHorizontalPadding
     />
