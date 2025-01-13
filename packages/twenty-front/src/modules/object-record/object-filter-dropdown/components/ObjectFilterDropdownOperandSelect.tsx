@@ -1,11 +1,14 @@
-import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { MenuItem } from 'twenty-ui';
@@ -19,21 +22,21 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 `;
 
 export const ObjectFilterDropdownOperandSelect = () => {
-  const {
-    filterDefinitionUsedInDropdownState,
-    setSelectedOperandInDropdown,
-    selectedFilterState,
-  } = useFilterDropdown();
+  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
+    filterDefinitionUsedInDropdownComponentState,
+  );
+
+  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const selectedFilter = useRecoilComponentValueV2(
+    selectedFilterComponentState,
+  );
 
   const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
-
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
-
-  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const operandsForFilterType = isDefined(filterDefinitionUsedInDropdown)
     ? getOperandsForFilterDefinition(filterDefinitionUsedInDropdown)

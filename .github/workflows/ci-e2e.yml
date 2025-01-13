@@ -1,9 +1,10 @@
-name: CI E2E Tests
+name: CI E2E Playwright Tests
 on:
   push:
     branches:
       - main
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

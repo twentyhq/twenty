@@ -87,6 +87,7 @@ export const DisplayDefaultValueWithVariablesProperly: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": { "b" :  {{var.test}} } }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -120,6 +121,7 @@ export const InsertVariableInTheMiddleOnTextInput: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -161,6 +163,7 @@ export const CanUseVariableAsObjectProperty: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -188,6 +191,7 @@ export const ClearField: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": 2 }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const defaultValueStringLength = args.defaultValue!.length;
