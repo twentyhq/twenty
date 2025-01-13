@@ -26,6 +26,7 @@ type FormNumberFieldInputProps = {
   onPersist: (value: number | null | string) => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
+  readonly?: boolean;
 };
 
 export const FormNumberFieldInput = ({
@@ -35,6 +36,7 @@ export const FormNumberFieldInput = ({
   onPersist,
   VariablePicker,
   hint,
+  readonly,
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
 
@@ -102,7 +104,7 @@ export const FormNumberFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
@@ -112,16 +114,17 @@ export const FormNumberFieldInput = ({
               copyButton={false}
               hotkeyScope="record-create"
               onChange={handleChange}
+              disabled={readonly}
             />
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

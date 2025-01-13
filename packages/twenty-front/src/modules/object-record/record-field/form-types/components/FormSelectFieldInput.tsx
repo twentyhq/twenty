@@ -26,17 +26,21 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   clearLabel?: string;
+  readonly?: boolean;
 };
 
-const StyledDisplayModeContainer = styled.button`
-  width: 100%;
+const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
-  display: flex;
-  cursor: pointer;
-  border: none;
   background: transparent;
+  border: none;
+  display: flex;
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+  cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
@@ -57,6 +61,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   clearLabel,
+  readonly,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -213,32 +218,42 @@ export const FormSelectFieldInput = ({
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
-            <>
+            readonly ? (
+              <StyledDisplayModeReadonlyContainer>
+                {isDefined(selectedOption) && (
+                  <SelectDisplay
+                    color={selectedOption.color ?? 'transparent'}
+                    label={selectedOption.label}
+                    Icon={selectedOption.icon ?? undefined}
+                  />
+                )}
+              </StyledDisplayModeReadonlyContainer>
+            ) : (
               <StyledDisplayModeContainer
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOption) ? (
+                {isDefined(selectedOption) && (
                   <SelectDisplay
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
-                    isUsedInForm
                   />
-                ) : null}
+                )}
               </StyledDisplayModeContainer>
-            </>
+            )
           ) : (
             <VariableChip
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
         <StyledSelectInputContainer>
-          {draftValue.type === 'static' &&
+          {!readonly &&
+            draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>
                 <SelectInput
@@ -258,7 +273,7 @@ export const FormSelectFieldInput = ({
             )}
         </StyledSelectInputContainer>
 
-        {VariablePicker && (
+        {VariablePicker && !readonly && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

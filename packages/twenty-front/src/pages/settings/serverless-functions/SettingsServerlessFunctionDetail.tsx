@@ -37,9 +37,10 @@ export const SettingsServerlessFunctionDetail = () => {
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
   const { formValues, setFormValues, loading } =
-    useServerlessFunctionUpdateFormState(serverlessFunctionId);
-  const { testServerlessFunction } =
-    useTestServerlessFunction(serverlessFunctionId);
+    useServerlessFunctionUpdateFormState({ serverlessFunctionId });
+  const { testServerlessFunction } = useTestServerlessFunction({
+    serverlessFunctionId,
+  });
   const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: 'latest',
