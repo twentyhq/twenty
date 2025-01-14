@@ -69,7 +69,6 @@ export class RunWorkflowJob {
         },
       );
     } catch (error) {
-      this.logger.error(`Error running workflow`, error);
       await this.workflowRunWorkspaceService.endWorkflowRun(
         workflowRunId,
         WorkflowRunStatus.FAILED,

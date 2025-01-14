@@ -49,7 +49,6 @@ export class WorkflowExecutorWorkspaceService {
     try {
       result = await workflowAction.execute(actionPayload);
     } catch (error) {
-      this.logger.error(error);
       result = {
         error: {
           errorType: error.name,
