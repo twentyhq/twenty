@@ -20,7 +20,7 @@ runs:
       uses: actions/cache/restore@v4
       id: restore-cache
       with:
-        key: ${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
+        key: ${{ inputs.key }}-${{ runner.name }}-${{ github.ref_name }}-${{ github.sha }}
         restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-
         path: |
           .cache
