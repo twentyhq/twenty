@@ -76,8 +76,10 @@ export class StripePriceService {
   }
 
   async getPricesByProductId(productId: string) {
-    const prices = await this.stripe.prices.search({
-      query: `product:'${productId}'`,
+    const prices = await this.stripe.prices.list({
+      product: productId,
+      type: 'recurring',
+      expand: ['data.currency_options', 'data.tiers'],
     });
 
     return prices.data;

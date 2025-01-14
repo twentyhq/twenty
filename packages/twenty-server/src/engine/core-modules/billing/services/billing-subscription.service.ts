@@ -10,14 +10,18 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
@@ -25,12 +29,21 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly stripePriceService: StripePriceService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
+    private readonly billingPlanService: BillingPlanService,
     private readonly environmentService: EnvironmentService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
+
+  async getBillingPllansEnabledFeatureFlag(workspaceId: string) {
+    return await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsBillingPlansEnabled,
+      workspaceId,
+    );
+  }
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
     workspaceId?: string;
@@ -56,14 +69,23 @@ export class BillingSubscriptionService {
       'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
     ),
   ) {
+    const isBillingPlansEnabled =
+      await this.getBillingPllansEnabledFeatureFlag(workspaceId);
+
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId },
     );
+    const getStripeProductId = isBillingPlansEnabled
+      ? await this.billingPlanService.getProductByPlan(
+          BillingPlanKey.PRO,
+          BillingUsageType.LICENSED,
+        )
+      : stripeProductId;
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
         (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === stripeProductId,
+          billingSubscriptionItem.stripeProductId === getStripeProductId,
       )?.[0];
 
     if (!billingSubscriptionItem) {
@@ -127,7 +149,9 @@ export class BillingSubscriptionService {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
-
+    const isBillingPlansEnabled = await this.getBillingPllansEnabledFeatureFlag(
+      workspace.id,
+    );
     const newInterval =
       billingSubscription?.interval === SubscriptionInterval.Year
         ? SubscriptionInterval.Month
@@ -136,10 +160,16 @@ export class BillingSubscriptionService {
     const billingSubscriptionItem =
       await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
 
-    const productPrice = await this.stripePriceService.getStripePrice(
-      AvailableProduct.BasePlan,
-      newInterval,
-    );
+    const productPrice = isBillingPlansEnabled
+      ? await this.billingPlanService.getProductPriceByPlanAndInterval(
+          BillingPlanKey.PRO,
+          BillingUsageType.LICENSED,
+          newInterval,
+        )
+      : await this.stripePriceService.getStripePrice(
+          AvailableProduct.BasePlan,
+          newInterval,
+        );
 
     if (!productPrice) {
       throw new Error(

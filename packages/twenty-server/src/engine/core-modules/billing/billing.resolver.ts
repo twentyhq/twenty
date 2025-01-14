@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { AVAILABLE_PRODUCT_TO_PLANS_MAP } from 'src/engine/core-modules/billing/constants/available-product-to-plans-map.constant';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dto/billing-session.input';
 import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
 import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
@@ -8,9 +9,13 @@ import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input'
 import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
 import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-billing.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -24,16 +29,39 @@ export class BillingResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly stripePriceService: StripePriceService,
+    private readonly billingPlanService: BillingPlanService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  async getBillingPllansEnabledFeatureFlag(workspaceId: string) {
+    return await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsBillingPlansEnabled,
+      workspaceId,
+    );
+  }
+
   @Query(() => ProductPricesEntity)
-  async getProductPrices(@Args() { product }: ProductInput) {
-    const productPrices =
-      await this.stripePriceService.getStripePrices(product);
+  @UseGuards(WorkspaceAuthGuard)
+  async getProductPrices(
+    @AuthWorkspace() workspace: Workspace,
+    @Args() { product }: ProductInput,
+  ) {
+    const { planKey, priceUsageBased } =
+      AVAILABLE_PRODUCT_TO_PLANS_MAP[product];
+    const isBillingPlansEnabled = await this.getBillingPllansEnabledFeatureFlag(
+      workspace.id,
+    );
+
+    const productPrices = isBillingPlansEnabled
+      ? await this.billingPlanService.getProductPricesByPlan(
+          planKey,
+          priceUsageBased,
+        )
+      : await this.stripePriceService.getStripePrices(product);
 
     return {
       totalNumberOfPrices: productPrices.length,
-      productPrices: productPrices,
+      productPrices,
     };
   }
 
@@ -64,10 +92,20 @@ export class BillingResolver {
       requirePaymentMethod,
     }: CheckoutSessionInput,
   ) {
-    const productPrice = await this.stripePriceService.getStripePrice(
-      AvailableProduct.BasePlan,
-      recurringInterval,
+    const isBillingPlansEnabled = await this.getBillingPllansEnabledFeatureFlag(
+      workspace.id,
     );
+
+    const productPrice = isBillingPlansEnabled
+      ? await this.billingPlanService.getProductPriceByPlanAndInterval(
+          plan,
+          BillingUsageType.LICENSED,
+          recurringInterval,
+        )
+      : await this.stripePriceService.getStripePrice(
+          AvailableProduct.BasePlan,
+          recurringInterval,
+        );
 
     if (!productPrice) {
       throw new Error(
