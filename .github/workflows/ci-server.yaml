@@ -16,7 +16,7 @@ env:
 jobs:
   server-setup:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
@@ -115,7 +115,7 @@ jobs:
 
   server-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     needs: server-setup
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -152,7 +152,7 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     needs: server-setup
     services:
       postgres:
