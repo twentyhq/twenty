@@ -46,7 +46,7 @@ export const MenuItemSelectAvatar = ({
     >
       <StyledMenuItemLeftContent>
         {avatar}
-        <StyledMenuItemLabel hasLeftIcon={!!avatar}>
+        <StyledMenuItemLabel>
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>

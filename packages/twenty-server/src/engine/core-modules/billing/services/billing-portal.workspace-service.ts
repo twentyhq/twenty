@@ -36,7 +36,9 @@ export class BillingPortalWorkspaceService {
     plan?: BillingPlanKey,
     requirePaymentMethod?: boolean,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+      subdomain: workspace.subdomain,
+    });
     const cancelUrl = frontBaseUrl.toString();
 
     if (successUrlPath) {
@@ -72,13 +74,13 @@ export class BillingPortalWorkspaceService {
   }
 
   async computeBillingPortalSessionURLOrThrow(
-    workspaceId: string,
+    workspace: Workspace,
     returnUrlPath?: string,
   ) {
     const currentSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         {
-          workspaceId,
+          workspaceId: workspace.id,
         },
       );
 
@@ -92,7 +94,9 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+      subdomain: workspace.subdomain,
+    });
 
     if (returnUrlPath) {
       frontBaseUrl.pathname = returnUrlPath;

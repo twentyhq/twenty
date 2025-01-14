@@ -1,9 +1,9 @@
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const availableFilterDefinitionsComponentState = createComponentStateV2<
-  FilterDefinition[]
+  RecordFilterDefinition[]
 >({
   key: 'availableFilterDefinitionsComponentState',
   defaultValue: [],

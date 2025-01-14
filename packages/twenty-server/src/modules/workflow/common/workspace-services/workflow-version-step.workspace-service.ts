@@ -92,7 +92,7 @@ export class WorkflowVersionStepWorkspaceService {
                 isLeaf: true,
                 icon: 'IconVariable',
                 tab: 'test',
-                label: 'Generate Function Input',
+                label: 'Generate Function Output',
               },
               _outputSchemaType: 'LINK',
             },
@@ -511,11 +511,16 @@ export class WorkflowVersionStepWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.deleteOneServerlessFunction({
-          id: step.settings.input.serverlessFunctionId,
-          workspaceId,
-        });
-
+        if (
+          !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
+            step.settings.input.serverlessFunctionId,
+          ))
+        ) {
+          await this.serverlessFunctionService.deleteOneServerlessFunction({
+            id: step.settings.input.serverlessFunctionId,
+            workspaceId,
+          });
+        }
         break;
       }
     }

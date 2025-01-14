@@ -4,6 +4,7 @@ import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -27,6 +28,7 @@ export enum WorkspaceActivationStatus {
   PENDING_CREATION = 'PENDING_CREATION',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
 }
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -35,7 +37,6 @@ registerEnumType(WorkspaceActivationStatus, {
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
-@UnPagedRelation('featureFlags', () => FeatureFlagEntity, { nullable: true })
 @UnPagedRelation('billingSubscriptions', () => BillingSubscription, {
   nullable: true,
 })
@@ -67,7 +68,7 @@ export class Workspace {
   inviteHash?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
 
   @Field()
@@ -110,6 +111,7 @@ export class Workspace {
   @Field(() => WorkspaceActivationStatus)
   @Column({
     type: 'enum',
+    enumName: 'workspace_activationStatus_enum',
     enum: WorkspaceActivationStatus,
     default: WorkspaceActivationStatus.INACTIVE,
   })

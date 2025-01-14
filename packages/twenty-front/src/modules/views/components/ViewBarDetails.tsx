@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -199,7 +199,7 @@ export const ViewBarDetails = ({
               // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
               // Also as filter is spread into viewFilter, definition is present
               // FixMe: Ugly hack to make it work
-              viewFilter={viewFilter as unknown as Filter}
+              viewFilter={viewFilter as unknown as RecordFilter}
               viewBarId={viewBarId}
             />
           ))}

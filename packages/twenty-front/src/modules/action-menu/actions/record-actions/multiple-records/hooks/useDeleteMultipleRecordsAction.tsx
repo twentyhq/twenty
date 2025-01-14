@@ -8,8 +8,8 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -57,7 +57,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const isDeletedFilterActive = contextStoreFilters.some(
       (filter) =>
         filter.fieldMetadataId === deletedAtFieldMetadata?.id &&
-        filter.operand === FilterOperand.IsNotEmpty,
+        filter.operand === RecordFilterOperand.IsNotEmpty,
     );
 
     const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({

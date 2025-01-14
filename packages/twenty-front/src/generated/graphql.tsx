@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -313,15 +313,8 @@ export type FeatureFlag = {
   workspaceId: Scalars['String'];
 };
 
-export type FeatureFlagFilter = {
-  and?: InputMaybe<Array<FeatureFlagFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<FeatureFlagFilter>>;
-};
-
 export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
-  IsAggregateQueryEnabled = 'IsAggregateQueryEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
@@ -337,18 +330,7 @@ export enum FeatureFlagKey {
   IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
-}
-
-export type FeatureFlagSort = {
-  direction: SortDirection;
-  field: FeatureFlagSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum FeatureFlagSortFields {
-  Id = 'id'
 }
 
 export type FieldConnection = {
@@ -1546,12 +1528,6 @@ export type WorkspaceBillingEntitlementsArgs = {
 export type WorkspaceBillingSubscriptionsArgs = {
   filter?: BillingSubscriptionFilter;
   sorting?: Array<BillingSubscriptionSort>;
-};
-
-
-export type WorkspaceFeatureFlagsArgs = {
-  filter?: FeatureFlagFilter;
-  sorting?: Array<FeatureFlagSort>;
 };
 
 export enum WorkspaceActivationStatus {

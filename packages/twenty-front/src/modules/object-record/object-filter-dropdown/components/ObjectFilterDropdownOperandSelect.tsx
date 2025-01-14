@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
 
-import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
+import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -13,8 +13,8 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { MenuItem } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { getOperandLabel } from '../utils/getOperandLabel';
-import { getOperandsForFilterDefinition } from '../utils/getOperandsForFilterType';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.primary};
@@ -39,7 +39,9 @@ export const ObjectFilterDropdownOperandSelect = () => {
   const { closeDropdown } = useDropdown();
 
   const operandsForFilterType = isDefined(filterDefinitionUsedInDropdown)
-    ? getOperandsForFilterDefinition(filterDefinitionUsedInDropdown)
+    ? getRecordFilterOperandsForRecordFilterDefinition(
+        filterDefinitionUsedInDropdown,
+      )
     : [];
 
   const handleOperandChange = (newOperand: ViewFilterOperand) => {
