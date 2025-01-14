@@ -4,6 +4,7 @@ import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -67,7 +68,7 @@ export class Workspace {
   inviteHash?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
 
   @Field()
