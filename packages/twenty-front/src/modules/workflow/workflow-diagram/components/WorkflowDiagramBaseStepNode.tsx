@@ -76,8 +76,6 @@ const StyledSourceHandle = styled(Handle)`
   border: none;
   width: 4px;
   height: 4px;
-  min-height: 0;
-  min-width: 0;
 `;
 
 export const StyledTargetHandle = styled(Handle)`

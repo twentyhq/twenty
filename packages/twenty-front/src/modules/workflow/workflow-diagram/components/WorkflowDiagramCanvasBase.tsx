@@ -47,6 +47,10 @@ const StyledResetReactflowStyles = styled.div`
     white-space: nowrap;
   }
 
+  .react-flow__handle {
+    min-height: 0;
+    min-width: 0;
+  }
   .react-flow__handle.connectionindicator {
     cursor: pointer;
   }
