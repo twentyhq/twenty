@@ -22,6 +22,28 @@ export class BillingService {
     return this.environmentService.get('IS_BILLING_ENABLED');
   }
 
+  async hasWorkspaceSubscriptionOrFreeAccess(workspaceId: string) {
+    const isBillingEnabled = this.isBillingEnabled();
+
+    if (!isBillingEnabled) {
+      return true;
+    }
+
+    const isFreeAccessEnabled =
+      await this.isFeatureEnabledService.isFeatureEnabled(
+        FeatureFlagKey.IsFreeAccessEnabled,
+        workspaceId,
+      );
+
+    if (isFreeAccessEnabled) {
+      return true;
+    }
+
+    return await this.billingSubscriptionService.hasWorkspaceBillingSubscription(
+      workspaceId,
+    );
+  }
+
   async hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
     workspaceId: string,
     entitlementKey?: BillingEntitlementKey,
