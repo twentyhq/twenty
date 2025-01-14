@@ -357,7 +357,7 @@ export const useAuth = () => {
     [
       setIsVerifyPendingState,
       signUp,
-      workspacePublicData.id,
+      workspacePublicData,
       isMultiWorkspaceEnabled,
       handleVerify,
       redirectToWorkspaceDomain,
