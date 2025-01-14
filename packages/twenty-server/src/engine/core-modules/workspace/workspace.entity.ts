@@ -36,7 +36,6 @@ registerEnumType(WorkspaceActivationStatus, {
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
-@UnPagedRelation('featureFlags', () => FeatureFlagEntity, { nullable: true })
 @UnPagedRelation('billingSubscriptions', () => BillingSubscription, {
   nullable: true,
 })
