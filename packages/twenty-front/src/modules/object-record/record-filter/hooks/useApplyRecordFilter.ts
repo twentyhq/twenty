@@ -1,6 +1,6 @@
 import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
@@ -21,7 +21,7 @@ export const useApplyRecordFilter = (componentInstanceId?: string) => {
 
   const applyRecordFilter = useRecoilCallback(
     ({ set, snapshot }) =>
-      (filter: Filter | null) => {
+      (filter: RecordFilter | null) => {
         set(selectedFilterCallbackState, filter);
 
         const onFilterSelect = getSnapshotValue(

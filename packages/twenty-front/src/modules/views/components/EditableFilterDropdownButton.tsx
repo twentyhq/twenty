@@ -1,18 +1,17 @@
 import { useCallback, useEffect } from 'react';
 
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -20,7 +19,7 @@ import { isDefined } from '~/utils/isDefined';
 
 type EditableFilterDropdownButtonProps = {
   viewFilterDropdownId: string;
-  viewFilter: Filter;
+  viewFilter: RecordFilter;
   hotkeyScope: HotkeyScope;
 };
 
@@ -85,11 +84,11 @@ export const EditableFilterDropdownButton = ({
     if (
       !value &&
       ![
-        FilterOperand.IsEmpty,
-        FilterOperand.IsNotEmpty,
-        ViewFilterOperand.IsInPast,
-        ViewFilterOperand.IsInFuture,
-        ViewFilterOperand.IsToday,
+        RecordFilterOperand.IsEmpty,
+        RecordFilterOperand.IsNotEmpty,
+        RecordFilterOperand.IsInPast,
+        RecordFilterOperand.IsInFuture,
+        RecordFilterOperand.IsToday,
       ].includes(operand)
     ) {
       deleteCombinedViewFilter(fieldId);

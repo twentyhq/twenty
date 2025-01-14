@@ -2,7 +2,7 @@ import { IconComponent } from 'twenty-ui';
 
 import { FilterableFieldType } from './FilterableFieldType';
 
-export type FilterDefinition = {
+export type RecordFilterDefinition = {
   fieldMetadataId: string;
   label: string;
   iconName: string;
