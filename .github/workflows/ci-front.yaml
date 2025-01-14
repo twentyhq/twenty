@@ -11,12 +11,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-22.04-8-runner
+  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
 
 jobs:
   front-sb-build:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -67,7 +67,7 @@ jobs:
           key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -122,7 +122,7 @@ jobs:
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-test
     env:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
@@ -163,7 +163,7 @@ jobs:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -203,7 +203,7 @@ jobs:
         run: npx nx run twenty-front:chromatic:ci
   front-task:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       TASK_CACHE_KEY: front-task-${{ matrix.task }}

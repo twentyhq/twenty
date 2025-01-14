@@ -16,12 +16,17 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Cache primary key builder
+      id: cache-primary-key-builder
+      shell: bash
+      run: |
+        echo "CACHE_PRIMARY_KEY_PREFIX=${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
     - name: Restore cache
       uses: actions/cache/restore@v4
       id: restore-cache
       with:
-        key: ${{ inputs.key }}-${{ github.ref_name }}-${{ github.sha }}
-        restore-keys: ${{ inputs.key }}-${{ github.ref_name }}-
+        key:  ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}
+        restore-keys: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-
         path: |
           .cache
           .nx/cache
