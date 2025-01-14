@@ -153,8 +153,13 @@ export class SSOAuthController {
       },
     });
 
+    const { userData } = this.authService.formatUserDataPayload(
+      user,
+      existingUser,
+    );
+
     await this.authService.signInUp({
-      ...(existingUser ? { existingUser } : { newUserParams: user }),
+      userData,
       workspace: identityProvider.workspace,
       authParams: {
         provider: 'sso',

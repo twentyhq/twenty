@@ -145,6 +145,13 @@ export class AuthResolver {
       },
     });
 
+    await this.authService.checkAccessForSignIn({
+      user: existingUser,
+      invitation,
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
+      currentWorkspace,
+    });
+
     const { user, workspace } = await this.authService.signInUp({
       ...(existingUser
         ? { existingUser }

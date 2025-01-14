@@ -9,7 +9,7 @@ export type SignInUpBaseParams = {
   billingCheckoutSessionState?: string | null;
 };
 
-export type SignInUpNewUserParams = {
+export type SignInUpNewUserPayload = {
   email: string;
   firstName?: string | null;
   lastName?: string | null;
@@ -21,15 +21,23 @@ export type PartialUserWithPicture = {
   picture?: string;
 } & Partial<User>;
 
-export type ExistingUserOrNewUser =
-  | { existingUser: User }
-  | {
-      newUserParams: SignInUpNewUserParams;
-    };
+export type ExistingUserOrNewUser = {
+  userData:
+    | { type: 'existingUser'; existingUser: User }
+    | {
+        type: 'newUser';
+        newUserPayload: SignInUpNewUserPayload;
+      };
+};
 
-export type ExistingUserOrPartialUserWithPicture =
-  | { existingUser: User }
-  | { newUserWithPicture: PartialUserWithPicture };
+export type ExistingUserOrPartialUserWithPicture = {
+  userData:
+    | { type: 'existingUser'; existingUser: User }
+    | {
+        type: 'newUserWithPicture';
+        newUserWithPicture: PartialUserWithPicture;
+      };
+};
 
 export type AuthProviderWithPasswordType = {
   authParams:

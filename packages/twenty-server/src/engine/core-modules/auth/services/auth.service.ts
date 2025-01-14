@@ -54,6 +54,7 @@ import {
   AuthProviderWithPasswordType,
   ExistingUserOrNewUser,
   SignInUpBaseParams,
+  SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 
 @Injectable()
@@ -166,16 +167,19 @@ export class AuthService {
   ) {
     if (
       params.authParams.provider === 'password' &&
-      'newUserParams' in params
+      params.userData.type === 'newUser'
     ) {
-      params.newUserParams.passwordHash =
+      params.userData.newUserPayload.passwordHash =
         await this.signInUpService.generateHash(params.authParams.password);
     }
 
-    if (params.authParams.provider === 'password' && 'existingUser' in params) {
+    if (
+      params.authParams.provider === 'password' &&
+      params.userData.type === 'existingUser'
+    ) {
       await this.signInUpService.validatePassword({
         password: params.authParams.password,
-        passwordHash: params.existingUser.passwordHash,
+        passwordHash: params.userData.existingUser.passwordHash,
       });
     }
 
@@ -186,20 +190,29 @@ export class AuthService {
       );
     }
 
-    if ('newUserParams' in params) {
+    if (params.userData.type === 'newUser') {
       const partialUserWithPicture =
         await this.signInUpService.computeParamsForNewUser(
-          params.newUserParams,
+          params.userData.newUserPayload,
           params.authParams,
         );
 
       return await this.signInUpService.signInUp({
         ...params,
-        newUserWithPicture: partialUserWithPicture,
+        userData: {
+          type: 'newUserWithPicture',
+          newUserWithPicture: partialUserWithPicture,
+        },
       });
     }
 
-    return await this.signInUpService.signInUp(params);
+    return await this.signInUpService.signInUp({
+      ...params,
+      userData: {
+        type: 'existingUser',
+        existingUser: params.userData.existingUser,
+      },
+    });
   }
 
   async verify(email: string, workspaceId: string): Promise<AuthTokens> {
@@ -555,29 +568,39 @@ export class AuthService {
     return workspace ?? undefined;
   }
 
+  formatUserDataPayload(
+    newUserPayload: SignInUpNewUserPayload,
+    existingUser?: User | null,
+  ): ExistingUserOrNewUser {
+    return {
+      userData: existingUser
+        ? { type: 'existingUser', existingUser }
+        : {
+            type: 'newUser',
+            newUserPayload,
+          },
+    };
+  }
+
   async checkAccessForSignIn({
-    user,
+    userData,
     invitation,
     workspaceInviteHash,
-    currentWorkspace,
+    workspace,
   }: {
-    user?: User | null;
-    invitation?: AppToken;
     workspaceInviteHash?: string;
-    currentWorkspace?: Workspace | null;
-  }) {
-    if (!invitation && !workspaceInviteHash && currentWorkspace) {
-      userValidator.assertIsDefinedOrThrow(
-        user,
-        new AuthException(
-          'User does not have access to this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        ),
-      );
-
-      await this.userService.hasUserAccessToWorkspaceOrThrow(
-        user.id,
-        currentWorkspace.id,
+  } & ExistingUserOrNewUser &
+    SignInUpBaseParams) {
+    if (!invitation && !workspaceInviteHash && workspace) {
+      if (userData.type === 'existingUser') {
+        await this.userService.hasUserAccessToWorkspaceOrThrow(
+          userData.existingUser.id,
+          workspace.id,
+        );
+      }
+      new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
   }

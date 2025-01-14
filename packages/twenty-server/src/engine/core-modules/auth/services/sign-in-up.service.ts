@@ -39,7 +39,7 @@ import {
   ExistingUserOrPartialUserWithPicture,
   PartialUserWithPicture,
   SignInUpBaseParams,
-  SignInUpNewUserParams,
+  SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 
 @Injectable()
@@ -60,7 +60,7 @@ export class SignInUpService {
   ) {}
 
   async computeParamsForNewUser(
-    newUserParams: SignInUpNewUserParams,
+    newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
     if (!newUserParams.firstName) newUserParams.firstName = '';
@@ -91,9 +91,7 @@ export class SignInUpService {
         workspace: params.workspace,
         user: await this.signInUpWithPersonalInvitation({
           invitation: params.invitation,
-          ...('newUserWithPicture' in params
-            ? { newUserWithPicture: params.newUserWithPicture }
-            : { existingUser: params.existingUser }),
+          userData: params.userData,
         }),
       };
     }
@@ -102,16 +100,16 @@ export class SignInUpService {
     if (params.workspace) {
       const updatedUser = await this.signInUpOnExistingWorkspace({
         workspace: params.workspace,
-        ...('newUserWithPicture' in params
-          ? { newUserWithPicture: params.newUserWithPicture }
-          : { existingUser: params.existingUser }),
+        userData: params.userData,
       });
 
       return { user: updatedUser, workspace: params.workspace };
     }
 
-    if ('newUserWithPicture' in params) {
-      return await this.signUpOnNewWorkspace(params.newUserWithPicture);
+    if (params.userData.type === 'newUserWithPicture') {
+      return await this.signUpOnNewWorkspace(
+        params.userData.newUserWithPicture,
+      );
     }
 
     // should never happen.
@@ -162,9 +160,9 @@ export class SignInUpService {
     }
 
     const email =
-      'newUserWithPicture' in params
-        ? params.newUserWithPicture.email
-        : params.existingUser.email;
+      params.userData.type === 'newUserWithPicture'
+        ? params.userData.newUserWithPicture.email
+        : params.userData.existingUser.email;
 
     if (!email) {
       throw new AuthException(
@@ -188,9 +186,7 @@ export class SignInUpService {
 
     const updatedUser = await this.signInUpOnExistingWorkspace({
       workspace: invitationValidation.workspace,
-      ...('existingUser' in params
-        ? { existingUser: params.existingUser }
-        : { newUserWithPicture: params.newUserWithPicture }),
+      userData: params.userData,
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -232,9 +228,12 @@ export class SignInUpService {
     );
 
     const currentUser =
-      'newUserWithPicture' in params
-        ? await this.persistNewUser(params.newUserWithPicture, params.workspace)
-        : params.existingUser;
+      params.userData.type === 'newUserWithPicture'
+        ? await this.persistNewUser(
+            params.userData.newUserWithPicture,
+            params.workspace,
+          )
+        : params.userData.existingUser;
 
     const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
       currentUser,

@@ -74,26 +74,27 @@ export class MicrosoftAuthController {
         where: { email },
       });
 
+      const { userData } = this.authService.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+        },
+        existingUser,
+      );
+
       await this.authService.checkAccessForSignIn({
-        user: existingUser,
+        userData,
         invitation,
         workspaceInviteHash,
-        currentWorkspace,
+        workspace: currentWorkspace,
       });
 
       const { user, workspace } = await this.authService.signInUp({
         invitation,
         workspace: currentWorkspace,
-        ...(existingUser
-          ? { existingUser }
-          : {
-              newUserParams: {
-                email,
-                firstName,
-                lastName,
-                picture,
-              },
-            }),
+        userData,
         authParams: {
           provider: 'microsoft',
         },
