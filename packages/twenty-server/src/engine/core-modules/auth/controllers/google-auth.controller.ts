@@ -25,6 +25,8 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -34,8 +36,11 @@ export class GoogleAuthController {
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
     private readonly socialSsoService: SocialSsoService,
+    private readonly userService: UserService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
   ) {}
 
   @Get()
@@ -60,40 +65,44 @@ export class GoogleAuthController {
       billingCheckoutSessionState,
     } = req.user;
 
-    const currentWorkspace = workspaceInviteHash
-      ? await this.workspaceRepository.findOneBy({
-          inviteHash: workspaceInviteHash,
-        })
-      : await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
-          {
-            email,
-            authProvider: 'google',
-          },
-          workspaceId,
-        );
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider: 'google',
+    });
 
     try {
-      const invitation = currentWorkspace
-        ? await this.authService.findOneInvitationBySignUpParams({
-            workspaceId: currentWorkspace.id,
-            email,
-            personalInviteToken: workspacePersonalInviteToken,
-          })
-        : undefined;
+      const invitation = await this.authService.findInvitationForSignInUp({
+        currentWorkspace,
+        workspacePersonalInviteToken,
+        email,
+      });
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      // TODO AMOREAUX: add checkAccessForSignIn for other auth providers
+      await this.authService.checkAccessForSignIn({
+        user: existingUser,
+        invitation,
+        workspaceInviteHash,
+        currentWorkspace,
+      });
 
       const { user, workspace } = await this.authService.signInUp({
-        email,
-        firstName,
-        lastName,
-        picture,
         invitation,
-        invitationFlow: invitation
-          ? 'personal'
-          : workspaceInviteHash
-            ? 'global'
-            : 'none',
         workspace: currentWorkspace ?? undefined,
+        existingUser,
+        newUserParams: {
+          email,
+          firstName,
+          lastName,
+          picture,
+        },
         authProvider: 'google',
+        billingCheckoutSessionState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(

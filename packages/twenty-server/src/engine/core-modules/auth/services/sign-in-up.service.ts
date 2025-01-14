@@ -35,21 +35,34 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { isDefined } from 'src/utils/is-defined';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export type SignInUpServiceInput = {
-  email: string;
-  password?: string;
-  firstName?: string | null;
-  lastName?: string | null;
   invitation?: AppToken;
-  picture?: string | null;
   workspace?: Workspace | null;
-  authProvider: WorkspaceAuthProvider;
-  invitationFlow: 'personal' | 'global' | 'none';
-};
+  existingUser?: User | null;
+  billingCheckoutSessionState?: string | null;
+  newUserParams?: {
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    picture?: string | null;
+    passwordHash?: string | null;
+  };
+} & (
+  | {
+      authProvider: Extract<WorkspaceAuthProvider, 'password'>;
+      password: string;
+    }
+  | {
+      authProvider: Exclude<WorkspaceAuthProvider, 'password'>;
+    }
+);
+
+type UserWithPicture = {
+  picture?: string;
+} & Partial<User>;
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -69,21 +82,16 @@ export class SignInUpService {
     private readonly userService: UserService,
   ) {}
 
-  async signInUp({
-    email,
-    workspace,
-    invitation,
-    invitationFlow,
-    password,
-    firstName,
-    lastName,
-    picture,
-    authProvider,
-  }: SignInUpServiceInput) {
-    if (!firstName) firstName = '';
-    if (!lastName) lastName = '';
+  private async computeParamsForNewUser(
+    newUserParams: SignInUpServiceInput['newUserParams'],
+    password?: string,
+  ) {
+    if (!newUserParams) return undefined;
 
-    if (!email) {
+    if (!newUserParams.firstName) newUserParams.firstName = '';
+    if (!newUserParams.lastName) newUserParams.lastName = '';
+
+    if (!newUserParams?.email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
@@ -91,130 +99,121 @@ export class SignInUpService {
     }
 
     if (password) {
-      const isPasswordValid = PASSWORD_REGEX.test(password);
-
-      if (!isPasswordValid) {
-        throw new AuthException(
-          'Password too weak',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
+      newUserParams.passwordHash = await this.generateHash(password);
     }
 
-    const passwordHash = password ? await hashPassword(password) : undefined;
+    return newUserParams as UserWithPicture;
+  }
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (existingUser && authProvider === 'password') {
-      const isValid = await compareHash(
-        password || '',
-        existingUser.passwordHash,
+  async signInUp(params: SignInUpServiceInput) {
+    if (params.authProvider === 'password' && params.newUserParams) {
+      params.newUserParams.passwordHash = await this.generateHash(
+        params.password,
       );
-
-      if (!isValid) {
-        throw new AuthException(
-          'Wrong password',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
     }
+
+    if (params.authProvider === 'password' && params.existingUser) {
+      await this.validatePassword({
+        password: params.password,
+        passwordHash: params.existingUser.passwordHash,
+      });
+    }
+
+    if (params.workspace) {
+      workspaceValidator.isAuthEnabledOrThrow(
+        params.authProvider,
+        params.workspace,
+      );
+    }
+
+    const newUserWithPicture = await this.computeParamsForNewUser(
+      params.newUserParams,
+      params.authProvider === 'password' ? params.password : undefined,
+    );
 
     // with personal invitation flow
-    if (invitationFlow === 'personal') {
-      return this.signInUpWithPersonalInvitation({
-        email,
-        invitation,
-        firstName,
-        lastName,
-        picture,
-        authProvider,
-        passwordHash,
-        existingUser,
-      });
+    if (params.workspace && params.invitation) {
+      return {
+        workspace: params.workspace,
+        user: await this.signInUpWithPersonalInvitation({
+          newUserWithPicture,
+          invitation: params.invitation,
+          existingUser: params.existingUser,
+        }),
+      };
     }
 
     // with global invitation flow
-    if (invitationFlow === 'global') {
-      workspaceValidator.assertIsDefinedOrThrow(
-        workspace,
-        new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.WORKSPACE_NOT_FOUND,
-        ),
-      );
-
+    if (params.workspace) {
       const updatedUser = await this.signInUpOnExistingWorkspace({
-        email,
-        passwordHash,
-        workspace,
-        firstName,
-        lastName,
-        picture,
-        existingUser,
-        authProvider,
+        workspace: params.workspace,
+        existingUser: params.existingUser,
+        newUserWithPicture,
       });
 
-      return { user: updatedUser, workspace };
+      return { user: updatedUser, workspace: params.workspace };
     }
 
-    // without invitation flow
-    if (!existingUser && workspace) {
+    return await this.signUpOnNewWorkspace(params.newUserParams);
+  }
+
+  private async generateHash(password: string) {
+    const isPasswordValid = PASSWORD_REGEX.test(password);
+
+    if (!isPasswordValid) {
       throw new AuthException(
-        "You're not member of this workspace",
+        'Password too weak',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return await hashPassword(password);
+  }
+
+  private async validatePassword({
+    password,
+    passwordHash,
+  }: {
+    password: string;
+    passwordHash: string;
+  }) {
+    const isValid = await compareHash(
+      await this.generateHash(password),
+      passwordHash,
+    );
+
+    if (!isValid) {
+      throw new AuthException(
+        'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-
-    if (!existingUser) {
-      return await this.signUpOnNewWorkspace({
-        email,
-        passwordHash,
-        firstName,
-        lastName,
-        picture,
-      });
-    }
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
-
-    return await this.validateSignIn({
-      user: existingUser,
-      workspace,
-      authProvider,
-    });
   }
 
   private async signInUpWithPersonalInvitation({
-    email,
+    newUserWithPicture,
     invitation,
-    firstName,
-    lastName,
-    picture,
-    authProvider,
-    passwordHash,
     existingUser,
   }: {
-    email: string;
-    invitation?: AppToken;
-    firstName: string;
-    lastName: string;
-    picture?: string | null;
-    authProvider: WorkspaceAuthProvider;
-    passwordHash?: string;
-    existingUser: User | null;
+    newUserWithPicture?: UserWithPicture;
+    invitation: AppToken;
+    existingUser?: User | null;
   }) {
     if (!invitation) {
       throw new AuthException(
         'Invitation not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const email = newUserWithPicture
+      ? newUserWithPicture.email
+      : existingUser?.email;
+
+    if (!email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
       );
     }
 
@@ -232,14 +231,9 @@ export class SignInUpService {
     }
 
     const updatedUser = await this.signInUpOnExistingWorkspace({
-      email,
-      passwordHash,
+      newUserWithPicture,
       workspace: invitationValidation.workspace,
-      firstName,
-      lastName,
-      picture,
       existingUser,
-      authProvider,
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -247,10 +241,7 @@ export class SignInUpService {
       email,
     );
 
-    return {
-      user: updatedUser,
-      workspace: invitationValidation.workspace,
-    };
+    return updatedUser;
   }
 
   private async validateSignIn({
@@ -262,10 +253,6 @@ export class SignInUpService {
     workspace: Workspace;
     authProvider: SignInUpServiceInput['authProvider'];
   }) {
-    if (authProvider) {
-      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
-    }
-
     await this.userService.hasUserAccessToWorkspaceOrThrow(
       user.id,
       workspace.id,
@@ -274,36 +261,29 @@ export class SignInUpService {
     return { user, workspace };
   }
 
+  private async persistNewUser(newUser: UserWithPicture, workspace: Workspace) {
+    const imagePath = await this.uploadPicture(newUser.picture, workspace.id);
+
+    delete newUser.picture;
+
+    const userToCreate = this.userRepository.create({
+      ...newUser,
+      defaultAvatarUrl: imagePath,
+      canImpersonate: false,
+    } as Partial<User>);
+
+    return await this.userRepository.save(userToCreate);
+  }
+
   async signInUpOnExistingWorkspace({
-    email,
-    passwordHash,
+    newUserWithPicture,
     workspace,
-    firstName,
-    lastName,
-    picture,
     existingUser,
-    authProvider,
   }: {
-    email: string;
-    passwordHash: string | undefined;
+    newUserWithPicture?: UserWithPicture;
     workspace: Workspace;
-    firstName: string;
-    lastName: string;
-    picture: SignInUpServiceInput['picture'];
-    existingUser: User | null;
-    authProvider?: WorkspaceAuthProvider;
+    existingUser?: User | null;
   }) {
-    const isNewUser = !isDefined(existingUser);
-    let user = existingUser;
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      ),
-    );
-
     workspaceValidator.assertIsActive(
       workspace,
       new AuthException(
@@ -312,42 +292,19 @@ export class SignInUpService {
       ),
     );
 
-    if (authProvider) {
-      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
-    }
+    const user = newUserWithPicture
+      ? await this.persistNewUser(newUserWithPicture, workspace)
+      : existingUser;
 
-    if (isNewUser) {
-      const imagePath = await this.uploadPicture(picture, workspace.id);
-
-      const userToCreate = this.userRepository.create({
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        defaultAvatarUrl: imagePath,
-        canImpersonate: false,
-        passwordHash,
-      });
-
-      user = await this.userRepository.save(userToCreate);
-    }
-
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException(
-        'User not found',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      ),
-    );
+    // should never happen - for type only
+    userValidator.assertIsDefinedOrThrow(user);
 
     const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
       user,
       workspace,
     );
 
-    await this.activateOnboardingForUser(user, workspace, {
-      firstName,
-      lastName,
-    });
+    await this.activateOnboardingForUser(user, workspace, updatedUser);
 
     return Object.assign(user, updatedUser);
   }
@@ -372,26 +329,18 @@ export class SignInUpService {
     }
   }
 
-  async signUpOnNewWorkspace({
-    email,
-    passwordHash,
-    firstName,
-    lastName,
-    picture,
-  }: {
-    email: string;
-    passwordHash: string | undefined;
-    firstName: string;
-    lastName: string;
-    picture: SignInUpServiceInput['picture'];
-  }) {
+  async signUpOnNewWorkspace(newUserParams) {
     const user: Partial<User> = {
-      email,
-      firstName,
-      lastName,
+      ...newUserParams,
       canImpersonate: false,
-      passwordHash,
     };
+
+    if (!user.email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
@@ -408,7 +357,7 @@ export class SignInUpService {
       }
     }
 
-    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
+    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(newUserParams?.email)}`;
     const isLogoUrlValid = async () => {
       try {
         return (
@@ -421,7 +370,9 @@ export class SignInUpService {
     };
 
     const logo =
-      isWorkEmail(email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmail(newUserParams.email) && (await isLogoUrlValid())
+        ? logoUrl
+        : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
@@ -434,7 +385,10 @@ export class SignInUpService {
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    user.defaultAvatarUrl = await this.uploadPicture(picture, workspace.id);
+    user.defaultAvatarUrl = await this.uploadPicture(
+      newUserParams.picture,
+      workspace.id,
+    );
 
     const userCreated = this.userRepository.create(user);
 
@@ -442,10 +396,7 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(newUser.id, workspace.id);
 
-    await this.activateOnboardingForUser(newUser, workspace, {
-      firstName,
-      lastName,
-    });
+    await this.activateOnboardingForUser(newUser, workspace, newUserParams);
 
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,

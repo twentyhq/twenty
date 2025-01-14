@@ -50,6 +50,8 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -60,6 +62,8 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
+    private readonly socialSsoService: SocialSsoService,
+    private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -152,67 +156,8 @@ export class AuthService {
     return user;
   }
 
-  async findOneInvitationBySignUpParams(params: {
-    workspaceId: string;
-    email?: string;
-    personalInviteToken?: string;
-  }) {
-    const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    qr.where('"appToken"."workspaceId" = :workspaceId', {
-      workspaceId: params.workspaceId,
-    }).andWhere('"appToken".type = :type', {
-      type: AppTokenType.InvitationToken,
-    });
-
-    if (params.email) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
-        email: params.email,
-      });
-    }
-
-    if (params.personalInviteToken) {
-      qr.andWhere('"appToken".context->>\'value\' = :personalInviteToken', {
-        personalInviteToken: params.personalInviteToken,
-      });
-    }
-
-    return (await qr.getOne()) ?? undefined;
-  }
-
-  async signInUp({
-    email,
-    password,
-    invitation,
-    workspace,
-    invitationFlow,
-    firstName,
-    lastName,
-    picture,
-    authProvider,
-  }: {
-    email: string;
-    password?: string;
-    firstName?: string | null;
-    lastName?: string | null;
-    invitation?: AppToken;
-    invitationFlow: SignInUpServiceInput['invitationFlow'];
-    picture?: string | null;
-    workspace?: Workspace | null;
-    authProvider: WorkspaceAuthProvider;
-    billingCheckoutSessionState?: string;
-  }) {
-    return await this.signInUpService.signInUp({
-      email,
-      password,
-      firstName,
-      lastName,
-      invitation,
-      invitationFlow,
-      workspace,
-      picture,
-      authProvider,
-    });
+  async signInUp(params: SignInUpServiceInput) {
+    return await this.signInUpService.signInUp(params);
   }
 
   async verify(email: string, workspaceId: string): Promise<AuthTokens> {
@@ -503,5 +448,93 @@ export class AuthService {
         [] as AvailableWorkspaceOutput['sso'],
       ),
     }));
+  }
+
+  async findInvitationForSignInUp({
+    currentWorkspace,
+    workspacePersonalInviteToken,
+    email,
+  }: {
+    currentWorkspace?: Workspace | null;
+    workspacePersonalInviteToken?: string;
+    email: string;
+  }) {
+    if (!currentWorkspace) return undefined;
+
+    const qr = this.appTokenRepository.createQueryBuilder('appToken');
+
+    qr.where('"appToken"."workspaceId" = :workspaceId', {
+      workspaceId: currentWorkspace.id,
+    }).andWhere('"appToken".type = :type', {
+      type: AppTokenType.InvitationToken,
+    });
+
+    if (email) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email,
+      });
+    }
+
+    if (workspacePersonalInviteToken) {
+      qr.andWhere('"appToken".context->>\'value\' = :personalInviteToken', {
+        personalInviteToken: workspacePersonalInviteToken,
+      });
+    }
+
+    return (await qr.getOne()) ?? undefined;
+  }
+
+  async findWorkspaceForSignInUp(
+    params: {
+      workspaceId?: string;
+      workspaceInviteHash?: string;
+    } & (
+      | {
+          authProvider: Exclude<WorkspaceAuthProvider, 'password'>;
+          email: string;
+        }
+      | { authProvider: Extract<WorkspaceAuthProvider, 'password'> }
+    ),
+  ) {
+    return params.workspaceInviteHash
+      ? await this.workspaceRepository.findOneBy({
+          inviteHash: params.workspaceInviteHash,
+        })
+      : params.authProvider !== 'password'
+        ? await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+            {
+              email: params.email,
+              authProvider: params.authProvider,
+            },
+            params.workspaceId,
+          )
+        : undefined;
+  }
+
+  async checkAccessForSignIn({
+    user,
+    invitation,
+    workspaceInviteHash,
+    currentWorkspace,
+  }: {
+    user?: User | null;
+    invitation?: AppToken;
+    workspaceInviteHash?: string;
+    currentWorkspace?: Workspace | null;
+  }) {
+    if (!invitation && !workspaceInviteHash && currentWorkspace) {
+      userValidator.assertIsDefinedOrThrow(
+        user,
+        new AuthException(
+          'User does not have access to this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+
+      await this.userService.hasUserAccessToWorkspaceOrThrow(
+        user.id,
+        currentWorkspace.id,
+      );
+    }
   }
 }
