@@ -22,22 +22,24 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
 }) => {
   const { isDropdownOpen } = useDropdown(dropdownId);
   return (
-    <StyledButton>
-      <StyledTag
-        text={value ? value.toString() : '-'}
-        color={'transparent'}
-        weight={'regular'}
-      />
-      {!isDropdownOpen && (
-        <AppTooltip
-          anchorSelect={`#${dropdownId}`}
-          content={tooltip}
-          noArrow
-          place="right"
-          positionStrategy="fixed"
-          delay={TooltipDelay.mediumDelay}
+    <div id={dropdownId}>
+      <StyledButton>
+        <StyledTag
+          text={value ? value.toString() : '-'}
+          color={'transparent'}
+          weight={'regular'}
         />
-      )}
-    </StyledButton>
+        {!isDropdownOpen && (
+          <AppTooltip
+            anchorSelect={`#${dropdownId}`}
+            content={tooltip}
+            noArrow
+            place="right"
+            positionStrategy="fixed"
+            delay={TooltipDelay.mediumDelay}
+          />
+        )}
+      </StyledButton>
+    </div>
   );
 };
