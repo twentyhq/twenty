@@ -3,6 +3,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -59,7 +60,9 @@ export const RightDrawerActionMenuDropdown = () => {
           RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
       }}
       data-select-disable
-      clickableComponent={<Button title="Actions" shortcut="⌘O" />}
+      clickableComponent={
+        <Button title="Actions" shortcut={`${getOsSpecificControlSymbol()}O`} />
+      }
       dropdownPlacement="top-end"
       dropdownOffset={{
         y: parseInt(theme.spacing(2), 10),

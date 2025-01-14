@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui';
@@ -46,7 +47,9 @@ export const RecordIndexActionMenuBarAllActionsButton = () => {
         <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
         <StyledButtonLabel>All Actions</StyledButtonLabel>
         <StyledSeparator size="sm" />
-        <StyledShortcutLabel>⌘K</StyledShortcutLabel>
+        <StyledShortcutLabel>
+          {getOsSpecificControlSymbol()}K
+        </StyledShortcutLabel>
       </StyledButton>
     </>
   );

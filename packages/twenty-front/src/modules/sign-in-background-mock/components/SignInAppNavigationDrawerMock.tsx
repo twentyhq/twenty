@@ -2,6 +2,7 @@ import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
@@ -39,7 +40,7 @@ export const SignInAppNavigationDrawerMock = ({
             label="Search"
             Icon={IconSearch}
             onClick={() => {}}
-            keyboard={['⌘', 'K']}
+            keyboard={[`${getOsSpecificControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

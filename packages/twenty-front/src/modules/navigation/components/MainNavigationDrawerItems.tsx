@@ -7,6 +7,7 @@ import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/C
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -45,7 +46,7 @@ export const MainNavigationDrawerItems = () => {
             label="Search"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
+            keyboard={[`${getOsSpecificControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

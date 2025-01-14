@@ -9,5 +9,5 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
-  ]
+, "src/modules/shortcuts/utils/getOsSpecificControlSymbol.ts"  ]
 }

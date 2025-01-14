@@ -34,6 +34,7 @@ import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedM
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
@@ -88,7 +89,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={['⌘', 'K']}
+            keyboard={[`${getOsSpecificControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

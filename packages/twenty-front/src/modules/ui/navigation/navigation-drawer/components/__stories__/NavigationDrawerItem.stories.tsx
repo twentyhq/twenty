@@ -5,6 +5,7 @@ import { CatalogDecorator, CatalogStory, IconSearch } from 'twenty-ui';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
+import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 
 const StyledContainer = styled.div`
@@ -188,7 +189,7 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
               : adornmentName === 'Count'
                 ? { count: 3 }
                 : adornmentName === 'Keyboard Keys'
-                  ? { keyboard: ['⌘', 'K'] }
+                  ? { keyboard: [`${getOsSpecificControlSymbol()}`, 'K'] }
                   : {},
         },
       ],
