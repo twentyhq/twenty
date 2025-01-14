@@ -12,13 +12,13 @@ outputs:
     description: actions/cache/restore cache-primary-key outputs proxy
     value: ${{ steps.restore-cache.outputs.cache-primary-key }}
   cache-hit:
-    description: String bool indicating whereas cache has been directly or indirectly hit
+    description: String bool indicating whether cache has been directly or indirectly hit
     value: ${{ steps.restore-cache.outputs.cache-hit != 'false' || steps.restore-cache.outputs.cache-matched-key != '' }}
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-    - name: Restore Storybook build cache
+    - name: Restore cache
       uses: actions/cache/restore@v4
       id: restore-cache
       with:
