@@ -18,7 +18,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft } from 'twenty-ui';
+import { IconCheck, IconChevronLeft } from 'twenty-ui';
 
 export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   availableAggregations,
@@ -94,6 +94,11 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                   availableAggregationOperation === AGGREGATE_OPERATIONS.count
                     ? false
                     : true
+                }
+                RightIcon={
+                  availableAggregationOperation === AGGREGATE_OPERATIONS.count
+                    ? IconCheck
+                    : undefined
                 }
               />
             ),
