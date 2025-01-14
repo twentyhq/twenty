@@ -48,7 +48,7 @@ const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
 
   position: relative;
   box-shadow: ${({ variant, theme }) =>
-    variant === 'placeholder' ? 'none' : theme.boxShadow.superHeavy};
+    variant === 'placeholder' ? 'none' : theme.boxShadow.strong};
 
   .selectable.selected &,
   .selectable:focus &,
@@ -72,7 +72,13 @@ const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
 `;
 
 const StyledSourceHandle = styled(Handle)`
-  background-color: ${({ theme }) => theme.color.gray50};
+  background-color: ${({ theme }) => theme.grayScale.gray25};
+  border: none;
+  width: 4px;
+  height: 4px;
+  min-height: 0;
+  min-width: 0;
+  cursor: pointer !important;
 `;
 
 export const StyledTargetHandle = styled(Handle)`
