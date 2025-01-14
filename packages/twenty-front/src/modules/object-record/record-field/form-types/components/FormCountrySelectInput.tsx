@@ -59,7 +59,7 @@ export const FormCountrySelectInput = ({
       defaultValue={selectedCountryName}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      removeDisplayValueHorizontalPadding
+      preventDisplayPadding
     />
   );
 };
