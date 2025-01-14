@@ -1,5 +1,6 @@
 import { Key } from 'ts-key-enum';
 import {
+  AppTooltip,
   IconFileExport,
   IconFileImport,
   IconLayout,
@@ -54,6 +55,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
+
+  const isGroupByEnabled =
+    viewType === ViewType.Kanban || currentView?.key !== 'INDEX';
 
   useScopedHotkeys(
     [Key.Escape],
@@ -115,20 +119,34 @@ export const ObjectOptionsDropdownMenuContent = () => {
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
         />
-        {viewType === ViewType.Kanban ||
-          (currentView?.key !== 'INDEX' && (
-            <MenuItem
-              onClick={() =>
-                isDefined(recordGroupFieldMetadata)
-                  ? onContentChange('recordGroups')
-                  : onContentChange('recordGroupFields')
-              }
-              LeftIcon={IconLayoutList}
-              text="Group by"
-              contextualText={recordGroupFieldMetadata?.label}
-              hasSubMenu
-            />
-          ))}
+
+        <div id="group-by-menu-item">
+          <MenuItem
+            onClick={() =>
+              isDefined(recordGroupFieldMetadata)
+                ? onContentChange('recordGroups')
+                : onContentChange('recordGroupFields')
+            }
+            LeftIcon={IconLayoutList}
+            text="Group by"
+            contextualText={
+              !isGroupByEnabled
+                ? 'Not available on Default view'
+                : recordGroupFieldMetadata?.label
+            }
+            hasSubMenu
+            disabled={!isGroupByEnabled}
+          />
+        </div>
+        {!isGroupByEnabled && (
+          <AppTooltip
+            anchorSelect={`#group-by-menu-item`}
+            content="Not available on Default view"
+            noArrow
+            place="bottom"
+            width="100%"
+          />
+        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>

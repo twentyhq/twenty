@@ -9,6 +9,7 @@ export type MenuItemBaseProps = {
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
   hovered?: boolean;
+  disabled?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -35,10 +36,16 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   ${({ theme, isKeySelected }) =>
     isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
 
-  ${({ isHoverBackgroundDisabled }) =>
-    isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
+  ${({ isHoverBackgroundDisabled, disabled }) =>
+    (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
-  ${({ theme, accent }) => {
+  ${({ theme, accent, disabled }) => {
+    if (disabled !== undefined && disabled !== false) {
+      return css`
+        opacity: 0.4;
+      `;
+    }
+
     switch (accent) {
       case 'danger': {
         return css`
@@ -112,6 +119,7 @@ export const StyledDraggableItem = styled.div`
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
+  disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
@@ -136,7 +144,11 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
-  cursor: ${({ cursor }) => {
+  cursor: ${({ cursor, disabled }) => {
+    if (disabled !== undefined && disabled !== false) {
+      return 'not-allowed';
+    }
+
     switch (cursor) {
       case 'drag':
         return 'grab';
