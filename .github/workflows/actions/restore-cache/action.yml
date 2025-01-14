@@ -17,10 +17,10 @@ runs:
   using: composite
   steps:
     - name: Cache primary key builder
-    id: cache-primary-key-builder
-    shell: bash
-    run: |
-      echo "CACHE_PRIMARY_KEY_PREFIX=${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
+      id: cache-primary-key-builder
+      shell: bash
+      run: |
+        echo "CACHE_PRIMARY_KEY_PREFIX=${{ inputs.key }}-${{ github.ref_name }}" >> "${GITHUB_OUTPUT}"
     - name: Restore cache
       uses: actions/cache/restore@v4
       id: restore-cache
