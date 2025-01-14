@@ -47,6 +47,10 @@ const StyledResetReactflowStyles = styled.div`
     white-space: nowrap;
   }
 
+  .react-flow__handle.connectionindicator {
+    cursor: pointer;
+  }
+
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;

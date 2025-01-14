@@ -78,7 +78,6 @@ const StyledSourceHandle = styled(Handle)`
   height: 4px;
   min-height: 0;
   min-width: 0;
-  cursor: pointer !important;
 `;
 
 export const StyledTargetHandle = styled(Handle)`
