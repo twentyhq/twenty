@@ -17,7 +17,7 @@ runs:
       if: ${{ steps.setup-node.outputs.cache-hit == 'true' }}
       run: |
         yarn config set enableHardenedMode false
-        yarn --immutable
+        yarn --mode=update-lockfile
     - name: Install Dependencies
       if: ${{ steps.setup-node.outputs.cache-hit == 'false' }}
       shell: bash
