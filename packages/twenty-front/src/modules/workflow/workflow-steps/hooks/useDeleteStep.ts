@@ -31,7 +31,7 @@ export const useDeleteStep = ({
     const workflowVersion = await getUpdatableWorkflowVersion(workflow);
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({
-        idToUpdate: workflow.currentVersion.id,
+        idToUpdate: workflowVersion.id,
         updateOneRecordInput: {
           trigger: null,
         },
