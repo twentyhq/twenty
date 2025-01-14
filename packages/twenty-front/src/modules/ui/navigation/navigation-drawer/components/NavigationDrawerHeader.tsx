@@ -23,12 +23,11 @@ const StyledSingleWorkspaceContainer = styled(StyledContainer)`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledName = styled.div<{ isMultiWorkspace: boolean }>`
+const StyledName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme, isMultiWorkspace }) =>
-    isMultiWorkspace ? theme.font.weight.regular : theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
@@ -69,7 +68,7 @@ export const NavigationDrawerHeader = ({
         <StyledSingleWorkspaceContainer>
           <Avatar placeholder={name} avatarUrl={logo} />
           <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledName isMultiWorkspace={isMultiWorkspace}>{name}</StyledName>
+            <StyledName>{name}</StyledName>
           </NavigationDrawerAnimatedCollapseWrapper>
         </StyledSingleWorkspaceContainer>
       )}
