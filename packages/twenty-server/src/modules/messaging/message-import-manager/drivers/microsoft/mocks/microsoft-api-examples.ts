@@ -100,7 +100,7 @@ export const microsoftGraphBatchWithTwoMessagesResponse = [
           createdDateTime: '2025-01-13T09:38:06Z',
           lastModifiedDateTime: '2025-01-13T11:50:48Z',
           changeKey: 'CQAAABYAAAAadQ+1xAL8SLCZzf1KYyk+AAADw4Em',
-          categories: {},
+          categories: [],
           receivedDateTime: '2025-01-13T09:38:06Z',
           sentDateTime: '2025-01-13T09:38:01Z',
           hasAttachments: false,

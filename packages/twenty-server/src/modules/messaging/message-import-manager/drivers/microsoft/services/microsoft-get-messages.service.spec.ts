@@ -55,11 +55,11 @@ describe('Microsoft get messages service', () => {
 
     expect(messages).toHaveLength(2);
     expect(
-      messages.filter(
+      messages.find(
         (message) =>
           message.externalId ===
           'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAAiVYkAAA',
-      )[0],
+      ),
     ).toStrictEqual({
       externalId:
         'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAAiVYkAAA',
@@ -128,7 +128,7 @@ describe('Microsoft get messages service', () => {
     });
   });
 
-  it('Should not format html responses', () => {
+  it('Should set empty text for html responses', () => {
     const batchResponses = microsoftGraphBatchWithHtmlMessagesResponse;
     const connectedAccount = {
       id: 'connected-account-id',
