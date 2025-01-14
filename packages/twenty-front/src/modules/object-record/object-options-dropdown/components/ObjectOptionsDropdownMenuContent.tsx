@@ -57,7 +57,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
   );
 
   const isGroupByEnabled =
-    viewType === ViewType.Kanban || currentView?.key !== 'INDEX';
+    (isDefined(currentView?.viewGroups) && currentView.viewGroups.length > 0) ||
+    currentView?.key !== 'INDEX';
 
   useScopedHotkeys(
     [Key.Escape],
