@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { isUndefined } from '@sniptt/guards';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -40,7 +41,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
   ${({ theme, accent, disabled }) => {
-    if (disabled !== undefined && disabled !== false) {
+    if (isUndefined(disabled) && disabled !== false) {
       return css`
         opacity: 0.4;
       `;
@@ -145,7 +146,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   }
 
   cursor: ${({ cursor, disabled }) => {
-    if (disabled !== undefined && disabled !== false) {
+    if (!isUndefined(disabled) && disabled !== false) {
       return 'not-allowed';
     }
 
