@@ -8,6 +8,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
