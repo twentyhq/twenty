@@ -17,6 +17,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 import { AuthService } from './auth.service';
 
@@ -102,6 +103,10 @@ describe('AuthService', () => {
               workspaceInvitationGetOneWorkspaceInvitationMock,
             validateInvitation: workspaceInvitationValidateInvitationMock,
           },
+        },
+        {
+          provide: SocialSsoService,
+          useValue: {},
         },
       ],
     }).compile();
