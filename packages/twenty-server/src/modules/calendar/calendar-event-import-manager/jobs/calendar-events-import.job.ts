@@ -28,8 +28,6 @@ export class CalendarEventsImportJob {
 
   @Process(CalendarEventsImportJob.name)
   async handle(data: CalendarEventsImportJobData): Promise<void> {
-    console.time('CalendarEventsImportJob time');
-
     const { calendarChannelId, workspaceId } = data;
 
     const calendarChannelRepository =
@@ -69,7 +67,5 @@ export class CalendarEventsImportJob {
       calendarChannel.connectedAccount,
       workspaceId,
     );
-
-    console.timeEnd('CalendarEventsImportJob time');
   }
 }
