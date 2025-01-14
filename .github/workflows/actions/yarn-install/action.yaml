@@ -10,4 +10,6 @@ runs:
         cache: yarn
     - name: Install Dependencies
       shell: bash
-      run: yarn --immutable --check-cache
+      run: |
+        yarn config set enableHardenedMode false
+        yarn --immutable --check-cache
