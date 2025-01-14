@@ -77,40 +77,42 @@ export class MessagingMessagesImportService {
         messageChannel.id,
       ]);
 
-      try {
-        connectedAccount.accessToken =
-          await this.refreshAccessTokenService.refreshAndSaveAccessToken(
-            connectedAccount,
-            workspaceId,
-          );
-      } catch (error) {
-        switch (error.code) {
-          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingTelemetryService.track({
-              eventName: `refresh_token.error.insufficient_permissions`,
+      if (connectedAccount.provider === 'google') {
+        try {
+          connectedAccount.accessToken =
+            await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+              connectedAccount,
               workspaceId,
-              connectedAccountId: messageChannel.connectedAccountId,
-              messageChannelId: messageChannel.id,
-              message: `${error.code}: ${error.reason}`,
-            });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
-          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
-          default:
-            throw error;
+            );
+        } catch (error) {
+          switch (error.code) {
+            case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+            case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+              await this.messagingTelemetryService.track({
+                eventName: `refresh_token.error.insufficient_permissions`,
+                workspaceId,
+                connectedAccountId: messageChannel.connectedAccountId,
+                messageChannelId: messageChannel.id,
+                message: `${error.code}: ${error.reason}`,
+              });
+              throw {
+                code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+                message: error.message,
+              };
+            case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+              throw {
+                code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+                message: error.message,
+              };
+            default:
+              throw error;
+          }
         }
-      }
 
-      await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccount,
-      );
+        await this.emailAliasManagerService.refreshHandleAliases(
+          connectedAccount,
+        );
+      }
 
       messageIdsToFetch = await this.cacheStorage.setPop(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
