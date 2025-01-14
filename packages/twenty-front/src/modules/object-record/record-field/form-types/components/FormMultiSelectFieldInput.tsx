@@ -14,8 +14,9 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { VisibilityHidden } from 'twenty-ui';
+import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 type FormMultiSelectFieldInputProps = {
@@ -25,6 +26,7 @@ type FormMultiSelectFieldInputProps = {
   onPersist: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -52,6 +54,12 @@ const StyledSelectInputContainer = styled.div`
   top: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  width: 100%;
+`;
+
 export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
@@ -59,8 +67,10 @@ export const FormMultiSelectFieldInput = ({
   onPersist,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
+  const theme = useTheme();
 
   const hotkeyScope = MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID;
 
@@ -163,6 +173,8 @@ export const FormMultiSelectFieldInput = ({
         )
       : undefined;
 
+  const placeholderText = placeholder ?? label;
+
   return (
     <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
@@ -174,12 +186,18 @@ export const FormMultiSelectFieldInput = ({
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOptions) && (
+                {isDefined(selectedOptions) ? (
                   <MultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
+                ) : (
+                  <StyledPlaceholder />
                 )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.light}
+                />
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
@@ -188,12 +206,18 @@ export const FormMultiSelectFieldInput = ({
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOptions) && (
+                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
                   <MultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
+                ) : (
+                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
                 )}
+                <IconChevronDown
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               </StyledDisplayModeContainer>
             )
           ) : (
