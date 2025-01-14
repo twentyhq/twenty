@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  SERVER_SETUP_CACHE_KEY: server-setup
+
 jobs:
   server-setup:
     timeout-minutes: 30
@@ -57,11 +60,12 @@ jobs:
       - name: Build twenty-shared
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx build twenty-shared
-      - name: Server / Restore Task Cache
+      - name: Restore server setup
+        id: restore-server-setup-cache
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Run lint & typecheck
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
@@ -103,6 +107,11 @@ jobs:
             
             exit 1
           fi
+      - name: Save server setup
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.restore-server-setup-cache.outputs.cache-hit != 'true'
+        uses: ./.github/workflows/actions/save-cache
+        with:
+          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
 
   server-test:
     timeout-minutes: 30
@@ -129,11 +138,11 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Restore Task Cache
+      - name: Restore server setup
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name:  Server / Run Tests
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
@@ -191,11 +200,11 @@ jobs:
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
-      - name: Server / Restore Task Cache
+      - name: Restore server setup
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Run Integration Tests
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
