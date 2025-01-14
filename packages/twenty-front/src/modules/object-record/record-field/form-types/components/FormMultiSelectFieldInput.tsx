@@ -186,7 +186,7 @@ export const FormMultiSelectFieldInput = ({
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOptions) ? (
+                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
                   <MultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
