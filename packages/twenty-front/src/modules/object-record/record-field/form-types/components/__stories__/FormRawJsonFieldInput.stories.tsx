@@ -32,8 +32,21 @@ export const Readonly: Story = {
     placeholder: 'Enter valid json',
     readonly: true,
     onPersist: fn(),
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
   },
   play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
     const editor = canvasElement.querySelector('.ProseMirror > p');
     expect(editor).toBeVisible();
 
@@ -46,6 +59,9 @@ export const Readonly: Story = {
     });
 
     expect(args.onPersist).not.toHaveBeenCalled();
+
+    const addVariableButton = canvas.queryByText('Add variable');
+    expect(addVariableButton).not.toBeInTheDocument();
   },
 };
 

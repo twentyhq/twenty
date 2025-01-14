@@ -28,6 +28,7 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   clearLabel?: string;
   readonly?: boolean;
+  preventDisplayPadding?: boolean;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -65,6 +66,7 @@ export const FormSelectFieldInput = ({
   options,
   clearLabel,
   readonly,
+  preventDisplayPadding,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -219,7 +221,7 @@ export const FormSelectFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -229,6 +231,7 @@ export const FormSelectFieldInput = ({
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
+                    preventPadding={preventDisplayPadding}
                   />
                 )}
                 <IconChevronDown
@@ -248,6 +251,7 @@ export const FormSelectFieldInput = ({
                     color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
                     Icon={selectedOption.icon ?? undefined}
+                    preventPadding={preventDisplayPadding}
                   />
                 )}
                 <IconChevronDown
