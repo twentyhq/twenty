@@ -19,6 +19,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   OnboardingStatus,
@@ -74,6 +75,8 @@ export const SettingsBilling = () => {
     },
   });
 
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
@@ -126,7 +129,9 @@ export const SettingsBilling = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: !isWorkspaceSuspended
+            ? getSettingsPagePath(SettingsPath.Workspace)
+            : undefined,
         },
         { children: 'Billing' },
       ]}

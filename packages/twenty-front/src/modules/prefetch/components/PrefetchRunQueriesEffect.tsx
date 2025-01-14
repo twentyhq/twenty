@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
@@ -14,6 +15,8 @@ import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
+
+  const isSettingsPage = useIsSettingsPage();
 
   const { upsertRecordsInCache: upsertViewsInCache } =
     usePrefetchRunQuery<View>({
@@ -42,7 +45,7 @@ export const PrefetchRunQueriesEffect = () => {
 
   const { result } = useCombinedFindManyRecords({
     operationSignatures,
-    skip: !currentUser,
+    skip: !currentUser || isSettingsPage,
   });
 
   useEffect(() => {

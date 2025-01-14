@@ -1,8 +1,11 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilValue } from 'recoil';
 
 export const useIsPrefetchLoading = () => {
+  const isSettingsPage = useIsSettingsPage();
+
   const isFavoriteFoldersPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
   );
@@ -15,8 +18,9 @@ export const useIsPrefetchLoading = () => {
   );
 
   return (
-    !areViewsPrefetched ||
-    !areFavoritesPrefetched ||
-    !isFavoriteFoldersPrefetched
+    !isSettingsPage &&
+    (!areViewsPrefetched ||
+      !areFavoritesPrefetched ||
+      !isFavoriteFoldersPrefetched)
   );
 };
