@@ -7,6 +7,7 @@ import { seedCompaniesAllView } from 'src/engine/workspace-manager/standard-obje
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
+import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
@@ -24,6 +25,7 @@ export const seedViewWithDemoData = async (
     seedCompaniesAllView(objectMetadataStandardIdToIdMap),
     peopleAllView(objectMetadataStandardIdToIdMap),
     opportunitiesAllView(objectMetadataStandardIdToIdMap),
+    opportunitiesTableByStageView(objectMetadataStandardIdToIdMap),
     opportunitiesByStageView(objectMetadataStandardIdToIdMap),
     notesAllView(objectMetadataStandardIdToIdMap),
     tasksAllView(objectMetadataStandardIdToIdMap),
