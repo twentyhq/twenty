@@ -59,6 +59,7 @@ export const FormCountrySelectInput = ({
       defaultValue={selectedCountryName}
       readonly={readonly}
       VariablePicker={VariablePicker}
+      placeholder="Select a country"
       preventDisplayPadding
     />
   );
