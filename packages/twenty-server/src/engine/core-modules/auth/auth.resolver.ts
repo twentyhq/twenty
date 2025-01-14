@@ -139,12 +139,13 @@ export class AuthResolver {
         origin,
       );
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
 
     const user =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
