@@ -58,8 +58,8 @@ import { AuthService } from './services/auth.service';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -129,29 +129,32 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard)
   @Mutation(() => SignUpOutput)
   async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
-    const currentWorkspace = signUpInput.workspaceInviteHash
-      ? await this.workspaceRepository.findOneBy({
-          inviteHash: signUpInput.workspaceInviteHash,
-        })
-      : undefined;
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
+      authProvider: 'password',
+    });
 
-    const invitation = currentWorkspace
-      ? await this.authService.findOneInvitationBySignUpParams({
-          workspaceId: currentWorkspace.id,
-          personalInviteToken: signUpInput.workspacePersonalInviteToken,
-        })
-      : undefined;
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace,
+      workspacePersonalInviteToken: signUpInput.workspacePersonalInviteToken,
+    });
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: signUpInput.email,
+      },
+    });
 
     const { user, workspace } = await this.authService.signInUp({
-      ...signUpInput,
+      ...(existingUser
+        ? { existingUser }
+        : { newUserParams: { email: signUpInput.email } }),
+      workspace: currentWorkspace,
       invitation,
-      invitationFlow: invitation
-        ? 'personal'
-        : signUpInput.workspaceInviteHash
-          ? 'global'
-          : 'none',
-      workspace: currentWorkspace ?? undefined,
-      authProvider: 'password',
+      authParams: {
+        provider: 'password',
+        password: signUpInput.password,
+      },
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(

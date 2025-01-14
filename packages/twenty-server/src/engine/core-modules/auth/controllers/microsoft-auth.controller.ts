@@ -19,8 +19,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,9 +28,8 @@ export class MicrosoftAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly socialSsoService: SocialSsoService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
   ) {}
 
   @Get()
@@ -58,40 +56,48 @@ export class MicrosoftAuthController {
       billingCheckoutSessionState,
     } = req.user;
 
-    const currentWorkspace = workspaceInviteHash
-      ? await this.workspaceRepository.findOneBy({
-          inviteHash: workspaceInviteHash,
-        })
-      : await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
-          {
-            email,
-            authProvider: 'microsoft',
-          },
-          workspaceId,
-        );
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider: 'microsoft',
+    });
 
     try {
-      const invitation = currentWorkspace
-        ? await this.authService.findOneInvitationBySignUpParams({
-            workspaceId: currentWorkspace.id,
-            email,
-            personalInviteToken: workspacePersonalInviteToken,
-          })
-        : undefined;
+      const invitation = await this.authService.findInvitationForSignInUp({
+        currentWorkspace,
+        workspacePersonalInviteToken,
+        email,
+      });
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      await this.authService.checkAccessForSignIn({
+        user: existingUser,
+        invitation,
+        workspaceInviteHash,
+        currentWorkspace,
+      });
 
       const { user, workspace } = await this.authService.signInUp({
-        email,
-        firstName,
-        lastName,
-        picture,
         invitation,
-        invitationFlow: invitation
-          ? 'personal'
-          : workspaceInviteHash
-            ? 'global'
-            : 'none',
-        workspace: currentWorkspace ?? undefined,
-        authProvider: 'microsoft',
+        workspace: currentWorkspace,
+        ...(existingUser
+          ? { existingUser }
+          : {
+              newUserParams: {
+                email,
+                firstName,
+                lastName,
+                picture,
+              },
+            }),
+        authParams: {
+          provider: 'microsoft',
+        },
+        billingCheckoutSessionState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(

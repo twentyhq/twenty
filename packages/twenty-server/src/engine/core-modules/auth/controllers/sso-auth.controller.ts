@@ -30,9 +30,9 @@ import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,9 +41,10 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly userService: UserService,
     private readonly ssoService: SSOService,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
@@ -146,25 +147,19 @@ export class SSOAuthController {
       );
     }
 
-    await this.authService.signInUp({
-      ...user,
-      workspace: identityProvider.workspace,
-      invitationFlow: 'none',
-      authProvider: 'sso',
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: user.email,
+      },
     });
 
-    const isUserExistInWorkspace =
-      await this.userWorkspaceService.checkUserWorkspaceExistsByEmail(
-        user.email,
-        identityProvider.workspaceId,
-      );
-
-    if (!isUserExistInWorkspace) {
-      throw new AuthException(
-        'User not found in workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+    await this.authService.signInUp({
+      ...(existingUser ? { existingUser } : { newUserParams: user }),
+      workspace: identityProvider.workspace,
+      authParams: {
+        provider: 'sso',
+      },
+    });
 
     return {
       identityProvider,

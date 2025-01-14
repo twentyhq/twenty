@@ -35,10 +35,7 @@ import {
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
-import {
-  SignInUpService,
-  SignInUpServiceInput,
-} from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
@@ -52,6 +49,12 @@ import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/w
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import {
+  AuthProviderWithPasswordType,
+  ExistingUserOrNewUser,
+  SignInUpBaseParams,
+} from 'src/engine/core-modules/auth/types/signInUp.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -156,7 +159,46 @@ export class AuthService {
     return user;
   }
 
-  async signInUp(params: SignInUpServiceInput) {
+  async signInUp(
+    params: SignInUpBaseParams &
+      ExistingUserOrNewUser &
+      AuthProviderWithPasswordType,
+  ) {
+    if (
+      params.authParams.provider === 'password' &&
+      'newUserParams' in params
+    ) {
+      params.newUserParams.passwordHash =
+        await this.signInUpService.generateHash(params.authParams.password);
+    }
+
+    if (params.authParams.provider === 'password' && 'existingUser' in params) {
+      await this.signInUpService.validatePassword({
+        password: params.authParams.password,
+        passwordHash: params.existingUser.passwordHash,
+      });
+    }
+
+    if (params.workspace) {
+      workspaceValidator.isAuthEnabledOrThrow(
+        params.authParams.provider,
+        params.workspace,
+      );
+    }
+
+    if ('newUserParams' in params) {
+      const partialUserWithPicture =
+        await this.signInUpService.computeParamsForNewUser(
+          params.newUserParams,
+          params.authParams,
+        );
+
+      return await this.signInUpService.signInUp({
+        ...params,
+        newUserWithPicture: partialUserWithPicture,
+      });
+    }
+
     return await this.signInUpService.signInUp(params);
   }
 
@@ -457,7 +499,7 @@ export class AuthService {
   }: {
     currentWorkspace?: Workspace | null;
     workspacePersonalInviteToken?: string;
-    email: string;
+    email?: string;
   }) {
     if (!currentWorkspace) return undefined;
 
@@ -496,7 +538,7 @@ export class AuthService {
       | { authProvider: Extract<WorkspaceAuthProvider, 'password'> }
     ),
   ) {
-    return params.workspaceInviteHash
+    const workspace = params.workspaceInviteHash
       ? await this.workspaceRepository.findOneBy({
           inviteHash: params.workspaceInviteHash,
         })
@@ -508,7 +550,9 @@ export class AuthService {
             },
             params.workspaceId,
           )
-        : undefined;
+        : null;
+
+    return workspace ?? undefined;
   }
 
   async checkAccessForSignIn({

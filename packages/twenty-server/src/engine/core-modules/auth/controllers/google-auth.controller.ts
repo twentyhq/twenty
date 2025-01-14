@@ -23,10 +23,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -35,10 +32,6 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly socialSsoService: SocialSsoService,
-    private readonly userService: UserService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -83,7 +76,6 @@ export class GoogleAuthController {
         where: { email },
       });
 
-      // TODO AMOREAUX: add checkAccessForSignIn for other auth providers
       await this.authService.checkAccessForSignIn({
         user: existingUser,
         invitation,
@@ -93,15 +85,20 @@ export class GoogleAuthController {
 
       const { user, workspace } = await this.authService.signInUp({
         invitation,
-        workspace: currentWorkspace ?? undefined,
-        existingUser,
-        newUserParams: {
-          email,
-          firstName,
-          lastName,
-          picture,
+        workspace: currentWorkspace,
+        ...(existingUser
+          ? { existingUser }
+          : {
+              newUserParams: {
+                email,
+                firstName,
+                lastName,
+                picture,
+              },
+            }),
+        authParams: {
+          provider: 'google',
         },
-        authProvider: 'google',
         billingCheckoutSessionState,
       });
 
