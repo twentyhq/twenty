@@ -57,6 +57,7 @@ export const FormPhoneFieldInput = ({
           VariablePicker={VariablePicker}
           placeholder="Enter phone number"
           hint="Without calling code"
+          readonly={readonly}
         />
       </FormNestedFieldInputContainer>
     </FormFieldInputContainer>

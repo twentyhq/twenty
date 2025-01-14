@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -62,7 +62,7 @@ export const ViewBarFilterEffect = ({
     if (isDefined(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
-    setOnFilterSelect(() => (filter: Filter | null) => {
+    setOnFilterSelect(() => (filter: RecordFilter | null) => {
       if (isDefined(filter)) {
         upsertCombinedViewFilter(filter);
       }

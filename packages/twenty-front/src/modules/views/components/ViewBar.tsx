@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
+
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
@@ -18,6 +18,7 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';

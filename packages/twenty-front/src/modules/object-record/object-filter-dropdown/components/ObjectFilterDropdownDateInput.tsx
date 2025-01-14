@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
 
-import { useApplyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useApplyRecordFilter';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
+import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';

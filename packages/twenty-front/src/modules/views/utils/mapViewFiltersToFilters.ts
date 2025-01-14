@@ -1,13 +1,13 @@
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from '~/utils/isDefined';
 
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],
-  availableFilterDefinitions: FilterDefinition[],
-): Filter[] => {
+  availableFilterDefinitions: RecordFilterDefinition[],
+): RecordFilter[] => {
   return viewFilters
     .map((viewFilter) => {
       const availableFilterDefinition = availableFilterDefinitions.find(

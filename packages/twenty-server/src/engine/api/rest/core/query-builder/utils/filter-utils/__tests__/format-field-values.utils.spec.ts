@@ -53,5 +53,23 @@ describe('formatFieldValue', () => {
     ).toThrow(
       "'filter' invalid for 'in' operator. Received '2024-12-01T14:23:23.914Z' but array value expected eg: 'field[in]:[value_1,value_2]'",
     );
+
+    expect(
+      formatFieldValue(
+        '["2023-12-01T14:23:23.914Z","2024-12-01T14:23:23.914Z"]',
+        undefined,
+        'containsAny',
+      ),
+    ).toEqual(['2023-12-01T14:23:23.914Z', '2024-12-01T14:23:23.914Z']);
+
+    expect(
+      formatFieldValue('[1,2]', FieldMetadataType.NUMBER, 'containsAny'),
+    ).toEqual([1, 2]);
+
+    expect(() =>
+      formatFieldValue('2024-12-01T14:23:23.914Z', undefined, 'containsAny'),
+    ).toThrow(
+      "'filter' invalid for 'containsAny' operator. Received '2024-12-01T14:23:23.914Z' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
+    );
   });
 });

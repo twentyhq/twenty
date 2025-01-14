@@ -427,6 +427,17 @@ export const DisabledWithVariable: Story = {
     defaultValue: `{{a.b.c}}`,
     onPersist: fn(),
     readonly: true,
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -92,6 +92,7 @@ export const FormFieldInput = ({
       options={field.metadata.options}
       clearLabel={field.label}
       readonly={readonly}
+      placeholder={field.label}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
@@ -157,6 +158,7 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       readonly={readonly}
+      placeholder={field.label}
     />
   ) : isFieldRawJson(field) ? (
     <FormRawJsonFieldInput

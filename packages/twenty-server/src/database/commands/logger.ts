@@ -28,12 +28,12 @@ export class CommandLogger {
     this.logger.error(message, stack, context);
   }
 
-  warn(message: string, context?: string) {
-    this.logger.warn(message, context);
+  warn(message: string, ...optionalParams: [...any, string?]) {
+    this.logger.warn(message, ...optionalParams);
   }
 
-  debug(message: string, context?: string) {
-    this.logger.debug(message, context);
+  debug(message: string, ...optionalParams: [...any, string?]) {
+    this.logger.debug(message, ...optionalParams);
   }
 
   verbose(message: string, ...optionalParams: [...any, string?]) {

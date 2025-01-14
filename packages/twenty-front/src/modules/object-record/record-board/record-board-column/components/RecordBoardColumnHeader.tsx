@@ -28,6 +28,7 @@ const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
 `;
+
 const StyledHeaderContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -38,6 +39,7 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
 `;
 
 const StyledRightContainer = styled.div`
@@ -55,6 +57,10 @@ const StyledColumn = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 
   position: relative;
+`;
+
+const StyledTag = styled(Tag)`
+  flex-shrink: 0;
 `;
 
 export const RecordBoardColumnHeader = () => {
@@ -106,7 +112,7 @@ export const RecordBoardColumnHeader = () => {
       >
         <StyledHeaderContainer>
           <StyledLeftContainer>
-            <Tag
+            <StyledTag
               onClick={handleBoardColumnMenuOpen}
               variant={
                 columnDefinition.type === RecordGroupDefinitionType.Value
