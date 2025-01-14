@@ -56,9 +56,9 @@ export class BillingPortalWorkspaceService {
       })
     )?.stripeCustomerId;
 
-    const session = await this.stripeCheckoutService.createCheckoutSession(
+    const session = await this.stripeCheckoutService.createCheckoutSession({
       user,
-      workspace.id,
+      workspaceId: workspace.id,
       priceId,
       quantity,
       successUrl,
@@ -66,7 +66,8 @@ export class BillingPortalWorkspaceService {
       stripeCustomerId,
       plan,
       requirePaymentMethod,
-    );
+      withTrialPeriod: !stripeCustomerId,
+    });
 
     assert(session.url, 'Error: missing checkout.session.url');
 
