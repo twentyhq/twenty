@@ -329,6 +329,7 @@ export const useAuth = () => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken,
+          ...(workspacePublicData?.id ? { id: workspacePublicData.id } : {}),
         },
       });
 
