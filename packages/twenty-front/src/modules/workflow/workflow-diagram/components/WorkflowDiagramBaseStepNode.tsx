@@ -63,7 +63,7 @@ const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  column-gap: ${({ theme }) => theme.spacing(3)};
+  column-gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ variant, theme }) =>
     variant === 'placeholder'
       ? theme.font.color.extraLight
