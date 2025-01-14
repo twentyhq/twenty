@@ -145,17 +145,22 @@ export class AuthResolver {
       },
     });
 
+    const { userData } = this.authService.formatUserDataPayload(
+      {
+        email: signUpInput.email,
+      },
+      existingUser,
+    );
+
     await this.authService.checkAccessForSignIn({
-      user: existingUser,
+      userData,
       invitation,
       workspaceInviteHash: signUpInput.workspaceInviteHash,
-      currentWorkspace,
+      workspace: currentWorkspace,
     });
 
     const { user, workspace } = await this.authService.signInUp({
-      ...(existingUser
-        ? { existingUser }
-        : { newUserParams: { email: signUpInput.email } }),
+      userData,
       workspace: currentWorkspace,
       invitation,
       authParams: {
