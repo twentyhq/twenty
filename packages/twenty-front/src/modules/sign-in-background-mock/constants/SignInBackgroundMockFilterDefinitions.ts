@@ -1,4 +1,4 @@
-import { RecordFilterDefinition } from "@/object-record/record-filter/types/RecordFilterDefinition";
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
   {
