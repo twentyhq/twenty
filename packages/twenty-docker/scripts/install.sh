@@ -90,10 +90,12 @@ else
 fi
 
 # Generate random strings for secrets
-echo "# === Randomly generated secrets ===" >>.env
+echo "# === Randomly generated secret ===" >>.env
 echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
-echo "" >>.env
-echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >>.env
+
+# Issue with Postgres spilo?
+#echo "" >>.env
+#echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >>.env
 
 echo -e "\t• .env configuration completed"
 
