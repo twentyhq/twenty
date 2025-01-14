@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
+import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -59,7 +60,7 @@ export class MicrosoftGetMessagesService {
   }
 
   public formatBatchResponsesAsMessages(
-    batchResponses: any[],
+    batchResponses: MicrosoftGraphBatchResponse[],
     connectedAccount: ConnectedAccountType,
   ): MessageWithParticipants[] {
     return batchResponses.flatMap((batchResponse) => {
@@ -71,7 +72,7 @@ export class MicrosoftGetMessagesService {
   }
 
   private formatBatchResponseAsMessages(
-    batchResponse: any,
+    batchResponse: MicrosoftGraphBatchResponse,
     connectedAccount: ConnectedAccountType,
   ): MessageWithParticipants[] {
     const parsedResponses = this.parseBatchResponse(batchResponse);
@@ -122,7 +123,7 @@ export class MicrosoftGetMessagesService {
     return messages.filter(isDefined);
   }
 
-  private parseBatchResponse(batchResponse: any) {
+  private parseBatchResponse(batchResponse: MicrosoftGraphBatchResponse) {
     if (!batchResponse?.responses) {
       return [];
     }

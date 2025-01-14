@@ -10,6 +10,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
+import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
@@ -40,7 +41,8 @@ describe('Microsoft get messages service', () => {
   });
 
   it('Should format batch responses as messages', () => {
-    const batchResponses = microsoftGraphBatchWithTwoMessagesResponse;
+    const batchResponses: MicrosoftGraphBatchResponse[] =
+      microsoftGraphBatchWithTwoMessagesResponse;
     const connectedAccount = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
@@ -129,7 +131,8 @@ describe('Microsoft get messages service', () => {
   });
 
   it('Should set empty text for html responses', () => {
-    const batchResponses = microsoftGraphBatchWithHtmlMessagesResponse;
+    const batchResponses: MicrosoftGraphBatchResponse[] =
+      microsoftGraphBatchWithHtmlMessagesResponse;
     const connectedAccount = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
