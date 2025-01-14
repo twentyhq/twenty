@@ -85,9 +85,10 @@ export class SendEmailWorkflowAction implements WorkflowAction {
     const result = emailSchema.safeParse(email);
 
     if (!result.success) {
-      this.logger.warn(`Email '${email}' invalid`);
-
-      return { result: { success: false } };
+      throw new SendEmailActionException(
+        `Email '${email}' invalid`,
+        SendEmailActionExceptionCode.INVALID_EMAIL,
+      );
     }
 
     const window = new JSDOM('').window;
