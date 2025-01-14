@@ -35,7 +35,7 @@ export class MicrosoftGetMessageListService {
       .api(syncCursor || '/me/mailfolders/inbox/messages/delta?$select=id')
       .version('beta')
       .headers({
-        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}`,
+        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
       })
       .get();
 
