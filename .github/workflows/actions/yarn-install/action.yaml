@@ -4,10 +4,14 @@ runs:
   using: "composite"
   steps:
     - name: Setup Node.js and get yarn cache
+      id: setup-node
       uses: actions/setup-node@v4
       with:
         node-version: 18
         cache: yarn
+    - name: Log if cache hit ${{ steps.setup-node.outputs.cache-hit }}
+      shell: bash
+      run: echo ${{ steps.setup-node.outputs.cache-hit }}
     - name: Install Dependencies
       shell: bash
       run: |
