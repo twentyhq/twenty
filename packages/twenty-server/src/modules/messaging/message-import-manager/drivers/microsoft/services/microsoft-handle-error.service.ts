@@ -13,14 +13,14 @@ export class MicrosoftHandleErrorService {
     if (error.statusCode === 401) {
       throw new MessageImportDriverException(
         'Unauthorized access to Microsoft Graph API',
-        MessageImportDriverExceptionCode.UNAUTHORIZED,
+        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
     }
 
     if (error.statusCode === 403) {
       throw new MessageImportDriverException(
         'Forbidden access to Microsoft Graph API',
-        MessageImportDriverExceptionCode.FORBIDDEN,
+        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
     }
 

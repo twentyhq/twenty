@@ -56,6 +56,10 @@ describe('Microsoft get messages service', () => {
     );
 
     expect(messages).toHaveLength(2);
+
+    const responseExample1 =
+      microsoftGraphBatchWithTwoMessagesResponse[0].responses[0];
+
     expect(
       messages.find(
         (message) =>
@@ -65,13 +69,11 @@ describe('Microsoft get messages service', () => {
     ).toStrictEqual({
       externalId:
         'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAAiVYkAAA',
-      subject: 'test email John: number 4',
-      receivedAt: new Date('2025-01-10T13:31:37.000Z'),
-      text: 'plain text format test 4',
-      headerMessageId:
-        '<FRZP194MB2383FF1CFE426952F85B1110981C3@FRAP194MB2383.EURP194.PROD.OUTLOOK.COM>',
-      messageThreadExternalId:
-        'AAQkAGZlMDQ1NjU5LTUzN2UtNDAyMC1hNmVlLTZhZmExMGU3ZDU1NwAQAAZhOZ86nXZElRkxyGJRiY8=',
+      subject: responseExample1.body.subject,
+      receivedAt: new Date(responseExample1.body.receivedDateTime),
+      text: responseExample1.body.body.content,
+      headerMessageId: responseExample1.body.internetMessageId,
+      messageThreadExternalId: responseExample1.body.conversationId,
       direction: 'OUTGOING',
       participants: [
         {
@@ -87,6 +89,10 @@ describe('Microsoft get messages service', () => {
       ],
       attachments: [],
     });
+
+    const responseExample2 =
+      microsoftGraphBatchWithTwoMessagesResponse[0].responses[1];
+
     expect(
       messages.filter(
         (message) =>
@@ -96,13 +102,11 @@ describe('Microsoft get messages service', () => {
     ).toStrictEqual({
       externalId:
         'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAA8ZAfgAA',
-      subject: 'test subject',
-      receivedAt: new Date('2025-01-13T09:38:06.000Z'),
-      text: 'You will send a message in the plain text format',
-      headerMessageId:
-        '<dfe8ac36-cf4c-4842-a506-034548452966@az.westus2.microsoft.com>',
-      messageThreadExternalId:
-        'AAQkAGZlMDQ1NjU5LTUzN2UtNDAyMC1hNmVlLTZhZmExMGU3ZDU1NwAQADz34qcnxpxEidnAJbZA-OI=',
+      subject: responseExample2.body.subject,
+      receivedAt: new Date(responseExample2.body.receivedDateTime),
+      text: responseExample2.body.body.content,
+      headerMessageId: responseExample2.body.internetMessageId,
+      messageThreadExternalId: responseExample2.body.conversationId,
       direction: 'INCOMING',
       participants: [
         {
@@ -145,21 +149,22 @@ describe('Microsoft get messages service', () => {
       connectedAccount,
     );
 
+    const responseExample =
+      microsoftGraphBatchWithHtmlMessagesResponse[0].responses[0];
+
     expect(messages[0]).toStrictEqual({
-      externalId:
-        'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAAiVYkAAA',
-      subject: 'test email John: number 5',
-      receivedAt: new Date('2025-01-10T13:31:37.000Z'),
+      externalId: responseExample.body.id,
+      subject: responseExample.body.subject,
+      receivedAt: new Date(responseExample.body.receivedDateTime),
       text: '',
-      headerMessageId:
-        '<FRZP194MB2383FF1CFE426952F85B1110981C3@FRAP194MB2383.EURP194.PROD.OUTLOOK.COM>',
-      messageThreadExternalId:
-        'AAQkAGZlMDQ1NjU5LTUzN2UtNDAyMC1hNmVlLTZhZmExMGU3ZDU1NwAQAAZhOZ86nXZElRkxyGJRiY9=',
+      headerMessageId: responseExample.body.internetMessageId,
+      messageThreadExternalId: responseExample.body.conversationId,
       direction: 'OUTGOING',
       participants: [
         {
-          displayName: 'John l',
-          handle: 'john.l@outlook.fr',
+          displayName: responseExample.body.sender.emailAddress.name,
+          handle:
+            responseExample.body.sender.emailAddress.address.toLowerCase(),
           role: 'from',
         },
       ],
