@@ -3,10 +3,8 @@ inputs:
   key:
     required: true
     description: Primary key to the cache, should be retrieved from `cache-restore` composite action outputs.
-    type: string
   additional-paths:
     required: false
-    type: string
 
 runs:
   using: "composite"
