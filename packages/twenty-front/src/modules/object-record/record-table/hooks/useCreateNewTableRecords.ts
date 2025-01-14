@@ -51,6 +51,7 @@ export const useCreateNewTableRecord = ({
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
+    shouldMatchRootQueryFilter: true,
   });
 
   const createNewTableRecord = async () => {
