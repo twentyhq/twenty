@@ -9,7 +9,7 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
 
-const StyledColumnFooterCell = styled.th<{
+const StyledColumnFooterCell = styled.td<{
   columnWidth: number;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -43,7 +43,6 @@ const StyledColumnFooterCell = styled.th<{
   *::-webkit-scrollbar {
     display: none;
   }
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledColumnFootContainer = styled.div`

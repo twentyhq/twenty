@@ -3,6 +3,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { getAggregateOperationShortLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
@@ -118,7 +119,7 @@ export const computeAggregateValueAndLabel = ({
       }
     }
   }
-  const label = getAggregateOperationLabel(aggregateOperation);
+  const label = getAggregateOperationShortLabel(aggregateOperation);
   const labelWithFieldName =
     aggregateOperation === AGGREGATE_OPERATIONS.count
       ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`

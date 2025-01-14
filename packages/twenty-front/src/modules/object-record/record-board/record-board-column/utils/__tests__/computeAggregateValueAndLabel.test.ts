@@ -171,7 +171,7 @@ describe('computeAggregateValueAndLabel', () => {
     });
 
     expect(result).toEqual({
-      label: 'Earliest date',
+      label: 'Earliest',
       labelWithFieldName: 'Earliest date of Created At',
       value: '1 Jan, 2023 12:00',
     });
@@ -207,7 +207,7 @@ describe('computeAggregateValueAndLabel', () => {
 
     expect(result).toEqual({
       value: '31 Dec, 2023 23:59',
-      label: 'Latest date',
+      label: 'Latest',
       labelWithFieldName: 'Latest date of Updated At',
     });
   });

@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -17,10 +17,10 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
-  const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const { resetSelectedItem } = useSelectableList('command-menu-list');
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -141,13 +141,12 @@ export const useCommandMenu = () => {
           actionMenuEntries,
         );
 
-        setIsCommandMenuOpened(true);
+        set(isCommandMenuOpenedState, true);
         setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
       },
     [
       mainContextStoreComponentInstanceId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setIsCommandMenuOpened,
     ],
   );
 
@@ -158,67 +157,69 @@ export const useCommandMenu = () => {
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
 
-        set(
-          contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          null,
-        );
-
-        set(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          {
-            mode: 'selection',
-            selectedRecordIds: [],
-          },
-        );
-
-        set(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          0,
-        );
-
-        set(
-          contextStoreFiltersComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          [],
-        );
-
-        set(
-          contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          null,
-        );
-
-        set(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          null,
-        );
-
-        set(
-          actionMenuEntriesComponentState.atomFamily({
-            instanceId: 'command-menu',
-          }),
-          new Map(),
-        );
-
         if (isCommandMenuOpened) {
+          set(
+            contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            null,
+          );
+
+          set(
+            contextStoreTargetedRecordsRuleComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            {
+              mode: 'selection',
+              selectedRecordIds: [],
+            },
+          );
+
+          set(
+            contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            0,
+          );
+
+          set(
+            contextStoreFiltersComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            [],
+          );
+
+          set(
+            contextStoreCurrentViewIdComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            null,
+          );
+
+          set(
+            contextStoreCurrentViewTypeComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            null,
+          );
+
+          set(
+            actionMenuEntriesComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            new Map(),
+          );
+
           set(viewableRecordIdState, null);
           set(commandMenuPageState, CommandMenuPages.Root);
-          setIsCommandMenuOpened(false);
+          set(isCommandMenuOpenedState, false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
+
+          emitRightDrawerCloseEvent();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [goBackToPreviousHotkeyScope, resetSelectedItem],
   );
 
   const toggleCommandMenu = useRecoilCallback(
@@ -250,10 +251,39 @@ export const useCommandMenu = () => {
     [openCommandMenu],
   );
 
+  const setGlobalCommandMenuContext = useRecoilCallback(({ set }) => {
+    return () => {
+      set(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        {
+          mode: 'selection',
+          selectedRecordIds: [],
+        },
+      );
+
+      set(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        0,
+      );
+
+      set(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: 'command-menu',
+        }),
+        null,
+      );
+    };
+  }, []);
+
   return {
     openCommandMenu,
     closeCommandMenu,
     openRecordInCommandMenu,
     toggleCommandMenu,
+    resetCommandMenuContext: setGlobalCommandMenuContext,
   };
 };

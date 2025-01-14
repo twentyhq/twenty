@@ -1,7 +1,7 @@
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { FilterDefinition } from './FilterDefinition';
 
-export type Filter = {
+export type RecordFilter = {
   id: string;
   variant?: 'default' | 'danger';
   fieldMetadataId: string;
@@ -11,5 +11,5 @@ export type Filter = {
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
   positionInViewFilterGroup?: number | null;
-  definition: FilterDefinition;
+  definition: RecordFilterDefinition;
 };
