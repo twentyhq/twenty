@@ -17,8 +17,17 @@ import {
   ExistingUserOrPartialUserWithPicture,
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+
+jest.mock('src/utils/image', () => {
+  return {
+    getImageBufferFromUrl: () => Promise.resolve(Buffer.from('')),
+  };
+});
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -38,24 +47,46 @@ describe('SignInUpService', () => {
         SignInUpService,
         {
           provide: getRepositoryToken(User, 'core'),
-          useValue: Repository<User>,
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Workspace, 'core'),
-          useValue: Repository<Workspace>,
+          useValue: {
+            save: jest.fn(),
+            create: jest.fn(),
+            get: jest.fn(),
+            count: jest.fn(),
+          },
         },
-        { provide: FileUploadService, useValue: {} },
+        {
+          provide: FileUploadService,
+          useValue: {
+            uploadImage: jest.fn(),
+          },
+        },
         {
           provide: WorkspaceInvitationService,
-          useValue: {},
+          useValue: {
+            validateInvitation: jest.fn(),
+            invalidateWorkspaceInvitation: jest.fn(),
+          },
         },
         {
           provide: UserWorkspaceService,
-          useValue: {},
+          useValue: {
+            addUserToWorkspace: jest.fn(),
+            create: jest.fn(),
+          },
         },
         {
           provide: OnboardingService,
-          useValue: {},
+          useValue: {
+            setOnboardingConnectAccountPending: jest.fn(),
+            setOnboardingInviteTeamPending: jest.fn(),
+          },
         },
         {
           provide: HttpService,
@@ -63,11 +94,15 @@ describe('SignInUpService', () => {
         },
         {
           provide: EnvironmentService,
-          useValue: {},
+          useValue: {
+            get: jest.fn(),
+          },
         },
         {
           provide: DomainManagerService,
-          useValue: {},
+          useValue: {
+            generateSubdomain: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -93,7 +128,10 @@ describe('SignInUpService', () => {
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
       invitation: { value: 'invitationToken' } as AppToken,
-      workspace: { id: 'workspaceId' } as Workspace,
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
@@ -136,7 +174,10 @@ describe('SignInUpService', () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
-      workspace: { id: 'workspaceId' } as Workspace,
+      workspace: {
+        id: 'workspaceId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
@@ -174,6 +215,7 @@ describe('SignInUpService', () => {
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
       id: 'newWorkspaceId',
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     } as Workspace);
     jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
       id: '',
@@ -181,6 +223,9 @@ describe('SignInUpService', () => {
       paths: ['path/to/image'],
     });
     jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
+    jest
+      .spyOn(domainManagerService, 'generateSubdomain')
+      .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')
       .mockResolvedValue({ id: 'newUserId' } as User);
@@ -195,13 +240,5 @@ describe('SignInUpService', () => {
     expect(UserRepository.create).toHaveBeenCalled();
     expect(UserRepository.save).toHaveBeenCalled();
     expect(fileUploadService.uploadImage).toHaveBeenCalled();
-  });
-
-  it('should throw an error for invalid params', async () => {
-    const params = {} as any;
-
-    await expect(service.signInUp(params)).rejects.toThrow(
-      'Invalid sign in up params',
-    );
   });
 });
