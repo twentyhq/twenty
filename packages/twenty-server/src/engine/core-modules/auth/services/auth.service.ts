@@ -190,6 +190,8 @@ export class AuthService {
       );
     }
 
+    console.log('>>>>>>>>>>>>>>', params);
+
     if (params.userData.type === 'newUser') {
       const partialUserWithPicture =
         await this.signInUpService.computeParamsForNewUser(
@@ -598,7 +600,7 @@ export class AuthService {
           workspace.id,
         );
       }
-      new AuthException(
+      throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
