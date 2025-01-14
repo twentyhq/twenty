@@ -3,10 +3,8 @@ inputs:
   key:
     required: true
     description: Prefix to the cache key
-    type: string
   additional-paths:
     required: false
-    type: string
 outputs:
   cache-primary-key:
     description: actions/cache/restore cache-primary-key outputs proxy
