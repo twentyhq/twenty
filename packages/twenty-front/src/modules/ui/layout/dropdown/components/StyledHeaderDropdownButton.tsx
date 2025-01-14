@@ -20,4 +20,14 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
 
   padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+
+  background: ${({ theme, isUnfolded }) =>
+    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+
+  &:hover {
+    background: ${({ theme, isUnfolded }) =>
+      isUnfolded
+        ? theme.background.transparent.medium
+        : theme.background.transparent.light};
+  }
 `;

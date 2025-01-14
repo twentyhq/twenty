@@ -19,6 +19,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -169,13 +170,18 @@ export const ObjectSortDropdownButton = ({
     setIsSortDirectionMenuUnfolded(false);
   };
 
+  const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
       dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
       clickableComponent={
-        <StyledHeaderDropdownButton onClick={handleButtonClick}>
+        <StyledHeaderDropdownButton
+          onClick={handleButtonClick}
+          isUnfolded={isDropdownOpen}
+        >
           Sort
         </StyledHeaderDropdownButton>
       }

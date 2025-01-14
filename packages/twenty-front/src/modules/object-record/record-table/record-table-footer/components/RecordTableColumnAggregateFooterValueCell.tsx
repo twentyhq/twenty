@@ -10,7 +10,7 @@ import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui';
 
-const StyledCell = styled.div`
+const StyledCell = styled.div<{ isUnfolded: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -23,6 +23,16 @@ const StyledCell = styled.div`
   min-width: ${({ theme }) => theme.spacing(7)};
   flex-grow: 1;
   width: 100%;
+
+  background: ${({ theme, isUnfolded }) =>
+    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+
+  &:hover {
+    background: ${({ theme, isUnfolded }) =>
+      isUnfolded
+        ? theme.background.transparent.medium
+        : theme.background.transparent.light};
+  }
 `;
 
 const StyledIcon = styled(IconChevronDown)`
@@ -66,7 +76,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
       }}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <StyledCell>
+      <StyledCell isUnfolded={isDropdownOpen}>
         {isHovered ||
         isDropdownOpen ||
         hasAggregateOperationForViewField ||
