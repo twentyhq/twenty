@@ -131,7 +131,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             text="Group by"
             contextualText={
               !isGroupByEnabled
-                ? 'Not available on Default view'
+                ? 'Not available on Default View'
                 : recordGroupFieldMetadata?.label
             }
             hasSubMenu
@@ -141,7 +141,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
         {!isGroupByEnabled && (
           <AppTooltip
             anchorSelect={`#group-by-menu-item`}
-            content="Not available on Default view"
+            content="Not available on Default View"
             noArrow
             place="bottom"
             width="100%"
