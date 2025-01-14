@@ -156,7 +156,7 @@ export const ChooseYourPlan = () => {
     handleCheckoutSession();
   }
 
-  if (billingCheckoutSession.skipPlanPage || isSubmitting) {
+  if (billingCheckoutSession.skipPlanPage && isSubmitting) {
     return <Loader />;
   }
 
