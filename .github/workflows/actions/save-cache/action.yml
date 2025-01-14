@@ -2,7 +2,7 @@ name: Save cache
 inputs:
   key:
     required: true
-    description: Prefix to the cache key, should be retrieve from `cache-restore` composite action.
+    description: Primary key to the cache, should be retrieved from `cache-restore` composite action outputs.
     type: string
   additional-paths:
     required: false
