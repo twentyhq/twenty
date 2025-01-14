@@ -421,13 +421,9 @@ export const useAuth = () => {
         );
       }
 
-      const verifyResult = await handleVerify(
+      const { user, workspace, workspaceMember } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
-
-      if (!verifyResult) return null;
-
-      const { user, workspaceMember, workspace } = verifyResult;
 
       setIsVerifyPendingState(false);
 
