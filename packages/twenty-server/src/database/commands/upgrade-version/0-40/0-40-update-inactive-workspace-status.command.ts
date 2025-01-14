@@ -194,7 +194,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
   ) {
     this.logger.warn(
       chalk.blue(
-        `(!!!) Deleting workspace and marking as suspended and deleting all data for workspace created at ${workspace.updatedAt} with subscription status ${billingSubscription?.status} and subscription updatedAt ${billingSubscription?.updatedAt} and canceledAt ${billingSubscription?.canceledAt}`,
+        `(!!!) Deleting workspace and marking as suspended and deleting all data for workspace updated at ${workspace.updatedAt} with subscription status ${billingSubscription?.status} and subscription updatedAt ${billingSubscription?.updatedAt} and canceledAt ${billingSubscription?.canceledAt}`,
       ),
     );
 
@@ -226,7 +226,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
           });
 
         if (remainingUserWorkspaces === 0) {
-          await this.userRepository.softRemove(userWorkspace.user);
+          await this.userRepository.softRemove({ id: userWorkspace.userId });
         }
       }
 
