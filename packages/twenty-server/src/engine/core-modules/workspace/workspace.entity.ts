@@ -27,6 +27,7 @@ export enum WorkspaceActivationStatus {
   PENDING_CREATION = 'PENDING_CREATION',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
 }
 
 registerEnumType(WorkspaceActivationStatus, {
@@ -109,6 +110,7 @@ export class Workspace {
   @Field(() => WorkspaceActivationStatus)
   @Column({
     type: 'enum',
+    enumName: 'workspace_activationStatus_enum',
     enum: WorkspaceActivationStatus,
     default: WorkspaceActivationStatus.INACTIVE,
   })
