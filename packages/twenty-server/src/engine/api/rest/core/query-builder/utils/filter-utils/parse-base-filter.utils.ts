@@ -4,6 +4,7 @@ export enum FilterComparators {
   eq = 'eq',
   neq = 'neq',
   in = 'in',
+  containsAny = 'containsAny',
   is = 'is',
   gt = 'gt',
   gte = 'gte',
@@ -59,7 +60,7 @@ export const parseBaseFilter = (
     throw new BadRequestException(
       `'filter' invalid for '${baseFilter}', comparator ${comparator} not in ${Object.keys(
         FilterComparators,
-      ).join(',')}`,
+      ).join(', ')}`,
     );
   }
 
