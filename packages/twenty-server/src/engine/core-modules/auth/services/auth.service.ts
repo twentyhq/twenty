@@ -576,7 +576,7 @@ export class AuthService {
     if (params.authProvider === 'password' && params.workspaceId) {
       return (
         (await this.workspaceRepository.findOneBy({
-          id: workspaceId,
+          id: params.workspaceId,
         })) ?? undefined
       );
     }
@@ -607,11 +607,8 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    console.log('>>>>>>>>>>>>>> STEP 1');
     if (!invitation && !workspaceInviteHash && workspace) {
-      console.log('>>>>>>>>>>>>>> STEP 2');
       if (userData.type === 'existingUser') {
-        console.log('>>>>>>>>>>>>>> STEP 3');
         await this.userService.hasUserAccessToWorkspaceOrThrow(
           userData.existingUser.id,
           workspace.id,
