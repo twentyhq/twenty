@@ -132,6 +132,7 @@ export class AuthResolver {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
       authProvider: 'password',
+      workspaceId: signUpInput.workspaceId,
     });
 
     const invitation = await this.authService.findInvitationForSignInUp({

@@ -553,21 +553,35 @@ export class AuthService {
       | { authProvider: Extract<WorkspaceAuthProvider, 'password'> }
     ),
   ) {
-    const workspace = params.workspaceInviteHash
-      ? await this.workspaceRepository.findOneBy({
+    if (params.workspaceInviteHash) {
+      return (
+        (await this.workspaceRepository.findOneBy({
           inviteHash: params.workspaceInviteHash,
-        })
-      : params.authProvider !== 'password'
-        ? await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
-            {
-              email: params.email,
-              authProvider: params.authProvider,
-            },
-            params.workspaceId,
-          )
-        : null;
+        })) ?? undefined
+      );
+    }
 
-    return workspace ?? undefined;
+    if (params.authProvider !== 'password') {
+      return (
+        (await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+          {
+            email: params.email,
+            authProvider: params.authProvider,
+          },
+          params.workspaceId,
+        )) ?? undefined
+      );
+    }
+
+    if (params.authProvider === 'password' && params.workspaceId) {
+      return (
+        (await this.workspaceRepository.findOneBy({
+          id: workspaceId,
+        })) ?? undefined
+      );
+    }
+
+    return undefined;
   }
 
   formatUserDataPayload(
