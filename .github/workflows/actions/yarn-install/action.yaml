@@ -12,8 +12,15 @@ runs:
     - name: Log if cache hit ${{ steps.setup-node.outputs.cache-hit }}
       shell: bash
       run: echo ${{ steps.setup-node.outputs.cache-hit }}
-    - name: Install Dependencies
+    - name: Install Dependencies from cache
       shell: bash
+      if: ${{ steps.setup-node.outputs.cache-hit == 'true' }}
       run: |
         yarn config set enableHardenedMode false
+        yarn --immutable --prefer-offline
+    - name: Install Dependencies
+      if: ${{ steps.setup-node.outputs.cache-hit == 'false' }}
+      shell: bash
+      run: |
+        yarn config set enableHardenedMode true
         yarn --immutable --check-cache
