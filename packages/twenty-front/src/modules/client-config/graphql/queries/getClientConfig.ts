@@ -6,7 +6,10 @@ export const GET_CLIENT_CONFIG = gql`
       billing {
         isBillingEnabled
         billingUrl
-        billingFreeTrialDurationInDays
+        trialPeriods {
+          duration
+          isCreditCardRequired
+        }
       }
       authProviders {
         google

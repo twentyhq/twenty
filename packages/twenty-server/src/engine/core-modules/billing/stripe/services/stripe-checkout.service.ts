@@ -49,13 +49,18 @@ export class StripeCheckoutService {
           plan,
         },
         trial_period_days: this.environmentService.get(
-          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
+          requirePaymentMethod
+            ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
+            : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
         ),
+        trial_settings: { end_behavior: { missing_payment_method: 'pause' } },
       },
       automatic_tax: { enabled: !!requirePaymentMethod },
       tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
-      customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
+      customer_update: stripeCustomerId
+        ? { name: 'auto', address: 'auto' }
+        : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
