@@ -7,6 +7,7 @@ import { RecordBoardColumnHeaderAggregateDropdownMenuItem } from '@/object-recor
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -17,6 +18,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconChevronLeft } from 'twenty-ui';
 
@@ -49,6 +51,10 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   );
 
   const { updateViewAggregate } = useUpdateViewAggregate();
+
+  const recordIndexKanbanAggregateOperation = useRecoilValue(
+    recordIndexKanbanAggregateOperationState,
+  );
 
   return (
     <>
@@ -96,7 +102,10 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                     : true
                 }
                 RightIcon={
-                  availableAggregationOperation === AGGREGATE_OPERATIONS.count
+                  availableAggregationOperation ===
+                    AGGREGATE_OPERATIONS.count &&
+                  recordIndexKanbanAggregateOperation?.operation ===
+                    AGGREGATE_OPERATIONS.count
                     ? IconCheck
                     : undefined
                 }
