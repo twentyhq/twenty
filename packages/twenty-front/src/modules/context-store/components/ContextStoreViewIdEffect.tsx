@@ -17,8 +17,7 @@ export const ContextStoreViewIdEffect = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const { getFiltersFromQueryParams, viewIdQueryParam } =
-    useViewFromQueryParams();
+  const { viewIdQueryParam } = useViewFromQueryParams();
 
   const { records: viewsOnCurrentObject } = usePrefetchedData<View>(
     PrefetchKey.AllViews,
@@ -91,10 +90,8 @@ export const ContextStoreViewIdEffect = ({
       setContextStoreCurrentViewId(null);
     };
   }, [
-    getFiltersFromQueryParams,
     isLastVisitedObjectMetadataItemDifferent,
     lastVisitedViewId,
-    objectMetadataItemId?.id,
     objectNamePlural,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataItem,
