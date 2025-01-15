@@ -105,17 +105,17 @@ export class AdminPanelService {
           firstName: workspaceUser.user.firstName,
           lastName: workspaceUser.user.lastName,
         })),
-        featureFlags: allFeatureFlagKeys.map((key) => ({
-          key,
-          value:
-            userWorkspace.workspace.featureFlags?.find(
-              (flag) => flag.key === key,
-            )?.value ?? false,
-          isPublic:
-            userWorkspace.workspace.featureFlags?.find(
-              (flag) => flag.key === key,
-            )?.isPublic ?? false,
-        })) as FeatureFlagEntity[],
+        featureFlags: allFeatureFlagKeys.map((key) => {
+          const foundFlag = userWorkspace.workspace.featureFlags?.find(
+            (flag) => flag.key === key,
+          );
+
+          return {
+            key,
+            value: foundFlag?.value ?? false,
+            isPublic: foundFlag?.isPublic ?? false,
+          };
+        }) as FeatureFlagEntity[],
       })),
     };
   }
