@@ -174,7 +174,7 @@ export class MessageImportExceptionHandlerService {
     );
 
     throw new MessageImportDriverException(
-      `SuncCursor error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      `SyncCursor error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
       MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
     );
   }
