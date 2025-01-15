@@ -73,13 +73,23 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
+    type: FieldMetadataType.RICH_TEXT,
+    label: 'Body',
+    description: 'Note body',
+    icon: 'IconFilePencil',
+  })
+  @WorkspaceIsNullable()
+  [BODY_FIELD_NAME]: string | null;
+
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: 'Body',
     description: 'Note body',
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: RichTextV2Metadata | null;
+  bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
