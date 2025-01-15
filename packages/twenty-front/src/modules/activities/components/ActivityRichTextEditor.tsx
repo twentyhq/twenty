@@ -70,19 +70,19 @@ export const ActivityRichTextEditor = ({
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    const body = richTextV2BodyExists
+    const input = richTextV2BodyExists
       ? {
-          blocknote,
-          markdown: null,
+          bodyV2: {
+            blocknote,
+            markdown: null,
+          },
         }
-      : (blocknote as any);
+      : { body: blocknote as any };
 
     if (isDefined(activity)) {
       upsertActivity({
         activity,
-        input: {
-          body,
-        },
+        input,
       });
     }
   }, 300);
