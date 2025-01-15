@@ -26,7 +26,7 @@ runs:
         key: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
         restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
         path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
-    - name: Install Dependencies ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
+    - name: Install Dependencies
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
