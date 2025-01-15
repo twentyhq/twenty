@@ -28,7 +28,7 @@ export const useSnackBar = () => {
 
   const setSnackBarQueue = useRecoilCallback(
     ({ set }) =>
-      (newValue) =>
+      (newValue: SnackBarOptions) =>
         set(snackBarInternalScopedState({ scopeId }), (prev) => {
           if (
             isDefined(newValue.dedupeKey) &&
