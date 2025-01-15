@@ -63,7 +63,6 @@ export const RecordIndexPage = () => {
   );
 
   return (
-    isDefined(objectNamePlural) &&
     isDefined(contextStoreCurrentViewId) && (
       <PageContainer>
         <RecordIndexContextProvider
