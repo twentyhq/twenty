@@ -29,7 +29,7 @@ export class MessagingGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     switch (connectedAccount.provider) {
