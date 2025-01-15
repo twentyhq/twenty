@@ -44,15 +44,6 @@ export const ContextStoreViewIdEffect = ({
     objectNamePlural,
   );
 
-  // // TODO: scope view bar per view id if possible
-  // const { resetCurrentView } = useResetCurrentView();
-
-  // useEffect(() => {
-  //   if (isDefined(currentViewId)) {
-  //     resetCurrentView();
-  //   }
-  // }, [resetCurrentView, currentViewId]);
-
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
