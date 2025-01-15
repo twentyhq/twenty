@@ -41,6 +41,10 @@ export class FeatureFlagEntity {
   @Column({ nullable: false })
   value: boolean;
 
+  @Field()
+  @Column({ nullable: false, default: false })
+  isPublic: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
