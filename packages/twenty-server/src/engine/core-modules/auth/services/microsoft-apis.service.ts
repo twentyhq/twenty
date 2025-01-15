@@ -170,7 +170,7 @@ export class MicrosoftAPIsService {
           },
           {
             syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
             syncCursor: '',
             syncStageStartedAt: null,
           },
