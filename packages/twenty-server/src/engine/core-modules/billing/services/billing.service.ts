@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
+import { Repository } from 'typeorm';
 
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -16,6 +18,8 @@ export class BillingService {
     private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly isFeatureEnabledService: FeatureFlagService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   isBillingEnabled() {
@@ -39,14 +43,16 @@ export class BillingService {
       return true;
     }
 
-    return await this.billingSubscriptionService.hasWorkspaceBillingSubscription(
-      workspaceId,
-    );
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: { workspaceId },
+    });
+
+    return isDefined(subscription);
   }
 
-  async hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+  async hasFreeAccessOrEntitlement(
     workspaceId: string,
-    entitlementKey?: BillingEntitlementKey,
+    entitlementKey: BillingEntitlementKey,
   ) {
     const isBillingEnabled = this.isBillingEnabled();
 
@@ -64,25 +70,9 @@ export class BillingService {
       return true;
     }
 
-    if (entitlementKey) {
-      return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
-        workspaceId,
-        entitlementKey,
-      );
-    }
-
-    const currentBillingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
-
-    return (
-      isDefined(currentBillingSubscription) &&
-      [
-        SubscriptionStatus.Active,
-        SubscriptionStatus.Trialing,
-        SubscriptionStatus.PastDue,
-      ].includes(currentBillingSubscription.status)
+    return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
+      workspaceId,
+      entitlementKey,
     );
   }
 }
