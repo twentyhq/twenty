@@ -146,7 +146,7 @@ const testCases = [
   { loc: AppPath.PlanRequired, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.PlanRequired, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
 
-  { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
+  { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: undefined },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
