@@ -4,7 +4,6 @@ on:
 
 jobs:
   ci-server-final:
-    if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8
     steps:

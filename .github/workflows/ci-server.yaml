@@ -179,5 +179,6 @@ jobs:
           name: reset-logs
           path: reset-logs.log
   ci-server-final:
+    if: always() && !cancelled()
     needs: [prerequisites, server-setup, server-test, server-integration-test]
     uses: ./.github/workflows/ci-final-check.yaml
