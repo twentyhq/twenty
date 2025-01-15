@@ -21,18 +21,27 @@ runs:
       uses: actions/cache/restore@v4
       with:
         key: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
+        restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
         path: |
           node_modules
           packages/*/node_modules
-        restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
+    - name: Run logs
+      shell: bash
+      run: |
+        echo ${{ steps.cache-node-modules.outputs.cache-matched-key }}
+        echo ${{ steps.cache-node-modules.outputs.cache-hit }}
+        echo ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
+        echo ${{ steps.restore-cache.outputs.cache-matched-key == '' }}
+        echo WTF${{ steps.restore-cache.outputs.cache-matched-key != '' }}
+        echo ${{ steps.restore-cache.outputs.cache-hit != 'true' && steps.restore-cache.outputs.cache-matched-key == '' }}
     - name: Install Dependencies
-      if: steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key != ''
+      if: ${{ steps.restore-cache.outputs.cache-hit != 'true' && steps.restore-cache.outputs.cache-matched-key == '' }}
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
         yarn config set enableHardenedMode true
         yarn --immutable --check-cache
     - name: Save cache
-      if: steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key != ''
+      if: ${{ steps.restore-cache.outputs.cache-hit != 'true' && steps.restore-cache.outputs.cache-matched-key == '' }}
       uses: actions/cache/save@v4
       with:
         key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
