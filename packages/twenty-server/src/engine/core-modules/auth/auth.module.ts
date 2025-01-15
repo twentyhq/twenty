@@ -43,6 +43,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -103,6 +104,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     SwitchWorkspaceService,
     TransientTokenService,
     ApiKeyService,
+    SocialSsoService,
     // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
     // OAuthService,
   ],
