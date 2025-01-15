@@ -9,10 +9,6 @@ runs:
       run: |
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
         echo "NODE_VERSION=18" >> "${GITHUB_OUTPUT}"
-    - name: Logs TMP
-      shell: bash
-      run: |
-        echo ${{ toJson(steps.globals.outputs) }}
     - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@v4
       with:
