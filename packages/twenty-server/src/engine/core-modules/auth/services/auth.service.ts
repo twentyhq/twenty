@@ -475,48 +475,6 @@ export class AuthService {
     return url.toString();
   }
 
-  async findAvailableWorkspacesByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceSSOIdentityProviders',
-      ],
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
-      id: userWorkspace.workspaceId,
-      displayName: userWorkspace.workspace.displayName,
-      subdomain: userWorkspace.workspace.subdomain,
-      logo: userWorkspace.workspace.logo,
-      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
-  }
-
   async findInvitationForSignInUp({
     currentWorkspace,
     workspacePersonalInviteToken,
