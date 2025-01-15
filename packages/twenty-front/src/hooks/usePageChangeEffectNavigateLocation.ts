@@ -43,7 +43,8 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PlanRequired &&
-    !isMatchingLocation(AppPath.PlanRequired)
+    !isMatchingLocation(AppPath.PlanRequired) &&
+    !isMatchingLocation(AppPath.PlanRequiredSuccess)
   ) {
     return AppPath.PlanRequired;
   }
