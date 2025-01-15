@@ -30,7 +30,7 @@ runs:
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
         yarn config set enableHardenedMode true
-        yarn --immutable --check-cache
+        yarn --immutable --immutable-cache --check-cache
     - name: Save cache
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
       uses: actions/cache/save@v4
