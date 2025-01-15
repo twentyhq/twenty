@@ -189,6 +189,7 @@ jobs:
           name: reset-logs
           path: reset-logs.log
   ci-server-final:
+    if: always()
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: [changed-files, server-test, server-integration-test]
