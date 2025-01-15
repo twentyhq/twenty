@@ -184,4 +184,7 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     needs: [prerequisites, server-setup, server-test, server-integration-test]
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/workflows/actions/rethrow-needs-failure
