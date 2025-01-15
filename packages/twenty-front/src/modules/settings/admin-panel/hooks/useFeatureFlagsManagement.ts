@@ -93,7 +93,7 @@ export const useFeatureFlagsManagement = () => {
         workspaceId,
         featureFlag,
         value: updateData.value ?? currentValue ?? false,
-        isPublic: updateData.isPublic,
+        isPublic: updateData.isPublic ?? false,
       },
       onError: (error) => {
         if (isDefined(previousUserLookupResult)) {
