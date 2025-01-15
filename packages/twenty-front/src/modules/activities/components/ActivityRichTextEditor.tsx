@@ -173,7 +173,7 @@ export const ActivityRichTextEditor = ({
 
   const initialBody = useMemo(() => {
     const blocknote = richTextV2BodyExists
-      ? activity?.bodyV2.blocknote
+      ? activity?.bodyV2?.blocknote
       : activity?.body;
 
     if (

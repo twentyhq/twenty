@@ -4,7 +4,7 @@ export type Activity = {
   updatedAt: string;
   title: string;
   body: string | null;
-  bodyV2: {
+  bodyV2?: {
     blocknote: string | null;
     markdown: string | null;
   };

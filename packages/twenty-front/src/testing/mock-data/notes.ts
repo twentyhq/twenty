@@ -9,7 +9,8 @@ export const mockedNotes: Array<MockedNote> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first note',
-    body: {
+    body: null,
+    bodyV2: {
       blocknote: null,
       markdown: null,
     },
@@ -67,7 +68,8 @@ export const mockedNotes: Array<MockedNote> = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     title: 'Another note',
-    body: {
+    body: null,
+    bodyV2: {
       blocknote: null,
       markdown: null,
     },
