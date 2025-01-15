@@ -13,26 +13,18 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.globals.outputs.NODE_VERSION }}
+    # Could use changed files to detect updates to package.json and lockfile ?
     - name: Restore node_modules
       id: cache-node-modules
       uses: actions/cache/restore@v4
       with:
-        key: node_modules-cache-${{ steps.globals.outputs.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
+        key: node_modules-cache-node-${{ steps.globals.outputs.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
         path: |
           node_modules
           packages/*/node_modules
         # restore-keys: root-node_modules- we don't want partial hit but hashfile direct hit
-    - name: Log if cache hit ${{ steps.cache-node-modules.outputs.cache-hit }}
-      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
-      run: echo ${{ steps.cache-node-modules.outputs.cache-hit }}
-    - name: Install Dependencies from cache
-      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
-      if: ${{ steps.cache-node-modules.outputs.cache-hit == 'true' }}
-      run: |
-        yarn config set enableHardenedMode false
-        yarn --mode=update-lockfile
     - name: Install Dependencies
-      if: ${{ steps.cache-node-modules.outputs.cache-hit == 'false' }}
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
         yarn config set enableHardenedMode true
