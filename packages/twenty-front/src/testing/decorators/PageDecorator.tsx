@@ -22,6 +22,7 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { IconsProvider } from 'twenty-ui';
@@ -82,7 +83,13 @@ const Providers = () => {
                       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                         <IconsProvider>
                           <PrefetchDataProvider>
-                            <Outlet />
+                            <RecordFiltersComponentInstanceContext.Provider
+                              value={{
+                                instanceId: 'storybook-test-record-filters',
+                              }}
+                            >
+                              <Outlet />
+                            </RecordFiltersComponentInstanceContext.Provider>
                           </PrefetchDataProvider>
                         </IconsProvider>
                       </SnackBarProviderScope>
