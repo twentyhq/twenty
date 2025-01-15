@@ -21,8 +21,6 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -44,7 +42,6 @@ const StyledButtonContainer = styled.div`
 export const PaymentSuccess = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
   const subscriptionStatus = useSubscriptionStatus();
   const onboardingStatus = useOnboardingStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
@@ -69,12 +66,9 @@ export const PaymentSuccess = () => {
       return;
     }
 
-    enqueueSnackBar(
+    throw new Error(
       "We're waiting for a confirmation from our payment provider (Stripe).\n" +
         'Please try again in a few seconds, sorry.',
-      {
-        variant: SnackBarVariant.Warning,
-      },
     );
   };
 
