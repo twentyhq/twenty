@@ -1,6 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings, getOsControlSymbol } from 'twenty-ui';
+import {
+  IconRobot,
+  IconSearch,
+  IconSettings,
+  getOsControlSymbol,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -56,6 +61,14 @@ export const MainNavigationDrawerItems = () => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
             Icon={IconSettings}
+          />
+          <NavigationDrawerItem
+            label="Chatbot"
+            to={'/chatbot'}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconRobot}
           />
         </StyledMainSection>
       )}
