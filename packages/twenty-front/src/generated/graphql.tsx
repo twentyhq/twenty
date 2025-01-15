@@ -919,7 +919,6 @@ export type Query = {
   listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
-  publicFeatureFlags: Array<FeatureFlag>;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -2083,11 +2082,6 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean, isPublic: boolean }> }> } };
-
-export type GetPublicFeatureFlagsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetPublicFeatureFlagsQuery = { __typename?: 'Query', publicFeatureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean, isPublic: boolean }> };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3657,42 +3651,6 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
-export const GetPublicFeatureFlagsDocument = gql`
-    query GetPublicFeatureFlags {
-  publicFeatureFlags {
-    key
-    value
-    isPublic
-  }
-}
-    `;
-
-/**
- * __useGetPublicFeatureFlagsQuery__
- *
- * To run a query within a React component, call `useGetPublicFeatureFlagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPublicFeatureFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetPublicFeatureFlagsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetPublicFeatureFlagsQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicFeatureFlagsQuery, GetPublicFeatureFlagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPublicFeatureFlagsQuery, GetPublicFeatureFlagsQueryVariables>(GetPublicFeatureFlagsDocument, options);
-      }
-export function useGetPublicFeatureFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicFeatureFlagsQuery, GetPublicFeatureFlagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPublicFeatureFlagsQuery, GetPublicFeatureFlagsQueryVariables>(GetPublicFeatureFlagsDocument, options);
-        }
-export type GetPublicFeatureFlagsQueryHookResult = ReturnType<typeof useGetPublicFeatureFlagsQuery>;
-export type GetPublicFeatureFlagsLazyQueryHookResult = ReturnType<typeof useGetPublicFeatureFlagsLazyQuery>;
-export type GetPublicFeatureFlagsQueryResult = Apollo.QueryResult<GetPublicFeatureFlagsQuery, GetPublicFeatureFlagsQueryVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {

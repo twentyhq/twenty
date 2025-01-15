@@ -28,7 +28,7 @@ const StyledFlagName = styled.span`
 
 export const SettingsLabsContent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { handleFeatureFlagUpdate } = useFeatureFlagsManagement();
+  const { updateFeatureFlagValue } = useFeatureFlagsManagement();
 
   const publicFlags =
     currentWorkspace?.featureFlags?.filter((flag) => flag.isPublic) ?? [];
@@ -36,7 +36,7 @@ export const SettingsLabsContent = () => {
   const handleToggle = async (key: FeatureFlagKey, value: boolean) => {
     if (!currentWorkspace?.id) return;
 
-    await handleFeatureFlagUpdate(currentWorkspace.id, key, value, true);
+    await updateFeatureFlagValue(currentWorkspace.id, key, value);
   };
 
   return (

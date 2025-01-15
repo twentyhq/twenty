@@ -20,6 +20,6 @@ export class UpdateWorkspaceFeatureFlagInput {
   value: boolean;
 
   @Field(() => Boolean, { nullable: true })
-  @IsBoolean()
+  @IsBoolean({ always: false })
   isPublic?: boolean;
 }

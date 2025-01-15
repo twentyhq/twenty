@@ -84,7 +84,8 @@ export const SettingsAdminContent = () => {
   const {
     userLookupResult,
     handleUserLookup,
-    handleFeatureFlagUpdate,
+    updateFeatureFlagValue,
+    updateFeatureFlagIsPublic,
     isLoading,
     error,
   } = useFeatureFlagsManagement();
@@ -177,10 +178,9 @@ export const SettingsAdminContent = () => {
                   <Toggle
                     value={flag.isPublic}
                     onChange={(newValue) =>
-                      handleFeatureFlagUpdate(
+                      updateFeatureFlagIsPublic(
                         activeWorkspace.id,
                         flag.key,
-                        flag.value,
                         newValue,
                       )
                     }
@@ -190,11 +190,10 @@ export const SettingsAdminContent = () => {
                   <Toggle
                     value={flag.value}
                     onChange={(newValue) =>
-                      handleFeatureFlagUpdate(
+                      updateFeatureFlagValue(
                         activeWorkspace.id,
                         flag.key,
                         newValue,
-                        flag.isPublic,
                       )
                     }
                   />

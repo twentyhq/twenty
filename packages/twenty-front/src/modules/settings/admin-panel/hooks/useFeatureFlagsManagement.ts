@@ -32,9 +32,7 @@ export const useFeatureFlagsManagement = () => {
     },
   });
 
-  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation({
-    refetchQueries: ['GetCurrentUser'],
-  });
+  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
 
   const handleUserLookup = async (userIdentifier: string) => {
     setError(null);
@@ -48,14 +46,14 @@ export const useFeatureFlagsManagement = () => {
     return response.data?.userLookupAdminPanel;
   };
 
-  const handleFeatureFlagUpdate = async (
+  const updateFeatureFlags = async (
     workspaceId: string,
     featureFlag: FeatureFlagKey,
-    value: boolean,
-    isPublic?: boolean,
+    updateData: { value?: boolean; isPublic?: boolean },
   ) => {
     setError(null);
-    const previousState = userLookupResult;
+    const previousUserLookupResult = userLookupResult;
+    const previousWorkspace = currentWorkspace;
 
     if (isDefined(userLookupResult)) {
       setUserLookupResult({
@@ -65,9 +63,7 @@ export const useFeatureFlagsManagement = () => {
             ? {
                 ...workspace,
                 featureFlags: workspace.featureFlags.map((flag) =>
-                  flag.key === featureFlag
-                    ? { ...flag, value, isPublic: isPublic ?? flag.isPublic }
-                    : flag,
+                  flag.key === featureFlag ? { ...flag, ...updateData } : flag,
                 ),
               }
             : workspace,
@@ -82,24 +78,29 @@ export const useFeatureFlagsManagement = () => {
         return {
           ...prev,
           featureFlags: prev.featureFlags?.map((flag) =>
-            flag.key === featureFlag
-              ? { ...flag, value, isPublic: isPublic ?? flag.isPublic }
-              : flag,
+            flag.key === featureFlag ? { ...flag, ...updateData } : flag,
           ),
         };
       });
     }
 
+    const currentValue = userLookupResult?.workspaces
+      .find((w) => w.id === workspaceId)
+      ?.featureFlags.find((f) => f.key === featureFlag)?.value;
+
     const response = await updateFeatureFlag({
       variables: {
         workspaceId,
         featureFlag,
-        value,
-        isPublic,
+        value: updateData.value ?? currentValue ?? false,
+        isPublic: updateData.isPublic,
       },
       onError: (error) => {
-        if (isDefined(previousState)) {
-          setUserLookupResult(previousState);
+        if (isDefined(previousUserLookupResult)) {
+          setUserLookupResult(previousUserLookupResult);
+        }
+        if (isDefined(previousWorkspace)) {
+          setCurrentWorkspace(previousWorkspace);
         }
         setError(error.message);
       },
@@ -108,10 +109,23 @@ export const useFeatureFlagsManagement = () => {
     return !!response.data;
   };
 
+  const updateFeatureFlagValue = (
+    workspaceId: string,
+    featureFlag: FeatureFlagKey,
+    value: boolean,
+  ) => updateFeatureFlags(workspaceId, featureFlag, { value });
+
+  const updateFeatureFlagIsPublic = (
+    workspaceId: string,
+    featureFlag: FeatureFlagKey,
+    isPublic: boolean,
+  ) => updateFeatureFlags(workspaceId, featureFlag, { isPublic });
+
   return {
     userLookupResult,
     handleUserLookup,
-    handleFeatureFlagUpdate,
+    updateFeatureFlagValue,
+    updateFeatureFlagIsPublic,
     isLoading,
     error,
   };
