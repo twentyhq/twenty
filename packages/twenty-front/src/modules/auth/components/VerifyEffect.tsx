@@ -29,6 +29,7 @@ export const VerifyEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
+        dedupeKey: 'verify-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }

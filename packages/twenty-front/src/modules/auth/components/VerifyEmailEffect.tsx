@@ -25,6 +25,7 @@ export const VerifyEmailEffect = () => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
         enqueueSnackBar(`Invalid email verification link.`, {
+          dedupeKey: 'email-verification-link-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         return navigate(AppPath.SignInUp);
@@ -39,12 +40,14 @@ export const VerifyEmailEffect = () => {
         );
 
         enqueueSnackBar('Email verified.', {
+          dedupeKey: 'email-verified-dedupe-key',
           variant: SnackBarVariant.Success,
         });
 
         navigate(`${AppPath.Verify}?loginToken=${loginToken.token}`);
       } catch (error) {
         enqueueSnackBar('Email verification failed.', {
+          dedupeKey: 'email-verification-failed-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         setIsError(true);
