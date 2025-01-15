@@ -22,10 +22,10 @@ export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
-  const displayBillingSubsriptionPausedBanner =
+  const displayBillingSubscriptionPausedBanner =
     isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
 
-  const displayBillingSubsriptionCanceledBanner =
+  const displayBillingSubscriptionCanceledBanner =
     isWorkspaceSuspended && !isDefined(subscriptionStatus);
 
   const displayFailPaymentInfoBanner =
@@ -36,10 +36,10 @@ export const InformationBannerWrapper = () => {
     <StyledInformationBannerWrapper>
       <InformationBannerReconnectAccountInsufficientPermissions />
       <InformationBannerReconnectAccountEmailAliases />
-      {displayBillingSubsriptionPausedBanner && (
+      {displayBillingSubscriptionPausedBanner && (
         <InformationBannerBillingSubscriptionPaused />
       )}
-      {displayBillingSubsriptionCanceledBanner && (
+      {displayBillingSubscriptionCanceledBanner && (
         <InformationBannerNoBillingSubscription />
       )}
       {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}

@@ -146,7 +146,7 @@ export const ChooseYourPlan = () => {
           <SubTitle>Cancel anytime</SubTitle>
         ) : (
           withCreditCardTrialPeriod && (
-            <SubTitle>{`Enjoy a ${withCreditCardTrialPeriod.duration}-free trial`}</SubTitle>
+            <SubTitle>{`Enjoy a ${withCreditCardTrialPeriod.duration}-days free trial`}</SubTitle>
           )
         )}
         <StyledSubscriptionContainer
@@ -159,14 +159,14 @@ export const ChooseYourPlan = () => {
             />
           </StyledSubscriptionPriceContainer>
           <StyledBenefitsContainer>
-            {benefits.map((benefit, index) => (
-              <SubscriptionBenefit key={index}>{benefit}</SubscriptionBenefit>
+            {benefits.map((benefit) => (
+              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
             ))}
           </StyledBenefitsContainer>
         </StyledSubscriptionContainer>
         {hasWithoutCreditCardTrialPeriod && (
           <StyledChooseTrialContainer>
-            {billing.trialPeriods.map((trialPeriod, index) => (
+            {billing.trialPeriods.map((trialPeriod) => (
               <CardPicker
                 checked={
                   billingCheckoutSession.requirePaymentMethod ===
@@ -175,7 +175,7 @@ export const ChooseYourPlan = () => {
                 handleChange={handleTrialPeriodChange(
                   trialPeriod.isCreditCardRequired,
                 )}
-                key={index}
+                key={trialPeriod.duration}
               >
                 <TrialCard
                   duration={trialPeriod.duration}

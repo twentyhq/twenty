@@ -20,7 +20,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   return (
     <InformationBanner
       variant="danger"
-      message={`Trial expired. Please update your billing details`}
+      message={'Trial expired. Please update your billing details'}
       buttonTitle="Update"
       buttonOnClick={() => openBillingPortal()}
       isButtonDisabled={loading || !isDefined(data)}
