@@ -1,4 +1,5 @@
 import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
@@ -22,6 +23,12 @@ export const RecordTableColumnFooterWithDropdown = ({
 
   const { fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
+  );
+
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+
+  const fieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === fieldMetadataId,
   );
 
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
@@ -61,6 +68,7 @@ export const RecordTableColumnFooterWithDropdown = ({
             resetContent: handleResetContent,
             dropdownId: dropdownId,
             fieldMetadataId: fieldMetadataId,
+            fieldMetadataType: fieldMetadata?.type,
           }}
         >
           <RecordTableColumnAggregateFooterDropdownContent />

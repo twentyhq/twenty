@@ -1,5 +1,6 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
+import { FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldTypesAvailableForNonStandardAggregateOperation';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -14,7 +15,7 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
     return [AGGREGATE_OPERATIONS.count];
   }
 
-  const availableAggregateOperations = new Set<AGGREGATE_OPERATIONS>([
+  const availableAggregateOperations = new Set<ExtendedAggregateOperations>([
     AGGREGATE_OPERATIONS.count,
     AGGREGATE_OPERATIONS.countEmpty,
     AGGREGATE_OPERATIONS.countNotEmpty,
@@ -27,7 +28,7 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
     return Array.from(availableAggregateOperations);
   }
 
-  Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION)
+  Object.keys(FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION)
     .filter((operation) =>
       isFieldTypeValidForAggregateOperation(
         fieldMetadataType,
@@ -35,7 +36,9 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
       ),
     )
     .forEach((operation) =>
-      availableAggregateOperations.add(operation as AGGREGATE_OPERATIONS),
+      availableAggregateOperations.add(
+        operation as ExtendedAggregateOperations,
+      ),
     );
 
   return Array.from(availableAggregateOperations);

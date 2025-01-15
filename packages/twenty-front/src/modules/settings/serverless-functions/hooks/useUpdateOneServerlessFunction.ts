@@ -1,8 +1,6 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { UPDATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/updateOneServerlessFunction';
-import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import {
   UpdateOneServerlessFunctionMutation,
   UpdateOneServerlessFunctionMutationVariables,
@@ -11,6 +9,8 @@ import {
 import { useEffect, useState } from 'react';
 import { FIND_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunction';
 import { sleep } from '~/utils/sleep';
+import { getOperationName } from '@apollo/client/utilities';
+import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 
 export const useUpdateOneServerlessFunction = (
   serverlessFunctionId: string,
@@ -31,7 +31,6 @@ export const useUpdateOneServerlessFunction = (
       variables: {
         input: { ...input, id: serverlessFunctionId },
       },
-      awaitRefetchQueries: true,
       refetchQueries: [
         getOperationName(FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE) ?? '',
       ],

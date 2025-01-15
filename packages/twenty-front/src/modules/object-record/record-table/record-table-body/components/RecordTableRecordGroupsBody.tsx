@@ -6,19 +6,13 @@ import { RecordTableRecordGroupRows } from '@/object-record/record-table/compone
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
-import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordTableRecordGroupsBody = () => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
   const allRecordIds = useRecoilComponentValueV2(
     recordIndexAllRecordIdsComponentSelector,
   );
@@ -49,12 +43,6 @@ export const RecordTableRecordGroupsBody = () => {
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
               </RecordTableBodyDroppable>
-              {isAggregateQueryEnabled && (
-                <RecordTableAggregateFooter
-                  key={recordGroupId}
-                  currentRecordGroupId={recordGroupId}
-                />
-              )}
             </RecordGroupContext.Provider>
           </RecordTableRecordGroupBodyContextProvider>
         ))}

@@ -5,7 +5,6 @@ import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -50,9 +49,7 @@ export const SettingsNewObject = () => {
 
       navigate(
         response
-          ? `${settingsObjectsPagePath}/${getObjectSlug(
-              response.createOneObject,
-            )}`
+          ? `${settingsObjectsPagePath}/${response.createOneObject.namePlural}`
           : settingsObjectsPagePath,
       );
 

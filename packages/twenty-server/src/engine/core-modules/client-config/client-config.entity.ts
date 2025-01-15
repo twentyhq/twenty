@@ -68,9 +68,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   isEmailVerificationRequired: boolean;
 
-  @Field(() => Boolean)
-  isSSOEnabled: boolean;
-
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
@@ -97,4 +94,7 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
+
+  @Field(() => Boolean)
+  canManageFeatureFlags: boolean;
 }

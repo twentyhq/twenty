@@ -13,9 +13,10 @@ const StyledRecordTableDraggableTr = styled(RecordTableDraggableTr)`
 const StyledIconContainer = styled(RecordTableTd)`
   border-right: none;
   color: ${({ theme }) => theme.font.color.secondary};
-  text-align: center;
-  vertical-align: middle;
-  padding-top: 3px;
+  display: flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledRecordTableTdTextContainer = styled(RecordTableTd)`
@@ -63,9 +64,13 @@ export const RecordTableActionRow = ({
     >
       <td aria-hidden />
       <StyledIconContainer>
-        <LeftIcon size={theme.icon.size.sm} color={theme.font.color.tertiary} />
+        <LeftIcon
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.sm}
+          color={theme.font.color.tertiary}
+        />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer>
+      <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
       <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />

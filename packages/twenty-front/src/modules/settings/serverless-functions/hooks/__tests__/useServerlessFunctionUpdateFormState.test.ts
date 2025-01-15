@@ -36,7 +36,7 @@ describe('useServerlessFunctionUpdateFormState', () => {
       },
     );
     const { result } = renderHook(
-      () => useServerlessFunctionUpdateFormState(serverlessFunctionId),
+      () => useServerlessFunctionUpdateFormState({ serverlessFunctionId }),
       {
         wrapper: RecoilRoot,
       },

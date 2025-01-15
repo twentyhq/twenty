@@ -1,6 +1,8 @@
 import { GraphQLScalarType } from 'graphql';
 import { IntValueNode, Kind } from 'graphql/language';
 
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
 export const TimeScalarType = new GraphQLScalarType({
   name: 'Time',
   description: 'Time custom scalar type',
@@ -17,8 +19,8 @@ export const TimeScalarType = new GraphQLScalarType({
       if (typeof intAst.value === 'number') {
         return new Date(intAst.value);
       }
-      throw new Error(`Invalid timestamp value: ${ast.value}`);
+      throw new ValidationError(`Invalid timestamp value: ${ast.value}`);
     }
-    throw new Error(`Invalid AST kind: ${ast.kind}`);
+    throw new ValidationError(`Invalid AST kind: ${ast.kind}`);
   },
 });

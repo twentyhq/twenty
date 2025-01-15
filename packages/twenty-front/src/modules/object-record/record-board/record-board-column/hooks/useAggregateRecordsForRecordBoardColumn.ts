@@ -9,20 +9,13 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateRecordsForRecordBoardColumn = () => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
-
-  const { columnDefinition, recordCount } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
@@ -77,8 +70,9 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter,
-    skip: !isAggregateQueryEnabled,
   });
+
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
   const { value, labelWithFieldName } = computeAggregateValueAndLabel({
     data,
@@ -86,10 +80,13 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
     aggregateOperation: recordIndexKanbanAggregateOperation?.operation,
     fallbackFieldName: kanbanFieldName,
+    dateFormat,
+    timeFormat,
+    timeZone,
   });
 
   return {
-    aggregateValue: isAggregateQueryEnabled ? value : recordCount,
+    aggregateValue: value,
     aggregateLabel: isDefined(value) ? labelWithFieldName : undefined,
   };
 };

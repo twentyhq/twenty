@@ -30,7 +30,6 @@ export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
   isCRMMigrationEnabled?: boolean,
   isServerlessFunctionSettingsEnabled?: boolean,
-  isSSOEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -68,7 +67,6 @@ export const useCreateAppRouter = (
                 isServerlessFunctionSettingsEnabled={
                   isServerlessFunctionSettingsEnabled
                 }
-                isSSOEnabled={isSSOEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }

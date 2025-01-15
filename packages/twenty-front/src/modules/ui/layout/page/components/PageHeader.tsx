@@ -111,8 +111,8 @@ export const PageHeader = ({
     isNavigationDrawerExpandedState,
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
@@ -133,7 +133,7 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {!isPageHeaderV2Enabled && hasPaginationButtons && (
+          {!isCommandMenuV2Enabled && hasPaginationButtons && (
             <>
               <IconButton
                 Icon={IconChevronUp}

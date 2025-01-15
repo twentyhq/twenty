@@ -510,6 +510,7 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
+      targetWorkspaceSubdomain: 'testSubDomain',
       workspaceInviteHash,
     });
 

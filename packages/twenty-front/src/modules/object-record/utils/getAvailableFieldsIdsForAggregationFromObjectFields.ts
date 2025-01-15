@@ -1,32 +1,32 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
-import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
+import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
-import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
+import { isDefined } from '~/utils/isDefined';
 
 export const getAvailableFieldsIdsForAggregationFromObjectFields = (
   fields: FieldMetadataItem[],
+  targetAggregateOperations: ExtendedAggregateOperations[],
 ): AvailableFieldsForAggregateOperation => {
-  const aggregationMap = initializeAvailableFieldsForAggregateOperationMap();
+  const aggregationMap = initializeAvailableFieldsForAggregateOperationMap(
+    targetAggregateOperations,
+  );
+
+  const allAggregations = getAvailableAggregationsFromObjectFields(fields);
 
   return fields.reduce((acc, field) => {
-    Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION).forEach(
-      (aggregateOperation) => {
-        const typedAggregateOperation =
-          aggregateOperation as AggregateOperationsOmittingStandardOperations;
-
-        if (
-          isFieldTypeValidForAggregateOperation(
-            field.type,
-            typedAggregateOperation,
-          )
-        ) {
-          acc[typedAggregateOperation]?.push(field.id);
+    if (isDefined(allAggregations[field.name])) {
+      Object.keys(allAggregations[field.name]).forEach((aggregation) => {
+        const typedAggregation = aggregation as ExtendedAggregateOperations;
+        if (targetAggregateOperations.includes(typedAggregation)) {
+          if (!isDefined(acc[typedAggregation])) {
+            acc[typedAggregation] = [];
+          }
+          (acc[typedAggregation] as string[]).push(field.id);
         }
-      },
-    );
-
+      });
+    }
     return acc;
   }, aggregationMap);
 };

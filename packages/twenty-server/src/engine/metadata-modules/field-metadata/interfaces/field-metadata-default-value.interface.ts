@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import {
   FieldMetadataDefaultActor,
   FieldMetadataDefaultArray,
@@ -16,7 +18,6 @@ import {
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type ExtractValueType<T> = T extends { value: infer V } ? V : T;
 

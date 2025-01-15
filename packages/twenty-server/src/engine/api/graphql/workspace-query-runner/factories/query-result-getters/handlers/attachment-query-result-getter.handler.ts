@@ -23,7 +23,7 @@ export class AttachmentQueryResultGetterHandler
 
     return {
       ...attachment,
-      fullPath: `${attachment.fullPath}?token=${signedPayload}`,
+      fullPath: `${process.env.SERVER_URL}/files/${attachment.fullPath}?token=${signedPayload}`,
     };
   }
 }

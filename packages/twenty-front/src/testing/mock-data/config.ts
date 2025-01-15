@@ -4,7 +4,6 @@ export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
-  isSSOEnabled: false,
   authProviders: {
     google: true,
     magicLink: false,
@@ -41,4 +40,5 @@ export const mockedClientConfig: ClientConfig = {
     __typename: 'Captcha',
   },
   api: { mutationMaximumAffectedRecords: 100 },
+  canManageFeatureFlags: true,
 };

@@ -8,18 +8,14 @@ import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/s
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   fieldMetadataId: string,
 ) => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
@@ -60,15 +56,19 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter: { ...requestFilters, ...recordGroupFilter },
-    skip:
-      !isAggregateQueryEnabled || !isDefined(aggregateOperationForViewField),
+    skip: !isDefined(aggregateOperationForViewField),
   });
+
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
   const { value, label } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
     fieldMetadataId: fieldMetadataId,
     aggregateOperation: aggregateOperationForViewField,
+    dateFormat,
+    timeFormat,
+    timeZone,
   });
 
   return {

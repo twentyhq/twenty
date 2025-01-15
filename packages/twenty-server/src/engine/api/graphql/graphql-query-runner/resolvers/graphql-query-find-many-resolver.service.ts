@@ -27,7 +27,6 @@ import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -108,19 +107,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       queryBuilder,
       appliedFilters,
     );
-
-    const isAggregationsEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsAggregateQueryEnabled,
-        authContext.workspace.id,
-      );
-
-    if (!isAggregationsEnabled) {
-      executionArgs.graphqlQuerySelectedFieldsResult.aggregate = {
-        totalCount:
-          executionArgs.graphqlQuerySelectedFieldsResult.aggregate.totalCount,
-      };
-    }
 
     const processAggregateHelper = new ProcessAggregateHelper();
 

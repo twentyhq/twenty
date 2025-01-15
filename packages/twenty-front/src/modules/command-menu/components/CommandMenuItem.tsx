@@ -2,9 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight, IconComponent, MenuItemCommand } from 'twenty-ui';
 
+import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-
-import { useCommandMenu } from '../hooks/useCommandMenu';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -27,7 +26,7 @@ export const CommandMenuItem = ({
   secondHotKey,
   shouldCloseCommandMenuOnClick,
 }: CommandMenuItemProps) => {
-  const { onItemClick } = useCommandMenu();
+  const { onItemClick } = useCommandMenuOnItemClick();
 
   if (isNonEmptyString(to) && !Icon) {
     Icon = IconArrowUpRight;
