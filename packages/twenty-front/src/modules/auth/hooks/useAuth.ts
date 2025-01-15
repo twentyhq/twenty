@@ -351,24 +351,9 @@ export const useAuth = () => {
         password,
         captchaToken,
       );
-
-      setIsVerifyPendingState(true);
-
-      const verifyResult = await handleVerify(loginToken.token);
-
-      if (!verifyResult) return null;
-
-      const { user, workspaceMember, workspace } = verifyResult;
-
-      setIsVerifyPendingState(false);
-
-      return {
-        user,
-        workspaceMember,
-        workspace,
-      };
+      await handleVerify(loginToken.token);
     },
-    [handleChallenge, handleVerify, setIsVerifyPendingState],
+    [handleChallenge, handleVerify],
   );
 
   const handleSignOut = useCallback(async () => {
