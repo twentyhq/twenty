@@ -65,14 +65,7 @@ export class MessageImportExceptionHandlerService {
         );
         break;
       case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
-        await this.handleSyncCursorException(
-          exception,
-          messageChannel,
-          workspaceId,
-        );
-        break;
-      case MessageImportDriverExceptionCode.EXAMPLE_ACCOUNT:
-        await this.handleExampleAccountException(
+        await this.handlePermanentException(
           exception,
           messageChannel,
           workspaceId,
@@ -163,7 +156,7 @@ export class MessageImportExceptionHandlerService {
     );
   }
 
-  private async handleSyncCursorException(
+  private async handlePermanentException(
     exception: MessageImportDriverException,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
@@ -173,25 +166,9 @@ export class MessageImportExceptionHandlerService {
       workspaceId,
     );
 
-    throw new MessageImportDriverException(
-      `SyncCursor error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
-      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-    );
-  }
-
-  private async handleExampleAccountException(
-    exception: MessageImportDriverException,
-    messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
-    workspaceId: string,
-  ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
-      [messageChannel.id],
-      workspaceId,
-    );
-
-    throw new MessageImportDriverException(
-      `Unvalid Account error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
-      MessageImportDriverExceptionCode.EXAMPLE_ACCOUNT,
+    throw new MessageImportException(
+      `Permanent error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      MessageImportExceptionCode.UNKNOWN,
     );
   }
 
