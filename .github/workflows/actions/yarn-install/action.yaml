@@ -10,7 +10,7 @@ runs:
         local_node_version=18
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
         echo "NODE_VERSION=$local_node_version" >> "${GITHUB_OUTPUT}"
-        echo "CACHE_KEY_PREFIX=node_modules-cache-node-$local_node_version-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}
+        echo "CACHE_KEY_PREFIX=node_modules-cache-node-$( echo $local_node_version )-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
     - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@v4
       with:
