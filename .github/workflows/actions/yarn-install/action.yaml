@@ -7,8 +7,10 @@ runs:
       id: globals
       shell: bash
       run: |
+        local_node_version=18
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
-        echo "NODE_VERSION=18" >> "${GITHUB_OUTPUT}"
+        echo "NODE_VERSION=$local_node_version" >> "${GITHUB_OUTPUT}"
+        echo "CACHE_KEY_PREFIX=node_modules-cache-node-$local_node_version-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}
     - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@v4
       with:
@@ -18,11 +20,11 @@ runs:
       id: cache-node-modules
       uses: actions/cache/restore@v4
       with:
-        key: node_modules-cache-node-${{ steps.globals.outputs.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
+        key: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
         path: |
           node_modules
           packages/*/node_modules
-        # restore-keys: root-node_modules- we don't want partial hit but hashfile direct hit
+        restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
     - name: Install Dependencies
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
