@@ -14,7 +14,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
-import { Button, MenuItem } from 'twenty-ui';
+import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RightDrawerActionMenuDropdown = () => {
@@ -68,7 +68,9 @@ export const RightDrawerActionMenuDropdown = () => {
           RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
       }}
       data-select-disable
-      clickableComponent={<Button title="Actions" shortcut="⌘O" />}
+      clickableComponent={
+        <Button title="Actions" hotkeys={[getOsControlSymbol(), 'O']} />
+      }
       dropdownPlacement="top-end"
       dropdownOffset={{
         y: parseInt(theme.spacing(2), 10),
