@@ -1,9 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseIn,
   IconCheck,
+  isDefined,
   MainButton,
   RGBA,
   UndecoratedLink,
@@ -12,9 +13,12 @@ import {
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
+import {
+  OnboardingStatus,
+  useGetCurrentUserLazyQuery,
+} from '~/generated/graphql';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { AppPath } from '@/types/AppPath';
-import { OnboardingStatus } from '~/generated/graphql';
-import { RefreshSubscriptionStatusEffect } from 'packages/twenty-front/src/modules/billing/components/RefreshSubscriptionStatusEffect';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -36,8 +40,25 @@ const StyledButtonContainer = styled.div`
 export const PaymentSuccess = () => {
   const theme = useTheme();
   const currentUser = useRecoilValue(currentUserState);
+  const subscriptionStatus = useSubscriptionStatus();
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
+
+  const checkSubscriptionStatus = async () => {
+    if (!isDefined(subscriptionStatus)) {
+      const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+      const currentUser = result.data?.currentUser;
+      if (isDefined(currentUser)) {
+        setCurrentUser(currentUser);
+      }
+    }
+  };
+
+  const onClick = async () => {
+    await checkSubscriptionStatus();
+  };
 
   if (currentUser?.onboardingStatus === OnboardingStatus.Completed) {
     return <></>;
@@ -45,7 +66,6 @@ export const PaymentSuccess = () => {
 
   return (
     <>
-      <RefreshSubscriptionStatusEffect />
       <AnimatedEaseIn>
         <StyledCheckContainer color={color}>
           <IconCheck color={color} size={24} stroke={3} />
@@ -54,7 +74,7 @@ export const PaymentSuccess = () => {
       <Title>All set!</Title>
       <SubTitle>Your account has been activated.</SubTitle>
       <StyledButtonContainer>
-        <UndecoratedLink to={AppPath.CreateWorkspace}>
+        <UndecoratedLink onClick={onClick} to={AppPath.CreateWorkspace}>
           <MainButton title="Start" width={200} />
         </UndecoratedLink>
       </StyledButtonContainer>
