@@ -18,6 +18,10 @@ jobs:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Check for changed files
         id: changed-files
         uses: tj-actions/changed-files@v11
