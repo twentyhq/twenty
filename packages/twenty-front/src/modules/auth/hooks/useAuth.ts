@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
   snapshot_UNSTABLE,
@@ -8,6 +8,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -25,6 +26,7 @@ import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -43,17 +45,22 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
-import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
-import { AppPath } from '@/types/AppPath';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { useSearchParams } from 'react-router-dom';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -68,7 +75,11 @@ export const useAuth = () => {
     currentWorkspaceMembersState,
   );
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isEmailVerificationRequired = useRecoilValue(
+    isEmailVerificationRequiredState,
+  );
 
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -78,11 +89,14 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [getLoginTokenFromEmailVerificationToken] =
+    useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
-  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
@@ -94,6 +108,8 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+
+  const [, setSearchParams] = useSearchParams();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -153,25 +169,59 @@ export const useAuth = () => {
 
   const handleChallenge = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      const challengeResult = await challenge({
+      try {
+        const challengeResult = await challenge({
+          variables: {
+            email,
+            password,
+            captchaToken,
+          },
+        });
+        if (isDefined(challengeResult.errors)) {
+          throw challengeResult.errors;
+        }
+
+        if (!challengeResult.data?.challenge) {
+          throw new Error('No login token');
+        }
+
+        return challengeResult.data.challenge;
+      } catch (error) {
+        // TODO: Get intellisense for graphql error extensions code (codegen?)
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+        ) {
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          throw error;
+        }
+        throw error;
+      }
+    },
+    [challenge, setSearchParams, setSignInUpStep],
+  );
+
+  const handleGetLoginTokenFromEmailVerificationToken = useCallback(
+    async (emailVerificationToken: string, captchaToken?: string) => {
+      const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
         variables: {
-          email,
-          password,
+          emailVerificationToken,
           captchaToken,
         },
       });
 
-      if (isDefined(challengeResult.errors)) {
-        throw challengeResult.errors;
+      if (isDefined(loginTokenResult.errors)) {
+        throw loginTokenResult.errors;
       }
 
-      if (!challengeResult.data?.challenge) {
+      if (!loginTokenResult.data?.getLoginTokenFromEmailVerificationToken) {
         throw new Error('No login token');
       }
 
-      return challengeResult.data.challenge;
+      return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
     },
-    [challenge],
+    [getLoginTokenFromEmailVerificationToken],
   );
 
   const loadCurrentUser = useCallback(async () => {
@@ -328,6 +378,9 @@ export const useAuth = () => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken,
+          ...(workspacePublicData?.id
+            ? { workspaceId: workspacePublicData.id }
+            : {}),
         },
       });
 
@@ -339,12 +392,21 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      if (isEmailVerificationRequired) {
+        setSearchParams({ email });
+        setSignInUpStep(SignInUpStep.EmailVerification);
+        return null;
+      }
+
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
           signUpResult.data.signUp.workspace.subdomain,
-          AppPath.Verify,
+          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
-            loginToken: signUpResult.data.signUp.loginToken.token,
+            ...(!isEmailVerificationRequired && {
+              loginToken: signUpResult.data.signUp.loginToken.token,
+            }),
+            email,
           },
         );
       }
@@ -354,8 +416,12 @@ export const useAuth = () => {
     [
       setIsVerifyPendingState,
       signUp,
+      workspacePublicData,
       isMultiWorkspaceEnabled,
       handleVerify,
+      setSignInUpStep,
+      setSearchParams,
+      isEmailVerificationRequired,
       redirectToWorkspaceDomain,
     ],
   );
@@ -386,13 +452,13 @@ export const useAuth = () => {
         );
       }
 
-      if (isDefined(workspaceSubdomain)) {
-        url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
+      if (isDefined(workspacePublicData)) {
+        url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
       return url.toString();
     },
-    [workspaceSubdomain],
+    [workspacePublicData],
   );
 
   const handleGoogleLogin = useCallback(
@@ -419,6 +485,8 @@ export const useAuth = () => {
 
   return {
     challenge: handleChallenge,
+    getLoginTokenFromEmailVerificationToken:
+      handleGetLoginTokenFromEmailVerificationToken,
     verify: handleVerify,
 
     loadCurrentUser,

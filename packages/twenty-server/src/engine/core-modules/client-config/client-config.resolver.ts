@@ -33,6 +33,9 @@ export class ClientConfigResolver {
       isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',
       ),
+      isEmailVerificationRequired: this.environmentService.get(
+        'IS_EMAIL_VERIFICATION_REQUIRED',
+      ),
       defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
       debugMode: this.environmentService.get('DEBUG_MODE'),

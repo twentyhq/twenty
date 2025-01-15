@@ -222,6 +222,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
           onPersist={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
+          placeholder="Select fields to update"
         />
 
         <HorizontalSeparator noMargin />

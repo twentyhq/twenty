@@ -1,6 +1,6 @@
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -54,7 +54,7 @@ describe('mapViewFiltersToFilters', () => {
         operand: ViewFilterOperand.Is,
       },
     ];
-    const expectedFilters: Filter[] = [
+    const expectedFilters: RecordFilter[] = [
       {
         id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',

@@ -28,6 +28,8 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   clearLabel?: string;
   readonly?: boolean;
+  preventDisplayPadding?: boolean;
+  placeholder?: string;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -38,7 +40,6 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   font-family: inherit;
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
-  justify-content: space-between;
 `;
 
 const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
@@ -48,13 +49,23 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
   &[data-open='true'] {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
   }
-  justify-content: space-between;
+`;
+
+const StyledPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  width: 100%;
 `;
 
 const StyledSelectInputContainer = styled.div`
   position: absolute;
   z-index: 1;
   top: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledSelectDisplayContainer = styled.div`
+  display: flex;
+  width: 100%;
 `;
 
 export const FormSelectFieldInput = ({
@@ -65,6 +76,8 @@ export const FormSelectFieldInput = ({
   options,
   clearLabel,
   readonly,
+  preventDisplayPadding,
+  placeholder,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -213,27 +226,34 @@ export const FormSelectFieldInput = ({
     ...filteredOptions.map((option) => option.value),
   ];
 
+  const placeholderText = placeholder ?? label;
+
   return (
     <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
-                {isDefined(selectedOption) && (
-                  <SelectDisplay
-                    color={selectedOption.color ?? 'transparent'}
-                    label={selectedOption.label}
-                    Icon={selectedOption.icon ?? undefined}
-                  />
+                {isDefined(selectedOption) ? (
+                  <StyledSelectDisplayContainer>
+                    <SelectDisplay
+                      color={selectedOption.color ?? 'transparent'}
+                      label={selectedOption.label}
+                      Icon={selectedOption.icon ?? undefined}
+                      preventPadding={preventDisplayPadding}
+                    />
+                  </StyledSelectDisplayContainer>
+                ) : (
+                  <StyledPlaceholder />
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
+                  color={theme.font.color.light}
                 />
               </StyledDisplayModeReadonlyContainer>
             ) : (
@@ -243,12 +263,17 @@ export const FormSelectFieldInput = ({
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
-                {isDefined(selectedOption) && (
-                  <SelectDisplay
-                    color={selectedOption.color ?? 'transparent'}
-                    label={selectedOption.label}
-                    Icon={selectedOption.icon ?? undefined}
-                  />
+                {isDefined(selectedOption) ? (
+                  <StyledSelectDisplayContainer>
+                    <SelectDisplay
+                      color={selectedOption.color ?? 'transparent'}
+                      label={selectedOption.label}
+                      Icon={selectedOption.icon ?? undefined}
+                      preventPadding={preventDisplayPadding}
+                    />
+                  </StyledSelectDisplayContainer>
+                ) : (
+                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}

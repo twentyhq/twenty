@@ -1,11 +1,11 @@
 import { useIcons } from 'twenty-ui';
 
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 
 type EditableFilterChipProps = {
-  viewFilter: Filter;
+  viewFilter: RecordFilter;
   onRemove: () => void;
 };
 

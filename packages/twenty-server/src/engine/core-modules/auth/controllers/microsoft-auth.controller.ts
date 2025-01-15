@@ -19,8 +19,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,9 +28,8 @@ export class MicrosoftAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
   ) {}
 
   @Get()
@@ -47,38 +45,60 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      workspaceId,
+      billingCheckoutSessionState,
+    } = req.user;
+
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider: 'microsoft',
+    });
+
     try {
-      const signInUpParams = req.user;
+      const invitation = await this.authService.findInvitationForSignInUp({
+        currentWorkspace,
+        workspacePersonalInviteToken,
+        email,
+      });
 
-      if (
-        this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        (signInUpParams.targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
-          !signInUpParams.targetWorkspaceSubdomain)
-      ) {
-        const workspaceWithGoogleAuthActive =
-          await this.workspaceRepository.findOne({
-            where: {
-              isMicrosoftAuthEnabled: true,
-              workspaceUsers: {
-                user: {
-                  email: signInUpParams.email,
-                },
-              },
-            },
-            relations: ['userWorkspaces', 'userWorkspaces.user'],
-          });
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
 
-        if (workspaceWithGoogleAuthActive) {
-          signInUpParams.targetWorkspaceSubdomain =
-            workspaceWithGoogleAuthActive.subdomain;
-        }
-      }
+      const { userData } = this.authService.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+        },
+        existingUser,
+      );
+
+      await this.authService.checkAccessForSignIn({
+        userData,
+        invitation,
+        workspaceInviteHash,
+        workspace: currentWorkspace,
+      });
 
       const { user, workspace } = await this.authService.signInUp({
-        ...signInUpParams,
-        fromSSO: true,
-        authProvider: 'microsoft',
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: 'microsoft',
+        },
+        billingCheckoutSessionState,
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
@@ -87,20 +107,18 @@ export class MicrosoftAuthController {
       );
 
       return res.redirect(
-        this.authService.computeRedirectURI(
-          loginToken.token,
-          workspace.subdomain,
-          signInUpParams.billingCheckoutSessionState,
-        ),
+        this.authService.computeRedirectURI({
+          loginToken: loginToken.token,
+          subdomain: workspace.subdomain,
+
+          billingCheckoutSessionState,
+        }),
       );
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl({
-            subdomain:
-              req.user.targetWorkspaceSubdomain ??
-              this.environmentService.get('DEFAULT_SUBDOMAIN'),
-            errorMessage: err.message,
+          this.domainManagerService.computeRedirectErrorUrl(err.message, {
+            subdomain: currentWorkspace?.subdomain,
           }),
         );
       }

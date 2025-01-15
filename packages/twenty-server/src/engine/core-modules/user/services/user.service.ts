@@ -165,4 +165,30 @@ export class UserService extends TypeOrmQueryService<User> {
       ),
     );
   }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    return user;
+  }
+
+  async markEmailAsVerified(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    user.isEmailVerified = true;
+
+    return await this.userRepository.save(user);
+  }
 }
