@@ -26,7 +26,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
@@ -47,6 +46,15 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import {
+  AuthProviderWithPasswordType,
+  ExistingUserOrNewUser,
+  SignInUpBaseParams,
+  SignInUpNewUserPayload,
+} from 'src/engine/core-modules/auth/types/signInUp.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -57,6 +65,8 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
+    private readonly socialSsoService: SocialSsoService,
+    private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -146,44 +156,72 @@ export class AuthService {
       );
     }
 
+    const isEmailVerificationRequired = this.environmentService.get(
+      'IS_EMAIL_VERIFICATION_REQUIRED',
+    );
+
+    if (isEmailVerificationRequired && !user.isEmailVerified) {
+      throw new AuthException(
+        'Email is not verified',
+        AuthExceptionCode.EMAIL_NOT_VERIFIED,
+      );
+    }
+
     return user;
   }
 
-  async signInUp({
-    email,
-    password,
-    workspaceInviteHash,
-    workspacePersonalInviteToken,
-    targetWorkspaceSubdomain,
-    firstName,
-    lastName,
-    picture,
-    fromSSO,
-    authProvider,
-  }: {
-    email: string;
-    password?: string;
-    firstName?: string | null;
-    lastName?: string | null;
-    workspaceInviteHash?: string;
-    workspacePersonalInviteToken?: string;
-    picture?: string | null;
-    fromSSO: boolean;
-    targetWorkspaceSubdomain?: string;
-    authProvider?: WorkspaceAuthProvider;
-    billingCheckoutSessionState?: string;
-  }) {
+  async signInUp(
+    params: SignInUpBaseParams &
+      ExistingUserOrNewUser &
+      AuthProviderWithPasswordType,
+  ) {
+    if (
+      params.authParams.provider === 'password' &&
+      params.userData.type === 'newUser'
+    ) {
+      params.userData.newUserPayload.passwordHash =
+        await this.signInUpService.generateHash(params.authParams.password);
+    }
+
+    if (
+      params.authParams.provider === 'password' &&
+      params.userData.type === 'existingUser'
+    ) {
+      await this.signInUpService.validatePassword({
+        password: params.authParams.password,
+        passwordHash: params.userData.existingUser.passwordHash,
+      });
+    }
+
+    if (params.workspace) {
+      workspaceValidator.isAuthEnabledOrThrow(
+        params.authParams.provider,
+        params.workspace,
+      );
+    }
+
+    if (params.userData.type === 'newUser') {
+      const partialUserWithPicture =
+        await this.signInUpService.computeParamsForNewUser(
+          params.userData.newUserPayload,
+          params.authParams,
+        );
+
+      return await this.signInUpService.signInUp({
+        ...params,
+        userData: {
+          type: 'newUserWithPicture',
+          newUserWithPicture: partialUserWithPicture,
+        },
+      });
+    }
+
     return await this.signInUpService.signInUp({
-      email,
-      password,
-      firstName,
-      lastName,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-      targetWorkspaceSubdomain,
-      picture,
-      fromSSO,
-      authProvider,
+      ...params,
+      userData: {
+        type: 'existingUser',
+        existingUser: params.userData.existingUser,
+      },
     });
   }
 
@@ -232,7 +270,9 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
-        availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
+        availableWorkspaces:
+          await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+        isEmailVerified: user.isEmailVerified,
       };
     }
 
@@ -414,11 +454,15 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(
-    loginToken: string,
-    subdomain?: string,
-    billingCheckoutSessionState?: string,
-  ) {
+  computeRedirectURI({
+    loginToken,
+    subdomain,
+    billingCheckoutSessionState,
+  }: {
+    loginToken: string;
+    subdomain?: string;
+    billingCheckoutSessionState?: string;
+  }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',
@@ -431,45 +475,117 @@ export class AuthService {
     return url.toString();
   }
 
-  async findAvailableWorkspacesByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceSSOIdentityProviders',
-      ],
+  async findInvitationForSignInUp({
+    currentWorkspace,
+    workspacePersonalInviteToken,
+    email,
+  }: {
+    currentWorkspace?: Workspace | null;
+    workspacePersonalInviteToken?: string;
+    email?: string;
+  }) {
+    if (!currentWorkspace) return undefined;
+
+    const qr = this.appTokenRepository.createQueryBuilder('appToken');
+
+    qr.where('"appToken"."workspaceId" = :workspaceId', {
+      workspaceId: currentWorkspace.id,
+    }).andWhere('"appToken".type = :type', {
+      type: AppTokenType.InvitationToken,
     });
 
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
+    if (email) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email,
+      });
+    }
 
-    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
-      id: userWorkspace.workspaceId,
-      displayName: userWorkspace.workspace.displayName,
-      subdomain: userWorkspace.workspace.subdomain,
-      logo: userWorkspace.workspace.logo,
-      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
+    if (workspacePersonalInviteToken) {
+      qr.andWhere('"appToken".value = :personalInviteToken', {
+        personalInviteToken: workspacePersonalInviteToken,
+      });
+    }
+
+    return (await qr.getOne()) ?? undefined;
+  }
+
+  async findWorkspaceForSignInUp(
+    params: {
+      workspaceId?: string;
+      workspaceInviteHash?: string;
+    } & (
+      | {
+          authProvider: Exclude<WorkspaceAuthProvider, 'password'>;
+          email: string;
+        }
+      | { authProvider: Extract<WorkspaceAuthProvider, 'password'> }
+    ),
+  ) {
+    if (params.workspaceInviteHash) {
+      return (
+        (await this.workspaceRepository.findOneBy({
+          inviteHash: params.workspaceInviteHash,
+        })) ?? undefined
+      );
+    }
+
+    if (params.authProvider !== 'password') {
+      return (
+        (await this.socialSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
+          {
+            email: params.email,
+            authProvider: params.authProvider,
+          },
+          params.workspaceId,
+        )) ?? undefined
+      );
+    }
+
+    if (params.authProvider === 'password' && params.workspaceId) {
+      return (
+        (await this.workspaceRepository.findOneBy({
+          id: params.workspaceId,
+        })) ?? undefined
+      );
+    }
+
+    return undefined;
+  }
+
+  formatUserDataPayload(
+    newUserPayload: SignInUpNewUserPayload,
+    existingUser?: User | null,
+  ): ExistingUserOrNewUser {
+    return {
+      userData: existingUser
+        ? { type: 'existingUser', existingUser }
+        : {
+            type: 'newUser',
+            newUserPayload,
+          },
+    };
+  }
+
+  async checkAccessForSignIn({
+    userData,
+    invitation,
+    workspaceInviteHash,
+    workspace,
+  }: {
+    workspaceInviteHash?: string;
+  } & ExistingUserOrNewUser &
+    SignInUpBaseParams) {
+    if (!invitation && !workspaceInviteHash && workspace) {
+      if (userData.type === 'existingUser') {
+        await this.userService.hasUserAccessToWorkspaceOrThrow(
+          userData.existingUser.id,
+          workspace.id,
+        );
+      }
+      throw new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
   }
 }

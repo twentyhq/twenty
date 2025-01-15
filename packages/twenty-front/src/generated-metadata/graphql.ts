@@ -183,6 +183,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
+  isEmailVerificationRequired: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   isSSOEnabled: Scalars['Boolean']['output'];
   sentry: Sentry;
@@ -404,7 +405,6 @@ export enum FeatureFlagKey {
   IsSsoEnabled = 'IsSSOEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsViewGroupsEnabled = 'IsViewGroupsEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
@@ -612,9 +612,11 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
+  resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
@@ -811,6 +813,12 @@ export type MutationGetAuthorizationUrlArgs = {
 };
 
 
+export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  emailVerificationToken: Scalars['String']['input'];
+};
+
+
 export type MutationImpersonateArgs = {
   userId: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
@@ -824,6 +832,11 @@ export type MutationPublishServerlessFunctionArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationResendEmailVerificationTokenArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -1289,6 +1302,11 @@ export enum RemoteTableStatus {
   Synced = 'SYNCED'
 }
 
+export type ResendEmailVerificationTokenOutput = {
+  __typename?: 'ResendEmailVerificationTokenOutput';
+  success: Scalars['Boolean']['output'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']['input']>;
@@ -1631,9 +1649,9 @@ export type User = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
-  emailVerified: Scalars['Boolean']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
+  isEmailVerified: Scalars['Boolean']['output'];
   lastName: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
@@ -1657,6 +1675,7 @@ export type UserExists = {
   __typename?: 'UserExists';
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
   exists: Scalars['Boolean']['output'];
+  isEmailVerified: Scalars['Boolean']['output'];
 };
 
 export type UserExistsOutput = UserExists | UserNotExists;
