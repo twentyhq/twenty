@@ -14,6 +14,7 @@ import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { OnboardingStatus } from '~/generated/graphql';
+import { RefreshSubscriptionStatusEffect } from 'packages/twenty-front/src/modules/billing/components/RefreshSubscriptionStatusEffect';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -44,6 +45,7 @@ export const PaymentSuccess = () => {
 
   return (
     <>
+      <RefreshSubscriptionStatusEffect />
       <AnimatedEaseIn>
         <StyledCheckContainer color={color}>
           <IconCheck color={color} size={24} stroke={3} />

@@ -18,6 +18,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.Invite) ||
     isMatchingLocation(AppPath.ResetPassword);
 
+  const isMatchingOpenSignedInRoute = isMatchingLocation(
+    AppPath.PlanRequiredSuccess,
+  );
+
   const isMatchingOngoingUserCreationRoute =
     isMatchingOpenRoute ||
     isMatchingLocation(AppPath.SignInUp) ||
@@ -29,10 +33,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.CreateProfile) ||
     isMatchingLocation(AppPath.SyncEmails) ||
     isMatchingLocation(AppPath.InviteTeam) ||
-    isMatchingLocation(AppPath.PlanRequired) ||
-    isMatchingLocation(AppPath.PlanRequiredSuccess);
+    isMatchingLocation(AppPath.PlanRequired);
 
   if (isMatchingOpenRoute) {
+    return;
+  }
+
+  if (isLoggedIn && isMatchingOpenSignedInRoute) {
     return;
   }
 
