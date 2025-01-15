@@ -172,7 +172,7 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your best PNGs, JPEGs and GIFs portraits under 10MB
+          We support your square PNGs, JPEGs and GIFs under 10MB
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

@@ -5,6 +5,9 @@ import { FormSelectFieldInput } from '@/object-record/record-field/form-types/co
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { CountryCode } from 'libphonenumber-js';
+
+export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '';
 
 export const FormCountryCodeSelectInput = ({
   selectedCountryCode,
@@ -13,7 +16,7 @@ export const FormCountryCodeSelectInput = ({
   VariablePicker,
 }: {
   selectedCountryCode: string;
-  onPersist: (countryCode: string) => void;
+  onPersist: (countryCode: FormCountryCodeSelectInputUpdatedValue) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -47,7 +50,7 @@ export const FormCountryCodeSelectInput = ({
     if (countryCode === null) {
       onPersist('');
     } else {
-      onPersist(countryCode);
+      onPersist(countryCode as CountryCode);
     }
   };
 

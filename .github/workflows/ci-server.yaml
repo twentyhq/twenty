@@ -108,7 +108,7 @@ jobs:
             exit 1
           fi
       - name: Save server setup
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.restore-server-setup-cache.outputs.cache-hit != 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}

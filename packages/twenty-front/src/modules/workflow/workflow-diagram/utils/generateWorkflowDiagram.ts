@@ -1,6 +1,7 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
+import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -8,7 +9,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { MarkerType } from '@xyflow/react';
 import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -23,7 +23,6 @@ export const generateWorkflowDiagram = ({
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
 
-  // Helper function to generate nodes and edges recursively
   const processNode = (
     step: WorkflowStep,
     parentNodeId: string,
@@ -45,22 +44,16 @@ export const generateWorkflowDiagram = ({
       },
     });
 
-    // Create an edge from the parent node to this node
     edges.push({
+      ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       id: v4(),
       source: parentNodeId,
       target: nodeId,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-      deletable: false,
-      selectable: false,
     });
 
     return nodeId;
   };
 
-  // Start with the trigger node
   const triggerNodeId = TRIGGER_STEP_ID;
 
   if (isDefined(trigger)) {
