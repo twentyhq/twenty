@@ -56,6 +56,8 @@ export class MicrosoftGetMessagesService {
       this.microsoftHandleErrorService.handleMicrosoftMessageListFetchError(
         error,
       );
+
+      return [];
     }
   }
 
