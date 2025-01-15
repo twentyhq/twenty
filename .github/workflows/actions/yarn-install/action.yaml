@@ -11,8 +11,8 @@ runs:
         echo "NODE_VERSION=18" >> "${GITHUB_OUTPUT}"
         {
           echo 'PATH_TO_CACHE<<EOF'
-          node_modules
-          packages/*/node_modules
+          echo "node_modules"
+          echo "packages/*/node_modules"
           echo EOF
         } >> "$GITHUB_OUTPUT"
     - name: Logs TMP ${{ steps.globals.outputs.PATH_TO_CACHE }}
