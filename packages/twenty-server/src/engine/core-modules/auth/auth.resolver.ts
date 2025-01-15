@@ -1,5 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -55,6 +58,8 @@ import { AuthService } from './services/auth.service';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -104,12 +109,14 @@ export class AuthResolver {
         origin,
       );
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
+
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -121,16 +128,46 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => SignUpOutput)
-  async signUp(
-    @Args() signUpInput: SignUpInput,
-    @OriginHeader() origin: string,
-  ): Promise<SignUpOutput> {
-    const { user, workspace } = await this.authService.signInUp({
-      ...signUpInput,
-      targetWorkspaceSubdomain:
-        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
-      fromSSO: false,
+  async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
       authProvider: 'password',
+      workspaceId: signUpInput.workspaceId,
+    });
+
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace,
+      workspacePersonalInviteToken: signUpInput.workspacePersonalInviteToken,
+    });
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: signUpInput.email,
+      },
+    });
+
+    const { userData } = this.authService.formatUserDataPayload(
+      {
+        email: signUpInput.email,
+      },
+      existingUser,
+    );
+
+    await this.authService.checkAccessForSignIn({
+      userData,
+      invitation,
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
+      workspace: currentWorkspace,
+    });
+
+    const { user, workspace } = await this.authService.signInUp({
+      userData,
+      workspace: currentWorkspace,
+      invitation,
+      authParams: {
+        provider: 'password',
+        password: signUpInput.password,
+      },
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(

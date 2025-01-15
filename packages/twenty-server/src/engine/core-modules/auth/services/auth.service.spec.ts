@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import bcrypt from 'bcrypt';
 import { expect, jest } from '@jest/globals';
+import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -16,6 +17,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 import { AuthService } from './auth.service';
 
@@ -31,6 +33,7 @@ const userWorkspaceAddUserToWorkspaceMock = jest.fn();
 
 describe('AuthService', () => {
   let service: AuthService;
+  let appTokenRepository: Repository<AppToken>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,7 +51,14 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(AppToken, 'core'),
-          useValue: {},
+          useValue: {
+            createQueryBuilder: jest.fn().mockReturnValue({
+              leftJoin: jest.fn().mockReturnThis(),
+              andWhere: jest.fn().mockReturnThis(),
+              where: jest.fn().mockReturnThis(),
+              getOne: jest.fn().mockImplementation(() => null),
+            }),
+          },
         },
         {
           provide: SignInUpService,
@@ -94,10 +104,18 @@ describe('AuthService', () => {
             validateInvitation: workspaceInvitationValidateInvitationMock,
           },
         },
+        {
+          provide: SocialSsoService,
+          useValue: {},
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+
+    appTokenRepository = module.get<Repository<AppToken>>(
+      getRepositoryToken(AppToken, 'core'),
+    );
   });
 
   it('should be defined', async () => {

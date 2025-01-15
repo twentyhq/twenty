@@ -36,6 +36,10 @@ export const isFieldValueReadOnly = ({
     return true;
   }
 
+  if (objectNameSingular === CoreObjectNameSingular.CalendarEvent) {
+    return true;
+  }
+
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
     fieldName !== 'name'

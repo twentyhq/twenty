@@ -17,6 +17,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
@@ -242,9 +243,10 @@ export const useCommandMenu = () => {
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return (recordId: string) => {
+      return (recordId: string, objectNameSingular: string) => {
         openCommandMenu();
         set(commandMenuPageState, CommandMenuPages.ViewRecord);
+        set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
       };
     },
