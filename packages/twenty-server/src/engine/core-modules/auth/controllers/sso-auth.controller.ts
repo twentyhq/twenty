@@ -137,7 +137,7 @@ export class SSOAuthController {
   }
 
   private async generateLoginToken(
-    user: { email: string } & Record<string, string>,
+    payload: { email: string } & Record<string, string>,
     identityProvider: WorkspaceSSOIdentityProvider,
   ) {
     if (!identityProvider) {
@@ -149,16 +149,16 @@ export class SSOAuthController {
 
     const existingUser = await this.userRepository.findOne({
       where: {
-        email: user.email,
+        email: payload.email,
       },
     });
 
     const { userData } = this.authService.formatUserDataPayload(
-      user,
+      payload,
       existingUser,
     );
 
-    await this.authService.signInUp({
+    const { workspace, user } = await this.authService.signInUp({
       userData,
       workspace: identityProvider.workspace,
       authParams: {
@@ -170,7 +170,7 @@ export class SSOAuthController {
       identityProvider,
       loginToken: await this.loginTokenService.generateLoginToken(
         user.email,
-        identityProvider.workspace.id,
+        workspace.id,
       ),
     };
   }
