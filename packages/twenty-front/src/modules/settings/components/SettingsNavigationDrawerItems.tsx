@@ -35,7 +35,6 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -49,8 +48,6 @@ type SettingsNavigationItem = {
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
-
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
   const billing = useRecoilValue(billingState);
   const isFunctionSettingsEnabled = useIsFeatureEnabled(
@@ -97,19 +94,6 @@ export const SettingsNavigationDrawerItems = () => {
       currentPathName,
     );
   });
-
-  if (isWorkspaceSuspended) {
-    return (
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
-        <SettingsNavigationDrawerItem
-          label="Billing"
-          path={SettingsPath.Billing}
-          Icon={IconCurrencyDollar}
-        />
-      </NavigationDrawerSection>
-    );
-  }
 
   return (
     <>

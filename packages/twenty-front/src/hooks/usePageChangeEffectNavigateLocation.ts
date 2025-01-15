@@ -49,7 +49,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.PlanRequired;
   }
 
-  if (isWorkspaceSuspended) {
+  if (isWorkspaceSuspended && !isMatchingLocation(AppPath.SettingsCatchAll)) {
     return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
       SettingsPath.Billing
     }`;
