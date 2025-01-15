@@ -1,6 +1,7 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
@@ -38,23 +39,29 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
           instanceId: componentInstanceId,
         }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <RecordFiltersComponentInstanceContext.Provider
           value={{
             instanceId: componentInstanceId,
           }}
         >
-          <JestContextStoreSetter
-            contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
-            contextStoreNumberOfSelectedRecords={
-              contextStoreNumberOfSelectedRecords
-            }
-            contextStoreCurrentObjectMetadataNameSingular={
-              contextStoreCurrentObjectMetadataNameSingular
-            }
+          <ActionMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: componentInstanceId,
+            }}
           >
-            {children}
-          </JestContextStoreSetter>
-        </ActionMenuComponentInstanceContext.Provider>
+            <JestContextStoreSetter
+              contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+              contextStoreNumberOfSelectedRecords={
+                contextStoreNumberOfSelectedRecords
+              }
+              contextStoreCurrentObjectMetadataNameSingular={
+                contextStoreCurrentObjectMetadataNameSingular
+              }
+            >
+              {children}
+            </JestContextStoreSetter>
+          </ActionMenuComponentInstanceContext.Provider>
+        </RecordFiltersComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>
   );
