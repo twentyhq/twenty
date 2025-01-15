@@ -18,7 +18,7 @@ const StyledCell = styled.div<{ isUnfolded: boolean }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
   min-width: ${({ theme }) => theme.spacing(7)};
   flex-grow: 1;

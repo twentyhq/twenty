@@ -133,6 +133,9 @@ export const RecordTableAggregateFooter = ({
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );
       })}
+      <td colSpan={visibleTableColumns.length - 1} />
+      <td />
+      <td />
     </StyledTableRow>
   );
 };
