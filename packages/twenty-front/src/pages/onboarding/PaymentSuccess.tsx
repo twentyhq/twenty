@@ -1,13 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseIn,
   IconCheck,
   isDefined,
   MainButton,
   RGBA,
-  UndecoratedLink,
 } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -18,7 +17,12 @@ import {
   useGetCurrentUserLazyQuery,
 } from '~/generated/graphql';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -39,28 +43,42 @@ const StyledButtonContainer = styled.div`
 
 export const PaymentSuccess = () => {
   const theme = useTheme();
-  const currentUser = useRecoilValue(currentUserState);
+  const navigate = useNavigate();
+  const { enqueueSnackBar } = useSnackBar();
   const subscriptionStatus = useSubscriptionStatus();
+  const onboardingStatus = useOnboardingStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const setCurrentUser = useSetRecoilState(currentUserState);
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
-  const checkSubscriptionStatus = async () => {
-    if (!isDefined(subscriptionStatus)) {
-      const result = await getCurrentUser({ fetchPolicy: 'network-only' });
-      const currentUser = result.data?.currentUser;
-      if (isDefined(currentUser)) {
-        setCurrentUser(currentUser);
-      }
+  const navigateWithSubscriptionCheck = async () => {
+    if (isDefined(subscriptionStatus)) {
+      navigate(AppPath.CreateWorkspace);
+      return;
     }
+
+    const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+    const currentUser = result.data?.currentUser;
+    const refreshedSubscriptionStatus =
+      currentUser?.currentWorkspace?.currentBillingSubscription?.status;
+
+    if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
+      setCurrentUser(currentUser);
+      navigate(AppPath.CreateWorkspace);
+      return;
+    }
+
+    enqueueSnackBar(
+      "We're waiting for a confirmation from our payment provider (Stripe).\n" +
+        'Please try again in a few seconds, sorry.',
+      {
+        variant: SnackBarVariant.Warning,
+      },
+    );
   };
 
-  const onClick = async () => {
-    await checkSubscriptionStatus();
-  };
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.Completed) {
+  if (onboardingStatus === OnboardingStatus.Completed) {
     return <></>;
   }
 
@@ -74,9 +92,11 @@ export const PaymentSuccess = () => {
       <Title>All set!</Title>
       <SubTitle>Your account has been activated.</SubTitle>
       <StyledButtonContainer>
-        <UndecoratedLink onClick={onClick} to={AppPath.CreateWorkspace}>
-          <MainButton title="Start" width={200} />
-        </UndecoratedLink>
+        <MainButton
+          title="Start"
+          width={200}
+          onClick={navigateWithSubscriptionCheck}
+        />
       </StyledButtonContainer>
     </>
   );
