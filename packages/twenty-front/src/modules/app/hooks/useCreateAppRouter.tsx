@@ -15,6 +15,7 @@ import {
 import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
+import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
@@ -68,6 +69,7 @@ export const useCreateAppRouter = (
               />
             }
           />
+          <Route path={AppPath.Chatbot} element={<Chatbot />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>

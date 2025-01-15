@@ -63,6 +63,14 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
+          <NavigationDrawerItem
+            label="Chatbot"
+            to={'/chatbot'}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconRobot}
+          />
         </StyledMainSection>
       )}
       <ScrollWrapper
