@@ -1,3 +1,4 @@
+export * from './button/components/AnimatedLightIconButton';
 export * from './button/components/Button';
 export * from './button/components/ButtonGroup';
 export * from './button/components/ColorPickerButton';
@@ -24,3 +25,4 @@ export * from './components/Radio';
 export * from './components/RadioGroup';
 export * from './components/Toggle';
 export * from './types/ColorScheme';
+

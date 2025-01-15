@@ -1,12 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
+import {
+  LightIconButtonAccent,
+  LightIconButtonSize,
+} from '@ui/input/button/components/LightIconButton';
+import { motion, MotionProps } from 'framer-motion';
 import { ComponentProps, MouseEvent } from 'react';
 
-export type LightIconButtonAccent = 'secondary' | 'tertiary';
-export type LightIconButtonSize = 'small' | 'medium';
-
-export type LightIconButtonProps = {
+export type AnimatedLightIconButtonProps = {
   className?: string;
   testId?: string;
   Icon?: IconComponent;
@@ -17,10 +19,11 @@ export type LightIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'> &
+  Pick<MotionProps, 'animate' | 'transition'>;
 
 const StyledButton = styled.button<
-  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
+  Pick<AnimatedLightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
 >`
   align-items: center;
   background: transparent;
@@ -78,10 +81,18 @@ const StyledButton = styled.button<
   }
 `;
 
-export const LightIconButton = ({
+const StyledIconContainer = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const AnimatedLightIconButton = ({
   'aria-label': ariaLabel,
   className,
   testId,
+  animate,
+  transition,
   Icon,
   active = false,
   size = 'small',
@@ -90,7 +101,7 @@ export const LightIconButton = ({
   focus = false,
   onClick,
   title,
-}: LightIconButtonProps) => {
+}: AnimatedLightIconButtonProps) => {
   const theme = useTheme();
 
   return (
@@ -106,11 +117,13 @@ export const LightIconButton = ({
       active={active}
       title={title}
     >
-      {Icon && (
-        <Icon
-          size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
-        />
-      )}
+      <StyledIconContainer animate={animate} transition={transition}>
+        {Icon && (
+          <Icon
+            size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
+          />
+        )}
+      </StyledIconContainer>
     </StyledButton>
   );
 };
