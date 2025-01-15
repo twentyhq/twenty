@@ -71,135 +71,128 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
       );
 
-      try {
-        const richTextFields = await this.fieldMetadataRepository.find({
-          where: {
-            workspaceId,
-            type: FieldMetadataType.RICH_TEXT,
-          },
+      const richTextFields = await this.fieldMetadataRepository.find({
+        where: {
+          workspaceId,
+          type: FieldMetadataType.RICH_TEXT,
+        },
+      });
+
+      if (!richTextFields.length) {
+        this.logger.log('No RICH_TEXT fields found in this workspace');
+        workspaceIterator++;
+        continue;
+      }
+
+      this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
+
+      for (const richTextField of richTextFields) {
+        const newRichTextField: Partial<FieldMetadataEntity> = {
+          ...richTextField,
+          name: `${richTextField.name}V2`,
+          id: undefined,
+          type: FieldMetadataType.RICH_TEXT_V2,
+          defaultValue: null,
+        };
+
+        await this.fieldMetadataRepository.insert(newRichTextField);
+
+        const objectMetadata = await this.objectMetadataRepository.findOne({
+          where: { id: richTextField.objectMetadataId },
         });
 
-        if (!richTextFields.length) {
-          this.logger.log('No RICH_TEXT fields found in this workspace');
-          workspaceIterator++;
+        if (!isDefined(objectMetadata)) {
+          this.logger.log(
+            `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
+          );
           continue;
         }
 
-        this.logger.log(`Found ${richTextFields.length} RICH_TEXT fields`);
-
-        for (const richTextField of richTextFields) {
-          const newRichTextField: Partial<FieldMetadataEntity> = {
-            ...richTextField,
-            name: `${richTextField.name}V2`,
-            id: undefined,
-            type: FieldMetadataType.RICH_TEXT_V2,
-            defaultValue: null,
-          };
-
-          await this.fieldMetadataRepository.insert(newRichTextField);
-
-          const objectMetadata = await this.objectMetadataRepository.findOne({
-            where: { id: richTextField.objectMetadataId },
-          });
-
-          if (!isDefined(objectMetadata)) {
-            this.logger.log(
-              `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
-            );
-            continue;
-          }
-
-          await this.workspaceMigrationService.createCustomMigration(
-            generateMigrationName(
-              `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
-            ),
-            workspaceId,
-            [
-              {
-                name: computeObjectTargetTable(objectMetadata),
-                action: WorkspaceMigrationTableActionType.ALTER,
-                columns: [
-                  {
-                    action: WorkspaceMigrationColumnActionType.CREATE,
-                    columnName: `${richTextField.name}V2Blocknote`,
-                    columnType: 'text',
-                    isNullable: true,
-                    defaultValue: null,
-                  } satisfies WorkspaceMigrationColumnCreate,
-                  {
-                    action: WorkspaceMigrationColumnActionType.CREATE,
-                    columnName: `${richTextField.name}V2Markdown`,
-                    columnType: 'text',
-                    isNullable: true,
-                    defaultValue: null,
-                  } satisfies WorkspaceMigrationColumnCreate,
-                ],
-              } satisfies WorkspaceMigrationTableAction,
-            ],
-          );
-        }
-
-        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `migrate-rich-text-field-${objectMetadata.nameSingular}-${richTextField.name}`,
+          ),
           workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.CREATE,
+                  columnName: `${richTextField.name}V2Blocknote`,
+                  columnType: 'text',
+                  isNullable: true,
+                  defaultValue: null,
+                } satisfies WorkspaceMigrationColumnCreate,
+                {
+                  action: WorkspaceMigrationColumnActionType.CREATE,
+                  columnName: `${richTextField.name}V2Markdown`,
+                  columnType: 'text',
+                  isNullable: true,
+                  defaultValue: null,
+                } satisfies WorkspaceMigrationColumnCreate,
+              ],
+            } satisfies WorkspaceMigrationTableAction,
+          ],
         );
-
-        await this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        );
-
-        const serverBlockNoteEditor = ServerBlockNoteEditor.create();
-
-        for (const richTextField of richTextFields) {
-          const objectMetadata = await this.objectMetadataRepository.findOne({
-            where: { id: richTextField.objectMetadataId },
-          });
-
-          if (!isDefined(objectMetadata)) {
-            this.logger.log(
-              `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
-            );
-            continue;
-          }
-
-          const schemaName =
-            this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-          const workspaceDataSource =
-            await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-              workspaceId,
-            );
-
-          const rows = await workspaceDataSource.query(
-            `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}"`,
-          );
-
-          this.logger.log(`Generating markdown for ${rows.length} records`);
-
-          for (const row of rows) {
-            const blocknoteFieldValue = row[richTextField.name];
-            const markdownFieldValue = blocknoteFieldValue
-              ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-                  JSON.parse(blocknoteFieldValue),
-                )
-              : null;
-
-            await workspaceDataSource.query(
-              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
-              [blocknoteFieldValue, markdownFieldValue, row.id],
-            );
-          }
-        }
-
-        workspaceIterator++;
-        this.logger.log(
-          chalk.green(`Command completed for workspace ${workspaceId}`),
-        );
-      } catch (error) {
-        this.logger.error(
-          chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
-        );
-        workspaceIterator++;
       }
+
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+
+      const serverBlockNoteEditor = ServerBlockNoteEditor.create();
+
+      for (const richTextField of richTextFields) {
+        const objectMetadata = await this.objectMetadataRepository.findOne({
+          where: { id: richTextField.objectMetadataId },
+        });
+
+        if (!isDefined(objectMetadata)) {
+          this.logger.log(
+            `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
+          );
+          continue;
+        }
+
+        const schemaName =
+          this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+        const workspaceDataSource =
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+            workspaceId,
+          );
+
+        const rows = await workspaceDataSource.query(
+          `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}"`,
+        );
+
+        this.logger.log(`Generating markdown for ${rows.length} records`);
+
+        for (const row of rows) {
+          const blocknoteFieldValue = row[richTextField.name];
+          const markdownFieldValue = blocknoteFieldValue
+            ? await serverBlockNoteEditor.blocksToMarkdownLossy(
+                JSON.parse(blocknoteFieldValue),
+              )
+            : null;
+
+          await workspaceDataSource.query(
+            `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
+            [blocknoteFieldValue, markdownFieldValue, row.id],
+          );
+        }
+      }
+
+      workspaceIterator++;
+      this.logger.log(
+        chalk.green(`Command completed for workspace ${workspaceId}`),
+      );
     }
 
     this.logger.log(chalk.green('Command completed!'));
