@@ -192,15 +192,19 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8
-    needs: [changed-files, server-test, server-integration-test]
+    needs: [changed-files, server-setup, server-test, server-integration-test]
     steps:
+      - name: Log server-test result
+        run: echo ${{ needs.server-test.result }}
+      - name: Log server-integration-test result
+        run: echo ${{ needs.server-integration-test.result }}
+      - name: Log server-setup result
+        run: echo ${{ needs.server-setup.result }}
       - name: Log changed-files result
         run: echo ${{ needs.changed-files.result }}
-      - name: Log server-test result
-        run: echo ${{ needs.changed-files.result }}
-      - name: Log server-integration-test result
-        run: echo ${{ needs.changed-files.result }}
-      - name: Log all ?
-        run: echo ${{ needs.*.result }}
+      - name: Programmatically fail the job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
+
 
 
