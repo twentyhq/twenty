@@ -1,5 +1,7 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { UserLookup } from '@/settings/admin-panel/types/UserLookup';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
   FeatureFlagKey,
@@ -8,6 +10,9 @@ import {
 } from '~/generated/graphql';
 
 export const useFeatureFlagsManagement = () => {
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
   const [userLookupResult, setUserLookupResult] = useState<UserLookup | null>(
     null,
   );
@@ -27,7 +32,9 @@ export const useFeatureFlagsManagement = () => {
     },
   });
 
-  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
+  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation({
+    refetchQueries: ['GetCurrentUser'],
+  });
 
   const handleUserLookup = async (userIdentifier: string) => {
     setError(null);
@@ -65,6 +72,21 @@ export const useFeatureFlagsManagement = () => {
               }
             : workspace,
         ),
+      });
+    }
+
+    if (currentWorkspace?.id === workspaceId) {
+      setCurrentWorkspace((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          featureFlags: prev.featureFlags?.map((flag) =>
+            flag.key === featureFlag
+              ? { ...flag, value, isPublic: isPublic ?? flag.isPublic }
+              : flag,
+          ),
+        };
       });
     }
 

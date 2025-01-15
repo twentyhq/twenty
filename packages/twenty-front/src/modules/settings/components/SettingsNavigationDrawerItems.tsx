@@ -8,6 +8,7 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFlask,
   IconFunction,
   IconHierarchy2,
   IconKey,
@@ -207,6 +208,11 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconServer}
           />
         )}
+        <SettingsNavigationDrawerItem
+          label="Labs"
+          path={SettingsPath.Labs}
+          Icon={IconFlask}
+        />
         <SettingsNavigationDrawerItem
           label="Releases"
           path={SettingsPath.Releases}

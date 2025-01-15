@@ -42,6 +42,7 @@ export class AdminPanelResolver {
       updateFlagInput.workspaceId,
       updateFlagInput.featureFlag,
       updateFlagInput.value,
+      updateFlagInput.isPublic,
     );
 
     return true;

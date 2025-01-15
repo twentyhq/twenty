@@ -262,6 +262,12 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
+const SettingsLabs = lazy(() =>
+  import('~/pages/settings/labs/SettingsLabs').then((module) => ({
+    default: module.SettingsLabs,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
@@ -402,6 +408,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route path={SettingsPath.Labs} element={<SettingsLabs />} />
     </Routes>
   </Suspense>
 );
