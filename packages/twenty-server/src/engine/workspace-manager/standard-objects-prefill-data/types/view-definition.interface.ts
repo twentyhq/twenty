@@ -1,3 +1,5 @@
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+
 export interface ViewDefinition {
   id?: string;
   name: string;
@@ -7,11 +9,14 @@ export interface ViewDefinition {
   position: number;
   icon?: string;
   kanbanFieldMetadataId?: string;
+  kanbanAggregateOperation?: AGGREGATE_OPERATIONS;
+  kanbanAggregateOperationFieldMetadataId?: string;
   fields?: {
     fieldMetadataId: string;
     position: number;
     isVisible: boolean;
     size: number;
+    aggregateOperation?: AGGREGATE_OPERATIONS;
   }[];
   filters?: {
     fieldMetadataId: string;
