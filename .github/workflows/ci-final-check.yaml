@@ -1,0 +1,15 @@
+name: CI final check reusable workflow
+on:
+  workflow_call:
+
+jobs:
+  ci-server-final:
+    if: always() && !cancelled()
+    timeout-minutes: 1
+    runs-on: depot-ubuntu-24.04-8
+    steps:
+      - run: echo ${{ needs.prerequisites.result }}
+      - run: echo "${{ toJson(needs.*.result) }}"
+      - name: Fail job if any needs failed ${{ needs }}
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

@@ -5,7 +5,7 @@ on:
       - main
 
   pull_request:
-   
+  
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,24 +15,13 @@ env:
 
 jobs:
   prerequisites:
-    timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04-8
-    outputs:
-      any_changed: ${{ steps.changed-files.outputs.any_changed }}
-    steps:
-      - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          files: |
-            package.json
-            packages/twenty-server/**
-            packages/twenty-emails/**
-            packages/twenty-shared/**
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-server/**
+        packages/twenty-emails/**
+        packages/twenty-shared/**
   server-setup:
     needs: prerequisites
     if: needs.prerequisites.outputs.any_changed == 'true'
@@ -46,8 +35,8 @@ jobs:
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: "true"
-          SPILO_PROVIDER: "local"
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
@@ -130,7 +119,7 @@ jobs:
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
-      - name:  Server / Run Tests
+      - name: Server / Run Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
@@ -146,8 +135,8 @@ jobs:
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: "true"
-          SPILO_PROVIDER: "local"
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
@@ -182,7 +171,7 @@ jobs:
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: "test:integration:with-db-reset"
+          tasks: 'test:integration:with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4
@@ -190,11 +179,5 @@ jobs:
           name: reset-logs
           path: reset-logs.log
   ci-server-final:
-    if: always() && !cancelled()
-    timeout-minutes: 1
-    runs-on: depot-ubuntu-24.04-8
     needs: [prerequisites, server-setup, server-test, server-integration-test]
-    steps:
-      - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
-        run: exit 1
+    uses: ./.github/workflows/ci-final-check.yaml
