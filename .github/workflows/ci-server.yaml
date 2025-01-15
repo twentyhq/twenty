@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
       - name: Check for changed files
         id: changed-files
-        uses: tj-actions/changed-files@v11
+        uses: tj-actions/changed-files@v45
         with:
           files: |
             package.json
@@ -198,6 +198,3 @@ jobs:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1
-
-
-
