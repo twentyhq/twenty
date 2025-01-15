@@ -22,9 +22,9 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
+import { isNonEmptyString } from '@sniptt/guards';
 import { StrictMode } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-ui';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const AppRouterProviders = () => {
@@ -64,7 +64,7 @@ export const AppRouterProviders = () => {
                       </PrefetchDataProvider>
                     </ObjectMetadataItemsGater>
                     <PageChangeEffect />
-                    {isDefined(objectNamePlural) && (
+                    {isNonEmptyString(objectNamePlural) && (
                       <ContextStoreViewIdEffect
                         objectNamePlural={objectNamePlural}
                       />

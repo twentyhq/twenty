@@ -62,47 +62,49 @@ export const RecordIndexPage = () => {
     [],
   );
 
+  if (!isDefined(contextStoreCurrentViewId)) {
+    return;
+  }
+
   return (
-    isDefined(contextStoreCurrentViewId) && (
-      <PageContainer>
-        <RecordIndexContextProvider
-          value={{
-            recordIndexId,
-            objectNamePlural,
-            objectNameSingular,
-            objectMetadataItem,
-            onIndexRecordsLoaded: handleIndexRecordsLoaded,
-            indexIdentifierUrl,
-          }}
+    <PageContainer>
+      <RecordIndexContextProvider
+        value={{
+          recordIndexId,
+          objectNamePlural,
+          objectNameSingular,
+          objectMetadataItem,
+          onIndexRecordsLoaded: handleIndexRecordsLoaded,
+          indexIdentifierUrl,
+        }}
+      >
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
         >
-          <ViewComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
+          <ContextStoreComponentInstanceContext.Provider
+            value={{
+              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+            }}
           >
-            <ContextStoreComponentInstanceContext.Provider
+            <ActionMenuComponentInstanceContext.Provider
               value={{
                 instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
               }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
-              >
-                <PageTitle title={`${capitalize(objectNamePlural)}`} />
-                <RecordIndexPageHeader />
-                <PageBody>
-                  <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreObjectMetadataEffect />
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <MainContextStoreComponentInstanceIdSetterEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                </PageBody>
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </ViewComponentInstanceContext.Provider>
-        </RecordIndexContextProvider>
-      </PageContainer>
-    )
+              <PageTitle title={`${capitalize(objectNamePlural)}`} />
+              <RecordIndexPageHeader />
+              <PageBody>
+                <StyledIndexContainer>
+                  <RecordIndexContainerContextStoreObjectMetadataEffect />
+                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                  <MainContextStoreComponentInstanceIdSetterEffect />
+                  <RecordIndexContainer />
+                </StyledIndexContainer>
+              </PageBody>
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </ViewComponentInstanceContext.Provider>
+      </RecordIndexContextProvider>
+    </PageContainer>
   );
 };
