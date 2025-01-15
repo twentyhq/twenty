@@ -63,11 +63,10 @@ export class MessagingGetMessageListService {
           syncCursor,
         );
       case 'microsoft':
-        return {
-          messageExternalIds: [],
-          messageExternalIdsToDelete: [],
-          nextSyncCursor: '',
-        };
+        return this.microsoftGetMessageListService.getPartialMessageList(
+          connectedAccount,
+          syncCursor,
+        );
       default:
         throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,
