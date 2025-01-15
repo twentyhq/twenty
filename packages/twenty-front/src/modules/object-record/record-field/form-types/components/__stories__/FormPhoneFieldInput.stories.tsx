@@ -55,7 +55,7 @@ export const SelectCountryCode: Story = {
 
     await userEvent.click(franceOption);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: 'FR',
@@ -92,7 +92,7 @@ export const SelectEmptyCountryCode: Story = {
 
     await userEvent.click(emptyOption);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',
