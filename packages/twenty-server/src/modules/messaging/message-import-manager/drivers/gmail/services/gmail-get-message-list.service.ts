@@ -54,11 +54,6 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          if (connectedAccount.refreshToken === 'exampleRefreshToken') {
-            console.log(
-              `Gmail ${connectedAccount.handle} for connected account ${connectedAccount.id} not found. You probably use an example account, remove it`,
-            );
-          }
           this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
 
           return {
