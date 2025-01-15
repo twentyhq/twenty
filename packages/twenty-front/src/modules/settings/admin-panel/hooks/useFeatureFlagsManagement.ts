@@ -2,9 +2,9 @@ import { UserLookup } from '@/settings/admin-panel/types/UserLookup';
 import { useState } from 'react';
 import { isDefined } from 'twenty-ui';
 import {
+  FeatureFlagKey,
   useUpdateWorkspaceFeatureFlagMutation,
   useUserLookupAdminPanelMutation,
-  FeatureFlagKey,
 } from '~/generated/graphql';
 
 export const useFeatureFlagsManagement = () => {
@@ -45,6 +45,7 @@ export const useFeatureFlagsManagement = () => {
     workspaceId: string,
     featureFlag: FeatureFlagKey,
     value: boolean,
+    isPublic?: boolean,
   ) => {
     setError(null);
     const previousState = userLookupResult;
@@ -57,7 +58,9 @@ export const useFeatureFlagsManagement = () => {
             ? {
                 ...workspace,
                 featureFlags: workspace.featureFlags.map((flag) =>
-                  flag.key === featureFlag ? { ...flag, value } : flag,
+                  flag.key === featureFlag
+                    ? { ...flag, value, isPublic: isPublic ?? flag.isPublic }
+                    : flag,
                 ),
               }
             : workspace,
@@ -70,6 +73,7 @@ export const useFeatureFlagsManagement = () => {
         workspaceId,
         featureFlag,
         value,
+        isPublic,
       },
       onError: (error) => {
         if (isDefined(previousState)) {

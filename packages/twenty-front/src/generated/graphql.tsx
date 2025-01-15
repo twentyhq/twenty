@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -308,6 +308,7 @@ export type ExecuteServerlessFunctionInput = {
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
+  isPublic: Scalars['Boolean'];
   key: FeatureFlagKey;
   value: Scalars['Boolean'];
   workspaceId: Scalars['String'];
@@ -764,6 +765,7 @@ export type MutationUpdateWorkspaceArgs = {
 
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String'];
+  isPublic?: InputMaybe<Scalars['Boolean']>;
   value: Scalars['Boolean'];
   workspaceId: Scalars['String'];
 };
@@ -1532,7 +1534,8 @@ export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
   OngoingCreation = 'ONGOING_CREATION',
-  PendingCreation = 'PENDING_CREATION'
+  PendingCreation = 'PENDING_CREATION',
+  Suspended = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
@@ -2067,6 +2070,7 @@ export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
   featureFlag: Scalars['String'];
   value: Scalars['Boolean'];
+  isPublic?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -2077,7 +2081,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 }>;
 
 
-export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean, isPublic: boolean }> }> } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3552,11 +3556,12 @@ export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof us
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
 export const UpdateWorkspaceFeatureFlagDocument = gql`
-    mutation UpdateWorkspaceFeatureFlag($workspaceId: String!, $featureFlag: String!, $value: Boolean!) {
+    mutation UpdateWorkspaceFeatureFlag($workspaceId: String!, $featureFlag: String!, $value: Boolean!, $isPublic: Boolean) {
   updateWorkspaceFeatureFlag(
     workspaceId: $workspaceId
     featureFlag: $featureFlag
     value: $value
+    isPublic: $isPublic
   )
 }
     `;
@@ -3578,6 +3583,7 @@ export type UpdateWorkspaceFeatureFlagMutationFn = Apollo.MutationFunction<Updat
  *      workspaceId: // value for 'workspaceId'
  *      featureFlag: // value for 'featureFlag'
  *      value: // value for 'value'
+ *      isPublic: // value for 'isPublic'
  *   },
  * });
  */
@@ -3612,6 +3618,7 @@ export const UserLookupAdminPanelDocument = gql`
       featureFlags {
         key
         value
+        isPublic
       }
     }
   }

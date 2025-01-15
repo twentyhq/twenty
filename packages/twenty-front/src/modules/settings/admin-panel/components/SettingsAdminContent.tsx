@@ -158,20 +158,34 @@ export const SettingsAdminContent = () => {
         {canManageFeatureFlags && (
           <StyledTable>
             <TableRow
-              gridAutoColumns="1fr 100px"
-              mobileGridAutoColumns="1fr 80px"
+              gridAutoColumns="1fr 100px 100px"
+              mobileGridAutoColumns="1fr 80px 80px"
             >
               <TableHeader>Feature Flag</TableHeader>
+              <TableHeader align="right">Public</TableHeader>
               <TableHeader align="right">Status</TableHeader>
             </TableRow>
 
             {activeWorkspace.featureFlags.map((flag) => (
               <TableRow
-                gridAutoColumns="1fr 100px"
-                mobileGridAutoColumns="1fr 80px"
+                gridAutoColumns="1fr 100px 100px"
+                mobileGridAutoColumns="1fr 80px 80px"
                 key={flag.key}
               >
                 <TableCell>{flag.key}</TableCell>
+                <TableCell align="right">
+                  <Toggle
+                    value={flag.isPublic}
+                    onChange={(newValue) =>
+                      handleFeatureFlagUpdate(
+                        activeWorkspace.id,
+                        flag.key,
+                        flag.value,
+                        newValue,
+                      )
+                    }
+                  />
+                </TableCell>
                 <TableCell align="right">
                   <Toggle
                     value={flag.value}
@@ -180,6 +194,7 @@ export const SettingsAdminContent = () => {
                         activeWorkspace.id,
                         flag.key,
                         newValue,
+                        flag.isPublic,
                       )
                     }
                   />

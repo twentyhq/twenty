@@ -5,11 +5,13 @@ export const UPDATE_WORKSPACE_FEATURE_FLAG = gql`
     $workspaceId: String!
     $featureFlag: String!
     $value: Boolean!
+    $isPublic: Boolean
   ) {
     updateWorkspaceFeatureFlag(
       workspaceId: $workspaceId
       featureFlag: $featureFlag
       value: $value
+      isPublic: $isPublic
     )
   }
 `;

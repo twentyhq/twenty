@@ -24,6 +24,7 @@ export const USER_LOOKUP_ADMIN_PANEL = gql`
         featureFlags {
           key
           value
+          isPublic
         }
       }
     }

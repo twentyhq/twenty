@@ -111,6 +111,10 @@ export class AdminPanelService {
             userWorkspace.workspace.featureFlags?.find(
               (flag) => flag.key === key,
             )?.value ?? false,
+          isPublic:
+            userWorkspace.workspace.featureFlags?.find(
+              (flag) => flag.key === key,
+            )?.isPublic ?? false,
         })) as FeatureFlagEntity[],
       })),
     };
@@ -120,6 +124,7 @@ export class AdminPanelService {
     workspaceId: string,
     featureFlag: FeatureFlagKey,
     value: boolean,
+    isPublic?: boolean,
   ) {
     featureFlagValidator.assertIsFeatureFlagKey(
       featureFlag,
@@ -144,11 +149,15 @@ export class AdminPanelService {
     );
 
     if (existingFlag) {
-      await this.featureFlagRepository.update(existingFlag.id, { value });
+      await this.featureFlagRepository.update(existingFlag.id, {
+        value,
+        ...(isPublic !== undefined ? { isPublic } : {}),
+      });
     } else {
       await this.featureFlagRepository.save({
         key: FeatureFlagKey[featureFlag],
         value,
+        isPublic: isPublic ?? false,
         workspaceId: workspace.id,
       });
     }

@@ -18,4 +18,8 @@ export class UpdateWorkspaceFeatureFlagInput {
   @Field(() => Boolean)
   @IsBoolean()
   value: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  isPublic?: boolean;
 }
