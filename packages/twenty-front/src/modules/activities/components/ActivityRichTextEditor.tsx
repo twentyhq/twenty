@@ -77,7 +77,7 @@ export const ActivityRichTextEditor = ({
             markdown: null,
           },
         }
-      : { body: blocknote as any };
+      : { body: blocknote };
 
     if (isDefined(activity)) {
       upsertActivity({
