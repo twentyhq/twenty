@@ -4,5 +4,5 @@ runs:
   using: composite
   steps:
     - name: Fail job if any needs failed
-      if: always() && !cancelled() && contains(needs.*.result, 'failure')
+      if: contains(needs.*.result, 'failure')
       run: exit 1
