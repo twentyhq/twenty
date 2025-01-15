@@ -3,6 +3,8 @@ name: Fail on needs
 runs:
   using: composite
   steps:
+    - name: log
+      run: echo ${{ toJSON(needs.*.result) }}
     - name: Fail job if any needs failed
       if: contains(needs.*.result, 'failure')
       run: exit 1
