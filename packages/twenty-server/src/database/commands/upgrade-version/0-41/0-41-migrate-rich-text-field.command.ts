@@ -18,7 +18,6 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
@@ -91,15 +90,13 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
         for (const richTextField of richTextFields) {
           const newRichTextField: Partial<FieldMetadataEntity> = {
             ...richTextField,
+            name: `${richTextField.name}V2`,
             id: undefined,
             type: FieldMetadataType.RICH_TEXT_V2,
             defaultValue: null,
           };
 
-          await this.fieldMetadataRepository.update(
-            richTextField.id,
-            newRichTextField,
-          );
+          await this.fieldMetadataRepository.insert(newRichTextField);
 
           const objectMetadata = await this.objectMetadataRepository.findOne({
             where: { id: richTextField.objectMetadataId },
@@ -123,23 +120,15 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
                 action: WorkspaceMigrationTableActionType.ALTER,
                 columns: [
                   {
-                    action: WorkspaceMigrationColumnActionType.ALTER,
-                    currentColumnDefinition: {
-                      columnName: `${richTextField.name}`,
-                      columnType: 'text',
-                      isNullable: true,
-                      defaultValue: null,
-                    },
-                    alteredColumnDefinition: {
-                      columnName: `${richTextField.name}Blocknote`,
-                      columnType: 'text',
-                      isNullable: true,
-                      defaultValue: null,
-                    },
-                  } satisfies WorkspaceMigrationColumnAlter,
+                    action: WorkspaceMigrationColumnActionType.CREATE,
+                    columnName: `${richTextField.name}V2Blocknote`,
+                    columnType: 'text',
+                    isNullable: true,
+                    defaultValue: null,
+                  } satisfies WorkspaceMigrationColumnCreate,
                   {
                     action: WorkspaceMigrationColumnActionType.CREATE,
-                    columnName: `${richTextField.name}Markdown`,
+                    columnName: `${richTextField.name}V2Markdown`,
                     columnType: 'text',
                     isNullable: true,
                     defaultValue: null,
@@ -181,22 +170,22 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
             );
 
           const rows = await workspaceDataSource.query(
-            `SELECT id, "${richTextField.name}Blocknote" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}"`,
+            `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}"`,
           );
 
           this.logger.log(`Generating markdown for ${rows.length} records`);
 
           for (const row of rows) {
-            const blocknoteValue = row[`${richTextField.name}Blocknote`];
-            const markdown = blocknoteValue
+            const blocknoteFieldValue = row[richTextField.name];
+            const markdownFieldValue = blocknoteFieldValue
               ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-                  JSON.parse(blocknoteValue),
+                  JSON.parse(blocknoteFieldValue),
                 )
               : null;
 
             await workspaceDataSource.query(
-              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}Markdown" = $1 WHERE id = $2`,
-              [markdown, row.id],
+              `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
+              [blocknoteFieldValue, markdownFieldValue, row.id],
             );
           }
         }
