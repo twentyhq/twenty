@@ -1,8 +1,12 @@
 import { InformationBannerBillingSubscriptionPaused } from '@/information-banner/components/billing/InformationBannerBillingSubscriptionPaused';
+import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
+import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
   height: 40px;
@@ -14,12 +18,30 @@ const StyledInformationBannerWrapper = styled.div`
 `;
 
 export const InformationBannerWrapper = () => {
+  const subscriptionStatus = useSubscriptionStatus();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
+
+  const displayBillingSubsriptionPausedBanner =
+    isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
+
+  const displayBillingSubsriptionCanceledBanner =
+    isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Canceled;
+
+  const displayFailPaymentInfoBanner =
+    subscriptionStatus === SubscriptionStatus.PastDue ||
+    subscriptionStatus === SubscriptionStatus.Unpaid;
+
   return (
     <StyledInformationBannerWrapper>
       <InformationBannerReconnectAccountInsufficientPermissions />
       <InformationBannerReconnectAccountEmailAliases />
-      <InformationBannerBillingSubscriptionPaused />
-      <InformationBannerNoBillingSubscription />
+      {displayBillingSubsriptionPausedBanner && (
+        <InformationBannerBillingSubscriptionPaused />
+      )}
+      {displayBillingSubsriptionCanceledBanner && (
+        <InformationBannerNoBillingSubscription />
+      )}
+      {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}
     </StyledInformationBannerWrapper>
   );
 };

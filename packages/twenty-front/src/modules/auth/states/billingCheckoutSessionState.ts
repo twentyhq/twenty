@@ -1,11 +1,11 @@
-import { STATE_BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/auth/constants/StateBillingCheckoutSessionDefaultValue';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import { createState } from '@ui/utilities/state/utils/createState';
 import { syncEffect } from 'recoil-sync';
 
 export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
   key: 'billingCheckoutSessionState',
-  defaultValue: STATE_BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
+  defaultValue: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
   effects: [
     syncEffect({
       refine: (value: unknown) => {
