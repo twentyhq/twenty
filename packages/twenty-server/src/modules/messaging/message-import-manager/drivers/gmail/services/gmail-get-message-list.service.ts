@@ -32,7 +32,7 @@ export class GmailGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     const gmailClient =
@@ -54,7 +54,16 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          if (connectedAccount.refreshToken === 'exampleRefreshToken') {
+            throw new MessageImportDriverException(
+              `Gmail ${connectedAccount.handle} for connected account ${connectedAccount.id} not found. You probably use an example account, remove it`,
+              MessageImportDriverExceptionCode.EXAMPLE_ACCOUNT,
+            );
+          } else {
+            this.gmailHandleErrorService.handleGmailMessageListFetchError(
+              error,
+            );
+          }
 
           return {
             data: {

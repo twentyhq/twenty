@@ -71,6 +71,13 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case MessageImportDriverExceptionCode.EXAMPLE_ACCOUNT:
+        await this.handleExampleAccountException(
+          exception,
+          messageChannel,
+          workspaceId,
+        );
+        break;
       default:
         throw exception;
     }
@@ -169,6 +176,22 @@ export class MessageImportExceptionHandlerService {
     throw new MessageImportDriverException(
       `SuncCursor error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
       MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    );
+  }
+
+  private async handleExampleAccountException(
+    exception: MessageImportDriverException,
+    messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      [messageChannel.id],
+      workspaceId,
+    );
+
+    throw new MessageImportDriverException(
+      `Unvalid Account error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      MessageImportDriverExceptionCode.EXAMPLE_ACCOUNT,
     );
   }
 
