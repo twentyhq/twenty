@@ -3,24 +3,54 @@ name: Yarn Install
 runs:
   using: "composite"
   steps:
+    - name: Cache primary key builder
+      id: globals
+      shell: bash
+      run: |
+        echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
+        echo "NODE_VERSION=18" >> "${GITHUB_OUTPUT}"
+        {
+          echo 'PATH_TO_CACHE<<EOF'
+          node_modules
+          packages/*/node_modules
+          echo EOF
+        } >> "$GITHUB_OUTPUT"
+    - name: Logs TMP ${{ steps.globals.outputs.PATH_TO_CACHE }}
+      shell: bash
+      run: |
+        echo ${{ steps.globals.outputs.PATH_TO_CACHE }}
+        echo ${{ toJson(steps.globals.outputs) }}
     - name: Setup Node.js and get yarn cache
-      id: setup-node
       uses: actions/setup-node@v4
       with:
-        node-version: 18
-        cache: yarn
-    - name: Log if cache hit ${{ steps.setup-node.outputs.cache-hit }}
-      shell: bash
-      run: echo ${{ steps.setup-node.outputs.cache-hit }}
+        node-version: ${{ steps.globals.outputs.NODE_VERSION }}
+    - name: Restore node_modules
+      id: cache-node-modules
+      uses: actions/cache/restore@v4
+      with:
+        key: node_modules-cache-${{ steps.globals.outputs.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
+        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+        # restore-keys: root-node_modules- we don't want partial hit but hashfile direct hit
+    - name: Log if cache hit ${{ steps.cache-node-modules.outputs.cache-hit }}
+      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
+      run: echo ${{ steps.cache-node-modules.outputs.cache-hit }}
     - name: Install Dependencies from cache
-      shell: bash
-      if: ${{ steps.setup-node.outputs.cache-hit == 'true' }}
+      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
+      if: ${{ steps.cache-node-modules.outputs.cache-hit == 'true' }}
       run: |
         yarn config set enableHardenedMode false
         yarn --mode=update-lockfile
     - name: Install Dependencies
-      if: ${{ steps.setup-node.outputs.cache-hit == 'false' }}
-      shell: bash
+      if: ${{ steps.cache-node-modules.outputs.cache-hit == 'false' }}
+      shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
         yarn config set enableHardenedMode true
         yarn --immutable --check-cache
+    - name: Save cache
+      # Only searching for direct hit 
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v4
+      with:
+        key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
+        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+      
