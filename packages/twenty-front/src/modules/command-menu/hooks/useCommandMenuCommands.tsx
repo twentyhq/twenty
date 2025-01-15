@@ -17,6 +17,7 @@ import {
   CommandType,
 } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -35,9 +36,6 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const useCommandMenuCommands = () => {
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
@@ -143,19 +141,27 @@ export const useCommandMenuCommands = () => {
         matchesSearchFilterObjectRecordsQueryResult,
     });
 
+  const { objectMetadataItem: noteObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
+
+  const richTextV2BodyExists = noteObjectMetadataItem
+    ? 'bodyV2' in noteObjectMetadataItem
+    : false;
+
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          {
-            body: isRichTextV2Enabled
-              ? {
+          richTextV2BodyExists
+            ? {
+                bodyV2: {
                   blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
-                }
-              : { ilike: `%${deferredCommandMenuSearch}%` },
-          },
+                },
+              }
+            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
@@ -167,13 +173,13 @@ export const useCommandMenuCommands = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          {
-            body: isRichTextV2Enabled
-              ? {
+          richTextV2BodyExists
+            ? {
+                bodyV2: {
                   blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
-                }
-              : { ilike: `%${deferredCommandMenuSearch}%` },
-          },
+                },
+              }
+            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,

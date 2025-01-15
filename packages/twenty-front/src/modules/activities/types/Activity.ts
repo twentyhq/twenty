@@ -3,7 +3,8 @@ export type Activity = {
   createdAt: string;
   updatedAt: string;
   title: string;
-  body: {
+  body: string | null;
+  bodyV2: {
     blocknote: string | null;
     markdown: string | null;
   };
