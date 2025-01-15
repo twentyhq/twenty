@@ -8,7 +8,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
 import { isDefined } from '~/utils/isDefined';
-import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -46,16 +45,12 @@ export const LocalePicker = () => {
   if (!isDefined(currentWorkspaceMember)) return;
 
   const handleLocaleChange = (value: string) => {
-    const workspaceMember: any = {};
+    setCurrentWorkspaceMember({
+      ...currentWorkspaceMember,
+      ...{ locale: value },
+    });
+    updateWorkspaceMember({ locale: value });
 
-    workspaceMember.locale = value;
-    if (!isEmptyObject(workspaceMember)) {
-      setCurrentWorkspaceMember({
-        ...currentWorkspaceMember,
-        ...workspaceMember,
-      });
-      updateWorkspaceMember(workspaceMember);
-    }
     i18n.changeLanguage(value);
   };
 
