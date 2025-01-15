@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -119,5 +120,47 @@ export class ViewService {
         },
       })
       .then((views) => views.map((view) => view.id));
+  }
+
+  async findViewsByKanbanAggregateOperationFieldMetadataId({
+    workspaceId,
+    fieldMetadataId,
+  }: {
+    workspaceId: string;
+    fieldMetadataId: string;
+  }) {
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'view',
+      );
+    const views = await viewRepository.find({
+      where: {
+        kanbanAggregateOperationFieldMetadataId: fieldMetadataId,
+      },
+    });
+
+    return views.map((view) => view.id);
+  }
+
+  async resetKanbanAggregateOperationForView({
+    workspaceId,
+    viewsIds,
+  }: {
+    workspaceId: string;
+    viewsIds: string[];
+  }) {
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'view',
+      );
+
+    for (const viewId of viewsIds) {
+      await viewRepository.update(viewId, {
+        kanbanAggregateOperationFieldMetadataId: null,
+        kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+      });
+    }
   }
 }
