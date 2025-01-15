@@ -35,6 +35,7 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   onClose?: () => void;
   role?: 'alert' | 'status';
   variant?: SnackBarVariant;
+  dedupeKey?: string;
 };
 
 const StyledContainer = styled.div`

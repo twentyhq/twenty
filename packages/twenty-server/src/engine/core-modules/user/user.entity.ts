@@ -55,7 +55,7 @@ export class User {
 
   @Field()
   @Column({ default: false })
-  emailVerified: boolean;
+  isEmailVerified: boolean;
 
   @Field({ nullable: true })
   @Column({ default: false })
