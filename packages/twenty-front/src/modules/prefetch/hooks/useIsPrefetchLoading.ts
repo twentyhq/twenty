@@ -1,11 +1,10 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { useRecoilValue } from 'recoil';
 
 export const useIsPrefetchLoading = () => {
-  const isSettingsPage = useIsSettingsPage();
-
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
   const isFavoriteFoldersPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
   );
@@ -18,7 +17,7 @@ export const useIsPrefetchLoading = () => {
   );
 
   return (
-    !isSettingsPage &&
+    !isWorkspaceSuspended &&
     (!areViewsPrefetched ||
       !areFavoritesPrefetched ||
       !isFavoriteFoldersPrefetched)

@@ -4,19 +4,19 @@ import { useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
+import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
-  const isSettingsPage = useIsSettingsPage();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
   const { upsertRecordsInCache: upsertViewsInCache } =
     usePrefetchRunQuery<View>({
@@ -45,7 +45,7 @@ export const PrefetchRunQueriesEffect = () => {
 
   const { result } = useCombinedFindManyRecords({
     operationSignatures,
-    skip: !currentUser || isSettingsPage,
+    skip: !currentUser || isWorkspaceSuspended,
   });
 
   useEffect(() => {
