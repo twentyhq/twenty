@@ -729,6 +729,7 @@ export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
+  workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
 };
@@ -2012,6 +2013,7 @@ export type SignUpMutationVariables = Exact<{
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
   captchaToken?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3096,13 +3098,14 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String) {
   signUp(
     email: $email
     password: $password
     workspaceInviteHash: $workspaceInviteHash
     workspacePersonalInviteToken: $workspacePersonalInviteToken
     captchaToken: $captchaToken
+    workspaceId: $workspaceId
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3134,6 +3137,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      workspaceInviteHash: // value for 'workspaceInviteHash'
  *      workspacePersonalInviteToken: // value for 'workspacePersonalInviteToken'
  *      captchaToken: // value for 'captchaToken'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */

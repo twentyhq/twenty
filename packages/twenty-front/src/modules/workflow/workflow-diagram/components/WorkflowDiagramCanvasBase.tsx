@@ -1,6 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
@@ -44,6 +45,14 @@ const StyledResetReactflowStyles = styled.div`
     width: auto;
     text-align: start;
     white-space: nowrap;
+  }
+
+  .react-flow__handle {
+    min-height: 0;
+    min-width: 0;
+  }
+  .react-flow__handle.connectionindicator {
+    cursor: pointer;
   }
 
   --xy-node-border-radius: none;
@@ -182,6 +191,8 @@ export const WorkflowDiagramCanvasBase = ({
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
+      <WorkflowDiagramCustomMarkers />
+
       <ReactFlow
         ref={(node) => {
           if (isDefined(node)) {
@@ -214,6 +225,7 @@ export const WorkflowDiagramCanvasBase = ({
         edgesFocusable={false}
         nodesDraggable={false}
         onPaneClick={closeCommandMenu}
+        nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
         <Background color={theme.border.color.medium} size={2} />

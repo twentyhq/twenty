@@ -8,6 +8,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -53,13 +54,12 @@ import { isEmailVerificationRequiredState } from '@/client-config/states/isEmail
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
-import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
-import { AppPath } from '@/types/AppPath';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useSearchParams } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -95,7 +95,8 @@ export const useAuth = () => {
 
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
-  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
@@ -377,6 +378,9 @@ export const useAuth = () => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken,
+          ...(workspacePublicData?.id
+            ? { workspaceId: workspacePublicData.id }
+            : {}),
         },
       });
 
@@ -412,6 +416,7 @@ export const useAuth = () => {
     [
       setIsVerifyPendingState,
       signUp,
+      workspacePublicData,
       isMultiWorkspaceEnabled,
       handleVerify,
       setSignInUpStep,
@@ -447,13 +452,13 @@ export const useAuth = () => {
         );
       }
 
-      if (isDefined(workspaceSubdomain)) {
-        url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
+      if (isDefined(workspacePublicData)) {
+        url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
       return url.toString();
     },
-    [workspaceSubdomain],
+    [workspacePublicData],
   );
 
   const handleGoogleLogin = useCallback(

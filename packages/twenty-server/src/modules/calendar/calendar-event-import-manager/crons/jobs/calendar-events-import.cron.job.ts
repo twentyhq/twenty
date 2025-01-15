@@ -39,8 +39,6 @@ export class CalendarEventsImportCronJob {
     CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    console.time('CalendarEventsImportCronJob time');
-
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -81,7 +79,5 @@ export class CalendarEventsImportCronJob {
         });
       }
     }
-
-    console.timeEnd('CalendarEventsImportCronJob time');
   }
 }

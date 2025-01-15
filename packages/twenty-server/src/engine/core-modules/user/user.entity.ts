@@ -4,6 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   OneToMany,
@@ -77,7 +78,7 @@ export class User {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {

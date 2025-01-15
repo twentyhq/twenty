@@ -5,6 +5,8 @@ import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 
 import { isDefined } from '~/utils/isDefined';
 
+export const RECORD_TABLE_TD_WIDTH = '32px';
+
 const StyledTd = styled.td<{
   zIndex?: number;
   backgroundColor: string;
@@ -44,8 +46,8 @@ const StyledTd = styled.td<{
   ${({ freezeFirstColumns }) =>
     freezeFirstColumns
       ? `@media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: 32px;
-      max-width: 32px;
+      width: ${RECORD_TABLE_TD_WIDTH};
+      max-width: ${RECORD_TABLE_TD_WIDTH};
     }`
       : ''}
 `;

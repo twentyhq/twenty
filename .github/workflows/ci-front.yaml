@@ -10,10 +10,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
+
 jobs:
   front-sb-build:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -46,17 +49,11 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: df -h
       - name: Restore storybook build cache
-        id: storybook-build-cache-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .cache
-            .nx/cache
-            node_modules/.cache
-            packages/*/node_modules/.cache
-          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
+        id: restore-storybook-build-cache
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/restore-cache
+        with: 
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -64,18 +61,13 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
       - name: Save storybook build cache
-        if: steps.storybook-build-cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/save-cache
         with:
-          key: ${{ steps.storybook-build-cache-restore.outputs.cache-primary-key }}
-          path: |
-            .cache
-            .nx/cache
-            node_modules/.cache
-            packages/*/node_modules/.cache
+          key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -107,17 +99,11 @@ jobs:
       - name: Install Playwright
         if: steps.changed-files.outputs.any_changed == 'true'
         run: cd packages/twenty-front && npx playwright install
-      - name: Restore Storybook build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .cache
-            .nx/cache
-            node_modules/.cache
-            packages/*/node_modules/.cache
-          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
+      - name: Restore storybook build cache
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/restore-cache
+        with: 
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
@@ -128,6 +114,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
       - name: Upload coverage artifact
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
@@ -135,7 +122,7 @@ jobs:
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-test
     env:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
@@ -176,7 +163,7 @@ jobs:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -201,17 +188,10 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Restore storybook build cache
-        id: storybook-build-cache-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .cache
-            .nx/cache
-            node_modules/.cache
-            packages/*/node_modules/.cache
-          key: storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            storybook-build-depot-ubuntu-22.04-8-runner-${{ github.ref_name }}-
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/restore-cache
+        with: 
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
@@ -223,9 +203,10 @@ jobs:
         run: npx nx run twenty-front:chromatic:ci
   front-task:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-22.04-8
+    runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
         task: [lint, typecheck, test]
@@ -252,12 +233,12 @@ jobs:
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore ${{ matrix.task }} task cache
+      - name: Restore ${{ matrix.task }} cache
+        id: restore-task-cache
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: ${{ matrix.task }}
+        uses: ./.github/workflows/actions/restore-cache
+        with: 
+          key: ${{ env.TASK_CACHE_KEY }}
       - name: Reset .env
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
@@ -270,3 +251,8 @@ jobs:
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
+      - name: Save ${{ matrix.task }} cache
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/save-cache
+        with:
+          key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}

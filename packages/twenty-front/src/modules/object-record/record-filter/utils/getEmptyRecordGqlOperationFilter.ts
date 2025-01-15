@@ -15,7 +15,7 @@ import {
   StringFilter,
   URLFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Field } from '~/generated/graphql';
@@ -24,7 +24,7 @@ import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateIL
 export const getEmptyRecordGqlOperationFilter = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
-  definition: FilterDefinition,
+  definition: RecordFilterDefinition,
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 

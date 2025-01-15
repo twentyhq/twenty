@@ -333,7 +333,7 @@ export const FormDateTimeFieldInput = ({
       <FormFieldInputRowContainer>
         <StyledInputContainer
           ref={datePickerWrapperRef}
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <>

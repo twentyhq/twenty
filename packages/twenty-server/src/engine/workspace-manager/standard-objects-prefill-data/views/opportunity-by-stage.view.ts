@@ -12,7 +12,7 @@ export const opportunitiesByStageView = (
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].id,
     type: 'kanban',
     key: null,
-    position: 1,
+    position: 2,
     icon: 'IconLayoutKanban',
     kanbanFieldMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[

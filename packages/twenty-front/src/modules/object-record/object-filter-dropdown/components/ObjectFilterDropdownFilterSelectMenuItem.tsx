@@ -7,11 +7,11 @@ import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { CompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/types/CompositeFilterableFieldType';
+import { CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
 
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -22,7 +22,7 @@ import { useRecoilValue } from 'recoil';
 import { MenuItemSelect, useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
-  filterDefinition: FilterDefinition;
+  filterDefinition: RecordFilterDefinition;
 };
 
 export const ObjectFilterDropdownFilterSelectMenuItem = ({
@@ -74,7 +74,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   );
 
   const handleSelectFilterDefinition = (
-    availableFilterDefinition: FilterDefinition,
+    availableFilterDefinition: RecordFilterDefinition,
   ) => {
     closeAdvancedFilterDropdown();
 
@@ -90,7 +90,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     }
 
     setSelectedOperandInDropdown(
-      getOperandsForFilterDefinition(availableFilterDefinition)[0],
+      getRecordFilterOperandsForRecordFilterDefinition(
+        availableFilterDefinition,
+      )[0],
     );
 
     setObjectFilterDropdownFilterIsSelected(true);

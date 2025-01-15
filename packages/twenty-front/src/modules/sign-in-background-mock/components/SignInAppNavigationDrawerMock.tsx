@@ -7,6 +7,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
+import { getOsControlSymbol } from '@ui/utilities/device/getOsControlSymbol';
 import { IconSearch, IconSettings, useIsMobile } from 'twenty-ui';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -39,7 +40,7 @@ export const SignInAppNavigationDrawerMock = ({
             label="Search"
             Icon={IconSearch}
             onClick={() => {}}
-            keyboard={['⌘', 'K']}
+            keyboard={[getOsControlSymbol(), 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

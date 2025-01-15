@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { expect, jest } from '@jest/globals';
+import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -15,6 +16,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuthService } from './auth.service';
@@ -50,7 +52,14 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(AppToken, 'core'),
-          useValue: {},
+          useValue: {
+            createQueryBuilder: jest.fn().mockReturnValue({
+              leftJoin: jest.fn().mockReturnThis(),
+              andWhere: jest.fn().mockReturnThis(),
+              where: jest.fn().mockReturnThis(),
+              getOne: jest.fn().mockImplementation(() => null),
+            }),
+          },
         },
         {
           provide: SignInUpService,
@@ -97,6 +106,10 @@ describe('AuthService', () => {
               workspaceInvitationGetOneWorkspaceInvitationMock,
             validateInvitation: workspaceInvitationValidateInvitationMock,
           },
+        },
+        {
+          provide: SocialSsoService,
+          useValue: {},
         },
       ],
     }).compile();
