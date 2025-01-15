@@ -1,5 +1,6 @@
 export const getUserDevice = () => {
   const userAgent = navigator.userAgent.toLowerCase();
+
   if (userAgent.includes('mac os x') || userAgent.includes('macos')) {
     return 'mac';
   }
@@ -13,6 +14,7 @@ export const getUserDevice = () => {
   }
 
   if (userAgent.includes('android')) return 'android';
+
   if (
     userAgent.includes('ios') ||
     userAgent.includes('iphone') ||
