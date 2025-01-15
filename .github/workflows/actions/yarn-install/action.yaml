@@ -9,16 +9,9 @@ runs:
       run: |
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
         echo "NODE_VERSION=18" >> "${GITHUB_OUTPUT}"
-        {
-          echo 'PATH_TO_CACHE<<EOF'
-          echo "node_modules"
-          echo "packages/*/node_modules"
-          echo EOF
-        } >> "$GITHUB_OUTPUT"
-    - name: Logs TMP ${{ steps.globals.outputs.PATH_TO_CACHE }}
+    - name: Logs TMP
       shell: bash
       run: |
-        echo ${{ steps.globals.outputs.PATH_TO_CACHE }}
         echo ${{ toJson(steps.globals.outputs) }}
     - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@v4
@@ -29,7 +22,9 @@ runs:
       uses: actions/cache/restore@v4
       with:
         key: node_modules-cache-${{ steps.globals.outputs.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
-        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+        path: |
+          node_modules
+          packages/*/node_modules
         # restore-keys: root-node_modules- we don't want partial hit but hashfile direct hit
     - name: Log if cache hit ${{ steps.cache-node-modules.outputs.cache-hit }}
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
@@ -52,5 +47,7 @@ runs:
       uses: actions/cache/save@v4
       with:
         key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
-        path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
+        path: |
+          node_modules
+          packages/*/node_modules
       
