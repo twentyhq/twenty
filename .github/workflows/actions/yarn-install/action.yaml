@@ -15,7 +15,6 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ steps.globals.outputs.NODE_VERSION }}
-    # Could use changed files to detect updates to package.json and lockfile ?
     - name: Restore node_modules
       id: cache-node-modules
       uses: actions/cache/restore@v4
