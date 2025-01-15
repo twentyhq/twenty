@@ -25,6 +25,8 @@ export const createWorkspaceViews = async (
       'position',
       'icon',
       'kanbanFieldMetadataId',
+      'kanbanAggregateOperation',
+      'kanbanAggregateOperationFieldMetadataId',
     ])
     .values(
       viewDefinitionsWithId.map(
@@ -37,6 +39,8 @@ export const createWorkspaceViews = async (
           position,
           icon,
           kanbanFieldMetadataId,
+          kanbanAggregateOperation,
+          kanbanAggregateOperationFieldMetadataId,
         }) => ({
           id,
           name,
@@ -46,6 +50,8 @@ export const createWorkspaceViews = async (
           position,
           icon,
           kanbanFieldMetadataId,
+          kanbanAggregateOperation,
+          kanbanAggregateOperationFieldMetadataId,
         }),
       ),
     )
@@ -63,6 +69,7 @@ export const createWorkspaceViews = async (
           'isVisible',
           'size',
           'viewId',
+          'aggregateOperation',
         ])
         .values(
           viewDefinition.fields.map((field) => ({
@@ -71,6 +78,7 @@ export const createWorkspaceViews = async (
             isVisible: field.isVisible,
             size: field.size,
             viewId: viewDefinition.id,
+            aggregateOperation: field.aggregateOperation,
           })),
         )
         .execute();
