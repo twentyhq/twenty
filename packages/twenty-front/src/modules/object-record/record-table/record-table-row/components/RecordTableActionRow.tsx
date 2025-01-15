@@ -8,6 +8,7 @@ import { IconComponent } from 'twenty-ui';
 
 const StyledRecordTableDraggableTr = styled(RecordTableDraggableTr)`
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.light};
