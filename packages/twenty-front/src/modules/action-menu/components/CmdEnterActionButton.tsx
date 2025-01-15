@@ -1,8 +1,7 @@
-import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui';
+import { Button, getOsControlSymbol } from 'twenty-ui';
 
 export const CmdEnterActionButton = ({
   title,
@@ -25,7 +24,7 @@ export const CmdEnterActionButton = ({
       accent="blue"
       size="medium"
       onClick={onClick}
-      shortcut={`${getOsSpecificControlSymbol()}⏎`}
+      hotkeys={[`${getOsControlSymbol()}`, '⏎']}
     />
   );
 };

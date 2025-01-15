@@ -2,12 +2,12 @@ import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
-import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
+import { getOsControlSymbol } from '@ui/utilities/device/getOsControlSymbol';
 import { IconSearch, IconSettings, useIsMobile } from 'twenty-ui';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -40,7 +40,7 @@ export const SignInAppNavigationDrawerMock = ({
             label="Search"
             Icon={IconSearch}
             onClick={() => {}}
-            keyboard={[`${getOsSpecificControlSymbol()}`, 'K']}
+            keyboard={[`${getOsControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

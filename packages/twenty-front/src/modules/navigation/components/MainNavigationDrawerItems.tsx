@@ -1,13 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings } from 'twenty-ui';
+import { IconSearch, IconSettings, getOsControlSymbol } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
-import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -46,7 +45,7 @@ export const MainNavigationDrawerItems = () => {
             label="Search"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
-            keyboard={[`${getOsSpecificControlSymbol()}`, 'K']}
+            keyboard={[`${getOsControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

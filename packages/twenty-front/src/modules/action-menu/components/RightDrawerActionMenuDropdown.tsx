@@ -3,7 +3,6 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
-import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -13,7 +12,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
-import { Button, MenuItem } from 'twenty-ui';
+import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
 
 export const RightDrawerActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -61,7 +60,7 @@ export const RightDrawerActionMenuDropdown = () => {
       }}
       data-select-disable
       clickableComponent={
-        <Button title="Actions" shortcut={`${getOsSpecificControlSymbol()}O`} />
+        <Button title="Actions" hotkeys={[`${getOsControlSymbol()}`, 'O']} />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{

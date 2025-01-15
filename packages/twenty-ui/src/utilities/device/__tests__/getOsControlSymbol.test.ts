@@ -1,13 +1,13 @@
-import { getOsSpecificControlSymbol } from '../getOsSpecificControlSymbol';
+import { getOsControlSymbol } from '../getOsControlSymbol';
 
-describe('getOsSpecificControlSymbol', () => {
+describe('getOsControlSymbol', () => {
   it('should return Ctrl for Windows', () => {
     Object.defineProperty(window.navigator, 'userAgent', {
       value:
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0',
       configurable: true,
     });
-    expect(getOsSpecificControlSymbol()).toBe('Ctrl');
+    expect(getOsControlSymbol()).toBe('Ctrl');
   });
 
   it('should return ⌘ for Mac', () => {
@@ -16,6 +16,6 @@ describe('getOsSpecificControlSymbol', () => {
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
       configurable: true,
     });
-    expect(getOsSpecificControlSymbol()).toBe('⌘');
+    expect(getOsControlSymbol()).toBe('⌘');
   });
 });

@@ -1,11 +1,11 @@
-import { getOsSpecificControlSymbol } from '@/shortcuts/utils/getOsSpecificControlSymbol';
+import { getOsControlSymbol } from 'twenty-ui';
 import { Shortcut, ShortcutType } from '../types/Shortcut';
 
 export const KEYBOARD_SHORTCUTS_GENERAL: Shortcut[] = [
   {
     label: 'Open search',
     type: ShortcutType.General,
-    firstHotKey: `${getOsSpecificControlSymbol()}`,
+    firstHotKey: `${getOsControlSymbol()}`,
     secondHotKey: 'K',
     areSimultaneous: false,
   },
