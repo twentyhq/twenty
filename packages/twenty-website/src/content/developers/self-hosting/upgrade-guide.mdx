@@ -19,7 +19,9 @@ If you used Docker Compose, follow these steps:
 
 2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose.
 
-3. Bring Twenty back online with `docker-compose up -d`
+3. Bring Twenty back online with `docker compose up -d`
+
+If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0, you have to upgrade your instance by each version, in this example from 0.33.0 to 0.34.0, then from 0.34.0 to 0.35.0.
 
 
 ## Version-specific upgrade steps
@@ -75,6 +77,8 @@ The `yarn command:prod cache:flush` command will flush the Redis cache.
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
 
+Starting from this version, twenty-postgres image for DB became deprecated and twenty-postgres-spilo is used instead.
+If you want to keep using twenty-postgres image, simply replace `twentycrm/twenty-postgres:${TAG}` with `twentycrm/twenty-postgres` in docker-compose.yml.
 
 ### v0.31.0 to v0.32.0
 
