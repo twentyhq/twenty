@@ -5,7 +5,7 @@ export const KEYBOARD_SHORTCUTS_GENERAL: Shortcut[] = [
   {
     label: 'Open search',
     type: ShortcutType.General,
-    firstHotKey: `${getOsControlSymbol()}`,
+    firstHotKey: getOsControlSymbol(),
     secondHotKey: 'K',
     areSimultaneous: false,
   },

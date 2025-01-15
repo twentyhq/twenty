@@ -24,7 +24,7 @@ export const CmdEnterActionButton = ({
       accent="blue"
       size="medium"
       onClick={onClick}
-      hotkeys={[`${getOsControlSymbol()}`, '⏎']}
+      hotkeys={[getOsControlSymbol(), '⏎']}
     />
   );
 };

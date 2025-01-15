@@ -189,7 +189,7 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
               : adornmentName === 'Count'
                 ? { count: 3 }
                 : adornmentName === 'Keyboard Keys'
-                  ? { keyboard: [`${getOsControlSymbol()}`, 'K'] }
+                  ? { keyboard: [getOsControlSymbol(), 'K'] }
                   : {},
         },
       ],

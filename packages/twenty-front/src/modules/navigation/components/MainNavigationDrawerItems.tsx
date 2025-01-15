@@ -45,7 +45,7 @@ export const MainNavigationDrawerItems = () => {
             label="Search"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
-            keyboard={[`${getOsControlSymbol()}`, 'K']}
+            keyboard={[getOsControlSymbol(), 'K']}
           />
           <NavigationDrawerItem
             label="Settings"
