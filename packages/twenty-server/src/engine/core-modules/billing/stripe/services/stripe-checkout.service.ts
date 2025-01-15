@@ -76,7 +76,9 @@ export class StripeCheckoutService {
       automatic_tax: { enabled: !!requirePaymentMethod },
       tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
-      customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
+      customer_update: stripeCustomerId
+        ? { name: 'auto', address: 'auto' }
+        : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
