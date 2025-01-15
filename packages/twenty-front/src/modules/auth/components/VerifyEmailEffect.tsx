@@ -40,14 +40,14 @@ export const VerifyEmailEffect = () => {
         );
 
         enqueueSnackBar('Email verified.', {
-          dedupeKey: 'email-verified-dedupe-key',
+          dedupeKey: 'email-verification-dedupe-key',
           variant: SnackBarVariant.Success,
         });
 
         navigate(`${AppPath.Verify}?loginToken=${loginToken.token}`);
       } catch (error) {
         enqueueSnackBar('Email verification failed.', {
-          dedupeKey: 'email-verification-failed-dedupe-key',
+          dedupeKey: 'email-verification-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         setIsError(true);
