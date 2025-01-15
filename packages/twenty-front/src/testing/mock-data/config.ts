@@ -33,12 +33,12 @@ export const mockedClientConfig: ClientConfig = {
     billingUrl: '',
     trialPeriods: [
       {
-        __typename: 'TrialPeriod',
+        __typename: 'TrialPeriodDTO',
         duration: 30,
         isCreditCardRequired: true,
       },
       {
-        __typename: 'TrialPeriod',
+        __typename: 'TrialPeriodDTO',
         duration: 7,
         isCreditCardRequired: false,
       },
