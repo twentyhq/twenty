@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { TrialPeriod } from 'src/engine/core-modules/billing/dto/trial-period.entity';
+import { TrialPeriodDTO } from 'src/engine/core-modules/billing/dto/trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 
@@ -12,8 +12,8 @@ class Billing {
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
-  @Field(() => [TrialPeriod])
-  trialPeriods: TrialPeriod[];
+  @Field(() => [TrialPeriodDTO])
+  trialPeriods: TrialPeriodDTO[];
 }
 
 @ObjectType()

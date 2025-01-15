@@ -79,7 +79,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
+  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 0;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)

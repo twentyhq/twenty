@@ -7,7 +7,6 @@ import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { billingState } from '@/client-config/states/billingState';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -21,7 +20,9 @@ import {
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
 import { useGetProductPricesQuery } from '~/generated/graphql';
 
-const StyledSubscriptionContainer = styled.div`
+const StyledSubscriptionContainer = styled.div<{
+  withLongerMarginBottom: boolean;
+}>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -29,7 +30,8 @@ const StyledSubscriptionContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme }) => theme.spacing(2)};
+    ${({ theme, withLongerMarginBottom }) =>
+      theme.spacing(withLongerMarginBottom ? 8 : 2)};
   width: 100%;
 `;
 
@@ -73,18 +75,6 @@ const StyledLinkGroup = styled.div`
     border-radius: 50%;
     height: 2px;
     width: 2px;
-  }
-`;
-
-const StyledMainButton = styled(MainButton)<{
-  withMarginTop: boolean;
-}>`
-  .ContinueButton {
-    ${({ withMarginTop, theme }) =>
-      withMarginTop &&
-      css`
-        margin-top: ${theme.spacing(4)};
-      `}
   }
 `;
 
@@ -159,7 +149,9 @@ export const ChooseYourPlan = () => {
             <SubTitle>{`Enjoy a ${withCreditCardTrialPeriod.duration}-free trial`}</SubTitle>
           )
         )}
-        <StyledSubscriptionContainer>
+        <StyledSubscriptionContainer
+          withLongerMarginBottom={!hasWithoutCreditCardTrialPeriod}
+        >
           <StyledSubscriptionPriceContainer>
             <SubscriptionPrice
               type={price.recurringInterval}
@@ -193,8 +185,7 @@ export const ChooseYourPlan = () => {
             ))}
           </StyledChooseTrialContainer>
         )}
-        <StyledMainButton
-          withMarginTop={!hasWithoutCreditCardTrialPeriod}
+        <MainButton
           className="ContinueButton"
           title="Continue"
           onClick={handleCheckoutSession}

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class TrialPeriod {
+export class TrialPeriodDTO {
   @Field(() => Number)
   duration: number;
 
