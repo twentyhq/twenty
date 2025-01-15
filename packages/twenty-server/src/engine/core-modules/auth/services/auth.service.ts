@@ -190,8 +190,6 @@ export class AuthService {
       );
     }
 
-    console.log('>>>>>>>>>>>>>>', params);
-
     if (params.userData.type === 'newUser') {
       const partialUserWithPicture =
         await this.signInUpService.computeParamsForNewUser(
@@ -533,7 +531,7 @@ export class AuthService {
     }
 
     if (workspacePersonalInviteToken) {
-      qr.andWhere('"appToken".context->>\'value\' = :personalInviteToken', {
+      qr.andWhere('"appToken".value = :personalInviteToken', {
         personalInviteToken: workspacePersonalInviteToken,
       });
     }
