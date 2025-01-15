@@ -14,9 +14,11 @@ env:
   SERVER_SETUP_CACHE_KEY: server-setup
 
 jobs:
-  changed-files:
+  prerequisites:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
+    outputs:
+      any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -32,8 +34,8 @@ jobs:
             packages/twenty-emails/**
             packages/twenty-shared/**
   server-setup:
-    needs: changed-files
-    if: needs.changed-files.outputs.any-changed == 'true'
+    needs: prerequisites
+    if: needs.prerequisites.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     env:
@@ -112,7 +114,6 @@ jobs:
           key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
 
   server-test:
-    # Should we also add  if: needs.changed-files.outputs.any-changed == 'true' or having a dep to above job is enough ?
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: server-setup
@@ -192,7 +193,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8
-    needs: [changed-files, server-setup, server-test, server-integration-test]
+    needs: [prerequisites, server-setup, server-test, server-integration-test]
     steps:
       - name: Log server-test result
         run: echo ${{ needs.server-test.result }}
@@ -200,8 +201,8 @@ jobs:
         run: echo ${{ needs.server-integration-test.result }}
       - name: Log server-setup result
         run: echo ${{ needs.server-setup.result }}
-      - name: Log changed-files result
-        run: echo ${{ needs.changed-files.result }}
+      - name: Log prerequisites result
+        run: echo ${{ needs.prerequisites.result }}
       - name: Programmatically fail the job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1
