@@ -21,11 +21,6 @@ describe('useSignInUpForm', () => {
     expect(result.current.form).toBeDefined();
   });
 
-  // it('should set prefilled email if available', () => {
-  //   renderHook(() => useSignInUpForm());
-  //   expect(mockSetValue).toHaveBeenCalledWith('email', mockPrefilledEmail);
-  // });
-
   it('should not prefill sign-in developer defaults when state is false', () => {
     const { result } = renderHook(() => useSignInUpForm(), {
       wrapper: ({ children }: { children: ReactNode }) => (
@@ -42,7 +37,7 @@ describe('useSignInUpForm', () => {
       captchaToken: '',
     });
   });
-  //
+
   it('should prefill developer defaults when the state is true', () => {
     const { result } = renderHook(
       () => {
