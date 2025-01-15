@@ -5,7 +5,7 @@ on:
       - main
 
   pull_request:
-  
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -179,6 +179,8 @@ jobs:
           name: reset-logs
           path: reset-logs.log
   ci-server-final:
-    if: always() && !cancelled()
+    timeout-minutes: 1
+    runs-on: depot-ubuntu-24.04-8
     needs: [prerequisites, server-setup, server-test, server-integration-test]
-    uses: ./.github/workflows/ci-final-check.yaml
+    steps:
+      - uses: ./.github/actions/rethrow-needs-failure
