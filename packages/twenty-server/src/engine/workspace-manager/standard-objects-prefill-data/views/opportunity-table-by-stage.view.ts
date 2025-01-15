@@ -3,17 +3,17 @@ import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/obj
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const opportunitiesByStageView = (
+export const opportunitiesTableByStageView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
     name: 'By Stage',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].id,
-    type: 'kanban',
+    type: 'table',
     key: null,
-    position: 2,
-    icon: 'IconLayoutKanban',
+    position: 1,
+    icon: 'IconList',
     kanbanFieldMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[
         OPPORTUNITY_STANDARD_FIELD_IDS.stage
