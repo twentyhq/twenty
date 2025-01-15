@@ -61,7 +61,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
       - name: Save storybook build cache
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.restore-storybook-build-cache.outputs.cache-hit != 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
@@ -252,7 +252,7 @@ jobs:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
       - name: Save ${{ matrix.task }} cache
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.restore-task-cache.outputs.cache-hit != 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
