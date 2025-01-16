@@ -519,18 +519,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      const viewsIdsWithFieldToDeleteAsKanbanAggregateOperationFieldMetadata =
-        await this.viewService.findViewsByKanbanAggregateOperationFieldMetadataId(
-          {
-            workspaceId,
-            fieldMetadataId: fieldMetadata.id,
-          },
-        );
-
-      await this.viewService.resetKanbanAggregateOperationForView({
+      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
         workspaceId,
-        viewsIds:
-          viewsIdsWithFieldToDeleteAsKanbanAggregateOperationFieldMetadata,
+        fieldMetadataId: fieldMetadata.id,
       });
 
       await fieldMetadataRepository.delete(fieldMetadata.id);

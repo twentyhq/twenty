@@ -122,7 +122,7 @@ export class ViewService {
       .then((views) => views.map((view) => view.id));
   }
 
-  async findViewsByKanbanAggregateOperationFieldMetadataId({
+  async resetKanbanAggregateOperationByFieldMetadataId({
     workspaceId,
     fieldMetadataId,
   }: {
@@ -134,33 +134,13 @@ export class ViewService {
         workspaceId,
         'view',
       );
-    const views = await viewRepository.find({
-      where: {
-        kanbanAggregateOperationFieldMetadataId: fieldMetadataId,
-      },
-    });
 
-    return views.map((view) => view.id);
-  }
-
-  async resetKanbanAggregateOperationForView({
-    workspaceId,
-    viewsIds,
-  }: {
-    workspaceId: string;
-    viewsIds: string[];
-  }) {
-    const viewRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'view',
-      );
-
-    for (const viewId of viewsIds) {
-      await viewRepository.update(viewId, {
+    await viewRepository.update(
+      { kanbanAggregateOperationFieldMetadataId: fieldMetadataId },
+      {
         kanbanAggregateOperationFieldMetadataId: null,
         kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
-      });
-    }
+      },
+    );
   }
 }
