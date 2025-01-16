@@ -1784,11 +1784,11 @@ export type WorkspaceBillingSubscriptionsArgs = {
 };
 
 export enum WorkspaceActivationStatus {
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  OngoingCreation = 'ONGOING_CREATION',
-  PendingCreation = 'PENDING_CREATION',
-  Suspended = 'SUSPENDED'
+  Active = 'Active',
+  Inactive = 'Inactive',
+  OngoingCreation = 'OngoingCreation',
+  PendingCreation = 'PendingCreation',
+  Suspended = 'Suspended'
 }
 
 export type WorkspaceEdge = {
