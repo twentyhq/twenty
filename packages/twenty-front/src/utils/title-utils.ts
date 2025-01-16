@@ -49,8 +49,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Create Workspace';
     case AppPath.CreateProfile:
       return 'Create Profile';
-    case SettingsPathPrefixes.Appearance:
-      return SettingsPageTitles.Appearance;
+    case SettingsPathPrefixes.Experience:
+      return SettingsPageTitles.Experience;
     case SettingsPathPrefixes.Accounts:
       return SettingsPageTitles.Accounts;
     case SettingsPathPrefixes.Profile:
