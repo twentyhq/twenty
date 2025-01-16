@@ -32,7 +32,6 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,7 +40,6 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly userService: UserService,
     private readonly ssoService: SSOService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
