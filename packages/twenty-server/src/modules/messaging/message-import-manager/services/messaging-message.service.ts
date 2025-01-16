@@ -58,13 +58,14 @@ export class MessagingMessageService {
       });
 
       if (existingMessage) {
-        await messageChannelMessageAssociationRepository.insert(
+        await messageChannelMessageAssociationRepository.upsert(
           {
             messageChannelId,
             messageId: existingMessage.id,
             messageExternalId: message.externalId,
             messageThreadExternalId: message.messageThreadExternalId,
           },
+          ['messageChannelId', 'messageExternalId'],
           transactionManager,
         );
 

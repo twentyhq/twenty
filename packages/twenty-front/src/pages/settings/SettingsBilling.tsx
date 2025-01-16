@@ -6,7 +6,6 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
-  Info,
   Section,
 } from 'twenty-ui';
 
@@ -15,7 +14,6 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,7 +23,6 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   OnboardingStatus,
   SubscriptionInterval,
-  SubscriptionStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -87,17 +84,6 @@ export const SettingsBilling = () => {
     billingPortalButtonDisabled ||
     onboardingStatus !== OnboardingStatus.Completed;
 
-  const displayPaymentFailInfo =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
-
-  const displaySubscriptionCanceledInfo =
-    subscriptionStatus === SubscriptionStatus.Canceled;
-
-  const displaySubscribeInfo =
-    onboardingStatus === OnboardingStatus.Completed &&
-    !isDefined(subscriptionStatus);
-
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       window.location.replace(data.billingPortalSession.url);
@@ -147,30 +133,7 @@ export const SettingsBilling = () => {
     >
       <SettingsPageContainer>
         <SettingsBillingCoverImage />
-        {displayPaymentFailInfo && (
-          <Info
-            text={'Last payment failed. Please update your billing details.'}
-            buttonTitle={'Update'}
-            accent={'danger'}
-            onClick={openBillingPortal}
-          />
-        )}
-        {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            to={AppPath.PlanRequired}
-          />
-        )}
-        {displaySubscribeInfo ? (
-          <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            to={AppPath.PlanRequired}
-          />
-        ) : (
+        {isDefined(subscriptionStatus) && (
           <>
             <Section>
               <H2Title

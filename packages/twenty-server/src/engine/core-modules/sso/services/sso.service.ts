@@ -36,7 +36,7 @@ export class SSOService {
 
   private async isSSOEnabled(workspaceId: string) {
     const isSSOBillingEnabled =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+      await this.billingService.hasFreeAccessOrEntitlement(
         workspaceId,
         this.featureLookUpKey,
       );

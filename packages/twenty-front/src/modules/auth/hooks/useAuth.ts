@@ -1,5 +1,5 @@
 import { AppPath } from '@/types/AppPath';
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
   snapshot_UNSTABLE,
@@ -26,6 +26,7 @@ import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -44,8 +45,13 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
@@ -54,6 +60,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useSearchParams } from 'react-router-dom';
 import i18n from '~/i18n/config';
 
 export const useAuth = () => {
@@ -69,7 +76,11 @@ export const useAuth = () => {
     currentWorkspaceMembersState,
   );
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isEmailVerificationRequired = useRecoilValue(
+    isEmailVerificationRequiredState,
+  );
 
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -79,6 +90,8 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [getLoginTokenFromEmailVerificationToken] =
+    useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
   const { isOnAWorkspaceSubdomain } =
@@ -96,6 +109,8 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+
+  const [, setSearchParams] = useSearchParams();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -155,29 +170,65 @@ export const useAuth = () => {
 
   const handleChallenge = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      const challengeResult = await challenge({
+      try {
+        const challengeResult = await challenge({
+          variables: {
+            email,
+            password,
+            captchaToken,
+          },
+        });
+        if (isDefined(challengeResult.errors)) {
+          throw challengeResult.errors;
+        }
+
+        if (!challengeResult.data?.challenge) {
+          throw new Error('No login token');
+        }
+
+        return challengeResult.data.challenge;
+      } catch (error) {
+        // TODO: Get intellisense for graphql error extensions code (codegen?)
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+        ) {
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          throw error;
+        }
+        throw error;
+      }
+    },
+    [challenge, setSearchParams, setSignInUpStep],
+  );
+
+  const handleGetLoginTokenFromEmailVerificationToken = useCallback(
+    async (emailVerificationToken: string, captchaToken?: string) => {
+      const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
         variables: {
-          email,
-          password,
+          emailVerificationToken,
           captchaToken,
         },
       });
 
-      if (isDefined(challengeResult.errors)) {
-        throw challengeResult.errors;
+      if (isDefined(loginTokenResult.errors)) {
+        throw loginTokenResult.errors;
       }
 
-      if (!challengeResult.data?.challenge) {
+      if (!loginTokenResult.data?.getLoginTokenFromEmailVerificationToken) {
         throw new Error('No login token');
       }
 
-      return challengeResult.data.challenge;
+      return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
     },
-    [challenge],
+    [getLoginTokenFromEmailVerificationToken],
   );
 
   const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser();
+    const currentUserResult = await getCurrentUser({
+      fetchPolicy: 'network-only',
+    });
 
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);
@@ -345,12 +396,21 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
+      if (isEmailVerificationRequired) {
+        setSearchParams({ email });
+        setSignInUpStep(SignInUpStep.EmailVerification);
+        return null;
+      }
+
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
           signUpResult.data.signUp.workspace.subdomain,
-          AppPath.Verify,
+          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
-            loginToken: signUpResult.data.signUp.loginToken.token,
+            ...(!isEmailVerificationRequired && {
+              loginToken: signUpResult.data.signUp.loginToken.token,
+            }),
+            email,
           },
         );
       }
@@ -363,6 +423,9 @@ export const useAuth = () => {
       workspacePublicData,
       isMultiWorkspaceEnabled,
       handleVerify,
+      setSignInUpStep,
+      setSearchParams,
+      isEmailVerificationRequired,
       redirectToWorkspaceDomain,
     ],
   );
@@ -426,6 +489,8 @@ export const useAuth = () => {
 
   return {
     challenge: handleChallenge,
+    getLoginTokenFromEmailVerificationToken:
+      handleGetLoginTokenFromEmailVerificationToken,
     verify: handleVerify,
 
     loadCurrentUser,

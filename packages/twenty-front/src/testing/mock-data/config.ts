@@ -3,6 +3,7 @@ import { CaptchaDriverType, ClientConfig } from '~/generated/graphql';
 export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
+  isEmailVerificationRequired: false,
   authProviders: {
     google: true,
     magicLink: false,
@@ -30,7 +31,18 @@ export const mockedClientConfig: ClientConfig = {
   billing: {
     isBillingEnabled: true,
     billingUrl: '',
-    billingFreeTrialDurationInDays: 10,
+    trialPeriods: [
+      {
+        __typename: 'TrialPeriodDTO',
+        duration: 30,
+        isCreditCardRequired: true,
+      },
+      {
+        __typename: 'TrialPeriodDTO',
+        duration: 7,
+        isCreditCardRequired: false,
+      },
+    ],
     __typename: 'Billing',
   },
   captcha: {
