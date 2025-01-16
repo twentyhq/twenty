@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -43,6 +44,7 @@ export class ServerlessFunctionEntity {
   runtime: ServerlessFunctionRuntime;
 
   @Column({ nullable: false, default: DEFAULT_SERVERLESS_TIMEOUT_SECONDS })
+  @Check(`"timeoutSeconds" >= 1 AND "timeoutSeconds" <= 900`)
   timeoutSeconds: number;
 
   @Column({ nullable: true })

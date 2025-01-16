@@ -7,6 +7,8 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
@@ -32,6 +34,8 @@ export class UpdateServerlessFunctionInput {
 
   @IsNumber()
   @Field({ nullable: true })
+  @Min(1)
+  @Max(900)
   @IsOptional()
   timeoutSeconds?: number;
 
