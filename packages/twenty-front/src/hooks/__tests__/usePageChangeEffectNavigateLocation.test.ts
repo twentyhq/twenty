@@ -85,6 +85,15 @@ const testCases = [
   { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.InviteTeam, res: undefined },
   { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.Completed, res: undefined },
 
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PlanRequired, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.Completed, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.ProfileCreation, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SyncEmail, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.InviteTeam, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.Completed, res: undefined },
+
   { loc: AppPath.CreateWorkspace, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
   { loc: AppPath.CreateWorkspace, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
   { loc: AppPath.CreateWorkspace, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
