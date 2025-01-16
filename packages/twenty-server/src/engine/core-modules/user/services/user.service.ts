@@ -41,7 +41,10 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User, workspace: Workspace) {
-    if (workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+    if (
+      workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE &&
+      workspace?.activationStatus !== WorkspaceActivationStatus.SUSPENDED
+    ) {
       return null;
     }
 
