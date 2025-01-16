@@ -1,5 +1,7 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLabsPublicFeatureFlags } from '@/settings/labs/hooks/useLabsPublicFeatureFlags';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { Toggle } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -25,10 +27,12 @@ const StyledFlagName = styled.span`
 `;
 
 export const SettingsLabsContent = () => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { labsPublicFeatureFlags, handleLabsPublicFeatureFlagUpdate } =
     useLabsPublicFeatureFlags();
 
   const handleToggle = async (key: FeatureFlagKey, value: boolean) => {
+    if (!currentWorkspace?.id) return;
     await handleLabsPublicFeatureFlagUpdate(key, value);
   };
 

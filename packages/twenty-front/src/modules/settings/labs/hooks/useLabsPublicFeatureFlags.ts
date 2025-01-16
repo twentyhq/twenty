@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
-  FeatureFlag,
-  FeatureFlagKey,
-  useGetLabsPublicFeatureFlagsQuery,
-  useUpdateLabsPublicFeatureFlagMutation,
+    FeatureFlag,
+    FeatureFlagKey,
+    useGetLabsPublicFeatureFlagsQuery,
+    useUpdateLabsPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabsPublicFeatureFlags = () => {
@@ -22,6 +22,7 @@ export const useLabsPublicFeatureFlags = () => {
       variables: {
         workspaceId: currentWorkspace?.id,
       },
+      skip: !currentWorkspace?.id,
       fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
         setLabsPublicFeatureFlags(data.getLabsPublicFeatureFlags);
