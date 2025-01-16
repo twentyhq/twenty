@@ -62,7 +62,7 @@ jobs:
         files: |
           packages/**
           playwright.config.ts
-          .github/workflows/ci-e2e.yml
+          .github/workflows/ci-e2e.yaml
 
     - name: Skip if no relevant changes
       if: steps.changed-files.outputs.any_changed == 'false'
