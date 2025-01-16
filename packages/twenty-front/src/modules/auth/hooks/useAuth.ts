@@ -1,3 +1,4 @@
+import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,7 +9,6 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
-import { AppPath } from '@/types/AppPath';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -49,6 +49,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -59,7 +60,6 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useSearchParams } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -225,7 +225,9 @@ export const useAuth = () => {
   );
 
   const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser();
+    const currentUserResult = await getCurrentUser({
+      fetchPolicy: 'network-only',
+    });
 
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);

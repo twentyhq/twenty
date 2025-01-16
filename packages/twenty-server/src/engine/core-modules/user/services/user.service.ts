@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -14,10 +15,7 @@ import {
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -41,7 +39,7 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User, workspace: Workspace) {
-    if (workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+    if (!isWorkspaceActiveOrSuspended(workspace)) {
       return null;
     }
 
@@ -59,7 +57,7 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMembers(workspace: Workspace) {
-    if (workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+    if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
 

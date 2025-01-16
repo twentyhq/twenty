@@ -31,7 +31,18 @@ export const mockedClientConfig: ClientConfig = {
   billing: {
     isBillingEnabled: true,
     billingUrl: '',
-    billingFreeTrialDurationInDays: 10,
+    trialPeriods: [
+      {
+        __typename: 'TrialPeriodDTO',
+        duration: 30,
+        isCreditCardRequired: true,
+      },
+      {
+        __typename: 'TrialPeriodDTO',
+        duration: 7,
+        isCreditCardRequired: false,
+      },
+    ],
     __typename: 'Billing',
   },
   captcha: {

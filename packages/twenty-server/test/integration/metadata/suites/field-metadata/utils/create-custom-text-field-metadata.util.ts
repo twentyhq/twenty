@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 const FIELD_NAME = 'testName';
 
-export const createTestTextFieldMetadata = async (
+export const createCustomTextFieldMetadata = async (
   objectMetadataItemId: string,
 ) => {
   const createFieldInput = {
