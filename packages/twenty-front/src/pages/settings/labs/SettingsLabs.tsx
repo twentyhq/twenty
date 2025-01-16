@@ -11,7 +11,7 @@ export const SettingsLabs = () => {
       links={[
         {
           children: 'Other',
-          href: getSettingsPagePath(SettingsPath.AdminPanel),
+          href: getSettingsPagePath(SettingsPath.Labs),
         },
         { children: 'Labs' },
       ]}
