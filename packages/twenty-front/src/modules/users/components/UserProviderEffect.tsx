@@ -18,6 +18,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
+import i18n from '~/i18n/config';
 import { isDefined } from '~/utils/isDefined';
 
 export const UserProviderEffect = () => {
@@ -91,6 +92,8 @@ export const UserProviderEffect = () => {
           ? getTimeFormatFromWorkspaceTimeFormat(workspaceMember.timeFormat)
           : TimeFormat[detectTimeFormat()],
       });
+
+      i18n.changeLanguage(workspaceMember.locale ?? 'en');
     }
 
     if (isDefined(workspaceMembers)) {

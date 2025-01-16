@@ -1,3 +1,4 @@
+import { AppPath } from '@/types/AppPath';
 import { useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,7 +9,6 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
-import { AppPath } from '@/types/AppPath';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -44,6 +44,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
@@ -53,7 +54,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import i18n from '~/i18n/config';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -228,6 +229,7 @@ export const useAuth = () => {
             )
           : TimeFormat[detectTimeFormat()],
       });
+      i18n.changeLanguage(workspaceMember.locale ?? 'en');
     }
 
     const workspace = user.currentWorkspace ?? null;

@@ -12,7 +12,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 
-export const SettingsAppearance = () => {
+export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
   const { t } = useTranslation();
 

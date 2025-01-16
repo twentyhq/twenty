@@ -4,7 +4,7 @@ import '@emotion/react';
 
 import { App } from '@/app/components/App';
 import 'react-loading-skeleton/dist/skeleton.css';
-import './i18n/config.ts';
+import './i18n/config';
 import './index.css';
 
 const root = ReactDOM.createRoot(

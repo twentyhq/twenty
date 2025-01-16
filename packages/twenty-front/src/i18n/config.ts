@@ -19,17 +19,17 @@ i18n
       },
       pt: {
         translation: {
-          language: 'idioma',
+          language: 'Idioma',
         },
       },
       fr: {
         translation: {
-          language: 'langue',
+          language: 'Langue',
         },
       },
       es: {
         translation: {
-          language: 'idioma',
+          language: 'Idioma',
         },
       },
       de: {
