@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { expect, jest } from '@jest/globals';
-import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
