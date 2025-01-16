@@ -24,9 +24,8 @@ const StyledTd = styled.td<{
     ${({ borderColor, hasBottomBorder }) =>
       hasBottomBorder ? borderColor : 'transparent'};
   color: ${({ fontColor }) => fontColor};
-  border-right: 1px solid
-    ${({ borderColor, hasRightBorder }) =>
-      hasRightBorder ? borderColor : 'transparent'};
+  border-right: ${({ borderColor, hasRightBorder }) =>
+    hasRightBorder ? `1px solid ${borderColor}` : 'none'};
 
   padding: 0;
   transition: 0.3s ease;
