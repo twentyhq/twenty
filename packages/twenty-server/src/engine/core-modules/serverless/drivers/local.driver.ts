@@ -3,7 +3,6 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 
 import dotenv from 'dotenv';
-import { millisecondsToSeconds } from 'date-fns';
 
 import {
   ServerlessDriver,
@@ -184,15 +183,13 @@ export class LocalDriver implements ServerlessDriver {
       return await new Promise((resolve, reject) => {
         const child = fork(listenerFile, { silent: true });
 
-        const timeoutMs = 900_000;
+        const timeoutMs = serverlessFunction.timeoutSeconds * 1_000;
 
         const timeoutHandler = setTimeout(() => {
           child.kill();
           const duration = Date.now() - startTime;
 
-          reject({
-            errorMessage: `${Date.now()} Task timed out after ${millisecondsToSeconds(duration)} seconds`,
-          });
+          reject(new Error(`Task timed out after ${duration / 1_000} seconds`));
         }, timeoutMs);
 
         child.on('message', (message: object | ServerlessExecuteError) => {

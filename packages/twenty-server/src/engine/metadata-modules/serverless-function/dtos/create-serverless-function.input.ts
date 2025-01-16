@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateServerlessFunctionInput {
@@ -13,4 +13,9 @@ export class CreateServerlessFunctionInput {
   @IsOptional()
   @Field({ nullable: true })
   description?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Field({ nullable: true })
+  timeoutSeconds?: number;
 }
