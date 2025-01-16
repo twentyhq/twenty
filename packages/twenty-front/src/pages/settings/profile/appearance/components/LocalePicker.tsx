@@ -50,8 +50,6 @@ export const LocalePicker = () => {
     updateWorkspaceMember({ locale: value });
 
     i18n.activate(value);
-    console.log('i18n.locale', i18n.locale);
-    console.log(value);
   };
 
   return (
