@@ -17,8 +17,8 @@ import {
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
-// Microsoft API limit is 1000 messages per request on this endpoint
-const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 1000;
+// Microsoft API limit is 999 messages per request on this endpoint
+const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
@@ -54,7 +54,7 @@ export class MicrosoftGetMessageListService {
 
     const pageIterator = new PageIterator(microsoftClient, response, callback);
 
-    await pageIterator.iterate();
+    await pageIterator.iterate().catch;
 
     return {
       messageExternalIds: messageExternalIds,
