@@ -2,7 +2,7 @@
   "jsc": {
     "target": "es2017",
     "parser": {
-      "syntax": "typescript", 
+      "syntax": "typescript",
       "tsx": true,
       "decorators": false,
       "dynamicImport": false

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -25,27 +26,29 @@ const StyledSSOSection = styled(Section)`
 `;
 
 export const SettingsSecurity = () => {
+  const { t } = useLingui();
+
   return (
     <SubMenuTopBarContainer
-      title="Security"
+      title={t`Security`}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Security' },
+        { children: t`Security` },
       ]}
     >
       <SettingsPageContainer>
         <StyledMainContent>
           <StyledSSOSection>
             <H2Title
-              title="SSO"
-              description="Configure an SSO connection"
+              title={t`SSO`}
+              description={t`Configure an SSO connection`}
               adornment={
                 <Tag
-                  text={'Enterprise'}
+                  text={t`Enterprise`}
                   color={'transparent'}
                   Icon={IconLock}
                   variant={'border'}
@@ -57,8 +60,8 @@ export const SettingsSecurity = () => {
           <Section>
             <StyledContainer>
               <H2Title
-                title="Authentication"
-                description="Customize your workspace security"
+                title={t`Authentication`}
+                description={t`Customize your workspace security`}
               />
               <SettingsSecurityOptionsList />
             </StyledContainer>
