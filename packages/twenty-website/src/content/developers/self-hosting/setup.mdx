@@ -40,7 +40,7 @@ Under [Credentials](https://console.cloud.google.com/apis/credentials), in OAuth
 - `https://<your-domain>/auth/google/redirect` if you want to use Google SSO
 - `https://<your-domain>/auth/google-apis/get-access-token`
 
-### Configure Scopes
+### Configure scopes
 [See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 - 'https://www.googleapis.com/auth/calendar.events'
 - 'https://www.googleapis.com/auth/gmail.readonly'
@@ -101,6 +101,15 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 You need to add the following redirect URIs to your project:
 - `https://<your-domain>/auth/microsoft/redirect` if you want to use Microsoft SSO
 - `https://<your-domain>/auth/microsoft-apis/get-access-token`
+
+### Configure scopes
+[See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+- 'openid'
+- 'email'
+- 'profile'
+- 'offline_access'
+- 'Mail.Read'
+- 'Calendars.Read
 
 ### If your app is in test mode
 
