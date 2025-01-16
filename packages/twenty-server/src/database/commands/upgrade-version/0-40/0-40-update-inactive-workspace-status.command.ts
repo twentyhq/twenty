@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import {
