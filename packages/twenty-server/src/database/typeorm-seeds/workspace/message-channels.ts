@@ -47,7 +47,7 @@ export const seedMessageChannel = async (
         handle: 'tim@apple.dev',
         isSyncEnabled: false,
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-        syncSubStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_IDS.JONY,
@@ -60,7 +60,7 @@ export const seedMessageChannel = async (
         handle: 'jony.ive@apple.dev',
         isSyncEnabled: false,
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-        syncSubStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_IDS.PHIL,
@@ -73,7 +73,7 @@ export const seedMessageChannel = async (
         handle: 'phil.schiler@apple.dev',
         isSyncEnabled: false,
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-        syncSubStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStatus: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
     ])
     .execute();
