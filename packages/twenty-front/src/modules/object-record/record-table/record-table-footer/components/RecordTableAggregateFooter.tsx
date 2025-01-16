@@ -30,21 +30,8 @@ const StyledTableRow = styled.tr<{
     border-right-color: ${({ theme }) => theme.background.primary};
   }
   &.first-columns-sticky {
-    td:nth-of-type(1) {
-      position: sticky;
-      left: 0;
-      z-index: 5;
-      transition: 0.3s ease;
-    }
     td:nth-of-type(2) {
       position: sticky;
-      left: 11px;
-      z-index: 5;
-      transition: 0.3s ease;
-    }
-    td:nth-of-type(3) {
-      position: sticky;
-      left: 43px;
       z-index: 5;
       transition: 0.3s ease;
       &::after {
@@ -116,7 +103,6 @@ export const RecordTableAggregateFooter = ({
       hasHorizontalOverflow={hasHorizontalOverflow}
     >
       <StyledTd />
-      <StyledTd />
       {visibleTableColumns.map((column, index) => {
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
@@ -133,6 +119,9 @@ export const RecordTableAggregateFooter = ({
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );
       })}
+      <td colSpan={visibleTableColumns.length - 1} />
+      <td />
+      <td />
     </StyledTableRow>
   );
 };

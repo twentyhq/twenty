@@ -3,11 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -16,6 +17,7 @@ import { AuthService } from './services/auth.service';
 // import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { SwitchWorkspaceService } from './services/switch-workspace.service';
+import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
@@ -78,6 +80,14 @@ describe('AuthResolver', () => {
         },
         {
           provide: TransientTokenService,
+          useValue: {},
+        },
+        {
+          provide: EmailVerificationService,
+          useValue: {},
+        },
+        {
+          provide: EmailVerificationTokenService,
           useValue: {},
         },
         // {
