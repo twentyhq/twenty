@@ -15,4 +15,5 @@ export enum FeatureFlagKey {
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
   IsCrmMigrationEnabled = 'IS_CRM_MIGRATION_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
+  IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
 }

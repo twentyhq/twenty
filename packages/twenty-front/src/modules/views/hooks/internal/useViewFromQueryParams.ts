@@ -112,12 +112,18 @@ export const useViewFromQueryParams = () => {
                         .getValue()
                     : null;
 
+                const satisfiesRelationFilterSchema =
+                  relationFilterValueSchemaObject.safeParse(
+                    filterValueFromURL,
+                  )?.success;
+
                 const relationRecordNames = [];
 
                 if (
                   isNonEmptyString(relationObjectMetadataNamePlural) &&
                   isDefined(relationObjectMetadataItem) &&
-                  Array.isArray(filterValueFromURL)
+                  (Array.isArray(filterValueFromURL) ||
+                    satisfiesRelationFilterSchema)
                 ) {
                   const queryResult = await apolloClient.query<
                     Record<string, { edges: { node: ObjectRecord }[] }>
@@ -127,7 +133,17 @@ export const useViewFromQueryParams = () => {
                       objectMetadataItems,
                     }),
                     variables: {
-                      filter: { id: { in: filterValueFromURL } },
+                      filter: {
+                        id: {
+                          in: satisfiesRelationFilterSchema
+                            ? (
+                                filterValueFromURL as {
+                                  selectedRecordIds: string[];
+                                }
+                              )?.selectedRecordIds
+                            : filterValueFromURL,
+                        },
+                      },
                     },
                   });
 

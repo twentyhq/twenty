@@ -330,7 +330,8 @@ export enum FeatureFlagKey {
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled',
+  IsLocalizationEnabled = 'IsLocalizationEnabled'
 }
 
 export type FieldConnection = {

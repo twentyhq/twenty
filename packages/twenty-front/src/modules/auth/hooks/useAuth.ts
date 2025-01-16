@@ -60,6 +60,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
 
 export const useAuth = () => {
@@ -279,6 +280,7 @@ export const useAuth = () => {
             )
           : TimeFormat[detectTimeFormat()],
       });
+      i18n.activate(workspaceMember.locale ?? 'en');
     }
 
     const workspace = user.currentWorkspace ?? null;
