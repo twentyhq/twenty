@@ -35,6 +35,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconFlask } from '@tabler/icons-react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -207,6 +208,11 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconServer}
           />
         )}
+        <SettingsNavigationDrawerItem
+          label="Labs"
+          path={SettingsPath.Labs}
+          Icon={IconFlask}
+        />
         <SettingsNavigationDrawerItem
           label="Releases"
           path={SettingsPath.Releases}
