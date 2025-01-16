@@ -184,7 +184,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       objectMetadataMap[relationMetadataInput.toObjectMetadataId] === undefined
     ) {
       throw new RelationMetadataException(
-        'Can\t find an existing object matching with fromObjectMetadataId or toObjectMetadataId',
+        "Can't find an existing object matching with fromObjectMetadataId or toObjectMetadataId",
         RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
       );
     }

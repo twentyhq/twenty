@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -50,15 +51,15 @@ export class BillingPortalWorkspaceService {
       workspaceId: workspace.id,
     });
 
-    const stripeCustomerId = (
-      await this.billingSubscriptionRepository.findOneBy({
-        workspaceId: workspace.id,
-      })
-    )?.stripeCustomerId;
+    const subscription = await this.billingSubscriptionRepository.findOneBy({
+      workspaceId: workspace.id,
+    });
 
-    const session = await this.stripeCheckoutService.createCheckoutSession(
+    const stripeCustomerId = subscription?.stripeCustomerId;
+
+    const session = await this.stripeCheckoutService.createCheckoutSession({
       user,
-      workspace.id,
+      workspaceId: workspace.id,
       priceId,
       quantity,
       successUrl,
@@ -66,7 +67,8 @@ export class BillingPortalWorkspaceService {
       stripeCustomerId,
       plan,
       requirePaymentMethod,
-    );
+      withTrialPeriod: !isDefined(subscription),
+    });
 
     assert(session.url, 'Error: missing checkout.session.url');
 

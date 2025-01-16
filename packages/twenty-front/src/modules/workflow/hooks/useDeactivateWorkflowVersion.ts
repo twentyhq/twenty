@@ -1,4 +1,3 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -11,13 +10,12 @@ import {
 } from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
   >(DEACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
