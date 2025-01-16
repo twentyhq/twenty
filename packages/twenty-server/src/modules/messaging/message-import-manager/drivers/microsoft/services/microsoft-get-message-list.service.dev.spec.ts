@@ -10,6 +10,7 @@ import { MicrosoftGetMessageListService } from './microsoft-get-message-list.ser
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 
 const refreshToken = 'replace-with-your-refresh-token';
+const syncCursor = 'replace-with-your-sync-cursor';
 
 xdescribe('Microsoft dev tests : get message list service', () => {
   let service: MicrosoftGetMessageListService;
@@ -53,5 +54,28 @@ xdescribe('Microsoft dev tests : get message list service', () => {
     await expect(
       service.getFullMessageList(mockConnectedAccountUnvalid),
     ).rejects.toThrowError('Access token is undefined or empty');
+  });
+
+  it('Should fetch and return partial message list successfully', async () => {
+    const result = await service.getPartialMessageList(
+      mockConnectedAccount,
+      syncCursor,
+    );
+
+    expect(result.nextSyncCursor).toBeTruthy();
+  });
+
+  it('Should fail partial message if syncCursor is invalid', async () => {
+    await expect(
+      service.getPartialMessageList(mockConnectedAccount, 'invalid-syncCursor'),
+    ).rejects.toThrowError(
+      /Resource not found for the segment|Badly formed content/g,
+    );
+  });
+
+  it('Should fail partial message if syncCursor is missing', async () => {
+    await expect(
+      service.getPartialMessageList(mockConnectedAccount, ''),
+    ).rejects.toThrowError(/Missing SyncCursor/g);
   });
 });
