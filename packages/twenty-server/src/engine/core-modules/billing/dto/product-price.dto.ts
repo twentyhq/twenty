@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 @ObjectType()
-export class ProductPriceEntity {
+export class ProductPriceDTO {
   @Field(() => SubscriptionInterval)
   recurringInterval: Stripe.Price.Recurring.Interval;
 
