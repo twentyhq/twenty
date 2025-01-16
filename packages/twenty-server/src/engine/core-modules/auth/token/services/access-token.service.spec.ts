@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request } from 'express';
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -12,10 +13,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { AccessTokenService } from './access-token.service';
@@ -108,7 +106,7 @@ describe('AccessTokenService', () => {
         id: userId,
       };
       const mockWorkspace = {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.Active,
         id: workspaceId,
       };
       const mockWorkspaceMember = { id: 'workspace-member-id' };

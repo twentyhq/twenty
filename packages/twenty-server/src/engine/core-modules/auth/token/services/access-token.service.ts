@@ -20,14 +20,14 @@ import {
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 @Injectable()
 export class AccessTokenService {
@@ -67,7 +67,7 @@ export class AccessTokenService {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+    if (workspace.activationStatus === WorkspaceActivationStatus.Active) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,

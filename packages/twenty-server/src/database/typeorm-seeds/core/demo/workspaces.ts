@@ -1,6 +1,5 @@
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { DataSource } from 'typeorm';
-
-import { WorkspaceActivationStatus } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const tableName = 'workspace';
 
@@ -30,7 +29,7 @@ export const seedWorkspaces = async (
         inviteHash: 'demo.dev-invite-hash',
         logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
         subdomain: 'demo',
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.Active,
       },
     ])
     .execute();

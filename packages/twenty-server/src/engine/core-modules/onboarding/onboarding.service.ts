@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
+
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
@@ -39,7 +38,7 @@ export class OnboardingService {
 
   private isWorkspaceActivationPending(workspace: Workspace) {
     return (
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus === WorkspaceActivationStatus.PendingCreation
     );
   }
 

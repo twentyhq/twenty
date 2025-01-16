@@ -1,17 +1,17 @@
 import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-import { CustomException } from 'src/utils/custom-exception';
-import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
+import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 const assertIsDefinedOrThrow = (
   workspace: Workspace | undefined | null,
@@ -29,9 +29,9 @@ const assertIsActive = (
   workspace: Workspace,
   exceptionToThrow: CustomException,
 ): asserts workspace is Workspace & {
-  activationStatus: WorkspaceActivationStatus.ACTIVE;
+  activationStatus: WorkspaceActivationStatus.Active;
 } => {
-  if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+  if (workspace.activationStatus === WorkspaceActivationStatus.Active) return;
   throw exceptionToThrow;
 };
 

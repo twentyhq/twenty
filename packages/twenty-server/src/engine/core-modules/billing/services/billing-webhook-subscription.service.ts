@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
@@ -12,10 +13,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
@@ -91,7 +89,7 @@ export class BillingWebhookSubscriptionService {
       data.object.status === SubscriptionStatus.Unpaid
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.INACTIVE,
+        activationStatus: WorkspaceActivationStatus.Inactive,
       });
     }
 
@@ -99,10 +97,10 @@ export class BillingWebhookSubscriptionService {
       (data.object.status === SubscriptionStatus.Active ||
         data.object.status === SubscriptionStatus.Trialing ||
         data.object.status === SubscriptionStatus.PastDue) &&
-      workspace.activationStatus == WorkspaceActivationStatus.INACTIVE
+      workspace.activationStatus == WorkspaceActivationStatus.Inactive
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.Active,
       });
     }
 

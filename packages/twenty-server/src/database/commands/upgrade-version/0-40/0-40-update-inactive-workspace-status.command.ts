@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -16,10 +17,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
@@ -68,7 +66,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
     options: UpdateInactiveWorkspaceStatusOptions,
   ): Promise<void> {
     const whereCondition: any = {
-      activationStatus: WorkspaceActivationStatus.INACTIVE,
+      activationStatus: WorkspaceActivationStatus.Inactive,
     };
 
     if (options.workspaceIds?.length > 0) {
@@ -179,7 +177,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
 
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        activationStatus: WorkspaceActivationStatus.Suspended,
       });
 
       await this.workspaceRepository.softRemove({ id: workspace.id });
@@ -200,7 +198,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
 
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        activationStatus: WorkspaceActivationStatus.Suspended,
       });
 
       await this.workspaceRepository.softRemove({ id: workspace.id });
@@ -243,7 +241,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
     this.logger.log(chalk.blue('(!) Marking as suspended'));
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        activationStatus: WorkspaceActivationStatus.Suspended,
       });
     }
   }

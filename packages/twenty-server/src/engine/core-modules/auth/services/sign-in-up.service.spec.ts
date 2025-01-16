@@ -1,28 +1,26 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
+import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { Repository } from 'typeorm';
 
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   AuthProviderWithPasswordType,
   ExistingUserOrPartialUserWithPicture,
   SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -137,7 +135,7 @@ describe('SignInUpService', () => {
       invitation: { value: 'invitationToken' } as AppToken,
       workspace: {
         id: 'workspaceId',
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.Active,
       } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
@@ -183,7 +181,7 @@ describe('SignInUpService', () => {
       AuthProviderWithPasswordType = {
       workspace: {
         id: 'workspaceId',
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.Active,
       } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
@@ -222,7 +220,7 @@ describe('SignInUpService', () => {
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
       id: 'newWorkspaceId',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.Active,
     } as Workspace);
     jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
       id: '',

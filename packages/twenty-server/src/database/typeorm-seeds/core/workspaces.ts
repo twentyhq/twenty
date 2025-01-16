@@ -1,9 +1,7 @@
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { DataSource } from 'typeorm';
 
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const tableName = 'workspace';
 
@@ -34,7 +32,7 @@ export const seedWorkspaces = async (
       subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.Active,
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
@@ -43,7 +41,7 @@ export const seedWorkspaces = async (
       subdomain: 'acme',
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.Active,
     },
   };
 

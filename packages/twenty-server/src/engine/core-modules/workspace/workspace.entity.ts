@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -22,14 +23,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-
-export enum WorkspaceActivationStatus {
-  ONGOING_CREATION = 'ONGOING_CREATION',
-  PENDING_CREATION = 'PENDING_CREATION',
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  SUSPENDED = 'SUSPENDED',
-}
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -113,7 +106,7 @@ export class Workspace {
     type: 'enum',
     enumName: 'workspace_activationStatus_enum',
     enum: WorkspaceActivationStatus,
-    default: WorkspaceActivationStatus.INACTIVE,
+    default: WorkspaceActivationStatus.Active,
   })
   activationStatus: WorkspaceActivationStatus;
 

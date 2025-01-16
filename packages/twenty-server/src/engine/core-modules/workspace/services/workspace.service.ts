@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { WorkspaceActivationStatus } from 'packages/twenty-shared/dist';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -14,10 +15,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
@@ -91,19 +89,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     if (
-      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
+      workspace.activationStatus === WorkspaceActivationStatus.OngoingCreation
     ) {
       throw new Error('Workspace is already being created');
     }
 
     if (
-      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus !== WorkspaceActivationStatus.PendingCreation
     ) {
       throw new Error('Workspace is not pending creation');
     }
 
     await this.workspaceRepository.update(workspace.id, {
-      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+      activationStatus: WorkspaceActivationStatus.OngoingCreation,
     });
 
     await this.featureFlagService.enableFeatureFlags(
@@ -116,7 +114,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      activationStatus: WorkspaceActivationStatus.Active,
     });
 
     return await this.workspaceRepository.findOneBy({
