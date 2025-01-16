@@ -41,11 +41,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
   ${({ theme, accent, disabled }) => {
-    if (isUndefined(disabled) && disabled !== false) {
-      return css`
-        opacity: 0.4;
-      `;
-    }
+    const isDisabled = !isUndefined(disabled) && disabled !== false;
 
     switch (accent) {
       case 'danger': {
@@ -54,17 +50,20 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
           &:hover {
             background: ${theme.background.transparent.danger};
           }
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'placeholder': {
         return css`
           color: ${theme.font.color.tertiary};
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'default':
       default: {
         return css`
           color: ${theme.font.color.secondary};
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
     }

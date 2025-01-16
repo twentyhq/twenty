@@ -22,6 +22,7 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -36,8 +37,6 @@ describe('SignInUpService', () => {
   let fileUploadService: FileUploadService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
-  let onboardingService: OnboardingService;
-  let httpService: HttpService;
   let environmentService: EnvironmentService;
   let domainManagerService: DomainManagerService;
 
@@ -99,6 +98,16 @@ describe('SignInUpService', () => {
           },
         },
         {
+          provide: UserService,
+          useValue: {
+            markEmailAsVerified: jest.fn().mockReturnValue({
+              id: 'test-user-id',
+              email: 'test@test.com',
+              isEmailVerified: true,
+            } as User),
+          },
+        },
+        {
           provide: DomainManagerService,
           useValue: {
             generateSubdomain: jest.fn(),
@@ -116,8 +125,6 @@ describe('SignInUpService', () => {
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
-    onboardingService = module.get<OnboardingService>(OnboardingService);
-    httpService = module.get<HttpService>(HttpService);
     environmentService = module.get<EnvironmentService>(EnvironmentService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);

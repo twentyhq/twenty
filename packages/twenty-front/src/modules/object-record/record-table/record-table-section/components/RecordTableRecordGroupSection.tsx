@@ -1,8 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 import { useCallback } from 'react';
-import { IconChevronDown, isDefined, Tag } from 'twenty-ui';
+import {
+  AnimatedLightIconButton,
+  IconChevronDown,
+  isDefined,
+  Tag,
+} from 'twenty-ui';
 
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -26,6 +30,11 @@ const StyledChevronContainer = styled(RecordTableTd)`
   color: ${({ theme }) => theme.font.color.secondary};
   text-align: center;
   vertical-align: middle;
+`;
+
+const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+  display: block;
+  margin: auto;
 `;
 
 const StyledTotalRow = styled.span`
@@ -84,15 +93,13 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <td aria-hidden />
       <StyledChevronContainer>
-        <motion.span
+        <StyledAnimatedLightIconButton
+          Icon={IconChevronDown}
+          size="small"
+          accent="secondary"
           animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{ duration: theme.animation.duration.normal }}
-          style={{
-            display: 'inline-block',
-          }}
-        >
-          <IconChevronDown size={theme.icon.size.md} />
-        </motion.span>
+        />
       </StyledChevronContainer>
       <StyledRecordGroupSection className="disable-shadow">
         <Tag

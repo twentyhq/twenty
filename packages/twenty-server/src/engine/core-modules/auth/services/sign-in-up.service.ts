@@ -41,6 +41,7 @@ import {
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -57,6 +58,7 @@ export class SignInUpService {
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly userService: UserService,
   ) {}
 
   async computeParamsForNewUser(
@@ -193,6 +195,8 @@ export class SignInUpService {
       invitationValidation.workspace.id,
       email,
     );
+
+    await this.userService.markEmailAsVerified(updatedUser.id);
 
     return updatedUser;
   }
