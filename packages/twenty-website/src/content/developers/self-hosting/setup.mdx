@@ -40,6 +40,12 @@ Under [Credentials](https://console.cloud.google.com/apis/credentials), in OAuth
 - `https://<your-domain>/auth/google/redirect` if you want to use Google SSO
 - `https://<your-domain>/auth/google-apis/get-access-token`
 
+### Configure Scopes
+[See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+- 'https://www.googleapis.com/auth/calendar.events'
+- 'https://www.googleapis.com/auth/gmail.readonly'
+- 'https://www.googleapis.com/auth/profile.emails.read'
+
 ### If your app is in test mode
 
 If your app is in test mode, you will need to add test users to your project.
