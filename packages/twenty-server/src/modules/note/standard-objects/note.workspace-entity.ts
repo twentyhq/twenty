@@ -34,10 +34,12 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 
 const TITLE_FIELD_NAME = 'title';
 const BODY_FIELD_NAME = 'body';
+const BODY_V2_FIELD_NAME = 'bodyV2';
 
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  // { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 }, // TODO: Check later if and how this works
+  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
@@ -89,7 +91,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  bodyV2: RichTextV2Metadata | null;
+  [BODY_V2_FIELD_NAME]: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,

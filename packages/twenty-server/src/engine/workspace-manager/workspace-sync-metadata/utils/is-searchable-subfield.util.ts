@@ -1,0 +1,18 @@
+import { FieldMetadataType } from 'twenty-shared';
+
+export const isSearchableSubfield = (
+  compositeFieldMetadataType: FieldMetadataType,
+  subFieldMetadataType: FieldMetadataType,
+  subFieldName: string,
+) => {
+  if (subFieldMetadataType !== FieldMetadataType.TEXT) {
+    return false;
+  }
+
+  switch (compositeFieldMetadataType) {
+    case FieldMetadataType.RICH_TEXT_V2:
+      return ['markdown'].includes(subFieldName);
+    default:
+      return true;
+  }
+};
