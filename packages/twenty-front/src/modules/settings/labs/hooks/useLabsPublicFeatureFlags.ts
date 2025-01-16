@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
-    FeatureFlagKey,
-    useGetLabsPublicFeatureFlagsQuery,
-    useUpdateLabsPublicFeatureFlagMutation,
+  FeatureFlagKey,
+  useGetLabsPublicFeatureFlagsQuery,
+  useUpdateLabsPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabsPublicFeatureFlags = () => {

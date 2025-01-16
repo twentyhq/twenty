@@ -1,10 +1,10 @@
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-    PUBLIC_FEATURE_FLAGS,
-    PublicFeatureFlag,
+  PUBLIC_FEATURE_FLAGS,
+  PublicFeatureFlag,
 } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
