@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
@@ -11,6 +12,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -54,13 +56,21 @@ export const useCreateNewTableRecord = ({
     shouldMatchRootQueryFilter: true,
   });
 
+  const navigate = useNavigate();
+
   const createNewTableRecord = async () => {
     const recordId = v4();
 
     if (isCommandMenuV2Enabled) {
       await createOneRecord({ id: recordId });
 
+      if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow) {
+        navigate(`/object/workflow/${recordId}`);
+        return;
+      }
+
       openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
+
       return;
     }
 
