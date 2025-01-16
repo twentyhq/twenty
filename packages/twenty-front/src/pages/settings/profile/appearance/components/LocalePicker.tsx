@@ -86,6 +86,10 @@ export const LocalePicker = () => {
             label: 'English',
             value: 'en',
           },
+          {
+            label: 'Chinese',
+            value: 'zh',
+          },
         ]}
         onChange={(value) => handleLocaleChange(value)}
       />

@@ -30,7 +30,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Appearance', undefined, {
+    await canvas.findByText('Experience', undefined, {
       timeout: 3000,
     });
 
