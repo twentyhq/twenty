@@ -52,17 +52,37 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    const nonFormattedUpdatedObjectRecords = await queryBuilder
+    const test = await queryBuilder
       .update(data)
       .where({ id: executionArgs.args.id })
-      .returning('*')
       .execute();
 
+    const nonFormattedUpdatedObjectRecords = await queryBuilder
+      .select()
+      .where({
+        id: executionArgs.args.id,
+      })
+      .execute();
+
+    console.log({
+      nonFormattedUpdatedObjectRecords,
+    });
+
     const formattedUpdatedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedUpdatedObjectRecords.raw,
+      test.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
+
+    console.log({
+      updateData: JSON.stringify(data),
+      nonFormattedUpdatedObjectRecords: JSON.stringify(
+        nonFormattedUpdatedObjectRecords,
+      ),
+      formattedUpdatedRecords,
+      existingRecords,
+      formattedExistingRecords,
+    });
 
     this.apiEventEmitterService.emitUpdateEvents(
       formattedExistingRecords,

@@ -3,7 +3,7 @@ import { Nullable } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
-  InternalDatePicker,
+  DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -42,9 +42,16 @@ export const DateInput = ({
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
+  console.log({
+    internalValue,
+  });
+
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newDate: Date | null) => {
+    console.log('handleChange', {
+      newDate,
+    });
     setInternalValue(newDate);
     onChange?.(newDate);
   };
@@ -54,7 +61,10 @@ export const DateInput = ({
     onClear?.();
   };
 
-  const handleMouseSelect = (newDate: Date | null) => {
+  const handleClose = (newDate: Date | null) => {
+    console.log('handleClose', {
+      newDate,
+    });
     setInternalValue(newDate);
     onSubmit?.(newDate);
   };
@@ -80,6 +90,10 @@ export const DateInput = ({
     closeDropdownMonthSelect();
     closeDropdown();
 
+    console.log('handleEscape', {
+      internalValue,
+    });
+
     onEscape(internalValue);
   };
 
@@ -89,6 +103,10 @@ export const DateInput = ({
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
     closeDropdown();
+
+    console.log('handleClickOutside', {
+      internalValue,
+    });
 
     onClickOutside(event, internalValue);
   };
@@ -104,16 +122,16 @@ export const DateInput = ({
 
   return (
     <div ref={wrapperRef}>
-      <InternalDatePicker
+      <DateTimePicker
         date={internalValue ?? new Date()}
         onChange={handleChange}
-        onMouseSelect={handleMouseSelect}
+        onClose={handleClose}
         clearable={clearable ? clearable : false}
-        isDateTimeInput={isDateTimeInput}
         onEnter={onEnter}
         onEscape={onEscape}
         onClear={handleClear}
         hideHeaderInput={hideHeaderInput}
+        isDateTimeInput={isDateTimeInput}
       />
     </div>
   );

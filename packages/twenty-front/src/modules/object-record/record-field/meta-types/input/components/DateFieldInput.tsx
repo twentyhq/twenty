@@ -32,9 +32,13 @@ export const DateFieldInput = ({
     if (!isDefined(newDate)) {
       persistField(null);
     } else {
-      const newDateISO = newDate?.toISOString();
+      const newDateWithoutTime = newDate?.toISOString().split('T')[0];
 
-      persistField(newDateISO);
+      console.log({
+        newDateWithoutTime: newDateWithoutTime,
+      });
+
+      persistField(newDateWithoutTime);
     }
   };
 
