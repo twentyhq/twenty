@@ -38,13 +38,6 @@ export class BillingSubscriptionService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
-  async getBillingPllansEnabledFeatureFlag(workspaceId: string) {
-    return await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsBillingPlansEnabled,
-      workspaceId,
-    );
-  }
-
   async getCurrentBillingSubscriptionOrThrow(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
@@ -70,16 +63,23 @@ export class BillingSubscriptionService {
     ),
   ) {
     const isBillingPlansEnabled =
-      await this.getBillingPllansEnabledFeatureFlag(workspaceId);
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsBillingPlansEnabled,
+        workspaceId,
+      );
 
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId },
     );
+
     const getStripeProductId = isBillingPlansEnabled
-      ? await this.billingPlanService.getProductByPlan(
-          BillingPlanKey.PRO,
-          BillingUsageType.LICENSED,
-        )
+      ? (
+          await this.billingPlanService.getProductsByProductMetadata(
+            BillingPlanKey.PRO,
+            BillingUsageType.LICENSED,
+            'true',
+          )
+        )?.[0].stripeProductId
       : stripeProductId;
 
     const billingSubscriptionItem =
@@ -90,7 +90,7 @@ export class BillingSubscriptionService {
 
     if (!billingSubscriptionItem) {
       throw new Error(
-        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+        `Cannot find billingSubscriptionItem for product ${getStripeProductId} for workspace ${workspaceId}`,
       );
     }
 
@@ -149,9 +149,11 @@ export class BillingSubscriptionService {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
-    const isBillingPlansEnabled = await this.getBillingPllansEnabledFeatureFlag(
-      workspace.id,
-    );
+    const isBillingPlansEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsBillingPlansEnabled,
+        workspace.id,
+      );
     const newInterval =
       billingSubscription?.interval === SubscriptionInterval.Year
         ? SubscriptionInterval.Month
@@ -161,11 +163,12 @@ export class BillingSubscriptionService {
       await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
 
     const productPrice = isBillingPlansEnabled
-      ? await this.billingPlanService.getProductPriceByPlanAndInterval(
-          BillingPlanKey.PRO,
-          BillingUsageType.LICENSED,
-          newInterval,
-        )
+      ? (
+          await this.billingPlanService.getProductPrices(
+            BillingPlanKey.PRO,
+            newInterval,
+          )
+        )?.[0]
       : await this.stripePriceService.getStripePrice(
           AvailableProduct.BasePlan,
           newInterval,

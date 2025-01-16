@@ -1,19 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import Stripe from 'stripe';
-
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+
 @ObjectType()
-export class ProductPriceEntity {
+export class PriceLicensedDTO {
   @Field(() => SubscriptionInterval)
-  recurringInterval: Stripe.Price.Recurring.Interval;
+  recurringInterval: SubscriptionInterval;
 
   @Field(() => Number)
   unitAmount: number;
-
-  @Field(() => Number)
-  created: number;
-
-  @Field(() => String)
-  stripePriceId: string;
 }
