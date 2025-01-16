@@ -11,14 +11,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  prerequisites:
+  changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
         packages/twenty-shared/**
   shared-test:
-    needs: prerequisites
-    if: needs.prerequisites.outputs.any_changed == 'true'
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
@@ -46,7 +46,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest
-    needs: [prerequisites, shared-test]
+    needs: [changed-files-check, shared-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
