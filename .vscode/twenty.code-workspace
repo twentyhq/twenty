@@ -47,6 +47,10 @@
     {
       "name": "packages/twenty-e2e-testing",
       "path": "../packages/twenty-e2e-testing"
+    },
+    {
+      "name": "packages/twenty-i18n",
+      "path": "../packages/twenty-i18n"
     }
   ],
   "settings": {

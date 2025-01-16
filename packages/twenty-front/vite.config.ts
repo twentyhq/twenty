@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
@@ -98,6 +99,7 @@ export default defineConfig(({ command, mode }) => {
         projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
       }),
       svgr(),
+      lingui(),
       checker(checkers),
       // TODO: fix this, we have to restrict the include to only the components that are using linaria
       // Otherwise the build will fail because wyw tries to include emotion styled components

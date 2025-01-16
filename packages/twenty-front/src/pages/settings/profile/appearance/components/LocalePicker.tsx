@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -7,6 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
+import { i18n } from '@lingui/core';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
@@ -24,8 +24,6 @@ export const LocalePicker = () => {
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-
-  const { i18n } = useTranslation();
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
@@ -51,7 +49,7 @@ export const LocalePicker = () => {
     });
     updateWorkspaceMember({ locale: value });
 
-    i18n.changeLanguage(value);
+    i18n.activate(value);
   };
 
   return (
@@ -60,7 +58,7 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
-        value={i18n.resolvedLanguage}
+        value={i18n.locale}
         options={[
           {
             label: 'Portuguese',

@@ -1,0 +1,22 @@
+{
+  "name": "@twenty/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "fmt": "prettier --write ."
+  },
+  "dependencies": {
+    "@lingui/core": "^5.1.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "typescript": "5.3.3"
+  }
+}
