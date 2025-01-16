@@ -186,7 +186,6 @@ export const ChooseYourPlan = () => {
           </StyledChooseTrialContainer>
         )}
         <MainButton
-          className="ContinueButton"
           title="Continue"
           onClick={handleCheckoutSession}
           width={200}
