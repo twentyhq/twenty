@@ -16,9 +16,9 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { i18n } from '@lingui/core';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDefined } from '~/utils/isDefined';
 
 export const UserProviderEffect = () => {
@@ -93,7 +93,7 @@ export const UserProviderEffect = () => {
           : TimeFormat[detectTimeFormat()],
       });
 
-      i18n.activate(workspaceMember.locale ?? 'en');
+      dynamicActivate(workspaceMember.locale ?? 'en');
     }
 
     if (isDefined(workspaceMembers)) {

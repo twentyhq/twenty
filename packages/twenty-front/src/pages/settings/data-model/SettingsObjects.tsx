@@ -4,8 +4,8 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsObjectMetadataItemTableRow,
-  StyledObjectTableRow,
+    SettingsObjectMetadataItemTableRow,
+    StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
@@ -21,16 +21,17 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
-  Button,
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSearch,
-  Section,
-  UndecoratedLink,
+    Button,
+    H2Title,
+    IconChevronRight,
+    IconPlus,
+    IconSearch,
+    Section,
+    UndecoratedLink,
 } from 'twenty-ui';
 import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
@@ -38,12 +39,15 @@ import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/Setti
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
+
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
+
 export const SettingsObjects = () => {
   const theme = useTheme();
+  const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -109,6 +113,7 @@ export const SettingsObjects = () => {
     inactiveObjectSettingsArray,
     SETTINGS_OBJECT_TABLE_METADATA,
   );
+
   const filteredActiveObjectSettingsItems = useMemo(
     () =>
       sortedActiveObjectSettingsItems.filter(
@@ -128,14 +133,15 @@ export const SettingsObjects = () => {
       ),
     [sortedInactiveObjectSettingsItems, searchTerm],
   );
+
   return (
     <SubMenuTopBarContainer
-      title="Data model"
+      title={t`Data model`}
       actionButton={
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
-            title="Add object"
+            title={t`Add object`}
             accent="blue"
             size="small"
           />
@@ -143,11 +149,11 @@ export const SettingsObjects = () => {
       }
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: 'Objects',
+          children: t`Objects`,
         },
       ]}
     >
@@ -155,11 +161,11 @@ export const SettingsObjects = () => {
         <>
           <SettingsObjectCoverImage />
           <Section>
-            <H2Title title="Existing objects" />
+            <H2Title title={t`Existing objects`} />
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder="Search an object..."
+              placeholder={t`Search an object...`}
               value={searchTerm}
               onChange={setSearchTerm}
             />
@@ -171,7 +177,7 @@ export const SettingsObjects = () => {
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={settingsObjectsTableMetadataField.fieldLabel}
+                      label={t`${settingsObjectsTableMetadataField.fieldLabel}`}
                       tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
                       initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}
@@ -181,7 +187,7 @@ export const SettingsObjects = () => {
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
-                <TableSection title="Active">
+                <TableSection title={t`Active`}>
                   {filteredActiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow
@@ -205,7 +211,7 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {isNonEmptyArray(inactiveObjectMetadataItems) && (
-                <TableSection title="Inactive">
+                <TableSection title={t`Inactive`}>
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (
                       <SettingsObjectMetadataItemTableRow

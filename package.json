@@ -302,6 +302,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-lingui": "^0.9.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-project-structure": "^3.9.1",

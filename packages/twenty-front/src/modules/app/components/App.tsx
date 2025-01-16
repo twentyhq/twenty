@@ -11,14 +11,12 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { messages as enMessages } from '../../../locales/en/messages';
-import { messages as frMessages } from '../../../locales/fr/messages';
+import { messages as enMessages } from '../../../locales/generated/en';
 
 i18n.load({
   en: enMessages,
-  fr: frMessages,
 });
-i18n.activate('fr');
+i18n.activate('en');
 
 export const App = () => {
   return (

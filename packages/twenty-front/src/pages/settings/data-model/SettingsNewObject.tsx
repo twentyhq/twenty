@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
@@ -7,10 +8,7 @@ import { z } from 'zod';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  SettingsDataModelObjectAboutForm,
-  settingsDataModelObjectAboutFormSchema,
-} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { SettingsDataModelObjectAboutForm, settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -24,78 +22,77 @@ type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createOneObjectMetadataItem, findManyRecordsCache } =
-    useCreateOneObjectMetadataItem();
-
-  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
-
-  const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
-    mode: 'onTouched',
+  const methods = useForm<SettingsDataModelNewObjectFormValues>({
+    defaultValues: {},
     resolver: zodResolver(newObjectFormSchema),
   });
 
-  const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting;
+  const { handleSubmit } = methods;
 
-  const handleSave = async (
-    formValues: SettingsDataModelNewObjectFormValues,
-  ) => {
+  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
+
+  const onSubmit = async (data: SettingsDataModelNewObjectFormValues) => {
     try {
-      const { data: response } = await createOneObjectMetadataItem(
-        settingsCreateObjectInputSchema.parse(formValues),
-      );
+      const createObjectInput = settingsCreateObjectInputSchema.parse(data);
 
-      navigate(
-        response
-          ? `${settingsObjectsPagePath}/${response.createOneObject.namePlural}`
-          : settingsObjectsPagePath,
-      );
+      await createOneObjectMetadataItem(createObjectInput);
 
-      await findManyRecordsCache();
-    } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
+      enqueueSnackBar(t`Object created successfully`, {
+        variant: SnackBarVariant.Success,
       });
+
+      navigate(getSettingsPagePath(SettingsPath.Objects));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        enqueueSnackBar(t`Invalid object data`, {
+          variant: SnackBarVariant.Error,
+        });
+      } else {
+        enqueueSnackBar(t`Failed to create object`, {
+          variant: SnackBarVariant.Error,
+        });
+      }
     }
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
+    <>
       <SubMenuTopBarContainer
-        title="New Object"
+        title={t`New Object`}
         links={[
           {
-            children: 'Workspace',
+            children: t`Workspace`,
             href: getSettingsPagePath(SettingsPath.Workspace),
           },
           {
-            children: 'Objects',
-            href: settingsObjectsPagePath,
+            children: t`Objects`,
+            href: getSettingsPagePath(SettingsPath.Objects),
           },
-          { children: 'New' },
+          { children: t`New` },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            isCancelDisabled={isSubmitting}
-            onCancel={() => navigate(settingsObjectsPagePath)}
-            onSave={formConfig.handleSubmit(handleSave)}
-          />
-        }
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-            />
-            <SettingsDataModelObjectAboutForm />
-          </Section>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Section>
+                <H2Title
+                  title={t`About`}
+                  description={t`Define the name and description of your object`}
+                />
+                <SettingsDataModelObjectAboutForm />
+              </Section>
+              <SaveAndCancelButtons
+                onCancel={() =>
+                  navigate(getSettingsPagePath(SettingsPath.Objects))
+                }
+              />
+            </form>
+          </FormProvider>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
-    </FormProvider>
+    </>
   );
 };
