@@ -174,7 +174,7 @@ export class SignInUpService {
     }
 
     const invitationValidation =
-      await this.workspaceInvitationService.validateInvitation({
+      await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: params.invitation.value,
         email,
       });

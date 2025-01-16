@@ -98,7 +98,7 @@ export class AuthService {
       );
 
     if (invitation) {
-      await this.workspaceInvitationService.validateInvitation({
+      await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: invitation.value,
         email: user.email,
       });
@@ -575,13 +575,40 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    if (!invitation && !workspaceInviteHash && workspace) {
-      if (userData.type === 'existingUser') {
-        await this.userService.hasUserAccessToWorkspaceOrThrow(
-          userData.existingUser.id,
-          workspace.id,
-        );
-      }
+    const hadPublicInviteLink = !!workspaceInviteHash;
+    const hasPersonalInvitation = !!invitation;
+    const isInvitedToWorkspace = hasPersonalInvitation || hadPublicInviteLink;
+    const isTargetAnExistingWorkspace = !!workspace;
+    const isAnExistingUser = userData.type === 'existingUser';
+
+    if (
+      hadPublicInviteLink &&
+      !hasPersonalInvitation &&
+      workspace &&
+      !workspace.isPublicInviteLinkEnabled
+    ) {
+      throw new AuthException(
+        'Public invite link is disabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      isAnExistingUser
+    ) {
+      return await this.userService.hasUserAccessToWorkspaceOrThrow(
+        userData.existingUser.id,
+        workspace.id,
+      );
+    }
+
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      !isAnExistingUser
+    ) {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
