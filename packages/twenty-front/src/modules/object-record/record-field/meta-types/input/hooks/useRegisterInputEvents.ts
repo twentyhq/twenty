@@ -37,13 +37,22 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
-      const fieldDropdownFocusId = getDropdownFocusIdForRecordField(
+      const fieldDropdownFocusIdTableCell = getDropdownFocusIdForRecordField(
         recordId,
         fieldDefinition.fieldMetadataId,
         'table-cell',
       );
 
-      if (activeDropdownFocusId !== fieldDropdownFocusId) {
+      const fieldDropdownFocusIdInlineCell = getDropdownFocusIdForRecordField(
+        recordId,
+        fieldDefinition.fieldMetadataId,
+        'inline-cell',
+      );
+
+      if (
+        activeDropdownFocusId !== fieldDropdownFocusIdTableCell &&
+        activeDropdownFocusId !== fieldDropdownFocusIdInlineCell
+      ) {
         return;
       }
 
