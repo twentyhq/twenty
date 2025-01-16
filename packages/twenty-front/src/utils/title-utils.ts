@@ -4,7 +4,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 
 export enum SettingsPageTitles {
   Accounts = 'Account - Settings',
-  Appearance = 'Appearance - Settings',
+  Experience = 'Experience - Settings',
   Profile = 'Profile - Settings',
   Objects = 'Data model - Settings',
   Members = 'Members - Settings',
@@ -17,7 +17,7 @@ export enum SettingsPageTitles {
 
 enum SettingsPathPrefixes {
   Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,
-  Appearance = `${AppBasePath.Settings}/${SettingsPath.Appearance}`,
+  Experience = `${AppBasePath.Settings}/${SettingsPath.Experience}`,
   Profile = `${AppBasePath.Settings}/${SettingsPath.ProfilePage}`,
   Objects = `${AppBasePath.Settings}/${SettingsPath.Objects}`,
   Members = `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`,

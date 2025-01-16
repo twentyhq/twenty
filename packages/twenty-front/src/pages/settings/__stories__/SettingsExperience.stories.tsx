@@ -15,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsExperience',
   component: SettingsExperience,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/appearance' },
+  args: { routePath: '/settings/experience' },
   parameters: {
     msw: graphqlMocks,
     date: new Date(2021, 1, 1),

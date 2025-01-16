@@ -368,7 +368,6 @@
       "packages/twenty-server",
       "packages/twenty-emails",
       "packages/twenty-ui",
-      "packages/twenty-i18n",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",
