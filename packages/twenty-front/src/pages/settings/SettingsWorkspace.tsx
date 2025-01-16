@@ -1,11 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import {
-    GithubVersionLink,
-    H2Title,
-    IconWorld,
-    Section,
-    UndecoratedLink,
+  GithubVersionLink,
+  H2Title,
+  IconWorld,
+  Section,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';

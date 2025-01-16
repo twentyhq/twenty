@@ -8,7 +8,10 @@ import { z } from 'zod';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsDataModelObjectAboutForm, settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import {
+  SettingsDataModelObjectAboutForm,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -75,6 +78,7 @@ export const SettingsNewObject = () => {
         ]}
       >
         <SettingsPageContainer>
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Section>

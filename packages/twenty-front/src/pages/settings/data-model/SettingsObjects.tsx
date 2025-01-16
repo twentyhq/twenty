@@ -4,8 +4,8 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-    SettingsObjectMetadataItemTableRow,
-    StyledObjectTableRow,
+  SettingsObjectMetadataItemTableRow,
+  StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
@@ -25,13 +25,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
-    Button,
-    H2Title,
-    IconChevronRight,
-    IconPlus,
-    IconSearch,
-    Section,
-    UndecoratedLink,
+  Button,
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSearch,
+  Section,
+  UndecoratedLink,
 } from 'twenty-ui';
 import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
@@ -177,7 +177,7 @@ export const SettingsObjects = () => {
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={t`${settingsObjectsTableMetadataField.fieldLabel}`}
+                      label={settingsObjectsTableMetadataField.fieldLabel}
                       tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
                       initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}

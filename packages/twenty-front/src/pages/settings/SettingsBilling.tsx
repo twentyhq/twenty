@@ -2,12 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-    Button,
-    H2Title,
-    IconCalendarEvent,
-    IconCircleX,
-    IconCreditCard,
-    Section,
+  Button,
+  H2Title,
+  IconCalendarEvent,
+  IconCircleX,
+  IconCreditCard,
+  Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -22,10 +22,10 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
-    OnboardingStatus,
-    SubscriptionInterval,
-    useBillingPortalSessionQuery,
-    useUpdateBillingSubscriptionMutation,
+  OnboardingStatus,
+  SubscriptionInterval,
+  useBillingPortalSessionQuery,
+  useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -97,6 +97,10 @@ export const SettingsBilling = () => {
     setIsSwitchingIntervalModalOpen(true);
   };
 
+  const from = switchingInfo.from;
+  const to = switchingInfo.to;
+  const impact = switchingInfo.impact;
+
   const switchInterval = async () => {
     try {
       await updateBillingSubscription();
@@ -110,16 +114,13 @@ export const SettingsBilling = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched ${switchingInfo.to}`, {
+      enqueueSnackBar(t`Subscription has been switched ${to}`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
-      enqueueSnackBar(
-        t`Error while switching subscription ${switchingInfo.to}.`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueSnackBar(t`Error while switching subscription ${to}.`, {
+        variant: SnackBarVariant.Error,
+      });
     }
   };
 
@@ -154,11 +155,11 @@ export const SettingsBilling = () => {
             <Section>
               <H2Title
                 title={t`Edit billing interval`}
-                description={t`Switch ${switchingInfo.from}`}
+                description={t`Switch ${from}`}
               />
               <Button
                 Icon={IconCalendarEvent}
-                title={t`Switch ${switchingInfo.to}`}
+                title={t`Switch ${to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
                 disabled={switchIntervalButtonDisabled}
@@ -184,14 +185,10 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}
-        title={t`Switch billing ${switchingInfo.to}`}
-        subtitle={
-          <>
-            {t`Are you sure that you want to change your billing interval? ${switchingInfo.impact}`}
-          </>
-        }
+        title={t`Switch billing ${to}`}
+        subtitle={t`Are you sure that you want to change your billing interval? ${impact}`}
         onConfirmClick={switchInterval}
-        deleteButtonText={t`Change ${switchingInfo.to}`}
+        deleteButtonText={t`Change ${to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>
