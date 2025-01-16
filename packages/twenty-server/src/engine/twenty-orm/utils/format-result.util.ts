@@ -15,7 +15,7 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 
 export function formatResult<T>(
   data: any,
-  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {
   if (!data) {
@@ -24,7 +24,7 @@ export function formatResult<T>(
 
   if (Array.isArray(data)) {
     return data.map((item) =>
-      formatResult(item, ObjectMetadataItemWithFieldMaps, objectMetadataMaps),
+      formatResult(item, objectMetadataItemWithFieldMaps, objectMetadataMaps),
     ) as T;
   }
 
@@ -32,12 +32,12 @@ export function formatResult<T>(
     return data;
   }
 
-  if (!ObjectMetadataItemWithFieldMaps) {
+  if (!objectMetadataItemWithFieldMaps) {
     throw new Error('Object metadata is missing');
   }
 
   const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
-    ObjectMetadataItemWithFieldMaps,
+    objectMetadataItemWithFieldMaps,
   );
 
   const compositeFieldMetadataMap = new Map(
@@ -58,7 +58,7 @@ export function formatResult<T>(
   );
 
   const relationMetadataMap = new Map(
-    Object.values(ObjectMetadataItemWithFieldMaps.fieldsById)
+    Object.values(objectMetadataItemWithFieldMaps.fieldsById)
       .filter(({ type }) => isRelationFieldMetadataType(type))
       .map((fieldMetadata) => [
         fieldMetadata.name,
@@ -76,7 +76,7 @@ export function formatResult<T>(
   );
   const newData: object = {};
   const objectMetadaItemFieldsByName =
-    objectMetadataMaps.byId[ObjectMetadataItemWithFieldMaps.id]?.fieldsByName;
+    objectMetadataMaps.byId[objectMetadataItemWithFieldMaps.id]?.fieldsByName;
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
@@ -87,7 +87,7 @@ export function formatResult<T>(
       if (isPlainObject(value)) {
         newData[key] = formatResult(
           value,
-          ObjectMetadataItemWithFieldMaps,
+          objectMetadataItemWithFieldMaps,
           objectMetadataMaps,
         );
       } else if (objectMetadaItemFieldsByName[key]) {
@@ -140,6 +140,23 @@ export function formatResult<T>(
     }
 
     newData[parentField][compositeProperty.name] = value;
+  }
+
+  const dateFieldMetadataCollection =
+    objectMetadataItemWithFieldMaps.fields.filter(
+      (field) => field.type === FieldMetadataType.DATE,
+    );
+
+  // TODO: This is a temporary fix to handle a bug in the frontend where the date get returned in the wrong timezone,
+  //   thus returning the wrong date.
+  for (const dateFieldMetadata of dateFieldMetadataCollection) {
+    const currentDate = new Date(newData[dateFieldMetadata.name]);
+
+    const offsetInMilliseconds = -(new Date().getTimezoneOffset() * 60000);
+
+    const shiftedDate = new Date(currentDate.getTime() + offsetInMilliseconds);
+
+    newData[dateFieldMetadata.name] = shiftedDate;
   }
 
   return newData as T;
