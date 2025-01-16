@@ -981,6 +981,11 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
+export type QueryGetLabsPublicFeatureFlagsArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
@@ -1565,11 +1570,11 @@ export type WorkspaceBillingSubscriptionsArgs = {
 };
 
 export enum WorkspaceActivationStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  ONGOING_CREATION = 'ONGOING_CREATION',
-  PENDING_CREATION = 'PENDING_CREATION',
-  SUSPENDED = 'SUSPENDED'
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
+  PendingCreation = 'PENDING_CREATION',
+  Suspended = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
@@ -2141,7 +2146,9 @@ export type UpdateLabsPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabsPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabsPublicFeatureFlag: boolean };
 
-export type GetLabsPublicFeatureFlagsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetLabsPublicFeatureFlagsQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
 
 
 export type GetLabsPublicFeatureFlagsQuery = { __typename?: 'Query', getLabsPublicFeatureFlags: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> };
@@ -3827,8 +3834,8 @@ export type UpdateLabsPublicFeatureFlagMutationHookResult = ReturnType<typeof us
 export type UpdateLabsPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabsPublicFeatureFlagMutation>;
 export type UpdateLabsPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabsPublicFeatureFlagMutation, UpdateLabsPublicFeatureFlagMutationVariables>;
 export const GetLabsPublicFeatureFlagsDocument = gql`
-    query GetLabsPublicFeatureFlags {
-  getLabsPublicFeatureFlags {
+    query GetLabsPublicFeatureFlags($workspaceId: String!) {
+  getLabsPublicFeatureFlags(workspaceId: $workspaceId) {
     id
     key
     value
@@ -3849,10 +3856,11 @@ export const GetLabsPublicFeatureFlagsDocument = gql`
  * @example
  * const { data, loading, error } = useGetLabsPublicFeatureFlagsQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetLabsPublicFeatureFlagsQuery(baseOptions?: Apollo.QueryHookOptions<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>) {
+export function useGetLabsPublicFeatureFlagsQuery(baseOptions: Apollo.QueryHookOptions<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>(GetLabsPublicFeatureFlagsDocument, options);
       }

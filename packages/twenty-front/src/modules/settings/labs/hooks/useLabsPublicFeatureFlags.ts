@@ -3,32 +3,35 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
-  FeatureFlag,
-  FeatureFlagKey,
-  useGetLabsPublicFeatureFlagsQuery,
-  useUpdateLabsPublicFeatureFlagMutation,
+    FeatureFlag,
+    FeatureFlagKey,
+    useGetLabsPublicFeatureFlagsQuery,
+    useUpdateLabsPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabsPublicFeatureFlags = () => {
   const [labsPublicFeatureFlags, setLabsPublicFeatureFlags] = useState<
     FeatureFlag[]
   >([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
   const { loading: labsPublicFeatureFlagsLoading } =
     useGetLabsPublicFeatureFlagsQuery({
+      variables: {
+        workspaceId: currentWorkspace?.id,
+      },
       fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
         setLabsPublicFeatureFlags(data.getLabsPublicFeatureFlags);
       },
     });
-  const [error, setError] = useState<string | null>(null);
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
-  );
+
   const [updateLabsPublicFeatureFlag] =
     useUpdateLabsPublicFeatureFlagMutation();
 
   const handleLabsPublicFeatureFlagUpdate = async (
-    workspaceId: string,
     publicFeatureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
@@ -53,7 +56,7 @@ export const useLabsPublicFeatureFlags = () => {
     }
     const response = await updateLabsPublicFeatureFlag({
       variables: {
-        workspaceId,
+        workspaceId: currentWorkspace?.id,
         publicFeatureFlag,
         value,
       },

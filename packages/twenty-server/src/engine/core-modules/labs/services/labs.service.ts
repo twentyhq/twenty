@@ -4,11 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+    FeatureFlagException,
+    FeatureFlagExceptionCode,
+} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { isPublicFeatureFlag } from 'src/engine/core-modules/labs/utils/is-public-feature-flag.util';
@@ -41,17 +45,17 @@ export class LabsService {
   ): Promise<void> {
     featureFlagValidator.assertIsFeatureFlagKey(
       publicFeatureFlag,
-      new AuthException(
+      new FeatureFlagException(
         'Invalid feature flag key',
-        AuthExceptionCode.INVALID_INPUT,
+        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
       ),
     );
 
     publicFeatureFlagValidator.assertIsPublicFeatureFlag(
       FeatureFlagKey[publicFeatureFlag],
-      new AuthException(
+      new FeatureFlagException(
         'Feature flag is not public',
-        AuthExceptionCode.INVALID_INPUT,
+        FeatureFlagExceptionCode.FEATURE_FLAG_IS_NOT_PUBLIC,
       ),
     );
 
@@ -69,14 +73,13 @@ export class LabsService {
       (flag) => flag.key === FeatureFlagKey[publicFeatureFlag],
     );
 
-    if (existingFlag) {
-      await this.featureFlagRepository.update(existingFlag.id, { value });
-    } else {
-      await this.featureFlagRepository.save({
-        workspaceId,
-        key: FeatureFlagKey[publicFeatureFlag],
-        value,
-      });
+    if (!existingFlag) {
+      throw new FeatureFlagException(
+        'Public feature flag not found',
+        FeatureFlagExceptionCode.FEATURE_FLAG_NOT_FOUND,
+      );
     }
+
+    await this.featureFlagRepository.update(existingFlag.id, { value });
   }
 }

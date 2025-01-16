@@ -3,10 +3,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { GetLabsPublicFeatureFlagsInput } from 'src/engine/core-modules/labs/dtos/get-labs-public-feature-flags.input';
 import { UpdateLabsPublicFeatureFlagInput } from 'src/engine/core-modules/labs/dtos/update-labs-public-feature-flag.input';
 import { LabsService } from 'src/engine/core-modules/labs/services/labs.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver()
@@ -17,9 +16,11 @@ export class LabsResolver {
   @Query(() => [FeatureFlagEntity])
   @UseGuards(WorkspaceAuthGuard)
   async getLabsPublicFeatureFlags(
-    @AuthWorkspace() workspace: Workspace,
+    @Args() getLabsPublicFeatureFlagsInput: GetLabsPublicFeatureFlagsInput,
   ): Promise<FeatureFlagEntity[]> {
-    return this.labsService.getLabsPublicFeatureFlags(workspace.id);
+    return this.labsService.getLabsPublicFeatureFlags(
+      getLabsPublicFeatureFlagsInput.workspaceId,
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard)
