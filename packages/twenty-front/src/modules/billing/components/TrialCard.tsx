@@ -12,14 +12,14 @@ const StyledTrialCardContainer = styled.div`
 
 const StyledTrialDurationContainer = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   display: flex;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCreditCardRequirementContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   display: flex;
 `;
 
