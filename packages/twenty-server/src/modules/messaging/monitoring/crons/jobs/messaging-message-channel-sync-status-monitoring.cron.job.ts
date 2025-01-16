@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import snakeCase from 'lodash.snakecase';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -9,10 +10,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
