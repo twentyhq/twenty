@@ -41,7 +41,7 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
     (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
   ${({ theme, accent, disabled }) => {
-    if (isUndefined(disabled) && disabled !== false) {
+    if (!isUndefined(disabled) && disabled !== false) {
       return css`
         opacity: 0.4;
       `;
