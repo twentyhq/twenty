@@ -5,26 +5,24 @@ import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
-    AuthException,
-    AuthExceptionCode,
+  AuthException,
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
-    AuthContext,
-    JwtPayload,
+  AuthContext,
+  JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import {
-    Workspace,
-    WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -67,7 +65,7 @@ export class AccessTokenService {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+    if (isWorkspaceActiveOrSuspended(workspace)) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
