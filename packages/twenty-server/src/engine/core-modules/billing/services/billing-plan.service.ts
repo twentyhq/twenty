@@ -214,6 +214,7 @@ export class BillingPlanService {
     return {
       recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
       unitAmount: billingPrice?.unitAmount ?? 0,
+      stripePriceId: billingPrice?.stripePriceId,
     };
   }
 
@@ -232,6 +233,7 @@ export class BillingPlanService {
           unitAmount: tier.unit_amount,
         })) ?? [],
       recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
+      stripePriceId: billingPrice?.stripePriceId,
     };
   }
 

@@ -1,16 +1,13 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared';
+import { In, Repository } from 'typeorm';
 
 import {
   BaseCommandOptions,
   BaseCommandRunner,
 } from 'src/database/commands/base.command';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export type ActiveWorkspacesCommandOptions = BaseCommandOptions & {
   workspaceId?: string;
 };
@@ -38,7 +35,10 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
     const activeWorkspaces = await this.workspaceRepository.find({
       select: ['id'],
       where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: In([
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
+        ]),
       },
     });
 

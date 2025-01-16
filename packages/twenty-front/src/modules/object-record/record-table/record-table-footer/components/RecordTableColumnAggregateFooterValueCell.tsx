@@ -1,4 +1,5 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { RECORD_TABLE_TD_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
@@ -10,7 +11,7 @@ import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui';
 
-const StyledCell = styled.div`
+const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -18,11 +19,27 @@ const StyledCell = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
   min-width: ${({ theme }) => theme.spacing(7)};
   flex-grow: 1;
-  width: 100%;
+  max-width: 100%;
+
+  background: ${({ theme, isUnfolded }) =>
+    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+
+  &:hover {
+    background: ${({ theme, isUnfolded }) =>
+      isUnfolded
+        ? theme.background.transparent.medium
+        : theme.background.transparent.light};
+  }
+
+  ${({ isFirstCell }) =>
+    isFirstCell &&
+    `
+    padding-left: ${RECORD_TABLE_TD_WIDTH};
+  `}
 `;
 
 const StyledIcon = styled(IconChevronDown)`
@@ -66,7 +83,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
       }}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <StyledCell>
+      <StyledCell isUnfolded={isDropdownOpen} isFirstCell={isFirstCell}>
         {isHovered ||
         isDropdownOpen ||
         hasAggregateOperationForViewField ||
@@ -76,7 +93,9 @@ export const RecordTableColumnAggregateFooterValueCell = ({
               fieldMetadataId={fieldMetadataId}
               dropdownId={dropdownId}
             />
-            <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
+            {!hasAggregateOperationForViewField && (
+              <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
+            )}
           </>
         ) : (
           <></>

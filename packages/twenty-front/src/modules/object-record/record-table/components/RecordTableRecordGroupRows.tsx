@@ -9,16 +9,10 @@ import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-ta
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRecordGroupRows = () => {
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
-
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const allRecordIds = useRecoilComponentValueV2(
@@ -66,12 +60,10 @@ export const RecordTableRecordGroupRows = () => {
       <RecordTablePendingRecordGroupRow />
       <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
-      {isAggregateQueryEnabled && (
-        <RecordTableAggregateFooter
-          key={currentRecordGroupId}
-          currentRecordGroupId={currentRecordGroupId}
-        />
-      )}
+      <RecordTableAggregateFooter
+        key={currentRecordGroupId}
+        currentRecordGroupId={currentRecordGroupId}
+      />
     </>
   );
 };

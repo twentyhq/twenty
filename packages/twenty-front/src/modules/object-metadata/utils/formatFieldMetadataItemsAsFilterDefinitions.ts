@@ -1,4 +1,4 @@
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -12,7 +12,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
   isJsonFilterEnabled: boolean;
-}): FilterDefinition[] => {
+}): RecordFilterDefinition[] => {
   return fields.reduce((acc, field) => {
     if (
       field.type === FieldMetadataType.Relation &&
@@ -49,14 +49,14 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     }
 
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
-  }, [] as FilterDefinition[]);
+  }, [] as RecordFilterDefinition[]);
 };
 
 export const formatFieldMetadataItemAsFilterDefinition = ({
   field,
 }: {
   field: ObjectMetadataItem['fields'][0];
-}): FilterDefinition => ({
+}): RecordFilterDefinition => ({
   fieldMetadataId: field.id,
   label: field.label,
   iconName: field.icon ?? 'Icon123',

@@ -1,6 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
-import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -81,7 +81,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     upsertCombinedViewFilter({
       id: v4(),
       fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-      operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
+      operand: getRecordFilterOperandsForRecordFilterDefinition(
+        defaultFilterDefinition,
+      )[0],
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
@@ -112,7 +114,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     upsertCombinedViewFilter({
       id: v4(),
       fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-      operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
+      operand: getRecordFilterOperandsForRecordFilterDefinition(
+        defaultFilterDefinition,
+      )[0],
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',

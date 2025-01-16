@@ -9,4 +9,7 @@ export class PriceLicensedDTO {
 
   @Field(() => Number)
   unitAmount: number;
+
+  @Field(() => String)
+  stripePriceId: string;
 }

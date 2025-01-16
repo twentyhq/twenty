@@ -62,7 +62,7 @@ export class BillingResolver {
   ) {
     return {
       url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
-        workspace.id,
+        workspace,
         returnUrlPath,
       ),
     };

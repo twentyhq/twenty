@@ -6,7 +6,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 export const MultipleFiltersButton = () => {
   const { resetFilterDropdown } = useResetFilterDropdown();
 
-  const { isDropdownOpen, toggleDropdown } = useDropdown(
+  const { toggleDropdown, isDropdownOpen } = useDropdown(
     OBJECT_FILTER_DROPDOWN_ID,
   );
 
@@ -17,8 +17,8 @@ export const MultipleFiltersButton = () => {
 
   return (
     <StyledHeaderDropdownButton
-      isUnfolded={isDropdownOpen}
       onClick={handleClick}
+      isUnfolded={isDropdownOpen}
     >
       Filter
     </StyledHeaderDropdownButton>

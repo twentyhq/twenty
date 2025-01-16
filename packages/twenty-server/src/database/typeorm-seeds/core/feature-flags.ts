@@ -56,11 +56,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsSSOEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -79,11 +74,6 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IsAdvancedFiltersEnabled,
         workspaceId: workspaceId,
         value: false,
-      },
-      {
-        key: FeatureFlagKey.IsAggregateQueryEnabled,
-        workspaceId: workspaceId,
-        value: true,
       },
       {
         key: FeatureFlagKey.IsCommandMenuV2Enabled,
