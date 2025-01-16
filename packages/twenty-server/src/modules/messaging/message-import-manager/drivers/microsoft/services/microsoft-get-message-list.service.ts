@@ -12,6 +12,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import {
   GetFullMessageListResponse,
   GetPartialMessageListResponse,
@@ -24,6 +25,7 @@ const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 export class MicrosoftGetMessageListService {
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
   ) {}
 
   public async getFullMessageList(
@@ -54,7 +56,9 @@ export class MicrosoftGetMessageListService {
 
     const pageIterator = new PageIterator(microsoftClient, response, callback);
 
-    await pageIterator.iterate().catch;
+    await pageIterator.iterate().catch((error) => {
+      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+    });
 
     return {
       messageExternalIds: messageExternalIds,
@@ -103,7 +107,9 @@ export class MicrosoftGetMessageListService {
 
     const pageIterator = new PageIterator(microsoftClient, response, callback);
 
-    await pageIterator.iterate();
+    await pageIterator.iterate().catch((error) => {
+      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+    });
 
     return {
       messageExternalIds,
