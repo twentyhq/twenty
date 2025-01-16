@@ -20,6 +20,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 import {
   OnboardingStatus,
   SubscriptionInterval,
@@ -61,6 +62,9 @@ export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
+  const hasCanceledSubscriptionOrNoSubscription =
+    !isDefined(subscriptionStatus) ||
+    subscriptionStatus === SubscriptionStatus.Canceled;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
@@ -75,13 +79,15 @@ export const SettingsBilling = () => {
     variables: {
       returnUrlPath: '/settings/billing',
     },
+    skip: hasCanceledSubscriptionOrNoSubscription,
   });
 
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
   const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStatus.COMPLETED;
+    onboardingStatus !== OnboardingStatus.COMPLETED ||
+    hasCanceledSubscriptionOrNoSubscription;
 
   const cancelPlanButtonDisabled =
     billingPortalButtonDisabled ||
@@ -137,50 +143,46 @@ export const SettingsBilling = () => {
     >
       <SettingsPageContainer>
         <SettingsBillingCoverImage />
-        {isDefined(subscriptionStatus) && (
-          <>
-            <Section>
-              <H2Title
-                title={t`Manage your subscription`}
-                description={t`Edit payment method, see your invoices and more`}
-              />
-              <Button
-                Icon={IconCreditCard}
-                title={t`View billing details`}
-                variant="secondary"
-                onClick={openBillingPortal}
-                disabled={billingPortalButtonDisabled}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Edit billing interval`}
-                description={t`Switch ${from}`}
-              />
-              <Button
-                Icon={IconCalendarEvent}
-                title={t`Switch ${to}`}
-                variant="secondary"
-                onClick={openSwitchingIntervalModal}
-                disabled={switchIntervalButtonDisabled}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Cancel your subscription`}
-                description={t`Your workspace will be disabled`}
-              />
-              <Button
-                Icon={IconCircleX}
-                title={t`Cancel Plan`}
-                variant="secondary"
-                accent="danger"
-                onClick={openBillingPortal}
-                disabled={cancelPlanButtonDisabled}
-              />
-            </Section>
-          </>
-        )}
+        <Section>
+          <H2Title
+            title={t`Manage your subscription`}
+            description={t`Edit payment method, see your invoices and more`}
+          />
+          <Button
+            Icon={IconCreditCard}
+            title={t`View billing details`}
+            variant="secondary"
+            onClick={openBillingPortal}
+            disabled={billingPortalButtonDisabled}
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Edit billing interval`}
+            description={t`Switch ${from}`}
+          />
+          <Button
+            Icon={IconCalendarEvent}
+            title={t`Switch ${to}`}
+            variant="secondary"
+            onClick={openSwitchingIntervalModal}
+            disabled={switchIntervalButtonDisabled}
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Cancel your subscription`}
+            description={t`Your workspace will be disabled`}
+          />
+          <Button
+            Icon={IconCircleX}
+            title={t`Cancel Plan`}
+            variant="secondary"
+            accent="danger"
+            onClick={openBillingPortal}
+            disabled={cancelPlanButtonDisabled}
+          />
+        </Section>
       </SettingsPageContainer>
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
