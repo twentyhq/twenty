@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { deleteWorkflow } from '../lib/requests/delete-workflow';
 
 test('Create workflow', async ({ page }) => {
   const NEW_WORKFLOW_NAME = 'Test Workflow';
@@ -32,21 +33,25 @@ test('Create workflow', async ({ page }) => {
   const body = await createWorkflowResponse.json();
   const newWorkflowId = body.data.createWorkflow.id;
 
-  const newWorkflowRowEntryName = page
-    .getByTestId(`row-id-${newWorkflowId}`)
-    .locator('div')
-    .filter({ hasText: NEW_WORKFLOW_NAME })
-    .nth(2);
+  try {
+    const newWorkflowRowEntryName = page
+      .getByTestId(`row-id-${newWorkflowId}`)
+      .locator('div')
+      .filter({ hasText: NEW_WORKFLOW_NAME })
+      .nth(2);
 
-  await Promise.all([
-    page.waitForURL(
-      (url) => url.pathname === `/object/workflow/${newWorkflowId}`,
-    ),
+    await Promise.all([
+      page.waitForURL(
+        (url) => url.pathname === `/object/workflow/${newWorkflowId}`,
+      ),
 
-    newWorkflowRowEntryName.click(),
-  ]);
+      newWorkflowRowEntryName.click(),
+    ]);
 
-  const workflowName = page.getByRole('button', { name: NEW_WORKFLOW_NAME });
+    const workflowName = page.getByRole('button', { name: NEW_WORKFLOW_NAME });
 
-  await expect(workflowName).toBeVisible();
+    await expect(workflowName).toBeVisible();
+  } finally {
+    await deleteWorkflow(page, newWorkflowId);
+  }
 });
