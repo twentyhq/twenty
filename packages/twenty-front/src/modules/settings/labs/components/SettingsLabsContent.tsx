@@ -28,7 +28,7 @@ const StyledFlagName = styled.span`
 
 export const SettingsLabsContent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { data: publicFlags, handleLabsPublicFeatureFlagUpdate } =
+  const { labsPublicFeatureFlags, handleLabsPublicFeatureFlagUpdate } =
     useLabsPublicFeatureFlags();
 
   const handleToggle = async (key: FeatureFlagKey, value: boolean) => {
@@ -39,7 +39,7 @@ export const SettingsLabsContent = () => {
 
   return (
     <StyledContainer>
-      {publicFlags?.getLabsPublicFeatureFlags.map((flag) => (
+      {labsPublicFeatureFlags.map((flag) => (
         <StyledFlagContainer key={flag.key}>
           <StyledFlagName>{flag.key}</StyledFlagName>
           <Toggle

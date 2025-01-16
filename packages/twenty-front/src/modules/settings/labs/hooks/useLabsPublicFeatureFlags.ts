@@ -1,24 +1,25 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { labsFeatureFlagsState } from '@/settings/labs/states/labsFeatureFlagsState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
+  FeatureFlag,
   FeatureFlagKey,
   useGetLabsPublicFeatureFlagsQuery,
   useUpdateLabsPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabsPublicFeatureFlags = () => {
-  const [labsFeatureFlags, setLabsFeatureFlags] = useRecoilState(
-    labsFeatureFlagsState,
-  );
-  const { loading: labsFlagsLoading } = useGetLabsPublicFeatureFlagsQuery({
-    fetchPolicy: 'cache-and-network',
-    onCompleted: (data) => {
-      setLabsFeatureFlags(data.getLabsPublicFeatureFlags);
-    },
-  });
+  const [labsPublicFeatureFlags, setLabsPublicFeatureFlags] = useState<
+    FeatureFlag[]
+  >([]);
+  const { loading: labsPublicFeatureFlagsLoading } =
+    useGetLabsPublicFeatureFlagsQuery({
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (data) => {
+        setLabsPublicFeatureFlags(data.getLabsPublicFeatureFlags);
+      },
+    });
   const [error, setError] = useState<string | null>(null);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -32,14 +33,14 @@ export const useLabsPublicFeatureFlags = () => {
     value: boolean,
   ) => {
     setError(null);
-    const previousState = labsFeatureFlags;
+    const previousState = labsPublicFeatureFlags;
     const previousWorkspace = currentWorkspace;
 
-    if (isDefined(labsFeatureFlags)) {
-      const updatedFlags = labsFeatureFlags.map((flag) =>
+    if (isDefined(labsPublicFeatureFlags)) {
+      const updatedFlags = labsPublicFeatureFlags.map((flag) =>
         flag.key === publicFeatureFlag ? { ...flag, value } : flag,
       );
-      setLabsFeatureFlags(updatedFlags);
+      setLabsPublicFeatureFlags(updatedFlags);
     }
 
     if (isDefined(currentWorkspace)) {
@@ -58,7 +59,7 @@ export const useLabsPublicFeatureFlags = () => {
       },
       onError: (error) => {
         if (isDefined(previousState)) {
-          setLabsFeatureFlags(previousState);
+          setLabsPublicFeatureFlags(previousState);
         }
         if (isDefined(previousWorkspace)) {
           setCurrentWorkspace(previousWorkspace);
@@ -71,9 +72,8 @@ export const useLabsPublicFeatureFlags = () => {
   };
 
   return {
-    data: { getLabsPublicFeatureFlags: labsFeatureFlags },
-
-    loading: labsFlagsLoading,
+    labsPublicFeatureFlags,
+    labsPublicFeatureFlagsLoading,
     handleLabsPublicFeatureFlagUpdate,
     error,
   };
