@@ -5,9 +5,9 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
-import { useSetRecoilState } from 'recoil';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const VerifyEffect = () => {
@@ -29,6 +29,7 @@ export const VerifyEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
+        dedupeKey: 'verify-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }

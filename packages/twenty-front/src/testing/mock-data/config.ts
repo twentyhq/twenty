@@ -3,6 +3,7 @@ import { CaptchaDriverType, ClientConfig } from '~/generated/graphql';
 export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
+  isEmailVerificationRequired: false,
   authProviders: {
     google: true,
     magicLink: false,

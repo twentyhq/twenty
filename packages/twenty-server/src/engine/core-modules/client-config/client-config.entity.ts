@@ -65,6 +65,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isMultiWorkspaceEnabled: boolean;
 
+  @Field(() => Boolean)
+  isEmailVerificationRequired: boolean;
+
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 

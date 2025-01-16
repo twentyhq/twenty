@@ -413,6 +413,15 @@ export class EnvironmentVariables {
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_EMAIL_VERIFICATION_REQUIRED = false;
+
+  @IsDuration()
+  @IsOptional()
+  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
+
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
   EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
