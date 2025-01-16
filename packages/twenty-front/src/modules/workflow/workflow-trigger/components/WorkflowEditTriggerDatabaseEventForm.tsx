@@ -29,20 +29,15 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const triggerEvent = isDefined(trigger)
-    ? splitWorkflowTriggerEventName(trigger.settings.eventName)
-    : undefined;
+  const triggerEvent = splitWorkflowTriggerEventName(
+    trigger.settings.eventName,
+  );
 
   const availableMetadata: Array<SelectOption<string>> =
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
     }));
-  const recordTypeMetadata = isDefined(triggerEvent)
-    ? activeObjectMetadataItems.find(
-        (item) => item.nameSingular === triggerEvent.objectType,
-      )
-    : undefined;
 
   const selectedEvent = isDefined(triggerEvent)
     ? OBJECT_EVENT_TRIGGERS.find(
@@ -52,12 +47,12 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   const headerTitle = isDefined(trigger.name)
     ? trigger.name
-    : isDefined(recordTypeMetadata) && isDefined(selectedEvent)
-      ? `When a ${recordTypeMetadata.labelSingular} is ${selectedEvent.label}`
+    : isDefined(selectedEvent)
+      ? selectedEvent.label
       : '-';
 
   const headerType = isDefined(selectedEvent)
-    ? `Trigger · Record is ${selectedEvent.label}`
+    ? `Trigger · ${selectedEvent.label}`
     : '-';
 
   return (
@@ -92,57 +87,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
               return;
             }
 
-            triggerOptions.onTriggerUpdate(
-              isDefined(trigger) && isDefined(triggerEvent)
-                ? {
-                    ...trigger,
-                    settings: {
-                      ...trigger.settings,
-                      eventName: `${updatedRecordType}.${triggerEvent.event}`,
-                    },
-                  }
-                : {
-                    name: headerTitle,
-                    type: 'DATABASE_EVENT',
-                    settings: {
-                      eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
-                      outputSchema: {},
-                    },
-                  },
-            );
-          }}
-        />
-        <Select
-          dropdownId="workflow-edit-trigger-event-type"
-          label="Event type"
-          fullWidth
-          value={triggerEvent?.event}
-          emptyOption={{ label: 'Select an option', value: '' }}
-          options={OBJECT_EVENT_TRIGGERS}
-          disabled={triggerOptions.readonly}
-          onChange={(updatedEvent) => {
-            if (triggerOptions.readonly === true) {
-              return;
-            }
-
-            triggerOptions.onTriggerUpdate(
-              isDefined(trigger) && isDefined(triggerEvent)
-                ? {
-                    ...trigger,
-                    settings: {
-                      ...trigger.settings,
-                      eventName: `${triggerEvent.objectType}.${updatedEvent}`,
-                    },
-                  }
-                : {
-                    name: headerTitle,
-                    type: 'DATABASE_EVENT',
-                    settings: {
-                      eventName: `${availableMetadata?.[0].value}.${updatedEvent}`,
-                      outputSchema: {},
-                    },
-                  },
-            );
+            triggerOptions.onTriggerUpdate({
+              ...trigger,
+              settings: {
+                ...trigger.settings,
+                eventName: `${updatedRecordType}.${triggerEvent.event}`,
+              },
+            });
           }}
         />
       </WorkflowStepBody>

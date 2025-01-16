@@ -24,7 +24,7 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
 const getDatabaseEventTriggerStepName = (
   trigger: WorkflowDatabaseEventTrigger,
 ): string => {
-  const [object, action] = trigger.settings.eventName.split('.');
+  const [, action] = trigger.settings.eventName.split('.');
 
-  return `${capitalize(object)} is ${capitalize(action)}`;
+  return `Record is ${capitalize(action)}`;
 };

@@ -70,7 +70,7 @@ export const generateWorkflowDiagram = ({
           trigger.settings.eventName,
         );
 
-        triggerLabel = `${capitalize(triggerEvent.objectType)} is ${capitalize(triggerEvent.event)}`;
+        triggerLabel = `Record is ${capitalize(triggerEvent.event)}`;
 
         break;
       }
