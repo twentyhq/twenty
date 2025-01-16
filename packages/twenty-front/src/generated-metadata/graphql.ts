@@ -117,9 +117,9 @@ export type AvailableWorkspaceOutput = {
 
 export type Billing = {
   __typename?: 'Billing';
-  billingFreeTrialDurationInDays?: Maybe<Scalars['Float']['output']>;
   billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
+  trialPeriods: Array<TrialPeriodDto>;
 };
 
 /** The different billing plans available */
@@ -1521,6 +1521,12 @@ export type TimelineThreadsWithTotal = {
 export type TransientToken = {
   __typename?: 'TransientToken';
   transientToken: AuthToken;
+};
+
+export type TrialPeriodDto = {
+  __typename?: 'TrialPeriodDTO';
+  duration: Scalars['Float']['output'];
+  isCreditCardRequired: Scalars['Boolean']['output'];
 };
 
 export type UuidFilterComparison = {

@@ -3,12 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
-import { TWENTY_ICONS_BASE_URL } from 'twenty-shared';
+import {
+  TWENTY_ICONS_BASE_URL,
+  WorkspaceActivationStatus,
+} from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,22 +22,6 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
-import { getImageBufferFromUrl } from 'src/utils/image';
-import { isWorkEmail } from 'src/utils/is-work-email';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthProviderWithPasswordType,
   ExistingUserOrPartialUserWithPicture,
@@ -41,7 +29,19 @@ import {
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getImageBufferFromUrl } from 'src/utils/image';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

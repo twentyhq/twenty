@@ -32,7 +32,6 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,7 +40,6 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly userService: UserService,
     private readonly ssoService: SSOService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -91,10 +89,10 @@ export class SSOAuthController {
     return this.authCallback(req, res);
   }
 
-  private async authCallback(req: any, res: Response) {
+  private async authCallback({ user }: any, res: Response) {
     const workspaceIdentityProvider =
       await this.findWorkspaceIdentityProviderByIdentityProviderId(
-        req.user.identityProviderId,
+        user.identityProviderId,
       );
 
     if (!workspaceIdentityProvider) {
@@ -103,9 +101,17 @@ export class SSOAuthController {
         AuthExceptionCode.INVALID_DATA,
       );
     }
+
+    if (!user.user.email) {
+      throw new AuthException(
+        'Email not found',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
+
     try {
       const { loginToken, identityProvider } = await this.generateLoginToken(
-        req.user,
+        user.user,
         workspaceIdentityProvider,
       );
 
@@ -147,6 +153,11 @@ export class SSOAuthController {
       );
     }
 
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace: identityProvider.workspace,
+      email: payload.email,
+    });
+
     const existingUser = await this.userRepository.findOne({
       where: {
         email: payload.email,
@@ -158,9 +169,16 @@ export class SSOAuthController {
       existingUser,
     );
 
+    await this.authService.checkAccessForSignIn({
+      userData,
+      invitation,
+      workspace: identityProvider.workspace,
+    });
+
     const { workspace, user } = await this.authService.signInUp({
       userData,
       workspace: identityProvider.workspace,
+      invitation,
       authParams: {
         provider: 'sso',
       },

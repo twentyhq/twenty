@@ -32,6 +32,11 @@ const StyledChevronContainer = styled(RecordTableTd)`
   vertical-align: middle;
 `;
 
+const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+  display: block;
+  margin: auto;
+`;
+
 const StyledTotalRow = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -88,7 +93,7 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <td aria-hidden />
       <StyledChevronContainer>
-        <AnimatedLightIconButton
+        <StyledAnimatedLightIconButton
           Icon={IconChevronDown}
           size="small"
           accent="secondary"

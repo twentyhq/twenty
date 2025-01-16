@@ -18,9 +18,20 @@ export class ClientConfigResolver {
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
         billingUrl: this.environmentService.get('BILLING_PLAN_REQUIRED_LINK'),
-        billingFreeTrialDurationInDays: this.environmentService.get(
-          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
-        ),
+        trialPeriods: [
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: true,
+          },
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: false,
+          },
+        ],
       },
       authProviders: {
         google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
