@@ -14,7 +14,7 @@ env:
   STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
 
 jobs:
-  prerequisites:
+  changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -23,8 +23,8 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-shared/**
   front-sb-build:
-    needs: [prerequisites]
-    if: needs.prerequisites.outputs.any_changed == 'true'
+    needs: [changed-files-check]
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     env:
@@ -147,8 +147,8 @@ jobs:
       - name: Publish to Chromatic
         run: npx nx run twenty-front:chromatic:ci
   front-task:
-    needs: prerequisites
-    if: needs.prerequisites.outputs.any_changed == 'true'
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     env:
@@ -193,7 +193,7 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     needs:
       [
-        prerequisites,
+        changed-files-check,
         front-task,
         front-chromatic-deployment,
         merge-reports-and-check-coverage,
