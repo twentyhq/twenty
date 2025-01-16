@@ -3,48 +3,47 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
-    FeatureFlag,
-    FeatureFlagKey,
-    useGetLabsPublicFeatureFlagsQuery,
-    useUpdateLabsPublicFeatureFlagMutation,
+  FeatureFlag,
+  FeatureFlagKey,
+  useGetLabPublicFeatureFlagsQuery,
+  useUpdateLabPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
-export const useLabsPublicFeatureFlags = () => {
-  const [labsPublicFeatureFlags, setLabsPublicFeatureFlags] = useState<
+export const useLabPublicFeatureFlags = () => {
+  const [labPublicFeatureFlags, setLabPublicFeatureFlags] = useState<
     FeatureFlag[]
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const { loading: labsPublicFeatureFlagsLoading } =
-    useGetLabsPublicFeatureFlagsQuery({
+  const { loading: labPublicFeatureFlagsLoading } =
+    useGetLabPublicFeatureFlagsQuery({
       variables: {
         workspaceId: currentWorkspace?.id,
       },
       skip: !currentWorkspace?.id,
       fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
-        setLabsPublicFeatureFlags(data.getLabsPublicFeatureFlags);
+        setLabPublicFeatureFlags(data.getLabPublicFeatureFlags);
       },
     });
 
-  const [updateLabsPublicFeatureFlag] =
-    useUpdateLabsPublicFeatureFlagMutation();
+  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation();
 
-  const handleLabsPublicFeatureFlagUpdate = async (
+  const handleLabPublicFeatureFlagUpdate = async (
     publicFeatureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
     setError(null);
-    const previousState = labsPublicFeatureFlags;
+    const previousState = labPublicFeatureFlags;
     const previousWorkspace = currentWorkspace;
 
-    if (isDefined(labsPublicFeatureFlags)) {
-      const updatedFlags = labsPublicFeatureFlags.map((flag) =>
+    if (isDefined(labPublicFeatureFlags)) {
+      const updatedFlags = labPublicFeatureFlags.map((flag) =>
         flag.key === publicFeatureFlag ? { ...flag, value } : flag,
       );
-      setLabsPublicFeatureFlags(updatedFlags);
+      setLabPublicFeatureFlags(updatedFlags);
     }
 
     if (isDefined(currentWorkspace)) {
@@ -55,7 +54,7 @@ export const useLabsPublicFeatureFlags = () => {
         ),
       });
     }
-    const response = await updateLabsPublicFeatureFlag({
+    const response = await updateLabPublicFeatureFlag({
       variables: {
         workspaceId: currentWorkspace?.id,
         publicFeatureFlag,
@@ -63,7 +62,7 @@ export const useLabsPublicFeatureFlags = () => {
       },
       onError: (error) => {
         if (isDefined(previousState)) {
-          setLabsPublicFeatureFlags(previousState);
+          setLabPublicFeatureFlags(previousState);
         }
         if (isDefined(previousWorkspace)) {
           setCurrentWorkspace(previousWorkspace);
@@ -76,9 +75,9 @@ export const useLabsPublicFeatureFlags = () => {
   };
 
   return {
-    labsPublicFeatureFlags,
-    labsPublicFeatureFlagsLoading,
-    handleLabsPublicFeatureFlagUpdate,
+    labPublicFeatureFlags,
+    labPublicFeatureFlagsLoading,
+    handleLabPublicFeatureFlagUpdate,
     error,
   };
 };

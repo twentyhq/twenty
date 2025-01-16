@@ -209,8 +209,8 @@ export const SettingsNavigationDrawerItems = () => {
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Labs"
-          path={SettingsPath.Labs}
+          label="Lab"
+          path={SettingsPath.Lab}
           Icon={IconFlask}
         />
         <SettingsNavigationDrawerItem

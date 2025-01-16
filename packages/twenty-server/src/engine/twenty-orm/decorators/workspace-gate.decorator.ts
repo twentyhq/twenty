@@ -1,5 +1,5 @@
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { isPublicFeatureFlag } from 'src/engine/core-modules/labs/utils/is-public-feature-flag.util';
+import { isPublicFeatureFlag } from 'src/engine/core-modules/lab/utils/is-public-feature-flag.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceGateOptions {

@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 
-export const UPDATE_LABS_PUBLIC_FEATURE_FLAG = gql`
-  mutation UpdateLabsPublicFeatureFlag(
+export const UPDATE_LAB_PUBLIC_FEATURE_FLAG = gql`
+  mutation UpdateLabPublicFeatureFlag(
     $workspaceId: String!
     $publicFeatureFlag: String!
     $value: Boolean!
   ) {
-    updateLabsPublicFeatureFlag(
+    updateLabPublicFeatureFlag(
       workspaceId: $workspaceId
       publicFeatureFlag: $publicFeatureFlag
       value: $value

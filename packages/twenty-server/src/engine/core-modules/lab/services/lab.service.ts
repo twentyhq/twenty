@@ -15,12 +15,12 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
-import { isPublicFeatureFlag } from 'src/engine/core-modules/labs/utils/is-public-feature-flag.util';
+import { isPublicFeatureFlag } from 'src/engine/core-modules/lab/utils/is-public-feature-flag.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
-export class LabsService {
+export class LabService {
   constructor(
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -28,7 +28,7 @@ export class LabsService {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
-  async getLabsPublicFeatureFlags(
+  async getLabPublicFeatureFlags(
     workspaceId: string,
   ): Promise<FeatureFlagEntity[]> {
     const flags = await this.featureFlagRepository.find({
@@ -38,7 +38,7 @@ export class LabsService {
     return flags.filter((flag) => isPublicFeatureFlag(flag.key));
   }
 
-  async updateLabsPublicFeatureFlag(
+  async updateLabPublicFeatureFlag(
     workspaceId: string,
     publicFeatureFlag: FeatureFlagKey,
     value: boolean,

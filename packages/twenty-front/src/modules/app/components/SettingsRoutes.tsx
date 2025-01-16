@@ -262,9 +262,9 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
-const SettingsLabs = lazy(() =>
-  import('~/pages/settings/labs/SettingsLabs').then((module) => ({
-    default: module.SettingsLabs,
+const SettingsLab = lazy(() =>
+  import('~/pages/settings/lab/SettingsLab').then((module) => ({
+    default: module.SettingsLab,
   })),
 );
 
@@ -408,7 +408,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.Labs} element={<SettingsLabs />} />
+      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
     </Routes>
   </Suspense>
 );

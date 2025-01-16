@@ -529,7 +529,7 @@ export type Mutation = {
   switchWorkspace: PublicWorkspaceDataOutput;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
-  updateLabsPublicFeatureFlag: Scalars['Boolean'];
+  updateLabPublicFeatureFlag: Scalars['Boolean'];
   updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
@@ -747,7 +747,7 @@ export type MutationTrackArgs = {
 };
 
 
-export type MutationUpdateLabsPublicFeatureFlagArgs = {
+export type MutationUpdateLabPublicFeatureFlagArgs = {
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
   workspaceId: Scalars['String'];
@@ -927,7 +927,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
-  getLabsPublicFeatureFlags: Array<FeatureFlag>;
+  getLabPublicFeatureFlags: Array<FeatureFlag>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -981,7 +981,7 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
-export type QueryGetLabsPublicFeatureFlagsArgs = {
+export type QueryGetLabPublicFeatureFlagsArgs = {
   workspaceId: Scalars['String'];
 };
 
@@ -2137,21 +2137,21 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
-export type UpdateLabsPublicFeatureFlagMutationVariables = Exact<{
+export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
 }>;
 
 
-export type UpdateLabsPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabsPublicFeatureFlag: boolean };
+export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
 
-export type GetLabsPublicFeatureFlagsQueryVariables = Exact<{
+export type GetLabPublicFeatureFlagsQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type GetLabsPublicFeatureFlagsQuery = { __typename?: 'Query', getLabsPublicFeatureFlags: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> };
+export type GetLabPublicFeatureFlagsQuery = { __typename?: 'Query', getLabPublicFeatureFlags: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3796,29 +3796,29 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
-export const UpdateLabsPublicFeatureFlagDocument = gql`
-    mutation UpdateLabsPublicFeatureFlag($workspaceId: String!, $publicFeatureFlag: String!, $value: Boolean!) {
-  updateLabsPublicFeatureFlag(
+export const UpdateLabPublicFeatureFlagDocument = gql`
+    mutation UpdateLabPublicFeatureFlag($workspaceId: String!, $publicFeatureFlag: String!, $value: Boolean!) {
+  updateLabPublicFeatureFlag(
     workspaceId: $workspaceId
     publicFeatureFlag: $publicFeatureFlag
     value: $value
   )
 }
     `;
-export type UpdateLabsPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabsPublicFeatureFlagMutation, UpdateLabsPublicFeatureFlagMutationVariables>;
+export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 
 /**
- * __useUpdateLabsPublicFeatureFlagMutation__
+ * __useUpdateLabPublicFeatureFlagMutation__
  *
- * To run a mutation, you first call `useUpdateLabsPublicFeatureFlagMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateLabsPublicFeatureFlagMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateLabPublicFeatureFlagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLabPublicFeatureFlagMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateLabsPublicFeatureFlagMutation, { data, loading, error }] = useUpdateLabsPublicFeatureFlagMutation({
+ * const [updateLabPublicFeatureFlagMutation, { data, loading, error }] = useUpdateLabPublicFeatureFlagMutation({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
  *      publicFeatureFlag: // value for 'publicFeatureFlag'
@@ -3826,16 +3826,16 @@ export type UpdateLabsPublicFeatureFlagMutationFn = Apollo.MutationFunction<Upda
  *   },
  * });
  */
-export function useUpdateLabsPublicFeatureFlagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLabsPublicFeatureFlagMutation, UpdateLabsPublicFeatureFlagMutationVariables>) {
+export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateLabsPublicFeatureFlagMutation, UpdateLabsPublicFeatureFlagMutationVariables>(UpdateLabsPublicFeatureFlagDocument, options);
+        return Apollo.useMutation<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>(UpdateLabPublicFeatureFlagDocument, options);
       }
-export type UpdateLabsPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabsPublicFeatureFlagMutation>;
-export type UpdateLabsPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabsPublicFeatureFlagMutation>;
-export type UpdateLabsPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabsPublicFeatureFlagMutation, UpdateLabsPublicFeatureFlagMutationVariables>;
-export const GetLabsPublicFeatureFlagsDocument = gql`
-    query GetLabsPublicFeatureFlags($workspaceId: String!) {
-  getLabsPublicFeatureFlags(workspaceId: $workspaceId) {
+export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
+export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
+export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const GetLabPublicFeatureFlagsDocument = gql`
+    query GetLabPublicFeatureFlags($workspaceId: String!) {
+  getLabPublicFeatureFlags(workspaceId: $workspaceId) {
     id
     key
     value
@@ -3845,32 +3845,32 @@ export const GetLabsPublicFeatureFlagsDocument = gql`
     `;
 
 /**
- * __useGetLabsPublicFeatureFlagsQuery__
+ * __useGetLabPublicFeatureFlagsQuery__
  *
- * To run a query within a React component, call `useGetLabsPublicFeatureFlagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLabsPublicFeatureFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetLabPublicFeatureFlagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLabPublicFeatureFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetLabsPublicFeatureFlagsQuery({
+ * const { data, loading, error } = useGetLabPublicFeatureFlagsQuery({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetLabsPublicFeatureFlagsQuery(baseOptions: Apollo.QueryHookOptions<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>) {
+export function useGetLabPublicFeatureFlagsQuery(baseOptions: Apollo.QueryHookOptions<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>(GetLabsPublicFeatureFlagsDocument, options);
+        return Apollo.useQuery<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>(GetLabPublicFeatureFlagsDocument, options);
       }
-export function useGetLabsPublicFeatureFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>) {
+export function useGetLabPublicFeatureFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>(GetLabsPublicFeatureFlagsDocument, options);
+          return Apollo.useLazyQuery<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>(GetLabPublicFeatureFlagsDocument, options);
         }
-export type GetLabsPublicFeatureFlagsQueryHookResult = ReturnType<typeof useGetLabsPublicFeatureFlagsQuery>;
-export type GetLabsPublicFeatureFlagsLazyQueryHookResult = ReturnType<typeof useGetLabsPublicFeatureFlagsLazyQuery>;
-export type GetLabsPublicFeatureFlagsQueryResult = Apollo.QueryResult<GetLabsPublicFeatureFlagsQuery, GetLabsPublicFeatureFlagsQueryVariables>;
+export type GetLabPublicFeatureFlagsQueryHookResult = ReturnType<typeof useGetLabPublicFeatureFlagsQuery>;
+export type GetLabPublicFeatureFlagsLazyQueryHookResult = ReturnType<typeof useGetLabPublicFeatureFlagsLazyQuery>;
+export type GetLabPublicFeatureFlagsQueryResult = Apollo.QueryResult<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {

@@ -3,32 +3,32 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { GetLabsPublicFeatureFlagsInput } from 'src/engine/core-modules/labs/dtos/get-labs-public-feature-flags.input';
-import { UpdateLabsPublicFeatureFlagInput } from 'src/engine/core-modules/labs/dtos/update-labs-public-feature-flag.input';
-import { LabsService } from 'src/engine/core-modules/labs/services/labs.service';
+import { GetLabPublicFeatureFlagsInput } from 'src/engine/core-modules/lab/dtos/get-lab-public-feature-flags.input';
+import { UpdateLabPublicFeatureFlagInput } from 'src/engine/core-modules/lab/dtos/update-lab-public-feature-flag.input';
+import { LabService } from 'src/engine/core-modules/lab/services/lab.service';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
-export class LabsResolver {
-  constructor(private labsService: LabsService) {}
+export class LabResolver {
+  constructor(private labService: LabService) {}
 
   @Query(() => [FeatureFlagEntity])
   @UseGuards(WorkspaceAuthGuard)
-  async getLabsPublicFeatureFlags(
-    @Args() getLabsPublicFeatureFlagsInput: GetLabsPublicFeatureFlagsInput,
+  async getLabPublicFeatureFlags(
+    @Args() getLabPublicFeatureFlagsInput: GetLabPublicFeatureFlagsInput,
   ): Promise<FeatureFlagEntity[]> {
-    return this.labsService.getLabsPublicFeatureFlags(
-      getLabsPublicFeatureFlagsInput.workspaceId,
+    return this.labService.getLabPublicFeatureFlags(
+      getLabPublicFeatureFlagsInput.workspaceId,
     );
   }
 
   @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => Boolean)
-  async updateLabsPublicFeatureFlag(
-    @Args() updateFlagInput: UpdateLabsPublicFeatureFlagInput,
+  async updateLabPublicFeatureFlag(
+    @Args() updateFlagInput: UpdateLabPublicFeatureFlagInput,
   ): Promise<boolean> {
-    await this.labsService.updateLabsPublicFeatureFlag(
+    await this.labService.updateLabPublicFeatureFlag(
       updateFlagInput.workspaceId,
       updateFlagInput.publicFeatureFlag,
       updateFlagInput.value,

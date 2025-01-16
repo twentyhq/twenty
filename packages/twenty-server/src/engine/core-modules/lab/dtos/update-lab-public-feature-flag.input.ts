@@ -5,7 +5,7 @@ import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @ArgsType()
-export class UpdateLabsPublicFeatureFlagInput {
+export class UpdateLabPublicFeatureFlagInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
