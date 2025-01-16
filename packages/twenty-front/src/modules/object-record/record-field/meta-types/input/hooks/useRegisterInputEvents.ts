@@ -1,10 +1,12 @@
 import { Key } from 'ts-key-enum';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({
@@ -17,7 +19,6 @@ export const useRegisterInputEvents = <T>({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
-  mode,
 }: {
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
@@ -28,16 +29,28 @@ export const useRegisterInputEvents = <T>({
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   hotkeyScope: string;
-  mode?: ClickOutsideMode;
 }) => {
+  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
+
+  const { recordId, fieldDefinition } = useContext(FieldContext);
+
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
+      const fieldDropdownFocusId = getDropdownFocusIdForRecordField(
+        recordId,
+        fieldDefinition.fieldMetadataId,
+        'table-cell',
+      );
+
+      if (activeDropdownFocusId !== fieldDropdownFocusId) {
+        return;
+      }
+
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
     listenerId: hotkeyScope,
-    mode,
   });
 
   useScopedHotkeys(
