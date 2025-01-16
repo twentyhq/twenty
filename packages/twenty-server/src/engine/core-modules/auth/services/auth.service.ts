@@ -577,7 +577,7 @@ export class AuthService {
     SignInUpBaseParams) {
     if (!invitation && !workspaceInviteHash && workspace) {
       if (userData.type === 'existingUser') {
-        await this.userService.hasUserAccessToWorkspaceOrThrow(
+        return await this.userService.hasUserAccessToWorkspaceOrThrow(
           userData.existingUser.id,
           workspace.id,
         );
