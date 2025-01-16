@@ -42,7 +42,7 @@ jobs:
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
-  ci-shared-final:
+  ci-shared-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest

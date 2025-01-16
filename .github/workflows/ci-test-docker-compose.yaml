@@ -86,7 +86,7 @@ jobs:
               echo "Still waiting for server... (${count}/300s)"
           done
         working-directory: ./packages/twenty-docker/
-  ci-test-docker-compose-final:
+  ci-test-docker-compose-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest

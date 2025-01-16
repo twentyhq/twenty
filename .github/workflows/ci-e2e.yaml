@@ -124,7 +124,7 @@ jobs:
         name: playwright-report
         path: packages/twenty-e2e-testing/playwright-report/
         retention-days: 30
-  ci-e2e-final:
+  ci-e2e-status-check:
       if: always() && !cancelled()
       timeout-minutes: 1
       runs-on: ubuntu-latest

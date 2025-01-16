@@ -56,7 +56,7 @@ jobs:
         run: npx nx build twenty-website
         env:
           DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
-  ci-website-final:
+  ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest

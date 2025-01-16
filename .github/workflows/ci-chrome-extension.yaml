@@ -37,7 +37,7 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Chrome Extension / Run build
         run: npx nx build twenty-chrome-extension
-  ci-chrome-extension-final:
+  ci-chrome-extension-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest

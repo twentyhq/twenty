@@ -187,7 +187,7 @@ jobs:
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
-  ci-front-final:
+  ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8

@@ -178,7 +178,7 @@ jobs:
         with:
           name: reset-logs
           path: reset-logs.log
-  ci-server-final:
+  ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8
