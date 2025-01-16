@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -12,10 +13,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
@@ -88,10 +86,11 @@ export class BillingWebhookSubscriptionService {
 
     if (
       data.object.status === SubscriptionStatus.Canceled ||
-      data.object.status === SubscriptionStatus.Unpaid
+      data.object.status === SubscriptionStatus.Unpaid ||
+      data.object.status === SubscriptionStatus.Paused
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.INACTIVE,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
     }
 
@@ -99,7 +98,7 @@ export class BillingWebhookSubscriptionService {
       (data.object.status === SubscriptionStatus.Active ||
         data.object.status === SubscriptionStatus.Trialing ||
         data.object.status === SubscriptionStatus.PastDue) &&
-      workspace.activationStatus == WorkspaceActivationStatus.INACTIVE
+      workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,

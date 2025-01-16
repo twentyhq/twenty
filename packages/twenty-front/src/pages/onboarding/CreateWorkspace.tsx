@@ -8,7 +8,9 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,7 +20,6 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useAuth } from '@/auth/hooks/useAuth';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -44,6 +45,7 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
@@ -76,13 +78,19 @@ export const CreateWorkspace = () => {
           throw result.errors ?? new Error('Unknown error');
         }
         await loadCurrentUser();
+        setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
         });
       }
     },
-    [activateWorkspace, enqueueSnackBar, loadCurrentUser],
+    [
+      activateWorkspace,
+      enqueueSnackBar,
+      loadCurrentUser,
+      setNextOnboardingStatus,
+    ],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
