@@ -19,6 +19,7 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
+  getOsControlSymbol,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -88,7 +89,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={['⌘', 'K']}
+            keyboard={[`${getOsControlSymbol()}`, 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

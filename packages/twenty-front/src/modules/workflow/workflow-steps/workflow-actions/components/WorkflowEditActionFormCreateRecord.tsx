@@ -215,6 +215,7 @@ export const WorkflowEditActionFormCreateRecord = ({
                 handleFieldChange(field.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
+              readonly={isFormDisabled}
             />
           );
         })}

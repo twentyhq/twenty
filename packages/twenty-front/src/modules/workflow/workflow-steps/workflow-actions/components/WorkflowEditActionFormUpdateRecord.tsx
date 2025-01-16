@@ -222,6 +222,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
           onPersist={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
+          placeholder="Select fields to update"
         />
 
         <HorizontalSeparator noMargin />
@@ -248,6 +249,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
+              readonly={isFormDisabled}
             />
           );
         })}

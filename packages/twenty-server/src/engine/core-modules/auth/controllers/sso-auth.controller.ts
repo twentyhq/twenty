@@ -30,9 +30,9 @@ import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,9 +41,10 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly environmentService: EnvironmentService,
+    private readonly userService: UserService,
     private readonly ssoService: SSOService,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
@@ -138,7 +139,7 @@ export class SSOAuthController {
   }
 
   private async generateLoginToken(
-    user: { email: string } & Record<string, string>,
+    payload: { email: string } & Record<string, string>,
     identityProvider: WorkspaceSSOIdentityProvider,
   ) {
     if (!identityProvider) {
@@ -148,34 +149,30 @@ export class SSOAuthController {
       );
     }
 
-    await this.authService.signInUp({
-      ...user,
-      ...(this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-        ? {
-            targetWorkspaceSubdomain: identityProvider.workspace.subdomain,
-          }
-        : {}),
-      fromSSO: true,
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: payload.email,
+      },
     });
 
-    const isUserExistInWorkspace =
-      await this.userWorkspaceService.checkUserWorkspaceExistsByEmail(
-        user.email,
-        identityProvider.workspaceId,
-      );
+    const { userData } = this.authService.formatUserDataPayload(
+      payload,
+      existingUser,
+    );
 
-    if (!isUserExistInWorkspace) {
-      throw new AuthException(
-        'User not found in workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+    const { workspace, user } = await this.authService.signInUp({
+      userData,
+      workspace: identityProvider.workspace,
+      authParams: {
+        provider: 'sso',
+      },
+    });
 
     return {
       identityProvider,
       loginToken: await this.loginTokenService.generateLoginToken(
         user.email,
-        identityProvider.workspace.id,
+        workspace.id,
       ),
     };
   }

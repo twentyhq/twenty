@@ -10,21 +10,15 @@ import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordSh
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledRightDrawerRecord = styled.div<{ hasTopBar: boolean }>`
-  height: ${({ theme, hasTopBar }) =>
-    hasTopBar ? `calc(100% - ${theme.spacing(16)})` : '100%'};
+const StyledRightDrawerRecord = styled.div<{ isMobile: boolean }>`
+  height: ${({ theme, isMobile }) =>
+    isMobile ? `calc(100% - ${theme.spacing(16)})` : '100%'};
 `;
 
 export const RightDrawerRecord = () => {
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
   const isMobile = useIsMobile();
-  const hasTopBar = isCommandMenuV2Enabled || isMobile;
 
   const viewableRecordNameSingular = useRecoilValue(
     viewableRecordNameSingularState,
@@ -56,7 +50,7 @@ export const RightDrawerRecord = () => {
       <ActionMenuComponentInstanceContext.Provider
         value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <StyledRightDrawerRecord hasTopBar={hasTopBar}>
+        <StyledRightDrawerRecord isMobile={isMobile}>
           <RecordFieldValueSelectorContextProvider>
             {!isNewViewableRecordLoading && (
               <RecordValueSetterEffect recordId={objectRecordId} />

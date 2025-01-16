@@ -66,19 +66,19 @@ export const FormRawJsonFieldInput = ({
 
       <FormFieldInputRowContainer multiline>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline
         >
           <TextVariableEditor editor={editor} multiline readonly={readonly} />
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly && (
           <VariablePicker
             inputId={inputId}
             multiline
             onVariableSelect={handleVariableTagInsert}
           />
-        ) : null}
+        )}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>
   );

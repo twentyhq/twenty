@@ -76,11 +76,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAggregateQueryEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsCommandMenuV2Enabled,
         workspaceId: workspaceId,
         value: true,

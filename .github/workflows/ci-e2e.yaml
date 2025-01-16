@@ -1,0 +1,135 @@
+name: CI E2E Playwright Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+          packages/**
+          playwright.config.ts
+          .github/workflows/ci-e2e.yaml
+  test:
+    runs-on: ubuntu-latest
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true' && ( github.event_name == 'push' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e')))
+    timeout-minutes: 30
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      # https://github.com/actions/runner-images/issues/70#issuecomment-589562148
+      NODE_OPTIONS: "--max-old-space-size=10240"
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+
+    - name: Check system resources
+      run: |
+        echo "Available memory:"
+        free -h
+        echo "Available disk space:"
+        df -h
+        echo "CPU info:"
+        lscpu
+
+    - name: Install dependencies
+      uses: ./.github/workflows/actions/yarn-install
+
+    - name: Build twenty-shared
+      run: npx nx build twenty-shared
+
+    - name: Setup environment files
+      run: |
+        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
+        cp packages/twenty-front/.env.example packages/twenty-front/.env
+        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
+        npx nx reset:env twenty-server
+
+    - name: Build frontend
+      run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
+
+    - name: Build server
+      run: NODE_ENV=production npx nx build twenty-server
+
+    - name: Create and setup database
+      run: |
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+        npx nx run twenty-server:database:reset
+        
+    - name: Start server
+      run: |
+        npx nx start twenty-server &
+        echo "Waiting for server to be ready..."
+        timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+
+    - name: Start frontend
+      run: |
+        npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
+        echo "Waiting for frontend to be ready..."
+        timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
+        
+    - name: Start worker
+      run: |
+        npx nx run twenty-server:worker:ci &
+        echo "Worker started"
+
+    - name: Install Playwright Browsers
+      run: npx nx setup twenty-e2e-testing
+
+    - name: Run Playwright tests
+      run: npx nx test twenty-e2e-testing
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: packages/twenty-e2e-testing/run_results/
+        retention-days: 30
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: packages/twenty-e2e-testing/playwright-report/
+        retention-days: 30
+  ci-e2e-status-check:
+      if: always() && !cancelled()
+      timeout-minutes: 1
+      runs-on: ubuntu-latest
+      needs: [changed-files-check, test]
+      steps:
+        - name: Fail job if any needs failed
+          if: contains(needs.*.result, 'failure')
+          run: exit 1

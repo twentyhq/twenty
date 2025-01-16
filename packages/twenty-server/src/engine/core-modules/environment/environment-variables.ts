@@ -73,7 +73,13 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS = 7;
+  BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
+
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -420,6 +426,15 @@ export class EnvironmentVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_EMAIL_VERIFICATION_REQUIRED = false;
+
+  @IsDuration()
+  @IsOptional()
+  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 

@@ -1,5 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -15,27 +18,33 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
-import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
-import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
+import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -52,6 +61,8 @@ import { AuthService } from './services/auth.service';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -59,8 +70,11 @@ export class AuthResolver {
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private transientTokenService: TransientTokenService,
+    private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
+    private userWorkspaceService: UserWorkspaceService,
+    private emailVerificationTokenService: EmailVerificationTokenService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -107,7 +121,6 @@ export class AuthResolver {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
-
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -118,30 +131,89 @@ export class AuthResolver {
   }
 
   @UseGuards(CaptchaGuard)
-  @Mutation(() => SignUpOutput)
-  async signUp(
-    @Args() signUpInput: SignUpInput,
+  @Mutation(() => LoginToken)
+  async getLoginTokenFromEmailVerificationToken(
+    @Args()
+    getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
     @OriginHeader() origin: string,
-  ): Promise<SignUpOutput> {
-    const currentWorkspace =
+  ) {
+    const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
     workspaceValidator.assertIsDefinedOrThrow(
-      currentWorkspace,
+      workspace,
       new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
 
-    const { user, workspace } = await this.authService.signInUp({
-      ...signUpInput,
-      workspace: currentWorkspace,
-      fromSSO: false,
+    const user =
+      await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
+        getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
+      );
+
+    await this.userService.markEmailAsVerified(user.id);
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return { loginToken };
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Mutation(() => SignUpOutput)
+  async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
       authProvider: 'password',
+      workspaceId: signUpInput.workspaceId,
     });
+
+    const invitation = await this.authService.findInvitationForSignInUp({
+      currentWorkspace,
+      workspacePersonalInviteToken: signUpInput.workspacePersonalInviteToken,
+    });
+
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: signUpInput.email,
+      },
+    });
+
+    const { userData } = this.authService.formatUserDataPayload(
+      {
+        email: signUpInput.email,
+      },
+      existingUser,
+    );
+
+    await this.authService.checkAccessForSignIn({
+      userData,
+      invitation,
+      workspaceInviteHash: signUpInput.workspaceInviteHash,
+      workspace: currentWorkspace,
+    });
+
+    const { user, workspace } = await this.authService.signInUp({
+      userData,
+      workspace: currentWorkspace,
+      invitation,
+      authParams: {
+        provider: 'password',
+        password: signUpInput.password,
+      },
+    });
+
+    await this.emailVerificationService.sendVerificationEmail(
+      user.id,
+      user.email,
+      workspace.subdomain,
+    );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -295,6 +367,6 @@ export class AuthResolver {
   async findAvailableWorkspacesByEmail(
     @Args('email') email: string,
   ): Promise<AvailableWorkspaceOutput[]> {
-    return this.authService.findAvailableWorkspacesByEmail(email);
+    return this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
   }
 }

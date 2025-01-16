@@ -41,16 +41,16 @@ export class SocialSsoService {
     throw new Error(`${authProvider} is not a valid auth provider.`);
   }
 
-  async findWorkspaceFromOriginAndAuthProvider(
-    origin: string,
+  async findWorkspaceFromWorkspaceIdOrAuthProvider(
     {
       authProvider,
       email,
     }: { authProvider: WorkspaceAuthProvider; email: string },
+    workspaceId?: string,
   ) {
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      new URL(this.domainManagerService.getBaseUrl()).origin === origin
+      !workspaceId
     ) {
       // Multi-workspace enable mode but on non workspace url.
       // so get the first workspace with the current auth method enable
@@ -69,44 +69,8 @@ export class SocialSsoService {
       return workspace ?? undefined;
     }
 
-    return await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-      origin,
-    );
-  }
-
-  async findOneInvitation(params: {
-    workspaceId: string;
-    email: string;
-    inviteHash?: string;
-    personalInviteToken?: string;
-  }) {
-    const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    if (params.inviteHash) {
-      qr.leftJoinAndSelect('appToken.workspace', 'workspace').andWhere(
-        'workspace.inviteHash = :inviteHash',
-        {
-          inviteHash: params.inviteHash,
-        },
-      );
-    }
-
-    qr.where('"appToken"."workspaceId" = :workspaceId', {
-      workspaceId: params.workspaceId,
-    })
-      .andWhere('"appToken".type = :type', {
-        type: AppTokenType.InvitationToken,
-      })
-      .andWhere('"appToken".context->>\'email\' = :email', {
-        email: params.email,
-      });
-
-    if (params.personalInviteToken) {
-      qr.andWhere('"appToken".context->>\'value\' = :personalInviteToken', {
-        personalInviteToken: params.personalInviteToken,
-      });
-    }
-
-    return (await qr.getOne()) ?? undefined;
+    return await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
   }
 }
