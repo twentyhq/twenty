@@ -9,7 +9,6 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 export type DateInputProps = {
   value: Nullable<Date>;
@@ -101,7 +100,6 @@ export const DateInput = ({
     onEscape: handleEscape,
     onClickOutside: handleClickOutside,
     hotkeyScope: hotkeyScope,
-    mode: ClickOutsideMode.comparePixels,
   });
 
   return (
