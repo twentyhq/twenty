@@ -60,52 +60,60 @@ export const useListenClickOutside = <T extends Element>({
           return;
         }
 
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => ref.current?.contains(event.target as Node));
+        switch (mode) {
+          case ClickOutsideMode.compareHTMLRef: {
+            const clickedOnAtLeastOneRef = refs
+              .filter((ref) => !!ref.current)
+              .some((ref) => ref.current?.contains(event.target as Node));
 
-          set(
-            getClickOutsideListenerIsMouseDownInsideState,
-            clickedOnAtLeastOneRef,
-          );
-        }
+            set(
+              getClickOutsideListenerIsMouseDownInsideState,
+              clickedOnAtLeastOneRef,
+            );
+            break;
+          }
 
-        if (mode === ClickOutsideMode.comparePixels) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => {
-              if (!ref.current) {
-                return false;
-              }
+          case ClickOutsideMode.comparePixels: {
+            const clickedOnAtLeastOneRef = refs
+              .filter((ref) => !!ref.current)
+              .some((ref) => {
+                if (!ref.current) {
+                  return false;
+                }
 
-              const { x, y, width, height } =
-                ref.current.getBoundingClientRect();
+                const { x, y, width, height } =
+                  ref.current.getBoundingClientRect();
 
-              const clientX =
-                'clientX' in event
-                  ? event.clientX
-                  : event.changedTouches[0].clientX;
-              const clientY =
-                'clientY' in event
-                  ? event.clientY
-                  : event.changedTouches[0].clientY;
+                const clientX =
+                  'clientX' in event
+                    ? event.clientX
+                    : event.changedTouches[0].clientX;
+                const clientY =
+                  'clientY' in event
+                    ? event.clientY
+                    : event.changedTouches[0].clientY;
 
-              if (
-                clientX < x ||
-                clientX > x + width ||
-                clientY < y ||
-                clientY > y + height
-              ) {
-                return false;
-              }
-              return true;
-            });
+                if (
+                  clientX < x ||
+                  clientX > x + width ||
+                  clientY < y ||
+                  clientY > y + height
+                ) {
+                  return false;
+                }
+                return true;
+              });
 
-          set(
-            getClickOutsideListenerIsMouseDownInsideState,
-            clickedOnAtLeastOneRef,
-          );
+            set(
+              getClickOutsideListenerIsMouseDownInsideState,
+              clickedOnAtLeastOneRef,
+            );
+            break;
+          }
+
+          default: {
+            break;
+          }
         }
       },
     [

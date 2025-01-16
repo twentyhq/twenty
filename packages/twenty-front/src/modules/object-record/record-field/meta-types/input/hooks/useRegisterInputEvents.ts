@@ -1,7 +1,10 @@
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import {
+  ClickOutsideMode,
+  useListenClickOutside,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({
@@ -14,6 +17,7 @@ export const useRegisterInputEvents = <T>({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
+  mode,
 }: {
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
@@ -24,6 +28,7 @@ export const useRegisterInputEvents = <T>({
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   hotkeyScope: string;
+  mode?: ClickOutsideMode;
 }) => {
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
@@ -32,6 +37,7 @@ export const useRegisterInputEvents = <T>({
     },
     enabled: isDefined(onClickOutside),
     listenerId: hotkeyScope,
+    mode,
   });
 
   useScopedHotkeys(
