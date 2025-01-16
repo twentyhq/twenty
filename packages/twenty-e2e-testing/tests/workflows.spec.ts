@@ -9,12 +9,7 @@ test('Create workflow', async ({ page }) => {
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
 
-  const createWorkflowButton = page.getByTestId('add-button');
-  await createWorkflowButton.click();
-
-  const nameInput = page.getByPlaceholder('Name');
-
-  await nameInput.fill(NEW_WORKFLOW_NAME);
+  const createWorkflowButton = page.getByRole('button', { name: 'New record' });
 
   const [createWorkflowResponse] = await Promise.all([
     page.waitForResponse(async (response) => {
@@ -27,8 +22,15 @@ test('Create workflow', async ({ page }) => {
       return requestBody.operationName === 'CreateOneWorkflow';
     }),
 
-    await nameInput.press('Enter'),
+    await createWorkflowButton.click(),
   ]);
+
+  const nameInputClosedState = page.getByText('Name').first();
+  await nameInputClosedState.click();
+
+  const nameInput = page.getByRole('textbox');
+  await nameInput.fill(NEW_WORKFLOW_NAME);
+  await nameInput.press('Enter');
 
   const body = await createWorkflowResponse.json();
   const newWorkflowId = body.data.createWorkflow.id;
