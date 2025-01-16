@@ -11,15 +11,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  prerequisites:
+  changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
         package.json
         packages/twenty-website/**
   website-build:
-    needs: prerequisites
-    if: needs.prerequisites.outputs.any_changed == 'true'
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 3
     runs-on: ubuntu-latest
     services:
@@ -60,7 +60,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: ubuntu-latest
-    needs: [prerequisites, website-build]
+    needs: [changed-files-check, website-build]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
