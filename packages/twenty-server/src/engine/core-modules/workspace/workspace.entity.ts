@@ -106,7 +106,7 @@ export class Workspace {
     type: 'enum',
     enumName: 'workspace_activationStatus_enum',
     enum: WorkspaceActivationStatus,
-    default: WorkspaceActivationStatus.ACTIVE,
+    default: WorkspaceActivationStatus.INACTIVE,
   })
   activationStatus: WorkspaceActivationStatus;
 
