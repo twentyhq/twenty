@@ -14,4 +14,7 @@ export class PriceMeteredDTO {
 
   @Field(() => SubscriptionInterval)
   recurringInterval: SubscriptionInterval;
+
+  @Field(() => String)
+  stripePriceId: string;
 }
