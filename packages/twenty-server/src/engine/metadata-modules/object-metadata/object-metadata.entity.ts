@@ -15,6 +15,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { RelationMetadataV2Entity } from 'src/engine/metadata-modules/relation-metadata-v2/relation-metadata-v2.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
@@ -111,6 +112,24 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     },
   )
   toRelations: Relation<RelationMetadataEntity[]>;
+
+  @OneToMany(
+    () => RelationMetadataV2Entity,
+    (relation: RelationMetadataV2Entity) => relation.sourceObjectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  sourceRelations: Relation<RelationMetadataV2Entity[]>;
+
+  @OneToMany(
+    () => RelationMetadataV2Entity,
+    (relation: RelationMetadataV2Entity) => relation.targetObjectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  targetRelations: Relation<RelationMetadataV2Entity[]>;
 
   @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
     onDelete: 'CASCADE',
