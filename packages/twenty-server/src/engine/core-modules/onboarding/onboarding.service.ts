@@ -38,7 +38,7 @@ export class OnboardingService {
 
   private isWorkspaceActivationPending(workspace: Workspace) {
     return (
-      workspace.activationStatus === WorkspaceActivationStatus.PendingCreation
+      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
     );
   }
 

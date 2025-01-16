@@ -66,7 +66,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
     options: UpdateInactiveWorkspaceStatusOptions,
   ): Promise<void> {
     const whereCondition: any = {
-      activationStatus: WorkspaceActivationStatus.Inactive,
+      activationStatus: WorkspaceActivationStatus.INACTIVE,
     };
 
     if (options.workspaceIds?.length > 0) {
@@ -177,7 +177,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
 
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.Suspended,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
 
       await this.workspaceRepository.softRemove({ id: workspace.id });
@@ -198,7 +198,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
 
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.Suspended,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
 
       await this.workspaceRepository.softRemove({ id: workspace.id });
@@ -241,7 +241,7 @@ export class UpdateInactiveWorkspaceStatusCommand extends BaseCommandRunner {
     this.logger.log(chalk.blue('(!) Marking as suspended'));
     if (!options.dryRun) {
       await this.workspaceRepository.update(workspace.id, {
-        activationStatus: WorkspaceActivationStatus.Suspended,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
     }
   }

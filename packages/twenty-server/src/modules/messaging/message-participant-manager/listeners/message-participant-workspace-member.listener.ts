@@ -44,7 +44,7 @@ export class MessageParticipantWorkspaceMemberListener {
 
     if (
       !workspace ||
-      workspace.activationStatus !== WorkspaceActivationStatus.Active
+      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE
     ) {
       return;
     }

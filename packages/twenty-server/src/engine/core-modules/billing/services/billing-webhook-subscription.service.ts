@@ -90,7 +90,7 @@ export class BillingWebhookSubscriptionService {
       data.object.status === SubscriptionStatus.Paused
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.Suspended,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
     }
 
@@ -98,10 +98,10 @@ export class BillingWebhookSubscriptionService {
       (data.object.status === SubscriptionStatus.Active ||
         data.object.status === SubscriptionStatus.Trialing ||
         data.object.status === SubscriptionStatus.PastDue) &&
-      workspace.activationStatus == WorkspaceActivationStatus.Suspended
+      workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
     }
 

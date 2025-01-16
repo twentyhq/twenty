@@ -106,7 +106,7 @@ describe('AccessTokenService', () => {
         id: userId,
       };
       const mockWorkspace = {
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       };
       const mockWorkspaceMember = { id: 'workspace-member-id' };

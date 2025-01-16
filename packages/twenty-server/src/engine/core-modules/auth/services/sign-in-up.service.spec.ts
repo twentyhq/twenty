@@ -135,7 +135,7 @@ describe('SignInUpService', () => {
       invitation: { value: 'invitationToken' } as AppToken,
       workspace: {
         id: 'workspaceId',
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
@@ -181,7 +181,7 @@ describe('SignInUpService', () => {
       AuthProviderWithPasswordType = {
       workspace: {
         id: 'workspaceId',
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       } as Workspace,
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
@@ -220,7 +220,7 @@ describe('SignInUpService', () => {
     jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
       id: 'newWorkspaceId',
-      activationStatus: WorkspaceActivationStatus.Active,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     } as Workspace);
     jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
       id: '',

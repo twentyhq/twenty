@@ -89,19 +89,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     if (
-      workspace.activationStatus === WorkspaceActivationStatus.OngoingCreation
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       throw new Error('Workspace is already being created');
     }
 
     if (
-      workspace.activationStatus !== WorkspaceActivationStatus.PendingCreation
+      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
     ) {
       throw new Error('Workspace is not pending creation');
     }
 
     await this.workspaceRepository.update(workspace.id, {
-      activationStatus: WorkspaceActivationStatus.OngoingCreation,
+      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
     await this.featureFlagService.enableFeatureFlags(
@@ -114,7 +114,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
-      activationStatus: WorkspaceActivationStatus.Active,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
     return await this.workspaceRepository.findOneBy({

@@ -29,7 +29,7 @@ export const seedWorkspaces = async (
         inviteHash: 'demo.dev-invite-hash',
         logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
         subdomain: 'demo',
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     ])
     .execute();

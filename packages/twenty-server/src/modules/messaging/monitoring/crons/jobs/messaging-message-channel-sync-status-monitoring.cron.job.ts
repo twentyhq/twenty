@@ -47,7 +47,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
 
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 

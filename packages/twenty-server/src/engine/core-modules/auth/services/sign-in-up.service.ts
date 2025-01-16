@@ -315,7 +315,7 @@ export class SignInUpService {
       displayName: '',
       domainName: '',
       inviteHash: v4(),
-      activationStatus: WorkspaceActivationStatus.PendingCreation,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       logo,
     });
 

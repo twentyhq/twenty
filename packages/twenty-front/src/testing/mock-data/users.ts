@@ -1,14 +1,14 @@
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  FeatureFlagKey,
-  OnboardingStatus,
-  SubscriptionInterval,
-  SubscriptionStatus,
-  User,
-  Workspace,
-  WorkspaceActivationStatus,
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+    FeatureFlagKey,
+    OnboardingStatus,
+    SubscriptionInterval,
+    SubscriptionStatus,
+    User,
+    Workspace,
+    WorkspaceActivationStatus,
+    WorkspaceMemberDateFormatEnum,
+    WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
@@ -45,7 +45,7 @@ export const mockCurrentWorkspace: Workspace = {
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
-  activationStatus: WorkspaceActivationStatus.Active,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
   hasValidEntrepriseKey: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,

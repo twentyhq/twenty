@@ -6,7 +6,7 @@ export const isWorkspaceActiveOrSuspended = (
   } | null,
 ): boolean => {
   return (
-    workspace?.activationStatus === WorkspaceActivationStatus.Active ||
-    workspace?.activationStatus === WorkspaceActivationStatus.Suspended
+    workspace?.activationStatus === WorkspaceActivationStatus.ACTIVE ||
+    workspace?.activationStatus === WorkspaceActivationStatus.SUSPENDED
   );
 };

@@ -4,7 +4,7 @@ import { isWorkspaceActiveOrSuspended } from '../isWorkspaceActiveOrSuspended';
 describe('isWorkspaceActiveOrSuspended', () => {
   it('should return true for Active workspace', () => {
     const workspace = {
-      activationStatus: WorkspaceActivationStatus.Active,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     };
 
     expect(isWorkspaceActiveOrSuspended(workspace)).toBe(true);
@@ -12,7 +12,7 @@ describe('isWorkspaceActiveOrSuspended', () => {
 
   it('should return true for Suspended workspace', () => {
     const workspace = {
-      activationStatus: WorkspaceActivationStatus.Suspended,
+      activationStatus: WorkspaceActivationStatus.SUSPENDED,
     };
 
     expect(isWorkspaceActiveOrSuspended(workspace)).toBe(true);
@@ -20,7 +20,7 @@ describe('isWorkspaceActiveOrSuspended', () => {
 
   it('should return false for Inactive workspace', () => {
     const workspace = {
-      activationStatus: WorkspaceActivationStatus.Inactive,
+      activationStatus: WorkspaceActivationStatus.INACTIVE,
     };
 
     expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);
@@ -28,7 +28,7 @@ describe('isWorkspaceActiveOrSuspended', () => {
 
   it('should return false for OngoingCreation workspace', () => {
     const workspace = {
-      activationStatus: WorkspaceActivationStatus.OngoingCreation,
+      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     };
 
     expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);
@@ -36,7 +36,7 @@ describe('isWorkspaceActiveOrSuspended', () => {
 
   it('should return false for PendingCreation workspace', () => {
     const workspace = {
-      activationStatus: WorkspaceActivationStatus.PendingCreation,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
     };
 
     expect(isWorkspaceActiveOrSuspended(workspace)).toBe(false);

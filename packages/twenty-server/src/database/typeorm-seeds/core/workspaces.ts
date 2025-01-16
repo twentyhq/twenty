@@ -32,7 +32,7 @@ export const seedWorkspaces = async (
       subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
-      activationStatus: WorkspaceActivationStatus.Active,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
@@ -41,7 +41,7 @@ export const seedWorkspaces = async (
       subdomain: 'acme',
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
-      activationStatus: WorkspaceActivationStatus.Active,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
   };
 

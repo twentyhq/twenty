@@ -35,7 +35,7 @@ export class MessagingOngoingStaleCronJob {
   async handle(): Promise<void> {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        activationStatus: WorkspaceActivationStatus.Active,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 

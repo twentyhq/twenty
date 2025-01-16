@@ -1,7 +1,7 @@
 export enum WorkspaceActivationStatus {
-  OngoingCreation = 'ONGOING_CREATION',
-  PendingCreation = 'PENDING_CREATION',
-  Active = 'Active',
-  Inactive = 'Inactive',
-  Suspended = 'Suspended',
+  ONGOING_CREATION = 'ONGOING_CREATION',
+  PENDING_CREATION = 'PENDING_CREATION',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
 }

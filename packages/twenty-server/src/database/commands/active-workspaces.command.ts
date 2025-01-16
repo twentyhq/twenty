@@ -36,8 +36,8 @@ export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
       select: ['id'],
       where: {
         activationStatus: In([
-          WorkspaceActivationStatus.Active,
-          WorkspaceActivationStatus.Suspended,
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
         ]),
       },
     });
