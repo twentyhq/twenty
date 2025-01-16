@@ -30,6 +30,7 @@ export const seedMessageChannel = async (
       'type',
       'connectedAccountId',
       'handle',
+      'isSyncEnabled',
       'visibility',
       'syncStage',
     ])
