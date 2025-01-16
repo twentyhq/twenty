@@ -6,6 +6,6 @@ import { WorkspaceActivationStatus } from '~/generated/graphql';
 export const useIsWorkspaceActivationStatusSuspended = (): boolean => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   return (
-    currentWorkspace?.activationStatus === WorkspaceActivationStatus.Suspended
+    currentWorkspace?.activationStatus === WorkspaceActivationStatus.SUSPENDED
   );
 };
