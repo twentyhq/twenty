@@ -67,6 +67,17 @@ const testCases = [
   { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: false },
   { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: false },
 
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: true },
+  { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: true },
+
   { loc: AppPath.SignInUp, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.SignInUp, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: true },
   { loc: AppPath.SignInUp, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: true },

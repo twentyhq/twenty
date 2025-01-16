@@ -41,7 +41,10 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User, workspace: Workspace) {
-    if (workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+    if (
+      workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE &&
+      workspace?.activationStatus !== WorkspaceActivationStatus.SUSPENDED
+    ) {
       return null;
     }
 
@@ -164,5 +167,31 @@ export class UserService extends TypeOrmQueryService<User> {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    return user;
+  }
+
+  async markEmailAsVerified(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    user.isEmailVerified = true;
+
+    return await this.userRepository.save(user);
   }
 }
