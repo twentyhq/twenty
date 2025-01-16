@@ -1,14 +1,14 @@
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-    FeatureFlagKey,
-    OnboardingStatus,
-    SubscriptionInterval,
-    SubscriptionStatus,
-    User,
-    Workspace,
-    WorkspaceActivationStatus,
-    WorkspaceMemberDateFormatEnum,
-    WorkspaceMemberTimeFormatEnum,
+  FeatureFlagKey,
+  OnboardingStatus,
+  SubscriptionInterval,
+  SubscriptionStatus,
+  User,
+  Workspace,
+  WorkspaceActivationStatus,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
