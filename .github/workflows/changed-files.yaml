@@ -12,7 +12,7 @@ on:
 jobs:
   changed-files:
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest
     outputs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
