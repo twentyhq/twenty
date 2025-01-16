@@ -33,6 +33,7 @@ const StyledBaseContainer = styled.div<{
 
   outline: ${({ hasSoftFocus, fontColorExtraLight }) =>
     hasSoftFocus ? `1px solid ${fontColorExtraLight}` : 'none'};
+  z-index: 5;
 `;
 
 export const RecordTableCellBaseContainer = ({
