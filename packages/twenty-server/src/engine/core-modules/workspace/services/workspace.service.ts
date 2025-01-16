@@ -17,8 +17,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    WorkspaceException,
-    WorkspaceExceptionCode,
+  WorkspaceException,
+  WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';

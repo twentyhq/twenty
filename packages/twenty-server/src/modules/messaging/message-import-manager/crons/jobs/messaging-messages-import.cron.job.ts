@@ -13,12 +13,12 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    MessageChannelSyncStage,
-    MessageChannelWorkspaceEntity,
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessagingMessagesImportJob,
-    MessagingMessagesImportJobData,
+  MessagingMessagesImportJob,
+  MessagingMessagesImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 
 export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
