@@ -1,5 +1,3 @@
-import { i18n } from '@lingui/core';
-import { I18nProvider } from '@lingui/react';
 import { Decorator } from '@storybook/react';
 
 import { GRAY_SCALE, MAIN_COLORS } from '@ui/theme';
@@ -32,9 +30,7 @@ export const ComponentDecorator: Decorator = (Story, context) => {
       width={container?.width}
       backgroundColor={backgroundColor}
     >
-      <I18nProvider i18n={i18n}>
-        <Story />
-      </I18nProvider>
+      <Story />
     </ComponentStorybookLayout>
   );
 };
