@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { deleteWorkflow } from '../lib/requests/delete-workflow';
+import { destroyWorkflow } from '../lib/requests/destroy-workflow';
 
 test('Create workflow', async ({ page }) => {
   const NEW_WORKFLOW_NAME = 'Test Workflow';
@@ -54,6 +55,13 @@ test('Create workflow', async ({ page }) => {
 
     await expect(workflowName).toBeVisible();
   } finally {
-    await deleteWorkflow(page, newWorkflowId);
+    await deleteWorkflow({
+      page,
+      workflowId: newWorkflowId,
+    });
+    await destroyWorkflow({
+      page,
+      workflowId: newWorkflowId,
+    });
   }
 });

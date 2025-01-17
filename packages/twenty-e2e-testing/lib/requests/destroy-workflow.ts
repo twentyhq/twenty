@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { getAuthToken } from '../utils/getAuthToken';
 import { backendGraphQLUrl } from './backend';
 
-export const deleteWorkflow = async ({
+export const destroyWorkflow = async ({
   page,
   workflowId,
 }: {
@@ -16,10 +16,10 @@ export const deleteWorkflow = async ({
       Authorization: `Bearer ${authToken}`,
     },
     data: {
-      operationName: 'DeleteOneWorkflow',
-      variables: { idToDelete: workflowId },
+      operationName: 'DestroyOneWorkflow',
+      variables: { idToDestroy: workflowId },
       query:
-        'mutation DeleteOneWorkflow($idToDelete: ID!) {\n  deleteWorkflow(id: $idToDelete) {\n    __typename\n    deletedAt\n    id\n  }\n}',
+        'mutation DestroyOneWorkflow($idToDestroy: ID!) {\n  destroyWorkflow(id: $idToDestroy) {\n    id\n    __typename\n  }\n}',
     },
   });
 };

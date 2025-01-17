@@ -2,6 +2,7 @@ import { test as base, expect, Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { createWorkflow } from '../requests/create-workflow';
 import { deleteWorkflow } from '../requests/delete-workflow';
+import { destroyWorkflow } from '../requests/destroy-workflow';
 
 export class WorkflowVisualizerPage {
   #page: Page;
@@ -55,7 +56,14 @@ export const test = base.extend<{ workflowVisualizer: WorkflowVisualizerPage }>(
 
       await use(workflowVisualizer);
 
-      await deleteWorkflow(page, workflowVisualizer.workflowId);
+      await deleteWorkflow({
+        page,
+        workflowId: workflowVisualizer.workflowId,
+      });
+      await destroyWorkflow({
+        page,
+        workflowId: workflowVisualizer.workflowId,
+      });
     },
   },
 );
