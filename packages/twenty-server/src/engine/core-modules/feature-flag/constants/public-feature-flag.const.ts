@@ -1,13 +1,11 @@
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
-// Metadata type for public flags
 type FeatureFlagMetadata = {
   label: string;
   description: string;
   imageKey?: string;
 };
 
-// This enforces that public flags must have metadata
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
@@ -17,7 +15,7 @@ export type PublicFeatureFlag = {
   >;
   metadata: FeatureFlagMetadata;
 };
-
+// TODO: Move images to twenty-website
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
     key: FeatureFlagKey.IsAnalyticsV2Enabled,

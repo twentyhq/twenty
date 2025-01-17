@@ -27,7 +27,6 @@ export class LabService {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
-
   async updateLabPublicFeatureFlag(
     workspaceId: string,
     publicFeatureFlag: FeatureFlagKey,

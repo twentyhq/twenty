@@ -14,7 +14,7 @@ export const useLabPublicFeatureFlags = () => {
     currentWorkspaceState,
   );
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
- 
+
   const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation();
 
   const handleLabPublicFeatureFlagUpdate = async (
@@ -56,9 +56,10 @@ export const useLabPublicFeatureFlags = () => {
   return {
     labPublicFeatureFlags: labPublicFeatureFlags.map((flag) => ({
       ...flag,
-      value: currentWorkspace?.featureFlags?.find(
-        (workspaceFlag) => workspaceFlag.key === flag.key
-      )?.value ?? false,
+      value:
+        currentWorkspace?.featureFlags?.find(
+          (workspaceFlag) => workspaceFlag.key === flag.key,
+        )?.value ?? false,
     })),
     handleLabPublicFeatureFlagUpdate,
     error,
