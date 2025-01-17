@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableStickyBottomEffect } from '@/object-record/record-table/components/RecordTableStickyBottomEffect';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -94,6 +95,7 @@ export const RecordTable = () => {
               <RecordTableRecordGroupsBody />
             )}
             <RecordTableStickyEffect />
+            <RecordTableStickyBottomEffect />
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}

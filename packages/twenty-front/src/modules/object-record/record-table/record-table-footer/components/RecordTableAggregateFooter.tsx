@@ -17,10 +17,6 @@ const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
   isSticky?: boolean;
 }>`
-  z-index: 10;
-
-  z-index: ${({ isSticky }) => (isSticky ? 10 : 2)};
-  position: relative;
   td {
     border-top: ${({ isSticky, theme }) => (isSticky ? `1px solid ${theme.border.color.light}` : 'none')};
     z-index: ${({ isSticky }) => (isSticky ? 10 : 'auto')};
@@ -106,7 +102,7 @@ export const RecordTableAggregateFooter = ({
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       hasHorizontalOverflow={hasHorizontalOverflow}
-      isSticky={scrollBottom > 0}
+      isSticky={scrollBottom > 2}
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {
