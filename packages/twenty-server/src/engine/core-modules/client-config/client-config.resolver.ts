@@ -3,6 +3,7 @@ import { Query, Resolver } from '@nestjs/graphql';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
+import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { ClientConfig } from './client-config.entity';
 
 @Resolver()
@@ -14,6 +15,7 @@ export class ClientConfigResolver {
 
   @Query(() => ClientConfig)
   async clientConfig(): Promise<ClientConfig> {
+
     const clientConfig: ClientConfig = {
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
@@ -75,7 +77,9 @@ export class ClientConfigResolver {
       canManageFeatureFlags:
         this.environmentService.get('DEBUG_MODE') ||
         this.environmentService.get('IS_BILLING_ENABLED'),
+      publicFeatureFlags: PUBLIC_FEATURE_FLAGS ,
     };
+
 
     return Promise.resolve(clientConfig);
   }

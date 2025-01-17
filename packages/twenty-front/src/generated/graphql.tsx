@@ -179,6 +179,7 @@ export type ClientConfig = {
   frontDomain: Scalars['String'];
   isEmailVerificationRequired: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
+  publicFeatureFlags: Array<PublicFeatureFlagObject>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean'];
   support: Support;
@@ -326,20 +327,13 @@ export enum FeatureFlagKey {
   IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
   IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled',
-  IsLocalizationEnabled = 'IsLocalizationEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
-
-export type FeatureFlagMetadata = {
-  __typename?: 'FeatureFlagMetadata';
-  description: Scalars['String'];
-  imageUrl: Scalars['String'];
-  label: Scalars['String'];
-};
 
 export type FieldConnection = {
   __typename?: 'FieldConnection';
@@ -463,15 +457,6 @@ export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
-};
-
-export type LabPublicFeatureFlag = {
-  __typename?: 'LabPublicFeatureFlag';
-  id: Scalars['UUID'];
-  key: FeatureFlagKey;
-  metadata: FeatureFlagMetadata;
-  value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -914,6 +899,19 @@ export type ProductPricesEntity = {
   totalNumberOfPrices: Scalars['Int'];
 };
 
+export type PublicFeatureFlagMetadataObject = {
+  __typename?: 'PublicFeatureFlagMetadataObject';
+  description: Scalars['String'];
+  imageKey?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
+};
+
+export type PublicFeatureFlagObject = {
+  __typename?: 'PublicFeatureFlagObject';
+  key: FeatureFlagKey;
+  metadata: PublicFeatureFlagMetadataObject;
+};
+
 export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
@@ -944,7 +942,6 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
-  getLabPublicFeatureFlags: Array<LabPublicFeatureFlag>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -995,11 +992,6 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
-};
-
-
-export type QueryGetLabPublicFeatureFlagsArgs = {
-  workspaceId: Scalars['String'];
 };
 
 
@@ -2131,7 +2123,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'TrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'TrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlagObject', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadataObject', label: string, description: string, imageKey?: string | null } }> } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2162,13 +2154,6 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
-
-export type GetLabPublicFeatureFlagsQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
-
-
-export type GetLabPublicFeatureFlagsQuery = { __typename?: 'Query', getLabPublicFeatureFlags: Array<{ __typename?: 'LabPublicFeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string, metadata: { __typename?: 'FeatureFlagMetadata', label: string, description: string, imageUrl: string } }> };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3659,6 +3644,14 @@ export const GetClientConfigDocument = gql`
     }
     chromeExtensionId
     canManageFeatureFlags
+    publicFeatureFlags {
+      key
+      metadata {
+        label
+        description
+        imageKey
+      }
+    }
   }
 }
     `;
@@ -3850,49 +3843,6 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
-export const GetLabPublicFeatureFlagsDocument = gql`
-    query GetLabPublicFeatureFlags($workspaceId: String!) {
-  getLabPublicFeatureFlags(workspaceId: $workspaceId) {
-    id
-    key
-    value
-    workspaceId
-    metadata {
-      label
-      description
-      imageUrl
-    }
-  }
-}
-    `;
-
-/**
- * __useGetLabPublicFeatureFlagsQuery__
- *
- * To run a query within a React component, call `useGetLabPublicFeatureFlagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLabPublicFeatureFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLabPublicFeatureFlagsQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetLabPublicFeatureFlagsQuery(baseOptions: Apollo.QueryHookOptions<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>(GetLabPublicFeatureFlagsDocument, options);
-      }
-export function useGetLabPublicFeatureFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>(GetLabPublicFeatureFlagsDocument, options);
-        }
-export type GetLabPublicFeatureFlagsQueryHookResult = ReturnType<typeof useGetLabPublicFeatureFlagsQuery>;
-export type GetLabPublicFeatureFlagsLazyQueryHookResult = ReturnType<typeof useGetLabPublicFeatureFlagsLazyQuery>;
-export type GetLabPublicFeatureFlagsQueryResult = Apollo.QueryResult<GetLabPublicFeatureFlagsQuery, GetLabPublicFeatureFlagsQueryVariables>;
 export const CreateOidcIdentityProviderDocument = gql`
     mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
   createOIDCIdentityProvider(input: $input) {

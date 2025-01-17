@@ -67,7 +67,7 @@ export const SettingsLabContent = () => {
         <StyledFlagContainer key={flag.key}>
           <StyledFlagContent>
             <StyledFlagImage
-              src={flag.metadata.imageUrl}
+              src={flag.metadata.imageKey ?? undefined}
               alt={flag.metadata.label}
             />
             <StyledFlagInfo>

@@ -1,69 +1,48 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
   FeatureFlagKey,
-  LabPublicFeatureFlag,
-  useGetLabPublicFeatureFlagsQuery,
   useUpdateLabPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabPublicFeatureFlags = () => {
-  const [labPublicFeatureFlags, setLabPublicFeatureFlags] = useState<
-    LabPublicFeatureFlag[]
-  >([]);
   const [error, setError] = useState<string | null>(null);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const { loading: labPublicFeatureFlagsLoading } =
-    useGetLabPublicFeatureFlagsQuery({
-      variables: {
-        workspaceId: currentWorkspace?.id,
-      },
-      skip: !currentWorkspace?.id,
-      fetchPolicy: 'cache-and-network',
-      onCompleted: (data) => {
-        setLabPublicFeatureFlags(data.getLabPublicFeatureFlags);
-      },
-    });
-
+  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
+ 
   const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation();
 
   const handleLabPublicFeatureFlagUpdate = async (
     publicFeatureFlag: FeatureFlagKey,
     value: boolean,
   ) => {
+    if (!isDefined(currentWorkspace)) {
+      setError('No workspace selected');
+      return false;
+    }
+
     setError(null);
-    const previousState = labPublicFeatureFlags;
     const previousWorkspace = currentWorkspace;
 
-    if (isDefined(labPublicFeatureFlags)) {
-      const updatedFlags = labPublicFeatureFlags.map((flag) =>
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      featureFlags: currentWorkspace.featureFlags?.map((flag) =>
         flag.key === publicFeatureFlag ? { ...flag, value } : flag,
-      );
-      setLabPublicFeatureFlags(updatedFlags);
-    }
+      ),
+    });
 
-    if (isDefined(currentWorkspace)) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        featureFlags: currentWorkspace.featureFlags?.map((flag) =>
-          flag.key === publicFeatureFlag ? { ...flag, value } : flag,
-        ),
-      });
-    }
     const response = await updateLabPublicFeatureFlag({
       variables: {
-        workspaceId: currentWorkspace?.id,
+        workspaceId: currentWorkspace.id,
         publicFeatureFlag,
         value,
       },
       onError: (error) => {
-        if (isDefined(previousState)) {
-          setLabPublicFeatureFlags(previousState);
-        }
         if (isDefined(previousWorkspace)) {
           setCurrentWorkspace(previousWorkspace);
         }
@@ -75,8 +54,12 @@ export const useLabPublicFeatureFlags = () => {
   };
 
   return {
-    labPublicFeatureFlags,
-    labPublicFeatureFlagsLoading,
+    labPublicFeatureFlags: labPublicFeatureFlags.map((flag) => ({
+      ...flag,
+      value: currentWorkspace?.featureFlags?.find(
+        (workspaceFlag) => workspaceFlag.key === flag.key
+      )?.value ?? false,
+    })),
     handleLabPublicFeatureFlagUpdate,
     error,
   };

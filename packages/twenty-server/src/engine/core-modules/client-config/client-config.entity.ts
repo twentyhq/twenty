@@ -1,8 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { TrialPeriodDTO } from 'src/engine/core-modules/billing/dto/trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { FeatureFlagKey } from '../feature-flag/enums/feature-flag-key.enum';
+
+registerEnumType(FeatureFlagKey, {
+  name: 'FeatureFlagKey',
+});
 
 @ObjectType()
 class Billing {
@@ -53,6 +58,27 @@ class ApiConfig {
 }
 
 @ObjectType()
+class PublicFeatureFlagMetadataObject {
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String)
+  description: string;
+
+  @Field(() => String, { nullable: true })
+  imageKey?: string;
+}
+
+@ObjectType()
+class PublicFeatureFlagObject {
+  @Field(() => FeatureFlagKey)
+  key: FeatureFlagKey;
+
+  @Field(() => PublicFeatureFlagMetadataObject)
+  metadata: PublicFeatureFlagMetadataObject;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
@@ -98,4 +124,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
+
+  @Field(() => [PublicFeatureFlagObject])
+  publicFeatureFlags: PublicFeatureFlagObject[];
 }
