@@ -158,7 +158,7 @@ export const useCommandMenuCommands = () => {
           richTextV2BodyExists
             ? {
                 bodyV2: {
-                  blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
                 },
               }
             : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
@@ -176,7 +176,7 @@ export const useCommandMenuCommands = () => {
           richTextV2BodyExists
             ? {
                 bodyV2: {
-                  blocknote: { ilike: `%${deferredCommandMenuSearch}%` },
+                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
                 },
               }
             : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
