@@ -473,17 +473,6 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
 
-    if (Array.isArray(draftWorkflowVersion.steps)) {
-      await Promise.all(
-        draftWorkflowVersion.steps.map((step) =>
-          this.runWorkflowVersionStepDeletionSideEffects({
-            step,
-            workspaceId,
-          }),
-        ),
-      );
-    }
-
     const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
     const newWorkflowVersionSteps: WorkflowAction[] = [];
 
