@@ -2,11 +2,11 @@ import { H2Title, Section } from 'twenty-ui';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 import { isDefined } from '~/utils/isDefined';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { Form } from './SettingsDomain';
 
 const StyledDomainFromWrapper = styled.div`
   align-items: center;
@@ -24,12 +24,18 @@ const StyledDomain = styled.h2`
 
 export const SettingsSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
+  const { t } = useLingui();
 
-  const { control } = useFormContext<Form>();
+  const { control } = useFormContext<{
+    subdomain: string;
+  }>();
 
   return (
     <Section>
-      <H2Title title="Subdomain" description="Set the name of your subdomain" />
+      <H2Title
+        title={t`Subdomain`}
+        description={t`Set the name of your subdomain`}
+      />
       <StyledDomainFromWrapper>
         <Controller
           name="subdomain"

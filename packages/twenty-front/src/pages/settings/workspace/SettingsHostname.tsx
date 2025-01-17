@@ -13,6 +13,7 @@ import {
 import { isDefined } from '~/utils/isDefined';
 import { useEffect } from 'react';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useLingui } from '@lingui/react/macro';
 
 const validationSchema = z
   .object({
@@ -41,6 +42,7 @@ export const SettingsHostname = () => {
   const [getHostnameDetailsQuery, { data: getHostnameDetailsData }] =
     useGetHostnameDetailsLazyQuery();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { t } = useLingui();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -144,7 +146,7 @@ export const SettingsHostname = () => {
 
   return (
     <Section>
-      <H2Title title="Domain" description="Set the name of your domain" />
+      <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
       <StyledDomainFromWrapper>
         <Controller
           name="hostname"

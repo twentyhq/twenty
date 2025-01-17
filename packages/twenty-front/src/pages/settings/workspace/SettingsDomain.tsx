@@ -21,11 +21,6 @@ import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-
-type Form = {
-  subdomain: string;
-};
-
 export const SettingsDomain = () => {
   const navigate = useNavigate();
   const { t } = useLingui();
@@ -54,7 +49,9 @@ export const SettingsDomain = () => {
     currentWorkspaceState,
   );
 
-  const form = useForm<Form>({
+  const form = useForm<{
+    subdomain: string;
+  }>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {

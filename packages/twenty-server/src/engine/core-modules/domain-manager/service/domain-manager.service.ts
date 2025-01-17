@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import Cloudflare from 'cloudflare';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -227,9 +227,7 @@ export class DomainManagerService {
 
     if (!hostname && !subdomain) return;
 
-    const where = isDefined(hostname)
-      ? { hostname }
-      : { subdomain, hostname: IsNull() };
+    const where = isDefined(hostname) ? { hostname } : { subdomain };
 
     return (
       (await this.workspaceRepository.findOne({
