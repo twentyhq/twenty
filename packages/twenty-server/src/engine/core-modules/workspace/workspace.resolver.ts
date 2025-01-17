@@ -159,6 +159,15 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
+  @ResolveField(() => [BillingSubscription])
+  async billingSubscriptions(
+    @Parent() workspace: Workspace,
+  ): Promise<BillingSubscription[]> {
+    return this.billingSubscriptionService.getBillingSubscriptions(
+      workspace.id,
+    );
+  }
+
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
