@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,6 +8,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  PUBLIC_FEATURE_FLAGS,
+  PublicFeatureFlag,
+} from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -15,6 +20,7 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { LabPublicFeatureFlagResponse } from 'src/engine/core-modules/lab/dtos/lab-public-feature-flag.response';
 import { isPublicFeatureFlag } from 'src/engine/core-modules/lab/utils/is-public-feature-flag.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -26,16 +32,39 @@ export class LabService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly configService: ConfigService,
   ) {}
 
   async getLabPublicFeatureFlags(
     workspaceId: string,
-  ): Promise<FeatureFlagEntity[]> {
-    const flags = await this.featureFlagRepository.find({
+  ): Promise<LabPublicFeatureFlagResponse[]> {
+    // Get workspace flags from database
+    const workspaceFlags = await this.featureFlagRepository.find({
       where: { workspaceId },
     });
 
-    return flags.filter((flag) => isPublicFeatureFlag(flag.key));
+    const baseUrl = this.configService.get('SERVER_URL');
+
+    // Filter public flags and add metadata
+    return workspaceFlags
+      .filter((flag) => isPublicFeatureFlag(flag.key))
+      .map((flag) => {
+        const publicFlag = PUBLIC_FEATURE_FLAGS.find(
+          (pFlag) => pFlag.key === flag.key,
+        ) as PublicFeatureFlag;
+
+        return {
+          id: flag.id,
+          key: flag.key,
+          value: flag.value,
+          workspaceId: flag.workspaceId,
+          metadata: {
+            label: publicFlag.metadata.label,
+            description: publicFlag.metadata.description,
+            imageUrl: `${baseUrl}/feature-flags/assets/${publicFlag.metadata.imageKey}`,
+          },
+        };
+      });
   }
 
   async updateLabPublicFeatureFlag(

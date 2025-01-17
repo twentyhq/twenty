@@ -6,7 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 const assertIsPublicFeatureFlag = (
   key: FeatureFlagKey,
   exceptionToThrow: CustomException,
-): asserts key is PublicFeatureFlag => {
+): asserts key is PublicFeatureFlag['key'] => {
   if (!isPublicFeatureFlag(key)) {
     throw exceptionToThrow;
   }

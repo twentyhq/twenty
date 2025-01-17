@@ -333,6 +333,13 @@ export enum FeatureFlagKey {
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
+export type FeatureFlagMetadata = {
+  __typename?: 'FeatureFlagMetadata';
+  description: Scalars['String'];
+  imageUrl: Scalars['String'];
+  label: Scalars['String'];
+};
+
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
@@ -455,6 +462,15 @@ export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type LabPublicFeatureFlag = {
+  __typename?: 'LabPublicFeatureFlag';
+  id: Scalars['UUID'];
+  key: FeatureFlagKey;
+  metadata: FeatureFlagMetadata;
+  value: Scalars['Boolean'];
+  workspaceId: Scalars['String'];
 };
 
 export type LinkMetadata = {
@@ -927,7 +943,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
-  getLabPublicFeatureFlags: Array<FeatureFlag>;
+  getLabPublicFeatureFlags: Array<LabPublicFeatureFlag>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -2151,7 +2167,7 @@ export type GetLabPublicFeatureFlagsQueryVariables = Exact<{
 }>;
 
 
-export type GetLabPublicFeatureFlagsQuery = { __typename?: 'Query', getLabPublicFeatureFlags: Array<{ __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string }> };
+export type GetLabPublicFeatureFlagsQuery = { __typename?: 'Query', getLabPublicFeatureFlags: Array<{ __typename?: 'LabPublicFeatureFlag', id: any, key: FeatureFlagKey, value: boolean, workspaceId: string, metadata: { __typename?: 'FeatureFlagMetadata', label: string, description: string, imageUrl: string } }> };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3840,6 +3856,11 @@ export const GetLabPublicFeatureFlagsDocument = gql`
     key
     value
     workspaceId
+    metadata {
+      label
+      description
+      imageUrl
+    }
   }
 }
     `;

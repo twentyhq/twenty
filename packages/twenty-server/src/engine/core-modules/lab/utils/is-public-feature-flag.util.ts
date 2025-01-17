@@ -6,10 +6,10 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 
 export const isPublicFeatureFlag = (
   key: FeatureFlagKey,
-): key is PublicFeatureFlag => {
+): key is PublicFeatureFlag['key'] => {
   if (!key) {
     return false;
   }
 
-  return PUBLIC_FEATURE_FLAGS.includes(key as PublicFeatureFlag);
+  return PUBLIC_FEATURE_FLAGS.some((flag) => flag.key === key);
 };

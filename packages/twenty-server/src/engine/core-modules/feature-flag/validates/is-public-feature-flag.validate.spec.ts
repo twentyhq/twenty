@@ -17,7 +17,7 @@ describe('publicFeatureFlagValidator', () => {
     );
 
     it('should not throw for public feature flags', () => {
-      const publicFlag = PUBLIC_FEATURE_FLAGS[0];
+      const publicFlag = PUBLIC_FEATURE_FLAGS[0].key;
 
       expect(() => {
         publicFeatureFlagValidator.assertIsPublicFeatureFlag(
@@ -66,12 +66,12 @@ describe('publicFeatureFlagValidator', () => {
           flag,
           mockException,
         );
-        const _test: PublicFeatureFlag = flag;
+        const _test: PublicFeatureFlag['key'] = flag;
 
         return true;
       };
 
-      expect(testTypeAssertion(publicFlag)).toBe(true);
+      expect(testTypeAssertion(publicFlag.key)).toBe(true);
     });
   });
 });

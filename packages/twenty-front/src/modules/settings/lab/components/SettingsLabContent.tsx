@@ -17,13 +17,38 @@ const StyledFlagContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
-  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing(4)};
   padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFlagContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledFlagImage = styled.img`
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  height: 48px;
+  object-fit: cover;
+  width: 48px;
+`;
+
+const StyledFlagInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFlagName = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
+`;
+
+const StyledFlagDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 export const SettingsLabContent = () => {
@@ -40,7 +65,18 @@ export const SettingsLabContent = () => {
     <StyledContainer>
       {labPublicFeatureFlags.map((flag) => (
         <StyledFlagContainer key={flag.key}>
-          <StyledFlagName>{flag.key}</StyledFlagName>
+          <StyledFlagContent>
+            <StyledFlagImage
+              src={flag.metadata.imageUrl}
+              alt={flag.metadata.label}
+            />
+            <StyledFlagInfo>
+              <StyledFlagName>{flag.metadata.label}</StyledFlagName>
+              <StyledFlagDescription>
+                {flag.metadata.description}
+              </StyledFlagDescription>
+            </StyledFlagInfo>
+          </StyledFlagContent>
           <Toggle
             value={flag.value}
             onChange={(value) => handleToggle(flag.key, value)}

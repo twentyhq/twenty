@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import {
-  FeatureFlag,
   FeatureFlagKey,
+  LabPublicFeatureFlag,
   useGetLabPublicFeatureFlagsQuery,
   useUpdateLabPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabPublicFeatureFlags = () => {
   const [labPublicFeatureFlags, setLabPublicFeatureFlags] = useState<
-    FeatureFlag[]
+    LabPublicFeatureFlag[]
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(

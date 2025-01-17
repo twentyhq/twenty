@@ -4,14 +4,15 @@ import { isPublicFeatureFlag } from 'src/engine/core-modules/lab/utils/is-public
 
 describe('isPublicFeatureFlag', () => {
   it('should return true for public flags', () => {
-    const publicFlag = PUBLIC_FEATURE_FLAGS[0];
+    const publicFlag = PUBLIC_FEATURE_FLAGS[0].key;
 
     expect(isPublicFeatureFlag(publicFlag)).toBe(true);
   });
 
   it('should return false for non-public flags', () => {
     const nonPublicFlag = Object.values(FeatureFlagKey).find(
-      (flag) => !PUBLIC_FEATURE_FLAGS.includes(flag as any),
+      (flag) =>
+        !PUBLIC_FEATURE_FLAGS.some((publicFlag) => publicFlag.key === flag),
     );
 
     expect(isPublicFeatureFlag(nonPublicFlag as FeatureFlagKey)).toBe(false);
