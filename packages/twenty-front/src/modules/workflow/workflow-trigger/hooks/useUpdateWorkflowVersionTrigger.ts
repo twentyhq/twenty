@@ -7,7 +7,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
-import { useGetUpdatableWorkflowVersion } from 'packages/twenty-front/src/modules/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
