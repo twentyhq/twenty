@@ -29,12 +29,27 @@ enum SettingsPathPrefixes {
   General = `${AppBasePath.Settings}/${SettingsPath.Workspace}`,
 }
 
+enum AppPathTranslated {
+  Verify = `${AppPath.Verify}`,
+  SignInUp = `${AppPath.SignInUp}`,
+  Invite = `${AppPath.Invite}`,
+  CreateWorkspace = `${AppPath.CreateWorkspace}`,
+  CreateProfile = `${AppPath.CreateProfile}`,
+}
+
 const getPathnameOrPrefix = (pathname: string) => {
   for (const prefix of Object.values(SettingsPathPrefixes)) {
     if (pathname.startsWith(prefix)) {
       return prefix;
     }
   }
+
+  for (const prefix of Object.values(AppPathTranslated)) {
+    if (pathname.startsWith(prefix)) {
+      return prefix;
+    }
+  }
+
   return pathname;
 };
 

@@ -8,7 +8,7 @@ i18n.load({
 });
 i18n.activate('en');
 
-export const i18nDecoratorFront = (Story: StoryFn) => {
+export const i18nFrontDecorator = (Story: StoryFn) => {
   return (
     <I18nProvider i18n={i18n}>
       <Story />
