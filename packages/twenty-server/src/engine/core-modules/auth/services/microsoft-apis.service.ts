@@ -28,12 +28,18 @@ import {
   MessageChannelVisibility,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessagingMessageListFetchJob,
+  MessagingMessageListFetchJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class MicrosoftAPIsService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
@@ -102,7 +108,6 @@ export class MicrosoftAPIsService {
           manager,
         );
 
-        // TODO: Modify this when the email sync is implemented
         await messageChannelRepository.save(
           {
             id: v4(),
@@ -111,8 +116,7 @@ export class MicrosoftAPIsService {
             handle,
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-            syncStage: MessageChannelSyncStage.FAILED,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
           },
           {},
           manager,
@@ -160,14 +164,13 @@ export class MicrosoftAPIsService {
           newOrExistingConnectedAccountId,
         );
 
-        // TODO: Modify this when the email sync is implemented
         await messageChannelRepository.update(
           {
             connectedAccountId: newOrExistingConnectedAccountId,
           },
           {
-            syncStage: MessageChannelSyncStage.FAILED,
-            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
             syncCursor: '',
             syncStageStartedAt: null,
           },
@@ -176,22 +179,21 @@ export class MicrosoftAPIsService {
       }
     });
 
-    // TODO: Uncomment this when the email sync is implemented
-    // const messageChannels = await messageChannelRepository.find({
-    //   where: {
-    //     connectedAccountId: newOrExistingConnectedAccountId,
-    //   },
-    // });
+    const messageChannels = await messageChannelRepository.find({
+      where: {
+        connectedAccountId: newOrExistingConnectedAccountId,
+      },
+    });
 
-    // for (const messageChannel of messageChannels) {
-    //   await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-    //     MessagingMessageListFetchJob.name,
-    //     {
-    //       workspaceId,
-    //       messageChannelId: messageChannel.id,
-    //     },
-    //   );
-    // }
+    for (const messageChannel of messageChannels) {
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        {
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
+    }
 
     const calendarChannels = await calendarChannelRepository.find({
       where: {

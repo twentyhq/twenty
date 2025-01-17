@@ -59,6 +59,22 @@ export class DomainManagerService {
     return baseUrl;
   }
 
+  buildEmailVerificationURL({
+    emailVerificationToken,
+    email,
+    workspaceSubdomain,
+  }: {
+    emailVerificationToken: string;
+    email: string;
+    workspaceSubdomain?: string;
+  }) {
+    return this.buildWorkspaceURL({
+      subdomain: workspaceSubdomain,
+      pathname: 'verify-email',
+      searchParams: { emailVerificationToken, email },
+    });
+  }
+
   buildWorkspaceURL({
     subdomain,
     pathname,
@@ -129,15 +145,16 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl({
-    errorMessage,
-    subdomain,
-  }: {
-    errorMessage: string;
-    subdomain?: string;
-  }) {
-    const url = this.buildWorkspaceURL({
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    {
       subdomain,
+    }: {
+      subdomain?: string;
+    },
+  ) {
+    const url = this.buildWorkspaceURL({
+      subdomain: subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -193,10 +210,12 @@ export class DomainManagerService {
 
       if (!isDefined(subdomain)) return;
 
-      return await this.workspaceRepository.findOne({
-        where: { subdomain },
-        relations: ['workspaceSSOIdentityProviders'],
-      });
+      return (
+        (await this.workspaceRepository.findOne({
+          where: { subdomain },
+          relations: ['workspaceSSOIdentityProviders'],
+        })) ?? undefined
+      );
     } catch (e) {
       throw new WorkspaceException(
         'Workspace not found',

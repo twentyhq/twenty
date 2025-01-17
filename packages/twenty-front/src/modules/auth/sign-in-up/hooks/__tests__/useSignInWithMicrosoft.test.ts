@@ -22,7 +22,6 @@ describe('useSignInWithMicrosoft', () => {
     plan: 'PRO',
     interval: 'Month',
     requirePaymentMethod: true,
-    skipPlanPage: false,
   };
 
   it('should call signInWithMicrosoft with the correct parameters', () => {

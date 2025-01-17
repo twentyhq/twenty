@@ -16,8 +16,8 @@ import {
   IconPrinter,
   IconSettings,
 } from 'twenty-ui';
-import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlag, FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,

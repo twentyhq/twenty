@@ -54,12 +54,16 @@ Register the following recurring jobs:
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch
-yarn command:prod cron:calendar:calendar-event-import
+yarn command:prod cron:calendar:calendar-events-import
 yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 ```
 
 ## For Outlook and Outlook Calendar (Microsoft 365)
+
+<ArticleWarning>
+Users must have a [Microsoft 365 Licence](https://admin.microsoft.com/Adminportal/Home) to be able to use the Calendar and Messaging API. They will not be able to sync their account on Twenty without one.
+</ArticleWarning>
 
 ### Create a project in Microsoft Azure
 
@@ -106,7 +110,7 @@ Register the following recurring jobs:
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch
-yarn command:prod cron:calendar:calendar-event-import
+yarn command:prod cron:calendar:calendar-events-import
 yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 ```
@@ -181,6 +185,8 @@ yarn command:prod cron:calendar:ongoing-stale
 ### Email
 
 <ArticleTable options={[
+    ['IS_EMAIL_VERIFICATION_REQUIRED', 'false', 'If enabled, users must verify their email address before signing in. When true, users will receive a verification email after registration'],
+    ['EMAIL_VERIFICATION_TOKEN_EXPIRES_IN', '1h', 'How long email verification tokens remain valid before requiring a new verification email'],
     ['EMAIL_FROM_ADDRESS', 'contact@yourdomain.com', 'Global email From: header used to send emails'],
     ['EMAIL_FROM_NAME', 'John from YourDomain', 'Global name From: header used to send emails'],
     ['EMAIL_SYSTEM_ADDRESS', 'system@yourdomain.com', 'Email address used as a destination to send internal system notification'],
@@ -208,24 +214,24 @@ yarn command:prod cron:calendar:ongoing-stale
 
   <ArticleTab>
 
-    Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
-    - EMAIL_DRIVER=smtp
-    - EMAIL_SMTP_HOST=smtp.office365.com
-    - EMAIL_SMTP_PORT=587
-    - EMAIL_SMTP_USER=office365_email_address
+  Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=smtp.office365.com
+  - EMAIL_SMTP_PORT=587
+  - EMAIL_SMTP_USER=office365_email_address
     - EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-    **smtp4dev** is a fake SMTP email server for development and testing.
-    - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
-    - Set the following env variables:
-      - EMAIL_DRIVER=smtp
-      - EMAIL_SMTP_HOST=localhost
-      - EMAIL_SMTP_PORT=2525
+  **smtp4dev** is a fake SMTP email server for development and testing.
+  - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
+  - Set the following env variables:
+    - EMAIL_DRIVER=smtp
+    - EMAIL_SMTP_HOST=localhost
+    - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
