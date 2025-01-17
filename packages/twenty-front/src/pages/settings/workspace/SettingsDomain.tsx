@@ -11,7 +11,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -122,17 +122,17 @@ export const SettingsDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`General`}
+      title={t`Domain`}
       links={[
         {
-          children: t`Workspace`,
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: t`General`,
+          children: <Trans>General</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: t`Domain` },
+        { children: <Trans>Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
