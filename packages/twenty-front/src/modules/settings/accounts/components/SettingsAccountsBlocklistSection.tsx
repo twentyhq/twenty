@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { H2Title, Section } from 'twenty-ui';
 
@@ -11,6 +12,7 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 
 export const SettingsAccountsBlocklistSection = () => {
+  const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
@@ -40,8 +42,8 @@ export const SettingsAccountsBlocklistSection = () => {
   return (
     <Section>
       <H2Title
-        title="Blocklist"
-        description="Exclude the following people and domains from my email sync"
+        title={t`Blocklist`}
+        description={t`Exclude the following people and domains from my email sync`}
       />
       <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}

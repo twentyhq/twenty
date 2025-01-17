@@ -1,21 +1,19 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-17 15:53+0100\n"
+"POT-Creation-Date: 2025-01-17 16:30+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: fr\n"
 
-#. placeholder {2}: formatInTimeZone( Date.now(), usedTimeZone, TimeFormat.HOUR_12, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:51
-msgid "12h ({2})"
-msgstr "12h ({2})"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:62
+msgid "12h ({time12hFormatted})"
+msgstr "12h ({time12hFormatted})"
 
-#. placeholder {1}: formatInTimeZone( Date.now(), usedTimeZone, TimeFormat.HOUR_24, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:43
-msgid "24h ({1})"
-msgstr "24h ({1})"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:58
+msgid "24h ({time24hFormatted})"
+msgstr "24h ({time24hFormatted})"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
@@ -28,6 +26,11 @@ msgstr "Abandonner"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:86
 msgid "About"
 msgstr "A propos de"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "Compte"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
 #: src/modules/settings/profile/components/DeleteAccount.tsx:45
@@ -114,6 +117,14 @@ msgstr "Retour au contenu"
 msgid "Billing"
 msgstr "Facturation"
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:45
+msgid "Blocklist"
+msgstr "Liste de blocage"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:60
+msgid "Calendar"
+msgstr "Calendrier"
+
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 msgid "Calendars"
@@ -153,9 +164,17 @@ msgstr "Choisir un objet"
 msgid "Configure an SSO connection"
 msgstr "Configurer une connexion SSO"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:61
+msgid "Configure and customize your calendar preferences."
+msgstr "Configurez et personnalisez vos préférences en matière de calendrier."
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Configurer l'affichage des dates dans l'application"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:35
+msgid "Configure your emails and calendar settings."
+msgstr "Configurez vos courriels et votre calendrier."
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:15
 msgid "Connect a Google account"
@@ -164,6 +183,10 @@ msgstr "Connecter un compte Google"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Connect a new account to your workspace"
 msgstr "Connecter un nouveau compte à votre espace de travail"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "Comptes connectés"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 msgid "Continue"
@@ -215,7 +238,7 @@ msgstr "Modèle de données"
 msgid "Date and time"
 msgstr "Date et heure"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:29
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:34
 msgid "Date format"
 msgstr "Format de la date"
 
@@ -295,6 +318,10 @@ msgstr "Modifiez le nom de votre sous-domaine ou définissez un domaine personna
 msgid "Email"
 msgstr "Courriel"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Emails"
+msgstr "Emails"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:94
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:233
 msgid "Endpoint URL"
@@ -316,9 +343,17 @@ msgstr "Erreur lors de la commutation de l'abonnement {to}."
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Établir des points de terminaison Webhook pour les notifications d'événements asynchrones."
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Exclude the following people and domains from my email sync"
+msgstr "Exclure les personnes et domaines suivants de ma synchronisation d'emails"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:167
 msgid "Existing objects"
 msgstr "Objets existants"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "Quitter les paramètres"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
@@ -428,6 +463,10 @@ msgstr "Gérer les membres"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:168
 msgid "Manage the members of your space here"
 msgstr "Gérez les membres de votre espace ici"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "Gérer vos comptes internet."
 
 #: src/pages/settings/SettingsBilling.tsx:144
 msgid "Manage your subscription"
@@ -588,9 +627,17 @@ msgstr "Sélectionnez votre langue préférée"
 msgid "Send an invite email to your team"
 msgstr "Envoyez un courriel d'invitation à votre équipe"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:47
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "Définissez la visibilité des e-mails, gérez votre liste de blocage et bien plus encore."
+
 #: src/pages/settings/workspace/SettingsDomain.tsx:151
 msgid "Set the name of your subdomain"
 msgstr "Définissez le nom de votre sous-domaine"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Settings"
+msgstr "Paramètres"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -640,21 +687,21 @@ msgstr "Changer en {from}"
 msgid "Switch {to}"
 msgstr "Changer en {to}"
 
-#. placeholder {0}: formatInTimeZone( Date.now(), usedTimeZone, systemTimeFormat, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:35
-msgid "System Settings - {0}"
-msgstr "Paramètres du système - {0}"
-
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:33
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:34
 msgid "System settings"
 msgstr "Paramètres du système"
 
-#. placeholder {0}: systemTimeZoneOption.label
-#. placeholder {0}: formatInTimeZone( Date.now(), usedTimeZone, systemDateFormat, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:32
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:35
-msgid "System settings - {0}"
-msgstr "Paramètres du système - {0}"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:40
+msgid "System settings - {systemDateFormatted}"
+msgstr "Paramètres du système - {systemDateFormatted}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:54
+msgid "System settings - {systemTimeFormatted}"
+msgstr "Paramètres du système - {systemTimeFormatted}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:33
+msgid "System settings - {systemTimeZoneOptionLabel}"
+msgstr "Paramètres du système - {systemTimeZoneOptionLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
@@ -684,11 +731,11 @@ msgstr "Cette action ne peut être annulée. Elle supprimera définitivement l'e
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Cette action ne peut être annulée. Elle supprimera définitivement l'ensemble de votre espace de travail. <0/> Veuillez saisir votre adresse électronique pour confirmer."
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:29
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:48
 msgid "Time format"
 msgstr "Format de l'heure"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:25
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:26
 msgid "Time zone"
 msgstr "Fuseau horaire"
 
@@ -721,6 +768,7 @@ msgstr "Utilisez uniquement des lettres, des chiffres et des tirets. Commencer e
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsNewAccount.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
 msgid "User"
 msgstr "Utilisateur"
 
@@ -829,9 +877,3 @@ msgstr "à l'année"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 msgid "yes"
 msgstr "oui"
-
-#. placeholder {0}: SSOIdentityProvider.name
-#. placeholder {1}: SSOIdentityProvider.type
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper.tsx:24
-msgid "{0} - {1}"
-msgstr "{0} - {1}"

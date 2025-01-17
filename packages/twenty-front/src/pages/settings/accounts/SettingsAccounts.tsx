@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { H2Title, Section } from 'twenty-ui';
 
@@ -17,6 +18,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
 export const SettingsAccounts = () => {
+  const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -35,13 +37,13 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="Account"
+      title={t`Account`}
       links={[
         {
-          children: 'User',
+          children: t`User`,
           href: getSettingsPagePath(SettingsPath.ProfilePage),
         },
-        { children: 'Account' },
+        { children: t`Account` },
       ]}
     >
       <SettingsPageContainer>
@@ -51,8 +53,8 @@ export const SettingsAccounts = () => {
           <>
             <Section>
               <H2Title
-                title="Connected accounts"
-                description="Manage your internet accounts."
+                title={t`Connected accounts`}
+                description={t`Manage your internet accounts.`}
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={accounts}

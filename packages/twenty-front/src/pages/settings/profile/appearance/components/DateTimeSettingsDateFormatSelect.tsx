@@ -17,10 +17,15 @@ export const DateTimeSettingsDateFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsDateFormatSelectProps) => {
-  const { t } = useLingui();
   const systemTimeZone = detectTimeZone();
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
   const systemDateFormat = DateFormat[detectDateFormat()];
+  const systemDateFormatted = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    systemDateFormat,
+  );
+  const { t } = useLingui();
 
   return (
     <Select
@@ -32,35 +37,31 @@ export const DateTimeSettingsDateFormatSelect = ({
       value={value}
       options={[
         {
-          label: t`System settings - ${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            systemDateFormat,
-          )}`,
+          label: t`System settings - ${systemDateFormatted}`,
           value: DateFormat.SYSTEM,
         },
         {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.MONTH_FIRST,
-          )}`,
+          ),
           value: DateFormat.MONTH_FIRST,
         },
         {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.DAY_FIRST,
-          )}`,
+          ),
           value: DateFormat.DAY_FIRST,
         },
         {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.YEAR_FIRST,
-          )}`,
+          ),
           value: DateFormat.YEAR_FIRST,
         },
       ]}

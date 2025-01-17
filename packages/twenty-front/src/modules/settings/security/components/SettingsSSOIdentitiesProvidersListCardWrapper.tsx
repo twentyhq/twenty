@@ -21,7 +21,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
     <SettingsListCard
       items={SSOIdentitiesProviders}
       getItemLabel={(SSOIdentityProvider) =>
-        t`${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
+        `${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
       }
       RowIconFn={(SSOIdentityProvider) =>
         guessSSOIdentityProviderIconByUrl(SSOIdentityProvider.issuer)

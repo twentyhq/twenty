@@ -1,21 +1,19 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-17 15:53+0100\n"
+"POT-Creation-Date: 2025-01-17 16:30+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-Hans\n"
 
-#. placeholder {2}: formatInTimeZone( Date.now(), usedTimeZone, TimeFormat.HOUR_12, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:51
-msgid "12h ({2})"
-msgstr "12h （[{2}）"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:62
+msgid "12h ({time12hFormatted})"
+msgstr "12h （[{time12hFormatted}）"
 
-#. placeholder {1}: formatInTimeZone( Date.now(), usedTimeZone, TimeFormat.HOUR_24, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:43
-msgid "24h ({1})"
-msgstr "24小时（[{1}）"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:58
+msgid "24h ({time24hFormatted})"
+msgstr "24小时（[{time24hFormatted}）"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
@@ -28,6 +26,11 @@ msgstr "中止"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:86
 msgid "About"
 msgstr "关于"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "账户"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
 #: src/modules/settings/profile/components/DeleteAccount.tsx:45
@@ -114,6 +117,14 @@ msgstr "返回内容"
 msgid "Billing"
 msgstr "账单"
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:45
+msgid "Blocklist"
+msgstr "拦截列表"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:60
+msgid "Calendar"
+msgstr "日历"
+
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 msgid "Calendars"
@@ -153,9 +164,17 @@ msgstr "选择对象"
 msgid "Configure an SSO connection"
 msgstr "配置 SSO 连接"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:61
+msgid "Configure and customize your calendar preferences."
+msgstr "配置和自定义日历偏好。"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "配置整个应用程序的日期显示方式"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:35
+msgid "Configure your emails and calendar settings."
+msgstr "配置电子邮件和日历设置。"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:15
 msgid "Connect a Google account"
@@ -164,6 +183,10 @@ msgstr "连接 Google 账户"
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Connect a new account to your workspace"
 msgstr "将新账户连接到工作区"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "连接账户"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 msgid "Continue"
@@ -215,7 +238,7 @@ msgstr "数据模型"
 msgid "Date and time"
 msgstr "日期和时间"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:29
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:34
 msgid "Date format"
 msgstr "日期格式"
 
@@ -295,6 +318,10 @@ msgstr "编辑子域名或设置自定义域名。"
 msgid "Email"
 msgstr "电子邮件"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Emails"
+msgstr "电子邮件"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:94
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:233
 msgid "Endpoint URL"
@@ -316,9 +343,17 @@ msgstr "切换订阅 {to} 时出错。"
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "建立 Webhook 端点，用于通知异步事件。"
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Exclude the following people and domains from my email sync"
+msgstr "从我的电子邮件同步中排除以下人员和域"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:167
 msgid "Existing objects"
 msgstr "现有对象"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
+msgstr "退出设置"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
@@ -428,6 +463,10 @@ msgstr "管理成员"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:168
 msgid "Manage the members of your space here"
 msgstr "在此管理空间成员"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "管理互联网账户"
 
 #: src/pages/settings/SettingsBilling.tsx:144
 msgid "Manage your subscription"
@@ -588,9 +627,17 @@ msgstr "选择您喜欢的语言"
 msgid "Send an invite email to your team"
 msgstr "向团队发送邀请电子邮件"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:47
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "设置电子邮件可见性、管理屏蔽列表等。"
+
 #: src/pages/settings/workspace/SettingsDomain.tsx:151
 msgid "Set the name of your subdomain"
 msgstr "设置子域名称"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Settings"
+msgstr "设置"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -640,21 +687,21 @@ msgstr "开关 {from}"
 msgid "Switch {to}"
 msgstr "开关 {to}"
 
-#. placeholder {0}: formatInTimeZone( Date.now(), usedTimeZone, systemTimeFormat, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:35
-msgid "System Settings - {0}"
-msgstr "系统设置 - [{0}］"
-
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:33
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:34
 msgid "System settings"
 msgstr "系统设置"
 
-#. placeholder {0}: systemTimeZoneOption.label
-#. placeholder {0}: formatInTimeZone( Date.now(), usedTimeZone, systemDateFormat, )
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:32
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:35
-msgid "System settings - {0}"
-msgstr "系统设置 - {0}"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:40
+msgid "System settings - {systemDateFormatted}"
+msgstr "系统设置 - {systemDateFormatted}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:54
+msgid "System settings - {systemTimeFormatted}"
+msgstr "系统设置 - {systemTimeFormatted}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:33
+msgid "System settings - {systemTimeZoneOptionLabel}"
+msgstr "系统设置 - {systemTimeZoneOptionLabel}"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
@@ -684,11 +731,11 @@ msgstr "此操作无法撤销。这将永久删除您的整个账户。 <0/> 请
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 请输入您的电子邮件以确认。"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:29
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:48
 msgid "Time format"
 msgstr "时间格式"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:25
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx:26
 msgid "Time zone"
 msgstr "时区"
 
@@ -721,6 +768,7 @@ msgstr "只能使用字母、数字和破折号。以字母或数字开头和结
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsNewAccount.tsx:17
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
 msgid "User"
 msgstr "用户"
 
@@ -829,9 +877,3 @@ msgstr "每年"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 msgid "yes"
 msgstr "是"
-
-#. placeholder {0}: SSOIdentityProvider.name
-#. placeholder {1}: SSOIdentityProvider.type
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper.tsx:24
-msgid "{0} - {1}"
-msgstr "[abcdef0] - [abcdef1]"

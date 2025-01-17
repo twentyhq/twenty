@@ -77,7 +77,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
           setPreviousUrl(`${location.pathname}${location.search}`);
-          navigate(AppPath.SignInUp);
+          navigate(AppPath.SignInUpNoLocale);
         }
       },
       extraLinks: [],

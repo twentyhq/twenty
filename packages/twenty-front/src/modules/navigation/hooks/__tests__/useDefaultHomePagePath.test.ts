@@ -59,7 +59,9 @@ describe('useDefaultHomePagePath', () => {
   it('should return proper path when no currentUser and existing view', () => {
     setupMockPrefetchedData('viewId');
     const { result } = renderHooks(false);
-    expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
+    expect(result.current.defaultHomePagePath).toEqual(
+      AppPath.SignInUpNoLocale,
+    );
   });
   it('should return proper path when currentUser is defined', () => {
     setupMockPrefetchedData();
