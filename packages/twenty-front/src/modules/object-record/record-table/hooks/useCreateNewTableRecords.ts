@@ -72,7 +72,7 @@ export const useCreateNewTableRecord = ({
           ) {
             await createOneRecord({
               id: recordId,
-              name: `Untitled ${objectMetadataItem.nameSingular}`,
+              name: 'Untitled',
             });
             navigate(`/object/workflow/${recordId}`);
             set(
