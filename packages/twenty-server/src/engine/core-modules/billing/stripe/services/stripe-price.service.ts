@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { ProductPriceDTO } from 'src/engine/core-modules/billing/dto/product-price.dto';
+import { BillingProductPriceDTO } from 'src/engine/core-modules/billing/dtos/billing-product-price.dto';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -48,8 +48,8 @@ export class StripePriceService {
     }
   }
 
-  formatProductPrices(prices: Stripe.Price[]): ProductPriceDTO[] {
-    const productPrices: ProductPriceDTO[] = Object.values(
+  formatProductPrices(prices: Stripe.Price[]): BillingProductPriceDTO[] {
+    const productPrices: BillingProductPriceDTO[] = Object.values(
       prices
         .filter((item) => item.recurring?.interval && item.unit_amount)
         .reduce((acc, item: Stripe.Price) => {
@@ -68,7 +68,7 @@ export class StripePriceService {
             };
           }
 
-          return acc satisfies Record<string, ProductPriceDTO>;
+          return acc satisfies Record<string, BillingProductPriceDTO>;
         }, {}),
     );
 

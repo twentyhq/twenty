@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { BillingPriceTierDTO } from 'src/engine/core-modules/billing/dto/billing-price-tier.dto';
+import { BillingPriceTierDTO } from 'src/engine/core-modules/billing/dtos/billing-price-tier.dto';
 import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @ObjectType()
-export class PriceMeteredDTO {
+export class BillingPriceMeteredDTO {
   @Field(() => BillingPriceTiersMode, { nullable: true })
   tiersMode: BillingPriceTiersMode.GRADUATED | null;
 

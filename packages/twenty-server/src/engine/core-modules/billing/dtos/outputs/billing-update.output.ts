@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UpdateBillingDTO {
+export class BillingUpdateOutput {
   @Field(() => Boolean, {
     description: 'Boolean that confirms query was successful',
   })

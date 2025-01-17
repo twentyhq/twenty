@@ -6,6 +6,7 @@ import assert from 'assert';
 import Stripe from 'stripe';
 import { Not, Repository } from 'typeorm';
 
+import { BillingException, BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
@@ -13,7 +14,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
@@ -74,13 +74,16 @@ export class BillingSubscriptionService {
 
     const getStripeProductId = isBillingPlansEnabled
       ? (
-          await this.billingPlanService.getProductsByProductMetadata(
-            BillingPlanKey.PRO,
-            BillingUsageType.LICENSED,
-            'true',
-          )
-        )?.[0].stripeProductId
+          await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO)
+          )?.stripeProductId
       : stripeProductId;
+
+    if (!getStripeProductId) {
+      throw new BillingException(
+        'Base product not found',
+        BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+      );
+    }
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -162,18 +165,28 @@ export class BillingSubscriptionService {
     const billingSubscriptionItem =
       await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
 
-    const productPrice = isBillingPlansEnabled
-      ? (
-          await this.billingPlanService.getProductPrices(
-            BillingPlanKey.PRO,
-            newInterval,
-          )
-        )?.[0]
-      : await this.stripePriceService.getStripePrice(
-          AvailableProduct.BasePlan,
-          newInterval,
-        );
+    let productPrice;
 
+    if (isBillingPlansEnabled) {
+      const baseProduct = await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO);
+
+      if (!baseProduct) {
+        throw new BillingException(
+          'Base product not found',
+          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+        );
+      }
+
+      productPrice = baseProduct.billingPrices.find(
+        (price) => price.interval === newInterval,
+      );
+    } else {
+      productPrice = await this.stripePriceService.getStripePrice(
+        AvailableProduct.BasePlan,
+        newInterval,
+      );
+    }
+      
     if (!productPrice) {
       throw new Error(
         `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,

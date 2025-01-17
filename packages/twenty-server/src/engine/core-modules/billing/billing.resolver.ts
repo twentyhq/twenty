@@ -1,18 +1,22 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-
-import { BillingSessionInput } from 'src/engine/core-modules/billing/dto/billing-session.input';
-import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
-import { PlansInformationDTO } from 'src/engine/core-modules/billing/dto/plans-information.dto';
-import { ProductPricesDTO } from 'src/engine/core-modules/billing/dto/product-prices.dto';
-import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
-import { SessionDTO } from 'src/engine/core-modules/billing/dto/session.dto';
-import { UpdateBillingDTO } from 'src/engine/core-modules/billing/dto/update-billing.dto';
+import { GraphQLError } from 'graphql';
+import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
+import { BillingProductInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-product.input';
+import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
+import { BillingProductPricesOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-product-prices.output';
+import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
+import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { formatBillingPriceDataToLicensedPriceDTO } from 'src/engine/core-modules/billing/utils/format-billing-price-data-to-licensed-price-dto.util copy';
+import { formatBillingPriceDataToMeteredPriceDTO } from 'src/engine/core-modules/billing/utils/format-billing-price-data-to-metered-price-dto.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -32,21 +36,13 @@ export class BillingResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Query(() => ProductPricesDTO)
+  @Query(() => BillingProductPricesOutput)
   @UseGuards(WorkspaceAuthGuard)
   async getProductPrices(
     @AuthWorkspace() workspace: Workspace,
-    @Args() { product }: ProductInput,
+    @Args() { product }: BillingProductInput,
   ) {
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspace.id,
-      );
-
-    const productPrices = isBillingPlansEnabled
-      ? await this.billingPlanService.getProductPrices()
-      : await this.stripePriceService.getStripePrices(product);
+    const productPrices = await this.stripePriceService.getStripePrices(product);
 
     return {
       totalNumberOfPrices: productPrices.length,
@@ -54,7 +50,7 @@ export class BillingResolver {
     };
   }
 
-  @Query(() => SessionDTO)
+  @Query(() => BillingSessionOutput)
   @UseGuards(WorkspaceAuthGuard)
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
@@ -68,7 +64,7 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => SessionDTO)
+  @Mutation(() => BillingSessionOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async checkoutSession(
     @AuthWorkspace() workspace: Workspace,
@@ -79,7 +75,7 @@ export class BillingResolver {
       successUrlPath,
       plan,
       requirePaymentMethod,
-    }: CheckoutSessionInput,
+    }: BillingCheckoutSessionInput,
   ) {
     const isBillingPlansEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -87,20 +83,28 @@ export class BillingResolver {
         workspace.id,
       );
 
-    const productPrice = isBillingPlansEnabled
-      ? (
-          await this.billingPlanService.getProductPrices(
-            plan,
-            recurringInterval,
-          )
-        )?.[0]
-      : await this.stripePriceService.getStripePrice(
-          AvailableProduct.BasePlan,
-          recurringInterval,
-        );
+    let productPrice;
+
+    if (isBillingPlansEnabled) {
+      const baseProduct = await this.billingPlanService.getPlanBaseProduct(plan ?? BillingPlanKey.PRO);
+
+      if (!baseProduct) {
+        throw new GraphQLError('Base product not found');
+      }
+
+      productPrice = baseProduct.billingPrices.find(
+        (price) => price.interval === recurringInterval,
+      );
+    } else {
+      productPrice = await this.stripePriceService.getStripePrice(
+        AvailableProduct.BasePlan,
+        recurringInterval,
+      );
+    }
+   
 
     if (!productPrice) {
-      throw new Error(
+      throw new GraphQLError(
         'Product price not found for the given recurring interval',
       );
     }
@@ -117,7 +121,7 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => UpdateBillingDTO)
+  @Mutation(() => BillingUpdateOutput)
   @UseGuards(WorkspaceAuthGuard)
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
@@ -125,9 +129,35 @@ export class BillingResolver {
     return { success: true };
   }
 
-  @Query(() => PlansInformationDTO)
-  // @UseGuards(WorkspaceAuthGuard) I don't need the workspace for this query should i add it anyways?
-  async getAllPlansInformation() {
-    return this.billingPlanService.getAllPlansInformation();
+  @Query(() => [BillingPlanOutput])
+  @UseGuards(WorkspaceAuthGuard)
+  async plans(): Promise<BillingPlanOutput[]> {
+    const plans = await this.billingPlanService.getPlans();
+
+    return plans.map((plan) => {
+      return {
+        planKey: plan.planKey,
+        baseProduct: {
+          ...plan.baseProduct,
+          type: BillingUsageType.LICENSED,
+          prices: plan.baseProduct.billingPrices.map(formatBillingPriceDataToLicensedPriceDTO),
+        },
+        otherLicensedProducts: plan.otherLicensedProducts.map((product) => {
+          return {
+            ...product,
+            type: BillingUsageType.LICENSED,
+            prices: product.billingPrices.map(formatBillingPriceDataToLicensedPriceDTO),
+          };
+        }),
+        meteredProducts: plan.meteredProducts.map((product) => {
+          return {
+            ...product,
+            type: BillingUsageType.METERED,
+            prices: product.billingPrices.map(formatBillingPriceDataToMeteredPriceDTO),
+          };
+        }),
+      };
+    });
   }
 }
+

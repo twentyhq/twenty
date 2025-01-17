@@ -12,7 +12,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @ArgsType()
-export class CheckoutSessionInput {
+export class BillingCheckoutSessionInput {
   @Field(() => SubscriptionInterval)
   @IsEnum(SubscriptionInterval)
   @IsNotEmpty()

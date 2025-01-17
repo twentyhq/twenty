@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @ObjectType()
-export class PriceLicensedDTO {
+export class BillingPriceLicensedDTO {
   @Field(() => SubscriptionInterval)
   recurringInterval: SubscriptionInterval;
 

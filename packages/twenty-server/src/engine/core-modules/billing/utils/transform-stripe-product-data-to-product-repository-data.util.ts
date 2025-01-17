@@ -7,7 +7,7 @@ export const transformStripeProductDataToProductRepositoryData = (
     stripeProductId: data.id,
     name: data.name,
     active: data.active,
-    description: data.description,
+    description: data.description ?? '',
     images: data.images,
     marketingFeatures: data.marketing_features,
     defaultStripePriceId: data.default_price

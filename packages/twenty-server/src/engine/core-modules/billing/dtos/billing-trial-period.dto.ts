@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Min } from 'class-validator';
 
 @ObjectType()
-export class TrialPeriodDTO {
+export class BillingTrialPeriodDTO {
   @Field(() => Number)
   @Min(0)
   duration: number;
