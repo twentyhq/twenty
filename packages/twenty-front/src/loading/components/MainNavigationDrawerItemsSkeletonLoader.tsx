@@ -21,7 +21,7 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
   length: number;
 }) => {
   const theme = useTheme();
-  
+
   return (
     <StyledSkeletonContainer>
       <SkeletonTheme
