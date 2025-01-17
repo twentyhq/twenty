@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -34,10 +34,10 @@ export const SettingsSecurity = () => {
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: t`Workspace`,
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: t`Security` },
+        { children: <Trans>Security</Trans> },
       ]}
     >
       <SettingsPageContainer>

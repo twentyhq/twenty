@@ -21,7 +21,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
@@ -33,7 +33,7 @@ import {
   Section,
   UndecoratedLink,
 } from 'twenty-ui';
-import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
+import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
@@ -46,8 +46,8 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 export const SettingsObjects = () => {
-  const theme = useTheme();
   const { t } = useLingui();
+  const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -104,14 +104,19 @@ export const SettingsObjects = () => {
     [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
 
+  const tableMetadata = useMemo(
+    () => GET_SETTINGS_OBJECT_TABLE_METADATA(t),
+    [t],
+  );
+
   const sortedActiveObjectSettingsItems = useSortedArray(
     activeObjectSettingsArray,
-    SETTINGS_OBJECT_TABLE_METADATA,
+    tableMetadata,
   );
 
   const sortedInactiveObjectSettingsItems = useSortedArray(
     inactiveObjectSettingsArray,
-    SETTINGS_OBJECT_TABLE_METADATA,
+    tableMetadata,
   );
 
   const filteredActiveObjectSettingsItems = useMemo(
@@ -149,12 +154,10 @@ export const SettingsObjects = () => {
       }
       links={[
         {
-          children: t`Workspace`,
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        {
-          children: t`Objects`,
-        },
+        { children: <Trans>Objects</Trans> },
       ]}
     >
       <SettingsPageContainer>
@@ -172,15 +175,15 @@ export const SettingsObjects = () => {
 
             <Table>
               <StyledObjectTableRow>
-                {SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+                {tableMetadata.fields.map(
                   (settingsObjectsTableMetadataField) => (
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
                       label={settingsObjectsTableMetadataField.fieldLabel}
-                      tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                      tableId={tableMetadata.tableId}
                       align={settingsObjectsTableMetadataField.align}
-                      initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}
+                      initialSort={tableMetadata.initialSort}
                     />
                   ),
                 )}

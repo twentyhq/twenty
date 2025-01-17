@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
@@ -67,14 +67,14 @@ export const SettingsNewObject = () => {
         title={t`New Object`}
         links={[
           {
-            children: t`Workspace`,
+            children: <Trans>Workspace</Trans>,
             href: getSettingsPagePath(SettingsPath.Workspace),
           },
           {
-            children: t`Objects`,
+            children: <Trans>Objects</Trans>,
             href: getSettingsPagePath(SettingsPath.Objects),
           },
-          { children: t`New` },
+          { children: <Trans>New</Trans> },
         ]}
       >
         <SettingsPageContainer>

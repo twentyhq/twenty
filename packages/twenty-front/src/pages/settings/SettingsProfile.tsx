@@ -1,4 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -19,10 +19,10 @@ export const SettingsProfile = () => {
       title={t`Profile`}
       links={[
         {
-          children: t`User`,
+          children: <Trans>User</Trans>,
           href: getSettingsPagePath(SettingsPath.ProfilePage),
         },
-        { children: t`Profile` },
+        { children: <Trans>Profile</Trans> },
       ]}
     >
       <SettingsPageContainer>

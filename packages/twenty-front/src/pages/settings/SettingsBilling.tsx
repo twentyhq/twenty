@@ -1,4 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -129,10 +129,10 @@ export const SettingsBilling = () => {
       title={t`Billing`}
       links={[
         {
-          children: t`Workspace`,
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: t`Billing` },
+        { children: <Trans>Billing</Trans> },
       ]}
     >
       <SettingsPageContainer>

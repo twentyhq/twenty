@@ -7,7 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 
 const StyledButtonContainer = styled.div`
@@ -36,10 +36,10 @@ export const SettingsDevelopers = () => {
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: t`Workspace`,
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: t`Developers` },
+        { children: <Trans>Developers</Trans> },
       ]}
     >
       <SettingsPageContainer>
