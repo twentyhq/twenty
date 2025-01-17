@@ -123,11 +123,11 @@ const SettingsProfile = lazy(() =>
   })),
 );
 
-const SettingsAppearance = lazy(() =>
+const SettingsExperience = lazy(() =>
   import(
-    '~/pages/settings/profile/appearance/components/SettingsAppearance'
+    '~/pages/settings/profile/appearance/components/SettingsExperience'
   ).then((module) => ({
-    default: module.SettingsAppearance,
+    default: module.SettingsExperience,
   })),
 );
 
@@ -284,7 +284,7 @@ export const SettingsRoutes = ({
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
-      <Route path={SettingsPath.Appearance} element={<SettingsAppearance />} />
+      <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
       <Route
