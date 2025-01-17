@@ -47,7 +47,7 @@ export const SettingsDevelopers = () => {
           <Section>
             <H2Title
               title={t`API keys`}
-              description={t`Active APIs keys created by you or your team.`}
+              description={t`Active API keys created by you or your team.`}
             />
             <SettingsApiKeysTable />
             <StyledButtonContainer>

@@ -123,7 +123,7 @@ export const SettingsObjectIndexTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={t`${item.fieldLabel}`}
+              label={item.fieldLabel}
               Icon={item.FieldIcon}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}

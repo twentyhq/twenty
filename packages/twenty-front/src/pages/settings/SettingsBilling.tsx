@@ -186,7 +186,10 @@ export const SettingsBilling = () => {
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}
         title={t`Switch billing ${to}`}
-        subtitle={t`Are you sure that you want to change your billing interval? ${impact}`}
+        subtitle={
+          t`Are you sure that you want to change your billing interval?` +
+          ` ${impact}`
+        }
         onConfirmClick={switchInterval}
         deleteButtonText={t`Change ${to}`}
         confirmButtonAccent={'blue'}

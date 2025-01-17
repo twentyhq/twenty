@@ -168,7 +168,7 @@ export const SettingsObjects = () => {
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder={t`Search an object...`}
+              placeholder={t`Search for an object...`}
               value={searchTerm}
               onChange={setSearchTerm}
             />

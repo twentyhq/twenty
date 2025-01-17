@@ -5,13 +5,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
 import {
-    AnimatedPlaceholder,
-    AnimatedPlaceholderEmptyTextContainer,
-    AnimatedPlaceholderErrorContainer,
-    AnimatedPlaceholderErrorSubTitle,
-    AnimatedPlaceholderErrorTitle,
-    MainButton,
-    UndecoratedLink,
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorSubTitle,
+  AnimatedPlaceholderErrorTitle,
+  MainButton,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 const StyledBackDrop = styled.div`

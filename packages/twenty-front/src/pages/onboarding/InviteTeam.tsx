@@ -155,7 +155,7 @@ export const InviteTeam = () => {
         });
       }
     },
-    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus],
+    [enqueueSnackBar, sendInvitation, setNextOnboardingStatus, t],
   );
 
   const handleSkip = async () => {

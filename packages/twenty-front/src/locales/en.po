@@ -13,10 +13,9 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: item.fieldLabel
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:126
-msgid "{0}"
-msgstr "{0}"
+#~ msgid "{0}"
+#~ msgstr "{0}"
 
 #: src/modules/ui/input/components/ImageInput.tsx:157
 msgid "Abort"
@@ -40,8 +39,12 @@ msgid "Active"
 msgstr "Active"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
-msgid "Active APIs keys created by you or your team."
-msgstr "Active APIs keys created by you or your team."
+msgid "Active API keys created by you or your team."
+msgstr "Active API keys created by you or your team."
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+#~ msgid "Active APIs keys created by you or your team."
+#~ msgstr "Active APIs keys created by you or your team."
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:149
 msgid "Add object"
@@ -56,12 +59,16 @@ msgid "Appearance"
 msgstr "Appearance"
 
 #: src/pages/settings/SettingsBilling.tsx:190
+msgid "Are you sure that you want to change your billing interval?"
+msgstr "Are you sure that you want to change your billing interval?"
+
+#: src/pages/settings/SettingsBilling.tsx:190
 #~ msgid "Are you sure that you want to change your billing interval? {5}"
 #~ msgstr "Are you sure that you want to change your billing interval? {5}"
 
 #: src/pages/settings/SettingsBilling.tsx:189
-msgid "Are you sure that you want to change your billing interval? {impact}"
-msgstr "Are you sure that you want to change your billing interval? {impact}"
+#~ msgid "Are you sure that you want to change your billing interval? {impact}"
+#~ msgstr "Are you sure that you want to change your billing interval? {impact}"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
@@ -93,7 +100,7 @@ msgstr "Cancel your subscription"
 #~ msgid "Change {6}"
 #~ msgstr "Change {6}"
 
-#: src/pages/settings/SettingsBilling.tsx:191
+#: src/pages/settings/SettingsBilling.tsx:194
 msgid "Change {to}"
 msgstr "Change {to}"
 
@@ -133,6 +140,10 @@ msgstr "Customize Domain"
 msgid "Customize your workspace security"
 msgstr "Customize your workspace security"
 
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+msgid "Danger zone"
+msgstr "Danger zone"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Data model"
 msgstr "Data model"
@@ -148,6 +159,15 @@ msgstr "Define the name and description of your object"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 msgid "Delete account"
 msgstr "Delete account"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr "Delete workspace"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr "Delete your whole workspace"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
@@ -397,8 +417,12 @@ msgid "Search an index..."
 msgstr "Search an index..."
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:171
-msgid "Search an object..."
-msgstr "Search an object..."
+#~ msgid "Search an object..."
+#~ msgstr "Search an object..."
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:171
+msgid "Search for an object..."
+msgstr "Search for an object..."
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
@@ -493,6 +517,10 @@ msgstr "The page you're seeking is either gone or never was. Let's get you back 
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignements."
 msgstr "This action cannot be undone. This will permanently delete this user and remove them from all their assignements."
 
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+
 #: src/pages/settings/SettingsBilling.tsx:51
 msgid "to monthly"
 msgstr "to monthly"
@@ -540,6 +568,10 @@ msgstr "Webhooks"
 #: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:25
 msgid "Workspace"
 msgstr "Workspace"
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr "Workspace Deletion"
 
 #: src/pages/settings/SettingsBilling.tsx:46
 msgid "You will be charged immediately for the full year."
