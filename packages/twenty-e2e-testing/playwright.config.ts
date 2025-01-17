@@ -30,10 +30,6 @@ export default defineConfig({
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
     testIdAttribute: 'data-testid', // taken from Twenty source
-    viewport: { width: 1920, height: 1080 }, // most laptops use this resolution
-    launchOptions: {
-      slowMo: 500, // time in milliseconds between each step, better to use it than explicitly define timeout in tests
-    },
   },
   expect: {
     timeout: 5000,
