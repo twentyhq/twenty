@@ -2,7 +2,7 @@ import { SelectOption } from '@/ui/input/components/Select';
 
 import { DatabaseTriggerName } from '@/workflow/workflow-trigger/constants/DatabaseTriggerName';
 
-export const OBJECT_EVENT_TRIGGERS: Array<SelectOption<string>> = [
+export const DATABASE_TRIGGER_EVENTS: Array<SelectOption<string>> = [
   {
     label: DatabaseTriggerName.RECORD_IS_CREATED,
     value: 'created',

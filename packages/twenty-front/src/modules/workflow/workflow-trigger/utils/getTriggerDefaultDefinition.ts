@@ -4,13 +4,8 @@ import {
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { DatabaseTriggerName } from '@/workflow/workflow-trigger/constants/DatabaseTriggerName';
-import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
+import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-
-const isDatabaseName = (name: string): name is DatabaseTriggerName => {
-  return (name as DatabaseTriggerName) !== undefined;
-};
 
 export const getTriggerDefaultDefinition = ({
   name,
@@ -29,15 +24,11 @@ export const getTriggerDefaultDefinition = ({
 
   switch (type) {
     case 'DATABASE_EVENT': {
-      if (!isDatabaseName(name)) {
-        throw new Error('Database event has an invalid name');
-      }
-
       return {
         type,
         settings: {
           eventName: `${activeObjectMetadataItems[0].nameSingular}.${
-            OBJECT_EVENT_TRIGGERS.find(
+            DATABASE_TRIGGER_EVENTS.find(
               (availableEvent) => availableEvent.label === name,
             )?.value
           }`,

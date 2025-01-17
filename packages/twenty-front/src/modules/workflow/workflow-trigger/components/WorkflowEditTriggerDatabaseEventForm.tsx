@@ -4,7 +4,7 @@ import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
+import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 import { useTheme } from '@emotion/react';
 import { IconPlaylistAdd, isDefined } from 'twenty-ui';
 
@@ -40,7 +40,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     }));
 
   const selectedEvent = isDefined(triggerEvent)
-    ? OBJECT_EVENT_TRIGGERS.find(
+    ? DATABASE_TRIGGER_EVENTS.find(
         (availableEvent) => availableEvent.value === triggerEvent.event,
       )
     : undefined;

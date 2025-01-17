@@ -7,9 +7,9 @@ import {
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -70,7 +70,10 @@ export const generateWorkflowDiagram = ({
           trigger.settings.eventName,
         );
 
-        triggerLabel = `Record is ${capitalize(triggerEvent.event)}`;
+        triggerLabel =
+          DATABASE_TRIGGER_EVENTS.find(
+            (event) => event.value === triggerEvent.event,
+          )?.label ?? '';
 
         break;
       }
