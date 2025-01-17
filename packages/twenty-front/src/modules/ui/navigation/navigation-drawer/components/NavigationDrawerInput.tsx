@@ -16,7 +16,6 @@ import {
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
-  inputRef?: React.RefObject<HTMLInputElement>;
   className?: string;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   value: string;
