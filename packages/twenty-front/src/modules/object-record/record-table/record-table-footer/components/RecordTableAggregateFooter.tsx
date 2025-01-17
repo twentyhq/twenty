@@ -51,7 +51,7 @@ const StyledTableRow = styled.tr<{
     }
   }
   position: sticky;
-  z-index: 4;
+  z-index: 5;
   background: ${({ theme }) => theme.background.primary};
   ${({ endOfTableSticky, hasHorizontalOverflow }) =>
     endOfTableSticky &&
