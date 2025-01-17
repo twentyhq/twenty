@@ -7,9 +7,10 @@ import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
-  align-items: flex-start;
   display: flex;
+  align-items: center;
   flex-direction: row;
+  width: 100%;
 `;
 
 const StyledEditableTitlePrefix = styled.div`

@@ -41,6 +41,7 @@ export const NavigationDrawerItemInput = ({
       rightOptions={undefined}
       className="navigation-drawer-item"
       active
+      isInBreadcrumb
     />
   );
 };

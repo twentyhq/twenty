@@ -37,6 +37,7 @@ export type NavigationDrawerItemProps = {
   danger?: boolean;
   soon?: boolean;
   count?: number;
+  isInBreadcrumb?: boolean;
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDragging?: boolean;
@@ -45,7 +46,13 @@ export type NavigationDrawerItemProps = {
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
+  | 'active'
+  | 'danger'
+  | 'indentationLevel'
+  | 'soon'
+  | 'to'
+  | 'isDragging'
+  | 'isInBreadcrumb'
 > & { isNavigationDrawerExpanded: boolean; hasRightOptions: boolean };
 
 const StyledItem = styled('button', {
@@ -55,8 +62,12 @@ const StyledItem = styled('button', {
 })<StyledItemProps>`
   box-sizing: content-box;
   align-items: center;
-  background: inherit;
-  height: ${({ theme }) => theme.spacing(5)};
+  background: ${(props) =>
+    props.active && !props.isInBreadcrumb
+      ? props.theme.background.transparent.light
+      : 'inherit'};
+  height: ${({ isInBreadcrumb, theme }) =>
+    isInBreadcrumb ? 'auto' : theme.spacing(5)};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   text-decoration: none;
@@ -241,6 +252,7 @@ export const NavigationDrawerItem = ({
   to,
   onClick,
   active,
+  isInBreadcrumb,
   danger,
   soon,
   count,
@@ -276,6 +288,7 @@ export const NavigationDrawerItem = ({
         onClick={handleItemClick}
         active={active}
         aria-selected={active}
+        isInBreadcrumb={isInBreadcrumb}
         danger={danger}
         soon={soon}
         as={to ? Link : undefined}

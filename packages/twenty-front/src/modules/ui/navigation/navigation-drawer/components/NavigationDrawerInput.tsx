@@ -1,78 +1,41 @@
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ChangeEvent, FocusEvent, useRef } from 'react';
-import { useRecoilState } from 'recoil';
+import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import {
-  IconComponent,
-  TEXT_INPUT_STYLE,
-  TablerIconsProps,
-  isDefined,
-} from 'twenty-ui';
+import { IconComponent, TablerIconsProps, isDefined } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
   className?: string;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
-  value: string;
   placeholder?: string;
+  value: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
   onCancel: (value: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
+  iconColor?: string;
 };
 
-const StyledItem = styled.div<{ isNavigationDrawerExpanded: boolean }>`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.color.blue};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: content-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.md};
-  height: calc(${({ theme }) => theme.spacing(5)} - 2px);
-  padding: ${({ theme }) => theme.spacing(1)};
-  text-decoration: none;
-  user-select: none;
-`;
-
-const StyledItemElementsContainer = styled.span`
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  display: flex;
-  width: 100%;
-`;
-
-const StyledTextInput = styled.input`
-  ${TEXT_INPUT_STYLE}
-  margin: 0;
-  width: 100%;
-  padding: 0;
+const StyledInput = styled(TextInputV2)`
+  background-color: white;
 `;
 
 export const NavigationDrawerInput = ({
   className,
+  placeholder,
   Icon,
   value,
-  placeholder,
   onChange,
   onSubmit,
   onCancel,
   onClickOutside,
   hotkeyScope,
 }: NavigationDrawerInputProps) => {
-  const theme = useTheme();
-  const [isNavigationDrawerExpanded] = useRecoilState(
-    isNavigationDrawerExpandedState,
-  );
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   useHotkeyScopeOnMount(hotkeyScope);
@@ -102,10 +65,6 @@ export const NavigationDrawerInput = ({
     listenerId: 'navigation-drawer-input',
   });
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
-  };
-
   const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
     if (isDefined(value)) {
       event.target.select();
@@ -113,32 +72,18 @@ export const NavigationDrawerInput = ({
   };
 
   return (
-    <StyledItem
-      className={className}
-      isNavigationDrawerExpanded={isNavigationDrawerExpanded}
-    >
-      <StyledItemElementsContainer>
-        {Icon && (
-          <Icon
-            style={{
-              minWidth: theme.icon.size.md,
-            }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.md}
-            color="currentColor"
-          />
-        )}
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <StyledTextInput
-            ref={inputRef}
-            value={value}
-            placeholder={placeholder}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            autoFocus
-          />
-        </NavigationDrawerAnimatedCollapseWrapper>
-      </StyledItemElementsContainer>
-    </StyledItem>
+    <NavigationDrawerAnimatedCollapseWrapper>
+      <StyledInput
+        className={className}
+        LeftIcon={Icon}
+        ref={inputRef}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        onFocus={handleFocus}
+        fullWidth
+        autoFocus
+      />
+    </NavigationDrawerAnimatedCollapseWrapper>
   );
 };
