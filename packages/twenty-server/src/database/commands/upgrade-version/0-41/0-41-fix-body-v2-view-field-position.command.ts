@@ -10,7 +10,6 @@ import {
 } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -25,7 +24,7 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
