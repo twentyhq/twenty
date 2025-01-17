@@ -105,7 +105,15 @@ msgid "Change {to}"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
-msgid "Chinese"
+#~ msgid "Chinese"
+#~ msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+msgid "Chinese — Simplified"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+msgid "Chinese — Traditional"
 msgstr ""
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
@@ -395,7 +403,7 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Pseudo-English"
 msgstr ""
 
