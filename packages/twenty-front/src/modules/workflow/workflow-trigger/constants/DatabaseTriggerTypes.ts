@@ -15,11 +15,11 @@ export const DATABASE_TRIGGER_TYPES: Array<{
   {
     name: DatabaseTriggerName.RECORD_IS_UPDATED,
     type: 'DATABASE_EVENT',
-    icon: IconTrash,
+    icon: IconClick,
   },
   {
     name: DatabaseTriggerName.RECORD_IS_DELETED,
     type: 'DATABASE_EVENT',
-    icon: IconClick,
+    icon: IconTrash,
   },
 ];
