@@ -76,7 +76,7 @@ export const RecordEditableName = ({
       <NavigationDrawerItemInput
         isRenaming={isRenaming}
         setIsRenaming={setIsRenaming}
-        defaultValue={record?.name}
+        defaultValue={record?.name ?? ''}
         placeholder={'Name'}
         handleSubmit={handleSubmit}
         handleCancel={handleCancel}
