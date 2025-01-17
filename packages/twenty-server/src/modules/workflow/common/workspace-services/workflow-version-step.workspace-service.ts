@@ -203,13 +203,13 @@ export class WorkflowVersionStepWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         const copiedServerlessFunction =
-          await this.serverlessFunctionService.copyOneServerlessFunction({
-            serverlessFunctionToCopyId:
-              step.settings.input.serverlessFunctionId,
-            serverlessFunctionToCopyVersion:
-              step.settings.input.serverlessFunctionVersion,
-            workspaceId,
-          });
+          await this.serverlessFunctionService.resetServerlessFunctionToOldVersion(
+            {
+              id: step.settings.input.serverlessFunctionId,
+              version: step.settings.input.serverlessFunctionVersion,
+              workspaceId,
+            },
+          );
 
         return {
           ...step,
@@ -219,7 +219,7 @@ export class WorkflowVersionStepWorkspaceService {
             input: {
               ...step.settings.input,
               serverlessFunctionId: copiedServerlessFunction.id,
-              serverlessFunctionVersion: copiedServerlessFunction.latestVersion,
+              serverlessFunctionVersion: 'draft',
             },
           },
         };
