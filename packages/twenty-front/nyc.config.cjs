@@ -39,7 +39,7 @@ const getCoverageConfig = () => {
       return pagesCoverage;
     case 'modules':
       return modulesCoverage;
-    case "performance":
+    case 'performance':
       return performanceCoverage;
     default:
       return globalCoverage;
