@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 
 const mockCreateNewWorkflowVersion = jest.fn().mockResolvedValue({
@@ -20,7 +20,7 @@ jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
   }),
 }));
 
-describe('useGetUpdatableWorkflowVersion', () => {
+describe('useGetUpdatableWorkflowVersionId', () => {
   const mockWorkflow = (status: 'ACTIVE' | 'DRAFT') =>
     ({
       id: '123',
@@ -43,20 +43,20 @@ describe('useGetUpdatableWorkflowVersion', () => {
     }) as WorkflowWithCurrentVersion;
 
   it('should not create workflow version if draft version exists', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
-    const workflowVersion = await result.current.getUpdatableWorkflowVersion(
-      mockWorkflow('DRAFT'),
-    );
+    const { result } = renderHook(() => useGetUpdatableWorkflowVersionId());
+    const workflowVersionId =
+      await result.current.getUpdatableWorkflowVersionId(mockWorkflow('DRAFT'));
     expect(mockCreateNewWorkflowVersion).not.toHaveBeenCalled();
-    expect(workflowVersion.id === '456');
+    expect(workflowVersionId === '456');
   });
 
   it('should create workflow version if no draft version exists', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
-    const workflowVersion = await result.current.getUpdatableWorkflowVersion(
-      mockWorkflow('ACTIVE'),
-    );
+    const { result } = renderHook(() => useGetUpdatableWorkflowVersionId());
+    const workflowVersionId =
+      await result.current.getUpdatableWorkflowVersionId(
+        mockWorkflow('ACTIVE'),
+      );
     expect(mockCreateNewWorkflowVersion).toHaveBeenCalled();
-    expect(workflowVersion.id === '457');
+    expect(workflowVersionId === '457');
   });
 });

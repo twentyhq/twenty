@@ -489,6 +489,8 @@ export class WorkflowVersionStepWorkspaceService {
       steps: newWorkflowVersionSteps,
       trigger: newWorkflowVersionTrigger,
     });
+
+    return draftWorkflowVersion.id;
   }
 
   private async runWorkflowVersionStepDeletionSideEffects({

@@ -1,4 +1,4 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
 import {
   WorkflowStep,
   WorkflowWithCurrentVersion,
@@ -11,7 +11,7 @@ export const useUpdateStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersionId } = useGetUpdatableWorkflowVersionId();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
 
   const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
@@ -19,9 +19,9 @@ export const useUpdateStep = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersionId(workflow);
     await updateWorkflowVersionStep({
-      workflowVersionId: workflowVersion.id,
+      workflowVersionId,
       step: updatedStep,
     });
   };
