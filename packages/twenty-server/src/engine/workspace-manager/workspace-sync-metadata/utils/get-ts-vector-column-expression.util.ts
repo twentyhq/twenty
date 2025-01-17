@@ -91,6 +91,16 @@ const getColumnExpression = (
         ''
       )
     `;
+    /* case FieldMetadataType.RICH_TEXT_V2:
+      return `
+        COALESCE(
+          CASE
+            WHEN to_regclass('${columnName}') IS NOT NULL THEN ${quotedColumnName}
+            ELSE NULL
+          END,
+          ''
+        )
+      `; */
     default:
       return `COALESCE(${quotedColumnName}, '')`;
   }

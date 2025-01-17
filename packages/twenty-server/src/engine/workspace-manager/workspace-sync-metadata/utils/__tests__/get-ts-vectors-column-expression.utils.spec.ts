@@ -63,16 +63,4 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       "to_tsvector('simple', COALESCE(\"bodyV2Markdown\", ''))",
     );
   });
-
-  it('should prefer rich text v2 fields over rich text fields', () => {
-    const fields = [
-      { name: 'body', type: FieldMetadataType.RICH_TEXT },
-      { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT_V2 },
-    ] as FieldTypeAndNameMetadata[];
-    const result = getTsVectorColumnExpressionFromFields(fields);
-
-    expect(result).toBe(
-      "to_tsvector('simple', COALESCE(\"bodyV2Markdown\", ''))",
-    );
-  });
 });

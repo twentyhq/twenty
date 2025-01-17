@@ -146,7 +146,7 @@ export const useCommandMenuCommands = () => {
   });
 
   const richTextV2BodyExists = noteObjectMetadataItem
-    ? 'bodyV2' in noteObjectMetadataItem
+    ? noteObjectMetadataItem.fields.some((field) => field.name === 'bodyV2')
     : false;
 
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
