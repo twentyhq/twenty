@@ -16,12 +16,11 @@ export const RecordTableStickyEffect = () => {
     scrollWrapperScrollBottomComponentState,
   );
 
-
   useEffect(() => {
     if (scrollBottom > 0) {
-      document.getElementById('record-table-body')?.classList.add('is-footer-sticky');
+      document.getElementById('record-table-body')?.classList.add('footer-sticky');
     } else {
-      document.getElementById('record-table-body')?.classList.remove('is-footer-sticky');
+      document.getElementById('record-table-body')?.classList.remove('footer-sticky');
     }
   }, [scrollBottom]);
 
