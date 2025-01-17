@@ -9,6 +9,7 @@ import {
 } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrappeScrollBottomComponentState';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
@@ -106,10 +107,18 @@ export const ScrollWrapper = ({
     componentInstanceId,
   );
 
+  const setScrollBottom = useSetRecoilComponentStateV2(
+    scrollWrapperScrollBottomComponentState,
+    componentInstanceId,
+  );
+
   const handleScroll = (overlayScroll: OverlayScrollbars) => {
     const target = overlayScroll.elements().scrollOffsetElement;
     setScrollTop(target.scrollTop);
     setScrollLeft(target.scrollLeft);
+    setScrollBottom(
+      target.scrollHeight - target.clientHeight - target.scrollTop,
+    );
   };
 
   const setOverlayScrollbars = useSetRecoilComponentStateV2(
@@ -129,6 +138,12 @@ export const ScrollWrapper = ({
       },
     },
     events: {
+      updated: (osInstance) => {
+        const { scrollOffsetElement: target } = osInstance.elements();
+        setScrollBottom(
+          target.scrollHeight - target.clientHeight - target.scrollTop,
+        );
+      },
       scroll: (osInstance) => {
         const { scrollOffsetElement: target, scrollbarVertical } =
           osInstance.elements();

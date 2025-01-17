@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -70,6 +71,7 @@ const StyledTextContainerWithEllipsis = styled.div`
 `;
 
 export const SettingsWorkspaceMembers = () => {
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -138,13 +140,13 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="Members"
+      title={t`Members`}
       links={[
         {
-          children: 'Workspace',
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Members' },
+        { children: <Trans>Members</Trans> },
       ]}
     >
       <SettingsPageContainer>
@@ -152,8 +154,8 @@ export const SettingsWorkspaceMembers = () => {
           currentWorkspace?.isPublicInviteLinkEnabled && (
             <Section>
               <H2Title
-                title="Invite by link"
-                description="Share this link to invite users to join your workspace"
+                title={t`Invite by link`}
+                description={t`Share this link to invite users to join your workspace`}
               />
               <WorkspaceInviteLink
                 inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
@@ -162,8 +164,8 @@ export const SettingsWorkspaceMembers = () => {
           )}
         <Section>
           <H2Title
-            title="Manage Members"
-            description="Manage the members of your space here"
+            title={t`Manage Members`}
+            description={t`Manage the members of your space here`}
           />
           <Table>
             <StyledTableHeaderRow>
@@ -171,8 +173,12 @@ export const SettingsWorkspaceMembers = () => {
                 gridAutoColumns="150px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
-                <TableHeader>Name</TableHeader>
-                <TableHeader>Email</TableHeader>
+                <TableHeader>
+                  <Trans>Name</Trans>
+                </TableHeader>
+                <TableHeader>
+                  <Trans>Email</Trans>
+                </TableHeader>
                 <TableHeader align={'right'}></TableHeader>
               </TableRow>
             </StyledTableHeaderRow>
@@ -235,8 +241,8 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
         <Section>
           <H2Title
-            title="Invite by email"
-            description="Send an invite email to your team"
+            title={t`Invite by email`}
+            description={t`Send an invite email to your team`}
           />
           <WorkspaceInviteTeam />
           {isNonEmptyArray(workspaceInvitations) && (
@@ -246,8 +252,12 @@ export const SettingsWorkspaceMembers = () => {
                   gridAutoColumns="150px 1fr 1fr"
                   mobileGridAutoColumns="100px 1fr 1fr"
                 >
-                  <TableHeader>Email</TableHeader>
-                  <TableHeader align={'right'}>Expires in</TableHeader>
+                  <TableHeader>
+                    <Trans>Email</Trans>
+                  </TableHeader>
+                  <TableHeader align={'right'}>
+                    <Trans>Expires in</Trans>
+                  </TableHeader>
                   <TableHeader></TableHeader>
                 </TableRow>
               </StyledTableHeaderRow>
@@ -308,18 +318,18 @@ export const SettingsWorkspaceMembers = () => {
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         setIsOpen={setIsConfirmationModalOpen}
-        title="Account Deletion"
+        title={t`Account Deletion`}
         subtitle={
-          <>
+          <Trans>
             This action cannot be undone. This will permanently delete this user
             and remove them from all their assignements.
-          </>
+          </Trans>
         }
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        deleteButtonText="Delete account"
+        deleteButtonText={t`Delete account`}
       />
     </SubMenuTopBarContainer>
   );

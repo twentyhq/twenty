@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
@@ -79,6 +80,7 @@ const StyledReleaseDate = styled.span`
 `;
 
 export const Releases = () => {
+  const { t } = useLingui();
   const [releases, setReleases] = useState<ReleaseNote[]>([]);
 
   useEffect(() => {
@@ -106,15 +108,13 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="Releases"
+      title={t`Releases`}
       links={[
         {
-          children: 'Others',
-          href: getSettingsPagePath(SettingsPath.Releases),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        {
-          children: 'Releases',
-        },
+        { children: <Trans>Releases</Trans> },
       ]}
     >
       <SettingsPageContainer>

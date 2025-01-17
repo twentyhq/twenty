@@ -273,6 +273,7 @@ export class ServerlessFunctionService {
         name: serverlessFunctionInput.name,
         description: serverlessFunctionInput.description,
         syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+        timeoutSeconds: serverlessFunctionInput.timeoutSeconds,
       },
     );
 
@@ -393,6 +394,7 @@ export class ServerlessFunctionService {
       {
         name: serverlessFunctionToCopy?.name,
         description: serverlessFunctionToCopy?.description,
+        timeoutSeconds: serverlessFunctionToCopy?.timeoutSeconds,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
       },

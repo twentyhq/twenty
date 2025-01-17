@@ -28,7 +28,7 @@ export const RecordTableNoRecordGroupRows = () => {
       })}
       <RecordTableBodyFetchMoreLoader />
       {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
-        <RecordTableAggregateFooter endOfTableSticky />
+        <RecordTableAggregateFooter />
       )}
     </>
   );

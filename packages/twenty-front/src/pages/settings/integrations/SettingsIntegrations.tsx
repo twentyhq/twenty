@@ -4,19 +4,21 @@ import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 export const SettingsIntegrations = () => {
+  const { t } = useLingui();
   const integrationCategories = useSettingsIntegrationCategories();
 
   return (
     <SubMenuTopBarContainer
-      title="Integrations"
+      title={t`Integrations`}
       links={[
         {
-          children: 'Workspace',
+          children: <Trans>Workspace</Trans>,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Integrations' },
+        { children: <Trans>Integrations</Trans> },
       ]}
     >
       <SettingsPageContainer>

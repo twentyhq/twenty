@@ -102,7 +102,7 @@ jobs:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
     strategy:
       matrix:
-        storybook_scope: [modules, pages]
+        storybook_scope: [modules, pages, performance]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -119,7 +119,7 @@ jobs:
           mkdir -p ${{ env.PATH_TO_COVERAGE }}
           npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
       - name: Checking coverage
-        run: npx nx storybook:coverage twenty-front --checkCoverage=true
+        run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
