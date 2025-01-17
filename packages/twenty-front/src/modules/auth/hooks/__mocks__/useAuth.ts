@@ -1,12 +1,12 @@
 import {
-  ChallengeDocument,
   GetAuthTokensFromLoginTokenDocument,
   GetCurrentUserDocument,
+  GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
 } from '~/generated/graphql';
 
 export const queries = {
-  challenge: ChallengeDocument,
+  getLoginTokenFromCredentials: GetLoginTokenFromCredentialsDocument,
   getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
@@ -18,7 +18,7 @@ export const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
 export const variables = {
-  challenge: {
+  getLoginTokenFromCredentials: {
     email,
     password,
   },
@@ -28,7 +28,7 @@ export const variables = {
 };
 
 export const results = {
-  challenge: {
+  getLoginTokenFromCredentials: {
     loginToken: {
       token,
       expiresAt: '2022-01-01',
@@ -81,12 +81,12 @@ export const results = {
 export const mocks = [
   {
     request: {
-      query: queries.challenge,
-      variables: variables.challenge,
+      query: queries.getLoginTokenFromCredentials,
+      variables: variables.getLoginTokenFromCredentials,
     },
     result: jest.fn(() => ({
       data: {
-        challenge: results.challenge,
+        getLoginTokenFromCredentials: results.getLoginTokenFromCredentials,
       },
     })),
   },
@@ -104,7 +104,7 @@ export const mocks = [
   {
     request: {
       query: queries.signup,
-      variables: variables.challenge,
+      variables: variables.getLoginTokenFromCredentials,
     },
     result: jest.fn(() => ({
       data: {

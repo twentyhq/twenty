@@ -46,7 +46,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'GetWorkspaceFromInviteHash',
       'Track',
       'CheckUserExists',
-      'Challenge',
+      'GetLoginTokenFromCredentials',
       'GetAuthTokensFromLoginToken',
       'GetLoginTokenFromEmailVerificationToken',
       'ResendEmailVerificationToken',

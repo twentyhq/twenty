@@ -23,10 +23,10 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetCurrentUserLazyQuery,
+  useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
 } from '~/generated/graphql';
@@ -87,7 +87,8 @@ export const useAuth = () => {
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const [challenge] = useChallengeMutation();
+  const [getLoginTokenFromCredentials] =
+    useGetLoginTokenFromCredentialsMutation();
   const [signUp] = useSignUpMutation();
   const [getAuthTokensFromLoginToken] =
     useGetAuthTokensFromLoginTokenMutation();
@@ -169,10 +170,10 @@ export const useAuth = () => {
     [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
-  const handleChallenge = useCallback(
+  const handleGetLoginTokenFromCredentials = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       try {
-        const challengeResult = await challenge({
+        const challengeResult = await getLoginTokenFromCredentials({
           variables: {
             email,
             password,
@@ -183,11 +184,11 @@ export const useAuth = () => {
           throw challengeResult.errors;
         }
 
-        if (!challengeResult.data?.challenge) {
+        if (!challengeResult.data?.getLoginTokenFromCredentials) {
           throw new Error('No login token');
         }
 
-        return challengeResult.data.challenge;
+        return challengeResult.data.getLoginTokenFromCredentials;
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
@@ -201,7 +202,7 @@ export const useAuth = () => {
         throw error;
       }
     },
-    [challenge, setSearchParams, setSignInUpStep],
+    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep],
   );
 
   const handleGetLoginTokenFromEmailVerificationToken = useCallback(
@@ -357,14 +358,14 @@ export const useAuth = () => {
 
   const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      const { loginToken } = await handleChallenge(
+      const { loginToken } = await handleGetLoginTokenFromCredentials(
         email,
         password,
         captchaToken,
       );
       await handleGetAuthTokensFromLoginToken(loginToken.token);
     },
-    [handleChallenge, handleGetAuthTokensFromLoginToken],
+    [handleGetLoginTokenFromCredentials, handleGetAuthTokensFromLoginToken],
   );
 
   const handleSignOut = useCallback(async () => {
@@ -496,7 +497,7 @@ export const useAuth = () => {
   );
 
   return {
-    challenge: handleChallenge,
+    getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     getLoginTokenFromEmailVerificationToken:
       handleGetLoginTokenFromEmailVerificationToken,
     getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,

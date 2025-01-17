@@ -47,8 +47,8 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-import { ChallengeInput } from './dto/challenge.input';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
+import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
@@ -107,8 +107,9 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async challenge(
-    @Args() challengeInput: ChallengeInput,
+  async getLoginTokenFromCredentials(
+    @Args()
+    getLoginTokenFromCredentialsInput: GetLoginTokenFromCredentialsInput,
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
     const workspace =
@@ -123,7 +124,12 @@ export class AuthResolver {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
-    const user = await this.authService.challenge(challengeInput, workspace);
+
+    const user = await this.authService.challenge(
+      getLoginTokenFromCredentialsInput,
+      workspace,
+    );
+
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
