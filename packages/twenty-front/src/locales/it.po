@@ -1,0 +1,326 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-16 21:57+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: it\n"
+
+#. placeholder {0}: settingsObjectsTableMetadataField.fieldLabel
+#: src/pages/settings/data-model/SettingsObjects.tsx:180
+msgid "{0}"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:84
+msgid "About"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+msgid "Active"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "Active APIs keys created by you or your team."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr ""
+
+#. placeholder {5}: switchingInfo.impact
+#: src/pages/settings/SettingsBilling.tsx:190
+msgid "Are you sure that you want to change your billing interval? {5}"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:128
+#: src/pages/settings/SettingsBilling.tsx:134
+msgid "Billing"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:174
+msgid "Cancel Plan"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:169
+msgid "Cancel your subscription"
+msgstr ""
+
+#. placeholder {6}: switchingInfo.to
+#: src/pages/settings/SettingsBilling.tsx:194
+msgid "Change {6}"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+msgid "Create API key"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+msgid "Create Webhook"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+msgid "Data model"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:85
+msgid "Define the name and description of your object"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:35
+#: src/pages/settings/developers/SettingsDevelopers.tsx:42
+msgid "Developers"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsDomain.tsx:135
+#: src/pages/settings/workspace/SettingsDomain.tsx:150
+msgid "Domain"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:156
+msgid "Edit billing interval"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:144
+msgid "Edit payment method, see your invoices and more"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:42
+msgid "Email"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr ""
+
+#. placeholder {1}: switchingInfo.to
+#: src/pages/settings/SettingsBilling.tsx:118
+msgid "Error while switching subscription {1}."
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:164
+msgid "Existing objects"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:56
+msgid "Failed to create object"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:45
+msgid "from monthly to yearly"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:52
+msgid "from yearly to monthly"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/workspace/SettingsDomain.tsx:132
+msgid "General"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:214
+msgid "Inactive"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:87
+msgid "Invalid form values"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:52
+msgid "Invalid object data"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+msgid "Language"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:143
+msgid "Manage your subscription"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+msgid "Name"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+msgid "New"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
+msgid "New Object"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:108
+msgid "not allowed"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:45
+msgid "Object created successfully"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:156
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
+msgid "Objects"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+msgid "Profile"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:168
+msgid "Search an object..."
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+msgid "Security"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+msgid "Select your preferred language"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:151
+msgid "Set the name of your subdomain"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:107
+msgid "Subdomain already taken"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:49
+msgid "Subdomain can not be longer than 30 characters"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
+#. placeholder {0}: switchingInfo.to
+#: src/pages/settings/SettingsBilling.tsx:113
+msgid "Subscription has been switched {0}"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr ""
+
+#. placeholder {2}: switchingInfo.from
+#: src/pages/settings/SettingsBilling.tsx:157
+msgid "Switch {2}"
+msgstr ""
+
+#. placeholder {3}: switchingInfo.to
+#: src/pages/settings/SettingsBilling.tsx:161
+msgid "Switch {3}"
+msgstr ""
+
+#. placeholder {4}: switchingInfo.to
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {4}"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:51
+msgid "to monthly"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:44
+msgid "to yearly"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:51
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:22
+msgid "User"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:148
+msgid "View billing details"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+msgid "Webhooks"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:131
+#: src/pages/settings/workspace/SettingsDomain.tsx:128
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+msgid "Workspace"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "You will be charged immediately for the full year."
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:170
+msgid "Your workspace will be disabled"
+msgstr ""

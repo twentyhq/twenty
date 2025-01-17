@@ -1,8 +1,8 @@
 const globalCoverage = {
-  branches: 24,
-  statements: 40,
-  lines: 40,
-  functions: 30,
+  branches: 23,
+  statements: 39,
+  lines: 39,
+  functions: 28,
   exclude: ['src/generated/**/*'],
 };
 

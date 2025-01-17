@@ -61,6 +61,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useSearchParams } from 'react-router-dom';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -279,6 +280,7 @@ export const useAuth = () => {
             )
           : TimeFormat[detectTimeFormat()],
       });
+      dynamicActivate(workspaceMember.locale ?? 'en');
     }
 
     const workspace = user.currentWorkspace ?? null;

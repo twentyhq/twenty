@@ -578,13 +578,18 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    if (!invitation && !workspaceInviteHash && workspace) {
-      if (userData.type === 'existingUser') {
-        await this.userService.hasUserAccessToWorkspaceOrThrow(
-          userData.existingUser.id,
-          workspace.id,
-        );
-      }
+    const hasInvitation = invitation || workspaceInviteHash;
+    const isTargetAnExistingWorkspace = !!workspace;
+    const isAnExistingUser = userData.type === 'existingUser';
+
+    if (!hasInvitation && isTargetAnExistingWorkspace && isAnExistingUser) {
+      return await this.userService.hasUserAccessToWorkspaceOrThrow(
+        userData.existingUser.id,
+        workspace.id,
+      );
+    }
+
+    if (!hasInvitation && isTargetAnExistingWorkspace && !isAnExistingUser) {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

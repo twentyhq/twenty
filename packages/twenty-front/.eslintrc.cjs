@@ -25,7 +25,7 @@ module.exports = {
       },
       plugins: ['project-structure'],
       settings: {
-        'project-structure/folder-structure-config-path': path.resolve(
+        'project-structure/folder-structure-config-path': path.join(
           __dirname,
           'folderStructure.json',
         ),

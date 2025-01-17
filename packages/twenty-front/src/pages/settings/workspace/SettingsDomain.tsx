@@ -1,6 +1,7 @@
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -20,23 +21,26 @@ import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const validationSchema = z
-  .object({
-    subdomain: z
-      .string()
-      .min(3, { message: 'Subdomain can not be shorter than 3 characters' })
-      .max(30, { message: 'Subdomain can not be longer than 30 characters' })
-      .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
-        message:
-          'Use letter, number and dash only. Start and finish with a letter or a number',
-      }),
-  })
-  .required();
 
-export type Form = z.infer<typeof validationSchema>;
+type Form = {
+  subdomain: string;
+};
 
 export const SettingsDomain = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
+
+  const validationSchema = z
+    .object({
+      subdomain: z
+        .string()
+        .min(3, { message: t`Subdomain can not be shorter than 3 characters` })
+        .max(30, { message: t`Subdomain can not be longer than 30 characters` })
+        .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+          message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
+        }),
+    })
+    .required();
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -66,7 +70,7 @@ export const SettingsDomain = () => {
       const values = form.getValues();
 
       if (!values || !form.formState.isValid || !currentWorkspace) {
-        throw new Error('Invalid form values');
+        throw new Error(t`Invalid form values`);
       }
 
       await updateWorkspace({
@@ -86,8 +90,8 @@ export const SettingsDomain = () => {
     } catch (error) {
       if (
         error instanceof Error &&
-        (error.message === 'Subdomain already taken' ||
-          error.message.endsWith('not allowed'))
+        (error.message === t`Subdomain already taken` ||
+          error.message.endsWith(t`not allowed`))
       ) {
         form.control.setError('subdomain', {
           type: 'manual',
@@ -104,17 +108,17 @@ export const SettingsDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="General"
+      title={t`General`}
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: 'General',
+          children: t`General`,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        { children: 'Domain' },
+        { children: t`Domain` },
       ]}
       actionButton={
         <SaveAndCancelButtons
