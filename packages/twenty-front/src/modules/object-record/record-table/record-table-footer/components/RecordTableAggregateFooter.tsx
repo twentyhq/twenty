@@ -7,6 +7,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { scrollWrapperIsScrollableComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useEffect } from 'react';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTd = styled.td`
@@ -14,7 +15,6 @@ const StyledTd = styled.td`
 `;
 
 const StyledTableRow = styled.tr<{
-  endOfTableSticky?: boolean;
   hasHorizontalOverflow?: boolean;
   isSticky?: boolean;
 }>`
@@ -23,7 +23,7 @@ const StyledTableRow = styled.tr<{
   z-index: ${({ isSticky }) => (isSticky ? 10 : 2)};
   position: relative;
   td {
-    border-top: 1px solid ${({ theme }) => theme.border.color.light};
+    border-top: ${({ isSticky, theme }) => (isSticky ? `1px solid ${theme.border.color.light}` : 'none')};
     z-index: ${({ isSticky }) => (isSticky ? 10 : 'auto')};
     position: ${({ isSticky }) => (isSticky ? 'sticky' : 'relative')};
     bottom: ${({ isSticky }) => (isSticky ? 0 : 'auto')};
@@ -59,8 +59,8 @@ const StyledTableRow = styled.tr<{
     }
   }
   background: ${({ theme }) => theme.background.primary};
-  ${({ endOfTableSticky, hasHorizontalOverflow }) =>
-    endOfTableSticky &&
+  ${({ isSticky, hasHorizontalOverflow }) =>
+    isSticky &&
     `
       bottom: ${hasHorizontalOverflow ? '10px' : '0'};
       ${
@@ -82,11 +82,8 @@ const StyledTableRow = styled.tr<{
 
 export const RecordTableAggregateFooter = ({
   currentRecordGroupId,
-  endOfTableSticky,
 }: {
   currentRecordGroupId?: string;
-
-  endOfTableSticky?: boolean;
 }) => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -105,13 +102,19 @@ export const RecordTableAggregateFooter = ({
     scrollWrapperIsScrollableComponentState,
   );
 
-  console.log(isScrollable);
+  useEffect(() => {
+    if (isScrollable) {
+      document.getElementById('record-table-body')?.classList.add('is-scrollable');
+    } else {
+      document.getElementById('record-table-body')?.classList.remove('is-scrollable');
+    }
+  }, [isScrollable]);
+
 
   return (
     <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
-      endOfTableSticky={endOfTableSticky}
       hasHorizontalOverflow={hasHorizontalOverflow}
       isSticky={isScrollable}
     >
