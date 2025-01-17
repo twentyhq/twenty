@@ -161,6 +161,9 @@ export function formatResult<T>(
   //   - we return `2025-01-01T00:00:00.000Z`
   //
   // See this PR for more details: https://github.com/twentyhq/twenty/pull/9700
+  const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
+    new Date().getTimezoneOffset() * 60 * 1000;
+
   for (const dateFieldMetadata of dateFieldMetadataCollection) {
     const rawUpdatedDate = newData[dateFieldMetadata.name] as
       | string
@@ -171,9 +174,6 @@ export function formatResult<T>(
     if (!isDefined(rawUpdatedDate)) {
       continue;
     }
-
-    const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
-      new Date().getTimezoneOffset() * 60 * 1000;
 
     if (isDate(rawUpdatedDate)) {
       if (isValidDate(rawUpdatedDate)) {
