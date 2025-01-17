@@ -42,6 +42,7 @@ export const SKELETON_LOADER_HEIGHT_SIZES = {
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
   const theme = useTheme();
+
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}
