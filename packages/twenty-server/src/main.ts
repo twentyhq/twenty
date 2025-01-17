@@ -86,6 +86,9 @@ const bootstrap = async () => {
   // Enable session - Today it's used only for SSO
   app.use(session(getSessionStorageOptions(environmentService)));
 
+  // Trust the first proxy to ensure correct client IP and protocol detection.
+  app.set('trust proxy', 1);
+
   await app.listen(environmentService.get('PORT'));
 };
 

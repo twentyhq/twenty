@@ -14,7 +14,7 @@ export const getSessionStorageOptions = (
 
   const SERVER_URL = environmentService.get('SERVER_URL');
 
-  const sessionStorage = {
+  const sessionStorage: session.SessionOptions = {
     secret: environmentService.get('SESSION_STORE_SECRET'),
     resave: false,
     saveUninitialized: false,
