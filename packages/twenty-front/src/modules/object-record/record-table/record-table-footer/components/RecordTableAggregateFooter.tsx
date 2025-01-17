@@ -5,7 +5,7 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
-import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrappeScrollBottomComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
