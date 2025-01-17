@@ -153,9 +153,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async getBillingSubscriptions(workspaceId: string) {
-    return this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+  async findMany(workspaceId: string) {
+    return this.billingSubscriptionRepository.find({ where: { workspaceId } });
   }
 }
