@@ -10,7 +10,7 @@ import { MicrosoftGetMessageListService } from './microsoft-get-message-list.ser
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
 
 const refreshToken = 'replace-with-your-refresh-token';
-const syncCursor = 'replace-with-your-sync-cursor';
+const syncCursor = `replace-with-your-sync-cursor`;
 
 xdescribe('Microsoft dev tests : get message list service', () => {
   let service: MicrosoftGetMessageListService;
