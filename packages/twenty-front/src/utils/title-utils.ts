@@ -2,6 +2,8 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
+import { t } from '@lingui/core/macro';
+
 export enum SettingsPageTitles {
   Accounts = 'Account - Settings',
   Experience = 'Experience - Settings',
@@ -40,15 +42,15 @@ export const getPageTitleFromPath = (pathname: string): string => {
   const pathnameOrPrefix = getPathnameOrPrefix(pathname);
   switch (pathnameOrPrefix) {
     case AppPath.Verify:
-      return 'Verify';
+      return t`Verify`;
     case AppPath.SignInUp:
-      return 'Sign in or Create an account';
+      return t`Sign in or Create an account`;
     case AppPath.Invite:
       return 'Invite';
     case AppPath.CreateWorkspace:
-      return 'Create Workspace';
+      return t`Create Workspace`;
     case AppPath.CreateProfile:
-      return 'Create Profile';
+      return t`Create Profile`;
     case SettingsPathPrefixes.Experience:
       return SettingsPageTitles.Experience;
     case SettingsPathPrefixes.Accounts:

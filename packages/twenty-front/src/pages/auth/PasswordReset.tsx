@@ -3,6 +3,7 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
@@ -13,13 +14,14 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
@@ -27,7 +29,6 @@ import {
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 const validationSchema = z
   .object({
@@ -70,6 +71,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -103,7 +105,7 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken,
     onError: (error) => {
-      enqueueSnackBar(error?.message ?? 'Token Invalid', {
+      enqueueSnackBar(error?.message ?? t`Token Invalid`, {
         variant: SnackBarVariant.Error,
       });
       navigate(AppPath.Index);
@@ -133,14 +135,14 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        enqueueSnackBar('There was an error while updating password.', {
+        enqueueSnackBar(t`There was an error while updating password.`, {
           variant: SnackBarVariant.Error,
         });
         return;
       }
 
       if (isLoggedIn) {
-        enqueueSnackBar('Password has been updated', {
+        enqueueSnackBar(t`Password has been updated`, {
           variant: SnackBarVariant.Success,
         });
         navigate(AppPath.Index);
@@ -156,7 +158,7 @@ export const PasswordReset = () => {
       enqueueSnackBar(
         err instanceof Error
           ? err.message
-          : 'An error occurred while updating password',
+          : t`An error occurred while updating password`,
         {
           variant: SnackBarVariant.Error,
         },
@@ -170,7 +172,9 @@ export const PasswordReset = () => {
         <AnimatedEaseIn>
           <Logo secondaryLogo={workspacePublicData?.logo} />
         </AnimatedEaseIn>
-        <Title animate>Reset Password</Title>
+        <Title animate>
+          <Trans>Reset Password</Trans>
+        </Title>
         <StyledContentContainer>
           {!email ? (
             <SkeletonTheme
@@ -227,7 +231,7 @@ export const PasswordReset = () => {
                         autoFocus
                         value={value}
                         type="password"
-                        placeholder="New Password"
+                        placeholder={t`New Password`}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={error?.message}
@@ -240,7 +244,7 @@ export const PasswordReset = () => {
 
               <MainButton
                 variant="secondary"
-                title="Change Password"
+                title={t`Change Password`}
                 type="submit"
                 fullWidth
                 disabled={isUpdatingPassword}

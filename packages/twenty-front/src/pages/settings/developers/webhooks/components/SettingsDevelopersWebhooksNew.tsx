@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, isDefined, Section } from 'twenty-ui';
@@ -15,6 +16,8 @@ import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
+
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
     operations: string[];
@@ -63,17 +66,17 @@ export const SettingsDevelopersWebhooksNew = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New Webhook"
+      title={t`New Webhook`}
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
         {
-          children: 'Developers',
+          children: t`Developers`,
           href: getSettingsPagePath(SettingsPath.Developers),
         },
-        { children: 'New Webhook' },
+        { children: t`New Webhook` },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -88,13 +91,13 @@ export const SettingsDevelopersWebhooksNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Endpoint URL"
-            description="We will send POST requests to this endpoint for every new event"
+            title={t`Endpoint URL`}
+            description={t`We will send POST requests to this endpoint for every new event`}
           />
           <TextInput
-            placeholder="URL"
+            placeholder={t`URL`}
             value={formValues.targetUrl}
-            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
+            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
             onKeyDown={handleKeyDown}
             onChange={handleChange}
             fullWidth

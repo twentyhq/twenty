@@ -1,3 +1,5 @@
+import { useLingui } from '@lingui/react/macro';
+
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableTimeZoneOption';
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/accounts/constants/AvailableTimezoneOptions';
@@ -13,22 +15,22 @@ export const DateTimeSettingsTimeZoneSelect = ({
   value = detectTimeZone(),
   onChange,
 }: DateTimeSettingsTimeZoneSelectProps) => {
+  const { t } = useLingui();
   const systemTimeZone = detectTimeZone();
-
   const systemTimeZoneOption = findAvailableTimeZoneOption(systemTimeZone);
 
   return (
     <Select
       dropdownId="settings-accounts-calendar-time-zone"
-      label="Time zone"
+      label={t`Time zone`}
       dropdownWidthAuto
       fullWidth
       value={value}
       options={[
         {
           label: isDefined(systemTimeZoneOption)
-            ? `System settings - ${systemTimeZoneOption.label}`
-            : 'System settings',
+            ? t`System settings - ${systemTimeZoneOption.label}`
+            : t`System settings`,
           value: 'system',
         },
         ...AVAILABLE_TIMEZONE_OPTIONS,

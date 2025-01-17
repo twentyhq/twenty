@@ -1,21 +1,21 @@
 /* @license Enterprise */
 
+import isPropValid from '@emotion/is-prop-valid';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
-
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IconKey } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { IconKey } from 'twenty-ui';
-import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
 
 const StyledLink = styled(Link, {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
@@ -26,6 +26,7 @@ const StyledLink = styled(Link, {
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
   const { enqueueSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -53,7 +54,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
       isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
     >
       <SettingsCard
-        title="Add SSO Identity Provider"
+        title={t`Add SSO Identity Provider`}
         disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
         Icon={<IconKey />}
       />

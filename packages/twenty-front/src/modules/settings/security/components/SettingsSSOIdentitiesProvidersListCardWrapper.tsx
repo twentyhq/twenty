@@ -1,16 +1,19 @@
 /* @license Enterprise */
 
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
+import { useLingui } from '@lingui/react/macro';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useNavigate } from 'react-router-dom';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { useRecoilValue } from 'recoil';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
   const navigate = useNavigate();
+  const { t } = useLingui();
 
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
 
@@ -18,7 +21,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
     <SettingsListCard
       items={SSOIdentitiesProviders}
       getItemLabel={(SSOIdentityProvider) =>
-        `${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
+        t`${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
       }
       RowIconFn={(SSOIdentityProvider) =>
         guessSSOIdentityProviderIconByUrl(SSOIdentityProvider.issuer)
@@ -27,7 +30,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
         <SettingsSSOIdentityProviderRowRightContainer SSOIdp={SSOIdp} />
       )}
       hasFooter
-      footerButtonLabel="Add SSO Identity Provider"
+      footerButtonLabel={t`Add SSO Identity Provider`}
       onFooterButtonClick={() =>
         navigate(getSettingsPagePath(SettingsPath.NewSSOIdentityProvider))
       }

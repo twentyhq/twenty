@@ -28,7 +28,7 @@ export const VerifyEmailEffect = () => {
           dedupeKey: 'email-verification-link-dedupe-key',
           variant: SnackBarVariant.Error,
         });
-        return navigate(AppPath.SignInUp);
+        return navigate(AppPath.SignInUpNoLocale);
       }
 
       const captchaToken = await readCaptchaToken();

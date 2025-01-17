@@ -38,7 +38,7 @@ export const VerifyEffect = () => {
       setIsAppWaitingForFreshObjectMetadata(true);
       verify(loginToken);
     } else if (!isLogged) {
-      navigate(AppPath.SignInUp);
+      navigate(AppPath.SignInUpNoLocale);
     }
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps

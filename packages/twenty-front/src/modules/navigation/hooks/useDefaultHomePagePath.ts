@@ -71,7 +71,7 @@ export const useDefaultHomePagePath = () => {
 
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {
-      return AppPath.SignInUp;
+      return AppPath.SignInUpNoLocale;
     }
 
     if (!isDefined(defaultObjectPathInfo)) {

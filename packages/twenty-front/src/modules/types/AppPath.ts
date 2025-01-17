@@ -1,10 +1,11 @@
 export enum AppPath {
   // Not logged-in
-  Verify = '/verify',
-  VerifyEmail = '/verify-email',
-  SignInUp = '/welcome',
-  Invite = '/invite/:workspaceInviteHash',
-  ResetPassword = '/reset-password/:passwordResetToken',
+  Verify = '/verify/:locale?',
+  VerifyEmail = '/verify-email/:locale?',
+  SignInUp = '/welcome/:locale?',
+  SignInUpNoLocale = '/welcome',
+  Invite = '/invite/:workspaceInviteHash/:locale?',
+  ResetPassword = '/reset-password/:passwordResetToken/:locale?',
 
   // Onboarding
   CreateWorkspace = '/create/workspace',

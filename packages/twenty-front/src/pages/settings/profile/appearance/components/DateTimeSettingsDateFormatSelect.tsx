@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -16,23 +17,22 @@ export const DateTimeSettingsDateFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsDateFormatSelectProps) => {
+  const { t } = useLingui();
   const systemTimeZone = detectTimeZone();
-
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
-
   const systemDateFormat = DateFormat[detectDateFormat()];
 
   return (
     <Select
       dropdownId="datetime-settings-date-format"
       dropdownWidth={218}
-      label="Date format"
+      label={t`Date format`}
       fullWidth
       dropdownWidthAuto
       value={value}
       options={[
         {
-          label: `System settings - ${formatInTimeZone(
+          label: t`System settings - ${formatInTimeZone(
             Date.now(),
             usedTimeZone,
             systemDateFormat,

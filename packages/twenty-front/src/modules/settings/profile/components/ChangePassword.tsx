@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { Button, H2Title } from 'twenty-ui';
 
@@ -8,6 +9,7 @@ import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 export const ChangePassword = () => {
   const { enqueueSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
   const currentUser = useRecoilValue(currentUserState);
 
@@ -15,7 +17,7 @@ export const ChangePassword = () => {
 
   const handlePasswordResetClick = async () => {
     if (!currentUser?.email) {
-      enqueueSnackBar('Invalid email', {
+      enqueueSnackBar(t`Invalid email`, {
         variant: SnackBarVariant.Error,
       });
       return;
@@ -28,11 +30,11 @@ export const ChangePassword = () => {
         },
       });
       if (data?.emailPasswordResetLink?.success === true) {
-        enqueueSnackBar('Password reset link has been sent to the email', {
+        enqueueSnackBar(t`Password reset link has been sent to the email`, {
           variant: SnackBarVariant.Success,
         });
       } else {
-        enqueueSnackBar('There was some issue', {
+        enqueueSnackBar(t`There was some issue`, {
           variant: SnackBarVariant.Error,
         });
       }
@@ -46,13 +48,13 @@ export const ChangePassword = () => {
   return (
     <>
       <H2Title
-        title="Change Password"
-        description="Receive an email containing password update link"
+        title={t`Change Password`}
+        description={t`Receive an email containing password update link`}
       />
       <Button
         onClick={handlePasswordResetClick}
         variant="secondary"
-        title="Change Password"
+        title={t`Change Password`}
       />
     </>
   );

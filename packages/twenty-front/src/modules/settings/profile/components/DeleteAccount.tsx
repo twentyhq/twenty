@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Button, H2Title } from 'twenty-ui';
@@ -15,6 +16,7 @@ export const DeleteAccount = () => {
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
+  const { t } = useLingui();
 
   const deleteAccount = async () => {
     await deleteUserAccount();
@@ -24,15 +26,15 @@ export const DeleteAccount = () => {
   return (
     <>
       <H2Title
-        title="Danger zone"
-        description="Delete account and all the associated data"
+        title={t`Danger zone`}
+        description={t`Delete account and all the associated data`}
       />
 
       <Button
         accent="danger"
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant="secondary"
-        title="Delete account"
+        title={t`Delete account`}
       />
 
       <ConfirmationModal
@@ -40,15 +42,15 @@ export const DeleteAccount = () => {
         confirmationPlaceholder={userEmail ?? ''}
         isOpen={isDeleteAccountModalOpen}
         setIsOpen={setIsDeleteAccountModalOpen}
-        title="Account Deletion"
+        title={t`Account Deletion`}
         subtitle={
-          <>
+          <Trans>
             This action cannot be undone. This will permanently delete your
             entire account. <br /> Please type in your email to confirm.
-          </>
+          </Trans>
         }
         onConfirmClick={deleteAccount}
-        deleteButtonText="Delete account"
+        deleteButtonText={t`Delete account`}
       />
     </>
   );

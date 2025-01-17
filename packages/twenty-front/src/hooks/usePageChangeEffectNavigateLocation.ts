@@ -38,7 +38,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
-    return AppPath.SignInUp;
+    return AppPath.SignInUpNoLocale;
   }
 
   if (

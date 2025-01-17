@@ -2,6 +2,9 @@ import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { Trans } from '@lingui/react/macro';
+import { useEffect, useMemo } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
@@ -17,12 +20,12 @@ import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/use
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
-import { useMemo } from 'react';
 import { AnimatedEaseIn } from 'twenty-ui';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDefined } from '~/utils/isDefined';
 
-import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StandardContent = ({
   workspacePublicData,
@@ -39,12 +42,14 @@ const StandardContent = ({
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>
-        Welcome to{' '}
-        {!isDefined(workspacePublicData?.displayName)
-          ? DEFAULT_WORKSPACE_NAME
-          : workspacePublicData?.displayName === ''
-            ? 'Your Workspace'
-            : workspacePublicData?.displayName}
+        <Trans>Welcome to</Trans>{' '}
+        {!isDefined(workspacePublicData?.displayName) ? (
+          DEFAULT_WORKSPACE_NAME
+        ) : workspacePublicData?.displayName === '' ? (
+          <Trans>Your Workspace</Trans>
+        ) : (
+          workspacePublicData?.displayName
+        )}
       </Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
@@ -61,8 +66,14 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-
+  const { locale } = useParams();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (!isUndefinedOrNull(locale)) {
+      dynamicActivate(locale);
+    }
+  }, [locale]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;
