@@ -45,6 +45,8 @@ export const useColorScheme = () => {
     ],
   );
 
+  console.log('colorScheme', colorScheme);
+
   return {
     colorScheme,
     setColorScheme,
