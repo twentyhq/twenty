@@ -142,7 +142,7 @@ export const Settings: Story = {
           />
           <NavigationDrawerItem
             label="Appearance"
-            to={getSettingsPagePath(SettingsPath.Appearance)}
+            to={getSettingsPagePath(SettingsPath.Experience)}
             Icon={IconColorSwatch}
           />
           <NavigationDrawerItemGroup>
