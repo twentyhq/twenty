@@ -327,12 +327,12 @@ export enum FeatureFlagKey {
   IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
   IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled',
-  IsLocalizationEnabled = 'IsLocalizationEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
 export type FieldConnection = {
