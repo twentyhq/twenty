@@ -17,6 +17,8 @@ const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
   isSticky?: boolean;
 }>`
+  z-index: 5;
+  position: sticky;
   td {
     border-top: ${({ isSticky, theme }) => (isSticky ? `1px solid ${theme.border.color.light}` : 'none')};
     z-index: ${({ isSticky }) => (isSticky ? 5 : 'auto')};
