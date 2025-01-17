@@ -1,8 +1,9 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 
 export const useGetUpdatableWorkflowVersion = () => {
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
   const getUpdatableWorkflowVersion = async (
     workflow: WorkflowWithCurrentVersion,
   ) => {
@@ -10,12 +11,9 @@ export const useGetUpdatableWorkflowVersion = () => {
       return workflow.currentVersion;
     }
 
-    return await createNewWorkflowVersion({
+    return await createDraftFromWorkflowVersion({
       workflowId: workflow.id,
-      name: `v${workflow.versions.length + 1}`,
-      status: 'DRAFT',
-      trigger: workflow.currentVersion.trigger,
-      steps: workflow.currentVersion.steps,
+      workflowVersionIdToCopy: workflow.currentVersion.id,
     });
   };
 
