@@ -1,5 +1,7 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -12,6 +14,8 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isDate } from 'src/utils/date/isDate';
+import { isValidDate } from 'src/utils/date/isValidDate';
 
 export function formatResult<T>(
   data: any,
@@ -150,13 +154,35 @@ export function formatResult<T>(
   // TODO: This is a temporary fix to handle a bug in the frontend where the date get returned in the wrong timezone,
   //   thus returning the wrong date.
   for (const dateFieldMetadata of dateFieldMetadataCollection) {
-    const currentDate = new Date(newData[dateFieldMetadata.name]);
+    const rawUpdatedDate = newData[dateFieldMetadata.name] as
+      | string
+      | null
+      | undefined
+      | Date;
+
+    if (!isDefined(rawUpdatedDate)) {
+      continue;
+    }
 
     const offsetInMilliseconds = -(new Date().getTimezoneOffset() * 60000);
 
-    const shiftedDate = new Date(currentDate.getTime() + offsetInMilliseconds);
+    if (isDate(rawUpdatedDate)) {
+      if (isValidDate(rawUpdatedDate)) {
+        const shiftedDate = new Date(
+          rawUpdatedDate.getTime() + offsetInMilliseconds,
+        );
 
-    newData[dateFieldMetadata.name] = shiftedDate;
+        newData[dateFieldMetadata.name] = shiftedDate;
+      }
+    } else if (isNonEmptyString(rawUpdatedDate)) {
+      const currentDate = new Date(newData[dateFieldMetadata.name]);
+
+      const shiftedDate = new Date(
+        new Date(currentDate).getTime() + offsetInMilliseconds,
+      );
+
+      newData[dateFieldMetadata.name] = shiftedDate;
+    }
   }
 
   return newData as T;
