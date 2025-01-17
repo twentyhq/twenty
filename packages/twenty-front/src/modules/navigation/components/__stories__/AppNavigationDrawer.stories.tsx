@@ -76,6 +76,6 @@ export const Main: Story = {};
 export const Settings: Story = {
   args: {
     mobileNavigationDrawer: 'settings',
-    routePath: '/settings/appearance',
+    routePath: '/settings/experience',
   },
 };
