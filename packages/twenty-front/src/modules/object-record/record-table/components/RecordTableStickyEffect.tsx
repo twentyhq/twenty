@@ -19,9 +19,9 @@ export const RecordTableStickyEffect = () => {
 
   useEffect(() => {
     if (scrollBottom > 0) {
-      document.getElementById('record-table-body')?.classList.add('is-scrollable');
+      document.getElementById('record-table-body')?.classList.add('is-footer-sticky');
     } else {
-      document.getElementById('record-table-body')?.classList.remove('is-scrollable');
+      document.getElementById('record-table-body')?.classList.remove('is-footer-sticky');
     }
   }, [scrollBottom]);
 

@@ -27,7 +27,7 @@ const StyledTable = styled.table`
   table-layout: fixed;
   width: 100%;
 
-  .is-scrollable tr:nth-last-child(2) td {
+  .is-footer-sticky tr:nth-last-child(2) td {
     border-bottom: none;
   }
 `;
