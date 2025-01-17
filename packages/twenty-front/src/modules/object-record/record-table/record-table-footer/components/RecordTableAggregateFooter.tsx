@@ -19,11 +19,9 @@ const StyledTableRow = styled.tr<{
 }>`
   td {
     border-top: ${({ isSticky, theme }) => (isSticky ? `1px solid ${theme.border.color.light}` : 'none')};
-    z-index: ${({ isSticky }) => (isSticky ? 10 : 'auto')};
+    z-index: ${({ isSticky }) => (isSticky ? 5 : 'auto')};
     position: ${({ isSticky }) => (isSticky ? 'sticky' : 'relative')};
     bottom: ${({ isSticky }) => (isSticky ? 0 : 'auto')};
-    border-right-color: ${({ theme }) => theme.background.primary};
-
   }
   cursor: pointer;
   td:nth-of-type(1) {
@@ -34,7 +32,7 @@ const StyledTableRow = styled.tr<{
   &.first-columns-sticky {
     td:nth-of-type(2) {
       position: sticky;
-      z-index: 15;
+      z-index: 10;
       transition: 0.3s ease;
       &::after {
         content: '';
@@ -45,7 +43,6 @@ const StyledTableRow = styled.tr<{
         right: 0px;
         box-shadow: ${({ theme }) => theme.boxShadow.light};
         clip-path: inset(0px -4px 0px 0px);
-        z-index: 20;
       }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
         width: 34px;
@@ -97,12 +94,14 @@ export const RecordTableAggregateFooter = ({
     scrollWrapperScrollBottomComponentState,
   );
 
+  console.log('scrollBottom', scrollBottom);
+
   return (
     <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       hasHorizontalOverflow={hasHorizontalOverflow}
-      isSticky={scrollBottom > 2}
+      isSticky={scrollBottom > 1}
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {
