@@ -10,10 +10,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -29,7 +30,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 >;
 
 export const SettingsObjectNewFieldSelect = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
