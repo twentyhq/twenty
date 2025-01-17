@@ -1,7 +1,9 @@
+import { UseOverlayScrollbarsInstance } from 'overlayscrollbars-react';
 import { createContext, RefObject } from 'react';
 
 type ScrollWrapperContextValue = {
   ref: RefObject<HTMLDivElement>;
+  instance: UseOverlayScrollbarsInstance | null;
   id: string;
 };
 
@@ -25,6 +27,7 @@ export type ContextProviderName =
 const createScrollWrapperContext = (id: string) =>
   createContext<ScrollWrapperContextValue>({
     ref: { current: null },
+    instance: null,
     id,
   });
 

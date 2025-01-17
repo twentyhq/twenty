@@ -58,6 +58,13 @@ export const RecordTableBodyFetchMoreLoader = () => {
     ),
   });
 
+  if (scrollWrapperRef.instance !== null) {
+    console.log(
+      (scrollWrapperRef.instance as any)().elements().content.scrollHeight,
+      (scrollWrapperRef.instance as any)().elements().content.clientHeight,
+    );
+  }
+
   if (!showLoadingMoreRow) {
     return <></>;
   }

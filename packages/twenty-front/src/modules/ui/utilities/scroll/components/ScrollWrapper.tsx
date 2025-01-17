@@ -68,10 +68,6 @@ const StyledScrollWrapper = styled.div<{
     `}
 `;
 
-const StyledInnerContainer = styled.div`
-  height: 100%;
-`;
-
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
@@ -161,6 +157,7 @@ export const ScrollWrapper = ({
     if (currentRef !== null) {
       initialize(currentRef);
     }
+
     return () => {
       // Reset vertical scroll component-specific Recoil state
       setScrollTop(0);
@@ -180,6 +177,7 @@ export const ScrollWrapper = ({
       <Context.Provider
         value={{
           ref: scrollableRef,
+          instance: instance,
           id: contextProviderName,
         }}
       >
@@ -189,7 +187,7 @@ export const ScrollWrapper = ({
           heightMode={heightMode}
           scrollbarVariant={scrollbarVariant}
         >
-          <StyledInnerContainer>{children}</StyledInnerContainer>
+          {children}
         </StyledScrollWrapper>
       </Context.Provider>
     </ScrollWrapperComponentInstanceContext.Provider>
