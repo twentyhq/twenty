@@ -26,6 +26,10 @@ const StyledTable = styled.table`
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
+
+  .is-scrollable tr:nth-last-child(2) td {
+    border-bottom: none;
+  }
 `;
 
 export const RecordTable = () => {

@@ -29,6 +29,7 @@ const StyledTd = styled.td<{
 
   padding: 0;
   transition: 0.3s ease;
+  position: relative;
 
   text-align: left;
 

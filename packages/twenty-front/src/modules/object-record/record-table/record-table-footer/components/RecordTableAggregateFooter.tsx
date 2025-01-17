@@ -16,24 +16,30 @@ const StyledTd = styled.td`
 const StyledTableRow = styled.tr<{
   endOfTableSticky?: boolean;
   hasHorizontalOverflow?: boolean;
+  isSticky?: boolean;
 }>`
+  z-index: 10;
+
+  z-index: ${({ isSticky }) => (isSticky ? 10 : 2)};
+  position: relative;
   td {
     border-top: 1px solid ${({ theme }) => theme.border.color.light};
+    z-index: ${({ isSticky }) => (isSticky ? 10 : 'auto')};
+    position: ${({ isSticky }) => (isSticky ? 'sticky' : 'relative')};
+    bottom: ${({ isSticky }) => (isSticky ? 0 : 'auto')};
+    border-right-color: ${({ theme }) => theme.background.primary};
+
   }
   cursor: pointer;
   td:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
     left: 0;
-    border-right-color: ${({ theme }) => theme.background.primary};
     border-top: none;
-  }
-  td:nth-of-type(2) {
-    border-right-color: ${({ theme }) => theme.background.primary};
   }
   &.first-columns-sticky {
     td:nth-of-type(2) {
       position: sticky;
-      z-index: 5;
+      z-index: 15;
       transition: 0.3s ease;
       &::after {
         content: '';
@@ -44,6 +50,7 @@ const StyledTableRow = styled.tr<{
         right: 0px;
         box-shadow: ${({ theme }) => theme.boxShadow.light};
         clip-path: inset(0px -4px 0px 0px);
+        z-index: 20;
       }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
         width: 34px;
@@ -51,8 +58,6 @@ const StyledTableRow = styled.tr<{
       }
     }
   }
-  position: sticky;
-  z-index: 5;
   background: ${({ theme }) => theme.background.primary};
   ${({ endOfTableSticky, hasHorizontalOverflow }) =>
     endOfTableSticky &&
@@ -108,6 +113,7 @@ export const RecordTableAggregateFooter = ({
       data-select-disable
       endOfTableSticky={endOfTableSticky}
       hasHorizontalOverflow={hasHorizontalOverflow}
+      isSticky={isScrollable}
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {

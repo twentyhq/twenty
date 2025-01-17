@@ -3,7 +3,7 @@ import { RecordTableTd } from '@/object-record/record-table/record-table-cell/co
 
 export const RecordTableCellLoading = () => {
   return (
-    <RecordTableTd>
+    <RecordTableTd zIndex={2}>
       <RecordTableCellSkeletonLoader />
     </RecordTableTd>
   );
