@@ -1,7 +1,7 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
+import { useGetUpdatableWorkflowVersion } from 'packages/twenty-front/src/modules/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
@@ -84,7 +84,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
   const { updateOneServerlessFunction, isReady } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
-  const { getUpdatableWorkflowVersionId } = useGetUpdatableWorkflowVersionId();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
@@ -257,7 +257,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     if (actionOptions.readonly === true || !isDefined(workflow)) {
       return;
     }
-    await getUpdatableWorkflowVersionId(workflow);
+    await getUpdatableWorkflowVersion(workflow);
     await onCodeChange(value);
   };
 

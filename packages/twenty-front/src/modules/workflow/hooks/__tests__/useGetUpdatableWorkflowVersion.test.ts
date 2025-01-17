@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
-import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 
-const mockCreateNewWorkflowVersion = jest.fn().mockResolvedValue({
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue({
   id: '457',
   name: 'toto',
   createdAt: '2024-07-03T20:03:35.064Z',
@@ -14,13 +14,13 @@ const mockCreateNewWorkflowVersion = jest.fn().mockResolvedValue({
   trigger: null,
 });
 
-jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
-  useCreateNewWorkflowVersion: () => ({
-    createNewWorkflowVersion: mockCreateNewWorkflowVersion,
+jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
+  useCreateDraftFromWorkflowVersion: () => ({
+    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
   }),
 }));
 
-describe('useGetUpdatableWorkflowVersionId', () => {
+describe('useGetUpdatableWorkflowVersion', () => {
   const mockWorkflow = (status: 'ACTIVE' | 'DRAFT') =>
     ({
       id: '123',
@@ -43,20 +43,20 @@ describe('useGetUpdatableWorkflowVersionId', () => {
     }) as WorkflowWithCurrentVersion;
 
   it('should not create workflow version if draft version exists', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersionId());
-    const workflowVersionId =
-      await result.current.getUpdatableWorkflowVersionId(mockWorkflow('DRAFT'));
-    expect(mockCreateNewWorkflowVersion).not.toHaveBeenCalled();
+    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
+    const workflowVersionId = await result.current.getUpdatableWorkflowVersion(
+      mockWorkflow('DRAFT'),
+    );
+    expect(mockCreateDraftFromWorkflowVersion).not.toHaveBeenCalled();
     expect(workflowVersionId === '456');
   });
 
   it('should create workflow version if no draft version exists', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersionId());
-    const workflowVersionId =
-      await result.current.getUpdatableWorkflowVersionId(
-        mockWorkflow('ACTIVE'),
-      );
-    expect(mockCreateNewWorkflowVersion).toHaveBeenCalled();
+    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
+    const workflowVersionId = await result.current.getUpdatableWorkflowVersion(
+      mockWorkflow('ACTIVE'),
+    );
+    expect(mockCreateDraftFromWorkflowVersion).toHaveBeenCalled();
     expect(workflowVersionId === '457');
   });
 });

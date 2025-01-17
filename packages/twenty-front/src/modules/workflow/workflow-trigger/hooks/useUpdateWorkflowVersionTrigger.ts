@@ -7,7 +7,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
-import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
+import { useGetUpdatableWorkflowVersion } from 'packages/twenty-front/src/modules/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -19,7 +19,7 @@ export const useUpdateWorkflowVersionTrigger = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { getUpdatableWorkflowVersionId } = useGetUpdatableWorkflowVersionId();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersionId(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     const outputSchema = (
       await computeStepOutputSchema({

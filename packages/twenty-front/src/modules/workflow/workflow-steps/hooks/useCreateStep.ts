@@ -1,6 +1,6 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
   WorkflowStepType,
@@ -28,14 +28,14 @@ export const useCreateStep = ({
     workflowCreateStepFromParentStepIdState,
   );
 
-  const { getUpdatableWorkflowVersionId } = useGetUpdatableWorkflowVersionId();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowCreateStepFromParentStepId)) {
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const workflowVersionId = await getUpdatableWorkflowVersionId(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     const createdStep = (
       await createWorkflowVersionStep({

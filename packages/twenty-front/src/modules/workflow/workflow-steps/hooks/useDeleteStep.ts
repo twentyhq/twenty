@@ -3,7 +3,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
-import { useGetUpdatableWorkflowVersionId } from '@/workflow/hooks/useGetUpdatableWorkflowVersionId';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
@@ -21,14 +21,14 @@ export const useDeleteStep = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { getUpdatableWorkflowVersionId } = useGetUpdatableWorkflowVersionId();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeRightDrawer } = useRightDrawer();
   const { closeCommandMenu } = useCommandMenu();
 
   const deleteStep = async (stepId: string) => {
     closeRightDrawer();
     closeCommandMenu();
-    const workflowVersionId = await getUpdatableWorkflowVersionId(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({
         idToUpdate: workflowVersionId,

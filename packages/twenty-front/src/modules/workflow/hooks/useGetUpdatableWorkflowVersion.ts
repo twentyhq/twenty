@@ -1,10 +1,10 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 
-export const useGetUpdatableWorkflowVersionId = () => {
+export const useGetUpdatableWorkflowVersion = () => {
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const getUpdatableWorkflowVersionId = async (
+  const getUpdatableWorkflowVersion = async (
     workflow: WorkflowWithCurrentVersion,
   ) => {
     if (workflow.currentVersion.status === 'DRAFT') {
@@ -16,5 +16,5 @@ export const useGetUpdatableWorkflowVersionId = () => {
     });
   };
 
-  return { getUpdatableWorkflowVersionId };
+  return { getUpdatableWorkflowVersion };
 };
