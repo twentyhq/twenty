@@ -51,88 +51,82 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
         `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
       );
 
-      try {
-        const viewRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
-            workspaceId,
-            'view',
-          );
+      const viewRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+          workspaceId,
+          'view',
+        );
 
-        const viewFieldRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
-            workspaceId,
-            'viewField',
-            false,
-          );
+      const viewFieldRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
+          workspaceId,
+          'viewField',
+          false,
+        );
 
-        const taskAndNoteObjectMetadata =
-          await this.objectMetadataRepository.find({
-            where: {
-              workspaceId,
-              nameSingular: In(['note', 'task']),
-            },
-            relations: ['fields'],
-          });
-
-        const taskAndNoteViews = await viewRepository.find({
+      const taskAndNoteObjectMetadata =
+        await this.objectMetadataRepository.find({
           where: {
-            objectMetadataId: In(
-              taskAndNoteObjectMetadata.map((object) => object.id),
-            ),
+            workspaceId,
+            nameSingular: In(['note', 'task']),
+          },
+          relations: ['fields'],
+        });
+
+      const taskAndNoteViews = await viewRepository.find({
+        where: {
+          objectMetadataId: In(
+            taskAndNoteObjectMetadata.map((object) => object.id),
+          ),
+        },
+      });
+
+      for (const view of taskAndNoteViews) {
+        const viewFields = await viewFieldRepository.find({
+          where: {
+            viewId: view.id,
           },
         });
 
-        for (const view of taskAndNoteViews) {
-          const viewFields = await viewFieldRepository.find({
-            where: {
-              viewId: view.id,
-            },
-          });
+        const fields = taskAndNoteObjectMetadata.flatMap(
+          (objectMetadata) => objectMetadata.fields,
+        );
 
-          const fields = taskAndNoteObjectMetadata.flatMap(
-            (objectMetadata) => objectMetadata.fields,
-          );
+        const fieldNameByMetadataId: Record<string, string> = fields.reduce(
+          (fieldNameByMetadataId, fieldMetadata) => ({
+            ...fieldNameByMetadataId,
+            [fieldMetadata.id]: fieldMetadata.name,
+          }),
+          {},
+        );
 
-          const fieldNameByMetadataId: Record<string, string> = fields.reduce(
-            (fieldNameByMetadataId, fieldMetadata) => ({
-              ...fieldNameByMetadataId,
-              [fieldMetadata.id]: fieldMetadata.name,
-            }),
-            {},
-          );
+        const bodyField = viewFields.find(
+          (field) => fieldNameByMetadataId[field.fieldMetadataId] === 'body',
+        );
+        const bodyV2Field = viewFields.find(
+          (field) => fieldNameByMetadataId[field.fieldMetadataId] === 'bodyV2',
+        );
 
-          const bodyField = viewFields.find(
-            (field) => fieldNameByMetadataId[field.fieldMetadataId] === 'body',
+        if (bodyField && bodyV2Field) {
+          await viewFieldRepository.update(
+            { id: bodyV2Field.id },
+            { position: bodyField.position, isVisible: bodyField.isVisible },
           );
-          const bodyV2Field = viewFields.find(
-            (field) =>
-              fieldNameByMetadataId[field.fieldMetadataId] === 'bodyV2',
+          chalk.green(
+            `Updated bodyV2 field position for view ${view.id} to ${bodyField.position}`,
           );
-
-          if (bodyField && bodyV2Field) {
-            await viewFieldRepository.update(
-              { id: bodyV2Field.id },
-              { position: bodyField.position, isVisible: bodyField.isVisible },
-            );
-            chalk.green(
-              `Updated bodyV2 field position for view ${view.id} to ${bodyField.position}`,
-            );
-          } else {
-            chalk.red(`No body or bodyV2 field found for view ${view.id}`);
-          }
-
-          await this.workspaceMetadataVersionService.incrementMetadataVersion(
-            workspaceId,
-          );
-
-          workspaceIterator++;
-          this.logger.log(
-            chalk.green(`Command completed for workspace ${workspaceId}`),
-          );
+        } else {
+          chalk.red(`No body or bodyV2 field found for view ${view.id}`);
         }
-      } catch {
-        this.logger.log(chalk.red(`Error in workspace ${workspaceId}`));
+
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+
         workspaceIterator++;
+        this.logger.log(
+          chalk.green(`Command completed for workspace ${workspaceId}`),
+        );
       }
     }
 
