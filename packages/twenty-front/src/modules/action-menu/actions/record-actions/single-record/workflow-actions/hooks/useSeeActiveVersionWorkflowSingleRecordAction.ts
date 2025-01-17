@@ -17,7 +17,7 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
 
     const workflowActiveVersion = useActiveWorkflowVersion(recordId);
 
-    const navigateApp = useNavigateApp<AppPath.RecordShowPage>();
+    const navigateApp = useNavigateApp();
 
     const shouldBeRegistered = isDefined(workflowActiveVersion) && isDraft;
 
@@ -26,7 +26,7 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
         return;
       }
 
-      navigateApp(AppPath.RecordShowPage, {
+      navigateApp<AppPath.RecordShowPage>(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
         objectRecordId: workflowActiveVersion.id,
       });

@@ -5,10 +5,10 @@ import { isDefined } from 'twenty-ui';
 
 type AppPathType = AppPath | `${AppPath.Settings}/${SettingsPath}`;
 
-export const useNavigateApp = <T extends AppPathType>() => {
+export const useNavigateApp = () => {
   const navigate = useNavigate();
 
-  return (
+  return <T extends AppPathType>(
     to: T,
     params?: { [key in PathParam<T>]: string | null },
     options?: {
