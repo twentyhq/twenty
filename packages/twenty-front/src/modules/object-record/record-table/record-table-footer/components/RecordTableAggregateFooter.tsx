@@ -5,7 +5,6 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
-import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrappeScrollBottomComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -15,15 +14,18 @@ const StyledTd = styled.td`
 
 const StyledTableRow = styled.tr<{
   hasHorizontalOverflow?: boolean;
-  isSticky?: boolean;
 }>`
   z-index: 5;
   position: sticky;
-  td {
-    border-top: ${({ isSticky, theme }) => (isSticky ? `1px solid ${theme.border.color.light}` : 'none')};
-    z-index: ${({ isSticky }) => (isSticky ? 5 : 'auto')};
-    position: ${({ isSticky }) => (isSticky ? 'sticky' : 'relative')};
-    bottom: ${({ isSticky }) => (isSticky ? 0 : 'auto')};
+  border: none;
+
+  &.footer-sticky {
+    td {
+      /* border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`}; */
+      z-index: 5;
+      position: sticky;
+      bottom: 0;
+    }
   }
   cursor: pointer;
   td:nth-of-type(1) {
@@ -53,8 +55,7 @@ const StyledTableRow = styled.tr<{
     }
   }
   background: ${({ theme }) => theme.background.primary};
-  ${({ isSticky, hasHorizontalOverflow }) =>
-    isSticky &&
+  ${({ hasHorizontalOverflow }) =>
     `
       bottom: ${hasHorizontalOverflow ? '10px' : '0'};
       ${
@@ -92,18 +93,11 @@ export const RecordTableAggregateFooter = ({
       overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
     : false;
 
-  const scrollBottom = useRecoilComponentValueV2(
-    scrollWrapperScrollBottomComponentState,
-  );
-
-  console.log('scrollBottom', scrollBottom);
-
   return (
     <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       hasHorizontalOverflow={hasHorizontalOverflow}
-      isSticky={scrollBottom > 1}
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {

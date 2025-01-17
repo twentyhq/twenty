@@ -29,7 +29,7 @@ const StyledTable = styled.table`
   width: 100%;
 
   .footer-sticky tr:nth-last-child(2) td {
-    border-bottom: none;
+    border-bottom-color: ${({ theme }) => theme.background.transparent};
   }
 `;
 
