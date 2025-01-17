@@ -46,7 +46,7 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case AppPath.SignInUp:
       return t`Sign in or Create an account`;
     case AppPath.Invite:
-      return 'Invite';
+      return t`'Invite'`;
     case AppPath.CreateWorkspace:
       return t`Create Workspace`;
     case AppPath.CreateProfile:

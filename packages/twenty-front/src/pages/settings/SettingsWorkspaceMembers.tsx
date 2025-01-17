@@ -322,7 +322,7 @@ export const SettingsWorkspaceMembers = () => {
         subtitle={
           <Trans>
             This action cannot be undone. This will permanently delete this user
-            and remove them from all their assignements.
+            and remove them from all their assignments.
           </Trans>
         }
         onConfirmClick={() =>
