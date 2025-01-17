@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   WorkflowRunOutput,
@@ -6,6 +6,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
@@ -17,6 +18,7 @@ export type WorkflowExecutorOutput = {
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
+  private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
   constructor(private readonly workflowActionFactory: WorkflowActionFactory) {}
 
   async execute({
@@ -42,7 +44,19 @@ export class WorkflowExecutorWorkspaceService {
 
     const actionPayload = resolveInput(step.settings.input, context);
 
-    const result = await workflowAction.execute(actionPayload);
+    let result: WorkflowActionResult;
+
+    try {
+      result = await workflowAction.execute(actionPayload);
+    } catch (error) {
+      result = {
+        error: {
+          errorType: error.name,
+          errorMessage: error.message,
+          stackTrace: error.stack,
+        },
+      };
+    }
 
     const stepOutput = output.steps[step.id];
 

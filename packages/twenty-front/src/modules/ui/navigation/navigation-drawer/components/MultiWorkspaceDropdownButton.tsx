@@ -45,6 +45,7 @@ const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
 const StyledLabel = styled.div`
   align-items: center;
   display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`

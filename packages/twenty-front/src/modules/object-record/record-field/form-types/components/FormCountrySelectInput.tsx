@@ -57,7 +57,10 @@ export const FormCountrySelectInput = ({
       onPersist={onChange}
       options={options}
       defaultValue={selectedCountryName}
+      readonly={readonly}
       VariablePicker={VariablePicker}
+      placeholder="Select a country"
+      preventDisplayPadding
     />
   );
 };

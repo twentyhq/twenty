@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings } from 'twenty-ui';
+import { IconSearch, IconSettings, getOsControlSymbol } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -45,7 +45,7 @@ export const MainNavigationDrawerItems = () => {
             label="Search"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
+            keyboard={[getOsControlSymbol(), 'K']}
           />
           <NavigationDrawerItem
             label="Settings"

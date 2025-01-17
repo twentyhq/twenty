@@ -45,7 +45,9 @@ import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
+import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -229,6 +231,14 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           objectMetadataStandardIdToIdMap,
           isWorkflowEnabled,
         );
+
+        const devViewDefinitionsWithId = await createWorkspaceViews(
+          entityManager,
+          dataSourceMetadata.schema,
+          [opportunitiesTableByStageView(objectMetadataStandardIdToIdMap)],
+        );
+
+        viewDefinitionsWithId.push(...devViewDefinitionsWithId);
 
         await seedWorkspaceFavorites(
           viewDefinitionsWithId

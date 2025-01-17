@@ -32,7 +32,7 @@ export class GmailGetMessageListService {
   public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'handle'
     >,
   ): Promise<GetFullMessageListResponse> {
     const gmailClient =

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { expect, fn, userEvent, within } from '@storybook/test';
 import { FormTextFieldInput } from '../FormTextFieldInput';
 
 const meta: Meta<typeof FormTextFieldInput> = {
@@ -41,5 +41,49 @@ export const Multiline: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText(/^Text$/);
+  },
+};
+
+export const WithVariablePicker: Story = {
+  args: {
+    label: 'Text',
+    placeholder: 'Text field...',
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const variablePicker = await canvas.findByText('VariablePicker');
+
+    expect(variablePicker).toBeVisible();
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Text',
+    placeholder: 'Text field...',
+    defaultValue: 'Text field',
+    readonly: true,
+    VariablePicker: () => <div>VariablePicker</div>,
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const variablePicker = canvas.queryByText('VariablePicker');
+    expect(variablePicker).not.toBeInTheDocument();
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const defaultValue = await canvas.findByText('Text field');
+    expect(defaultValue).toBeVisible();
+
+    await userEvent.type(editor, 'Hello');
+
+    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(canvas.queryByText('Hello')).not.toBeInTheDocument();
+    expect(defaultValue).toBeVisible();
   },
 };

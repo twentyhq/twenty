@@ -17,6 +17,11 @@ export class SignUpInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
+  workspaceId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   workspaceInviteHash?: string;
 
   @Field(() => String, { nullable: true })

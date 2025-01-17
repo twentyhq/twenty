@@ -16,7 +16,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -112,12 +112,18 @@ export const useViewFromQueryParams = () => {
                         .getValue()
                     : null;
 
+                const satisfiesRelationFilterSchema =
+                  relationFilterValueSchemaObject.safeParse(
+                    filterValueFromURL,
+                  )?.success;
+
                 const relationRecordNames = [];
 
                 if (
                   isNonEmptyString(relationObjectMetadataNamePlural) &&
                   isDefined(relationObjectMetadataItem) &&
-                  Array.isArray(filterValueFromURL)
+                  (Array.isArray(filterValueFromURL) ||
+                    satisfiesRelationFilterSchema)
                 ) {
                   const queryResult = await apolloClient.query<
                     Record<string, { edges: { node: ObjectRecord }[] }>
@@ -127,7 +133,17 @@ export const useViewFromQueryParams = () => {
                       objectMetadataItems,
                     }),
                     variables: {
-                      filter: { id: { in: filterValueFromURL } },
+                      filter: {
+                        id: {
+                          in: satisfiesRelationFilterSchema
+                            ? (
+                                filterValueFromURL as {
+                                  selectedRecordIds: string[];
+                                }
+                              )?.selectedRecordIds
+                            : filterValueFromURL,
+                        },
+                      },
                     },
                   });
 

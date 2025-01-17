@@ -1,6 +1,7 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -24,6 +25,7 @@ import {
   IconFileExport,
   IconHeart,
   IconHeartOff,
+  IconPlus,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -34,6 +36,18 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     actionHook: ActionHook;
   }
 > = {
+  createNewRecord: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
+    label: 'Create new record',
+    shortLabel: 'New record',
+    position: 0,
+    isPinned: true,
+    Icon: IconPlus,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    actionHook: useCreateNewTableRecordNoSelectionRecordAction,
+  },
   exportNoteToPdf: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,

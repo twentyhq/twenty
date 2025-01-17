@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const ObjectMetadataItemsLoadEffect = () => {
@@ -18,7 +18,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
   useEffect(() => {
     if (
       isUndefinedOrNull(currentUser) ||
-      currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active
+      !isWorkspaceActiveOrSuspended(currentWorkspace)
     ) {
       loadMockedObjectMetadataItems();
     } else {
@@ -26,7 +26,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
     }
   }, [
     currentUser,
-    currentWorkspace?.activationStatus,
+    currentWorkspace,
     loadMockedObjectMetadataItems,
     refreshObjectMetadataItems,
   ]);
