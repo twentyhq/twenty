@@ -105,8 +105,16 @@ msgid "Change {to}"
 msgstr "Change {to}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
-msgid "Chinese"
-msgstr "Chinese"
+#~ msgid "Chinese"
+#~ msgstr "Chinese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+msgid "Chinese — Simplified"
+msgstr "Chinese — Simplified"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+msgid "Chinese — Traditional"
+msgstr "Chinese — Traditional"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -395,7 +403,7 @@ msgstr "Portuguese"
 msgid "Profile"
 msgstr "Profile"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Pseudo-English"
 msgstr "Pseudo-English"
 
