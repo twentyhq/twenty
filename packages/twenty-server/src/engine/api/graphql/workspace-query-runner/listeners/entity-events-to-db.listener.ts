@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
@@ -9,9 +11,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -46,7 +46,7 @@ export class EntityEventsToDbListener {
 
   private async handle(batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
     const filteredEvents = batchEvent.events.filter(
-      (event) => event.objectMetadata?.isAuditLogged,
+      (event) => event.objectMetadata?.isAuditLogged && event.properties.after, // We ignore events on a destroyed record
     );
 
     await this.entityEventsToDbQueueService.add<
