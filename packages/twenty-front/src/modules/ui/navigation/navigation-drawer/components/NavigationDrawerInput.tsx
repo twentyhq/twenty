@@ -1,5 +1,4 @@
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import styled from '@emotion/styled';
@@ -72,18 +71,16 @@ export const NavigationDrawerInput = ({
   };
 
   return (
-    <NavigationDrawerAnimatedCollapseWrapper>
-      <StyledInput
-        className={className}
-        LeftIcon={Icon}
-        ref={inputRef}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        onFocus={handleFocus}
-        fullWidth
-        autoFocus
-      />
-    </NavigationDrawerAnimatedCollapseWrapper>
+    <StyledInput
+      className={className}
+      LeftIcon={Icon}
+      ref={inputRef}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      onFocus={handleFocus}
+      fullWidth
+      autoFocus
+    />
   );
 };
