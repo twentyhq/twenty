@@ -12,18 +12,15 @@ import {
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
 import {
-  OnboardingStatus,
   SubscriptionInterval,
+  SubscriptionStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -60,12 +57,16 @@ export const SettingsBilling = () => {
   };
 
   const { enqueueSnackBar } = useSnackBar();
-  const onboardingStatus = useOnboardingStatus();
-  const subscriptionStatus = useSubscriptionStatus();
-  const hasCanceledSubscriptionOrNoSubscription =
-    !isDefined(subscriptionStatus) ||
-    subscriptionStatus === SubscriptionStatus.Canceled;
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const subscriptions = currentWorkspace?.billingSubscriptions;
+  const hasSubscriptions = subscriptions && subscriptions.length > 0;
+
+  const hasNotCanceledCurrentSubscription =
+    isDefined(currentWorkspace?.currentBillingSubscription) &&
+    currentWorkspace?.currentBillingSubscription?.status !==
+      SubscriptionStatus.Canceled;
+
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
     currentWorkspace?.currentBillingSubscription?.interval ===
@@ -79,19 +80,11 @@ export const SettingsBilling = () => {
     variables: {
       returnUrlPath: '/settings/billing',
     },
-    skip: hasCanceledSubscriptionOrNoSubscription,
+    skip: !hasSubscriptions,
   });
 
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
-
-  const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStatus.COMPLETED ||
-    hasCanceledSubscriptionOrNoSubscription;
-
-  const cancelPlanButtonDisabled =
-    billingPortalButtonDisabled ||
-    onboardingStatus !== OnboardingStatus.COMPLETED;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
@@ -166,7 +159,7 @@ export const SettingsBilling = () => {
             title={t`Switch ${to}`}
             variant="secondary"
             onClick={openSwitchingIntervalModal}
-            disabled={switchIntervalButtonDisabled}
+            disabled={!hasNotCanceledCurrentSubscription}
           />
         </Section>
         <Section>
@@ -180,7 +173,7 @@ export const SettingsBilling = () => {
             variant="secondary"
             accent="danger"
             onClick={openBillingPortal}
-            disabled={cancelPlanButtonDisabled}
+            disabled={!hasNotCanceledCurrentSubscription}
           />
         </Section>
       </SettingsPageContainer>

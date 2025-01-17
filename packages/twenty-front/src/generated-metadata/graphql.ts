@@ -1743,9 +1743,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
-  billingCustomers?: Maybe<Array<BillingCustomer>>;
-  billingEntitlements?: Maybe<Array<BillingEntitlement>>;
-  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
+  billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
   databaseSchema: Scalars['String']['output'];
@@ -1768,30 +1766,12 @@ export type Workspace = {
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
 };
 
-
-export type WorkspaceBillingCustomersArgs = {
-  filter?: BillingCustomerFilter;
-  sorting?: Array<BillingCustomerSort>;
-};
-
-
-export type WorkspaceBillingEntitlementsArgs = {
-  filter?: BillingEntitlementFilter;
-  sorting?: Array<BillingEntitlementSort>;
-};
-
-
-export type WorkspaceBillingSubscriptionsArgs = {
-  filter?: BillingSubscriptionFilter;
-  sorting?: Array<BillingSubscriptionSort>;
-};
-
 export enum WorkspaceActivationStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  ONGOING_CREATION = 'ONGOING_CREATION',
-  PENDING_CREATION = 'PENDING_CREATION',
-  SUSPENDED = 'SUSPENDED'
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
+  PendingCreation = 'PENDING_CREATION',
+  Suspended = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
