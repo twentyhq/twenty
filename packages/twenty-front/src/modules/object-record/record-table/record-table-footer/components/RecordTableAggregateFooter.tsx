@@ -5,6 +5,7 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
+import { scrollWrapperIsScrollableComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
@@ -94,6 +95,12 @@ export const RecordTableAggregateFooter = ({
     ? overlayScrollbarsInstance.elements().scrollOffsetElement.scrollWidth >
       overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
     : false;
+
+  const isScrollable = useRecoilComponentValueV2(
+    scrollWrapperIsScrollableComponentState,
+  );
+
+  console.log(isScrollable);
 
   return (
     <StyledTableRow
