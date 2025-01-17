@@ -98,10 +98,6 @@ export const useSetRecordTableData = ({
 
           onEntityCountChange(totalCount, currentRecordGroupId);
         }
-
-        console.log({
-          records,
-        });
       },
     [
       recordIndexRecordIdsByGroupFamilyState,

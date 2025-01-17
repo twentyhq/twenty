@@ -42,16 +42,9 @@ export const DateInput = ({
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
-  console.log({
-    internalValue,
-  });
-
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newDate: Date | null) => {
-    console.log('handleChange', {
-      newDate,
-    });
     setInternalValue(newDate);
     onChange?.(newDate);
   };
@@ -62,9 +55,6 @@ export const DateInput = ({
   };
 
   const handleClose = (newDate: Date | null) => {
-    console.log('handleClose', {
-      newDate,
-    });
     setInternalValue(newDate);
     onSubmit?.(newDate);
   };
@@ -90,10 +80,6 @@ export const DateInput = ({
     closeDropdownMonthSelect();
     closeDropdown();
 
-    console.log('handleEscape', {
-      internalValue,
-    });
-
     onEscape(internalValue);
   };
 
@@ -103,10 +89,6 @@ export const DateInput = ({
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
     closeDropdown();
-
-    console.log('handleClickOutside', {
-      internalValue,
-    });
 
     onClickOutside(event, internalValue);
   };

@@ -339,10 +339,6 @@ export const DateTimePicker = ({
   const handleClose = (newDate: Date) => {
     closeDropdowns();
     onClose?.(newDate);
-
-    console.log('handleClose', {
-      newDate,
-    });
   };
 
   const handleChangeMonth = (month: number) => {
@@ -386,10 +382,6 @@ export const DateTimePicker = ({
       })
       .toJSDate();
 
-    console.log('handleDateChange', {
-      dateParsed,
-    });
-
     onChange?.(dateParsed);
   };
 
@@ -403,10 +395,6 @@ export const DateTimePicker = ({
         year: date.getFullYear(),
       })
       .toJSDate();
-
-    console.log('handleDateSelect', {
-      dateParsed,
-    });
 
     handleClose?.(dateParsed);
   };

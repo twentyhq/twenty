@@ -151,8 +151,16 @@ export function formatResult<T>(
       (field) => field.type === FieldMetadataType.DATE,
     );
 
-  // TODO: This is a temporary fix to handle a bug in the frontend where the date get returned in the wrong timezone,
+  // This is a temporary fix to handle a bug in the frontend where the date gets returned in the wrong timezone,
   //   thus returning the wrong date.
+  //
+  // In short, for example :
+  //   - DB stores `2025-01-01`
+  //   - TypeORM .returning() returns `2024-12-31T23:00:00.000Z`
+  //   - we shift +1h (or whatever the timezone offset is on the server)
+  //   - we return `2025-01-01T00:00:00.000Z`
+  //
+  // See this PR for more details: https://github.com/twentyhq/twenty/pull/9700
   for (const dateFieldMetadata of dateFieldMetadataCollection) {
     const rawUpdatedDate = newData[dateFieldMetadata.name] as
       | string
@@ -164,12 +172,14 @@ export function formatResult<T>(
       continue;
     }
 
-    const offsetInMilliseconds = -(new Date().getTimezoneOffset() * 60000);
+    const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
+      new Date().getTimezoneOffset() * 60 * 1000;
 
     if (isDate(rawUpdatedDate)) {
       if (isValidDate(rawUpdatedDate)) {
         const shiftedDate = new Date(
-          rawUpdatedDate.getTime() + offsetInMilliseconds,
+          rawUpdatedDate.getTime() -
+            serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
         );
 
         newData[dateFieldMetadata.name] = shiftedDate;
@@ -178,7 +188,8 @@ export function formatResult<T>(
       const currentDate = new Date(newData[dateFieldMetadata.name]);
 
       const shiftedDate = new Date(
-        new Date(currentDate).getTime() + offsetInMilliseconds,
+        new Date(currentDate).getTime() -
+          serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
       );
 
       newData[dateFieldMetadata.name] = shiftedDate;

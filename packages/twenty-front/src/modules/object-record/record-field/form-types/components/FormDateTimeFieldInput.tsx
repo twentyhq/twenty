@@ -5,10 +5,10 @@ import { VariableChip } from '@/object-record/record-field/form-types/components
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
-    DateTimePicker,
-    MONTH_AND_YEAR_DROPDOWN_ID,
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  DateTimePicker,
+  MONTH_AND_YEAR_DROPDOWN_ID,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
@@ -22,12 +22,12 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    ChangeEvent,
-    KeyboardEvent,
-    useContext,
-    useId,
-    useRef,
-    useState,
+  ChangeEvent,
+  KeyboardEvent,
+  useContext,
+  useId,
+  useRef,
+  useState,
 } from 'react';
 import { isDefined, Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
