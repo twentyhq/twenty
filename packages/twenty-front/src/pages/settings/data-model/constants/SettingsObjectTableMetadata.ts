@@ -1,31 +1,36 @@
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
+type GET_SETTINGS_OBJECT_TABLE_METADATAProps = {
+  (descriptor: { id: string }): string;
+  (literals: TemplateStringsArray, ...placeholders: any[]): string;
+};
+
 export const GET_SETTINGS_OBJECT_TABLE_METADATA = (
-  t: (literals: string) => string,
+  t: GET_SETTINGS_OBJECT_TABLE_METADATAProps,
 ): TableMetadata<SettingsObjectTableItem> => ({
   tableId: 'settingsObject',
   fields: [
     {
-      fieldLabel: t('Name'),
+      fieldLabel: t({ id: 'Name' }),
       fieldName: 'labelPlural',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t('Type'),
+      fieldLabel: t({ id: 'Type' }),
       fieldName: 'objectTypeLabel',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t('Fields'),
+      fieldLabel: t({ id: 'Fields' }),
       fieldName: 'fieldsCount',
       fieldType: 'number',
       align: 'right',
     },
     {
-      fieldLabel: t('Instances'),
+      fieldLabel: t({ id: 'Instances' }),
       fieldName: 'totalObjectCount',
       fieldType: 'number',
       align: 'right',

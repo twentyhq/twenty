@@ -28,13 +28,13 @@ export const ComponentDecorator: Decorator = (Story, context) => {
   const backgroundColor = getBackgroundColor(inverted, accent);
 
   return (
-    <I18nProvider i18n={i18n}>
-      <ComponentStorybookLayout
-        width={container?.width}
-        backgroundColor={backgroundColor}
-      >
+    <ComponentStorybookLayout
+      width={container?.width}
+      backgroundColor={backgroundColor}
+    >
+      <I18nProvider i18n={i18n}>
         <Story />
-      </ComponentStorybookLayout>
-    </I18nProvider>
+      </I18nProvider>
+    </ComponentStorybookLayout>
   );
 };
