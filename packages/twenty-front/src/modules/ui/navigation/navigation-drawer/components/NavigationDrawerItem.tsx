@@ -55,8 +55,7 @@ const StyledItem = styled('button', {
 })<StyledItemProps>`
   box-sizing: content-box;
   align-items: center;
-  background: ${(props) =>
-    props.active ? props.theme.background.transparent.light : 'inherit'};
+  background: inherit;
   height: ${({ theme }) => theme.spacing(5)};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
