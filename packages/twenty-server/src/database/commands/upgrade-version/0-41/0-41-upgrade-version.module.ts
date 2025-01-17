@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-41/0-41-fix-body-v2-view-field-position.command';
 
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-rich-text-field.command';
 import { UpgradeTo0_41Command } from 'src/database/commands/upgrade-version/0-41/0-41-upgrade-version.command';
@@ -23,6 +24,10 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMetadataVersionModule,
     WorkspaceDataSourceModule,
   ],
-  providers: [UpgradeTo0_41Command, MigrateRichTextFieldCommand],
+  providers: [
+    UpgradeTo0_41Command,
+    MigrateRichTextFieldCommand,
+    FixBodyV2ViewFieldPositionCommand,
+  ],
 })
 export class UpgradeTo0_41CommandModule {}

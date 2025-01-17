@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-41/0-41-fix-body-v2-view-field-position.command';
 import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-rich-text-field.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -17,6 +18,7 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly migrateRichTextFieldCommand: MigrateRichTextFieldCommand,
+    private readonly fixBodyV2ViewFieldPositionCommand: FixBodyV2ViewFieldPositionCommand,
   ) {
     super(workspaceRepository);
   }
@@ -29,6 +31,12 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     this.logger.log('Running command to upgrade to 0.41');
 
     await this.migrateRichTextFieldCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.fixBodyV2ViewFieldPositionCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
