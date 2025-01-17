@@ -1,15 +1,16 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
+import { NavigationDrawerItemInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemInput';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
-  align-items: flex-start;
   display: flex;
+  align-items: center;
   flex-direction: row;
+  width: 100%;
 `;
 
 const StyledEditableTitlePrefix = styled.div`
@@ -30,7 +31,10 @@ export const RecordEditableName = ({
   objectRecordId: string;
   objectLabelPlural: string;
 }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
+  const [isRenaming, setIsRenaming] = useRecoilComponentStateV2(
+    isRecordEditableNameRenamingComponentState,
+  );
+
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -38,8 +42,6 @@ export const RecordEditableName = ({
       name: true,
     },
   });
-
-  const [recordName, setRecordName] = useState(record?.name);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
@@ -59,13 +61,8 @@ export const RecordEditableName = ({
   };
 
   const handleCancel = () => {
-    setRecordName(record?.name);
     setIsRenaming(false);
   };
-
-  useEffect(() => {
-    setRecordName(record?.name);
-  }, [record?.name]);
 
   if (loading) {
     return null;
@@ -77,24 +74,14 @@ export const RecordEditableName = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      {isRenaming ? (
-        <NavigationDrawerInput
-          value={recordName}
-          onChange={setRecordName}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-          onClickOutside={handleCancel}
-          hotkeyScope="favorites-folder-input"
-        />
-      ) : (
-        <NavigationDrawerItem
-          label={recordName}
-          onClick={() => setIsRenaming(true)}
-          rightOptions={undefined}
-          className="navigation-drawer-item"
-          active
-        />
-      )}
+      <NavigationDrawerItemInput
+        isRenaming={isRenaming}
+        setIsRenaming={setIsRenaming}
+        defaultValue={record?.name ?? ''}
+        placeholder={'Name'}
+        handleSubmit={handleSubmit}
+        handleCancel={handleCancel}
+      />
     </StyledEditableTitleContainer>
   );
 };
