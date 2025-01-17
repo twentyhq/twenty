@@ -158,7 +158,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "lingui extract"
+        "command": "lingui extract --overwrite"
       }
     },
     "lingui:compile": {

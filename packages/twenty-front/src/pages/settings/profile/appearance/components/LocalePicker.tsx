@@ -8,6 +8,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
 import { i18n } from '@lingui/core';
+import { useLingui } from '@lingui/react/macro';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -19,6 +20,7 @@ const StyledContainer = styled.div`
 `;
 
 export const LocalePicker = () => {
+  const { t } = useLingui();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -57,38 +59,42 @@ export const LocalePicker = () => {
 
   const localeOptions = [
     {
-      label: 'Portuguese',
+      label: t`Portuguese`,
       value: 'pt',
     },
     {
-      label: 'French',
+      label: t`French`,
       value: 'fr',
     },
     {
-      label: 'German',
+      label: t`German`,
       value: 'de',
     },
     {
-      label: 'Italian',
+      label: t`Italian`,
       value: 'it',
     },
     {
-      label: 'Spanish',
+      label: t`Spanish`,
       value: 'es',
     },
     {
-      label: 'English',
+      label: t`English`,
       value: 'en',
     },
     {
-      label: 'Chinese',
-      value: 'zh',
+      label: t`Chinese — Simplified`,
+      value: 'zh-Hans',
+    },
+    {
+      label: t`Chinese — Traditional`,
+      value: 'zh-Hant',
     },
   ];
 
   if (isDebugMode) {
     localeOptions.push({
-      label: 'Pseudo-English',
+      label: t`Pseudo-English`,
       value: 'pseudo-en',
     });
   }

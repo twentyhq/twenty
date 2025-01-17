@@ -32,6 +32,56 @@ module.exports = {
       },
       rules: {
         'project-structure/folder-structure': 'error',
+        /* 
+        Uncomment this rule when we have a way to work on 
+        'lingui/no-unlocalized-strings': [
+          'error',
+          {
+            ignore: [
+              '^(?![A-Z])\\S+$',
+              '^[A-Z0-9_-]+$'
+            ],
+            ignoreNames: [
+              { regex: { pattern: 'className', flags: 'i' } },
+              { regex: { pattern: '^[A-Z0-9_-]+$' } },
+              'styleName',
+              'src',
+              'srcSet', 
+              'type',
+              'id',
+              'width',
+              'height',
+              'displayName',
+              'Authorization'
+            ],
+            ignoreFunctions: [
+              'cva',
+              'cn',
+              'track',
+              'Error',
+              'console.*',
+              '*headers.set',
+              '*.addEventListener',
+              '*.removeEventListener',
+              '*.postMessage',
+              '*.getElementById',
+              '*.dispatch',
+              '*.commit',
+              '*.includes',
+              '*.indexOf',
+              '*.endsWith',
+              '*.startsWith',
+              'require'
+            ],
+            useTsTypes: true,
+            ignoreMethodsOnTypes: [
+              'Map.get',
+              'Map.has',
+              'Set.has'
+            ]
+          }
+        ]
+          */
       },
     },
   ],
