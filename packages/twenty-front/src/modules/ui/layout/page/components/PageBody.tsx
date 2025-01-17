@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
