@@ -1,13 +1,13 @@
 import {
   ChallengeDocument,
+  GetAuthTokensFromLoginTokenDocument,
   GetCurrentUserDocument,
   SignUpDocument,
-  VerifyDocument,
 } from '~/generated/graphql';
 
 export const queries = {
   challenge: ChallengeDocument,
-  verify: VerifyDocument,
+  getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
 };
@@ -22,7 +22,7 @@ export const variables = {
     email,
     password,
   },
-  verify: { loginToken: token },
+  getAuthTokensFromLoginToken: { loginToken: token },
   signup: {},
   getCurrentUser: {},
 };
@@ -34,7 +34,7 @@ export const results = {
       expiresAt: '2022-01-01',
     },
   },
-  verify: {
+  getAuthTokensFromLoginToken: {
     tokens: {
       accessToken: { token, expiresAt: 'expiresAt' },
       refreshToken: { token, expiresAt: 'expiresAt' },
@@ -92,12 +92,12 @@ export const mocks = [
   },
   {
     request: {
-      query: queries.verify,
-      variables: variables.verify,
+      query: queries.getAuthTokensFromLoginToken,
+      variables: variables.getAuthTokensFromLoginToken,
     },
     result: jest.fn(() => ({
       data: {
-        verify: results.verify,
+        getAuthTokensFromLoginToken: results.getAuthTokensFromLoginToken,
       },
     })),
   },

@@ -594,6 +594,7 @@ export type Mutation = {
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
+  getAuthTokensFromLoginToken: AuthTokens;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
@@ -624,7 +625,6 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
-  verify: AuthTokens;
 };
 
 
@@ -791,6 +791,11 @@ export type MutationGenerateApiKeyTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromLoginTokenArgs = {
+  loginToken: Scalars['String']['input'];
+};
+
+
 export type MutationGetAuthorizationUrlArgs = {
   input: GetAuthorizationUrlInput;
 };
@@ -941,11 +946,6 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
-};
-
-
-export type MutationVerifyArgs = {
-  loginToken: Scalars['String']['input'];
 };
 
 export type ObjectConnection = {

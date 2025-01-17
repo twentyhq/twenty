@@ -48,12 +48,12 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { ChallengeInput } from './dto/challenge.input';
+import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
-import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -265,8 +265,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  async verify(
-    @Args() verifyInput: VerifyInput,
+  async getAuthTokensFromLoginToken(
+    @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @OriginHeader() origin: string,
   ): Promise<AuthTokens> {
     const workspace =
@@ -277,7 +277,9 @@ export class AuthResolver {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const { sub: email, workspaceId } =
-      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
+      await this.loginTokenService.verifyLoginToken(
+        getAuthTokensFromLoginTokenInput.loginToken,
+      );
 
     if (workspaceId !== workspace.id) {
       throw new AuthException(

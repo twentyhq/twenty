@@ -58,7 +58,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.verify(token);
+      await result.current.getAuthTokensFromLoginToken(token);
     });
 
     expect(mocks[1].result).toHaveBeenCalled();
