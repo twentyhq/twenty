@@ -65,11 +65,15 @@ export const useCreateNewTableRecord = ({
         const recordId = v4();
 
         if (isCommandMenuV2Enabled) {
-          await createOneRecord({ id: recordId });
-
+          // TODO: Generalize this behaviour, there will be a view setting to specify
+          // if the new record should be displayed in the side panel or on the record page
           if (
             objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
           ) {
+            await createOneRecord({
+              id: recordId,
+              name: `Untitled ${objectMetadataItem.nameSingular}`,
+            });
             navigate(`/object/workflow/${recordId}`);
             set(
               isRecordEditableNameRenamingComponentState.atomFamily({
@@ -80,6 +84,7 @@ export const useCreateNewTableRecord = ({
             return;
           }
 
+          await createOneRecord({ id: recordId });
           openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
 
           return;
