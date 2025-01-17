@@ -107,7 +107,18 @@ export const useCreateNewTableRecord = ({
           );
         }
       },
-    [],
+    [
+      createOneRecord,
+      isCommandMenuV2Enabled,
+      navigate,
+      objectMetadataItem.labelIdentifierFieldMetadataId,
+      objectMetadataItem.nameSingular,
+      openRecordInCommandMenu,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      setHotkeyScope,
+      setPendingRecordId,
+      setSelectedTableCellEditMode,
+    ],
   );
 
   const createNewTableRecordInGroup = useRecoilCallback(
