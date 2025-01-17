@@ -102,7 +102,7 @@ jobs:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
     strategy:
       matrix:
-        storybook_scope: [modules, pages]
+        storybook_scope: [modules, pages, performance]
     steps:
       - uses: actions/checkout@v4
         with:
