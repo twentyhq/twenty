@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledTr = styled.tr<{ isDragging: boolean}>`
+const StyledTr = styled.tr<{ isDragging: boolean }>`
   border: ${({ isDragging, theme }) =>
     isDragging
       ? `1px solid ${theme.border.color.medium}`

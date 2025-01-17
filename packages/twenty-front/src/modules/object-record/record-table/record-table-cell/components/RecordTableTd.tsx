@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { ReactNode, useContext } from 'react';
 import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 
-
 export const RECORD_TABLE_TD_WIDTH = '32px';
 
 const StyledTd = styled.td<{

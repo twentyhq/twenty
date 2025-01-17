@@ -116,7 +116,9 @@ export const ScrollWrapper = ({
     const target = overlayScroll.elements().scrollOffsetElement;
     setScrollTop(target.scrollTop);
     setScrollLeft(target.scrollLeft);
-    setScrollBottom(target.scrollHeight - target.clientHeight - target.scrollTop);
+    setScrollBottom(
+      target.scrollHeight - target.clientHeight - target.scrollTop,
+    );
   };
 
   const setOverlayScrollbars = useSetRecoilComponentStateV2(
@@ -138,7 +140,9 @@ export const ScrollWrapper = ({
     events: {
       updated: (osInstance) => {
         const { scrollOffsetElement: target } = osInstance.elements();
-        setScrollBottom(target.scrollHeight - target.clientHeight - target.scrollTop);
+        setScrollBottom(
+          target.scrollHeight - target.clientHeight - target.scrollTop,
+        );
       },
       scroll: (osInstance) => {
         const { scrollOffsetElement: target, scrollbarVertical } =

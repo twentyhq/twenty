@@ -6,6 +6,7 @@ import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isUndefined } from '@sniptt/guards';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTd = styled.td`
@@ -21,7 +22,7 @@ const StyledTableRow = styled.tr<{
 
   &.footer-sticky {
     td {
-      /* border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`}; */
+      border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
       z-index: 5;
       position: sticky;
       bottom: 0;
@@ -56,22 +57,23 @@ const StyledTableRow = styled.tr<{
   }
   background: ${({ theme }) => theme.background.primary};
   ${({ hasHorizontalOverflow }) =>
-    `
-      bottom: ${hasHorizontalOverflow ? '10px' : '0'};
-      ${
-        hasHorizontalOverflow &&
-        `
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -10px;
-          left: 0;
-          right: 0;
-          height: 10px;
-          background: inherit;
+    `.footer-sticky {
+        bottom: ${hasHorizontalOverflow ? '10px' : '0'};
+        ${
+          hasHorizontalOverflow &&
+          `
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: inherit;
+          }
         }
       `
-      }
+        }
     `}
 `;
 
@@ -97,7 +99,9 @@ export const RecordTableAggregateFooter = ({
     <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
-      hasHorizontalOverflow={hasHorizontalOverflow}
+      hasHorizontalOverflow={
+        hasHorizontalOverflow && isUndefined(currentRecordGroupId)
+      }
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {
