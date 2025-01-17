@@ -6,6 +6,7 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -58,36 +59,51 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigate();
 
-  const createNewTableRecord = async () => {
-    const recordId = v4();
+  const createNewTableRecord = useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        const recordId = v4();
 
-    if (isCommandMenuV2Enabled) {
-      await createOneRecord({ id: recordId });
+        if (isCommandMenuV2Enabled) {
+          await createOneRecord({ id: recordId });
 
-      if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow) {
-        navigate(`/object/workflow/${recordId}`);
-        return;
-      }
+          if (
+            objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
+          ) {
+            navigate(`/object/workflow/${recordId}`);
+            set(
+              isRecordEditableNameRenamingComponentState.atomFamily({
+                instanceId: recordId,
+              }),
+              true,
+            );
+            return;
+          }
 
-      openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
+          openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
 
-      return;
-    }
+          return;
+        }
 
-    setPendingRecordId(recordId);
-    setSelectedTableCellEditMode(-1, 0);
-    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+        setPendingRecordId(recordId);
+        setSelectedTableCellEditMode(-1, 0);
+        setHotkeyScope(
+          DEFAULT_CELL_SCOPE.scope,
+          DEFAULT_CELL_SCOPE.customScopes,
+        );
 
-    if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
-      setActiveDropdownFocusIdAndMemorizePrevious(
-        getDropdownFocusIdForRecordField(
-          recordId,
-          objectMetadataItem.labelIdentifierFieldMetadataId,
-          'table-cell',
-        ),
-      );
-    }
-  };
+        if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
+          setActiveDropdownFocusIdAndMemorizePrevious(
+            getDropdownFocusIdForRecordField(
+              recordId,
+              objectMetadataItem.labelIdentifierFieldMetadataId,
+              'table-cell',
+            ),
+          );
+        }
+      },
+    [],
+  );
 
   const createNewTableRecordInGroup = useRecoilCallback(
     ({ set }) =>

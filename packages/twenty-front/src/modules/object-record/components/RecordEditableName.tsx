@@ -1,7 +1,9 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { capitalize } from 'twenty-shared';
@@ -30,7 +32,11 @@ export const RecordEditableName = ({
   objectRecordId: string;
   objectLabelPlural: string;
 }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
+  const [isRenaming, setIsRenaming] = useRecoilComponentStateV2(
+    isRecordEditableNameRenamingComponentState,
+  );
+  const [recordName, setRecordName] = useState<string>('');
+
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -38,8 +44,6 @@ export const RecordEditableName = ({
       name: true,
     },
   });
-
-  const [recordName, setRecordName] = useState(record?.name);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
@@ -59,12 +63,12 @@ export const RecordEditableName = ({
   };
 
   const handleCancel = () => {
-    setRecordName(record?.name);
+    setRecordName(record?.name ?? '');
     setIsRenaming(false);
   };
 
   useEffect(() => {
-    setRecordName(record?.name);
+    setRecordName(record?.name ?? '');
   }, [record?.name]);
 
   if (loading) {
