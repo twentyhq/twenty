@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -10,6 +11,19 @@ export const RecordTableStickyEffect = () => {
   const scrollTop = useRecoilComponentValueV2(
     scrollWrapperScrollTopComponentState,
   );
+
+  const scrollBottom = useRecoilComponentValueV2(
+    scrollWrapperScrollBottomComponentState,
+  );
+
+
+  useEffect(() => {
+    if (scrollBottom > 0) {
+      document.getElementById('record-table-body')?.classList.add('is-scrollable');
+    } else {
+      document.getElementById('record-table-body')?.classList.remove('is-scrollable');
+    }
+  }, [scrollBottom]);
 
   useEffect(() => {
     if (scrollTop > 0) {

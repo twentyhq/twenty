@@ -5,9 +5,8 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
-import { scrollWrapperIsScrollableComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect } from 'react';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTd = styled.td`
@@ -98,25 +97,16 @@ export const RecordTableAggregateFooter = ({
       overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
     : false;
 
-  const isScrollable = useRecoilComponentValueV2(
-    scrollWrapperIsScrollableComponentState,
+  const scrollBottom = useRecoilComponentValueV2(
+    scrollWrapperScrollBottomComponentState,
   );
-
-  useEffect(() => {
-    if (isScrollable) {
-      document.getElementById('record-table-body')?.classList.add('is-scrollable');
-    } else {
-      document.getElementById('record-table-body')?.classList.remove('is-scrollable');
-    }
-  }, [isScrollable]);
-
 
   return (
     <StyledTableRow
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
       hasHorizontalOverflow={hasHorizontalOverflow}
-      isSticky={isScrollable}
+      isSticky={scrollBottom > 0}
     >
       <StyledTd />
       {visibleTableColumns.map((column, index) => {

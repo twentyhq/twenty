@@ -10,7 +10,7 @@ import {
 
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
-import { scrollWrapperIsScrollableComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperIsScrollableComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -107,8 +107,8 @@ export const ScrollWrapper = ({
     componentInstanceId,
   );
 
-  const setIsScrollable = useSetRecoilComponentStateV2(
-    scrollWrapperIsScrollableComponentState,
+  const setScrollBottom = useSetRecoilComponentStateV2(
+    scrollWrapperScrollBottomComponentState,
     componentInstanceId,
   );
 
@@ -141,11 +141,7 @@ export const ScrollWrapper = ({
         const scrollHeight =
           instance()?.elements().scrollOffsetElement.scrollHeight || 0;
 
-          if (scrollHeight > clientHeight) {
-            setIsScrollable(true);
-          } else {
-            setIsScrollable(false);
-          }
+        setScrollBottom(scrollHeight - clientHeight);
       },
       scroll: (osInstance) => {
         const { scrollOffsetElement: target, scrollbarVertical } =
