@@ -4,7 +4,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ChangeEvent, FocusEvent, forwardRef, useRef } from 'react';
+import { ChangeEvent, FocusEvent, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
@@ -58,93 +58,88 @@ const StyledTextInput = styled.input`
   padding: 0;
 `;
 
-export const NavigationDrawerInput = forwardRef<
-  HTMLInputElement,
-  NavigationDrawerInputProps
->(
-  ({
-    className,
-    Icon,
-    value,
-    placeholder,
-    onChange,
-    onSubmit,
-    onCancel,
-    onClickOutside,
+export const NavigationDrawerInput = ({
+  className,
+  Icon,
+  value,
+  placeholder,
+  onChange,
+  onSubmit,
+  onCancel,
+  onClickOutside,
+  hotkeyScope,
+}: NavigationDrawerInputProps) => {
+  const theme = useTheme();
+  const [isNavigationDrawerExpanded] = useRecoilState(
+    isNavigationDrawerExpandedState,
+  );
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useHotkeyScopeOnMount(hotkeyScope);
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      onCancel(value);
+    },
     hotkeyScope,
-  }: NavigationDrawerInputProps) => {
-    const theme = useTheme();
-    const [isNavigationDrawerExpanded] = useRecoilState(
-      isNavigationDrawerExpandedState,
-    );
+  );
 
-    const inputRef = useRef<HTMLInputElement>(null);
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      onSubmit(value);
+    },
+    hotkeyScope,
+  );
 
-    useHotkeyScopeOnMount(hotkeyScope);
+  useListenClickOutside({
+    refs: [inputRef],
+    callback: (event) => {
+      event.stopImmediatePropagation();
+      onClickOutside(event, value);
+    },
+    listenerId: 'navigation-drawer-input',
+  });
 
-    useScopedHotkeys(
-      [Key.Escape],
-      () => {
-        onCancel(value);
-      },
-      hotkeyScope,
-    );
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.value);
+  };
 
-    useScopedHotkeys(
-      [Key.Enter],
-      () => {
-        onSubmit(value);
-      },
-      hotkeyScope,
-    );
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+    if (isDefined(value)) {
+      event.target.select();
+    }
+  };
 
-    useListenClickOutside({
-      refs: [inputRef],
-      callback: (event) => {
-        event.stopImmediatePropagation();
-        onClickOutside(event, value);
-      },
-      listenerId: 'navigation-drawer-input',
-    });
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(event.target.value);
-    };
-
-    const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
-      if (isDefined(value)) {
-        event.target.select();
-      }
-    };
-
-    return (
-      <StyledItem
-        className={className}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
-      >
-        <StyledItemElementsContainer>
-          {Icon && (
-            <Icon
-              style={{
-                minWidth: theme.icon.size.md,
-              }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.md}
-              color="currentColor"
-            />
-          )}
-          <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledTextInput
-              ref={inputRef}
-              value={value}
-              placeholder={placeholder}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              autoFocus
-            />
-          </NavigationDrawerAnimatedCollapseWrapper>
-        </StyledItemElementsContainer>
-      </StyledItem>
-    );
-  },
-);
+  return (
+    <StyledItem
+      className={className}
+      isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+    >
+      <StyledItemElementsContainer>
+        {Icon && (
+          <Icon
+            style={{
+              minWidth: theme.icon.size.md,
+            }}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.md}
+            color="currentColor"
+          />
+        )}
+        <NavigationDrawerAnimatedCollapseWrapper>
+          <StyledTextInput
+            ref={inputRef}
+            value={value}
+            placeholder={placeholder}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            autoFocus
+          />
+        </NavigationDrawerAnimatedCollapseWrapper>
+      </StyledItemElementsContainer>
+    </StyledItem>
+  );
+};
