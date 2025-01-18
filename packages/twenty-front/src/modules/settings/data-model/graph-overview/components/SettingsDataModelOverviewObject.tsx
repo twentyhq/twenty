@@ -13,8 +13,10 @@ import { capitalize } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
+import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
@@ -122,7 +124,9 @@ export const SettingsDataModelOverviewObject = ({
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
           <StyledObjectLink
-            to={`/settings/objects/${objectMetadataItem.namePlural}`}
+            to={getSettingsPath(SettingsPath.Objects, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
           >
             {Icon && <Icon size={theme.icon.size.md} />}
             {capitalize(objectMetadataItem.namePlural)}

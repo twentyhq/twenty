@@ -3,6 +3,7 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
@@ -18,16 +19,16 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useParams } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 const validationSchema = z
   .object({
@@ -74,7 +75,7 @@ export const PasswordReset = () => {
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);

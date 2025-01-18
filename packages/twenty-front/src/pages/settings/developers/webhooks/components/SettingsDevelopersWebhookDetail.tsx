@@ -1,7 +1,7 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -28,7 +28,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -38,8 +37,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -66,7 +67,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { webhookId = '' } = useParams();
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -108,11 +109,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
-  const developerPath = getSettingsPagePath(SettingsPath.Developers);
-
   const deleteWebhook = () => {
     deleteOneWebhook(webhookId);
-    navigate(developerPath);
+    navigate(SettingsPath.Developers);
   };
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled(
@@ -163,7 +162,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         secret: secret,
       },
     });
-    navigate(developerPath);
+    navigate(SettingsPath.Developers);
   };
 
   const addEmptyOperationIfNecessary = (
@@ -210,16 +209,19 @@ export const SettingsDevelopersWebhooksDetail = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Developers', href: developerPath },
+        {
+          children: 'Developers',
+          href: getSettingsPath(SettingsPath.Developers),
+        },
         { children: 'Webhook' },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!isDirty}
           onCancel={() => {
-            navigate(developerPath);
+            navigate(SettingsPath.Developers);
           }}
           onSave={handleSave}
         />
