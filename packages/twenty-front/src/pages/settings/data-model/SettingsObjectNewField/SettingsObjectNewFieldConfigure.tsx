@@ -34,6 +34,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
@@ -197,7 +198,9 @@ export const SettingsObjectNewFieldConfigure = () => {
             { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectNamePlural}`,
+              href: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural,
+              }),
             },
 
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },

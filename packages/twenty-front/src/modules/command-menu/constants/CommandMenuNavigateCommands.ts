@@ -6,12 +6,19 @@ import {
   IconUser,
 } from 'twenty-ui';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { getAppPath } from '@/utils/navigation/getAppPath';
+import { getSettingsPath } from '@/utils/navigation/getSettingsPath';
 import { Command, CommandType } from '../types/Command';
 
 export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {
     id: 'go-to-people',
-    to: '/objects/people',
+    to: getAppPath(AppPath.RecordIndexPage, {
+      objectNameSingular: CoreObjectNameSingular.Person,
+    }),
     label: 'Go to People',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -21,7 +28,9 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   companies: {
     id: 'go-to-companies',
-    to: '/objects/companies',
+    to: getAppPath(AppPath.RecordIndexPage, {
+      objectNameSingular: CoreObjectNameSingular.Company,
+    }),
     label: 'Go to Companies',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -31,7 +40,9 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   opportunities: {
     id: 'go-to-activities',
-    to: '/objects/opportunities',
+    to: getAppPath(AppPath.RecordIndexPage, {
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
+    }),
     label: 'Go to Opportunities',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -41,7 +52,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   settings: {
     id: 'go-to-settings',
-    to: '/settings/profile',
+    to: getSettingsPath(SettingsPath.ProfilePage),
     label: 'Go to Settings',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -51,7 +62,9 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   },
   tasks: {
     id: 'go-to-tasks',
-    to: '/objects/tasks',
+    to: getAppPath(AppPath.RecordIndexPage, {
+      objectNameSingular: CoreObjectNameSingular.Task,
+    }),
     label: 'Go to Tasks',
     type: CommandType.Navigate,
     firstHotKey: 'G',

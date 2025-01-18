@@ -175,11 +175,13 @@ export const SettingsObjectFieldEdit = () => {
             },
             {
               children: 'Objects',
-              href: '/settings/objects',
+              href: getSettingsPath(SettingsPath.Objects),
             },
             {
               children: objectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectNamePlural}`,
+              href: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural,
+              }),
             },
             {
               children: fieldMetadataItem.label,

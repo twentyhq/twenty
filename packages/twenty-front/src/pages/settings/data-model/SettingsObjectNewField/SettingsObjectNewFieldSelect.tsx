@@ -6,6 +6,7 @@ import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/Set
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -15,6 +16,7 @@ import { isDefined } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -70,7 +72,9 @@ export const SettingsObjectNewFieldSelect = () => {
             { children: 'Objects', href: '/settings/objects' },
             {
               children: activeObjectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectNamePlural}`,
+              href: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural,
+              }),
             },
             { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
           ]}

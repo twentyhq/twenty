@@ -50,7 +50,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             LeftIcon={IconMail}
             text="Emails settings"
             onClick={() => {
-              navigate(SettingsPath.AccountEmails);
+              navigate(SettingsPath.AccountsEmails);
               closeDropdown();
             }}
           />
@@ -58,7 +58,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             LeftIcon={IconCalendarEvent}
             text="Calendar settings"
             onClick={() => {
-              navigate(SettingsPath.AccountCalendars);
+              navigate(SettingsPath.AccountsCalendars);
               closeDropdown();
             }}
           />

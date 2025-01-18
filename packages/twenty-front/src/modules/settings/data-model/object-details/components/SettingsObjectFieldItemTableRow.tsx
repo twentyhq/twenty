@@ -257,7 +257,9 @@ export const SettingsObjectFieldItemTableRow = ({
           }
           to={
             isRelatedObjectLinkable
-              ? `/settings/objects/${relationObjectMetadataItem.namePlural}`
+              ? getSettingsPath(SettingsPath.Objects, {
+                  objectNamePlural: relationObjectMetadataItem.namePlural,
+                })
               : undefined
           }
           value={fieldType}

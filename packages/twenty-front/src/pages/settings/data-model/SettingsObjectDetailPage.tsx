@@ -145,7 +145,7 @@ export const SettingsObjectDetailPage = () => {
             children: 'Workspace',
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: 'Objects', href: '/settings/objects' },
+          { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
           {
             children: objectMetadataItem.labelPlural,
           },

@@ -205,9 +205,10 @@ export const SettingsObjects = () => {
                             stroke={theme.icon.stroke.sm}
                           />
                         }
-                        link={`/settings/objects/${
-                          objectSettingsItem.objectMetadataItem.namePlural
-                        }`}
+                        link={getSettingsPath(SettingsPath.ObjectDetail, {
+                          objectNamePlural:
+                            objectSettingsItem.objectMetadataItem.namePlural,
+                        })}
                       />
                     ),
                   )}
