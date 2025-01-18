@@ -80,7 +80,7 @@ export const useDefaultHomePagePath = () => {
 
     const namePlural = defaultObjectPathInfo.objectMetadataItem?.namePlural;
     const viewParam = defaultObjectPathInfo.view
-      ? `?view=${defaultObjectPathInfo.view.id}`
+      ? `?viewId=${defaultObjectPathInfo.view.id}`
       : '';
 
     return `/objects/${namePlural}${viewParam}`;

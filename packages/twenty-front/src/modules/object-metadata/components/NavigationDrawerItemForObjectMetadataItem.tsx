@@ -36,7 +36,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
   const navigationPath = `/objects/${objectMetadataItem.namePlural}${
-    viewId ? `?view=${viewId}` : ''
+    viewId ? `?viewId=${viewId}` : ''
   }`;
 
   const isActive =
@@ -76,7 +76,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         {sortedObjectMetadataViews.map((view, index) => (
           <NavigationDrawerSubItem
             label={view.name}
-            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+            to={`/objects/${objectMetadataItem.namePlural}?viewId=${view.id}`}
             active={viewId === view.id}
             subItemState={getNavigationSubItemLeftAdornment({
               index,

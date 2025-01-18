@@ -3,7 +3,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useCleanRecoilState = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -11,10 +10,7 @@ export const useCleanRecoilState = () => {
   const apiKeyToken = useRecoilValue(apiKeyTokenState);
   const cleanRecoilState = () => {
     if (
-      !isMatchingLocation(
-        getSettingsPath(SettingsPath.Developers) +
-          SettingsPath.DevelopersApiKeyDetail,
-      ) &&
+      !isMatchingLocation(SettingsPath.DevelopersApiKeyDetail) &&
       isDefined(apiKeyToken)
     ) {
       resetApiKeyToken();

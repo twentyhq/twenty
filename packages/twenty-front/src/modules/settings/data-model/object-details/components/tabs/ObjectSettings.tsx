@@ -147,7 +147,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           objectMetadataItem.id,
         );
         setNavigationMemorizedUrl(
-          `/objects/${objectNamePluralForRedirection}?view=${lastVisitedView}`,
+          `/objects/${objectNamePluralForRedirection}?viewId=${lastVisitedView}`,
         );
       }
 

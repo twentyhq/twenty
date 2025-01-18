@@ -56,7 +56,7 @@ export const SettingsDevelopers = () => {
                 title={t`Create API key`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/api-keys/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
               />
             </StyledButtonContainer>
           </Section>
@@ -72,7 +72,7 @@ export const SettingsDevelopers = () => {
                 title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/webhooks/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
               />
             </StyledButtonContainer>
           </Section>

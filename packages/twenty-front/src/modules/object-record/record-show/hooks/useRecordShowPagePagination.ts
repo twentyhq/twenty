@@ -24,7 +24,7 @@ export const useRecordShowPagePagination = (
 
   const navigate = useNavigateApp();
   const [searchParams] = useSearchParams();
-  const viewIdQueryParam = searchParams.get('view');
+  const viewIdQueryParam = searchParams.get('viewId');
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
@@ -130,7 +130,7 @@ export const useRecordShowPagePagination = (
     !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
 
   const navigateToPreviousRecord = () => {
-    if (isFirstRecord) {
+    if (isFirstRecord || !recordBefore) {
       if (cacheIsAvailableForNavigation) {
         const lastRecordIdFromCache =
           recordIdsInCache[recordIdsInCache.length - 1];
@@ -164,7 +164,7 @@ export const useRecordShowPagePagination = (
     !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
 
   const navigateToNextRecord = () => {
-    if (isLastRecord) {
+    if (isLastRecord || !recordAfter) {
       if (cacheIsAvailableForNavigation) {
         const firstRecordIdFromCache = recordIdsInCache[0];
 

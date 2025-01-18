@@ -40,7 +40,7 @@ export const sortFavorites = (
           avatarType: 'icon',
           avatarUrl: '',
           labelIdentifier: view?.name,
-          link: `/objects/${labelPlural.toLocaleLowerCase()}${favorite.viewId ? `?view=${favorite.viewId}` : ''}`,
+          link: `/objects/${labelPlural.toLocaleLowerCase()}${favorite.viewId ? `?viewId=${favorite.viewId}` : ''}`,
           workspaceMemberId: favorite.workspaceMemberId,
           favoriteFolderId: favorite.favoriteFolderId,
           objectNameSingular: 'view',
