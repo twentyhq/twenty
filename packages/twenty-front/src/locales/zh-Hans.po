@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-18 20:53+0100\n"
+"POT-Creation-Date: 2025-01-18 21:12+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -126,6 +126,10 @@ msgstr "账单"
 msgid "Blocklist"
 msgstr "拦截列表"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+msgid "Calculate"
+msgstr "计算"
+
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
 msgstr "日历"
@@ -165,6 +169,10 @@ msgstr "繁体中文"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
 msgstr "选择对象"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:133
+msgid "Companies"
+msgstr "公司"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -206,6 +214,10 @@ msgstr "连接账户"
 msgid "Continue"
 msgstr "继续"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:105
+msgid "Copilot"
+msgstr "副驾驶"
+
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "复制邀请链接"
@@ -221,6 +233,10 @@ msgstr "创建应用程序接口密钥"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
 msgstr "创建 Webhook"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:149
+msgid "Custom Objects"
+msgstr "自定义对象"
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
@@ -547,6 +563,10 @@ msgstr "API 密钥名称"
 msgid "Name of your workspace"
 msgstr "工作区名称"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:125
+msgid "Navigate"
+msgstr "导航"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:77
 msgid "New"
 msgstr "新"
@@ -579,6 +599,10 @@ msgstr "新钥匙"
 msgid "No connected account"
 msgstr "无连接账户"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:141
+msgid "Notes"
+msgstr "说明"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
 msgid "Object created successfully"
 msgstr "对象创建成功"
@@ -591,6 +615,10 @@ msgstr "对象"
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
 msgstr "偏离常规路线"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:137
+msgid "Opportunities"
+msgstr "机会"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:195
 msgid "Other"
@@ -607,6 +635,10 @@ msgstr "密码"
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
 msgstr "密码重置链接已发送至邮箱"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:129
+msgid "People"
+msgstr "人"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -647,6 +679,10 @@ msgstr "阅读文件"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:109
+msgid "Record Selection"
+msgstr "记录选择"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:187
 msgid "Regenerate Key"
 msgstr "再生密钥"
@@ -677,6 +713,11 @@ msgstr "重置密码"
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
 msgstr "SSO"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
+msgid "Search"
+msgstr "搜索"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
 msgid "Search a field..."
@@ -720,7 +761,9 @@ msgstr "设置电子邮件可见性、管理屏蔽列表等。"
 msgid "Set the name of your subdomain"
 msgstr "设置子域名称"
 
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 msgid "Settings"
 msgstr "设置"
 
@@ -776,6 +819,10 @@ msgstr "系统设置 - [{systemTimeFormatLabel}］"
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "系统设置 - {systemDateFormatLabel}"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:145
+msgid "Tasks"
+msgstr "任务"
+
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
 msgstr "与您的账户关联的电子邮件"
@@ -830,6 +877,10 @@ msgstr "用户"
 msgid "User is not logged in"
 msgstr "用户未登录"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:117
+msgid "View"
+msgstr "查看"
+
 #: src/pages/settings/SettingsBilling.tsx:149
 msgid "View billing details"
 msgstr "查看账单详情"
@@ -863,6 +914,14 @@ msgstr "API 密钥的过期时间。"
 msgid "When the key will be disabled"
 msgstr "何时禁用按键"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:113
+msgid "Workflow Record Selection"
+msgstr "工作流程记录选择"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:121
+msgid "Workflows"
+msgstr "工作流程"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:132
@@ -877,6 +936,7 @@ msgstr "何时禁用按键"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
 msgid "Workspace"
 msgstr "工作空间"

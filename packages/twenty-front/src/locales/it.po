@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-18 20:53+0100\n"
+"POT-Creation-Date: 2025-01-18 21:12+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -126,6 +126,10 @@ msgstr "Fatturazione"
 msgid "Blocklist"
 msgstr "Elenco di blocco"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+msgid "Calculate"
+msgstr "Calcolare"
+
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
 msgstr "Calendario"
@@ -165,6 +169,10 @@ msgstr "Cinese tradizionale"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
 msgstr "Scegliere un oggetto"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:133
+msgid "Companies"
+msgstr "Aziende"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -206,6 +214,10 @@ msgstr "Conti collegati"
 msgid "Continue"
 msgstr "Continua"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:105
+msgid "Copilot"
+msgstr "Copilota"
+
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "Copiare il link dell'invito"
@@ -221,6 +233,10 @@ msgstr "Creare la chiave API"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
 msgstr "Creare un webhook"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:149
+msgid "Custom Objects"
+msgstr "Oggetti personalizzati"
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
@@ -547,6 +563,10 @@ msgstr "Nome della chiave API"
 msgid "Name of your workspace"
 msgstr "Nome dell'area di lavoro"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:125
+msgid "Navigate"
+msgstr "Navigare"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:77
 msgid "New"
 msgstr "Nuovo"
@@ -579,6 +599,10 @@ msgstr "Nuova chiave"
 msgid "No connected account"
 msgstr "Nessun account collegato"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:141
+msgid "Notes"
+msgstr "Note"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
 msgid "Object created successfully"
 msgstr "Oggetto creato con successo"
@@ -591,6 +615,10 @@ msgstr "Oggetti"
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
 msgstr "Fuori dai sentieri battuti"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:137
+msgid "Opportunities"
+msgstr "Opportunità"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:195
 msgid "Other"
@@ -607,6 +635,10 @@ msgstr "Password"
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
 msgstr "Il link per la reimpostazione della password è stato inviato all'e-mail"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:129
+msgid "People"
+msgstr "Persone"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -647,6 +679,10 @@ msgstr "Leggi la documentazione"
 msgid "Receive an email containing password update link"
 msgstr "Ricevere un'e-mail contenente il link per l'aggiornamento della password"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:109
+msgid "Record Selection"
+msgstr "Selezione dei record"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:187
 msgid "Regenerate Key"
 msgstr "Chiave di rigenerazione"
@@ -677,6 +713,11 @@ msgstr "Reimpostare la password"
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
 msgstr "SSO"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
+msgid "Search"
+msgstr "Ricerca"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
 msgid "Search a field..."
@@ -720,7 +761,9 @@ msgstr "Impostate la visibilità delle e-mail, gestite la vostra blocklist e alt
 msgid "Set the name of your subdomain"
 msgstr "Impostare il nome del sottodominio"
 
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 msgid "Settings"
 msgstr "Impostazioni"
 
@@ -776,6 +819,10 @@ msgstr "Impostazioni di sistema - {systemTimeFormatLabel}"
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Impostazioni di sistema - {systemDateFormatLabel}"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:145
+msgid "Tasks"
+msgstr "Compiti"
+
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
 msgstr "L'e-mail associata al vostro account"
@@ -830,6 +877,10 @@ msgstr "Utente"
 msgid "User is not logged in"
 msgstr "L'utente non è connesso"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:117
+msgid "View"
+msgstr "Vista"
+
 #: src/pages/settings/SettingsBilling.tsx:149
 msgid "View billing details"
 msgstr "Visualizza i dettagli della fatturazione"
@@ -863,6 +914,14 @@ msgstr "Quando scadrà la chiave API."
 msgid "When the key will be disabled"
 msgstr "Quando il tasto sarà disabilitato"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:113
+msgid "Workflow Record Selection"
+msgstr "Selezione dei record del flusso di lavoro"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:121
+msgid "Workflows"
+msgstr "Flussi di lavoro"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:132
@@ -877,6 +936,7 @@ msgstr "Quando il tasto sarà disabilitato"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
 msgid "Workspace"
 msgstr "Spazio di lavoro"

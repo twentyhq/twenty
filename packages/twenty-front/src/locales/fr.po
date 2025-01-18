@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-18 20:53+0100\n"
+"POT-Creation-Date: 2025-01-18 21:12+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -126,6 +126,10 @@ msgstr "Facturation"
 msgid "Blocklist"
 msgstr "Liste de blocage"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+msgid "Calculate"
+msgstr "Calculer"
+
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
 msgstr "Calendrier"
@@ -165,6 +169,10 @@ msgstr "Chinois - Traditionnel"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
 msgstr "Choisir un objet"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:133
+msgid "Companies"
+msgstr "Entreprises"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -206,6 +214,10 @@ msgstr "Comptes connectés"
 msgid "Continue"
 msgstr "Continuer"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:105
+msgid "Copilot"
+msgstr "Copilote"
+
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr "Copier le lien de l'invitation"
@@ -221,6 +233,10 @@ msgstr "Créer une clé API"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
 msgstr "Créer un Webhook"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:149
+msgid "Custom Objects"
+msgstr "Objets personnalisés"
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
@@ -547,6 +563,10 @@ msgstr "Nom de votre clé API"
 msgid "Name of your workspace"
 msgstr "Nom de votre espace de travail"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:125
+msgid "Navigate"
+msgstr "Naviguer"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:77
 msgid "New"
 msgstr "Nouveau"
@@ -579,6 +599,10 @@ msgstr "Nouvelle clé"
 msgid "No connected account"
 msgstr "Pas de compte connecté"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:141
+msgid "Notes"
+msgstr "Notes"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
 msgid "Object created successfully"
 msgstr "Objet créé avec succès"
@@ -591,6 +615,10 @@ msgstr "Objets"
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
 msgstr "Hors des sentiers battus"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:137
+msgid "Opportunities"
+msgstr "Opportunités"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:195
 msgid "Other"
@@ -607,6 +635,10 @@ msgstr "Mot de passe"
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
 msgstr "Le lien de réinitialisation du mot de passe a été envoyé à l'email"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:129
+msgid "People"
+msgstr "Les personnes"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -647,6 +679,10 @@ msgstr "Lire la documentation"
 msgid "Receive an email containing password update link"
 msgstr "Recevoir un courriel contenant un lien de mise à jour du mot de passe"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:109
+msgid "Record Selection"
+msgstr "Sélection des enregistrements"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:187
 msgid "Regenerate Key"
 msgstr "Régénérer la clé"
@@ -677,6 +713,11 @@ msgstr "Réinitialiser le mot de passe"
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
 msgstr "SSO"
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
+msgid "Search"
+msgstr "Recherche"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
 msgid "Search a field..."
@@ -720,7 +761,9 @@ msgstr "Définissez la visibilité des e-mails, gérez votre liste de blocage et
 msgid "Set the name of your subdomain"
 msgstr "Définissez le nom de votre sous-domaine"
 
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -776,6 +819,10 @@ msgstr "Paramètres du système - {systemTimeFormatLabel}"
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Paramètres du système - {systemDateFormatLabel}"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:145
+msgid "Tasks"
+msgstr "Tâches"
+
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
 msgstr "L'email associé à votre compte"
@@ -830,6 +877,10 @@ msgstr "Utilisateur"
 msgid "User is not logged in"
 msgstr "L'utilisateur n'est pas connecté"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:117
+msgid "View"
+msgstr "Voir"
+
 #: src/pages/settings/SettingsBilling.tsx:149
 msgid "View billing details"
 msgstr "Voir les détails de la facturation"
@@ -863,6 +914,14 @@ msgstr "Date d'expiration de la clé API."
 msgid "When the key will be disabled"
 msgstr "Quand la clé sera désactivée"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:113
+msgid "Workflow Record Selection"
+msgstr "Sélection des enregistrements du flux de travail"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:121
+msgid "Workflows"
+msgstr "Flux de travail"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:132
@@ -877,6 +936,7 @@ msgstr "Quand la clé sera désactivée"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
 msgid "Workspace"
 msgstr "Espace de travail"

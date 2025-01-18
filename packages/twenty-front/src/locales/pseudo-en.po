@@ -152,6 +152,10 @@ msgstr ""
 msgid "Blocklist"
 msgstr ""
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+msgid "Calculate"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
 msgstr ""
@@ -200,6 +204,10 @@ msgstr ""
 msgid "Choose an object"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:133
+msgid "Companies"
+msgstr ""
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr ""
@@ -240,6 +248,10 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:105
+msgid "Copilot"
+msgstr ""
+
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
 msgstr ""
@@ -254,6 +266,10 @@ msgstr ""
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
+msgstr ""
+
+#: src/modules/command-menu/components/CommandMenu.tsx:149
+msgid "Custom Objects"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
@@ -598,6 +614,10 @@ msgstr ""
 msgid "Name of your workspace"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:125
+msgid "Navigate"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:77
 msgid "New"
 msgstr ""
@@ -634,6 +654,10 @@ msgstr ""
 msgid "not allowed"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:141
+msgid "Notes"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
 msgid "Object created successfully"
 msgstr ""
@@ -645,6 +669,10 @@ msgstr ""
 
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
+msgstr ""
+
+#: src/modules/command-menu/components/CommandMenu.tsx:137
+msgid "Opportunities"
 msgstr ""
 
 #: src/pages/onboarding/InviteTeam.tsx:213
@@ -669,6 +697,10 @@ msgstr ""
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
+msgstr ""
+
+#: src/modules/command-menu/components/CommandMenu.tsx:129
+msgid "People"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
@@ -710,6 +742,10 @@ msgstr ""
 msgid "Receive an email containing password update link"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:109
+msgid "Record Selection"
+msgstr ""
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:183
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:265
 msgid "Regenerate an API key"
@@ -735,6 +771,11 @@ msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx:177
 msgid "Reset Password"
+msgstr ""
+
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
+msgid "Search"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
@@ -783,7 +824,9 @@ msgstr ""
 msgid "Set the name of your subdomain"
 msgstr ""
 
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
 msgid "Settings"
 msgstr ""
 
@@ -859,6 +902,10 @@ msgstr ""
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:145
+msgid "Tasks"
+msgstr ""
+
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
 msgstr ""
@@ -925,6 +972,10 @@ msgstr ""
 msgid "User is not logged in"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:117
+msgid "View"
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx:149
 msgid "View billing details"
 msgstr ""
@@ -958,6 +1009,14 @@ msgstr ""
 msgid "When the key will be disabled"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:113
+msgid "Workflow Record Selection"
+msgstr ""
+
+#: src/modules/command-menu/components/CommandMenu.tsx:121
+msgid "Workflows"
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:132
@@ -972,6 +1031,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
 msgid "Workspace"
 msgstr ""
