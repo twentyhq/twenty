@@ -33,6 +33,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -48,6 +49,7 @@ type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
+  const { t } = useLingui();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -170,11 +172,11 @@ export const SettingsObjectFieldEdit = () => {
           title={fieldMetadataItem?.label}
           links={[
             {
-              children: 'Workspace',
+              children: t`Workspace`,
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: 'Objects',
+              children: t`Objects`,
               href: getSettingsPath(SettingsPath.Objects),
             },
             {
@@ -203,8 +205,8 @@ export const SettingsObjectFieldEdit = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Icon and Name"
-                description="The name and icon of this field"
+                title={t`Icon and Name`}
+                description={t`The name and icon of this field`}
               />
               <SettingsDataModelFieldIconLabelForm
                 disabled={!fieldMetadataItem.isCustom}
@@ -218,13 +220,13 @@ export const SettingsObjectFieldEdit = () => {
             <Section>
               {fieldMetadataItem.isUnique ? (
                 <H2Title
-                  title="Values"
-                  description="The values of this field must be unique"
+                  title={t`Values`}
+                  description={t`The values of this field must be unique`}
                 />
               ) : (
                 <H2Title
-                  title="Values"
-                  description="The values of this field"
+                  title={t`Values`}
+                  description={t`The values of this field`}
                 />
               )}
               <SettingsDataModelFieldSettingsFormCard
@@ -234,8 +236,8 @@ export const SettingsObjectFieldEdit = () => {
             </Section>
             <Section>
               <H2Title
-                title="Description"
-                description="The description of this field"
+                title={t`Description`}
+                description={t`The description of this field`}
               />
               <SettingsDataModelFieldDescriptionForm
                 disabled={!fieldMetadataItem.isCustom}
@@ -245,15 +247,17 @@ export const SettingsObjectFieldEdit = () => {
             {!isLabelIdentifier && (
               <Section>
                 <H2Title
-                  title="Danger zone"
-                  description="Deactivate this field"
+                  title={t`Danger zone`}
+                  description={t`Deactivate this field`}
                 />
                 <Button
                   Icon={
                     fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
                   }
                   variant="secondary"
-                  title={fieldMetadataItem.isActive ? 'Deactivate' : 'Activate'}
+                  title={
+                    fieldMetadataItem.isActive ? t`Deactivate` : t`Activate`
+                  }
                   size="small"
                   onClick={
                     fieldMetadataItem.isActive

@@ -13,10 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
-msgid "'Exit Settings'"
-msgstr ""
-
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:126
 #~ msgid "{0}"
 #~ msgstr ""
@@ -25,8 +21,16 @@ msgstr ""
 msgid "{apiKeyName} API Key"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:92
+msgid "1 000 workflow node executions"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
 msgid "12h ({hour12Label})"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
+msgid "2. Configure field"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
@@ -54,6 +58,10 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:114
 msgid "Accounts"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+msgid "Activate"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:193
@@ -101,6 +109,7 @@ msgstr ""
 msgid "An optional description"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:179
 msgid "API & Webhooks"
 msgstr ""
@@ -112,6 +121,10 @@ msgstr ""
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
+msgstr ""
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
@@ -138,6 +151,10 @@ msgstr ""
 msgid "Authentication"
 msgstr ""
 
+#: src/pages/auth/Authorize.tsx:127
+msgid "Authorize"
+msgstr ""
+
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
 msgstr ""
@@ -152,6 +169,10 @@ msgstr ""
 msgid "Blocklist"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:210
+msgid "Book a Call"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
 msgid "Calculate"
 msgstr ""
@@ -164,6 +185,17 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:78
 msgid "Calendars"
+msgstr ""
+
+#: src/pages/auth/Authorize.tsx:124
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:198
+#: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
+msgid "Cancel"
+msgstr ""
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
 msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx:175
@@ -202,6 +234,14 @@ msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
+msgstr ""
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr ""
+
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:201
+msgid "Close"
 msgstr ""
 
 #: src/modules/command-menu/components/CommandMenu.tsx:133
@@ -245,6 +285,7 @@ msgid "Connected accounts"
 msgstr ""
 
 #: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/ChooseYourPlan.tsx:198
 msgid "Continue"
 msgstr ""
 
@@ -268,6 +309,10 @@ msgstr ""
 msgid "Create Webhook"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:90
+msgid "Custom objects"
+msgstr ""
+
 #: src/modules/command-menu/components/CommandMenu.tsx:149
 msgid "Custom Objects"
 msgstr ""
@@ -282,6 +327,7 @@ msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:229
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
 msgid "Danger zone"
@@ -294,6 +340,18 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+msgid "Deactivate"
+msgstr ""
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
+msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
+msgid "Deactivate this field"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:87
@@ -339,6 +397,8 @@ msgid "Delete your whole workspace"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
 msgstr ""
 
@@ -349,6 +409,10 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:78
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:160
 msgid "Developers"
+msgstr ""
+
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
+msgid "Display as relative date"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
@@ -382,6 +446,10 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:89
+msgid "Email integration"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
 msgid "Email or domain is already in blocklist"
 msgstr ""
@@ -391,6 +459,14 @@ msgstr ""
 msgid "Emails"
 msgstr ""
 
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr ""
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
+msgid "Employees"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
@@ -398,6 +474,10 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
 msgid "English"
+msgstr ""
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:157
+msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr ""
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
@@ -430,6 +510,14 @@ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:167
 msgid "Existing objects"
+msgstr ""
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+#~ msgid "Exit settings"
+#~ msgstr ""
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "Exit Settings"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
@@ -474,6 +562,10 @@ msgstr ""
 msgid "from yearly to monthly"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:87
+msgid "Full access"
+msgstr ""
+
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
 msgid "Functions"
 msgstr ""
@@ -493,8 +585,17 @@ msgstr ""
 msgid "Get the most out of your workspace by inviting your team."
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:148
+msgid "Get your subscription"
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspace.tsx:65
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
+msgid "Icon and Name"
 msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:267
@@ -504,6 +605,10 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjects.tsx:218
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
 msgid "Inactive"
+msgstr ""
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
+msgid "Input must be in camel case and cannot start with a number"
 msgstr ""
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
@@ -563,6 +668,10 @@ msgstr ""
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
+msgstr ""
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:206
+msgid "Log out"
 msgstr ""
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:209
@@ -663,7 +772,9 @@ msgid "Object created successfully"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsNewObject.tsx:74
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr ""
 
@@ -722,6 +833,11 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
 msgid "Portuguese"
+msgstr ""
+
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:62
+#: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
+msgid "Preview"
 msgstr ""
 
 #: src/pages/settings/SettingsProfile.tsx:19
@@ -834,6 +950,10 @@ msgstr ""
 msgid "Share this link to invite users to join your workspace"
 msgstr ""
 
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:212
+msgid "Should changing a field's label also change the API name?"
+msgstr ""
+
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
 msgstr ""
@@ -894,6 +1014,10 @@ msgstr ""
 msgid "Switch billing {to}"
 msgstr ""
 
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
+msgid "Synchronize Field Label and API Name"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
 msgstr ""
@@ -906,12 +1030,31 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
+msgid "The description of this field"
+msgstr ""
+
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
 msgstr ""
 
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:209
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
+msgid "The name and icon of this field"
+msgstr ""
+
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
+msgid "The values of this field"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
+msgid "The values of this field must be unique"
 msgstr ""
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
@@ -946,6 +1089,10 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:88
+msgid "Unlimited contacts"
+msgstr ""
+
 #: src/modules/ui/input/components/ImageInput.tsx:165
 msgid "Upload"
 msgstr ""
@@ -970,6 +1117,12 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
 msgid "User is not logged in"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:223
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:228
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
+msgid "Values"
 msgstr ""
 
 #: src/modules/command-menu/components/CommandMenu.tsx:117
@@ -1030,7 +1183,9 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:74
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
 msgid "Workspace"

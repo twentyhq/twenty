@@ -22,6 +22,7 @@ import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -44,6 +45,8 @@ type SettingsDataModelNewFieldFormValues = z.infer<
 const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
+  const { t } = useLingui();
+
   const navigateApp = useNavigateApp();
   const navigate = useNavigateSettings();
 
@@ -192,10 +195,16 @@ export const SettingsObjectNewFieldConfigure = () => {
         {...formConfig}
       >
         <SubMenuTopBarContainer
-          title="2. Configure field"
+          title={t`2. Configure field`}
           links={[
-            { children: 'Workspace', href: '/settings/workspace' },
-            { children: 'Objects', href: '/settings/objects' },
+            {
+              children: t`Workspace`,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: t`Objects`,
+              href: getSettingsPath(SettingsPath.Objects),
+            },
             {
               children: activeObjectMetadataItem.labelPlural,
               href: getSettingsPath(SettingsPath.ObjectDetail, {
@@ -227,8 +236,8 @@ export const SettingsObjectNewFieldConfigure = () => {
           <SettingsPageContainer>
             <Section>
               <H2Title
-                title="Icon and Name"
-                description="The name and icon of this field"
+                title={t`Icon and Name`}
+                description={t`The name and icon of this field`}
               />
               <SettingsDataModelFieldIconLabelForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
@@ -238,7 +247,10 @@ export const SettingsObjectNewFieldConfigure = () => {
               />
             </Section>
             <Section>
-              <H2Title title="Values" description="The values of this field" />
+              <H2Title
+                title={t`Values`}
+                description={t`The values of this field`}
+              />
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={{
                   icon: formConfig.watch('icon'),
@@ -251,8 +263,8 @@ export const SettingsObjectNewFieldConfigure = () => {
             </Section>
             <Section>
               <H2Title
-                title="Description"
-                description="The description of this field"
+                title={t`Description`}
+                description={t`The description of this field`}
               />
               <SettingsDataModelFieldDescriptionForm />
             </Section>
