@@ -45680,6 +45680,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-shared@file:packages/twenty-shared::locator=twenty%40workspace%3A.":
+  version: 0.40.0-canary
+  resolution: "twenty-shared@file:packages/twenty-shared#packages/twenty-shared::hash=469ea2&locator=twenty%40workspace%3A."
+  checksum: 10c0/8d7b8c3ab88b8f58f73cf3e0aafbe10c132dcb12edd77f9febfd65009c4641b23a7890677cd9cf23de4e1f184ae74740ff30c467255695993818c4a7405a1c20
+  languageName: node
+  linkType: hard
+
 "twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
@@ -46047,6 +46054,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     tsup: "npm:^8.2.4"
     tsx: "npm:^4.17.0"
+    twenty-shared: "file:packages/twenty-shared"
     type-fest: "npm:4.10.1"
     typescript: "npm:5.3.3"
     use-context-selector: "npm:^2.0.0"
