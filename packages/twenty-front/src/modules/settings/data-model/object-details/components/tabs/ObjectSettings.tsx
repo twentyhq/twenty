@@ -18,6 +18,7 @@ import {
 import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -28,6 +29,7 @@ import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const objectEditFormSchema = z
@@ -147,7 +149,11 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           objectMetadataItem.id,
         );
         setNavigationMemorizedUrl(
-          `/objects/${objectNamePluralForRedirection}?viewId=${lastVisitedView}`,
+          getAppPath(
+            AppPath.RecordIndexPage,
+            { objectNamePlural: objectNamePluralForRedirection },
+            { viewId: lastVisitedView },
+          ),
         );
       }
 
