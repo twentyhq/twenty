@@ -147,9 +147,7 @@ export const AnalyticsActivityGraph = ({
                   match: '*',
                 },
               ]}
-              yScale={{
-                type: 'linear',
-              }}
+              yScale={{ type: 'linear' }}
               axisBottom={{
                 format: '%b %d, %I:%M %p', //TODO: add the user prefered time format for the graph
                 tickValues: 2,
