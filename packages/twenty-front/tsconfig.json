@@ -24,7 +24,7 @@
       "@/*": ["packages/twenty-front/src/modules/*"],
       "~/*": ["packages/twenty-front/src/*"],
       "twenty-ui": ["packages/twenty-ui/src/index.ts"],
-      "@ui/*": ["packages/twenty-ui/src/*"],
+      "@ui/*": ["packages/twenty-ui/src/*"]
     }
   },
   "files": [],
@@ -41,11 +41,7 @@
     },
     {
       "path": "./tsconfig.storybook.json"
-    },
-    {
-      "path": "../twenty-shared/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json"
 }
-
