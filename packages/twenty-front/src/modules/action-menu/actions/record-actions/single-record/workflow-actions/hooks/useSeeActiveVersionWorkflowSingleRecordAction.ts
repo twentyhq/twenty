@@ -26,7 +26,7 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
         return;
       }
 
-      navigateApp<AppPath.RecordShowPage>(AppPath.RecordShowPage, {
+      navigateApp(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
         objectRecordId: workflowActiveVersion.id,
       });

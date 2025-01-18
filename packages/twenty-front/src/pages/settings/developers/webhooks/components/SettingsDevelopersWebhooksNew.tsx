@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, isDefined, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -8,13 +7,16 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
+
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
     operations: string[];
@@ -40,7 +42,9 @@ export const SettingsDevelopersWebhooksNew = () => {
     if (!newWebhook) {
       return;
     }
-    navigate(`/settings/developers/webhooks/${newWebhook.id}`);
+    navigate(`${AppPath.Settings}/${SettingsPath.DevelopersNewWebhookDetail}`, {
+      webhookId: newWebhook.id,
+    });
   };
 
   const canSave =
@@ -79,7 +83,7 @@ export const SettingsDevelopersWebhooksNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate(getSettingsPagePath(SettingsPath.Developers));
+            navigate(`${AppPath.Settings}/${SettingsPath.Developers}`);
           }}
           onSave={handleSave}
         />

@@ -7,6 +7,7 @@ import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/typ
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,10 +15,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const { enqueueSnackBar } = useSnackBar();
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
@@ -44,7 +45,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
         ),
       );
 
-      navigate(getSettingsPagePath(SettingsPath.Security));
+      navigate(`${AppPath.Settings}/${SettingsPath.Security}`);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -58,7 +59,9 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!formConfig.formState.isValid}
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Security))}
+          onCancel={() =>
+            navigate(`${AppPath.Settings}/${SettingsPath.Security}`)
+          }
           onSave={handleSave}
         />
       }

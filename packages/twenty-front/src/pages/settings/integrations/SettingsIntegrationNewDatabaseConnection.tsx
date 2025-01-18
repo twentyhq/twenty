@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
@@ -23,6 +23,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { H2Title, Section } from 'twenty-ui';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const createRemoteServerInputPostgresSchema =
   settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
@@ -67,7 +68,7 @@ type SettingsIntegrationNewConnectionFormValues =
 
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { databaseKey = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -118,8 +119,16 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
       const connectionId = createdConnection.data?.createOneRemoteServer.id;
 
+      if (!connectionId) {
+        throw new Error('Failed to create connection');
+      }
+
       navigate(
-        `${settingsIntegrationsPagePath}/${databaseKey}/${connectionId}`,
+        `${AppPath.Settings}/${SettingsPath.IntegrationDatabaseConnection}`,
+        {
+          databaseKey,
+          connectionId,
+        },
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
@@ -150,7 +159,12 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() =>
-            navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
+            navigate(
+              `${AppPath.Settings}/${SettingsPath.IntegrationDatabase}`,
+              {
+                databaseKey,
+              },
+            )
           }
           onSave={handleSave}
         />
