@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -17,12 +16,13 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const navigate = useNavigate();
+  const navigateSettings = useNavigateSettings();
   const setApiKeyToken = useSetRecoilState(apiKeyTokenState);
   const [formValues, setFormValues] = useState<{
     name: string;
@@ -58,7 +58,9 @@ export const SettingsDevelopersApiKeysNew = () => {
     });
     if (isDefined(tokenData.data?.generateApiKeyToken)) {
       setApiKeyToken(tokenData.data.generateApiKeyToken.token);
-      navigate(`/settings/developers/api-keys/${newApiKey.id}`);
+      navigateSettings(SettingsPath.DevelopersApiKeyDetail, {
+        apiKeyId: newApiKey.id,
+      });
     }
   };
   const canSave = !!formValues.name && createOneApiKey;
@@ -80,7 +82,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate('/settings/developers');
+            navigateSettings(SettingsPath.Developers);
           }}
           onSave={handleSave}
         />

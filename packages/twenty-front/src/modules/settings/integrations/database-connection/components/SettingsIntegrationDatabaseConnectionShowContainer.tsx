@@ -5,11 +5,12 @@ import { useDatabaseConnection } from '@/settings/integrations/database-connecti
 import { SettingsPath } from '@/types/SettingsPath';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { Section } from '@react-email/components';
-import { useNavigate } from 'react-router-dom';
 import { H2Title } from 'twenty-ui';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { connection, integration, databaseKey, tables } =
     useDatabaseConnection({ fetchPolicy: 'network-only' });
 
@@ -22,7 +23,9 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const deleteConnection = async () => {
     await deleteOneDatabaseConnection({ id: connection.id });
 
-    navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
+    navigate(SettingsPath.IntegrationDatabase, {
+      databaseKey,
+    });
   };
 
   const settingsIntegrationsPagePath = getSettingsPath(

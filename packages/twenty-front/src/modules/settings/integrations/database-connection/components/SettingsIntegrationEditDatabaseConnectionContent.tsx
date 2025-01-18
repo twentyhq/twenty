@@ -16,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Info } from 'twenty-ui';
 import { z } from 'zod';
 import {
@@ -24,6 +23,7 @@ import {
   RemoteTable,
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
@@ -38,7 +38,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   tables: RemoteTable[];
 }) => {
   const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const editConnectionSchema = getEditionSchemaForForm(databaseKey);
   type SettingsIntegrationEditConnectionFormValues = z.infer<
@@ -82,9 +82,10 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         id: connection?.id ?? '',
       });
 
-      navigate(
-        `${settingsIntegrationsPagePath}/${databaseKey}/${connection?.id}`,
-      );
+      navigate(SettingsPath.IntegrationDatabaseConnection, {
+        databaseKey,
+        connectionId: connection?.id,
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -116,7 +117,9 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() =>
-              navigate(`${settingsIntegrationsPagePath}/${databaseKey}`)
+              navigate(SettingsPath.IntegrationDatabase, {
+                databaseKey,
+              })
             }
             onSave={handleSave}
           />

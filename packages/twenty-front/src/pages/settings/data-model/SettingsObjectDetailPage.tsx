@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,6 +30,7 @@ import {
   isDefined,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -51,7 +52,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 export const SettingsObjectDetailPage = () => {
-  const navigate = useNavigate();
+  const navigateApp = useNavigateApp();
 
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -76,10 +77,10 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDefined(objectMetadataItem)) navigate(AppPath.NotFound);
+    if (!isDefined(objectMetadataItem)) navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
-    navigate,
+    navigateApp,
     objectNamePlural,
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
