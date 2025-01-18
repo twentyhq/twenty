@@ -13,8 +13,8 @@ import { AppPath } from '@/types/AppPath';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
-    AppNavigationDrawer,
-    AppNavigationDrawerProps,
+  AppNavigationDrawer,
+  AppNavigationDrawerProps,
 } from '../AppNavigationDrawer';
 
 const MobileNavigationDrawerStateSetterEffect = ({
