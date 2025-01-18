@@ -6,32 +6,32 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const tasksByStatusView = (
+export const tasksAssignedToMeView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'By Status',
+    name: 'Assigned to Me',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].id,
-    type: 'kanban',
+    type: 'table',
     key: null,
-    position: 1,
-    icon: 'IconLayoutKanban',
-    kanbanFieldMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-        TASK_STANDARD_FIELD_IDS.status
-      ],
-    filters: [] /* [
+    position: 2,
+    icon: 'IconUserCircle',
+    kanbanFieldMetadataId: '',
+    filters: [
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.type
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.assignee
           ],
-        displayValue: 'Task',
+        displayValue: 'Me',
         operand: 'is',
-        value: '["TASK"]',
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: true,
+          selectedRecordIds: [],
+        }),
       },
-    ],*/,
+    ],
     fields: [
       {
         fieldMetadataId:
@@ -54,7 +54,7 @@ export const tasksByStatusView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.dueAt
+            TASK_STANDARD_FIELD_IDS.taskTargets
           ],
         position: 3,
         isVisible: true,
@@ -63,7 +63,7 @@ export const tasksByStatusView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.assignee
+            TASK_STANDARD_FIELD_IDS.createdBy
           ],
         position: 4,
         isVisible: true,
@@ -72,52 +72,38 @@ export const tasksByStatusView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+            TASK_STANDARD_FIELD_IDS.dueAt
+          ],
+        position: 5,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.assignee
           ],
         position: 6,
         isVisible: true,
         size: 150,
       },
-      /*
-      TODO: Add later, since we don't have real-time it probably doesn't work well?
-      {
-        fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt
-          ],
-        position: 0,
-        isVisible: true,
-        size: 210,
-      },
-      */
-    ],
-    groups: [
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
+            TASK_STANDARD_FIELD_IDS.body
           ],
+        position: 7,
         isVisible: true,
-        fieldValue: 'TODO',
-        position: 0,
+        size: 150,
       },
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
+            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
+        position: 8,
         isVisible: true,
-        fieldValue: 'IN_PROGRESS',
-        position: 1,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
-          ],
-        isVisible: true,
-        fieldValue: 'DONE',
-        position: 2,
+        size: 150,
       },
     ],
   };
