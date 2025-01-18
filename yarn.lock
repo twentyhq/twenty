@@ -45682,16 +45682,10 @@ __metadata:
 
 "twenty-shared@file:packages/twenty-shared::locator=twenty%40workspace%3A.":
   version: 0.40.0-canary
-  resolution: "twenty-shared@file:packages/twenty-shared#packages/twenty-shared::hash=469ea2&locator=twenty%40workspace%3A."
-  checksum: 10c0/8d7b8c3ab88b8f58f73cf3e0aafbe10c132dcb12edd77f9febfd65009c4641b23a7890677cd9cf23de4e1f184ae74740ff30c467255695993818c4a7405a1c20
+  resolution: "twenty-shared@file:packages/twenty-shared#packages/twenty-shared::hash=4ceb44&locator=twenty%40workspace%3A."
+  checksum: 10c0/5b4e61784a2d1d11e8975ecbeaac181e8927768a5ed57e14777ef887493a27f3949d02d7aca95dac1e0e17d5eba8a845392820134280b5fb6264a8a0ba051c82
   languageName: node
   linkType: hard
-
-"twenty-shared@workspace:packages/twenty-shared":
-  version: 0.0.0-use.local
-  resolution: "twenty-shared@workspace:packages/twenty-shared"
-  languageName: unknown
-  linkType: soft
 
 "twenty-ui@workspace:packages/twenty-ui":
   version: 0.0.0-use.local
