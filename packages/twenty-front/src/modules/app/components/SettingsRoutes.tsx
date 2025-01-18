@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -316,28 +315,22 @@ export const SettingsRoutes = ({
           element={<SettingsCRMMigration />}
         />
       )}
+
       <Route
-        path={AppPath.DevelopersCatchAll}
-        element={
-          <Routes>
-            <Route
-              path={SettingsPath.DevelopersNewApiKey}
-              element={<SettingsDevelopersApiKeysNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersApiKeyDetail}
-              element={<SettingsDevelopersApiKeyDetail />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhook}
-              element={<SettingsDevelopersWebhooksNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhookDetail}
-              element={<SettingsDevelopersWebhooksDetail />}
-            />
-          </Routes>
-        }
+        path={SettingsPath.DevelopersNewApiKey}
+        element={<SettingsDevelopersApiKeysNew />}
+      />
+      <Route
+        path={SettingsPath.DevelopersApiKeyDetail}
+        element={<SettingsDevelopersApiKeyDetail />}
+      />
+      <Route
+        path={SettingsPath.DevelopersNewWebhook}
+        element={<SettingsDevelopersWebhooksNew />}
+      />
+      <Route
+        path={SettingsPath.DevelopersNewWebhookDetail}
+        element={<SettingsDevelopersWebhooksDetail />}
       />
       {isServerlessFunctionSettingsEnabled && (
         <>
