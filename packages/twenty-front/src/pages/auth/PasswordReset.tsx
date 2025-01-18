@@ -14,6 +14,7 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -71,6 +72,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -171,7 +173,9 @@ export const PasswordReset = () => {
         <AnimatedEaseIn>
           <Logo secondaryLogo={workspacePublicData?.logo} />
         </AnimatedEaseIn>
-        <Title animate>Reset Password</Title>
+        <Title animate>
+          <Trans>Reset Password</Trans>
+        </Title>
         <StyledContentContainer>
           {!email ? (
             <SkeletonTheme
@@ -201,7 +205,7 @@ export const PasswordReset = () => {
                   <TextInputV2
                     autoFocus
                     value={email}
-                    placeholder="Email"
+                    placeholder={t`Email`}
                     fullWidth
                     disabled
                   />
@@ -228,7 +232,7 @@ export const PasswordReset = () => {
                         autoFocus
                         value={value}
                         type="password"
-                        placeholder="New Password"
+                        placeholder={t`New Password`}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={error?.message}
@@ -241,7 +245,7 @@ export const PasswordReset = () => {
 
               <MainButton
                 variant="secondary"
-                title="Change Password"
+                title={t`Change Password`}
                 type="submit"
                 fullWidth
                 disabled={isUpdatingPassword}

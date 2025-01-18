@@ -9,11 +9,13 @@ import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
 
   const [formValues, setFormValues] = useState<{
@@ -69,14 +71,14 @@ export const SettingsDevelopersWebhooksNew = () => {
       title="New Webhook"
       links={[
         {
-          children: 'Workspace',
+          children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: 'Developers',
+          children: t`Developers`,
           href: getSettingsPath(SettingsPath.Developers),
         },
-        { children: 'New Webhook' },
+        { children: t`New Webhook` },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -91,13 +93,13 @@ export const SettingsDevelopersWebhooksNew = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Endpoint URL"
-            description="We will send POST requests to this endpoint for every new event"
+            title={t`Endpoint URL`}
+            description={t`We will send POST requests to this endpoint for every new event`}
           />
           <TextInput
-            placeholder="URL"
+            placeholder={t`URL`}
             value={formValues.targetUrl}
-            error={!isTargetUrlValid ? 'Please enter a valid URL' : undefined}
+            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
             onKeyDown={handleKeyDown}
             onChange={handleChange}
             fullWidth

@@ -12,6 +12,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
@@ -28,6 +29,8 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const { t } = useLingui();
 
   const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
     SSOIdentitiesProvidersState,
@@ -53,7 +56,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
       isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
     >
       <SettingsCard
-        title="Add SSO Identity Provider"
+        title={t`Add SSO Identity Provider`}
         disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
         Icon={<IconKey />}
       />
