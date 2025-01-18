@@ -6,18 +6,18 @@ import {
   IconUser,
 } from 'twenty-ui';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { getAppPath } from '@/utils/navigation/getAppPath';
-import { getSettingsPath } from '@/utils/navigation/getSettingsPath';
+import { getAppPath } from '~/utils/navigation/getAppPath';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Command, CommandType } from '../types/Command';
 
 export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {
     id: 'go-to-people',
     to: getAppPath(AppPath.RecordIndexPage, {
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNamePlural: CoreObjectNamePlural.Person,
     }),
     label: 'Go to People',
     type: CommandType.Navigate,
@@ -29,7 +29,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   companies: {
     id: 'go-to-companies',
     to: getAppPath(AppPath.RecordIndexPage, {
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNamePlural: CoreObjectNamePlural.Company,
     }),
     label: 'Go to Companies',
     type: CommandType.Navigate,
@@ -41,7 +41,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   opportunities: {
     id: 'go-to-activities',
     to: getAppPath(AppPath.RecordIndexPage, {
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNamePlural: CoreObjectNamePlural.Opportunity,
     }),
     label: 'Go to Opportunities',
     type: CommandType.Navigate,
@@ -63,7 +63,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   tasks: {
     id: 'go-to-tasks',
     to: getAppPath(AppPath.RecordIndexPage, {
-      objectNameSingular: CoreObjectNameSingular.Task,
+      objectNamePlural: CoreObjectNamePlural.Task,
     }),
     label: 'Go to Tasks',
     type: CommandType.Navigate,
