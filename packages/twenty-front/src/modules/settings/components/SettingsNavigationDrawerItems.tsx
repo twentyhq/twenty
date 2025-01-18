@@ -56,9 +56,6 @@ export const SettingsNavigationDrawerItems = () => {
   const isFreeAccessEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFreeAccessEnabled,
   );
-  const isCRMMigrationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCrmMigrationEnabled,
-  );
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
@@ -161,13 +158,6 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
-        {isCRMMigrationEnabled && (
-          <SettingsNavigationDrawerItem
-            label="CRM Migration"
-            path={SettingsPath.CRMMigration}
-            Icon={IconCode}
-          />
-        )}
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
             label="Security"

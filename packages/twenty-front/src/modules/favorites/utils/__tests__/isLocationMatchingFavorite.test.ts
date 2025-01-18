@@ -45,7 +45,7 @@ describe('isLocationMatchingFavorite', () => {
     const currentViewPath = '/app/objects/companies?viewId=123';
     const favorite = {
       objectNameSingular: 'view',
-      link: '/app/objects/companies/view=246',
+      link: '/app/objects/companies?viewId=246',
     };
 
     expect(

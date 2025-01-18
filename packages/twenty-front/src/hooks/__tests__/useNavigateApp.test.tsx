@@ -44,6 +44,7 @@ describe('useNavigateApp', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/object/company/123', undefined);
   });
+
   it('should navigate with query params', () => {
     const { result } = renderHook(() => useNavigateApp(), {
       wrapper: Wrapper,

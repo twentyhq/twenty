@@ -19,7 +19,6 @@ export enum SettingsPath {
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
   Domain = 'domain',
-  CRMMigration = 'crm-migration',
   Developers = 'developers',
   DevelopersNewApiKey = 'developers/api-keys/new',
   DevelopersApiKeyDetail = 'developers/api-keys/:apiKeyId',
