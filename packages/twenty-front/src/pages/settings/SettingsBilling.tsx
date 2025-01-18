@@ -27,6 +27,7 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;

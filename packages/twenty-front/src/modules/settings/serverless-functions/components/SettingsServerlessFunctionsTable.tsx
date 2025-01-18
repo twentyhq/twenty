@@ -9,6 +9,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { ServerlessFunction } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;

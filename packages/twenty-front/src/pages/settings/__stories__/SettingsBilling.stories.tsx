@@ -9,6 +9,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsBilling } from '../SettingsBilling';
 
 const meta: Meta<PageDecoratorArgs> = {

@@ -28,6 +28,7 @@ import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const objectEditFormSchema = z
   .object({})

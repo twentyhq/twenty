@@ -6,6 +6,7 @@ import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdent
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useRecoilValue } from 'recoil';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
   const navigate = useNavigateSettings();

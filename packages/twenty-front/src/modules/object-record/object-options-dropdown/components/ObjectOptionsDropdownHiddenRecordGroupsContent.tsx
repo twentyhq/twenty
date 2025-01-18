@@ -21,6 +21,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const {

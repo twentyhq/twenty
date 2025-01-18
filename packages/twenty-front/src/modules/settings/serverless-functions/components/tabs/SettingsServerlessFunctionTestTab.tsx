@@ -16,6 +16,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledInputsContainer = styled.div`
   display: flex;

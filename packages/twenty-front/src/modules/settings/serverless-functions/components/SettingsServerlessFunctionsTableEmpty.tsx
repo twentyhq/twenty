@@ -10,6 +10,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   IconPlus,
 } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledEmptyFunctionsContainer = styled.div`
   height: 60vh;

@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link, {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',

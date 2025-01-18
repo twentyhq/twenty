@@ -11,6 +11,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ReleaseNote = {
   slug: string;

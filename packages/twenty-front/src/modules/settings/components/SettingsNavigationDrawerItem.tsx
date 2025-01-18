@@ -6,6 +6,7 @@ import {
   NavigationDrawerItemProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationDrawerItemProps = Pick<
   NavigationDrawerItemProps,
