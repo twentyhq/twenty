@@ -11,10 +11,10 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { AppPath } from '@/types/AppPath';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { i18nFrontDecorator } from '~/testing/decorators/i18nFrontDecorator';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
-  AppNavigationDrawer,
-  AppNavigationDrawerProps,
+    AppNavigationDrawer,
+    AppNavigationDrawerProps,
 } from '../AppNavigationDrawer';
 
 const MobileNavigationDrawerStateSetterEffect = ({
@@ -55,7 +55,7 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     IconsProviderDecorator,
     ObjectMetadataItemsDecorator,
-    i18nFrontDecorator,
+    I18nFrontDecorator,
     (Story, { args }) => (
       <MemoryRouter initialEntries={[args.routePath]}>
         <Story />
