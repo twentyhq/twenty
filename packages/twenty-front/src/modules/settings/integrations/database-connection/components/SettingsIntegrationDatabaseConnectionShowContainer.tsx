@@ -25,7 +25,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
   };
 
-  const settingsIntegrationsPagePath = settingsLink(
+  const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
 

@@ -10,7 +10,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { Section } from 'twenty-ui';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const REVERT_PUBLIC_KEY = 'pk_live_a87fee8c-28c7-494f-99a3-996ff89f9918';
 
@@ -23,7 +23,7 @@ export const SettingsCRMMigration = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Migrate</Trans> },
       ]}

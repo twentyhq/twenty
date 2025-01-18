@@ -1,11 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import {
-    GithubVersionLink,
-    H2Title,
-    IconWorld,
-    Section,
-    UndecoratedLink,
+  GithubVersionLink,
+  H2Title,
+  IconWorld,
+  Section,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -29,7 +29,7 @@ export const SettingsWorkspace = () => {
       links={[
         {
           children: t`Workspace`,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: t`General` },
       ]}
@@ -50,7 +50,7 @@ export const SettingsWorkspace = () => {
                 title={t`Domain`}
                 description={t`Edit your subdomain name or set a custom domain.`}
               />
-              <UndecoratedLink to={settingsLink(SettingsPath.Domain)}>
+              <UndecoratedLink to={getSettingsPath(SettingsPath.Domain)}>
                 <SettingsCard
                   title={t`Customize Domain`}
                   Icon={<IconWorld />}

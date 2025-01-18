@@ -1,19 +1,20 @@
 import { AppPath } from '@/types/AppPath';
 import { useNavigate } from 'react-router-dom';
-import { appLink } from '~/utils/navigation/appLink';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useNavigateApp = () => {
   const navigate = useNavigate();
 
   return <T extends AppPath>(
     to: T,
-    params?: Parameters<typeof appLink<T>>[1],
+    params?: Parameters<typeof getAppPath<T>>[1],
+    queryParams?: Record<string, any>,
     options?: {
       replace?: boolean;
       state?: any;
     },
   ) => {
-    const path = appLink(to, params);
+    const path = getAppPath(to, params, queryParams);
     return navigate(path, options);
   };
 };

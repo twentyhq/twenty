@@ -34,7 +34,7 @@ import {
 } from 'twenty-ui';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -143,7 +143,7 @@ export const SettingsObjects = () => {
     <SubMenuTopBarContainer
       title={t`Data model`}
       actionButton={
-        <UndecoratedLink to={settingsLink(SettingsPath.NewObject)}>
+        <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
             title={t`Add object`}
@@ -155,7 +155,7 @@ export const SettingsObjects = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Objects</Trans> },
       ]}

@@ -19,7 +19,7 @@ export const SettingsProfile = () => {
       links={[
         {
           children: <Trans>User</Trans>,
-          href: settingsLink(SettingsPath.ProfilePage),
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
         { children: <Trans>Profile</Trans> },
       ]}

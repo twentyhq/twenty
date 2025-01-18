@@ -2,12 +2,12 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { SettingsPath } from '@/types/SettingsPath';
 import { isDefined } from 'twenty-ui';
 import { useBillingPortalSessionQuery } from '~/generated/graphql';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: settingsLink(SettingsPath.Billing),
+      returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
   });
 

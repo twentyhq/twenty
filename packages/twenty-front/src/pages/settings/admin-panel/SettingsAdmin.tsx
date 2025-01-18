@@ -2,7 +2,7 @@ import { SettingsAdminContent } from '@/settings/admin-panel/components/Settings
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAdmin = () => {
   return (
@@ -11,7 +11,7 @@ export const SettingsAdmin = () => {
       links={[
         {
           children: 'Other',
-          href: settingsLink(SettingsPath.AdminPanel),
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         { children: 'Server Admin Panel' },
       ]}

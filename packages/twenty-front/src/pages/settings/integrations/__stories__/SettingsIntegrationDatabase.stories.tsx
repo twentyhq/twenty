@@ -9,7 +9,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -17,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsIntegrationDatabase,
   decorators: [PageDecorator],
   args: {
-    routePath: settingsLink(SettingsPath.IntegrationDatabase),
+    routePath: getSettingsPath(SettingsPath.IntegrationDatabase),
     routeParams: { ':databaseKey': 'postgresql' },
   },
   parameters: {

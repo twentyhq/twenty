@@ -3,9 +3,9 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsIntegrationDatabaseConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import {
-    formatValuesForUpdate,
-    getEditionSchemaForForm,
-    getFormDefaultValuesFromConnection,
+  formatValuesForUpdate,
+  getEditionSchemaForForm,
+  getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -20,10 +20,11 @@ import { useNavigate } from 'react-router-dom';
 import { H2Title, Info } from 'twenty-ui';
 import { z } from 'zod';
 import {
-    RemoteServer,
-    RemoteTable,
-    RemoteTableStatus,
+  RemoteServer,
+  RemoteTable,
+  RemoteTableStatus,
 } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
@@ -55,7 +56,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
 
   const { updateOneDatabaseConnection } = useUpdateOneDatabaseConnection();
 
-  const settingsIntegrationsPagePath = settingsLink(
+  const settingsIntegrationsPagePath = getSettingsPath(
     SettingsPath.Integrations,
   );
 

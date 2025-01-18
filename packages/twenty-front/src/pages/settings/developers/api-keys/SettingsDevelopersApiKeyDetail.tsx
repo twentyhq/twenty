@@ -25,7 +25,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -150,11 +150,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
           links={[
             {
               children: 'Workspace',
-              href: settingsLink(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.Workspace),
             },
             {
               children: 'Developers',
-              href: settingsLink(SettingsPath.Developers),
+              href: getSettingsPath(SettingsPath.Developers),
             },
             { children: `${apiKeyName} API Key` },
           ]}

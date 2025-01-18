@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import {
-    IconChevronLeft,
-    IconSettings,
-    MenuItem,
-    UndecoratedLink,
+  IconChevronLeft,
+  IconSettings,
+  MenuItem,
+  UndecoratedLink,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -50,13 +50,10 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
       viewType,
     });
 
-  const viewGroupSettingsUrl = settingsLink(
-    SettingsPath.ObjectFieldEdit,
-    {
-      objectNamePlural,
-      fieldName: recordGroupFieldMetadata?.name ?? '',
-    },
-  );
+  const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
+    objectNamePlural,
+    fieldName: recordGroupFieldMetadata?.name ?? '',
+  });
 
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(

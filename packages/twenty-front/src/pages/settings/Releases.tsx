@@ -111,7 +111,7 @@ export const Releases = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Releases</Trans> },
       ]}

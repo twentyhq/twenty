@@ -10,7 +10,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
@@ -70,11 +70,11 @@ export const SettingsDevelopersWebhooksNew = () => {
       links={[
         {
           children: 'Workspace',
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Developers',
-          href: settingsLink(SettingsPath.Developers),
+          href: getSettingsPath(SettingsPath.Developers),
         },
         { children: 'New Webhook' },
       ]}

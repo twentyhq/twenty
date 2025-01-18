@@ -33,7 +33,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const settingsUrl = settingsLink(SettingsPath.ObjectDetail, {
+  const settingsUrl = getSettingsPath(SettingsPath.ObjectDetail, {
     objectNamePlural,
   });
 

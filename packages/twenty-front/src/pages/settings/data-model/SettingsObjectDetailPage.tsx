@@ -32,7 +32,7 @@ import {
 import { FeatureFlagKey } from '~/generated/graphql';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -142,7 +142,7 @@ export const SettingsObjectDetailPage = () => {
         links={[
           {
             children: 'Workspace',
-            href: settingsLink(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           { children: 'Objects', href: '/settings/objects' },
           {

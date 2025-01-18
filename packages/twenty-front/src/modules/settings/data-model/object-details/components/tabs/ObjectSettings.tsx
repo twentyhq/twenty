@@ -11,9 +11,9 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
-    IS_LABEL_SYNCED_WITH_NAME_LABEL,
-    SettingsDataModelObjectAboutForm,
-    settingsDataModelObjectAboutFormSchema,
+  IS_LABEL_SYNCED_WITH_NAME_LABEL,
+  SettingsDataModelObjectAboutForm,
+  settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
@@ -64,7 +64,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
-  const settingsObjectsPagePath = settingsLink(SettingsPath.Objects);
+  const settingsObjectsPagePath = getSettingsPath(SettingsPath.Objects);
 
   const formConfig = useForm<SettingsDataModelObjectEditFormValues>({
     mode: 'onTouched',

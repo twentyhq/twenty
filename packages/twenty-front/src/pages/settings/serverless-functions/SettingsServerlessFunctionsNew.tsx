@@ -13,7 +13,7 @@ import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigateSettings();
@@ -78,11 +78,11 @@ export const SettingsServerlessFunctionsNew = () => {
       links={[
         {
           children: 'Workspace',
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Functions',
-          href: settingsLink(SettingsPath.ServerlessFunctions),
+          href: getSettingsPath(SettingsPath.ServerlessFunctions),
         },
         { children: 'New' },
       ]}

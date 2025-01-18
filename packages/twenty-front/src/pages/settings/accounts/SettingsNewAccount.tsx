@@ -2,7 +2,7 @@ import { SettingsNewAccountSection } from '@/settings/accounts/components/Settin
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsNewAccount = () => {
   return (
@@ -11,11 +11,11 @@ export const SettingsNewAccount = () => {
       links={[
         {
           children: 'User',
-          href: settingsLink(SettingsPath.ProfilePage),
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
           children: 'Accounts',
-          href: settingsLink(SettingsPath.Accounts),
+          href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: `New` },
       ]}

@@ -5,16 +5,16 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-    AppTooltip,
-    Avatar,
-    H2Title,
-    IconButton,
-    IconMail,
-    IconReload,
-    IconTrash,
-    Section,
-    Status,
-    TooltipDelay,
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconButton,
+  IconMail,
+  IconReload,
+  IconTrash,
+  Section,
+  Status,
+  TooltipDelay,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -143,7 +143,7 @@ export const SettingsWorkspaceMembers = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Members</Trans> },
       ]}

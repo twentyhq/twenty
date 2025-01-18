@@ -37,7 +37,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -171,7 +171,7 @@ export const SettingsObjectFieldEdit = () => {
           links={[
             {
               children: 'Workspace',
-              href: settingsLink(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.Workspace),
             },
             {
               children: 'Objects',

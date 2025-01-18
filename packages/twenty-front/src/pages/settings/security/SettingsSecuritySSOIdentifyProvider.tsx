@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
   const navigate = useNavigateSettings();
@@ -65,11 +65,11 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       links={[
         {
           children: 'Workspace',
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Security',
-          href: settingsLink(SettingsPath.Security),
+          href: getSettingsPath(SettingsPath.Security),
         },
         { children: 'New' },
       ]}

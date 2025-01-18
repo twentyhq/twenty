@@ -17,7 +17,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
@@ -68,11 +68,11 @@ export const SettingsNewObject = () => {
         links={[
           {
             children: <Trans>Workspace</Trans>,
-            href: settingsLink(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
             children: <Trans>Objects</Trans>,
-            href: settingsLink(SettingsPath.Objects),
+            href: getSettingsPath(SettingsPath.Objects),
           },
           { children: <Trans>New</Trans> },
         ]}

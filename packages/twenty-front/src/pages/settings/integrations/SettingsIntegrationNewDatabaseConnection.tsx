@@ -24,7 +24,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const createRemoteServerInputPostgresSchema =
   settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
@@ -102,7 +102,9 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   if (!isIntegrationAvailable) return null;
 
-  const settingsIntegrationsPagePath = settingsLink(SettingsPath.Integrations);
+  const settingsIntegrationsPagePath = getSettingsPath(
+    SettingsPath.Integrations,
+  );
 
   const canSave = formConfig.formState.isValid;
 
@@ -140,7 +142,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       links={[
         {
           children: 'Workspace',
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',

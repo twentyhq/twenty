@@ -7,7 +7,7 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 import { useCheckoutSessionMutation } from '~/generated/graphql';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
@@ -29,7 +29,7 @@ export const useHandleCheckoutSession = ({
     const { data } = await checkoutSession({
       variables: {
         recurringInterval,
-        successUrlPath: settingsLink(SettingsPath.Billing),
+        successUrlPath: getSettingsPath(SettingsPath.Billing),
         plan,
         requirePaymentMethod,
       },

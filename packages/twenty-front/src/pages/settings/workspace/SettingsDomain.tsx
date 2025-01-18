@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type Form = {
   subdomain: string;
@@ -126,11 +126,11 @@ export const SettingsDomain = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: <Trans>General</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Domain</Trans> },
       ]}

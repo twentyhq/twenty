@@ -3,8 +3,8 @@ import { within } from '@storybook/test';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
@@ -15,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsBilling',
   component: SettingsBilling,
   decorators: [PageDecorator],
-  args: { routePath: settingsLink(SettingsPath.Billing) },
+  args: { routePath: getSettingsPath(SettingsPath.Billing) },
   parameters: {
     msw: graphqlMocks,
   },

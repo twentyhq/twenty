@@ -3,7 +3,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from 'twenty-ui';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccountsEmails = () => (
   <SubMenuTopBarContainer
@@ -11,11 +11,11 @@ export const SettingsAccountsEmails = () => (
     links={[
       {
         children: 'User',
-        href: settingsLink(SettingsPath.ProfilePage),
+        href: getSettingsPath(SettingsPath.ProfilePage),
       },
       {
         children: 'Accounts',
-        href: settingsLink(SettingsPath.Ac  counts),
+        href: getSettingsPath(SettingsPath.Accounts),
       },
       { children: 'Emails' },
     ]}

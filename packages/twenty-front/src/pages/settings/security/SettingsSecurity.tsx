@@ -8,7 +8,7 @@ import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/comp
 import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -35,7 +35,7 @@ export const SettingsSecurity = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Security</Trans> },
       ]}

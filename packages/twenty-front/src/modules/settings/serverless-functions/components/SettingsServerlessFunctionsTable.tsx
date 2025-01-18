@@ -37,7 +37,7 @@ export const SettingsServerlessFunctionsTable = () => {
                   <SettingsServerlessFunctionsFieldItemTableRow
                     key={serverlessFunction.id}
                     serverlessFunction={serverlessFunction}
-                    to={settingsLink(SettingsPath.ServerlessFunctions, {
+                    to={getSettingsPath(SettingsPath.ServerlessFunctions, {
                       id: serverlessFunction.id,
                     })}
                   />

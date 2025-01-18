@@ -1,7 +1,7 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -37,9 +37,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -66,7 +67,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { webhookId = '' } = useParams();
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -108,11 +109,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
-  const developerPath = settingsLink(SettingsPath.Developers);
-
   const deleteWebhook = () => {
     deleteOneWebhook(webhookId);
-    navigate(developerPath);
+    navigate(SettingsPath.Developers);
   };
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled(
@@ -163,7 +162,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         secret: secret,
       },
     });
-    navigate(developerPath);
+    navigate(SettingsPath.Developers);
   };
 
   const addEmptyOperationIfNecessary = (
@@ -210,16 +209,19 @@ export const SettingsDevelopersWebhooksDetail = () => {
       links={[
         {
           children: 'Workspace',
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Developers', href: developerPath },
+        {
+          children: 'Developers',
+          href: getSettingsPath(SettingsPath.Developers),
+        },
         { children: 'Webhook' },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!isDirty}
           onCancel={() => {
-            navigate(developerPath);
+            navigate(SettingsPath.Developers);
           }}
           onSave={handleSave}
         />

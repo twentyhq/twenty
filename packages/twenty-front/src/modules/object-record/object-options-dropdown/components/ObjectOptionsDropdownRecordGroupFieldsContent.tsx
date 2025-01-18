@@ -67,7 +67,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newSelectFieldSettingsUrl = settingsLink(
+  const newSelectFieldSettingsUrl = getSettingsPath(
     SettingsPath.ObjectNewFieldConfigure,
     {
       objectNamePlural,

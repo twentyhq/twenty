@@ -10,7 +10,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -27,7 +27,7 @@ export const SettingsExperience = () => {
       links={[
         {
           children: <Trans>User</Trans>,
-          href: settingsLink(SettingsPath.ProfilePage),
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
         { children: <Trans>Experience</Trans> },
       ]}

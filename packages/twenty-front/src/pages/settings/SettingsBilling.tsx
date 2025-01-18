@@ -2,12 +2,12 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-    Button,
-    H2Title,
-    IconCalendarEvent,
-    IconCircleX,
-    IconCreditCard,
-    Section,
+  Button,
+  H2Title,
+  IconCalendarEvent,
+  IconCircleX,
+  IconCreditCard,
+  Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -21,10 +21,10 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
-    OnboardingStatus,
-    SubscriptionInterval,
-    useBillingPortalSessionQuery,
-    useUpdateBillingSubscriptionMutation,
+  OnboardingStatus,
+  SubscriptionInterval,
+  useBillingPortalSessionQuery,
+  useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -129,7 +129,7 @@ export const SettingsBilling = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: settingsLink(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Billing</Trans> },
       ]}

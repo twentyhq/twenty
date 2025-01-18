@@ -8,14 +8,14 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Integrations/SettingsIntegrations',
   component: SettingsIntegrations,
   decorators: [PageDecorator],
-  args: { routePath: settingsLink(SettingsPath.Integrations) },
+  args: { routePath: getSettingsPath(SettingsPath.Integrations) },
   parameters: {
     msw: graphqlMocks,
   },

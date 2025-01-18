@@ -4,7 +4,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccountsCalendars = () => {
   const { t } = useLingui();
@@ -15,11 +15,11 @@ export const SettingsAccountsCalendars = () => {
       links={[
         {
           children: <Trans>User</Trans>,
-          href: settingsLink(SettingsPath.ProfilePage),
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
           children: <Trans>Accounts</Trans>,
-          href: settingsLink(SettingsPath.Accounts),
+          href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: <Trans>Calendars</Trans> },
       ]}

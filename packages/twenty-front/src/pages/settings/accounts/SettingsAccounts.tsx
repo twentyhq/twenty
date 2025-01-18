@@ -38,7 +38,7 @@ export const SettingsAccounts = () => {
       links={[
         {
           children: 'User',
-          href: settingsLink(SettingsPath.ProfilePage),
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
         { children: 'Account' },
       ]}

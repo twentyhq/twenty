@@ -24,7 +24,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
-import { settingsLink } from '~/utils/navigation/settingsLink';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -198,11 +198,11 @@ export const SettingsServerlessFunctionDetail = () => {
         links={[
           {
             children: 'Workspace',
-            href: settingsLink(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
             children: 'Functions',
-            href: settingsLink(SettingsPath.ServerlessFunctions),
+            href: getSettingsPath(SettingsPath.ServerlessFunctions),
           },
           { children: `${formValues.name}` },
         ]}
