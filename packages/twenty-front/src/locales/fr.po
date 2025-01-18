@@ -1,11 +1,15 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-17 14:28+0100\n"
+"POT-Creation-Date: 2025-01-18 14:49+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: fr\n"
+
+#: src/modules/navigation/components/AppNavigationDrawer.tsx:36
+msgid "'Exit Settings'"
+msgstr "quitter les paramètres"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
@@ -19,7 +23,13 @@ msgstr "Abandonner"
 msgid "About"
 msgstr "A propos de"
 
+#: src/pages/settings/accounts/SettingsAccounts.tsx:40
+#: src/pages/settings/accounts/SettingsAccounts.tsx:46
+msgid "Account"
+msgstr "Compte"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+#: src/modules/settings/profile/components/DeleteAccount.tsx:45
 msgid "Account Deletion"
 msgstr "Suppression de compte"
 
@@ -36,9 +46,33 @@ msgstr "Actif"
 msgid "Active API keys created by you or your team."
 msgstr "Clés API actives créées par vous ou votre équipe."
 
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:59
+msgid "Add SSO Identity Provider"
+msgstr "Ajouter un fournisseur d'identité SSO"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:149
 msgid "Add object"
 msgstr "Ajouter un objet"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
+msgid "Allow logins through Google's single sign-on functionality."
+msgstr "Autoriser les connexions via la fonctionnalité d'authentification unique de Google."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
+msgid "Allow logins through Microsoft's single sign-on functionality."
+msgstr "Autoriser les connexions via la fonctionnalité d'authentification unique de Microsoft."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
+msgid "Allow the invitation of new users by sharing an invite link."
+msgstr "Permettre l'invitation de nouveaux utilisateurs en partageant un lien d'invitation."
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
+msgid "Allow users to sign in with an email and password."
+msgstr "Permettre aux utilisateurs de se connecter à l'aide d'un courriel et d'un mot de passe."
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
+msgid "An optional description"
+msgstr "Une description facultative"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
@@ -47,6 +81,10 @@ msgstr "Apparence"
 #: src/pages/settings/SettingsBilling.tsx:190
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "Êtes-vous sûr de vouloir modifier votre intervalle de facturation ?"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
+msgid "At least one authentication method must be enabled"
+msgstr "Au moins une méthode d'authentification doit être activée"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
@@ -61,6 +99,14 @@ msgstr "Retour au contenu"
 msgid "Billing"
 msgstr "Facturation"
 
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
+msgid "Blocklist"
+msgstr "Liste de blocage"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
+msgid "Calendar"
+msgstr "Calendrier"
+
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 msgid "Calendars"
@@ -74,6 +120,12 @@ msgstr "Annuler le plan"
 msgid "Cancel your subscription"
 msgstr "Annuler votre abonnement"
 
+#: src/pages/auth/PasswordReset.tsx:248
+#: src/modules/settings/profile/components/ChangePassword.tsx:52
+#: src/modules/settings/profile/components/ChangePassword.tsx:58
+msgid "Change Password"
+msgstr "Modifier le mot de passe"
+
 #: src/pages/settings/SettingsBilling.tsx:194
 msgid "Change {to}"
 msgstr "Modifier {to}"
@@ -86,13 +138,37 @@ msgstr "Chinois - simplifié"
 msgid "Chinese — Traditional"
 msgstr "Chinois - Traditionnel"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
+msgid "Choose an object"
+msgstr "Choisir un objet"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
 msgstr "Configurer une connexion SSO"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
+msgid "Configure and customize your calendar preferences."
+msgstr "Configurez et personnalisez vos préférences en matière de calendrier."
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
 msgstr "Configurer l'affichage des dates dans l'application"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
+msgid "Configure your emails and calendar settings."
+msgstr "Configurez vos courriels et votre calendrier."
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Connect a Google account"
+msgstr "Connecter un compte Google"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
+msgid "Connect a new account to your workspace"
+msgstr "Connecter un nouveau compte à votre espace de travail"
+
+#: src/pages/settings/accounts/SettingsAccounts.tsx:56
+msgid "Connected accounts"
+msgstr "Comptes connectés"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 msgid "Continue"
@@ -118,7 +194,9 @@ msgstr "Personnaliser le domaine"
 msgid "Customize your workspace security"
 msgstr "Personnalisez la sécurité de votre espace de travail"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+#: src/modules/settings/profile/components/DeleteAccount.tsx:29
 msgid "Danger zone"
 msgstr "Zone de danger"
 
@@ -134,9 +212,28 @@ msgstr "Date et heure"
 msgid "Define the name and description of your object"
 msgstr "Définir le nom et la description de votre objet"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
+msgid "Delete"
+msgstr "Supprimer"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+#: src/modules/settings/profile/components/DeleteAccount.tsx:37
+#: src/modules/settings/profile/components/DeleteAccount.tsx:53
 msgid "Delete account"
 msgstr "Supprimer le compte"
+
+#: src/modules/settings/profile/components/DeleteAccount.tsx:30
+msgid "Delete account and all the associated data"
+msgstr "Supprimer le compte et toutes les données associées"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
+msgid "Delete this integration"
+msgstr "Supprimer cette intégration"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
+msgid "Delete webhook"
+msgstr "Supprimer le webhook"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
@@ -147,8 +244,14 @@ msgstr "Supprimer l'espace de travail"
 msgid "Delete your whole workspace"
 msgstr "Supprimer l'ensemble de l'espace de travail"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
+msgid "Description"
+msgstr "Description"
+
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
 msgid "Developers"
 msgstr "Développeurs"
 
@@ -174,8 +277,18 @@ msgstr "Modifiez le nom de votre sous-domaine ou définissez un domaine personna
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
+#: src/pages/auth/PasswordReset.tsx:208
 msgid "Email"
 msgstr "Courriel"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
+msgid "Emails"
+msgstr "Emails"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
+msgid "Endpoint URL"
+msgstr "URL du point final"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
 msgid "English"
@@ -192,6 +305,10 @@ msgstr "Erreur lors de la commutation de l'abonnement {to}."
 #: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Établir des points de terminaison Webhook pour les notifications d'événements asynchrones."
+
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
+msgid "Exclude the following people and domains from my email sync"
+msgstr "Exclure les personnes et domaines suivants de ma synchronisation d'emails"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:167
 msgid "Existing objects"
@@ -213,6 +330,10 @@ msgstr "Échec de la création de l'objet"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
 msgid "Fields"
 msgstr "Domaines"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
+msgid "Filters"
+msgstr "Filtres"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 msgid "French"
@@ -236,7 +357,7 @@ msgstr "Tirez le meilleur parti de votre espace de travail en y invitant votre �
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Accordez à Twenty support un accès temporaire à votre espace de travail afin que nous puissions résoudre des problèmes ou récupérer du contenu en votre nom. Vous pouvez révoquer l'accès à tout moment."
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:217
+#: src/pages/settings/data-model/SettingsObjects.tsx:218
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
 msgid "Inactive"
 msgstr "Inactif"
@@ -246,6 +367,14 @@ msgstr "Inactif"
 msgid "Integrations"
 msgstr "Intégrations"
 
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
+msgid "Invalid auth provider"
+msgstr "Fournisseur d'authentification invalide"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:21
+msgid "Invalid email"
+msgstr "Courriel non valide"
+
 #: src/pages/settings/workspace/SettingsDomain.tsx:87
 msgid "Invalid form values"
 msgstr "Valeurs de formulaire non valides"
@@ -253,6 +382,10 @@ msgstr "Valeurs de formulaire non valides"
 #: src/pages/settings/data-model/SettingsNewObject.tsx:53
 msgid "Invalid object data"
 msgstr "Données d'objet non valides"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "Inviter par lien"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -290,6 +423,10 @@ msgstr "Gérer les membres"
 msgid "Manage the members of your space here"
 msgstr "Gérez les membres de votre espace ici"
 
+#: src/pages/settings/accounts/SettingsAccounts.tsx:57
+msgid "Manage your internet accounts."
+msgstr "Gérer vos comptes internet."
+
 #: src/pages/settings/SettingsBilling.tsx:144
 msgid "Manage your subscription"
 msgstr "Gérer votre abonnement"
@@ -298,11 +435,6 @@ msgstr "Gérer votre abonnement"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
 msgid "Members"
 msgstr "Les membres"
-
-#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:22
-#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:28
-msgid "Migrate"
-msgstr "Migrer"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
@@ -322,6 +454,18 @@ msgstr "Nouveau"
 msgid "New Object"
 msgstr "Nouvel objet"
 
+#: src/pages/auth/PasswordReset.tsx:235
+msgid "New Password"
+msgstr "Nouveau mot de passe"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:81
+msgid "New Webhook"
+msgstr "Nouveau Webhook"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "Nouveau compte"
+
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
 msgid "Object created successfully"
 msgstr "Objet créé avec succès"
@@ -336,13 +480,29 @@ msgid "Off the beaten path"
 msgstr "Hors des sentiers battus"
 
 #: src/pages/not-found/NotFound.tsx:41
-msgid "Page Not Found | Twenty"
-msgstr "Page Not Found | Twenty"
+msgid "Page Not Found"
+msgstr "Page non trouvée"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
+msgid "Password"
+msgstr "Mot de passe"
+
+#: src/modules/settings/profile/components/ChangePassword.tsx:34
+msgid "Password reset link has been sent to the email"
+msgstr "Le lien de réinitialisation du mot de passe a été envoyé à l'email"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
 msgid "Picture"
 msgstr "Photo"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:102
+msgid "Please enter a valid URL"
+msgstr "Veuillez saisir une URL valide"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
+msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+msgstr "Veuillez taper {confirmationText} pour confirmer que vous souhaitez supprimer ce webhook."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
 msgid "Portuguese"
@@ -357,6 +517,10 @@ msgstr "Profil"
 msgid "Pseudo-English"
 msgstr "Pseudo-anglais"
 
+#: src/modules/settings/profile/components/ChangePassword.tsx:53
+msgid "Receive an email containing password update link"
+msgstr "Recevoir un courriel contenant un lien de mise à jour du mot de passe"
+
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
 msgid "Releases"
@@ -365,6 +529,10 @@ msgstr "Communiqués"
 #: src/modules/ui/input/components/ImageInput.tsx:173
 msgid "Remove"
 msgstr "Retirer"
+
+#: src/pages/auth/PasswordReset.tsx:177
+msgid "Reset Password"
+msgstr "Réinitialiser le mot de passe"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
@@ -387,6 +555,10 @@ msgstr "Recherche d'un objet..."
 msgid "Security"
 msgstr "Sécurité"
 
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
+msgid "Select the events you wish to send to this endpoint"
+msgstr "Sélectionnez les événements que vous souhaitez envoyer à ce point de contact"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
 msgid "Select your preferred language"
 msgstr "Sélectionnez votre langue préférée"
@@ -395,9 +567,17 @@ msgstr "Sélectionnez votre langue préférée"
 msgid "Send an invite email to your team"
 msgstr "Envoyez un courriel d'invitation à votre équipe"
 
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:46
+msgid "Set email visibility, manage your blocklist and more."
+msgstr "Définissez la visibilité des e-mails, gérez votre liste de blocage et bien plus encore."
+
 #: src/pages/settings/workspace/SettingsDomain.tsx:151
 msgid "Set the name of your subdomain"
 msgstr "Définissez le nom de votre sous-domaine"
+
+#: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
+msgid "Settings"
+msgstr "Paramètres"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:158
 msgid "Share this link to invite users to join your workspace"
@@ -433,15 +613,15 @@ msgstr "Soutien"
 
 #: src/pages/settings/SettingsBilling.tsx:188
 msgid "Switch billing {to}"
-msgstr "Facturation du commutateur {to}"
+msgstr "Changer la facturation en {to}"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Switch {from}"
-msgstr "Commutateur {from}"
+msgstr "Changer en {from}"
 
 #: src/pages/settings/SettingsBilling.tsx:162
 msgid "Switch {to}"
-msgstr "Commutateur {to}"
+msgstr "Changer en {to}"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
@@ -451,8 +631,12 @@ msgstr "L'email associé à votre compte"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "La page que vous recherchez a disparu ou n'a jamais existé. Remettons les choses en ordre"
 
+#: src/modules/settings/profile/components/ChangePassword.tsx:38
+msgid "There was an issue"
+msgstr "Il y a eu un problème"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:323
-msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignements."
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Cette action ne peut être annulée. Cette action supprimera définitivement l'utilisateur et l'exclura de toutes ses affectations."
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
@@ -462,6 +646,11 @@ msgstr "Cette action ne peut être annulée. Elle supprimera définitivement l'e
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
 msgid "Type"
 msgstr "Type"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "URL"
 
 #: src/modules/ui/input/components/ImageInput.tsx:165
 msgid "Upload"
@@ -474,12 +663,27 @@ msgstr "Utilisez uniquement des lettres, des chiffres et des tirets. Commencer e
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+#: src/pages/settings/accounts/SettingsAccounts.tsx:43
 msgid "User"
 msgstr "Utilisateur"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:51
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:106
+msgid "User is not logged in"
+msgstr "L'utilisateur n'est pas connecté"
 
 #: src/pages/settings/SettingsBilling.tsx:149
 msgid "View billing details"
 msgstr "Voir les détails de la facturation"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
+msgid "We will send POST requests to this endpoint for every new event"
+msgstr "Nous enverrons des requêtes POST à ce point de terminaison pour chaque nouvel événement"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
+msgid "Webhook"
+msgstr "Crochet Web"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:65
 msgid "Webhooks"
@@ -493,15 +697,20 @@ msgstr "Crochets Web"
 #: src/pages/settings/security/SettingsSecurity.tsx:37
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsNewObject.tsx:70
-#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:25
 msgid "Workspace"
 msgstr "Espace de travail"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
 msgid "Workspace Deletion"
 msgstr "Suppression de l'espace de travail"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
+msgid "Write a description"
+msgstr "Rédiger une description"
 
 #: src/pages/settings/SettingsBilling.tsx:46
 msgid "You will be charged immediately for the full year."
@@ -542,3 +751,7 @@ msgstr "au mois"
 #: src/pages/settings/SettingsBilling.tsx:44
 msgid "to yearly"
 msgstr "à l'année"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+msgid "yes"
+msgstr "oui"
