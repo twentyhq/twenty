@@ -44,6 +44,19 @@ describe('useNavigateApp', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/object/company/123', undefined);
   });
+  it('should navigate with query params', () => {
+    const { result } = renderHook(() => useNavigateApp(), {
+      wrapper: Wrapper,
+    });
+
+    const queryParams = { viewId: '123', filter: 'test' };
+    result.current(AppPath.Index, undefined, queryParams);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/?viewId=123&filter=test',
+      undefined,
+    );
+  });
 
   it('should navigate with options', () => {
     const { result } = renderHook(() => useNavigateApp(), {
@@ -51,7 +64,7 @@ describe('useNavigateApp', () => {
     });
 
     const options = { replace: true, state: { test: true } };
-    result.current(AppPath.Index, undefined, options);
+    result.current(AppPath.Index, undefined, undefined, options);
 
     expect(mockNavigate).toHaveBeenCalledWith('/', options);
   });

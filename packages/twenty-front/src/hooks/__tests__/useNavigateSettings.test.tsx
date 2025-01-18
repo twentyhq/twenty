@@ -47,13 +47,27 @@ describe('useNavigateSettings', () => {
     );
   });
 
+  it('should navigate with query params', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: Wrapper,
+    });
+
+    const queryParams = { viewId: '123', filter: 'test' };
+    result.current(SettingsPath.Accounts, undefined, queryParams);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/settings/accounts?viewId=123&filter=test',
+      undefined,
+    );
+  });
+
   it('should navigate with options', () => {
     const { result } = renderHook(() => useNavigateSettings(), {
       wrapper: Wrapper,
     });
 
     const options = { replace: true, state: { test: true } };
-    result.current(SettingsPath.Accounts, undefined, options);
+    result.current(SettingsPath.Accounts, undefined, undefined, options);
 
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', options);
   });
