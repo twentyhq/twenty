@@ -28,7 +28,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -40,6 +39,7 @@ import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
@@ -108,7 +108,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
-  const developerPath = getSettingsPagePath(SettingsPath.Developers);
+  const developerPath = settingsLink(SettingsPath.Developers);
 
   const deleteWebhook = () => {
     deleteOneWebhook(webhookId);
@@ -210,7 +210,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: 'Developers', href: developerPath },
         { children: 'Webhook' },

@@ -2,20 +2,19 @@
 
 import { Link } from 'react-router-dom';
 
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledLink = styled(Link, {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
@@ -49,7 +48,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
 
   return loading || !SSOIdentitiesProviders.length ? (
     <StyledLink
-      to={getSettingsPagePath(SettingsPath.NewSSOIdentityProvider)}
+      to={settingsLink(SettingsPath.NewSSOIdentityProvider)}
       isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
     >
       <SettingsCard

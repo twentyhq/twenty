@@ -10,7 +10,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -19,6 +18,7 @@ import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -68,11 +68,11 @@ export const SettingsDevelopersApiKeysNew = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         {
           children: 'Developers',
-          href: getSettingsPagePath(SettingsPath.Developers),
+          href: settingsLink(SettingsPath.Developers),
         },
         { children: 'New Key' },
       ]}

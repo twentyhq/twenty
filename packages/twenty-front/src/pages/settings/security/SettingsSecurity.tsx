@@ -6,9 +6,9 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -35,7 +35,7 @@ export const SettingsSecurity = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Security</Trans> },
       ]}

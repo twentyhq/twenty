@@ -9,9 +9,9 @@ import {
 } from 'twenty-ui';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ export const SettingsAccountsSettingsSection = () => {
         description="Configure your emails and calendar settings."
       />
       <StyledCardsContainer>
-        <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
+        <UndecoratedLink to={settingsLink(SettingsPath.AccountsEmails)}>
           <SettingsCard
             Icon={
               <IconMailCog
@@ -44,9 +44,7 @@ export const SettingsAccountsSettingsSection = () => {
             description="Set email visibility, manage your blocklist and more."
           />
         </UndecoratedLink>
-        <UndecoratedLink
-          to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
-        >
+        <UndecoratedLink to={settingsLink(SettingsPath.AccountsCalendars)}>
           <SettingsCard
             Icon={
               <IconCalendarEvent

@@ -8,7 +8,6 @@ import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -112,7 +111,7 @@ export const Releases = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Releases</Trans> },
       ]}

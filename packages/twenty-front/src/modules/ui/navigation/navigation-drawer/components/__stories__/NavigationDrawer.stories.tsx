@@ -24,7 +24,6 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -36,6 +35,7 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
@@ -136,30 +136,30 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="User" />
           <NavigationDrawerItem
             label="Profile"
-            to={getSettingsPagePath(SettingsPath.ProfilePage)}
+            to={settingsLink(SettingsPath.ProfilePage)}
             Icon={IconUserCircle}
             active
           />
           <NavigationDrawerItem
             label="Appearance"
-            to={getSettingsPagePath(SettingsPath.Experience)}
+            to={settingsLink(SettingsPath.Experience)}
             Icon={IconColorSwatch}
           />
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to={getSettingsPagePath(SettingsPath.Accounts)}
+              to={settingsLink(SettingsPath.Accounts)}
               Icon={IconAt}
             />
             <NavigationDrawerSubItem
               label="Emails"
-              to={getSettingsPagePath(SettingsPath.AccountsEmails)}
+              to={settingsLink(SettingsPath.AccountsEmails)}
               Icon={IconMail}
               subItemState="intermediate-before-selected"
             />
             <NavigationDrawerSubItem
               label="Calendar"
-              to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
+              to={settingsLink(SettingsPath.AccountsCalendars)}
               Icon={IconCalendarEvent}
               subItemState="last-selected"
             />
@@ -170,12 +170,12 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to={getSettingsPagePath(SettingsPath.Workspace)}
+            to={settingsLink(SettingsPath.Workspace)}
             Icon={IconSettings}
           />
           <NavigationDrawerItem
             label="Members"
-            to={getSettingsPagePath(SettingsPath.WorkspaceMembersPage)}
+            to={settingsLink(SettingsPath.WorkspaceMembersPage)}
             Icon={IconUsers}
           />
         </NavigationDrawerSection>

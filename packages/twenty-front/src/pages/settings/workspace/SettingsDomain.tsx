@@ -3,7 +3,6 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -13,12 +12,13 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 type Form = {
   subdomain: string;
@@ -38,7 +38,7 @@ const StyledDomain = styled.h2`
 `;
 
 export const SettingsDomain = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { t } = useLingui();
 
   const validationSchema = z
@@ -126,11 +126,11 @@ export const SettingsDomain = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         {
           children: <Trans>General</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Domain</Trans> },
       ]}
@@ -139,7 +139,7 @@ export const SettingsDomain = () => {
           isSaveDisabled={
             !isValid || subdomainValue === currentWorkspace?.subdomain
           }
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
+          onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
         />
       }

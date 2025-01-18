@@ -1,22 +1,22 @@
 import { useRecoilValue } from 'recoil';
 import {
-  IconApps,
-  IconAt,
-  IconCalendarEvent,
-  IconCode,
-  IconColorSwatch,
-  IconComponent,
-  IconCurrencyDollar,
-  IconDoorEnter,
-  IconFunction,
-  IconHierarchy2,
-  IconKey,
-  IconMail,
-  IconRocket,
-  IconServer,
-  IconSettings,
-  IconUserCircle,
-  IconUsers,
+    IconApps,
+    IconAt,
+    IconCalendarEvent,
+    IconCode,
+    IconColorSwatch,
+    IconComponent,
+    IconCurrencyDollar,
+    IconDoorEnter,
+    IconFunction,
+    IconHierarchy2,
+    IconKey,
+    IconMail,
+    IconRocket,
+    IconServer,
+    IconSettings,
+    IconUserCircle,
+    IconUsers,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -24,11 +24,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
-  NavigationDrawerItem,
-  NavigationDrawerItemIndentationLevel,
+    NavigationDrawerItem,
+    NavigationDrawerItemIndentationLevel,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -37,6 +36,7 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 type SettingsNavigationItem = {
   label: string;
@@ -83,7 +83,7 @@ export const SettingsNavigationDrawerItems = () => {
   ];
 
   const selectedIndex = accountSubSettings.findIndex((accountSubSetting) => {
-    const href = getSettingsPagePath(accountSubSetting.path);
+    const href = settingsLink(accountSubSetting.path);
     const pathName = resolvePath(href).pathname;
 
     return matchPath(

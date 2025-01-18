@@ -1,10 +1,10 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationGroup } from '@/settings/integrations/components/SettingsIntegrationGroup';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const SettingsIntegrations = () => {
   const { t } = useLingui();
@@ -16,7 +16,7 @@ export const SettingsIntegrations = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Integrations</Trans> },
       ]}

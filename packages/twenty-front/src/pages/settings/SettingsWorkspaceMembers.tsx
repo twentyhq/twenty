@@ -5,16 +5,16 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconButton,
-  IconMail,
-  IconReload,
-  IconTrash,
-  Section,
-  Status,
-  TooltipDelay,
+    AppTooltip,
+    Avatar,
+    H2Title,
+    IconButton,
+    IconMail,
+    IconReload,
+    IconTrash,
+    Section,
+    Status,
+    TooltipDelay,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -23,7 +23,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -144,7 +143,7 @@ export const SettingsWorkspaceMembers = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Members</Trans> },
       ]}

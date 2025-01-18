@@ -1,7 +1,6 @@
 import { ColorSchemePicker, H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
@@ -11,6 +10,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -27,7 +27,7 @@ export const SettingsExperience = () => {
       links={[
         {
           children: <Trans>User</Trans>,
-          href: getSettingsPagePath(SettingsPath.ProfilePage),
+          href: settingsLink(SettingsPath.ProfilePage),
         },
         { children: <Trans>Experience</Trans> },
       ]}

@@ -1,13 +1,13 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { isDefined } from 'twenty-ui';
 import { useBillingPortalSessionQuery } from '~/generated/graphql';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const InformationBannerFailPaymentInfo = () => {
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: `${AppPath.Settings}/${SettingsPath.Billing}`,
+      returnUrlPath: settingsLink(SettingsPath.Billing),
     },
   });
 

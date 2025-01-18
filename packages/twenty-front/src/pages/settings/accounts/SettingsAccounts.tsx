@@ -12,7 +12,6 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
@@ -39,7 +38,7 @@ export const SettingsAccounts = () => {
       links={[
         {
           children: 'User',
-          href: getSettingsPagePath(SettingsPath.ProfilePage),
+          href: settingsLink(SettingsPath.ProfilePage),
         },
         { children: 'Account' },
       ]}

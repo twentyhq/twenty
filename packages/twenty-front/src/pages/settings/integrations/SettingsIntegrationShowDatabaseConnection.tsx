@@ -1,8 +1,8 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationDatabaseConnectionShowContainer } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionShowContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const SettingsIntegrationShowDatabaseConnection = () => {
   return (
@@ -11,11 +11,11 @@ export const SettingsIntegrationShowDatabaseConnection = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',
-          href: getSettingsPagePath(SettingsPath.Integrations),
+          href: settingsLink(SettingsPath.Integrations),
         },
         { children: 'Database Connection' },
       ]}

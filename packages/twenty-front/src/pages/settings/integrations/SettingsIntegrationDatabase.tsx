@@ -8,10 +8,10 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
@@ -45,11 +45,11 @@ export const SettingsIntegrationDatabase = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',
-          href: getSettingsPagePath(SettingsPath.Integrations),
+          href: settingsLink(SettingsPath.Integrations),
         },
         { children: integration.text },
       ]}

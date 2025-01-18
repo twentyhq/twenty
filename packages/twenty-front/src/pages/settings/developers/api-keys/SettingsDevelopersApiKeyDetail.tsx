@@ -17,8 +17,6 @@ import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTo
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -26,7 +24,8 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -49,7 +48,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigateApp();
+  const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
   const [apiKeyToken, setApiKeyToken] = useRecoilState(apiKeyTokenState);
@@ -80,7 +79,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         updateOneRecordInput: { revokedAt: DateTime.now().toString() },
       });
       if (redirect) {
-        navigate(`${AppPath.Settings}/${SettingsPath.Developers}`);
+        navigate(SettingsPath.Developers);
       }
     } catch (err) {
       enqueueSnackBar(`Error deleting api key: ${err}`, {
@@ -129,12 +128,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
         if (isNonEmptyString(apiKey?.token)) {
           setApiKeyToken(apiKey.token);
-          navigate(
-            `${AppPath.Settings}/${SettingsPath.DevelopersApiKeyDetail}`,
-            {
-              apiKeyId: apiKey.id,
-            },
-          );
+          navigate(SettingsPath.DevelopersApiKeyDetail, {
+            apiKeyId: apiKey.id,
+          });
         }
       }
     } catch (err) {
@@ -154,11 +150,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
           links={[
             {
               children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
+              href: settingsLink(SettingsPath.Workspace),
             },
             {
               children: 'Developers',
-              href: getSettingsPagePath(SettingsPath.Developers),
+              href: settingsLink(SettingsPath.Developers),
             },
             { children: `${apiKeyName} API Key` },
           ]}

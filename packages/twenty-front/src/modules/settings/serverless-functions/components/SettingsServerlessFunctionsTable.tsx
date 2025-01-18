@@ -2,7 +2,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { SettingsServerlessFunctionsTableEmpty } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTableEmpty';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -38,7 +37,7 @@ export const SettingsServerlessFunctionsTable = () => {
                   <SettingsServerlessFunctionsFieldItemTableRow
                     key={serverlessFunction.id}
                     serverlessFunction={serverlessFunction}
-                    to={getSettingsPagePath(SettingsPath.ServerlessFunctions, {
+                    to={settingsLink(SettingsPath.ServerlessFunctions, {
                       id: serverlessFunction.id,
                     })}
                   />

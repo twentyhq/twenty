@@ -28,7 +28,6 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -38,6 +37,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -171,7 +171,7 @@ export const SettingsObjectFieldEdit = () => {
           links={[
             {
               children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
+              href: settingsLink(SettingsPath.Workspace),
             },
             {
               children: 'Objects',

@@ -2,19 +2,18 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  Button,
-  H2Title,
-  IconCalendarEvent,
-  IconCircleX,
-  IconCreditCard,
-  Section,
+    Button,
+    H2Title,
+    IconCalendarEvent,
+    IconCircleX,
+    IconCreditCard,
+    Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,10 +21,10 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
-  OnboardingStatus,
-  SubscriptionInterval,
-  useBillingPortalSessionQuery,
-  useUpdateBillingSubscriptionMutation,
+    OnboardingStatus,
+    SubscriptionInterval,
+    useBillingPortalSessionQuery,
+    useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -130,7 +129,7 @@ export const SettingsBilling = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Billing</Trans> },
       ]}

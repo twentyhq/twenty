@@ -7,17 +7,15 @@ import {
   Section,
 } from 'twenty-ui';
 
+import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -47,7 +45,7 @@ export const SettingsServerlessFunctionTestTab = ({
     }));
   };
 
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
   );
@@ -55,7 +53,7 @@ export const SettingsServerlessFunctionTestTab = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+      navigate(SettingsPath.ServerlessFunctions);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionTestTab,
   );

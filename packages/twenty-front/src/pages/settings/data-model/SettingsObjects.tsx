@@ -10,7 +10,6 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -35,6 +34,7 @@ import {
 } from 'twenty-ui';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -143,7 +143,7 @@ export const SettingsObjects = () => {
     <SubMenuTopBarContainer
       title={t`Data model`}
       actionButton={
-        <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+        <UndecoratedLink to={settingsLink(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
             title={t`Add object`}
@@ -155,7 +155,7 @@ export const SettingsObjects = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: <Trans>Objects</Trans> },
       ]}

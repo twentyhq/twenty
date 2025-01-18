@@ -6,16 +6,15 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
-  const navigate = useNavigateApp();
+  const navigate = useNavigateSettings();
 
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
@@ -42,7 +41,7 @@ export const SettingsDevelopersWebhooksNew = () => {
     if (!newWebhook) {
       return;
     }
-    navigate(`${AppPath.Settings}/${SettingsPath.DevelopersNewWebhookDetail}`, {
+    navigate(SettingsPath.DevelopersNewWebhookDetail, {
       webhookId: newWebhook.id,
     });
   };
@@ -71,11 +70,11 @@ export const SettingsDevelopersWebhooksNew = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         {
           children: 'Developers',
-          href: getSettingsPagePath(SettingsPath.Developers),
+          href: settingsLink(SettingsPath.Developers),
         },
         { children: 'New Webhook' },
       ]}
@@ -83,7 +82,7 @@ export const SettingsDevelopersWebhooksNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigate(`${AppPath.Settings}/${SettingsPath.Developers}`);
+            navigate(SettingsPath.Developers);
           }}
           onSave={handleSave}
         />

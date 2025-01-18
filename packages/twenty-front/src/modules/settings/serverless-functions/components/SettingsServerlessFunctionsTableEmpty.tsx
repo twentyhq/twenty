@@ -1,15 +1,14 @@
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Button,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  IconPlus,
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    Button,
+    EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+    IconPlus,
 } from 'twenty-ui';
 
 const StyledEmptyFunctionsContainer = styled.div`
@@ -35,7 +34,7 @@ export const SettingsServerlessFunctionsTableEmpty = () => {
         <Button
           Icon={IconPlus}
           title="New function"
-          to={getSettingsPagePath(SettingsPath.NewServerlessFunction)}
+          to={settingsLink(SettingsPath.NewServerlessFunction)}
         />
       </AnimatedPlaceholderEmptyContainer>
     </StyledEmptyFunctionsContainer>

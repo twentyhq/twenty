@@ -1,18 +1,17 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import {
-  GithubVersionLink,
-  H2Title,
-  IconWorld,
-  Section,
-  UndecoratedLink,
+    GithubVersionLink,
+    H2Title,
+    IconWorld,
+    Section,
+    UndecoratedLink,
 } from 'twenty-ui';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -30,7 +29,7 @@ export const SettingsWorkspace = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: settingsLink(SettingsPath.Workspace),
         },
         { children: t`General` },
       ]}
@@ -51,7 +50,7 @@ export const SettingsWorkspace = () => {
                 title={t`Domain`}
                 description={t`Edit your subdomain name or set a custom domain.`}
               />
-              <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
+              <UndecoratedLink to={settingsLink(SettingsPath.Domain)}>
                 <SettingsCard
                   title={t`Customize Domain`}
                   Icon={<IconWorld />}

@@ -8,7 +8,6 @@ import { ObjectIndexes } from '@/settings/data-model/object-details/components/t
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -33,6 +32,7 @@ import {
 import { FeatureFlagKey } from '~/generated/graphql';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { settingsLink } from '~/utils/navigation/settingsLink';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -142,7 +142,7 @@ export const SettingsObjectDetailPage = () => {
         links={[
           {
             children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            href: settingsLink(SettingsPath.Workspace),
           },
           { children: 'Objects', href: '/settings/objects' },
           {

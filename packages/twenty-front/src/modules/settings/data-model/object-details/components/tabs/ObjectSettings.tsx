@@ -11,14 +11,13 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
-  IS_LABEL_SYNCED_WITH_NAME_LABEL,
-  SettingsDataModelObjectAboutForm,
-  settingsDataModelObjectAboutFormSchema,
+    IS_LABEL_SYNCED_WITH_NAME_LABEL,
+    SettingsDataModelObjectAboutForm,
+    settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -65,7 +64,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
-  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
+  const settingsObjectsPagePath = settingsLink(SettingsPath.Objects);
 
   const formConfig = useForm<SettingsDataModelObjectEditFormValues>({
     mode: 'onTouched',

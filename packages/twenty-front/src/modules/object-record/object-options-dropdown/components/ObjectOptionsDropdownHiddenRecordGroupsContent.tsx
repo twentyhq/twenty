@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import {
-  IconChevronLeft,
-  IconSettings,
-  MenuItem,
-  UndecoratedLink,
+    IconChevronLeft,
+    IconSettings,
+    MenuItem,
+    UndecoratedLink,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -13,7 +13,6 @@ import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-gr
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -51,7 +50,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
       viewType,
     });
 
-  const viewGroupSettingsUrl = getSettingsPagePath(
+  const viewGroupSettingsUrl = settingsLink(
     SettingsPath.ObjectFieldEdit,
     {
       objectNamePlural,

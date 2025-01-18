@@ -17,7 +17,6 @@ import { useSearchRecordGroupField } from '@/object-record/object-options-dropdo
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -68,7 +67,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newSelectFieldSettingsUrl = getSettingsPagePath(
+  const newSelectFieldSettingsUrl = settingsLink(
     SettingsPath.ObjectNewFieldConfigure,
     {
       objectNamePlural,

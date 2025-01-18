@@ -7,7 +7,6 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
@@ -20,7 +19,7 @@ export const SettingsProfile = () => {
       links={[
         {
           children: <Trans>User</Trans>,
-          href: getSettingsPagePath(SettingsPath.ProfilePage),
+          href: settingsLink(SettingsPath.ProfilePage),
         },
         { children: <Trans>Profile</Trans> },
       ]}

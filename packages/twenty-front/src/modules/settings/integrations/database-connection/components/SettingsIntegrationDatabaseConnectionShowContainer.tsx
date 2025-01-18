@@ -2,7 +2,6 @@ import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDa
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSummaryCard';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseTablesListCard';
 import { useDatabaseConnection } from '@/settings/integrations/database-connection/hooks/useDatabaseConnection';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { Section } from '@react-email/components';
@@ -26,7 +25,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
   };
 
-  const settingsIntegrationsPagePath = getSettingsPagePath(
+  const settingsIntegrationsPagePath = settingsLink(
     SettingsPath.Integrations,
   );
 
