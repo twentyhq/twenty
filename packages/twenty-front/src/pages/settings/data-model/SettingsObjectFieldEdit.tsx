@@ -3,7 +3,7 @@ import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Button,
   H2Title,
@@ -28,14 +28,16 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -44,7 +46,9 @@ type SettingsDataModelFieldEditFormValues = z.infer<
   any;
 
 export const SettingsObjectFieldEdit = () => {
-  const navigate = useNavigate();
+  const navigateSettings = useNavigateSettings();
+  const navigateApp = useNavigateApp();
+
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
@@ -78,9 +82,9 @@ export const SettingsObjectFieldEdit = () => {
 
   useEffect(() => {
     if (!objectMetadataItem || !fieldMetadataItem) {
-      navigate(AppPath.NotFound);
+      navigateApp(AppPath.NotFound);
     }
-  }, [navigate, objectMetadataItem, fieldMetadataItem]);
+  }, [navigateApp, objectMetadataItem, fieldMetadataItem]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
@@ -127,7 +131,9 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        navigate(`/settings/objects/${objectNamePlural}`);
+        navigateSettings(SettingsPath.ObjectDetail, {
+          objectNamePlural,
+        });
 
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
@@ -144,12 +150,16 @@ export const SettingsObjectFieldEdit = () => {
 
   const handleDeactivate = async () => {
     await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigate(`/settings/objects/${objectNamePlural}`);
+    navigateSettings(SettingsPath.ObjectDetail, {
+      objectNamePlural,
+    });
   };
 
   const handleActivate = async () => {
     await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigate(`/settings/objects/${objectNamePlural}`);
+    navigateSettings(SettingsPath.ObjectDetail, {
+      objectNamePlural,
+    });
   };
 
   return (
@@ -161,15 +171,17 @@ export const SettingsObjectFieldEdit = () => {
           links={[
             {
               children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.Workspace),
             },
             {
               children: 'Objects',
-              href: '/settings/objects',
+              href: getSettingsPath(SettingsPath.Objects),
             },
             {
               children: objectMetadataItem.labelPlural,
-              href: `/settings/objects/${objectNamePlural}`,
+              href: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural,
+              }),
             },
             {
               children: fieldMetadataItem.label,
@@ -179,7 +191,11 @@ export const SettingsObjectFieldEdit = () => {
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(`/settings/objects/${objectNamePlural}`)}
+              onCancel={() =>
+                navigateSettings(SettingsPath.ObjectDetail, {
+                  objectNamePlural,
+                })
+              }
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }

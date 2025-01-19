@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -224,6 +224,7 @@ export type CreateOneFieldMetadataInput = {
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -321,7 +322,6 @@ export enum FeatureFlagKey {
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
-  IsCrmMigrationEnabled = 'IsCrmMigrationEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsFreeAccessEnabled = 'IsFreeAccessEnabled',
   IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
@@ -1161,6 +1161,7 @@ export type ServerlessFunction = {
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
+  timeoutSeconds: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1412,6 +1413,7 @@ export type UpdateServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
   name: Scalars['String'];
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateWorkflowVersionStepInput = {

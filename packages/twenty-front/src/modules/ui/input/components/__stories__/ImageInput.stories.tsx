@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { i18nDecoratorFront } from '~/testing/decorators/i18nDecoratorFront';
+import { i18nFrontDecorator } from '~/testing/decorators/i18nFrontDecorator';
 import { workspaceLogoUrl } from '~/testing/mock-data/users';
 
 import { ImageInput } from '../ImageInput';
@@ -9,7 +9,7 @@ import { ImageInput } from '../ImageInput';
 const meta: Meta<typeof ImageInput> = {
   title: 'UI/Input/ImageInput/ImageInput',
   component: ImageInput,
-  decorators: [ComponentDecorator, i18nDecoratorFront],
+  decorators: [ComponentDecorator, i18nFrontDecorator],
 };
 
 export default meta;

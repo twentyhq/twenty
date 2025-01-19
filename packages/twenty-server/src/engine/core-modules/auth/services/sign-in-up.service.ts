@@ -98,7 +98,6 @@ export class SignInUpService {
       };
     }
 
-    // with global invitation flow
     if (params.workspace) {
       const updatedUser = await this.signInUpOnExistingWorkspace({
         workspace: params.workspace,
@@ -246,7 +245,9 @@ export class SignInUpService {
 
     const user = Object.assign(currentUser, updatedUser);
 
-    await this.activateOnboardingForUser(user, params.workspace);
+    if (params.userData.type === 'newUserWithPicture') {
+      await this.activateOnboardingForUser(user, params.workspace);
+    }
 
     return user;
   }

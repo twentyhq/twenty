@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
@@ -17,7 +17,6 @@ import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTo
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,6 +24,8 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -47,7 +48,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
   const [apiKeyToken, setApiKeyToken] = useRecoilState(apiKeyTokenState);
@@ -68,7 +69,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
       setApiKeyName(record.name);
     },
   });
-  const developerPath = getSettingsPagePath(SettingsPath.Developers);
 
   const deleteIntegration = async (redirect = true) => {
     setIsLoading(true);
@@ -79,7 +79,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         updateOneRecordInput: { revokedAt: DateTime.now().toString() },
       });
       if (redirect) {
-        navigate(developerPath);
+        navigate(SettingsPath.Developers);
       }
     } catch (err) {
       enqueueSnackBar(`Error deleting api key: ${err}`, {
@@ -114,6 +114,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       token: tokenData.data?.generateApiKeyToken.token,
     };
   };
+
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
@@ -127,7 +128,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
         if (isNonEmptyString(apiKey?.token)) {
           setApiKeyToken(apiKey.token);
-          navigate(`/settings/developers/api-keys/${apiKey.id}`);
+          navigate(SettingsPath.DevelopersApiKeyDetail, {
+            apiKeyId: apiKey.id,
+          });
         }
       }
     } catch (err) {
@@ -147,9 +150,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
           links={[
             {
               children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.Workspace),
             },
-            { children: 'Developers', href: developerPath },
+            {
+              children: 'Developers',
+              href: getSettingsPath(SettingsPath.Developers),
+            },
             { children: `${apiKeyName} API Key` },
           ]}
         >
