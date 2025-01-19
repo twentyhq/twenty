@@ -35,6 +35,27 @@ export default defineConfig({
       slowMo: 500, // time in milliseconds between each step, better to use it than explicitly define timeout in tests
     },
   },
+  webServer: [
+    // Comment from now as I don't how to get worker's healthcheck
+    // {
+    //   command: 'npx nx worker twenty-server',
+    //   url: 'http://127.0.0.1:3001',
+    //   timeout: 120 * 1000,
+    //   reuseExistingServer: !process.env.CI,
+    // },
+    {
+      command: 'npx nx start twenty-server',
+      url: 'http://localhost:3000/healthz',
+      timeout: 120 * 1000,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: 'npx nx start twenty-front',
+      url: 'http://localhost:3001',
+      timeout: 120 * 10000,
+      reuseExistingServer: !process.env.CI,
+    }
+  ],
   expect: {
     timeout: 5000,
   },
@@ -60,30 +81,5 @@ export default defineConfig({
       dependencies: ['Login setup'],
       testMatch: /authentication\/.+\.e2e-spec\.ts/, // forces to run login setup before running tests from this project - CASE SENSITIVE
     },
-
-    //{
-    //  name: 'webkit',
-    //  use: { ...devices['Desktop Safari'] },
-    //},
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    //{
-    //  name: 'Microsoft Edge',
-    //  use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    //},
-    //{
-    //  name: 'Google Chrome',
-    //  use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    //},
   ],
 });

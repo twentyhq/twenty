@@ -8,7 +8,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright install"
+          "npx playwright install --with-deps"
         ]
       }
     },
@@ -17,7 +17,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright test"
+          "npx playwright test"
         ]
       }
     },
@@ -26,7 +26,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright test --ui"
+          "npx playwright test --ui"
         ]
       }
     },
@@ -35,7 +35,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright test --debug"
+          "DEBUG=pw:webserver npx playwright test --debug"
         ]
       }
     },
@@ -44,7 +44,7 @@
       "options": {
         "cwd": "packages/twenty-e2e-testing",
         "commands": [
-          "yarn playwright show-report"
+          "npx playwright show-report"
         ]
       }
     }
