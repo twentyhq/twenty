@@ -10,6 +10,10 @@ export const mockedNotes: Array<MockedNote> = [
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first note',
     body: null,
+    bodyV2: {
+      blocknote: null,
+      markdown: null,
+    },
     noteTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
@@ -65,6 +69,10 @@ export const mockedNotes: Array<MockedNote> = [
     updatedAt: new Date().toISOString(),
     title: 'Another note',
     body: null,
+    bodyV2: {
+      blocknote: null,
+      markdown: null,
+    },
     noteTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',

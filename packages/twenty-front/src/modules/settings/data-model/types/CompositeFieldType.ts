@@ -10,6 +10,7 @@ export const COMPOSITE_FIELD_TYPES = [
   'PHONES',
   'FULL_NAME',
   'ACTOR',
+  'RICH_TEXT_V2',
 ] as const;
 
 type CompositeFieldTypeBaseLiteral = (typeof COMPOSITE_FIELD_TYPES)[number];
