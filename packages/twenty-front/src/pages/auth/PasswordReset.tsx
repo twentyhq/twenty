@@ -185,9 +185,7 @@ export const PasswordReset = () => {
               <Skeleton
                 height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
                 count={2}
-                style={{
-                  marginBottom: theme.spacing(2),
-                }}
+                style={{ marginBottom: theme.spacing(2) }}
               />
             </SkeletonTheme>
           ) : (

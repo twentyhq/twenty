@@ -33,7 +33,7 @@ export const AppNavigationDrawer = ({
 
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
-        title: t`'Exit Settings'`,
+        title: t`Exit Settings`,
         children: <SettingsNavigationDrawerItems />,
         footer: (
           <AdvancedSettingsToggle

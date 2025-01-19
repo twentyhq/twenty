@@ -130,7 +130,11 @@ export const useRecordShowPagePagination = (
     !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
 
   const navigateToPreviousRecord = () => {
-    if (isFirstRecord || !recordBefore) {
+    if (loading) {
+      return;
+    }
+
+    if (isFirstRecord) {
       if (cacheIsAvailableForNavigation) {
         const lastRecordIdFromCache =
           recordIdsInCache[recordIdsInCache.length - 1];
@@ -164,7 +168,11 @@ export const useRecordShowPagePagination = (
     !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
 
   const navigateToNextRecord = () => {
-    if (isLastRecord || !recordAfter) {
+    if (loading) {
+      return;
+    }
+
+    if (isLastRecord) {
       if (cacheIsAvailableForNavigation) {
         const firstRecordIdFromCache = recordIdsInCache[0];
 
