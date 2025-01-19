@@ -48,7 +48,6 @@ export const SettingsObjectNewFieldSelect = () => {
     [
       FieldMetadataType.Numeric,
       FieldMetadataType.RichText,
-      FieldMetadataType.RichTextV2,
       FieldMetadataType.Actor,
     ] as const
   ).filter(isDefined);

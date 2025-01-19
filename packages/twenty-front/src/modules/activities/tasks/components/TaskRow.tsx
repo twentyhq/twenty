@@ -82,7 +82,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
     objectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const body = getActivitySummary(task?.bodyV2?.blocknote ?? task?.body);
+  const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
   const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({

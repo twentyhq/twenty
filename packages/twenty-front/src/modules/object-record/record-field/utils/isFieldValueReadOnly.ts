@@ -2,8 +2,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-
-import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -51,9 +49,7 @@ export const isFieldValueReadOnly = ({
 
   if (
     isDefined(fieldType) &&
-    (isFieldActor({ type: fieldType }) ||
-      isFieldRichText({ type: fieldType }) ||
-      isFieldRichTextV2({ type: fieldType }))
+    (isFieldActor({ type: fieldType }) || isFieldRichText({ type: fieldType }))
   ) {
     return true;
   }

@@ -128,15 +128,6 @@ export type RawJsonFilter = {
   is?: IsFilter;
 };
 
-export type RichTextV2LeafFilter = {
-  ilike?: string;
-};
-
-export type RichTextV2Filter = {
-  blocknote?: RichTextV2LeafFilter;
-  markdown?: RichTextV2LeafFilter;
-};
-
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -152,7 +143,6 @@ export type LeafFilter =
   | PhonesFilter
   | ArrayFilter
   | RawJsonFilter
-  | RichTextV2Filter
   | undefined;
 
 export type AndObjectRecordFilter = {

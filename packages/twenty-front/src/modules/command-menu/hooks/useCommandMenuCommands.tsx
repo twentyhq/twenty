@@ -17,7 +17,6 @@ import {
   CommandType,
 } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -141,27 +140,13 @@ export const useCommandMenuCommands = () => {
         matchesSearchFilterObjectRecordsQueryResult,
     });
 
-  const { objectMetadataItem: noteObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
-
-  const richTextV2BodyExists = noteObjectMetadataItem
-    ? noteObjectMetadataItem.fields.some((field) => field.name === 'bodyV2')
-    : false;
-
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          richTextV2BodyExists
-            ? {
-                bodyV2: {
-                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
-                },
-              }
-            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
@@ -173,13 +158,7 @@ export const useCommandMenuCommands = () => {
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          richTextV2BodyExists
-            ? {
-                bodyV2: {
-                  markdown: { ilike: `%${deferredCommandMenuSearch}%` },
-                },
-              }
-            : { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,

@@ -211,19 +211,6 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
-      } else if (fieldMetadataItem.type === FieldMetadataType.RichTextV2) {
-        Object.entries(
-          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.RichTextV2],
-        ).forEach(([_, fieldLabel]) => {
-          availableFieldsForImport.push({
-            icon: getIcon(fieldMetadataItem.icon),
-            label: `${fieldLabel} (${fieldMetadataItem.label})`,
-            key: `${fieldLabel} (${fieldMetadataItem.name})`,
-            fieldType: {
-              type: 'input',
-            },
-          });
-        });
       } else {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),

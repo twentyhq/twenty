@@ -53,7 +53,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     </StyledGreyBox>
   ),
 
-  [CardType.RichTextV2Card]: ({ targetableObject }) => (
+  [CardType.RichTextCard]: ({ targetableObject }) => (
     <ShowPageActivityContainer targetableObject={targetableObject} />
   ),
 

@@ -21,7 +21,6 @@ import {
   RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
-  RichTextV2Filter,
   SelectFilter,
   StringFilter,
   UUIDFilter,
@@ -34,7 +33,6 @@ import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMat
 import { isMatchingMultiSelectFilter } from '@/object-record/record-filter/utils/isMatchingMultiSelectFilter';
 import { isMatchingRatingFilter } from '@/object-record/record-filter/utils/isMatchingRatingFilter';
 import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
-import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/isMatchingRichTextV2Filter';
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
@@ -185,12 +183,6 @@ export const isRecordMatchingFilter = ({
         // This should be tackled in Q4'24
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
-          value: record[filterKey],
-        });
-      }
-      case FieldMetadataType.RichTextV2: {
-        return isMatchingRichTextV2Filter({
-          richTextV2Filter: filterValue as RichTextV2Filter,
           value: record[filterKey],
         });
       }

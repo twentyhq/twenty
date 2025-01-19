@@ -36,11 +36,11 @@ export const useRecordShowContainerTabs = (
   > = {
     [CoreObjectNameSingular.Note]: {
       tabs: {
-        richTextV2: {
+        richText: {
           title: 'Note',
           position: 0,
           Icon: IconNotes,
-          cards: [{ type: CardType.RichTextV2Card }],
+          cards: [{ type: CardType.RichTextCard }],
           hide: {
             ifMobile: false,
             ifDesktop: false,
@@ -56,11 +56,11 @@ export const useRecordShowContainerTabs = (
     },
     [CoreObjectNameSingular.Task]: {
       tabs: {
-        richTextV2: {
+        richText: {
           title: 'Note',
           position: 0,
           Icon: IconNotes,
-          cards: [{ type: CardType.RichTextV2Card }],
+          cards: [{ type: CardType.RichTextCard }],
           hide: {
             ifMobile: false,
             ifDesktop: false,

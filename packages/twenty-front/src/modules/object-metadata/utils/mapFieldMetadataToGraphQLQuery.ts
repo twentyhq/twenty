@@ -162,13 +162,5 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
-  if (fieldType === FieldMetadataType.RichTextV2) {
-    return `${field.name}
-{
-  blocknote
-  markdown
-}`;
-  }
-
   return '';
 };

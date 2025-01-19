@@ -123,7 +123,7 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
     [FieldMetadataType.RichText]: {
-      label: 'Rich Text Deprecated',
+      label: 'Rich Text',
       Icon: IllustrationIconSetting,
       exampleValue: "{ key: 'value' }",
       category: 'Basic',

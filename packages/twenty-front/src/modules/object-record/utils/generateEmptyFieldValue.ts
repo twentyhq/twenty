@@ -84,12 +84,6 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.RichText: {
       return null;
     }
-    case FieldMetadataType.RichTextV2: {
-      return {
-        blocknote: null,
-        markdown: null,
-      };
-    }
     case FieldMetadataType.Actor: {
       return {
         source: 'MANUAL',
