@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -226,14 +225,6 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsCRMMigration = lazy(() =>
-  import('~/pages/settings/crm-migration/SettingsCRMMigration').then(
-    (module) => ({
-      default: module.SettingsCRMMigration,
-    }),
-  ),
-);
-
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -264,14 +255,12 @@ const SettingsAdminContent = lazy(() =>
 
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
-  isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
-  isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
@@ -310,34 +299,22 @@ export const SettingsRoutes = ({
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-      {isCRMMigrationEnabled && (
-        <Route
-          path={SettingsPath.CRMMigration}
-          element={<SettingsCRMMigration />}
-        />
-      )}
+
       <Route
-        path={AppPath.DevelopersCatchAll}
-        element={
-          <Routes>
-            <Route
-              path={SettingsPath.DevelopersNewApiKey}
-              element={<SettingsDevelopersApiKeysNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersApiKeyDetail}
-              element={<SettingsDevelopersApiKeyDetail />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhook}
-              element={<SettingsDevelopersWebhooksNew />}
-            />
-            <Route
-              path={SettingsPath.DevelopersNewWebhookDetail}
-              element={<SettingsDevelopersWebhooksDetail />}
-            />
-          </Routes>
-        }
+        path={SettingsPath.DevelopersNewApiKey}
+        element={<SettingsDevelopersApiKeysNew />}
+      />
+      <Route
+        path={SettingsPath.DevelopersApiKeyDetail}
+        element={<SettingsDevelopersApiKeyDetail />}
+      />
+      <Route
+        path={SettingsPath.DevelopersNewWebhook}
+        element={<SettingsDevelopersWebhooksNew />}
+      />
+      <Route
+        path={SettingsPath.DevelopersNewWebhookDetail}
+        element={<SettingsDevelopersWebhooksDetail />}
       />
       {isServerlessFunctionSettingsEnabled && (
         <>

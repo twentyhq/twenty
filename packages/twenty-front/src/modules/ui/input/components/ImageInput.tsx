@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
@@ -175,7 +175,7 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your square PNGs, JPEGs and GIFs under 10MB
+          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

@@ -1,12 +1,14 @@
 import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useLingui } from '@lingui/react/macro';
 import { MainButton, UndecoratedLink } from 'twenty-ui';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from '~/utils/isDefined';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 type App = { id: string; name: string; logo: string };
 
@@ -54,7 +56,8 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 export const Authorize = () => {
-  const navigate = useNavigate();
+  const { t } = useLingui();
+  const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
   //TODO: Replace with db call for registered third party apps
@@ -118,9 +121,13 @@ export const Authorize = () => {
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
-            <MainButton title="Cancel" variant="secondary" fullWidth />
+            <MainButton title={t`Cancel`} variant="secondary" fullWidth />
           </UndecoratedLink>
-          <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
+          <MainButton
+            title={t`Authorize`}
+            onClick={handleAuthorize}
+            fullWidth
+          />
         </StyledButtonContainer>
       </StyledCardWrapper>
     </StyledContainer>

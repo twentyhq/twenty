@@ -3,8 +3,10 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
 import { isDefined } from 'twenty-ui';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getObjectMetadataLabelPluralFromViewId } from './getObjectMetadataLabelPluralFromViewId';
 
 export type ProcessedFavorite = Favorite & {
@@ -40,7 +42,11 @@ export const sortFavorites = (
           avatarType: 'icon',
           avatarUrl: '',
           labelIdentifier: view?.name,
-          link: `/objects/${labelPlural.toLocaleLowerCase()}${favorite.viewId ? `?view=${favorite.viewId}` : ''}`,
+          link: getAppPath(
+            AppPath.RecordIndexPage,
+            { objectNamePlural: labelPlural.toLowerCase() },
+            favorite.viewId ? { viewId: favorite.viewId } : undefined,
+          ),
           workspaceMemberId: favorite.workspaceMemberId,
           favoriteFolderId: favorite.favoriteFolderId,
           objectNameSingular: 'view',
