@@ -15,7 +15,7 @@ export const useMultiSelectField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.MultiSelect,
+    FieldMetadataType.MULTI_SELECT,
     isFieldMultiSelect,
     fieldDefinition,
   );

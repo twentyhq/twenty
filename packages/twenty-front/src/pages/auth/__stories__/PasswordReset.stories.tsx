@@ -5,19 +5,19 @@ import { HttpResponse, graphql } from 'msw';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
-  OnboardingStatus,
-  ValidatePasswordResetTokenDocument,
+    OnboardingStatus,
+    ValidatePasswordResetTokenDocument,
 } from '~/generated/graphql';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import {
-  PageDecorator,
-  PageDecoratorArgs,
+    PageDecorator,
+    PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const mockedOnboardingUsersData = mockedOnboardingUserData(
-  OnboardingStatus.Completed,
+  OnboardingStatus.COMPLETED,
 );
 
 const meta: Meta<PageDecoratorArgs> = {

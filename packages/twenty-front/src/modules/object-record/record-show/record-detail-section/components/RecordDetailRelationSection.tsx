@@ -69,8 +69,8 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
-  const isToManyObjects = relationType === RelationDefinitionType.OneToMany;
+  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
+  const isToManyObjects = relationType === RelationDefinitionType.ONE_TO_MANY;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject

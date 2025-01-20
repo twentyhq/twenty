@@ -3,8 +3,8 @@ import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
 import {
-  MultiItemBaseInput,
-  MultiItemBaseInputProps,
+    MultiItemBaseInput,
+    MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -95,19 +95,19 @@ export const MultiItemFieldInput = <T,>({
   const handleEditButtonClick = (index: number) => {
     let item;
     switch (fieldMetadataType) {
-      case FieldMetadataType.Links:
+      case FieldMetadataType.LINKS:
         item = items[index] as { label: string; url: string };
         setInputValue(item.url || '');
         break;
-      case FieldMetadataType.Phones:
+      case FieldMetadataType.PHONES:
         item = items[index] as PhoneRecord;
         setInputValue(item.callingCode + item.number);
         break;
-      case FieldMetadataType.Emails:
+      case FieldMetadataType.EMAILS:
         item = items[index] as string;
         setInputValue(item);
         break;
-      case FieldMetadataType.Array:
+      case FieldMetadataType.ARRAY:
         item = items[index] as string;
         setInputValue(item);
         break;

@@ -51,7 +51,7 @@ export const EmailsFieldInput = ({
       onCancel={onCancel}
       onClickOutside={onClickOutside}
       placeholder="Email"
-      fieldMetadataType={FieldMetadataType.Emails}
+      fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
       renderItem={({
         value: email,

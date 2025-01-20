@@ -239,7 +239,7 @@ const defaultResponseData = {
 const fieldRelationResponseData = {
   ...defaultResponseData,
   id: FIELD_RELATION_METADATA_ID,
-  type: FieldMetadataType.Relation,
+  type: FieldMetadataType.RELATION,
 };
 
 export const responseData = {

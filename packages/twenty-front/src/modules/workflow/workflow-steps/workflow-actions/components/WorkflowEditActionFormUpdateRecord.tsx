@@ -4,10 +4,10 @@ import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
-  HorizontalSeparator,
-  IconAddressBook,
-  isDefined,
-  useIcons,
+    HorizontalSeparator,
+    IconAddressBook,
+    isDefined,
+    useIcons,
 } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -41,16 +41,16 @@ type UpdateRecordFormData = {
 };
 
 const AVAILABLE_FIELD_METADATA_TYPES = [
-  FieldMetadataType.Text,
-  FieldMetadataType.Number,
-  FieldMetadataType.Date,
-  FieldMetadataType.Boolean,
-  FieldMetadataType.Select,
-  FieldMetadataType.MultiSelect,
-  FieldMetadataType.Emails,
-  FieldMetadataType.Links,
-  FieldMetadataType.FullName,
-  FieldMetadataType.Address,
+  FieldMetadataType.TEXT,
+  FieldMetadataType.NUMBER,
+  FieldMetadataType.DATE,
+  FieldMetadataType.BOOLEAN,
+  FieldMetadataType.SELECT,
+  FieldMetadataType.MULTI_SELECT,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
 ];
 
 export const WorkflowEditActionFormUpdateRecord = ({

@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  Button,
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  Section,
+    Button,
+    H2Title,
+    IconArchive,
+    IconArchiveOff,
+    Section,
 } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -107,7 +107,7 @@ export const SettingsObjectFieldEdit = () => {
 
     try {
       if (
-        formValues.type === FieldMetadataType.Relation &&
+        formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues &&
         'relation' in dirtyFields
       ) {
@@ -213,7 +213,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldMetadataItem.type !== FieldMetadataType.Relation
+                  fieldMetadataItem.type !== FieldMetadataType.RELATION
                 }
               />
             </Section>

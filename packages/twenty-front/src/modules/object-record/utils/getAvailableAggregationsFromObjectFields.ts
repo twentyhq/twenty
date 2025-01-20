@@ -21,7 +21,7 @@ export const getAvailableAggregationsFromObjectFields = (
       return acc;
     }
 
-    if (field.type === FieldMetadataType.Relation) {
+    if (field.type === FieldMetadataType.RELATION) {
       acc[field.name] = {
         [AGGREGATE_OPERATIONS.count]: 'totalCount',
       };
@@ -37,7 +37,7 @@ export const getAvailableAggregationsFromObjectFields = (
       [AGGREGATE_OPERATIONS.count]: 'totalCount',
     };
 
-    if (field.type === FieldMetadataType.Number) {
+    if (field.type === FieldMetadataType.NUMBER) {
       acc[field.name] = {
         ...acc[field.name],
         [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
@@ -47,7 +47,7 @@ export const getAvailableAggregationsFromObjectFields = (
       };
     }
 
-    if (field.type === FieldMetadataType.Currency) {
+    if (field.type === FieldMetadataType.CURRENCY) {
       acc[field.name] = {
         ...acc[field.name],
         [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}AmountMicros`,

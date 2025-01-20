@@ -2,11 +2,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import {
-  AnimatedEaseIn,
-  IconCheck,
-  isDefined,
-  MainButton,
-  RGBA,
+    AnimatedEaseIn,
+    IconCheck,
+    isDefined,
+    MainButton,
+    RGBA,
 } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -16,8 +16,8 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
-  OnboardingStatus,
-  useGetCurrentUserLazyQuery,
+    OnboardingStatus,
+    useGetCurrentUserLazyQuery,
 } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -71,7 +71,7 @@ export const PaymentSuccess = () => {
     );
   };
 
-  if (onboardingStatus === OnboardingStatus.Completed) {
+  if (onboardingStatus === OnboardingStatus.COMPLETED) {
     return <></>;
   }
 

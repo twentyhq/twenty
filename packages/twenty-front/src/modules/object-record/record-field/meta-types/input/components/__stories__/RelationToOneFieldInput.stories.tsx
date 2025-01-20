@@ -13,16 +13,16 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockCurrentWorkspace,
-  mockedWorkspaceMemberData,
+    mockCurrentWorkspace,
+    mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
-  RelationToOneFieldInput,
-  RelationToOneFieldInputProps,
+    RelationToOneFieldInput,
+    RelationToOneFieldInputProps,
 } from '../RelationToOneFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {
@@ -61,7 +61,7 @@ const RelationToOneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'Relation',
-          type: FieldMetadataType.Relation,
+          type: FieldMetadataType.RELATION,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
