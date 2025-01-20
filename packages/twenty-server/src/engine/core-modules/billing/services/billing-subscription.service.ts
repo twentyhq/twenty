@@ -152,4 +152,8 @@ export class BillingSubscriptionService {
       productPrice.stripePriceId,
     );
   }
+
+  async findMany(workspaceId: string) {
+    return this.billingSubscriptionRepository.find({ where: { workspaceId } });
+  }
 }
