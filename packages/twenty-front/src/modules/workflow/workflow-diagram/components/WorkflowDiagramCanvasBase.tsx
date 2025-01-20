@@ -233,7 +233,7 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer>
+      <StyledStatusTagContainer data-testid="workflow-visualizer-status">
         <WorkflowVersionStatusTag versionStatus={status} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
