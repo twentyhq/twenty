@@ -1,6 +1,6 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -18,6 +18,8 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
