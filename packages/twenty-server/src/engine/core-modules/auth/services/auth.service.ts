@@ -567,14 +567,14 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    const hadPublicInviteLink = !!workspaceInviteHash;
+    const hasPublicInviteLink = !!workspaceInviteHash;
     const hasPersonalInvitation = !!invitation;
-    const isInvitedToWorkspace = hasPersonalInvitation || hadPublicInviteLink;
+    const isInvitedToWorkspace = hasPersonalInvitation || hasPublicInviteLink;
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
 
     if (
-      hadPublicInviteLink &&
+      hasPublicInviteLink &&
       !hasPersonalInvitation &&
       workspace &&
       !workspace.isPublicInviteLinkEnabled
