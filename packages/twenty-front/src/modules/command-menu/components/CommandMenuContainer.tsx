@@ -91,6 +91,7 @@ export const CommandMenuContainer = ({
           <ActionMenuConfirmationModals />
           {isCommandMenuOpened && (
             <StyledCommandMenu
+              data-testid="command-menu"
               ref={commandMenuRef}
               className="command-menu"
               animate={targetVariantForAnimation}
