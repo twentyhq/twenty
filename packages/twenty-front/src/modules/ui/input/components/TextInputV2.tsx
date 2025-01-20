@@ -16,11 +16,12 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
-  Pick<TextInputV2ComponentProps, 'fullWidth'>
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'autoSize'>
 >`
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
+  min-width: ${({ autoSize }) => (autoSize ? '100px' : 'auto')};
 `;
 
 const StyledInputContainer = styled.div`
@@ -28,7 +29,7 @@ const StyledInputContainer = styled.div`
   flex-direction: row;
   width: 100%;
   position: relative;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  background-color: inherit;
 `;
 
 const StyledInput = styled.input<
@@ -50,7 +51,8 @@ const StyledInput = styled.input<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
   outline: none;
-  padding: ${({ theme, autoSize }) => (autoSize ? 0 : theme.spacing(2))};
+  padding: ${({ theme, autoSize }) =>
+    autoSize ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
@@ -119,11 +121,10 @@ const StyledTrailingIcon = styled.div`
 const INPUT_TYPE_PASSWORD = 'password';
 
 const StyledAutoSizeInputContainer = styled.div<{ height: 'sm' | 'md' }>`
-  display: inline-flex;
-  position: relative;
   align-items: center;
+  display: inline-flex;
   height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
-  background-color: inherit;
+  position: relative;
 `;
 
 const StyledAutoSizeSpan = styled.span`
@@ -194,7 +195,11 @@ const TextInputV2Component = (
   const inputId = useId();
 
   return (
-    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
+    <StyledContainer
+      className={className}
+      fullWidth={fullWidth ?? false}
+      autoSize={autoSize}
+    >
       {label && (
         <InputLabel htmlFor={inputId}>
           {label + (required ? '*' : '')}
@@ -213,6 +218,7 @@ const TextInputV2Component = (
             <StyledAutoSizeSpan>{value}</StyledAutoSizeSpan>
             <StyledInput
               id={inputId}
+              height={height}
               data-testid={dataTestId}
               autoComplete={autoComplete || 'off'}
               ref={combinedRef}
