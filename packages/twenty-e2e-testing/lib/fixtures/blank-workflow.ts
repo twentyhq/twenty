@@ -4,6 +4,12 @@ import { createWorkflow } from '../requests/create-workflow';
 import { deleteWorkflow } from '../requests/delete-workflow';
 import { destroyWorkflow } from '../requests/destroy-workflow';
 
+type WorkflowTriggerType =
+  | 'record-created'
+  | 'record-updated'
+  | 'record-deleted'
+  | 'manual';
+
 type WorkflowActionType =
   | 'create-record'
   | 'update-record'
@@ -21,8 +27,9 @@ export class WorkflowVisualizerPage {
   readonly workflowStatus: Locator;
   readonly activateWorkflowButton: Locator;
   readonly deactivateWorkflowButton: Locator;
+  readonly addTriggerButton: Locator;
 
-  #actionName: Record<WorkflowActionType, string> = {
+  #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
     'update-record': 'Update Record',
     'delete-record': 'Delete Record',
@@ -30,12 +37,26 @@ export class WorkflowVisualizerPage {
     'send-email': 'Send Email',
   };
 
-  #createdActionName: Record<WorkflowActionType, string> = {
+  #createdActionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
     'update-record': 'Update Record',
     'delete-record': 'Delete Record',
     code: 'Code - Serverless Function',
     'send-email': 'Send Email',
+  };
+
+  #triggerNames: Record<WorkflowTriggerType, string> = {
+    'record-created': 'Record is Created',
+    'record-updated': 'Record is Updated',
+    'record-deleted': 'Record is Deleted',
+    manual: 'Launch manually',
+  };
+
+  #createdTriggerNames: Record<WorkflowTriggerType, string> = {
+    'record-created': 'Record is Created',
+    'record-updated': 'Record is Updated',
+    'record-deleted': 'Record is Deleted',
+    manual: 'Manual Trigger',
   };
 
   constructor({ page, workflowName }: { page: Page; workflowName: string }) {
@@ -50,6 +71,7 @@ export class WorkflowVisualizerPage {
     this.deactivateWorkflowButton = page.getByLabel('Deactivate Workflow', {
       exact: true,
     });
+    this.addTriggerButton = page.getByText('Add a Trigger');
   }
 
   async createOneWorkflow() {
@@ -79,22 +101,36 @@ export class WorkflowVisualizerPage {
     await expect(workflowName).toBeVisible();
   }
 
+  async createInitialTrigger(trigger: WorkflowTriggerType) {
+    await this.addTriggerButton.click();
+
+    const triggerName = this.#triggerNames[trigger];
+    const createdTriggerName = this.#createdTriggerNames[trigger];
+
+    const triggerOption = this.#page.getByText(triggerName);
+    await triggerOption.click();
+
+    const triggerNode = this.#page.getByTestId('rf__node-trigger');
+    await expect(triggerNode).toHaveClass(/selected/);
+    await expect(triggerNode).toContainText(createdTriggerName);
+  }
+
   async createStep(action: WorkflowActionType) {
     await this.addStepButton.click();
 
-    const actionName = this.#actionName[action];
-    const createdActionName = this.#createdActionName[action];
+    const actionNames = this.#actionNames[action];
+    const createdActionNames = this.#createdActionNames[action];
 
-    const actionToCreateOption = this.#page.getByText(actionName);
+    const actionToCreateOption = this.#page.getByText(actionNames);
     await actionToCreateOption.click();
 
     await expect(
       this.#page.getByTestId('command-menu').getByRole('textbox').first(),
-    ).toHaveValue(createdActionName);
+    ).toHaveValue(createdActionNames);
 
     const createdActionNode = this.#page
       .locator('.react-flow__node.selected')
-      .getByText(createdActionName);
+      .getByText(createdActionNames);
 
     await expect(createdActionNode).toBeVisible();
 

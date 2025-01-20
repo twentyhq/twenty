@@ -5,15 +5,7 @@ test('Create workflow with every possible step', async ({
   workflowVisualizer,
   page,
 }) => {
-  const addTriggerButton = page.getByText('Add a Trigger');
-  await addTriggerButton.click();
-
-  const triggerOption = page.getByText('Record is Created');
-  await triggerOption.click();
-
-  const triggerNode = page.getByTestId('rf__node-trigger');
-  await expect(triggerNode).toHaveClass(/selected/);
-  await expect(triggerNode).toHaveText(/Record is Created/);
+  await workflowVisualizer.createInitialTrigger('record-created');
 
   await workflowVisualizer.createStep('create-record');
   await workflowVisualizer.createStep('update-record');
