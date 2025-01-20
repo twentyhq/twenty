@@ -527,7 +527,6 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
-  switchWorkspace: PublicWorkspaceDataOutput;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
@@ -733,11 +732,6 @@ export type MutationSignUpArgs = {
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationSwitchWorkspaceArgs = {
-  workspaceId: Scalars['String'];
 };
 
 
