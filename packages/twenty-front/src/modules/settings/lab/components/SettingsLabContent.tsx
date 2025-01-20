@@ -46,7 +46,7 @@ export const SettingsLabContent = () => {
       {labPublicFeatureFlags.map((flag, index) => (
         <Card key={flag.key} rounded>
           <StyledFlagImage
-            src={flag.metadata.imagePath ?? ''}
+            src={flag.metadata.imagePath}
             alt={flag.metadata.label}
             isFirstCard={index === 0}
           />
