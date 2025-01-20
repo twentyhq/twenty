@@ -23,6 +23,7 @@ export const NavigationDrawerItemInput = ({
 
   return isRenaming ? (
     <NavigationDrawerInput
+      autoSize
       placeholder={placeholder}
       value={value}
       onChange={setValue}

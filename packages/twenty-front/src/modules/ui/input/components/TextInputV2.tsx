@@ -28,10 +28,14 @@ const StyledInputContainer = styled.div`
   flex-direction: row;
   width: 100%;
   position: relative;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
 `;
 
 const StyledInput = styled.input<
-  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
+  Pick<
+    TextInputV2ComponentProps,
+    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize'
+  >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
@@ -46,10 +50,11 @@ const StyledInput = styled.input<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   height: 32px;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme, autoSize }) => (autoSize ? 0 : theme.spacing(2))};
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
+  min-width: ${({ autoSize }) => (autoSize ? '100px' : 'auto')};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -68,6 +73,8 @@ const StyledInput = styled.input<
       border-color: ${theme.color.blue};`;
     }};
   }
+
+  position: ${({ autoSize }) => (autoSize ? 'absolute' : 'relative')};
 `;
 
 const StyledErrorHelper = styled.div`
@@ -111,6 +118,20 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
+const StyledAutoSizeInputContainer = styled.div`
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  height: 32px;
+  background-color: inherit;
+`;
+
+const StyledAutoSizeSpan = styled.span`
+  padding: 0 8px;
+  visibility: hidden;
+  white-space: pre;
+`;
+
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange' | 'onKeyDown'
@@ -123,6 +144,7 @@ export type TextInputV2ComponentProps = Omit<
   noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
+  autoSize?: boolean;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
@@ -149,6 +171,7 @@ const TextInputV2Component = (
     RightIcon,
     LeftIcon,
     autoComplete,
+    autoSize,
     maxLength,
     dataTestId,
   }: TextInputV2ComponentProps,
@@ -183,32 +206,65 @@ const TextInputV2Component = (
             </StyledTrailingIcon>
           </StyledLeftIconContainer>
         )}
-        <StyledInput
-          id={inputId}
-          data-testid={dataTestId}
-          autoComplete={autoComplete || 'off'}
-          ref={combinedRef}
-          tabIndex={tabIndex ?? 0}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          type={passwordVisible ? 'text' : type}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(
-              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            );
-          }}
-          onKeyDown={onKeyDown}
-          {...{
-            autoFocus,
-            disabled,
-            placeholder,
-            required,
-            value,
-            LeftIcon,
-            maxLength,
-            error,
-          }}
-        />
+        {autoSize ? (
+          <StyledAutoSizeInputContainer>
+            <StyledAutoSizeSpan>{value}</StyledAutoSizeSpan>
+            <StyledInput
+              id={inputId}
+              data-testid={dataTestId}
+              autoComplete={autoComplete || 'off'}
+              ref={combinedRef}
+              tabIndex={tabIndex ?? 0}
+              onFocus={onFocus}
+              autoSize={autoSize}
+              onBlur={onBlur}
+              type={passwordVisible ? 'text' : type}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                onChange?.(
+                  turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+                );
+              }}
+              onKeyDown={onKeyDown}
+              {...{
+                autoFocus,
+                disabled,
+                placeholder,
+                required,
+                value,
+                LeftIcon,
+                maxLength,
+                error,
+              }}
+            />
+          </StyledAutoSizeInputContainer>
+        ) : (
+          <StyledInput
+            id={inputId}
+            data-testid={dataTestId}
+            autoComplete={autoComplete || 'off'}
+            ref={combinedRef}
+            tabIndex={tabIndex ?? 0}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            type={passwordVisible ? 'text' : type}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange?.(
+                turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+              );
+            }}
+            onKeyDown={onKeyDown}
+            {...{
+              autoFocus,
+              disabled,
+              placeholder,
+              required,
+              value,
+              LeftIcon,
+              maxLength,
+              error,
+            }}
+          />
+        )}
         <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon

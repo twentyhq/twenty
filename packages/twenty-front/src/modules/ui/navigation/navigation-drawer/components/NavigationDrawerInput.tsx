@@ -18,6 +18,7 @@ type NavigationDrawerInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
   iconColor?: string;
+  autoSize?: boolean;
 };
 
 const StyledInput = styled(TextInputV2)`
@@ -28,6 +29,7 @@ export const NavigationDrawerInput = ({
   className,
   placeholder,
   Icon,
+  autoSize,
   value,
   onChange,
   onSubmit,
@@ -73,13 +75,14 @@ export const NavigationDrawerInput = ({
   return (
     <StyledInput
       className={className}
+      autoSize={autoSize}
       LeftIcon={Icon}
       ref={inputRef}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       onFocus={handleFocus}
-      fullWidth
+      fullWidth={!autoSize}
       autoFocus
     />
   );
