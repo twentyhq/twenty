@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconCircleOff, isDefined, useIcons } from 'twenty-ui';
+import { IconCircleOff, useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
@@ -9,6 +9,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Maybe } from 'graphql/jsutils/Maybe';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -19,11 +20,19 @@ export const settingsDataModelObjectIdentifiersFormSchema =
 export type SettingsDataModelObjectIdentifiersFormValues = z.infer<
   typeof settingsDataModelObjectIdentifiersFormSchema
 >;
-
+export type SettingsDataModelIdentifiers =
+  keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
   defaultLabelIdentifierFieldMetadataId: string;
 };
+// Could this be done using generic ?
+type AllObjectMetadataIdentifiers = {
+  label: string;
+  fieldName: SettingsDataModelIdentifiers;
+  options: SelectOption<string | null>[];
+  defaultValue: Maybe<string> | undefined;
+}[];
 
 const StyledContainer = styled.div`
   display: flex;
@@ -37,7 +46,6 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const { control } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
   const { getIcon } = useIcons();
-
   const labelIdentifierFieldOptions = useMemo(
     () =>
       getActiveFieldMetadataItems(objectMetadataItem)
@@ -60,46 +68,46 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     label: 'None',
     value: null,
   };
+  // Should we declare below array within component function to avoid satisfies assertion
   return (
     <StyledContainer>
-      {[
-        {
-          label: 'Record label',
-          fieldName: 'labelIdentifierFieldMetadataId' as const,
-          options: labelIdentifierFieldOptions,
-        },
-        {
-          label: 'Record image',
-          fieldName: 'imageIdentifierFieldMetadataId' as const,
-          options: imageIdentifierFieldOptions,
-        },
-      ].map(({ fieldName, label, options }) => (
+      {(
+        [
+          {
+            label: 'Record label',
+            fieldName: 'labelIdentifierFieldMetadataId',
+            options: labelIdentifierFieldOptions,
+            defaultValue:
+              objectMetadataItem[
+                'labelIdentifierFieldMetadataId' satisfies SettingsDataModelIdentifiers
+              ] ?? defaultLabelIdentifierFieldMetadataId,
+          },
+          {
+            label: 'Record image',
+            fieldName: 'imageIdentifierFieldMetadataId',
+            options: imageIdentifierFieldOptions,
+            defaultValue: undefined,
+          },
+        ] satisfies AllObjectMetadataIdentifiers
+      ).map(({ fieldName, label, options, defaultValue }) => (
         <Controller
           key={fieldName}
           name={fieldName}
           control={control}
-          defaultValue={
-            fieldName === 'labelIdentifierFieldMetadataId'
-              ? isDefined(objectMetadataItem[fieldName])
-                ? objectMetadataItem[fieldName]
-                : defaultLabelIdentifierFieldMetadataId
-              : objectMetadataItem[fieldName]
-          }
-          render={({ field: { onBlur, onChange, value } }) => {
-            return (
-              <Select
-                label={label}
-                disabled={!objectMetadataItem.isCustom || !options.length}
-                fullWidth
-                dropdownId={`${fieldName}-select`}
-                emptyOption={emptyOption}
-                options={options}
-                value={value}
-                onChange={onChange}
-                onBlur={onBlur}
-              />
-            );
-          }}
+          defaultValue={defaultValue}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <Select
+              label={label}
+              disabled={!objectMetadataItem.isCustom || !options.length}
+              fullWidth
+              dropdownId={`${fieldName}-select`}
+              emptyOption={emptyOption}
+              options={options}
+              value={value}
+              onChange={onChange}
+              onBlur={onBlur}
+            />
+          )}
         />
       ))}
     </StyledContainer>
