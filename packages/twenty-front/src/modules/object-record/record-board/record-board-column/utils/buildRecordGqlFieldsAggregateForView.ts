@@ -4,14 +4,14 @@ import { KanbanAggregateOperation } from '@/object-record/record-index/states/re
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { isDefined } from '~/utils/isDefined';
 
-export const buildRecordGqlFieldsAggregateForRecordBoard = ({
+export const buildRecordGqlFieldsAggregateForView = ({
   objectMetadataItem,
   recordIndexKanbanAggregateOperation,
-  kanbanFieldName,
+  fieldNameForCount,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   recordIndexKanbanAggregateOperation: KanbanAggregateOperation;
-  kanbanFieldName: string;
+  fieldNameForCount: string;
 }): RecordGqlFieldsAggregate => {
   let recordGqlFieldsAggregate = {};
 
@@ -31,7 +31,7 @@ export const buildRecordGqlFieldsAggregateForRecordBoard = ({
       );
     } else {
       recordGqlFieldsAggregate = {
-        [kanbanFieldName]: [AGGREGATE_OPERATIONS.count],
+        [fieldNameForCount]: [AGGREGATE_OPERATIONS.count],
       };
     }
   } else {
