@@ -1,7 +1,6 @@
-import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { useRecoilCallback } from 'recoil';
@@ -14,32 +13,19 @@ export const useApplyRecordFilter = (componentInstanceId?: string) => {
     componentInstanceId,
   );
 
-  const onFilterSelectCallbackState = useRecoilComponentCallbackStateV2(
-    onFilterSelectComponentState,
-    componentInstanceId,
-  );
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const applyRecordFilter = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       (filter: RecordFilter | null) => {
         set(selectedFilterCallbackState, filter);
 
-        const onFilterSelect = getSnapshotValue(
-          snapshot,
-          onFilterSelectCallbackState,
-        );
-
         if (isDefined(filter)) {
           upsertCombinedViewFilter(filter);
+          upsertRecordFilter(filter);
         }
-
-        onFilterSelect?.(filter);
       },
-    [
-      selectedFilterCallbackState,
-      onFilterSelectCallbackState,
-      upsertCombinedViewFilter,
-    ],
+    [selectedFilterCallbackState, upsertCombinedViewFilter, upsertRecordFilter],
   );
 
   return {

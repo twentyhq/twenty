@@ -5,6 +5,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -107,17 +108,21 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
             recordIndexId: instanceId,
           }}
         >
-          <ObjectFilterDropdownComponentInstanceContext.Provider
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <RecordTableComponentInstanceContext.Provider
-              value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId }}
             >
-              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <Story />
-              </ViewComponentInstanceContext.Provider>
-            </RecordTableComponentInstanceContext.Provider>
-          </ObjectFilterDropdownComponentInstanceContext.Provider>
+              <RecordTableComponentInstanceContext.Provider
+                value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+              >
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <Story />
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
         </RecordIndexContextProvider>
       );
     },

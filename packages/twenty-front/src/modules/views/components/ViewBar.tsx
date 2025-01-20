@@ -21,6 +21,7 @@ import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
+import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
@@ -53,6 +54,7 @@ export const ViewBar = ({
       value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
     >
       <ViewEventContext.Provider value={{ onCurrentViewChange }}>
+        <ViewBarRecordFilterEffect />
         <ViewBarEffect viewBarId={viewBarId} />
         <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
         <ViewBarSortEffect />

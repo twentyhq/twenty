@@ -1,6 +1,7 @@
 import { useIcons } from 'twenty-ui';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
@@ -29,10 +30,14 @@ export const VariantFilterChip = ({
     viewBarId,
   });
 
+  const { removeRecordFilter } = useRemoveRecordFilter();
+
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
     deleteCombinedViewFilter(viewFilter.id);
+    removeRecordFilter(viewFilter.fieldMetadataId);
+
     if (
       viewFilter.definition.label === 'Deleted' &&
       viewFilter.operand === 'isNotEmpty'
