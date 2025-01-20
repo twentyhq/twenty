@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableStickyBottomEffect } from '@/object-record/record-table/components/RecordTableStickyBottomEffect';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -26,6 +27,10 @@ const StyledTable = styled.table`
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
+
+  .footer-sticky tr:nth-last-child(2) td {
+    border-bottom-color: ${({ theme }) => theme.background.transparent};
+  }
 `;
 
 export const RecordTable = () => {
@@ -90,6 +95,7 @@ export const RecordTable = () => {
               <RecordTableRecordGroupsBody />
             )}
             <RecordTableStickyEffect />
+            <RecordTableStickyBottomEffect />
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}

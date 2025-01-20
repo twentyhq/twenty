@@ -12,12 +12,12 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import packageJson from '../../../package.json';
 
 export const SettingsWorkspace = () => {
@@ -30,7 +30,7 @@ export const SettingsWorkspace = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: t`General` },
       ]}
@@ -51,7 +51,7 @@ export const SettingsWorkspace = () => {
                 title={t`Domain`}
                 description={t`Edit your subdomain name or set a custom domain.`}
               />
-              <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
+              <UndecoratedLink to={getSettingsPath(SettingsPath.Domain)}>
                 <SettingsCard
                   title={t`Customize Domain`}
                   Icon={<IconWorld />}

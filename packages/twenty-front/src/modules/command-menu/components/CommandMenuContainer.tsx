@@ -97,9 +97,7 @@ export const CommandMenuContainer = ({
               initial="closed"
               exit="closed"
               variants={COMMAND_MENU_ANIMATION_VARIANTS}
-              transition={{
-                duration: theme.animation.duration.normal,
-              }}
+              transition={{ duration: theme.animation.duration.normal }}
             >
               {children}
             </StyledCommandMenu>

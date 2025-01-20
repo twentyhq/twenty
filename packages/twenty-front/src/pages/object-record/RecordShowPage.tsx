@@ -47,9 +47,7 @@ export const RecordShowPage = () => {
   return (
     <RecordFieldValueSelectorContextProvider>
       <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: `record-show-${objectRecordId}`,
-        }}
+        value={{ instanceId: `record-show-${objectRecordId}` }}
       >
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: `record-show-${objectRecordId}` }}
@@ -92,9 +90,7 @@ export const RecordShowPage = () => {
             </RecordShowPageHeader>
             <PageBody>
               <TimelineActivityContext.Provider
-                value={{
-                  labelIdentifierValue: pageName,
-                }}
+                value={{ labelIdentifierValue: pageName }}
               >
                 <RecordShowContainer
                   objectNameSingular={objectNameSingular}
