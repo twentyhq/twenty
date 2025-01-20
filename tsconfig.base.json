@@ -18,7 +18,6 @@
     "paths": {
       "twenty-emails": ["packages/twenty-emails/src/index.ts"],
       "twenty-ui": ["packages/twenty-ui/src/index.ts"],
-      "twenty-shared": ["packages/twenty-shared/dist"]
     }
   },
   "exclude": ["node_modules", "tmp"]

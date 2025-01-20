@@ -14,6 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -21,8 +22,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "../../.cache/tsc",
     "paths": {
-      "@/*": ["packages/twenty-front/src/modules/*"],
-      "~/*": ["packages/twenty-front/src/*"],
+      "@/*": ["src/modules/*"],
+      "~/*": ["src/*"],
       "twenty-ui": ["packages/twenty-ui/src/index.ts"],
       "@ui/*": ["packages/twenty-ui/src/*"]
     }
