@@ -27,9 +27,7 @@ const jestConfig: JestConfigWithTsJest = {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/../..',
-    }),
+    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

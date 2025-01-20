@@ -49,19 +49,9 @@
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "recoil-sync": "^0.2.0",
-    "transliteration": "^2.3.5",
-    "twenty-shared": "workspace:0.41.0-canary"
+    "transliteration": "^2.3.5"
   },
   "devDependencies": {
     "@types/file-saver": "^2"
-  },
-  "workspaces": {
-    "nohoist": [
-      "**twenty-shared/**",
-      "*twenty-shared",
-      "**/twenty-shared",
-      "twenty-shared",
-      "twenty-shared/**"
-    ]
   }
 }

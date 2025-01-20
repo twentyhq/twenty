@@ -45612,7 +45612,6 @@ __metadata:
     file-saver: "npm:^2.0.5"
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
-    twenty-shared: "workspace:0.41.0-canary"
   languageName: unknown
   linkType: soft
 
@@ -45681,7 +45680,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-shared@workspace:0.41.0-canary, twenty-shared@workspace:packages/twenty-shared":
+"twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   languageName: unknown
