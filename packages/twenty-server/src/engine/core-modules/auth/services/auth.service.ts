@@ -541,14 +541,6 @@ export class AuthService {
       );
     }
 
-    if (params.authProvider === 'password' && params.workspaceId) {
-      return (
-        (await this.workspaceRepository.findOneBy({
-          id: params.workspaceId,
-        })) ?? undefined
-      );
-    }
-
     return undefined;
   }
 

@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ConfirmationModal } from '../ConfirmationModal';
 
 const meta: Meta<typeof ConfirmationModal> = {
   title: 'UI/Layout/Modal/ConfirmationModal',
   component: ConfirmationModal,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
 };
 export default meta;
 

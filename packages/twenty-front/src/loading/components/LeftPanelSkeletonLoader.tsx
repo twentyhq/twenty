@@ -57,9 +57,7 @@ export const LeftPanelSkeletonLoader = () => {
           : NAV_DRAWER_WIDTHS.menu.desktop.expanded,
         opacity: isMobile ? 0 : 1,
       }}
-      transition={{
-        duration: ANIMATION.duration.fast,
-      }}
+      transition={{ duration: ANIMATION.duration.fast }}
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>

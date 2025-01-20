@@ -7,15 +7,15 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { userEvent, within } from '@storybook/test';
-import { SettingsAppearance } from '../profile/appearance/components/SettingsAppearance';
+import { SettingsExperience } from '../profile/appearance/components/SettingsExperience';
 
 Date.now = () => new Date('2022-06-13T12:33:37.000Z').getTime();
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsAppearance',
-  component: SettingsAppearance,
+  title: 'Pages/Settings/SettingsExperience',
+  component: SettingsExperience,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/appearance' },
+  args: { routePath: '/settings/experience' },
   parameters: {
     msw: graphqlMocks,
     date: new Date(2021, 1, 1),
@@ -24,13 +24,13 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsAppearance>;
+export type Story = StoryObj<typeof SettingsExperience>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Appearance', undefined, {
+    await canvas.findAllByText('Experience', undefined, {
       timeout: 3000,
     });
 
