@@ -4,7 +4,6 @@ import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatu
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { Card, MOBILE_VIEWPORT } from 'twenty-ui';
-import { TWENTY_WEBSITE_URL } from '~/config';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCardGrid = styled.div`
@@ -47,7 +46,7 @@ export const SettingsLabContent = () => {
       {labPublicFeatureFlags.map((flag, index) => (
         <Card key={flag.key} rounded>
           <StyledFlagImage
-            src={`${TWENTY_WEBSITE_URL}${flag.metadata.imagePath}`}
+            src={flag.metadata.imagePath ?? ''}
             alt={flag.metadata.label}
             isFirstCard={index === 0}
           />

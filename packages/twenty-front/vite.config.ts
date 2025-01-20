@@ -24,7 +24,6 @@ export default defineConfig(({ command, mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
-    TWENTY_WEBSITE_URL,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -153,11 +152,9 @@ export default defineConfig(({ command, mode }) => {
     define: {
       _env_: {
         REACT_APP_SERVER_BASE_URL,
-        TWENTY_WEBSITE_URL,
       },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
-        TWENTY_WEBSITE_URL,
       },
     },
     css: {
