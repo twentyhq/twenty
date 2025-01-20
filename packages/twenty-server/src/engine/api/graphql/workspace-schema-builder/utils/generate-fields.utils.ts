@@ -1,10 +1,10 @@
+import { FieldMetadataType } from '@twenty/shared';
 import {
-  GraphQLFieldConfigMap,
-  GraphQLInputFieldConfigMap,
-  GraphQLInputType,
-  GraphQLOutputType,
+    GraphQLFieldConfigMap,
+    GraphQLInputFieldConfigMap,
+    GraphQLInputType,
+    GraphQLOutputType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';

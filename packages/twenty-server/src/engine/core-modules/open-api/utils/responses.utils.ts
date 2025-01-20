@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 

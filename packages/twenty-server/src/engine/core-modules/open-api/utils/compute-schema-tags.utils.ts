@@ -1,5 +1,5 @@
+import { capitalize } from '@twenty/shared';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 

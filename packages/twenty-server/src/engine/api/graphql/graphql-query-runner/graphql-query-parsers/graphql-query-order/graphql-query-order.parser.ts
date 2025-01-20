@@ -1,14 +1,14 @@
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 
 import {
-  ObjectRecordOrderBy,
-  OrderByDirection,
+    ObjectRecordOrderBy,
+    OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

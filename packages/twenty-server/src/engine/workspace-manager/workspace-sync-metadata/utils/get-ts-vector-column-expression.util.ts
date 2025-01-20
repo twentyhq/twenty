@@ -1,18 +1,18 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
-  computeColumnName,
-  computeCompositeColumnName,
+    computeColumnName,
+    computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
-  WorkspaceMigrationException,
-  WorkspaceMigrationExceptionCode,
+    WorkspaceMigrationException,
+    WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 import {
-  isSearchableFieldType,
-  SearchableFieldType,
+    isSearchableFieldType,
+    SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
 export type FieldTypeAndNameMetadata = {

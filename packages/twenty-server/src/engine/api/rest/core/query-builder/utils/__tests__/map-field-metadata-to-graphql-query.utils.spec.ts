@@ -1,10 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import {
-  fieldCurrencyMock,
-  fieldNumberMock,
-  fieldTextMock,
-  objectMetadataItemMock,
+    fieldCurrencyMock,
+    fieldNumberMock,
+    fieldTextMock,
+    objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';

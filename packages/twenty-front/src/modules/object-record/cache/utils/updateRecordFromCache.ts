@@ -6,7 +6,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const updateRecordFromCache = <T extends ObjectRecord>({

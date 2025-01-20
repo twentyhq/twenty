@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 
 export function getFirstNameAndLastNameFromHandleAndDisplayName(
   handle: string,

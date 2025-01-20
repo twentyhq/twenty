@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { getImageAbsoluteURI } from '@twenty/shared';
 import React from 'react';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';

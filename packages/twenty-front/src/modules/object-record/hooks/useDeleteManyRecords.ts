@@ -13,8 +13,8 @@ import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteMan
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { capitalize } from '@twenty/shared';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { sleep } from '~/utils/sleep';

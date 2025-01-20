@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { plainToInstance } from 'class-transformer';
 import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  Max,
-  Min,
-  validateOrReject,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    Max,
+    Min,
+    validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
+    FieldMetadataException,
+    FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 enum ValueType {

@@ -15,8 +15,8 @@ import { createOneActivityOperationSignatureFactory } from '@/activities/graphql
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
+import { capitalize } from '@twenty/shared';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared';
 
 export const useCreateActivityInDB = ({
   activityObjectNameSingular,

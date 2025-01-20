@@ -1,16 +1,16 @@
+import { FieldMetadataType } from '@twenty/shared';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+    FieldMetadataComplexOption,
+    FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
+    FieldMetadataException,
+    FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 import { isEnumFieldMetadataType } from './is-enum-field-metadata-type.util';

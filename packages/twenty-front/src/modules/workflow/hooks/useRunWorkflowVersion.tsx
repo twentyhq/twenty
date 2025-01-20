@@ -3,11 +3,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import {
-  RunWorkflowVersionMutation,
-  RunWorkflowVersionMutationVariables,
+    RunWorkflowVersionMutation,
+    RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useRunWorkflowVersion = () => {

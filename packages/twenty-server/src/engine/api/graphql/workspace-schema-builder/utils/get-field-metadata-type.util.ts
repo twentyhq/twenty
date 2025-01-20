@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 const typeOrmTypeMapping = new Map<string, FieldMetadataType>([
   ['uuid', FieldMetadataType.UUID],

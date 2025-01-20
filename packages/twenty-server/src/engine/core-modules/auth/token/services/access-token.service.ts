@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isWorkspaceActiveOrSuspended } from '@twenty/shared';
 import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
 import { ExtractJwt } from 'passport-jwt';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
-  AuthContext,
-  JwtPayload,
+    AuthContext,
+    JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';

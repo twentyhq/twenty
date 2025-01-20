@@ -6,14 +6,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { capitalize } from '@twenty/shared';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import {
-  Card,
-  IconGoogle,
-  IconLink,
-  IconMicrosoft,
-  IconPassword,
+    Card,
+    IconGoogle,
+    IconLink,
+    IconMicrosoft,
+    IconPassword,
 } from 'twenty-ui';
 import { AuthProviders } from '~/generated-metadata/graphql';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';

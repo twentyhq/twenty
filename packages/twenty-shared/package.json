@@ -1,7 +1,8 @@
 {
-  "name": "twenty-shared",
+  "name": "@twenty/shared",
   "version": "0.40.0-canary",
   "license": "AGPL-3.0",
+  "private": true,
   "main": "./dist/index.js",
   "scripts": {
     "build": "npx vite build"

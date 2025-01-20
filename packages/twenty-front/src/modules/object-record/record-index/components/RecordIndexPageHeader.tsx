@@ -11,8 +11,8 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { capitalize } from '@twenty/shared';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import { isDefined, useIcons } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 

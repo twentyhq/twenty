@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-factory.interface';
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
 import {
-  WorkspaceMigrationColumnAction,
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnAlter,
-  WorkspaceMigrationColumnCreate,
+    WorkspaceMigrationColumnAction,
+    WorkspaceMigrationColumnActionType,
+    WorkspaceMigrationColumnAlter,
+    WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
-  WorkspaceMigrationException,
-  WorkspaceMigrationExceptionCode,
+    WorkspaceMigrationException,
+    WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export class ColumnActionAbstractFactory<

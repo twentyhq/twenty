@@ -10,8 +10,8 @@ import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMu
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
+import { capitalize } from '@twenty/shared';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 

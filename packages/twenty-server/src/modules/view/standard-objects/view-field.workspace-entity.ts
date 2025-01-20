@@ -1,7 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { Relation } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';

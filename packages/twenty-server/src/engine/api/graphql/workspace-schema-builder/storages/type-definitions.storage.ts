@@ -1,20 +1,20 @@
 import { Injectable, Scope } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import {
-  GraphQLEnumType,
-  GraphQLInputObjectType,
-  GraphQLObjectType,
+    GraphQLEnumType,
+    GraphQLInputObjectType,
+    GraphQLObjectType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { EnumTypeDefinition } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import {
-  InputTypeDefinition,
-  InputTypeDefinitionKind,
+    InputTypeDefinition,
+    InputTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import {
-  ObjectTypeDefinition,
-  ObjectTypeDefinitionKind,
+    ObjectTypeDefinition,
+    ObjectTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 
 export type GqlInputType = InputTypeDefinition | EnumTypeDefinition;

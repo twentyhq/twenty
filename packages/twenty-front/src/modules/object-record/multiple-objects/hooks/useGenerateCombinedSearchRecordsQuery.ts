@@ -7,7 +7,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
 import { isObjectMetadataItemSearchable } from '@/object-record/utils/isObjectMetadataItemSearchable';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const useGenerateCombinedSearchRecordsQuery = ({

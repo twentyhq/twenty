@@ -12,19 +12,19 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getImageAbsoluteURI } from '@twenty/shared';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import {
-  Button,
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  IconSearch,
-  IconUser,
-  isDefined,
-  Section,
-  Toggle,
+    Button,
+    H1Title,
+    H1TitleFontColor,
+    H2Title,
+    IconSearch,
+    IconUser,
+    isDefined,
+    Section,
+    Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 

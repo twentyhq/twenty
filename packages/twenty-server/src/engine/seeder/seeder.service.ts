@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize, FieldMetadataType } from 'twenty-shared';
+import { capitalize, FieldMetadataType } from '@twenty/shared';
 
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 

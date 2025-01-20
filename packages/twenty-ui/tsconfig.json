@@ -7,10 +7,11 @@
     "strict": true,
     "esModuleInterop": true,
     "noEmit": true,
+    "baseUrl": ".",
     "types": ["node"],
     "outDir": "../../.cache/tsc",
     "paths": {
-      "@ui/*": ["packages/twenty-ui/src/*"]
+      "@ui/*": ["src/*"]
     }
   },
   "files": [],

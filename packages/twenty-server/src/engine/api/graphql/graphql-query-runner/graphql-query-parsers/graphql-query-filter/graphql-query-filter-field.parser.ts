@@ -1,11 +1,11 @@
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { WhereExpressionBuilder } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
+    GraphqlQueryRunnerException,
+    GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';

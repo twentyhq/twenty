@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
+import { getImageAbsoluteURI } from '@twenty/shared';
 import { HttpResponse, graphql, http } from 'msw';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
-  PageDecorator,
-  PageDecoratorArgs,
+    PageDecorator,
+    PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';

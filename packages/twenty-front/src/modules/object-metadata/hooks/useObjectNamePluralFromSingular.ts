@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
+import { isWorkspaceActiveOrSuspended } from '@twenty/shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { isDefined } from '~/utils/isDefined';
 

@@ -7,7 +7,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateManyRecordsMutation = ({

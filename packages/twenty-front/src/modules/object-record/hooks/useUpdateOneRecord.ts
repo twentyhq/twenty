@@ -12,7 +12,7 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type useUpdateOneRecordProps = {

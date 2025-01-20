@@ -1,21 +1,21 @@
+import { capitalize } from '@twenty/shared';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
 
 import {
-  getArrayRequestBody,
-  getFindDuplicatesRequestBody,
-  getRequestBody,
-  getUpdateRequestBody,
+    getArrayRequestBody,
+    getFindDuplicatesRequestBody,
+    getRequestBody,
+    getUpdateRequestBody,
 } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
-  getCreateManyResponse201,
-  getCreateOneResponse201,
-  getDeleteResponse200,
-  getFindDuplicatesResponse200,
-  getFindManyResponse200,
-  getFindOneResponse200,
-  getJsonResponse,
-  getUpdateOneResponse200,
+    getCreateManyResponse201,
+    getCreateOneResponse201,
+    getDeleteResponse200,
+    getFindDuplicatesResponse200,
+    getFindManyResponse200,
+    getFindOneResponse200,
+    getJsonResponse,
+    getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 

@@ -10,6 +10,9 @@
       "require": "./dist/index.cjs"
     }
   },
+  "dependencies": {
+    "@twenty/shared": "workspace:*"
+  },
   "scripts": {
     "build": "npx vite build"
   }

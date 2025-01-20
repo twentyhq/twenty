@@ -6,12 +6,12 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
-  MultiObjectRecordQueryResult,
-  useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
+    MultiObjectRecordQueryResult,
+    useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_QUERY = gql`

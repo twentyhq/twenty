@@ -1,9 +1,9 @@
 import {
-  ApolloError,
-  ApolloQueryResult,
-  FetchMoreQueryOptions,
-  OperationVariables,
-  WatchQueryFetchPolicy,
+    ApolloError,
+    ApolloQueryResult,
+    FetchMoreQueryOptions,
+    OperationVariables,
+    WatchQueryFetchPolicy,
 } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,7 +23,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isDefined } from '~/utils/isDefined';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';

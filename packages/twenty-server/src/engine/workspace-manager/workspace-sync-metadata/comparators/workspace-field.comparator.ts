@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import diff from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared';
 
 import {
-  ComparatorAction,
-  FieldComparatorResult,
+    ComparatorAction,
+    FieldComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 

@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+    ObjectRecord,
+    ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
-  CreateManyResolverArgs,
-  CreateOneResolverArgs,
-  FindDuplicatesResolverArgs,
-  FindManyResolverArgs,
-  FindOneResolverArgs,
-  ResolverArgs,
-  ResolverArgsType,
+    CreateManyResolverArgs,
+    CreateOneResolverArgs,
+    FindDuplicatesResolverArgs,
+    FindManyResolverArgs,
+    FindOneResolverArgs,
+    ResolverArgs,
+    ResolverArgsType,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

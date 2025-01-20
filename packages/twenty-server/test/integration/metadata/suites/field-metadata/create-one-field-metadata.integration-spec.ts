@@ -1,8 +1,8 @@
+import { FieldMetadataType } from '@twenty/shared';
 import { createOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { FieldMetadataType } from 'twenty-shared';
 
 describe('createOne', () => {
   describe('FieldMetadataService name/label sync', () => {

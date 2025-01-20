@@ -1,11 +1,11 @@
+import { WorkspaceActivationStatus } from '@twenty/shared';
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import {
-  BaseCommandOptions,
-  BaseCommandRunner,
+    BaseCommandOptions,
+    BaseCommandRunner,
 } from 'src/database/commands/base.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export type ActiveWorkspacesCommandOptions = BaseCommandOptions & {

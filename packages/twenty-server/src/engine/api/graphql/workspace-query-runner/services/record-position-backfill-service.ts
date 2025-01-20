@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared';
 
 import {
-  RecordPositionQueryFactory,
-  RecordPositionQueryType,
+    RecordPositionQueryFactory,
+    RecordPositionQueryType,
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';

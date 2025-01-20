@@ -1,6 +1,7 @@
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
+import { getImageAbsoluteURI } from '@twenty/shared';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { HighlightedContainer } from 'src/components/HighlightedContainer';
@@ -10,7 +11,6 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;

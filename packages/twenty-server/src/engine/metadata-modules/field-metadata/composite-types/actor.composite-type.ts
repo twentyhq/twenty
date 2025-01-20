@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import {
-  CompositeProperty,
-  CompositeType,
+    CompositeProperty,
+    CompositeType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export enum FieldActorSource {

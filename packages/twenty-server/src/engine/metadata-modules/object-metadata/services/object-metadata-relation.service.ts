@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { capitalize, FieldMetadataType } from 'twenty-shared';
+import { capitalize, FieldMetadataType } from '@twenty/shared';
 import { In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -12,20 +12,20 @@ import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { buildNameLabelAndDescriptionForForeignKeyFieldMetadata } from 'src/engine/metadata-modules/object-metadata/utils/build-name-label-and-description-for-foreign-key-field-metadata.util';
 import {
-  RelationMetadataEntity,
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataEntity,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  STANDARD_OBJECT_FIELD_IDS,
+    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+    STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  createForeignKeyDeterministicUuid,
-  createRelationDeterministicUuid,
+    createForeignKeyDeterministicUuid,
+    createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [

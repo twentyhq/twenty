@@ -2,7 +2,7 @@ import { ApolloCache, Modifiers } from '@apollo/client/cache';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const modifyRecordFromCache = <

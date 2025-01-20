@@ -1,11 +1,11 @@
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
-import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 import {
-  capitalize,
-  FieldMetadataType,
-  isFieldMetadataDateKind,
-} from 'twenty-shared';
+    capitalize,
+    FieldMetadataType,
+    isFieldMetadataDateKind,
+} from '@twenty/shared';
+import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

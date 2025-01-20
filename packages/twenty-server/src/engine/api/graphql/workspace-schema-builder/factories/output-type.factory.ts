@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { GraphQLOutputType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 
 import {
-  TypeMapperService,
-  TypeOptions,
+    TypeMapperService,
+    TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 

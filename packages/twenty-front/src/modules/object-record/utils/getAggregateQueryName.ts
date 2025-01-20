@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isDefined } from '~/utils/isDefined';
 
 export const getAggregateQueryName = (

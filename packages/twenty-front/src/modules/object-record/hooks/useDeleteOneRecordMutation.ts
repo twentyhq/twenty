@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { mapSoftDeleteFieldsToGraphQLQuery } from '@/object-metadata/utils/mapSoftDeleteFieldsToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useDeleteOneRecordMutation = ({

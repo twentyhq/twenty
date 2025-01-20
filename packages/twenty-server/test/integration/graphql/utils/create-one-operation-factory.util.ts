@@ -1,5 +1,5 @@
+import { capitalize } from '@twenty/shared';
 import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared';
 
 type CreateOneOperationFactoryParams = {
   objectMetadataSingularName: string;

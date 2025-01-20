@@ -6,8 +6,8 @@ import {
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { capitalize } from '@twenty/shared';
 
-import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 

@@ -1,12 +1,12 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-metadata.interface';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
-  deduceRelationDirection,
-  RelationDirection,
+    deduceRelationDirection,
+    RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 
 describe('deduceRelationDirection', () => {

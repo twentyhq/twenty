@@ -1,22 +1,22 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import {
-  FieldMetadataDefaultActor,
-  FieldMetadataDefaultArray,
-  FieldMetadataDefaultValueAddress,
-  FieldMetadataDefaultValueBoolean,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueDateTime,
-  FieldMetadataDefaultValueEmails,
-  FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueLinks,
-  FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueUuidFunction,
+    FieldMetadataDefaultActor,
+    FieldMetadataDefaultArray,
+    FieldMetadataDefaultValueAddress,
+    FieldMetadataDefaultValueBoolean,
+    FieldMetadataDefaultValueCurrency,
+    FieldMetadataDefaultValueDateTime,
+    FieldMetadataDefaultValueEmails,
+    FieldMetadataDefaultValueFullName,
+    FieldMetadataDefaultValueLinks,
+    FieldMetadataDefaultValueNowFunction,
+    FieldMetadataDefaultValueNumber,
+    FieldMetadataDefaultValuePhones,
+    FieldMetadataDefaultValueRawJson,
+    FieldMetadataDefaultValueRichText,
+    FieldMetadataDefaultValueString,
+    FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
 type ExtractValueType<T> = T extends { value: infer V } ? V : T;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

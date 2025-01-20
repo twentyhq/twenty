@@ -1,8 +1,8 @@
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
+import { capitalize } from '@twenty/shared';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
-import { capitalize } from 'twenty-shared';
 import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 
 type Variant = 'placeholder';

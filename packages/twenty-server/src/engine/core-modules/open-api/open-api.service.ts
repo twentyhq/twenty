@@ -1,40 +1,40 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize } from '@twenty/shared';
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
-  computeMetadataSchemaComponents,
-  computeParameterComponents,
-  computeSchemaComponents,
+    computeMetadataSchemaComponents,
+    computeParameterComponents,
+    computeSchemaComponents,
 } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { computeSchemaTags } from 'src/engine/core-modules/open-api/utils/compute-schema-tags.utils';
 import { computeWebhooks } from 'src/engine/core-modules/open-api/utils/computeWebhooks.utils';
 import {
-  get400ErrorResponses,
-  get401ErrorResponses,
+    get400ErrorResponses,
+    get401ErrorResponses,
 } from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
 import {
-  computeBatchPath,
-  computeDuplicatesResultPath,
-  computeManyResultPath,
-  computeSingleResultPath,
+    computeBatchPath,
+    computeDuplicatesResultPath,
+    computeManyResultPath,
+    computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
 import {
-  getRequestBody,
-  getUpdateRequestBody,
+    getRequestBody,
+    getUpdateRequestBody,
 } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import {
-  getCreateOneResponse201,
-  getDeleteResponse200,
-  getFindManyResponse200,
-  getFindOneResponse200,
-  getUpdateOneResponse200,
+    getCreateOneResponse201,
+    getDeleteResponse200,
+    getFindManyResponse200,
+    getFindOneResponse200,
+    getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getServerUrl } from 'src/utils/get-server-url';

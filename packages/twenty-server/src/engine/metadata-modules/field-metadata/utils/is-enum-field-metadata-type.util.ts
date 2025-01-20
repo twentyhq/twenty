@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 export type EnumFieldMetadataUnionType =
   | FieldMetadataType.RATING

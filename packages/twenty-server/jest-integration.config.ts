@@ -24,6 +24,7 @@ const jestConfig: JestConfigWithTsJest = {
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
     'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
+    // TODO debug
     'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
   },
   fakeTimers: {

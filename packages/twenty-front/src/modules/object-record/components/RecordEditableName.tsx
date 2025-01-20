@@ -3,8 +3,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import styled from '@emotion/styled';
+import { capitalize } from '@twenty/shared';
 import { useEffect, useState } from 'react';
-import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: flex-start;

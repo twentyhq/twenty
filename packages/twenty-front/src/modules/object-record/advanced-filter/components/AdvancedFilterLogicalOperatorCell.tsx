@@ -1,7 +1,7 @@
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import styled from '@emotion/styled';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 
 const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};

@@ -15,6 +15,9 @@
       "require": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@twenty/shared": "workspace:*"
+  },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",

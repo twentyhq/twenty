@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 import { ColumnType } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 import {
-  FieldMetadataDefaultValue,
-  FieldMetadataFunctionDefaultValue,
+    FieldMetadataDefaultValue,
+    FieldMetadataFunctionDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
-  WorkspaceTableStructure,
-  WorkspaceTableStructureResult,
+    WorkspaceTableStructure,
+    WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';

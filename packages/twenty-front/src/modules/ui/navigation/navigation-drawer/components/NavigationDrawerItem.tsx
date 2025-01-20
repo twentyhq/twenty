@@ -8,15 +8,15 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { capitalize } from '@twenty/shared';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import {
-  IconComponent,
-  MOBILE_VIEWPORT,
-  Pill,
-  TablerIconsProps,
+    IconComponent,
+    MOBILE_VIEWPORT,
+    Pill,
+    TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 

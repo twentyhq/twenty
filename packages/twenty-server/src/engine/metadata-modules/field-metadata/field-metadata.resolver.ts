@@ -1,18 +1,18 @@
 import {
-  BadRequestException,
-  UnauthorizedException,
-  UseGuards,
+    BadRequestException,
+    UnauthorizedException,
+    UseGuards,
 } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';

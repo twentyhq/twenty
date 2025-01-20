@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FieldMetadataType } from '@twenty/shared';
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import {
-  ObjectTypeDefinition,
-  ObjectTypeDefinitionKind,
+    ObjectTypeDefinition,
+    ObjectTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { OutputTypeFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/output-type.factory';
 import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-property-target.util';

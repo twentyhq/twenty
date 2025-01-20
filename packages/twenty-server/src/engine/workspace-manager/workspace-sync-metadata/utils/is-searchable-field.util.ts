@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 const SEARCHABLE_FIELD_TYPES = [
   FieldMetadataType.TEXT,

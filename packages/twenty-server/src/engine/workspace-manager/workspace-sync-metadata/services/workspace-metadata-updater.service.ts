@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize, FieldMetadataType } from 'twenty-shared';
+import { capitalize, FieldMetadataType } from '@twenty/shared';
 import {
-  EntityManager,
-  EntityTarget,
-  FindOptionsWhere,
-  In,
-  ObjectLiteral,
-  Repository,
+    EntityManager,
+    EntityTarget,
+    FindOptionsWhere,
+    In,
+    ObjectLiteral,
+    Repository,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';

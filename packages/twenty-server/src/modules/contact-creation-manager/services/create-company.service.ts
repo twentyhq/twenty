@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { TWENTY_COMPANIES_BASE_URL } from '@twenty/shared';
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
-import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared';
 import { DeepPartial, EntityManager, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';

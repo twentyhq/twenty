@@ -2,11 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import FileType from 'file-type';
 import {
-  TWENTY_ICONS_BASE_URL,
-  WorkspaceActivationStatus,
-} from 'twenty-shared';
+    TWENTY_ICONS_BASE_URL,
+    WorkspaceActivationStatus,
+} from '@twenty/shared';
+import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -14,20 +14,20 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  PASSWORD_REGEX,
-  compareHash,
-  hashPassword,
+    PASSWORD_REGEX,
+    compareHash,
+    hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import {
-  AuthProviderWithPasswordType,
-  ExistingUserOrPartialUserWithPicture,
-  PartialUserWithPicture,
-  SignInUpBaseParams,
-  SignInUpNewUserPayload,
+    AuthProviderWithPasswordType,
+    ExistingUserOrPartialUserWithPicture,
+    PartialUserWithPicture,
+    SignInUpBaseParams,
+    SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';

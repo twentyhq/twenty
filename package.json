@@ -1,4 +1,5 @@
 {
+  "private": true,
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
@@ -337,7 +338,6 @@
     "ts-node": "10.9.1",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.17.0",
-    "twenty-shared": "file:packages/twenty-shared",
     "vite": "^5.4.0",
     "vite-plugin-checker": "^0.6.2",
     "vite-plugin-dts": "3.8.1",
@@ -365,16 +365,8 @@
   },
   "workspaces": {
     "packages": [
-      "packages/twenty-chrome-extension",
-      "packages/twenty-front",
-      "packages/twenty-server",
-      "packages/twenty-emails",
-      "packages/twenty-ui",
-      "packages/twenty-utils",
-      "packages/twenty-zapier",
-      "packages/twenty-website",
-      "packages/twenty-e2e-testing",
-      "tools/eslint-rules"
+      "packages/*",
+      "tools/*"
     ]
   }
 }

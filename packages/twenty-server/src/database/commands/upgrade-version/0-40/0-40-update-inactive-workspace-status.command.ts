@@ -1,13 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from '@twenty/shared';
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import {
-  BaseCommandOptions,
-  BaseCommandRunner,
+    BaseCommandOptions,
+    BaseCommandRunner,
 } from 'src/database/commands/base.command';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';

@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from '@twenty/shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useDeleteManyRecordsMutation = ({

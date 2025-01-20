@@ -11,8 +11,8 @@ import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMu
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
+import { capitalize } from '@twenty/shared';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 

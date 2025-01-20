@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from '@twenty/shared';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+    FieldMetadataComplexOption,
+    FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type FieldMetadataOptionsMapping = {

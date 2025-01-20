@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from '@twenty/shared';
 import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -15,12 +15,12 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
-  MessageParticipantMatchParticipantJob,
-  MessageParticipantMatchParticipantJobData,
+    MessageParticipantMatchParticipantJob,
+    MessageParticipantMatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
 import {
-  MessageParticipantUnmatchParticipantJob,
-  MessageParticipantUnmatchParticipantJobData,
+    MessageParticipantUnmatchParticipantJob,
+    MessageParticipantUnmatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 @Injectable()
