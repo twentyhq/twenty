@@ -25,8 +25,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
-
   const isMatchingLocation = useIsMatchingLocation();
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
