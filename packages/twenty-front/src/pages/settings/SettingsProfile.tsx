@@ -1,4 +1,4 @@
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -7,9 +7,9 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
@@ -19,10 +19,10 @@ export const SettingsProfile = () => {
       title={t`Profile`}
       links={[
         {
-          children: t`User`,
-          href: getSettingsPagePath(SettingsPath.ProfilePage),
+          children: <Trans>User</Trans>,
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        { children: t`Profile` },
+        { children: <Trans>Profile</Trans> },
       ]}
     >
       <SettingsPageContainer>

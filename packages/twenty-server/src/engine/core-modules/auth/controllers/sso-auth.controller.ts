@@ -155,10 +155,13 @@ export class SSOAuthController {
       );
     }
 
-    const invitation = await this.authService.findInvitationForSignInUp({
-      currentWorkspace: identityProvider.workspace,
-      email: payload.email,
-    });
+    const invitation =
+      payload.email && identityProvider.workspace
+        ? await this.authService.findInvitationForSignInUp({
+            currentWorkspace: identityProvider.workspace,
+            email: payload.email,
+          })
+        : undefined;
 
     const existingUser = await this.userRepository.findOne({
       where: {

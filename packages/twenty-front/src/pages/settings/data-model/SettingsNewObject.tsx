@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -13,18 +12,19 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
 type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -47,7 +47,7 @@ export const SettingsNewObject = () => {
         variant: SnackBarVariant.Success,
       });
 
-      navigate(getSettingsPagePath(SettingsPath.Objects));
+      navigate(SettingsPath.Objects);
     } catch (error) {
       if (error instanceof z.ZodError) {
         enqueueSnackBar(t`Invalid object data`, {
@@ -67,14 +67,14 @@ export const SettingsNewObject = () => {
         title={t`New Object`}
         links={[
           {
-            children: t`Workspace`,
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            children: <Trans>Workspace</Trans>,
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: t`Objects`,
-            href: getSettingsPagePath(SettingsPath.Objects),
+            children: <Trans>Objects</Trans>,
+            href: getSettingsPath(SettingsPath.Objects),
           },
-          { children: t`New` },
+          { children: <Trans>New</Trans> },
         ]}
       >
         <SettingsPageContainer>
@@ -89,9 +89,7 @@ export const SettingsNewObject = () => {
                 <SettingsDataModelObjectAboutForm />
               </Section>
               <SaveAndCancelButtons
-                onCancel={() =>
-                  navigate(getSettingsPagePath(SettingsPath.Objects))
-                }
+                onCancel={() => navigate(SettingsPath.Objects)}
               />
             </form>
           </FormProvider>

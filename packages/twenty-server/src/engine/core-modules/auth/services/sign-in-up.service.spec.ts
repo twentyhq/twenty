@@ -67,7 +67,7 @@ describe('SignInUpService', () => {
         {
           provide: WorkspaceInvitationService,
           useValue: {
-            validateInvitation: jest.fn(),
+            validatePersonalInvitation: jest.fn(),
             invalidateWorkspaceInvitation: jest.fn(),
           },
         },
@@ -145,7 +145,7 @@ describe('SignInUpService', () => {
     };
 
     jest
-      .spyOn(workspaceInvitationService, 'validateInvitation')
+      .spyOn(workspaceInvitationService, 'validatePersonalInvitation')
       .mockResolvedValue({
         isValid: true,
         workspace: params.workspace as Workspace,
@@ -163,7 +163,9 @@ describe('SignInUpService', () => {
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(workspaceInvitationService.validateInvitation).toHaveBeenCalledWith({
+    expect(
+      workspaceInvitationService.validatePersonalInvitation,
+    ).toHaveBeenCalledWith({
       workspacePersonalInviteToken: 'invitationToken',
       email: 'test@example.com',
     });

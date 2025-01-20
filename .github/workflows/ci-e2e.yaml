@@ -69,11 +69,12 @@ jobs:
     - name: Build twenty-shared
       run: npx nx build twenty-shared
 
+    - name: Install Playwright Browsers
+      run: npx nx setup twenty-e2e-testing
+
     - name: Setup environment files
       run: |
-        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
         cp packages/twenty-front/.env.example packages/twenty-front/.env
-        cp packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
         npx nx reset:env twenty-server
 
     - name: Build frontend
@@ -87,7 +88,7 @@ jobs:
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
         npx nx run twenty-server:database:reset
-        
+
     - name: Start server
       run: |
         npx nx start twenty-server &
@@ -104,9 +105,6 @@ jobs:
       run: |
         npx nx run twenty-server:worker:ci &
         echo "Worker started"
-
-    - name: Install Playwright Browsers
-      run: npx nx setup twenty-e2e-testing
 
     - name: Run Playwright tests
       run: npx nx test twenty-e2e-testing

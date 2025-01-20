@@ -1,10 +1,14 @@
 module.exports = {
   root: true,
-  extends: [
-    'plugin:prettier/recommended',
-    'plugin:lingui/recommended',
+  extends: ['plugin:prettier/recommended', 'plugin:lingui/recommended'],
+  plugins: [
+    '@nx',
+    'prefer-arrow',
+    'import',
+    'unused-imports',
+    'unicorn',
+    'lingui',
   ],
-  plugins: ['@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn', 'lingui'],
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],

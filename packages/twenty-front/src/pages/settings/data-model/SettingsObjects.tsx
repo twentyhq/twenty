@@ -10,7 +10,6 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -21,7 +20,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
@@ -33,8 +32,9 @@ import {
   Section,
   UndecoratedLink,
 } from 'twenty-ui';
-import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
+import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -46,8 +46,8 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 export const SettingsObjects = () => {
-  const theme = useTheme();
   const { t } = useLingui();
+  const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -104,14 +104,19 @@ export const SettingsObjects = () => {
     [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
 
+  const tableMetadata = useMemo(
+    () => GET_SETTINGS_OBJECT_TABLE_METADATA(t),
+    [t],
+  );
+
   const sortedActiveObjectSettingsItems = useSortedArray(
     activeObjectSettingsArray,
-    SETTINGS_OBJECT_TABLE_METADATA,
+    tableMetadata,
   );
 
   const sortedInactiveObjectSettingsItems = useSortedArray(
     inactiveObjectSettingsArray,
-    SETTINGS_OBJECT_TABLE_METADATA,
+    tableMetadata,
   );
 
   const filteredActiveObjectSettingsItems = useMemo(
@@ -138,7 +143,7 @@ export const SettingsObjects = () => {
     <SubMenuTopBarContainer
       title={t`Data model`}
       actionButton={
-        <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+        <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
             title={t`Add object`}
@@ -149,12 +154,10 @@ export const SettingsObjects = () => {
       }
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        {
-          children: t`Objects`,
-        },
+        { children: <Trans>Objects</Trans> },
       ]}
     >
       <SettingsPageContainer>
@@ -165,22 +168,22 @@ export const SettingsObjects = () => {
 
             <StyledSearchInput
               LeftIcon={IconSearch}
-              placeholder={t`Search an object...`}
+              placeholder={t`Search for an object...`}
               value={searchTerm}
               onChange={setSearchTerm}
             />
 
             <Table>
               <StyledObjectTableRow>
-                {SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+                {tableMetadata.fields.map(
                   (settingsObjectsTableMetadataField) => (
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
                       label={settingsObjectsTableMetadataField.fieldLabel}
-                      tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                      tableId={tableMetadata.tableId}
                       align={settingsObjectsTableMetadataField.align}
-                      initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}
+                      initialSort={tableMetadata.initialSort}
                     />
                   ),
                 )}
@@ -202,9 +205,10 @@ export const SettingsObjects = () => {
                             stroke={theme.icon.stroke.sm}
                           />
                         }
-                        link={`/settings/objects/${
-                          objectSettingsItem.objectMetadataItem.namePlural
-                        }`}
+                        link={getSettingsPath(SettingsPath.ObjectDetail, {
+                          objectNamePlural:
+                            objectSettingsItem.objectMetadataItem.namePlural,
+                        })}
                       />
                     ),
                   )}

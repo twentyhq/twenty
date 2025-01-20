@@ -98,7 +98,7 @@ export class AuthService {
       );
 
     if (invitation) {
-      await this.workspaceInvitationService.validateInvitation({
+      await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: invitation.value,
         email: user.email,
       });
@@ -483,29 +483,30 @@ export class AuthService {
     workspacePersonalInviteToken,
     email,
   }: {
-    currentWorkspace?: Workspace | null;
+    currentWorkspace: Workspace | null;
     workspacePersonalInviteToken?: string;
     email?: string;
   }) {
-    if (!currentWorkspace) return undefined;
+    if (!currentWorkspace || !workspacePersonalInviteToken) return undefined;
 
-    const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    qr.where('"appToken"."workspaceId" = :workspaceId', {
-      workspaceId: currentWorkspace.id,
-    }).andWhere('"appToken".type = :type', {
-      type: AppTokenType.InvitationToken,
-    });
-
-    if (email) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
-        email,
+    const qr = this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken"."workspaceId" = :workspaceId', {
+        workspaceId: currentWorkspace.id,
+      })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
       });
-    }
 
     if (workspacePersonalInviteToken) {
       qr.andWhere('"appToken".value = :personalInviteToken', {
         personalInviteToken: workspacePersonalInviteToken,
+      });
+    }
+
+    if (email) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email,
       });
     }
 
@@ -544,14 +545,6 @@ export class AuthService {
       );
     }
 
-    if (params.authProvider === 'password' && params.workspaceId) {
-      return (
-        (await this.workspaceRepository.findOneBy({
-          id: params.workspaceId,
-        })) ?? undefined
-      );
-    }
-
     return undefined;
   }
 
@@ -578,18 +571,40 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    const hasInvitation = invitation || workspaceInviteHash;
+    const hasPublicInviteLink = !!workspaceInviteHash;
+    const hasPersonalInvitation = !!invitation;
+    const isInvitedToWorkspace = hasPersonalInvitation || hasPublicInviteLink;
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
 
-    if (!hasInvitation && isTargetAnExistingWorkspace && isAnExistingUser) {
+    if (
+      hasPublicInviteLink &&
+      !hasPersonalInvitation &&
+      workspace &&
+      !workspace.isPublicInviteLinkEnabled
+    ) {
+      throw new AuthException(
+        'Public invite link is disabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      isAnExistingUser
+    ) {
       return await this.userService.hasUserAccessToWorkspaceOrThrow(
         userData.existingUser.id,
         workspace.id,
       );
     }
 
-    if (!hasInvitation && isTargetAnExistingWorkspace && !isAnExistingUser) {
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      !isAnExistingUser
+    ) {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

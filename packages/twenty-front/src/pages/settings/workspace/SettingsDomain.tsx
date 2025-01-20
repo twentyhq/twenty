@@ -1,4 +1,3 @@
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -10,7 +9,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   FeatureFlagKey,
@@ -22,7 +20,7 @@ import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain'
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsDomain = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { t } = useLingui();
 
   const validationSchema = z
@@ -105,17 +103,17 @@ export const SettingsDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`General`}
+      title={t`Domain`}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`General`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>General</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`Domain` },
+        { children: <Trans>Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -123,7 +121,7 @@ export const SettingsDomain = () => {
             !form.formState.isValid ||
             subdomainValue === currentWorkspace?.subdomain
           }
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
+          onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
         />
       }

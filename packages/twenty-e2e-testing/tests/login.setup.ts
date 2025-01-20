@@ -1,6 +1,6 @@
-import { expect, test as base } from '@playwright/test';
-import { LoginPage } from '../lib/pom/loginPage';
+import { test as base, expect } from '@playwright/test';
 import path from 'path';
+import { LoginPage } from '../lib/pom/loginPage';
 
 // fixture
 const test = base.extend<{ loginPage: LoginPage }>({
@@ -29,7 +29,7 @@ test('Login test', async ({ loginPage, page }) => {
       await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
       await page.waitForLoadState('networkidle');
       await loginPage.clickSignInButton();
-      await expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
+      await expect(page.getByText(/Welcome to .+/)).not.toBeVisible();
     },
   );
 

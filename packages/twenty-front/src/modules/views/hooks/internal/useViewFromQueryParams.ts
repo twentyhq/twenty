@@ -21,7 +21,7 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const filterQueryParamsSchema = z.object({
-  view: z.string().optional(),
+  viewId: z.string().optional(),
   filter: z
     .record(
       z.record(
@@ -59,7 +59,7 @@ export const useViewFromQueryParams = () => {
   const viewIdQueryParam = useMemo(
     () =>
       queryParamsValidation.success
-        ? queryParamsValidation.data.view
+        ? queryParamsValidation.data.viewId
         : undefined,
     [queryParamsValidation],
   );
