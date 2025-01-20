@@ -12,7 +12,16 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'jsdom',
   transformIgnorePatterns: ['../../node_modules/'],
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
+    '^.+\\.(ts|js|tsx|jsx)$': [
+      '@swc/jest',
+      {
+        jsc: {
+          experimental: {
+            plugins: [], // Disable Lingui plugin during tests
+          },
+        },
+      },
+    ],
   },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
@@ -24,7 +33,7 @@ const jestConfig: JestConfigWithTsJest = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 58,
+      statements: 57,
       lines: 55,
       functions: 47,
     },

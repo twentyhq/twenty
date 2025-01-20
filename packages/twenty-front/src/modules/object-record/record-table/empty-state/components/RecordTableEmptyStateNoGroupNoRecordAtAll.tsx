@@ -8,7 +8,10 @@ import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useC
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handleButtonClick = () => {
     createNewTableRecord();

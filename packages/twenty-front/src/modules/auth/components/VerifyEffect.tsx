@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
-import { useSetRecoilState } from 'recoil';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ export const VerifyEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const isLogged = useIsLogged();
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const { verify } = useAuth();
 
@@ -29,6 +30,7 @@ export const VerifyEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
+        dedupeKey: 'verify-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }

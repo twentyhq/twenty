@@ -23,7 +23,7 @@ type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   argTypes: {
-    shortcut: { control: false },
+    hotkeys: { control: false },
     Icon: { control: false },
   },
   args: {
@@ -44,7 +44,7 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Button> = {
-  args: { title: 'Filter', Icon: IconSearch, shortcut: '' },
+  args: { title: 'Filter', Icon: IconSearch, hotkeys: ['⌘', 'O'] },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -127,7 +127,7 @@ export const SoonCatalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    shortcut: { control: false },
+    hotkeys: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -199,7 +199,7 @@ export const PositionCatalog: CatalogStory<Story, typeof Button> = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
-    shortcut: { control: false },
+    hotkeys: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -266,7 +266,7 @@ export const PositionCatalog: CatalogStory<Story, typeof Button> = {
 };
 
 export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
-  args: { title: 'Actions', shortcut: '⌘O' },
+  args: { title: 'Actions', hotkeys: ['⌘', 'O'] },
   argTypes: {
     size: { control: false },
     variant: { control: false },

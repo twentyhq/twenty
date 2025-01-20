@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 
 import deepEqual from 'deep-equal';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -56,6 +56,15 @@ export class ServerlessFunctionService {
 
   async findManyServerlessFunctions(where) {
     return this.serverlessFunctionRepository.findBy(where);
+  }
+
+  async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
+    return await this.serverlessFunctionRepository.exists({
+      where: {
+        id: serverlessFunctionId,
+        latestVersion: Not(IsNull()),
+      },
+    });
   }
 
   async getServerlessFunctionSourceCode(
@@ -264,6 +273,7 @@ export class ServerlessFunctionService {
         name: serverlessFunctionInput.name,
         description: serverlessFunctionInput.description,
         syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+        timeoutSeconds: serverlessFunctionInput.timeoutSeconds,
       },
     );
 
@@ -384,6 +394,7 @@ export class ServerlessFunctionService {
       {
         name: serverlessFunctionToCopy?.name,
         description: serverlessFunctionToCopy?.description,
+        timeoutSeconds: serverlessFunctionToCopy?.timeoutSeconds,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
       },

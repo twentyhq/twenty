@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -12,7 +12,8 @@ import { onFilterSelectComponentState } from '@/object-record/object-filter-drop
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
+import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
@@ -61,7 +62,7 @@ export const ViewBarFilterEffect = ({
     if (isDefined(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
-    setOnFilterSelect(() => (filter: Filter | null) => {
+    setOnFilterSelect(() => (filter: RecordFilter | null) => {
       if (isDefined(filter)) {
         upsertCombinedViewFilter(filter);
       }
@@ -82,10 +83,12 @@ export const ViewBarFilterEffect = ({
             filterDefinitionUsedInDropdown?.fieldMetadataId,
         );
 
-      const { selectedRecordIds } = relationFilterValueSchema
+      const { selectedRecordIds } = jsonRelationFilterValueSchema
         .catch({
           isCurrentWorkspaceMemberSelected: false,
-          selectedRecordIds: [],
+          selectedRecordIds: simpleRelationFilterValueSchema.parse(
+            viewFilterUsedInDropdown?.value,
+          ),
         })
         .parse(viewFilterUsedInDropdown?.value);
 

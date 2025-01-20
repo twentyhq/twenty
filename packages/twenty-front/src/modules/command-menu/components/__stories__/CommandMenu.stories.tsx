@@ -19,6 +19,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
@@ -65,6 +66,7 @@ const meta: Meta<typeof CommandMenu> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentWithRouterDecorator,
+    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

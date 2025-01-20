@@ -11,6 +11,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { AppPath } from '@/types/AppPath';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   AppNavigationDrawer,
   AppNavigationDrawerProps,
@@ -54,6 +55,7 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     IconsProviderDecorator,
     ObjectMetadataItemsDecorator,
+    I18nFrontDecorator,
     (Story, { args }) => (
       <MemoryRouter initialEntries={[args.routePath]}>
         <Story />
@@ -76,6 +78,6 @@ export const Main: Story = {};
 export const Settings: Story = {
   args: {
     mobileNavigationDrawer: 'settings',
-    routePath: '/settings/appearance',
+    routePath: '/settings/experience',
   },
 };

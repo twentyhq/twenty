@@ -9,8 +9,11 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAccountsBlocklistSection = () => {
+  const { t } = useLingui();
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
@@ -40,8 +43,8 @@ export const SettingsAccountsBlocklistSection = () => {
   return (
     <Section>
       <H2Title
-        title="Blocklist"
-        description="Exclude the following people and domains from my email sync"
+        title={t`Blocklist`}
+        description={t`Exclude the following people and domains from my email sync`}
       />
       <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}

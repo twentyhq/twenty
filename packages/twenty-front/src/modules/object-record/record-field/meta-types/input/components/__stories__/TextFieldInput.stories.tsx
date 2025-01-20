@@ -6,6 +6,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { FieldMetadataType } from '~/generated/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { FieldContextProvider } from '../../../components/FieldContextProvider';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
@@ -56,6 +57,7 @@ const TextFieldInputWithContext = ({
         }}
         recordId={recordId}
       >
+        <StorybookFieldInputDropdownFocusIdSetterEffect />
         <TextFieldValueSetterEffect value={value} />
         <TextFieldInput
           onEnter={onEnter}

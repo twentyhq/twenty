@@ -1,16 +1,11 @@
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import { createState } from '@ui/utilities/state/utils/createState';
 import { syncEffect } from 'recoil-sync';
-import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
 
 export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
   key: 'billingCheckoutSessionState',
-  defaultValue: {
-    plan: BillingPlanKey.Pro,
-    interval: SubscriptionInterval.Month,
-    requirePaymentMethod: true,
-    skipPlanPage: false,
-  },
+  defaultValue: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
   effects: [
     syncEffect({
       refine: (value: unknown) => {
@@ -19,8 +14,7 @@ export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
           value !== null &&
           'plan' in value &&
           'interval' in value &&
-          'requirePaymentMethod' in value &&
-          'skipPlanPage' in value
+          'requirePaymentMethod' in value
         ) {
           return {
             type: 'success',

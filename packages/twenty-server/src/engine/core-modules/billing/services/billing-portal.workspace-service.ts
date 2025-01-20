@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -36,7 +37,9 @@ export class BillingPortalWorkspaceService {
     plan?: BillingPlanKey,
     requirePaymentMethod?: boolean,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+      subdomain: workspace.subdomain,
+    });
     const cancelUrl = frontBaseUrl.toString();
 
     if (successUrlPath) {
@@ -48,15 +51,15 @@ export class BillingPortalWorkspaceService {
       workspaceId: workspace.id,
     });
 
-    const stripeCustomerId = (
-      await this.billingSubscriptionRepository.findOneBy({
-        workspaceId: workspace.id,
-      })
-    )?.stripeCustomerId;
+    const subscription = await this.billingSubscriptionRepository.findOneBy({
+      workspaceId: workspace.id,
+    });
 
-    const session = await this.stripeCheckoutService.createCheckoutSession(
+    const stripeCustomerId = subscription?.stripeCustomerId;
+
+    const session = await this.stripeCheckoutService.createCheckoutSession({
       user,
-      workspace.id,
+      workspaceId: workspace.id,
       priceId,
       quantity,
       successUrl,
@@ -64,7 +67,8 @@ export class BillingPortalWorkspaceService {
       stripeCustomerId,
       plan,
       requirePaymentMethod,
-    );
+      withTrialPeriod: !isDefined(subscription),
+    });
 
     assert(session.url, 'Error: missing checkout.session.url');
 
@@ -72,13 +76,13 @@ export class BillingPortalWorkspaceService {
   }
 
   async computeBillingPortalSessionURLOrThrow(
-    workspaceId: string,
+    workspace: Workspace,
     returnUrlPath?: string,
   ) {
     const currentSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         {
-          workspaceId,
+          workspaceId: workspace.id,
         },
       );
 
@@ -92,7 +96,9 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
+      subdomain: workspace.subdomain,
+    });
 
     if (returnUrlPath) {
       frontBaseUrl.pathname = returnUrlPath;

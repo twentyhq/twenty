@@ -8,6 +8,7 @@ import {
 } from '@ui/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBar, SnackBarVariant } from '../SnackBar';
 
 const meta: Meta<typeof SnackBar> = {
@@ -33,7 +34,7 @@ export default meta;
 type Story = StoryObj<typeof SnackBar>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
   parameters: {
     chromatic: { disableSnapshot: true },
   },
@@ -43,7 +44,7 @@ export const Catalog: CatalogStory<Story, typeof SnackBar> = {
   args: {
     onCancel: fn(),
   },
-  decorators: [CatalogDecorator],
+  decorators: [CatalogDecorator, I18nFrontDecorator],
   parameters: {
     catalog: {
       dimensions: [

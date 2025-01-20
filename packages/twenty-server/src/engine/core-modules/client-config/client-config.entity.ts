@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { TrialPeriodDTO } from 'src/engine/core-modules/billing/dto/trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 
@@ -11,8 +12,8 @@ class Billing {
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
-  @Field(() => Number, { nullable: true })
-  billingFreeTrialDurationInDays?: number;
+  @Field(() => [TrialPeriodDTO])
+  trialPeriods: TrialPeriodDTO[];
 }
 
 @ObjectType()
@@ -64,6 +65,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isMultiWorkspaceEnabled: boolean;
+
+  @Field(() => Boolean)
+  isEmailVerificationRequired: boolean;
 
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;

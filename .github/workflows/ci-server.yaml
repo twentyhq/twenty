@@ -5,15 +5,28 @@ on:
       - main
 
   pull_request:
-   
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  SERVER_SETUP_CACHE_KEY: server-setup
+
 jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-server/**
+        packages/twenty-emails/**
+        packages/twenty-shared/**
   server-setup:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
@@ -22,8 +35,8 @@ jobs:
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: "true"
-          SPILO_PROVIDER: "local"
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
@@ -40,52 +53,33 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            package.json
-            packages/twenty-server/**
-            packages/twenty-emails/**
-            packages/twenty-shared/**
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Build twenty-shared
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx build twenty-shared
-      - name: Server / Restore Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore server setup
+        id: restore-server-setup-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
       - name: Server / Run lint & typecheck
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
           tasks: lint,typecheck
       - name: Server / Build
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx build twenty-server
       - name: Server / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-server
       - name: Server / Create DB
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
       - name: Server / Check for Pending Migrations
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           METADATA_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate metadata-migration-check -d src/database/typeorm/metadata/metadata.datasource.ts || true)
 
@@ -103,10 +97,14 @@ jobs:
             
             exit 1
           fi
+      - name: Save server setup
+        uses: ./.github/workflows/actions/save-cache
+        with:
+          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
 
   server-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     needs: server-setup
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -115,27 +113,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            package.json
-            packages/twenty-server/**
-            packages/twenty-emails/**
-            packages/twenty-shared/**
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Restore Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore server setup
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
-      - name:  Server / Run Tests
-        if: steps.changed-files.outputs.any_changed == 'true'
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+      - name: Server / Run Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
@@ -143,7 +127,7 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     needs: server-setup
     services:
       postgres:
@@ -151,8 +135,8 @@ jobs:
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: "true"
-          SPILO_PROVIDER: "local"
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
@@ -171,40 +155,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            package.json
-            packages/twenty-server/**
-            packages/twenty-emails/**
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Update .env.test for billing
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "IS_BILLING_ENABLED=true" >> .env.test
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
-      - name: Server / Restore Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore server setup
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:backend
+          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Run Integration Tests
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: "test:integration:with-db-reset"
+          tasks: 'test:integration:with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reset-logs
           path: reset-logs.log
+  ci-server-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 1
+    runs-on: depot-ubuntu-24.04-8
+    needs: [changed-files-check, server-setup, server-test, server-integration-test]
+    steps:
+      - name: Fail job if any needs failed 
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
