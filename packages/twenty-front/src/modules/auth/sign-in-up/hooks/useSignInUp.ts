@@ -14,10 +14,9 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
