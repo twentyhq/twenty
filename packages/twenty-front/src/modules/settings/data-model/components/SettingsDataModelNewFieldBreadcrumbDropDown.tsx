@@ -126,9 +126,7 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }
-        dropdownHotkeyScope={{
-          scope: dropdownId,
-        }}
+        dropdownHotkeyScope={{ scope: dropdownId }}
       />
     </StyledContainer>
   );

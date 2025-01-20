@@ -132,12 +132,8 @@ export const SettingsObjectNewFieldSelector = ({
                         <UndecoratedLink
                           to={getSettingsPath(
                             SettingsPath.ObjectNewFieldConfigure,
-                            {
-                              objectNamePlural,
-                            },
-                            {
-                              fieldType: key,
-                            },
+                            { objectNamePlural },
+                            { fieldType: key },
                           )}
                           fullWidth
                           onClick={() => {

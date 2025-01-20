@@ -229,9 +229,7 @@ export const RecordDetailRelationSection = ({
                     )}
                   </RecordPickerComponentInstanceContext.Provider>
                 }
-                dropdownHotkeyScope={{
-                  scope: dropdownId,
-                }}
+                dropdownHotkeyScope={{ scope: dropdownId }}
               />
             </DropdownScope>
           )
