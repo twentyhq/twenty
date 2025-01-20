@@ -15,8 +15,7 @@
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
         "command": "node {projectRoot}/scripts/generateBarrels.js"
-      },
-      "dependsOn": ["^build"]
+      }
     },
     "lint": {
       "options": {
@@ -27,8 +26,7 @@
       },
       "configurations": {
         "fix": {}
-      },
-      "dependsOn": ["^build"]
+      }
     },
     "fmt": {
       "options": {
@@ -36,8 +34,7 @@
       },
       "configurations": {
         "fix": {}
-      },
-      "dependsOn": ["^build"]
+      }
     },
     "test": {},
     "typecheck": {},
