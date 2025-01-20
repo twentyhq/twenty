@@ -103,8 +103,5 @@ export class User {
 
   @Field(() => Workspace, { nullable: true })
   currentWorkspace: Relation<Workspace>;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  newField: string;
+  
 }
