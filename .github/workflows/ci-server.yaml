@@ -105,15 +105,15 @@ jobs:
 
          GENERATED_GRAPHQL_FILE=$(ls packages/twenty-front/*graphql.ts 2>/dev/null || echo "")
     
-         if [ -n "$GENERATED_GRAPHQL_FILE" ]; then
-          echo "::error::GraphQL generation is pending. Please run the GraphQL generation commands before committing."
-          echo "$GRAPHQL_GENERATION_OUTPUT"
-          echo "$GRAPHQL_METADATA_OUTPUT"
+          if [ -n "$GENERATED_GRAPHQL_FILE" ]; then
+            echo "::error::GraphQL generation is pending. Please run the GraphQL generation commands before committing."
+            echo "$GRAPHQL_GENERATION_OUTPUT"
+            echo "$GRAPHQL_METADATA_OUTPUT"
       
-          rm -f packages/twenty-front/*graphql.ts
+            rm -f packages/twenty-front/*graphql.ts
 
-          exit 1
-        fi
+           exit 1
+          fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache
         with:
