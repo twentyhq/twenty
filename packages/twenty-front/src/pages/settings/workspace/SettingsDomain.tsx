@@ -102,6 +102,7 @@ export const SettingsDomain = () => {
 
       redirectToWorkspaceDomain(values.subdomain);
     } catch (error) {
+      console.log('>>>>>>>>>>>>>>', error);
       if (
         error instanceof Error &&
         (error.message === t`Subdomain already taken` ||

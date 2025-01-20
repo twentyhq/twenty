@@ -142,6 +142,7 @@ export class SignInUpService {
       passwordHash,
     );
 
+    console.trace();
     if (!isValid) {
       throw new AuthException(
         'Wrong password',
