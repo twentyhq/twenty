@@ -480,29 +480,30 @@ export class AuthService {
     workspacePersonalInviteToken,
     email,
   }: {
-    currentWorkspace?: Workspace | null;
+    currentWorkspace: Workspace | null;
     workspacePersonalInviteToken?: string;
     email?: string;
   }) {
-    if (!currentWorkspace) return undefined;
+    if (!currentWorkspace || !workspacePersonalInviteToken) return undefined;
 
-    const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    qr.where('"appToken"."workspaceId" = :workspaceId', {
-      workspaceId: currentWorkspace.id,
-    }).andWhere('"appToken".type = :type', {
-      type: AppTokenType.InvitationToken,
-    });
-
-    if (email) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
-        email,
+    const qr = this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken"."workspaceId" = :workspaceId', {
+        workspaceId: currentWorkspace.id,
+      })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
       });
-    }
 
     if (workspacePersonalInviteToken) {
       qr.andWhere('"appToken".value = :personalInviteToken', {
         personalInviteToken: workspacePersonalInviteToken,
+      });
+    }
+
+    if (email) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email,
       });
     }
 
