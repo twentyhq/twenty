@@ -43,6 +43,7 @@ const StyledRecordGroupSection = styled(RecordTableTd)`
   height: 32px;
   display: flex;
   align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledEmptyTd = styled.td`

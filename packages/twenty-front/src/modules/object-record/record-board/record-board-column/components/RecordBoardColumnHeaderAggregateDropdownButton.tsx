@@ -1,3 +1,4 @@
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
 import { AppTooltip, Tag, TooltipDelay } from 'twenty-ui';
@@ -6,7 +7,7 @@ const StyledTag = styled(Tag)`
   width: 100%;
 `;
 
-const StyledContainer = styled.div`
+const StyledHeader = styled(StyledHeaderDropdownButton)`
   padding: 0;
 `;
 
@@ -22,8 +23,8 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   const { isDropdownOpen } = useDropdown(dropdownId);
 
   return (
-    <div id={dropdownId}>
-      <StyledContainer>
+    <StyledHeader id={dropdownId} isUnfolded={isDropdownOpen}>
+      <>
         <StyledTag
           text={value ? value.toString() : '-'}
           color={'transparent'}
@@ -39,7 +40,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
             delay={TooltipDelay.mediumDelay}
           />
         )}
-      </StyledContainer>
-    </div>
+      </>
+    </StyledHeader>
   );
 };
