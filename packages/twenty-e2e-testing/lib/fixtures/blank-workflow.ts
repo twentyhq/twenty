@@ -28,6 +28,9 @@ export class WorkflowVisualizerPage {
   readonly activateWorkflowButton: Locator;
   readonly deactivateWorkflowButton: Locator;
   readonly addTriggerButton: Locator;
+  readonly commandMenu: Locator;
+  readonly workflowNameButton: Locator;
+  readonly triggerNode: Locator;
 
   #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
@@ -72,6 +75,11 @@ export class WorkflowVisualizerPage {
       exact: true,
     });
     this.addTriggerButton = page.getByText('Add a Trigger');
+    this.commandMenu = page.getByTestId('command-menu');
+    this.workflowNameButton = page.getByRole('button', {
+      name: this.workflowName,
+    });
+    this.triggerNode = this.#page.getByTestId('rf__node-trigger');
   }
 
   async createOneWorkflow() {
@@ -91,14 +99,16 @@ export class WorkflowVisualizerPage {
     this.workflowId = id;
   }
 
+  async waitForWorkflowVisualizerLoad() {
+    await expect(this.workflowNameButton).toBeVisible();
+  }
+
   async goToWorkflowVisualizerPage() {
-    await this.#page.goto(`/object/workflow/${this.workflowId}`);
+    await Promise.all([
+      this.#page.goto(`/object/workflow/${this.workflowId}`),
 
-    const workflowName = this.#page.getByRole('button', {
-      name: this.workflowName,
-    });
-
-    await expect(workflowName).toBeVisible();
+      this.waitForWorkflowVisualizerLoad(),
+    ]);
   }
 
   async createInitialTrigger(trigger: WorkflowTriggerType) {
@@ -110,35 +120,94 @@ export class WorkflowVisualizerPage {
     const triggerOption = this.#page.getByText(triggerName);
     await triggerOption.click();
 
-    const triggerNode = this.#page.getByTestId('rf__node-trigger');
-    await expect(triggerNode).toHaveClass(/selected/);
-    await expect(triggerNode).toContainText(createdTriggerName);
+    await expect(this.triggerNode).toHaveClass(/selected/);
+    await expect(this.triggerNode).toContainText(createdTriggerName);
   }
 
   async createStep(action: WorkflowActionType) {
     await this.addStepButton.click();
 
-    const actionNames = this.#actionNames[action];
-    const createdActionNames = this.#createdActionNames[action];
+    const actionName = this.#actionNames[action];
+    const createdActionName = this.#createdActionNames[action];
 
-    const actionToCreateOption = this.#page.getByText(actionNames);
-    await actionToCreateOption.click();
+    const actionToCreateOption = this.commandMenu.getByText(actionName);
+
+    const [createWorkflowStepResponse] = await Promise.all([
+      this.#page.waitForResponse((response) => {
+        if (!response.url().endsWith('/graphql')) {
+          return false;
+        }
+
+        const requestBody = response.request().postDataJSON();
+
+        return requestBody.operationName === 'CreateWorkflowVersionStep';
+      }),
+
+      actionToCreateOption.click(),
+    ]);
+    const createWorkflowStepResponseBody =
+      await createWorkflowStepResponse.json();
+    const createdStepId =
+      createWorkflowStepResponseBody.data.createWorkflowVersionStep.id;
 
     await expect(
       this.#page.getByTestId('command-menu').getByRole('textbox').first(),
-    ).toHaveValue(createdActionNames);
+    ).toHaveValue(createdActionName);
 
     const createdActionNode = this.#page
       .locator('.react-flow__node.selected')
-      .getByText(createdActionNames);
+      .getByText(createdActionName);
 
     await expect(createdActionNode).toBeVisible();
 
     const selectedNodes = this.#page.locator('.react-flow__node.selected');
 
-    await expect(async () => {
-      expect(await selectedNodes.count()).toBe(1);
-    }).toPass();
+    await expect(selectedNodes).toHaveCount(1);
+
+    return {
+      createdStepId,
+    };
+  }
+
+  getStepNode(stepId: string) {
+    return this.#page.getByTestId(`rf__node-${stepId}`);
+  }
+
+  getDeleteStepButton(stepId: string) {
+    return this.getStepNode(stepId).getByRole('button');
+  }
+
+  getAllStepNodes() {
+    return this.#page
+      .getByTestId(/^rf__node-.+$/)
+      .and(this.#page.getByTestId(/^((?!rf__node-trigger).)*$/))
+      .and(
+        this.#page.getByTestId(/^((?!rf__node-branch-\d+__create-step).)*$/),
+      );
+  }
+
+  async deleteStep(stepId: string) {
+    const stepNode = this.getStepNode(stepId);
+
+    await stepNode.click();
+
+    await Promise.all([
+      expect(stepNode).not.toBeVisible(),
+      this.#page.waitForResponse((response) => {
+        if (!response.url().endsWith('/graphql')) {
+          return false;
+        }
+
+        const requestBody = response.request().postDataJSON();
+
+        return (
+          requestBody.operationName === 'DeleteWorkflowVersionStep' &&
+          requestBody.variables.input.stepId === stepId
+        );
+      }),
+
+      this.getDeleteStepButton(stepId).click(),
+    ]);
   }
 }
 
