@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-18 21:38+0100\n"
+"POT-Creation-Date: 2025-01-20 14:33+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -45,7 +45,7 @@ msgstr "Claves API"
 msgid "Abort"
 msgstr "Abortar"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:86
+#: src/pages/settings/data-model/SettingsNewObject.tsx:93
 msgid "About"
 msgstr "Acerca de"
 
@@ -76,6 +76,10 @@ msgstr "Activo"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "Active API keys created by you or your team."
 msgstr "Claves API activas creadas por usted o su equipo."
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "Añadir campo"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:59
 msgid "Add SSO Identity Provider"
@@ -283,6 +287,10 @@ msgstr "Objetos personalizados"
 msgid "Custom objects"
 msgstr "Objetos personalizados"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "Personalice los campos disponibles en las vistas {objectLabelSingular}."
+
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
 msgstr "Personalizar dominio"
@@ -320,7 +328,7 @@ msgstr "Desactive \"Sincronizar etiquetas de objetos y nombres de API\" para est
 msgid "Deactivate this field"
 msgstr "Desactivar este campo"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:87
+#: src/pages/settings/data-model/SettingsNewObject.tsx:94
 msgid "Define the name and description of your object"
 msgstr "Defina el nombre y la descripción de su objeto"
 
@@ -492,11 +500,8 @@ msgstr "Fecha de expiración"
 msgid "Expires in"
 msgstr "Expira en"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:57
-msgid "Failed to create object"
-msgstr "Error al crear objeto"
-
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "Campos"
 
@@ -579,10 +584,6 @@ msgstr "Correo electrónico o dominio no válidos"
 #: src/pages/settings/workspace/SettingsDomain.tsx:87
 msgid "Invalid form values"
 msgstr "Valores de formulario no válidos"
-
-#: src/pages/settings/data-model/SettingsNewObject.tsx:53
-msgid "Invalid object data"
-msgstr "Datos de objeto no válidos"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
 msgid "Invite by Link"
@@ -668,7 +669,7 @@ msgstr "Nombre de su espacio de trabajo"
 msgid "Navigate"
 msgstr "Navegue por"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:77
+#: src/pages/settings/data-model/SettingsNewObject.tsx:79
 msgid "New"
 msgstr "Nuevo"
 
@@ -676,7 +677,7 @@ msgstr "Nuevo"
 msgid "New Key"
 msgstr "Nueva llave"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:67
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 msgid "New Object"
 msgstr "Nuevo objeto"
 
@@ -704,13 +705,9 @@ msgstr "Ninguna cuenta conectada"
 msgid "Notes"
 msgstr "Notas"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:46
-msgid "Object created successfully"
-msgstr "Objeto creado correctamente"
-
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:74
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr "Objetos"
@@ -1081,7 +1078,7 @@ msgstr "Flujos de trabajo"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/pages/settings/data-model/SettingsNewObject.tsx:72
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136

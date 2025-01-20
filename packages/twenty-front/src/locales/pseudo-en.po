@@ -41,7 +41,7 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:86
+#: src/pages/settings/data-model/SettingsNewObject.tsx:93
 msgid "About"
 msgstr ""
 
@@ -76,6 +76,10 @@ msgstr ""
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 #~ msgid "Active APIs keys created by you or your team."
 #~ msgstr ""
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:149
 msgid "Add object"
@@ -317,6 +321,10 @@ msgstr ""
 msgid "Custom Objects"
 msgstr ""
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
 msgstr ""
@@ -354,7 +362,7 @@ msgstr ""
 msgid "Deactivate this field"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:87
+#: src/pages/settings/data-model/SettingsNewObject.tsx:94
 msgid "Define the name and description of your object"
 msgstr ""
 
@@ -539,10 +547,11 @@ msgid "Expires in"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:57
-msgid "Failed to create object"
-msgstr ""
+#~ msgid "Failed to create object"
+#~ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr ""
 
@@ -635,8 +644,8 @@ msgid "Invalid form values"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:53
-msgid "Invalid object data"
-msgstr ""
+#~ msgid "Invalid object data"
+#~ msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -727,7 +736,7 @@ msgstr ""
 msgid "Navigate"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:77
+#: src/pages/settings/data-model/SettingsNewObject.tsx:79
 msgid "New"
 msgstr ""
 
@@ -743,7 +752,7 @@ msgstr ""
 msgid "New Key"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:67
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 msgid "New Object"
 msgstr ""
 
@@ -768,12 +777,12 @@ msgid "Notes"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:46
-msgid "Object created successfully"
-msgstr ""
+#~ msgid "Object created successfully"
+#~ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:74
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr ""
@@ -1184,7 +1193,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/pages/settings/data-model/SettingsNewObject.tsx:72
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
