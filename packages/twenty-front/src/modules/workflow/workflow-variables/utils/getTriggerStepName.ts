@@ -3,6 +3,7 @@ import {
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
 
@@ -24,7 +25,9 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
 const getDatabaseEventTriggerStepName = (
   trigger: WorkflowDatabaseEventTrigger,
 ): string => {
-  const [object, action] = trigger.settings.eventName.split('.');
+  const [, action] = trigger.settings.eventName.split('.');
 
-  return `${capitalize(object)} is ${capitalize(action)}`;
+  return (
+    DATABASE_TRIGGER_EVENTS.find((event) => event.value === action)?.label ?? ''
+  );
 };
