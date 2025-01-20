@@ -24,7 +24,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text.composite-type';
+} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 import { RecordPositionFactory } from './record-position.factory';
