@@ -11,6 +11,10 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagException,
+  FeatureFlagExceptionCode,
+} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -123,9 +127,9 @@ export class AdminPanelService {
   ) {
     featureFlagValidator.assertIsFeatureFlagKey(
       featureFlag,
-      new AuthException(
+      new FeatureFlagException(
         'Invalid feature flag key',
-        AuthExceptionCode.INVALID_INPUT,
+        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
       ),
     );
 

@@ -8,6 +8,7 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFlask,
   IconFunction,
   IconHierarchy2,
   IconKey,
@@ -22,6 +23,7 @@ import {
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -64,6 +66,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
+  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
@@ -198,6 +201,13 @@ export const SettingsNavigationDrawerItems = () => {
             label={t`Server Admin Panel`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
+          />
+        )}
+        {labPublicFeatureFlags?.length > 0 && (
+          <SettingsNavigationDrawerItem
+            label={t`Lab`}
+            path={SettingsPath.Lab}
+            Icon={IconFlask}
           />
         )}
         <SettingsNavigationDrawerItem
