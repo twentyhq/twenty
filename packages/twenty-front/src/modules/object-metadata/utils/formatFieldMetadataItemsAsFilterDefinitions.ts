@@ -15,34 +15,34 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 }): RecordFilterDefinition[] => {
   return fields.reduce((acc, field) => {
     if (
-      field.type === FieldMetadataType.Relation &&
+      field.type === FieldMetadataType.RELATION &&
       field.relationDefinition?.direction !==
-        RelationDefinitionType.ManyToOne &&
-      field.relationDefinition?.direction !== RelationDefinitionType.OneToOne
+        RelationDefinitionType.MANY_TO_ONE &&
+      field.relationDefinition?.direction !== RelationDefinitionType.ONE_TO_ONE
     ) {
       return acc;
     }
 
     if (
       ![
-        FieldMetadataType.Boolean,
-        FieldMetadataType.DateTime,
-        FieldMetadataType.Date,
-        FieldMetadataType.Text,
-        FieldMetadataType.Emails,
-        FieldMetadataType.Number,
-        FieldMetadataType.Links,
-        FieldMetadataType.FullName,
-        FieldMetadataType.Address,
-        FieldMetadataType.Relation,
-        FieldMetadataType.Select,
-        FieldMetadataType.MultiSelect,
-        FieldMetadataType.Currency,
-        FieldMetadataType.Rating,
-        FieldMetadataType.Actor,
-        FieldMetadataType.Phones,
-        FieldMetadataType.Array,
-        ...(isJsonFilterEnabled ? [FieldMetadataType.RawJson] : []),
+        FieldMetadataType.BOOLEAN,
+        FieldMetadataType.DATE_TIME,
+        FieldMetadataType.DATE,
+        FieldMetadataType.TEXT,
+        FieldMetadataType.EMAILS,
+        FieldMetadataType.NUMBER,
+        FieldMetadataType.LINKS,
+        FieldMetadataType.FULL_NAME,
+        FieldMetadataType.ADDRESS,
+        FieldMetadataType.RELATION,
+        FieldMetadataType.SELECT,
+        FieldMetadataType.MULTI_SELECT,
+        FieldMetadataType.CURRENCY,
+        FieldMetadataType.RATING,
+        FieldMetadataType.ACTOR,
+        FieldMetadataType.PHONES,
+        FieldMetadataType.ARRAY,
+        ...(isJsonFilterEnabled ? [FieldMetadataType.RAW_JSON] : []),
       ].includes(field.type)
     ) {
       return acc;
@@ -69,39 +69,39 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
 
 export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
   switch (fieldType) {
-    case FieldMetadataType.DateTime:
+    case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';
-    case FieldMetadataType.Date:
+    case FieldMetadataType.DATE:
       return 'DATE';
-    case FieldMetadataType.Links:
+    case FieldMetadataType.LINKS:
       return 'LINKS';
-    case FieldMetadataType.FullName:
+    case FieldMetadataType.FULL_NAME:
       return 'FULL_NAME';
-    case FieldMetadataType.Number:
+    case FieldMetadataType.NUMBER:
       return 'NUMBER';
-    case FieldMetadataType.Currency:
+    case FieldMetadataType.CURRENCY:
       return 'CURRENCY';
-    case FieldMetadataType.Emails:
+    case FieldMetadataType.EMAILS:
       return 'EMAILS';
-    case FieldMetadataType.Phones:
+    case FieldMetadataType.PHONES:
       return 'PHONES';
-    case FieldMetadataType.Relation:
+    case FieldMetadataType.RELATION:
       return 'RELATION';
-    case FieldMetadataType.Select:
+    case FieldMetadataType.SELECT:
       return 'SELECT';
-    case FieldMetadataType.MultiSelect:
+    case FieldMetadataType.MULTI_SELECT:
       return 'MULTI_SELECT';
-    case FieldMetadataType.Address:
+    case FieldMetadataType.ADDRESS:
       return 'ADDRESS';
-    case FieldMetadataType.Rating:
+    case FieldMetadataType.RATING:
       return 'RATING';
-    case FieldMetadataType.Actor:
+    case FieldMetadataType.ACTOR:
       return 'ACTOR';
-    case FieldMetadataType.Array:
+    case FieldMetadataType.ARRAY:
       return 'ARRAY';
-    case FieldMetadataType.RawJson:
+    case FieldMetadataType.RAW_JSON:
       return 'RAW_JSON';
-    case FieldMetadataType.Boolean:
+    case FieldMetadataType.BOOLEAN:
       return 'BOOLEAN';
     default:
       return 'TEXT';

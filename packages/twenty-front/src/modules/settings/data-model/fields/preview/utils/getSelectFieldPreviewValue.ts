@@ -16,7 +16,7 @@ export const getSelectFieldPreviewValue = ({
   >;
 }): FieldSelectValue => {
   if (
-    fieldMetadataItem.type !== FieldMetadataType.Select ||
+    fieldMetadataItem.type !== FieldMetadataType.SELECT ||
     !fieldMetadataItem.options?.length
   ) {
     return null;

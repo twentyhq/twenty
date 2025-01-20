@@ -2,8 +2,8 @@ import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  RecordGroupDefinition,
-  RecordGroupDefinitionType,
+    RecordGroupDefinition,
+    RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -22,7 +22,7 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
   const fieldMetadataId = viewGroups?.[0]?.fieldMetadataId;
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) =>
-      field.id === fieldMetadataId && field.type === FieldMetadataType.Select,
+      field.id === fieldMetadataId && field.type === FieldMetadataType.SELECT,
   );
 
   if (!selectFieldMetadataItem) {

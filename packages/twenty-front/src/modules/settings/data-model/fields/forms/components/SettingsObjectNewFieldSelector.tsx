@@ -85,14 +85,14 @@ export const SettingsObjectNewFieldSelector = ({
 
   const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {
-      case FieldMetadataType.Boolean:
+      case FieldMetadataType.BOOLEAN:
         resetBooleanDefaultValueField();
         break;
-      case FieldMetadataType.Currency:
+      case FieldMetadataType.CURRENCY:
         resetCurrencyDefaultValueField();
         break;
-      case FieldMetadataType.Select:
-      case FieldMetadataType.MultiSelect:
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
         resetSelectDefaultValueField();
         break;
       default:

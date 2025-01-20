@@ -61,7 +61,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   );
 
   const hasSyncedTables = tables?.some(
-    (table) => table?.status === RemoteTableStatus.Synced,
+    (table) => table?.status === RemoteTableStatus.SYNCED,
   );
 
   const { isDirty, isValid } = formConfig.formState;

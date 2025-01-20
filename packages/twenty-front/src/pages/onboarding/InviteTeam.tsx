@@ -14,19 +14,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import {
-  Controller,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
+    Controller,
+    SubmitHandler,
+    useFieldArray,
+    useForm,
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
-  ActionLink,
-  IconCopy,
-  LightButton,
-  MainButton,
-  SeparatorLineText,
+    ActionLink,
+    IconCopy,
+    LightButton,
+    MainButton,
+    SeparatorLineText,
 } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -171,7 +171,7 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
     return <></>;
   }
 

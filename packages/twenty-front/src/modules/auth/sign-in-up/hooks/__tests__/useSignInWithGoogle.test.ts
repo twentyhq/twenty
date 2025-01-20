@@ -16,7 +16,7 @@ jest.mock('@/auth/hooks/useAuth', () => ({
 
 describe('useSignInWithGoogle', () => {
   const mockBillingCheckoutSession = {
-    plan: BillingPlanKey.Pro,
+    plan: BillingPlanKey.PRO,
     interval: SubscriptionInterval.Month,
     requirePaymentMethod: true,
   };

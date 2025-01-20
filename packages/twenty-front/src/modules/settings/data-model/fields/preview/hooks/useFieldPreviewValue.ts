@@ -32,24 +32,24 @@ export const useFieldPreviewValue = ({
     },
     skip:
       skip ||
-      fieldMetadataItem.type !== FieldMetadataType.Relation ||
+      fieldMetadataItem.type !== FieldMetadataType.RELATION ||
       !relationObjectMetadataItem,
   });
 
   if (skip === true) return null;
 
   switch (fieldMetadataItem.type) {
-    case FieldMetadataType.Currency:
+    case FieldMetadataType.CURRENCY:
       return getCurrencyFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Relation:
+    case FieldMetadataType.RELATION:
       return relationFieldPreviewValue;
-    case FieldMetadataType.Select:
+    case FieldMetadataType.SELECT:
       return getSelectFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.MultiSelect:
+    case FieldMetadataType.MULTI_SELECT:
       return getMultiSelectFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Address:
+    case FieldMetadataType.ADDRESS:
       return getAddressFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Phones:
+    case FieldMetadataType.PHONES:
       return getPhonesFieldPreviewValue({ fieldMetadataItem });
     default:
       return getFieldPreviewValue({ fieldMetadataItem });

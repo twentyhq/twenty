@@ -9,11 +9,11 @@ export const mockedRemoteObjectIntegrations = [
         id: '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
         name: 'Twenty_postgres',
         tables: [
-          { name: 'Invoices', status: RemoteTableStatus.NotSynced },
-          { name: 'Quotes', status: RemoteTableStatus.Synced },
-          { name: 'Customers', status: RemoteTableStatus.NotSynced },
-          { name: 'Subscriptions', status: RemoteTableStatus.Synced },
-          { name: 'Payments', status: RemoteTableStatus.NotSynced },
+          { name: 'Invoices', status: RemoteTableStatus.NOT_SYNCED },
+          { name: 'Quotes', status: RemoteTableStatus.SYNCED },
+          { name: 'Customers', status: RemoteTableStatus.NOT_SYNCED },
+          { name: 'Subscriptions', status: RemoteTableStatus.SYNCED },
+          { name: 'Payments', status: RemoteTableStatus.NOT_SYNCED },
         ],
       },
       {

@@ -15,7 +15,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 export const usePhonesField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.Phones, isFieldPhones, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.PHONES, isFieldPhones, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

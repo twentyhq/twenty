@@ -17,7 +17,7 @@ describe('getCurrencyFieldPreviewValue', () => {
   it('returns null if the field is not a Currency field', () => {
     // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ type }) => type !== FieldMetadataType.Currency,
+      ({ type }) => type !== FieldMetadataType.CURRENCY,
     );
 
     if (!fieldMetadataItem) {
@@ -34,7 +34,7 @@ describe('getCurrencyFieldPreviewValue', () => {
   const fieldName = 'amount';
   const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
     ({ name, type }) =>
-      name === fieldName && type === FieldMetadataType.Currency,
+      name === fieldName && type === FieldMetadataType.CURRENCY,
   );
 
   if (!fieldMetadataItem) {

@@ -9,8 +9,8 @@ import { FieldContextProvider } from '@/object-record/record-field/meta-types/co
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import {
-  DateTimeFieldInput,
-  DateTimeFieldInputProps,
+    DateTimeFieldInput,
+    DateTimeFieldInputProps,
 } from '../DateTimeFieldInput';
 const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
@@ -72,7 +72,7 @@ const DateFieldInputWithContext = ({
           fieldMetadataId: 'date',
           defaultValue: null,
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',

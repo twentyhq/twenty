@@ -12,7 +12,7 @@ export const useBooleanField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.Boolean,
+    FieldMetadataType.BOOLEAN,
     isFieldBoolean,
     fieldDefinition,
   );

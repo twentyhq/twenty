@@ -5,14 +5,14 @@ describe('shouldFieldBeQueried', () => {
   describe('if recordGqlFields is absent, we query all except relations', () => {
     it('should be queried if the field is not a relation', () => {
       const res = shouldFieldBeQueried({
-        field: { name: 'fieldName', type: FieldMetadataType.Boolean },
+        field: { name: 'fieldName', type: FieldMetadataType.BOOLEAN },
       });
       expect(res).toBe(true);
     });
 
     it('should not be queried if the field is a relation', () => {
       const res = shouldFieldBeQueried({
-        field: { name: 'fieldName', type: FieldMetadataType.Relation },
+        field: { name: 'fieldName', type: FieldMetadataType.RELATION },
       });
       expect(res).toBe(false);
     });
@@ -22,7 +22,7 @@ describe('shouldFieldBeQueried', () => {
     it('should be queried if true', () => {
       const res = shouldFieldBeQueried({
         recordGqlFields: { fieldName: true },
-        field: { name: 'fieldName', type: FieldMetadataType.Relation },
+        field: { name: 'fieldName', type: FieldMetadataType.RELATION },
       });
       expect(res).toBe(true);
     });
@@ -30,7 +30,7 @@ describe('shouldFieldBeQueried', () => {
     it('should be queried if object', () => {
       const res = shouldFieldBeQueried({
         recordGqlFields: { fieldName: { subFieldName: false } },
-        field: { name: 'fieldName', type: FieldMetadataType.Relation },
+        field: { name: 'fieldName', type: FieldMetadataType.RELATION },
       });
       expect(res).toBe(true);
     });
@@ -38,7 +38,7 @@ describe('shouldFieldBeQueried', () => {
     it('should not be queried if false', () => {
       const res = shouldFieldBeQueried({
         recordGqlFields: { fieldName: false },
-        field: { name: 'fieldName', type: FieldMetadataType.Relation },
+        field: { name: 'fieldName', type: FieldMetadataType.RELATION },
       });
       expect(res).toBe(false);
     });
@@ -46,7 +46,7 @@ describe('shouldFieldBeQueried', () => {
     it('should not be queried if absent', () => {
       const res = shouldFieldBeQueried({
         recordGqlFields: { otherFieldName: false },
-        field: { name: 'fieldName', type: FieldMetadataType.Relation },
+        field: { name: 'fieldName', type: FieldMetadataType.RELATION },
       });
       expect(res).toBe(false);
     });

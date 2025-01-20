@@ -25,7 +25,7 @@ export const useRelationToOneFieldDisplay = () => {
   }
 
   assertFieldMetadata(
-    FieldMetadataType.Relation,
+    FieldMetadataType.RELATION,
     isFieldRelation,
     fieldDefinition,
   );

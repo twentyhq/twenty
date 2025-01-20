@@ -79,13 +79,13 @@ export const computeAggregateValueAndLabel = ({
     value = `${formatNumber(Number(aggregateValue) * 100)}%`;
   } else {
     switch (field.type) {
-      case FieldMetadataType.Currency: {
+      case FieldMetadataType.CURRENCY: {
         value = Number(aggregateValue);
         value = formatAmount(value / 1_000_000);
         break;
       }
 
-      case FieldMetadataType.Number: {
+      case FieldMetadataType.NUMBER: {
         value = Number(aggregateValue);
         const { decimals, type } = field.settings ?? {};
         value =
@@ -95,7 +95,7 @@ export const computeAggregateValueAndLabel = ({
         break;
       }
 
-      case FieldMetadataType.DateTime: {
+      case FieldMetadataType.DATE_TIME: {
         value = aggregateValue as string;
         value = formatDateTimeString({
           value,
@@ -107,7 +107,7 @@ export const computeAggregateValueAndLabel = ({
         break;
       }
 
-      case FieldMetadataType.Date: {
+      case FieldMetadataType.DATE: {
         value = aggregateValue as string;
         value = formatDateString({
           value,

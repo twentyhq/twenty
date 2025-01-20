@@ -17,7 +17,7 @@ export const useCurrencyField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.Currency,
+    FieldMetadataType.CURRENCY,
     isFieldCurrency,
     fieldDefinition,
   );

@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 
-import { useTheme } from '@emotion/react';
-import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
-import {
-  CodeEditor,
-  CoreEditorHeader,
-  IconSquareRoundedCheck,
-} from 'twenty-ui';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import {
   DEFAULT_OUTPUT_VALUE,
   ServerlessFunctionTestData,
 } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { useTheme } from '@emotion/react';
+import {
+  CodeEditor,
+  CoreEditorHeader,
+  IconSquareRoundedCheck,
+} from 'twenty-ui';
+import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ const StyledOutput = styled.div<{ status?: ServerlessFunctionExecutionStatus }>`
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme, status }) =>
-    status === ServerlessFunctionExecutionStatus.Success
+    status === ServerlessFunctionExecutionStatus.SUCCESS
       ? theme.color.turquoise
       : theme.color.red};
   display: flex;
@@ -47,7 +47,7 @@ export const ServerlessFunctionExecutionResult = ({
       <StyledOutput status={serverlessFunctionTestData.output.status}>
         <IconSquareRoundedCheck size={theme.icon.size.md} />
         {serverlessFunctionTestData.output.status ===
-        ServerlessFunctionExecutionStatus.Success
+        ServerlessFunctionExecutionStatus.SUCCESS
           ? '200 OK'
           : '500 Error'}
         {' - '}

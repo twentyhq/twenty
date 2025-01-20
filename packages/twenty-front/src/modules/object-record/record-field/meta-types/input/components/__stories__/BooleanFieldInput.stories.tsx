@@ -8,8 +8,8 @@ import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import {
-  BooleanFieldInput,
-  BooleanFieldInputProps,
+    BooleanFieldInput,
+    BooleanFieldInputProps,
 } from '../BooleanFieldInput';
 
 const BooleanFieldValueSetterEffect = ({
@@ -45,7 +45,7 @@ const BooleanFieldInputWithContext = ({
         fieldMetadataId: 'boolean',
         label: 'Boolean',
         iconName: 'Icon123',
-        type: FieldMetadataType.Boolean,
+        type: FieldMetadataType.BOOLEAN,
         metadata: {
           fieldName: 'Boolean',
           objectMetadataNameSingular: 'person',

@@ -7,4 +7,4 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const isFieldTsVector = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldTsVectorMetadata> =>
-  field.type === FieldMetadataType.TsVector;
+  field.type === FieldMetadataType.TS_VECTOR;

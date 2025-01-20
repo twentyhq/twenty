@@ -269,7 +269,7 @@ export const useRecordShowContainerTabs = (
           !hide.ifRelationsMissing.every((rel) =>
             objectMetadataItem.fields.some(
               (field) =>
-                field.type === FieldMetadataType.Relation &&
+                field.type === FieldMetadataType.RELATION &&
                 field.name === rel &&
                 field.isActive,
             ),

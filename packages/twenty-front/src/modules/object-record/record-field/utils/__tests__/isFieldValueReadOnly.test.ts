@@ -81,25 +81,25 @@ describe('isFieldValueReadOnly', () => {
     expect(result).toBe(true);
   });
 
-  it('should return true if fieldType is FieldMetadataType.Actor', () => {
+  it('should return true if fieldType is FieldMetadataType.ACTOR', () => {
     const result = isFieldValueReadOnly({
-      fieldType: FieldMetadataType.Actor,
+      fieldType: FieldMetadataType.ACTOR,
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return true if fieldType is FieldMetadataType.RichText', () => {
+  it('should return true if fieldType is FieldMetadataType.RICH_TEXT', () => {
     const result = isFieldValueReadOnly({
-      fieldType: FieldMetadataType.RichText,
+      fieldType: FieldMetadataType.RICH_TEXT,
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false if fieldType is not FieldMetadataType.Actor or FieldMetadataType.RichText', () => {
+  it('should return false if fieldType is not FieldMetadataType.ACTOR or FieldMetadataType.RICH_TEXT', () => {
     const result = isFieldValueReadOnly({
-      fieldType: FieldMetadataType.Text,
+      fieldType: FieldMetadataType.TEXT,
     });
 
     expect(result).toBe(false);
