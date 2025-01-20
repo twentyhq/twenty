@@ -20,7 +20,8 @@ import { hasPendingRecordComponentSelector } from '@/object-record/record-table/
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
+import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -71,6 +72,10 @@ export const RecordTable = () => {
     recordTableId,
   });
 
+  const { isScrollHandlerDragging } = useContext(
+    RecordTableWithWrappersScrollWrapperContext,
+  );
+
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -100,10 +105,16 @@ export const RecordTable = () => {
           <DragSelect
             dragSelectable={tableBodyRef}
             onDragSelectionStart={() => {
-              resetTableRowSelection();
-              toggleClickOutsideListener(false);
+              if (!isScrollHandlerDragging) {
+                resetTableRowSelection();
+                toggleClickOutsideListener(false);
+              }
             }}
-            onDragSelectionChange={setRowSelected}
+            onDragSelectionChange={(recordId, isSelected) => {
+              if (!isScrollHandlerDragging) {
+                setRowSelected(recordId, isSelected);
+              }
+            }}
             onDragSelectionEnd={() => {
               toggleClickOutsideListener(true);
             }}
