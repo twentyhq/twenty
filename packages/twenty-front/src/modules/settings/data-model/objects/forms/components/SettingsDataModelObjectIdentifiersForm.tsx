@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, ControllerProps, useFormContext } from 'react-hook-form';
 import { IconCircleOff, useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -32,6 +32,7 @@ type AllObjectMetadataIdentifiers = {
   fieldName: SettingsDataModelIdentifiers;
   options: SelectOption<string | null>[];
   defaultValue: Maybe<string> | undefined;
+  rules?: ControllerProps['rules']
 }[];
 
 const StyledContainer = styled.div`
@@ -89,7 +90,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
             defaultValue: undefined,
           },
         ] satisfies AllObjectMetadataIdentifiers
-      ).map(({ fieldName, label, options, defaultValue }) => (
+      ).map(({ fieldName, label, options, defaultValue}) => (
         <Controller
           key={fieldName}
           name={fieldName}
