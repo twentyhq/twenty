@@ -200,25 +200,6 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       return [primaryLinkLabel, primaryLinkUrl, secondaryLinks];
     }
-    case FieldMetadataType.RICH_TEXT_V2: {
-      const blocknote: NodeField = {
-        type: FieldMetadataType.TEXT,
-        name: 'blocknote',
-        label: 'Blocknote',
-        description: 'Blocknote',
-        isNullable: true,
-        defaultValue: null,
-      };
-      const markdown: NodeField = {
-        type: FieldMetadataType.TEXT,
-        name: 'markdown',
-        label: 'Markdown',
-        description: 'Markdown',
-        isNullable: true,
-        defaultValue: null,
-      };
-      return [blocknote, markdown];
-    }
     default:
       throw new Error(`Unknown nodeField type: ${nodeField.type}`);
   }
