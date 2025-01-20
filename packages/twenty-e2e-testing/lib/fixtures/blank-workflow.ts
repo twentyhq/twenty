@@ -175,8 +175,8 @@ export class WorkflowVisualizerPage {
     return this.#page.getByTestId(`rf__node-${stepId}`);
   }
 
-  getDeleteStepButton(stepId: string) {
-    return this.getStepNode(stepId).getByRole('button');
+  getDeleteNodeButton(nodeLocator: Locator) {
+    return nodeLocator.getByRole('button');
   }
 
   getAllStepNodes() {
@@ -208,7 +208,29 @@ export class WorkflowVisualizerPage {
         );
       }),
 
-      this.getDeleteStepButton(stepId).click(),
+      this.getDeleteNodeButton(stepNode).click(),
+    ]);
+  }
+
+  async deleteTrigger() {
+    await this.triggerNode.click();
+
+    await Promise.all([
+      expect(this.triggerNode).toContainText('Add a Trigger'),
+      this.#page.waitForResponse((response) => {
+        if (!response.url().endsWith('/graphql')) {
+          return false;
+        }
+
+        const requestBody = response.request().postDataJSON();
+
+        return (
+          requestBody.operationName === 'UpdateOneWorkflowVersion' &&
+          requestBody.variables.input.trigger === null
+        );
+      }),
+
+      this.getDeleteNodeButton(this.triggerNode).click(),
     ]);
   }
 }

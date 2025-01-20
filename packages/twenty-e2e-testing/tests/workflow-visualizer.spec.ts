@@ -141,3 +141,46 @@ test('Add a step to an active version', async ({
 
   await assertEndState();
 });
+
+test('Replace the trigger of an active version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
+
+  await workflowVisualizer.createStep('create-record');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Draft'),
+
+    workflowVisualizer.deleteTrigger(),
+  ]);
+
+  await workflowVisualizer.createInitialTrigger('record-deleted');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await page.reload();
+
+  await expect(workflowVisualizer.triggerNode).toContainText(
+    'Record is Deleted',
+  );
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+  ]);
+});
