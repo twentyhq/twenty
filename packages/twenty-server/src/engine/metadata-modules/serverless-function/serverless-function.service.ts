@@ -367,67 +367,50 @@ export class ServerlessFunctionService {
     });
   }
 
-  async copyOneServerlessFunction({
-    serverlessFunctionToCopyId,
-    serverlessFunctionToCopyVersion,
+  async resetServerlessFunctionToOldVersion({
+    id,
+    version,
     workspaceId,
   }: {
-    serverlessFunctionToCopyId: string;
-    serverlessFunctionToCopyVersion: string;
+    id: string;
+    version: string;
     workspaceId: string;
   }) {
-    const serverlessFunctionToCopy =
+    const serverlessFunctionToReset =
       await this.serverlessFunctionRepository.findOneBy({
         workspaceId,
-        id: serverlessFunctionToCopyId,
-        latestVersion: serverlessFunctionToCopyVersion,
+        id: id,
       });
 
-    if (!serverlessFunctionToCopy) {
+    if (!serverlessFunctionToReset) {
       throw new ServerlessFunctionException(
-        'Function does not exist',
+        'Function to reset does not exist',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
     }
 
-    const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
-      {
-        name: serverlessFunctionToCopy?.name,
-        description: serverlessFunctionToCopy?.description,
-        timeoutSeconds: serverlessFunctionToCopy?.timeoutSeconds,
-        workspaceId,
-        layerVersion: LAST_LAYER_VERSION,
-      },
-    );
-
-    const copiedServerlessFunction =
-      await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
-
-    const serverlessFunctionToCopyFileFolder = getServerlessFolder({
-      serverlessFunction: serverlessFunctionToCopy,
-      version: 'latest',
-    });
-    const copiedServerlessFunctionFileFolder = getServerlessFolder({
-      serverlessFunction: copiedServerlessFunction,
-      version: 'draft',
-    });
-
     await this.fileStorageService.copy({
       from: {
-        folderPath: serverlessFunctionToCopyFileFolder,
+        folderPath: getServerlessFolder({
+          serverlessFunction: serverlessFunctionToReset,
+          version,
+        }),
       },
       to: {
-        folderPath: copiedServerlessFunctionFileFolder,
+        folderPath: getServerlessFolder({
+          serverlessFunction: serverlessFunctionToReset,
+          version: 'draft',
+        }),
       },
     });
 
     await this.buildServerlessFunction({
-      serverlessFunctionId: copiedServerlessFunction.id,
+      serverlessFunctionId: id,
       serverlessFunctionVersion: 'draft',
       workspaceId,
     });
 
-    return copiedServerlessFunction;
+    return serverlessFunctionToReset;
   }
 
   private async throttleExecution(workspaceId: string) {

@@ -28,10 +28,10 @@ export const useDeleteStep = ({
   const deleteStep = async (stepId: string) => {
     closeRightDrawer();
     closeCommandMenu();
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
     if (stepId === TRIGGER_STEP_ID) {
       await updateOneWorkflowVersion({
-        idToUpdate: workflowVersion.id,
+        idToUpdate: workflowVersionId,
         updateOneRecordInput: {
           trigger: null,
         },
@@ -39,7 +39,7 @@ export const useDeleteStep = ({
       return;
     }
     await deleteWorkflowVersionStep({
-      workflowVersionId: workflowVersion.id,
+      workflowVersionId,
       stepId,
     });
   };

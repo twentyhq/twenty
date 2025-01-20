@@ -170,17 +170,23 @@ export class WorkflowStatusesUpdateJob {
                 workspaceId,
               );
           } catch (e) {
-            serverlessFunction = null;
+            serverlessFunction = (
+              await this.serverlessFunctionService.findManyServerlessFunctions({
+                id: step.settings.input.serverlessFunctionId,
+              })
+            )?.[0];
           }
 
-          if (serverlessFunction) {
-            const newStepSettings = { ...step.settings };
-
-            newStepSettings.input.serverlessFunctionVersion =
-              serverlessFunction.latestVersion;
-
-            newStep.settings = newStepSettings;
+          if (!serverlessFunction) {
+            throw new Error('Published serverless function does not exist');
           }
+
+          const newStepSettings = { ...step.settings };
+
+          newStepSettings.input.serverlessFunctionVersion =
+            serverlessFunction.latestVersion;
+
+          newStep.settings = newStepSettings;
         }
         newSteps.push(newStep);
       }
