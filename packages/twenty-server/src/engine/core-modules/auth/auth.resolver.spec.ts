@@ -16,7 +16,6 @@ import { ApiKeyService } from './services/api-key.service';
 import { AuthService } from './services/auth.service';
 // import { OAuthService } from './services/oauth.service';
 import { ResetPasswordService } from './services/reset-password.service';
-import { SwitchWorkspaceService } from './services/switch-workspace.service';
 import { EmailVerificationTokenService } from './token/services/email-verification-token.service';
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
@@ -72,10 +71,6 @@ describe('AuthResolver', () => {
         },
         {
           provide: LoginTokenService,
-          useValue: {},
-        },
-        {
-          provide: SwitchWorkspaceService,
           useValue: {},
         },
         {

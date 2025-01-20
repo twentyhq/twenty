@@ -28,6 +28,7 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -38,6 +39,8 @@ type SwitchInfo = {
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
+
+  const { redirect } = useRedirect();
 
   const MONTHLY_SWITCH_INFO: SwitchInfo = {
     newInterval: SubscriptionInterval.Year,
@@ -89,7 +92,7 @@ export const SettingsBilling = () => {
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
-      window.location.replace(data.billingPortalSession.url);
+      redirect(data.billingPortalSession.url);
     }
   };
 

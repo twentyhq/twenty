@@ -124,21 +124,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user;
   }
 
-  async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
-    const appToken =
-      await this.workspaceInvitationService.validatePersonalInvitation({
-        workspacePersonalInviteToken: inviteToken,
-        email: user.email,
-      });
-
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      appToken.workspace.id,
-      user.email,
-    );
-
-    return await this.addUserToWorkspace(user, appToken.workspace);
-  }
-
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
     return await this.userWorkspaceRepository.countBy({
       workspaceId,
