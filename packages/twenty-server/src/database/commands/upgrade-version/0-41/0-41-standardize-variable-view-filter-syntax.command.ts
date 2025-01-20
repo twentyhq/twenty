@@ -134,7 +134,6 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
     this.logger.log(chalk.green(`Command completed!`));
   }
 
-  // TODO: Should the new value have square brackets around the comma-separated list of record ids?
   private convertRelationViewFilterValue(value: string): string {
     const jsonRelationFilterValueResult =
       jsonRelationFilterValueSchema.safeParse(value);
@@ -147,9 +146,9 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
       jsonRelationFilterValueResult.data;
 
     if (isCurrentWorkspaceMemberSelected) {
-      return [...selectedRecordIds, '{{CURRENT_WORKSPACE_MEMBER}}'].join(',');
+      return JSON.stringify([...selectedRecordIds, '{{CURRENT_WORKSPACE_MEMBER}}']);
     }
 
-    return selectedRecordIds.join(',');
+    return JSON.stringify(selectedRecordIds);
   }
 }
