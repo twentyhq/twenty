@@ -113,6 +113,8 @@ jobs:
             rm -f packages/twenty-front/*graphql.ts
 
            exit 1
+           else
+            echo "No GraphQL generation issues detected."
           fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache
