@@ -83,8 +83,12 @@ export const LocalePicker = () => {
       value: 'en',
     },
     {
-      label: t`Chinese`,
-      value: 'zh',
+      label: t`Chinese — Simplified`,
+      value: 'zh-Hans',
+    },
+    {
+      label: t`Chinese — Traditional`,
+      value: 'zh-Hant',
     },
   ];
 
