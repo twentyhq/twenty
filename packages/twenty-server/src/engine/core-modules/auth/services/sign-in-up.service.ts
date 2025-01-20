@@ -137,12 +137,8 @@ export class SignInUpService {
     password: string;
     passwordHash: string;
   }) {
-    const isValid = await compareHash(
-      await this.generateHash(password),
-      passwordHash,
-    );
+    const isValid = await compareHash(password, passwordHash);
 
-    console.trace();
     if (!isValid) {
       throw new AuthException(
         'Wrong password',
