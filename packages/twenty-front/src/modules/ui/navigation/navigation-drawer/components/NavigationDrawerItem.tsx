@@ -13,10 +13,10 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
-    IconComponent,
-    MOBILE_VIEWPORT,
-    Pill,
-    TablerIconsProps,
+  IconComponent,
+  MOBILE_VIEWPORT,
+  Pill,
+  TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 

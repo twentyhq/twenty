@@ -1,6 +1,6 @@
 import {
-    VariableDateViewFilterValueDirection,
-    VariableDateViewFilterValueUnit,
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { capitalize } from '@twenty/shared';
 import { plural } from 'pluralize';

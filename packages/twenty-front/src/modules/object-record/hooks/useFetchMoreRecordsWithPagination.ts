@@ -1,9 +1,9 @@
 import {
-    ApolloError,
-    ApolloQueryResult,
-    FetchMoreQueryOptions,
-    OperationVariables,
-    WatchQueryFetchPolicy,
+  ApolloError,
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+  WatchQueryFetchPolicy,
 } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';

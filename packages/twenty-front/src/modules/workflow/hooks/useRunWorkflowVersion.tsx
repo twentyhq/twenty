@@ -6,8 +6,8 @@ import { useTheme } from '@emotion/react';
 import { capitalize } from '@twenty/shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import {
-    RunWorkflowVersionMutation,
-    RunWorkflowVersionMutationVariables,
+  RunWorkflowVersionMutation,
+  RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useRunWorkflowVersion = () => {

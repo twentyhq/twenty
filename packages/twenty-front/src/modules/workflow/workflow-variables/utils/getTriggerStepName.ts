@@ -1,6 +1,6 @@
 import {
-    WorkflowDatabaseEventTrigger,
-    WorkflowTrigger,
+  WorkflowDatabaseEventTrigger,
+  WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { capitalize } from '@twenty/shared';
