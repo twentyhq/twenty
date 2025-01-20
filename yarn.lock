@@ -45682,8 +45682,8 @@ __metadata:
 
 "twenty-shared@file:packages/twenty-shared::locator=twenty%40workspace%3A.":
   version: 0.40.0-canary
-  resolution: "twenty-shared@file:packages/twenty-shared#packages/twenty-shared::hash=4ceb44&locator=twenty%40workspace%3A."
-  checksum: 10c0/5b4e61784a2d1d11e8975ecbeaac181e8927768a5ed57e14777ef887493a27f3949d02d7aca95dac1e0e17d5eba8a845392820134280b5fb6264a8a0ba051c82
+  resolution: "twenty-shared@file:packages/twenty-shared#packages/twenty-shared::hash=9bbac1&locator=twenty%40workspace%3A."
+  checksum: 10c0/3fb4115bbf282ed06fde3253d79a84ed0e30a0ed88dc2ed6643b0df9af7b5b81f4dd9d2e58211d111c348aec84f5e83eff32b676b543c125f5f475c21b062383
   languageName: node
   linkType: hard
 
