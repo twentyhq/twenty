@@ -1,17 +1,16 @@
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
-import { CustomException } from 'src/utils/custom-exception';
+import { WorkspaceActivationStatus } from 'twenty-shared';
+
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 const assertIsDefinedOrThrow = (
   workspace: Workspace | undefined | null,

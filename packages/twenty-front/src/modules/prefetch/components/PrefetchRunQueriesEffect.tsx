@@ -10,10 +10,13 @@ import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal/useUpsertRecordsInCacheForPrefetchKey';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
+import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
+
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
 
   const { upsertRecordsInCache: upsertViewsInCache } =
     useUpsertRecordsInCacheForPrefetchKey<View>({
@@ -42,7 +45,7 @@ export const PrefetchRunQueriesEffect = () => {
 
   const { result } = useCombinedFindManyRecords({
     operationSignatures,
-    skip: !currentUser,
+    skip: !currentUser || isWorkspaceSuspended,
   });
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -6,7 +7,6 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
-  Info,
   Section,
 } from 'twenty-ui';
 
@@ -14,8 +14,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,11 +23,11 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   OnboardingStatus,
   SubscriptionInterval,
-  SubscriptionStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -38,26 +36,28 @@ type SwitchInfo = {
   impact: string;
 };
 
-const MONTHLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: SubscriptionInterval.Year,
-  to: 'to yearly',
-  from: 'from monthly to yearly',
-  impact: 'You will be charged immediately for the full year.',
-};
-
-const YEARLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: SubscriptionInterval.Month,
-  to: 'to monthly',
-  from: 'from yearly to monthly',
-  impact: 'Your credit balance will be used to pay the monthly bills.',
-};
-
-const SWITCH_INFOS = {
-  year: YEARLY_SWITCH_INFO,
-  month: MONTHLY_SWITCH_INFO,
-};
-
 export const SettingsBilling = () => {
+  const { t } = useLingui();
+
+  const MONTHLY_SWITCH_INFO: SwitchInfo = {
+    newInterval: SubscriptionInterval.Year,
+    to: t`to yearly`,
+    from: t`from monthly to yearly`,
+    impact: t`You will be charged immediately for the full year.`,
+  };
+
+  const YEARLY_SWITCH_INFO: SwitchInfo = {
+    newInterval: SubscriptionInterval.Month,
+    to: t`to monthly`,
+    from: t`from yearly to monthly`,
+    impact: t`Your credit balance will be used to pay the monthly bills.`,
+  };
+
+  const SWITCH_INFOS = {
+    year: YEARLY_SWITCH_INFO,
+    month: MONTHLY_SWITCH_INFO,
+  };
+
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
@@ -87,17 +87,6 @@ export const SettingsBilling = () => {
     billingPortalButtonDisabled ||
     onboardingStatus !== OnboardingStatus.Completed;
 
-  const displayPaymentFailInfo =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
-
-  const displaySubscriptionCanceledInfo =
-    subscriptionStatus === SubscriptionStatus.Canceled;
-
-  const displaySubscribeInfo =
-    onboardingStatus === OnboardingStatus.Completed &&
-    !isDefined(subscriptionStatus);
-
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       window.location.replace(data.billingPortalSession.url);
@@ -107,6 +96,10 @@ export const SettingsBilling = () => {
   const openSwitchingIntervalModal = () => {
     setIsSwitchingIntervalModalOpen(true);
   };
+
+  const from = switchingInfo.from;
+  const to = switchingInfo.to;
+  const impact = switchingInfo.impact;
 
   const switchInterval = async () => {
     try {
@@ -121,65 +114,39 @@ export const SettingsBilling = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
+      enqueueSnackBar(t`Subscription has been switched ${to}`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
-      enqueueSnackBar(
-        `Error while switching subscription ${switchingInfo.to}.`,
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
+      enqueueSnackBar(t`Error while switching subscription ${to}.`, {
+        variant: SnackBarVariant.Error,
+      });
     }
   };
 
   return (
     <SubMenuTopBarContainer
-      title="Billing"
+      title={t`Billing`}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Billing' },
+        { children: <Trans>Billing</Trans> },
       ]}
     >
       <SettingsPageContainer>
         <SettingsBillingCoverImage />
-        {displayPaymentFailInfo && (
-          <Info
-            text={'Last payment failed. Please update your billing details.'}
-            buttonTitle={'Update'}
-            accent={'danger'}
-            onClick={openBillingPortal}
-          />
-        )}
-        {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            to={AppPath.PlanRequired}
-          />
-        )}
-        {displaySubscribeInfo ? (
-          <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            to={AppPath.PlanRequired}
-          />
-        ) : (
+        {isDefined(subscriptionStatus) && (
           <>
             <Section>
               <H2Title
-                title="Manage your subscription"
-                description="Edit payment method, see your invoices and more"
+                title={t`Manage your subscription`}
+                description={t`Edit payment method, see your invoices and more`}
               />
               <Button
                 Icon={IconCreditCard}
-                title="View billing details"
+                title={t`View billing details`}
                 variant="secondary"
                 onClick={openBillingPortal}
                 disabled={billingPortalButtonDisabled}
@@ -187,12 +154,12 @@ export const SettingsBilling = () => {
             </Section>
             <Section>
               <H2Title
-                title="Edit billing interval"
-                description={`Switch ${switchingInfo.from}`}
+                title={t`Edit billing interval`}
+                description={t`Switch ${from}`}
               />
               <Button
                 Icon={IconCalendarEvent}
-                title={`Switch ${switchingInfo.to}`}
+                title={t`Switch ${to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
                 disabled={switchIntervalButtonDisabled}
@@ -200,12 +167,12 @@ export const SettingsBilling = () => {
             </Section>
             <Section>
               <H2Title
-                title="Cancel your subscription"
-                description="Your workspace will be disabled"
+                title={t`Cancel your subscription`}
+                description={t`Your workspace will be disabled`}
               />
               <Button
                 Icon={IconCircleX}
-                title="Cancel Plan"
+                title={t`Cancel Plan`}
                 variant="secondary"
                 accent="danger"
                 onClick={openBillingPortal}
@@ -218,15 +185,13 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}
-        title={`Switch billing ${switchingInfo.to}`}
+        title={t`Switch billing ${to}`}
         subtitle={
-          <>
-            {`Are you sure that you want to change your billing interval? 
-            ${switchingInfo.impact}`}
-          </>
+          t`Are you sure that you want to change your billing interval?` +
+          ` ${impact}`
         }
         onConfirmClick={switchInterval}
-        deleteButtonText={`Change ${switchingInfo.to}`}
+        deleteButtonText={t`Change ${to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>

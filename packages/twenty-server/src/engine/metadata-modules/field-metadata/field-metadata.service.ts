@@ -57,6 +57,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -85,6 +86,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
     private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
+    private readonly viewService: ViewService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -516,6 +518,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         );
       }
+
+      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
+        workspaceId,
+        fieldMetadataId: fieldMetadata.id,
+      });
 
       await fieldMetadataRepository.delete(fieldMetadata.id);
 

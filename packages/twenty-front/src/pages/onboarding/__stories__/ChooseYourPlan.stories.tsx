@@ -40,14 +40,14 @@ const meta: Meta<PageDecoratorArgs> = {
                   {
                     __typename: 'ProductPriceEntity',
                     created: 1699860608,
-                    recurringInterval: 'month',
+                    recurringInterval: 'Month',
                     stripePriceId: 'monthly8usd',
                     unitAmount: 900,
                   },
                   {
                     __typename: 'ProductPriceEntity',
                     created: 1701874964,
-                    recurringInterval: 'year',
+                    recurringInterval: 'Year',
                     stripePriceId: 'priceId',
                     unitAmount: 9000,
                   },
@@ -56,7 +56,7 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphqlMocks.handlers,
+        ...graphqlMocks.handlers,
       ],
     },
   },
@@ -70,7 +70,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Choose your Plan', undefined, {
+    await canvas.findByText('Choose your Trial', undefined, {
       timeout: 3000,
     });
   },
