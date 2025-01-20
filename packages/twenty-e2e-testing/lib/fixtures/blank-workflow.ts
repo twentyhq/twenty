@@ -37,7 +37,7 @@ export class WorkflowVisualizerPage {
     'create-record': 'Create Record',
     'update-record': 'Update Record',
     'delete-record': 'Delete Record',
-    code: 'Serverless Function',
+    code: 'Code',
     'send-email': 'Send Email',
   };
 
