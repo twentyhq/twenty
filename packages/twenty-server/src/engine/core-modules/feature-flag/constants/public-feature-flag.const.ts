@@ -15,7 +15,7 @@ export type PublicFeatureFlag = {
   >;
   metadata: FeatureFlagMetadata;
 };
-// TODO: Move images to twenty-website
+
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
     key: FeatureFlagKey.IsAnalyticsV2Enabled,
