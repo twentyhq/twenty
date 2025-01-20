@@ -45680,7 +45680,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-shared@workspace:packages/twenty-shared":
+"twenty-shared@workspace:*, twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   languageName: unknown
@@ -45689,6 +45689,8 @@ __metadata:
 "twenty-ui@workspace:packages/twenty-ui":
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
+  dependencies:
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
