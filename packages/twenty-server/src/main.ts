@@ -85,9 +85,6 @@ const bootstrap = async () => {
   // Inject the server url in the frontend page
   generateFrontConfig();
 
-  // Trust the first proxy to ensure correct client IP and protocol detection.
-  app.set('trust proxy', 1);
-
   await app.listen(environmentService.get('PORT'));
 };
 
