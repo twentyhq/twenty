@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { RelationMetadataV2Module } from 'src/engine/metadata-modules/relation-metadata-v2/relation-metadata-v2.module';
 import { RelationMetadataModule } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.module';
 import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
@@ -15,6 +16,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     FieldMetadataModule,
     ObjectMetadataModule,
     RelationMetadataModule,
+    RelationMetadataV2Module,
     ServerlessFunctionModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
@@ -26,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     FieldMetadataModule,
     ObjectMetadataModule,
     RelationMetadataModule,
+    RelationMetadataV2Module,
     ServerlessFunctionModule,
     RemoteServerModule,
   ],
