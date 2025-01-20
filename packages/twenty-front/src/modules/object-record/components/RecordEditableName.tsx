@@ -1,7 +1,7 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
-import { NavigationDrawerItemInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemInput';
+import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
@@ -15,7 +15,6 @@ const StyledEditableTitleContainer = styled.div`
 
 const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  line-height: 24px;
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.spacing(0.75)};
@@ -74,13 +73,15 @@ export const RecordEditableName = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <NavigationDrawerItemInput
+      <EditableBreadcrumbItem
         isRenaming={isRenaming}
         setIsRenaming={setIsRenaming}
         defaultValue={record?.name ?? ''}
         placeholder={'Name'}
-        handleSubmit={handleSubmit}
-        handleCancel={handleCancel}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        onClickOutside={handleCancel}
+        hotkeyScope="editable-breadcrumb-item"
       />
     </StyledEditableTitleContainer>
   );

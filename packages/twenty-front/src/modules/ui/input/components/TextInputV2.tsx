@@ -34,7 +34,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize'
+    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize' | 'height'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -48,7 +48,7 @@ const StyledInput = styled.input<
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: 32px;
+  height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
   outline: none;
   padding: ${({ theme, autoSize }) => (autoSize ? 0 : theme.spacing(2))};
   padding-left: ${({ theme, LeftIcon }) =>
@@ -118,11 +118,11 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-const StyledAutoSizeInputContainer = styled.div`
+const StyledAutoSizeInputContainer = styled.div<{ height: 'sm' | 'md' }>`
   display: inline-flex;
   position: relative;
   align-items: center;
-  height: 32px;
+  height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
   background-color: inherit;
 `;
 
@@ -145,6 +145,7 @@ export type TextInputV2ComponentProps = Omit<
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
   autoSize?: boolean;
+  height?: 'sm' | 'md';
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
@@ -173,6 +174,7 @@ const TextInputV2Component = (
     autoComplete,
     autoSize,
     maxLength,
+    height = 'md',
     dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
@@ -207,7 +209,7 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         {autoSize ? (
-          <StyledAutoSizeInputContainer>
+          <StyledAutoSizeInputContainer height={height}>
             <StyledAutoSizeSpan>{value}</StyledAutoSizeSpan>
             <StyledInput
               id={inputId}
