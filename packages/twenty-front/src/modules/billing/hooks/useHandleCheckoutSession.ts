@@ -1,4 +1,3 @@
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -8,6 +7,7 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 import { useCheckoutSessionMutation } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
@@ -29,7 +29,7 @@ export const useHandleCheckoutSession = ({
     const { data } = await checkoutSession({
       variables: {
         recurringInterval,
-        successUrlPath: `${AppPath.Settings}/${SettingsPath.Billing}`,
+        successUrlPath: getSettingsPath(SettingsPath.Billing),
         plan,
         requirePaymentMethod,
       },

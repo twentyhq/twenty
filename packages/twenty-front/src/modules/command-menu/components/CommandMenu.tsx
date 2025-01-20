@@ -13,6 +13,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -56,6 +57,8 @@ const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
+  const { t } = useLingui();
+
   const { onItemClick } = useCommandMenuOnItemClick();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
@@ -99,51 +102,51 @@ export const CommandMenu = () => {
 
   const commandGroups: CommandGroupConfig[] = [
     {
-      heading: 'Copilot',
+      heading: t`Copilot`,
       items: copilotCommands,
     },
     {
-      heading: 'Record Selection',
+      heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionCommands,
     },
     {
-      heading: 'Workflow Record Selection',
+      heading: t`Workflow Record Selection`,
       items: matchingWorkflowRunRecordSelectionCommands,
     },
     {
-      heading: 'View',
+      heading: t`View`,
       items: matchingStandardActionGlobalCommands,
     },
     {
-      heading: 'Workflows',
+      heading: t`Workflows`,
       items: matchingWorkflowRunGlobalCommands,
     },
     {
-      heading: 'Navigate',
+      heading: t`Navigate`,
       items: matchingNavigateCommand,
     },
     {
-      heading: 'People',
+      heading: t`People`,
       items: peopleCommands,
     },
     {
-      heading: 'Companies',
+      heading: t`Companies`,
       items: companyCommands,
     },
     {
-      heading: 'Opportunities',
+      heading: t`Opportunities`,
       items: opportunityCommands,
     },
     {
-      heading: 'Notes',
+      heading: t`Notes`,
       items: noteCommands,
     },
     {
-      heading: 'Tasks',
+      heading: t`Tasks`,
       items: tasksCommands,
     },
     {
-      heading: 'Custom Objects',
+      heading: t`Custom Objects`,
       items: customObjectCommands,
     },
   ];

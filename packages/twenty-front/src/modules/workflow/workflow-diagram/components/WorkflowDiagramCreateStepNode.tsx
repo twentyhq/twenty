@@ -15,7 +15,7 @@ export const WorkflowDiagramCreateStepNode = () => {
     <StyledContainer>
       <StyledTargetHandle type="target" position={Position.Top} />
 
-      <IconButton Icon={IconPlus} size="medium" />
+      <IconButton Icon={IconPlus} size="medium" ariaLabel="Add a step" />
     </StyledContainer>
   );
 };

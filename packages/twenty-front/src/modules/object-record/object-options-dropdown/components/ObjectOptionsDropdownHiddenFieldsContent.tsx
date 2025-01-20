@@ -12,7 +12,6 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -20,6 +19,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const {
@@ -34,7 +34,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
+  const settingsUrl = getSettingsPath(SettingsPath.ObjectDetail, {
     objectNamePlural,
   });
 

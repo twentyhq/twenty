@@ -8,6 +8,7 @@ import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/field
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -17,6 +18,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconSearch, UndecoratedLink } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsObjectNewFieldSelectorProps = {
   className?: string;
@@ -128,7 +130,11 @@ export const SettingsObjectNewFieldSelector = ({
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink
-                          to={`/settings/objects/${objectNamePlural}/new-field/configure?fieldType=${key}`}
+                          to={getSettingsPath(
+                            SettingsPath.ObjectNewFieldConfigure,
+                            { objectNamePlural },
+                            { fieldType: key },
+                          )}
                           fullWidth
                           onClick={() => {
                             setValue('type', key as SettingsFieldType);

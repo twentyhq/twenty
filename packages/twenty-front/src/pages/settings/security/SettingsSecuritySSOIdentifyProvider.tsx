@@ -6,7 +6,6 @@ import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreat
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
 import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,10 +13,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsSecuritySSOIdentifyProvider = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const { enqueueSnackBar } = useSnackBar();
   const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
@@ -44,7 +44,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
         ),
       );
 
-      navigate(getSettingsPagePath(SettingsPath.Security));
+      navigate(SettingsPath.Security);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -58,18 +58,18 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!formConfig.formState.isValid}
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Security))}
+          onCancel={() => navigate(SettingsPath.Security)}
           onSave={handleSave}
         />
       }
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Security',
-          href: getSettingsPagePath(SettingsPath.Security),
+          href: getSettingsPath(SettingsPath.Security),
         },
         { children: 'New' },
       ]}
