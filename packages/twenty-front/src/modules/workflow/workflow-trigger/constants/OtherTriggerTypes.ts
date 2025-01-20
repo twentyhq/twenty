@@ -1,5 +1,5 @@
 import { WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { IconComponent, IconSettingsAutomation } from 'twenty-ui';
+import { IconClick, IconComponent } from 'twenty-ui';
 
 export const OTHER_TRIGGER_TYPES: Array<{
   name: string;
@@ -9,6 +9,6 @@ export const OTHER_TRIGGER_TYPES: Array<{
   {
     name: 'Launch manually',
     type: 'MANUAL',
-    icon: IconSettingsAutomation,
+    icon: IconClick,
   },
 ];
