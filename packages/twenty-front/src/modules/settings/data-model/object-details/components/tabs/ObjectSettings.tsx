@@ -124,6 +124,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    console.log("SALUT")
+    console.log({formValues})
     if (isEmpty(formConfig.formState.dirtyFields) === true) {
       return;
     }
@@ -191,7 +193,9 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               disableEdition={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
-                formConfig.handleSubmit(handleSave)();
+                console.log("blur");
+                console.log(formConfig.formState)
+                formConfig.handleSubmit(handleSave, (error) => console.log("error", error))();
               }}
             />
           </StyledFormSection>
