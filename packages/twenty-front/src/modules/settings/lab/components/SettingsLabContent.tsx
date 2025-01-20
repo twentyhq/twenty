@@ -1,54 +1,35 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Toggle } from 'twenty-ui';
+import { Card, MOBILE_VIEWPORT } from 'twenty-ui';
+import { TWENTY_WEBSITE_URL } from '~/config';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledCardGrid = styled.div`
+  display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(4)};
+  grid-template-columns: 1fr;
+
+  & > *:not(:first-child) {
+    grid-column: span 1;
+  }
+
+  @media (min-width: ${MOBILE_VIEWPORT}px) {
+    grid-template-columns: repeat(2, 1fr);
+
+    & > *:first-child {
+      grid-column: 1 / -1;
+    }
+  }
 `;
 
-const StyledFlagContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledFlagContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledFlagImage = styled.img`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  height: 48px;
+const StyledFlagImage = styled.img<{ isFirstCard: boolean }>`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
   object-fit: cover;
-  width: 48px;
-`;
-
-const StyledFlagInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledFlagName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-`;
-
-const StyledFlagDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  width: 100%;
 `;
 
 export const SettingsLabContent = () => {
@@ -62,27 +43,23 @@ export const SettingsLabContent = () => {
   };
 
   return (
-    <StyledContainer>
-      {labPublicFeatureFlags.map((flag) => (
-        <StyledFlagContainer key={flag.key}>
-          <StyledFlagContent>
-            <StyledFlagImage
-              src={flag.metadata.imageKey ?? undefined}
-              alt={flag.metadata.label}
-            />
-            <StyledFlagInfo>
-              <StyledFlagName>{flag.metadata.label}</StyledFlagName>
-              <StyledFlagDescription>
-                {flag.metadata.description}
-              </StyledFlagDescription>
-            </StyledFlagInfo>
-          </StyledFlagContent>
-          <Toggle
-            value={flag.value}
-            onChange={(value) => handleToggle(flag.key, value)}
+    <StyledCardGrid>
+      {labPublicFeatureFlags.map((flag, index) => (
+        <Card key={flag.key} rounded>
+          <StyledFlagImage
+            src={`${TWENTY_WEBSITE_URL}${flag.metadata.imagePath}`}
+            alt={flag.metadata.label}
+            isFirstCard={index === 0}
           />
-        </StyledFlagContainer>
+          <SettingsOptionCardContentToggle
+            title={flag.metadata.label}
+            description={flag.metadata.description}
+            checked={flag.value}
+            onChange={(value) => handleToggle(flag.key, value)}
+            toggleCentered={false}
+          />
+        </Card>
       ))}
-    </StyledContainer>
+    </StyledCardGrid>
   );
 };

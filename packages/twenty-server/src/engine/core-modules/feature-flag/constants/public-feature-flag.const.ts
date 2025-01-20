@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  imageKey?: string;
+  imagePath?: string;
 };
 
 export type PublicFeatureFlag = {
@@ -23,7 +23,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Analytics V2',
       description:
         'Enable the new version of analytics with enhanced features and improved performance',
-      imageKey: 'workflows.png',
+      imagePath: '/images/lab/is-workflow-enabled.png',
     },
   },
   {
@@ -32,7 +32,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Advanced Filters',
       description:
         'Enable advanced filtering capabilities across the application',
-      imageKey: 'workflows.png',
+      imagePath: '/images/lab/is-workflow-enabled.png',
     },
   },
   {
@@ -41,7 +41,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Command Menu V2',
       description:
         'Enable the new command menu with improved search and navigation',
-      imageKey: 'workflows.png',
+      imagePath: '/images/lab/is-workflow-enabled.png',
     },
   },
 ];

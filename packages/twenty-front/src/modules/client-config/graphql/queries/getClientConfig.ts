@@ -53,7 +53,7 @@ export const GET_CLIENT_CONFIG = gql`
         metadata {
           label
           description
-          imageKey
+          imagePath
         }
       }
     }

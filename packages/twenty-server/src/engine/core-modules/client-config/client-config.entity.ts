@@ -58,7 +58,7 @@ class ApiConfig {
 }
 
 @ObjectType()
-class PublicFeatureFlagMetadataObject {
+class PublicFeatureFlagMetadata {
   @Field(() => String)
   label: string;
 
@@ -66,16 +66,16 @@ class PublicFeatureFlagMetadataObject {
   description: string;
 
   @Field(() => String, { nullable: true })
-  imageKey?: string;
+  imagePath?: string;
 }
 
 @ObjectType()
-class PublicFeatureFlagObject {
+class PublicFeatureFlag {
   @Field(() => FeatureFlagKey)
   key: FeatureFlagKey;
 
-  @Field(() => PublicFeatureFlagMetadataObject)
-  metadata: PublicFeatureFlagMetadataObject;
+  @Field(() => PublicFeatureFlagMetadata)
+  metadata: PublicFeatureFlagMetadata;
 }
 
 @ObjectType()
@@ -125,6 +125,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
 
-  @Field(() => [PublicFeatureFlagObject])
-  publicFeatureFlags: PublicFeatureFlagObject[];
+  @Field(() => [PublicFeatureFlag])
+  publicFeatureFlags: PublicFeatureFlag[];
 }

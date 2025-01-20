@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
-import { PublicFeatureFlagObject } from '~/generated/graphql';
-export const labPublicFeatureFlagsState = atom<PublicFeatureFlagObject[]>({
+import { PublicFeatureFlag } from '~/generated/graphql';
+
+export const labPublicFeatureFlagsState = atom<PublicFeatureFlag[]>({
   key: 'labPublicFeatureFlagsState',
   default: [],
 });
