@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { BACKGROUND_LIGHT, MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 
 const StyledContainer = styled.div`
-  background: ${BACKGROUND_LIGHT.noisy};
+  background: ${({ theme }) => theme.background.noisy};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
