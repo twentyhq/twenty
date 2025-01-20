@@ -68,7 +68,6 @@ export class MicrosoftAuthController {
         currentWorkspace && workspacePersonalInviteToken && email
           ? await this.authService.findInvitationForSignInUp({
               currentWorkspace,
-              workspacePersonalInviteToken,
               email,
             })
           : undefined;
