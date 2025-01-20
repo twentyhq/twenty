@@ -40,16 +40,14 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
     <RecordFieldValueSelectorContextProvider>
       <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: `record-show-${objectRecordId}`,
-        }}
+        value={{ instanceId: `record-show-${objectRecordId}` }}
       >
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: `record-show-${objectRecordId}` }}
@@ -63,18 +61,18 @@ export const RecordShowPage = () => {
               headerIcon={headerIcon}
             >
               <>
-                {!isPageHeaderV2Enabled &&
+                {!isCommandMenuV2Enabled &&
                   objectNameSingular === CoreObjectNameSingular.Workflow && (
                     <RecordShowPageWorkflowHeader workflowId={objectRecordId} />
                   )}
-                {!isPageHeaderV2Enabled &&
+                {!isCommandMenuV2Enabled &&
                   objectNameSingular ===
                     CoreObjectNameSingular.WorkflowVersion && (
                     <RecordShowPageWorkflowVersionHeader
                       workflowVersionId={objectRecordId}
                     />
                   )}
-                {(isPageHeaderV2Enabled ||
+                {(isCommandMenuV2Enabled ||
                   (objectNameSingular !== CoreObjectNameSingular.Workflow &&
                     objectNameSingular !==
                       CoreObjectNameSingular.WorkflowVersion)) && (
@@ -92,9 +90,7 @@ export const RecordShowPage = () => {
             </RecordShowPageHeader>
             <PageBody>
               <TimelineActivityContext.Provider
-                value={{
-                  labelIdentifierValue: pageName,
-                }}
+                value={{ labelIdentifierValue: pageName }}
               >
                 <RecordShowContainer
                   objectNameSingular={objectNameSingular}

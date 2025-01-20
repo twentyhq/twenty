@@ -2,9 +2,6 @@ import styled from '@emotion/styled';
 import { useIsMobile } from 'twenty-ui';
 
 const StyledSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex-shrink: 1;
@@ -13,6 +10,9 @@ const StyledSection = styled.div`
 const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
   isMobile: boolean;
 }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: calc(
     100% - ${({ isMobile, theme }) => (isMobile ? 0 : theme.spacing(2))}
   );

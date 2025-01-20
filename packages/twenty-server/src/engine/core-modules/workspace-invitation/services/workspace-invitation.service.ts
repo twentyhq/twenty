@@ -37,8 +37,6 @@ export class WorkspaceInvitationService {
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly environmentService: EnvironmentService,
@@ -47,32 +45,7 @@ export class WorkspaceInvitationService {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
-  // VALIDATIONS METHODS
-  private async validatePublicInvitation(workspaceInviteHash: string) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        inviteHash: workspaceInviteHash,
-      },
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (!workspace.isPublicInviteLinkEnabled) {
-      throw new AuthException(
-        'Workspace does not allow public invites',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    return { isValid: true, workspace };
-  }
-
-  private async validatePersonalInvitation({
+  async validatePersonalInvitation({
     workspacePersonalInviteToken,
     email,
   }: {
@@ -109,37 +82,11 @@ export class WorkspaceInvitationService {
     }
   }
 
-  async validateInvitation({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-    email,
-  }: {
-    workspacePersonalInviteToken?: string;
-    workspaceInviteHash?: string;
-    email: string;
-  }) {
-    if (workspacePersonalInviteToken) {
-      return await this.validatePersonalInvitation({
-        workspacePersonalInviteToken,
-        email,
-      });
-    }
-
-    if (workspaceInviteHash) {
-      return await this.validatePublicInvitation(workspaceInviteHash);
-    }
-
-    throw new AuthException(
-      'Invitation invalid',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-    );
-  }
-
   async findInvitationByWorkspaceSubdomainAndUserEmail({
     subdomain,
     email,
   }: {
-    subdomain?: string;
+    subdomain: string;
     email: string;
   }) {
     const workspace =

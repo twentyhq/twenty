@@ -1,5 +1,4 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { DateTime } from 'luxon';
 import { formatDateString } from '~/utils/string/formatDateString';
 
@@ -7,7 +6,6 @@ describe('formatDateString', () => {
   const defaultParams = {
     timeZone: 'UTC',
     dateFormat: DateFormat.DAY_FIRST,
-    timeFormat: TimeFormat.HOUR_24,
   };
 
   it('should return empty string for null value', () => {
@@ -49,7 +47,7 @@ describe('formatDateString', () => {
 
   it('should format date as datetime when displayAsRelativeDate is false', () => {
     const mockDate = '2023-01-01T12:00:00Z';
-    const mockFormattedDate = '1 Jan, 2023 12:00';
+    const mockFormattedDate = '1 Jan, 2023';
 
     jest.mock('@/localization/utils/formatDateISOStringToDateTime', () => ({
       formatDateISOStringToDateTime: jest
@@ -68,7 +66,7 @@ describe('formatDateString', () => {
 
   it('should format date as datetime by default when displayAsRelativeDate is not provided', () => {
     const mockDate = '2023-01-01T12:00:00Z';
-    const mockFormattedDate = '1 Jan, 2023 12:00';
+    const mockFormattedDate = '1 Jan, 2023';
 
     jest.mock('@/localization/utils/formatDateISOStringToDateTime', () => ({
       formatDateISOStringToDateTime: jest

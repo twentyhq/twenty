@@ -34,14 +34,10 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
       <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: componentInstanceId,
-        }}
+        value={{ instanceId: componentInstanceId }}
       >
         <ActionMenuComponentInstanceContext.Provider
-          value={{
-            instanceId: componentInstanceId,
-          }}
+          value={{ instanceId: componentInstanceId }}
         >
           <JestContextStoreSetter
             contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}

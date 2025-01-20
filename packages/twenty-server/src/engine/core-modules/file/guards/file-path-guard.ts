@@ -1,10 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -20,12 +14,16 @@ export class FilePathGuard implements CanActivate {
       return false;
     }
 
-    const payload = await this.jwtWrapperService.verifyWorkspaceToken(
-      query['token'],
-      'FILE',
-    );
+    try {
+      const payload = await this.jwtWrapperService.verifyWorkspaceToken(
+        query['token'],
+        'FILE',
+      );
 
-    if (!payload.workspaceId) {
+      if (!payload.workspaceId) {
+        return false;
+      }
+    } catch (error) {
       return false;
     }
 
@@ -33,32 +31,10 @@ export class FilePathGuard implements CanActivate {
       json: true,
     });
 
-    const expirationDate = decodedPayload?.['expirationDate'];
     const workspaceId = decodedPayload?.['workspaceId'];
-
-    const isExpired = await this.isExpired(expirationDate);
-
-    if (isExpired) {
-      return false;
-    }
 
     request.workspaceId = workspaceId;
 
     return true;
-  }
-
-  private async isExpired(expirationDate: string): Promise<boolean> {
-    if (!expirationDate) {
-      return true;
-    }
-
-    if (new Date(expirationDate) < new Date()) {
-      throw new HttpException(
-        'This url has expired. Please reload twenty page and open file again.',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    return false;
   }
 }

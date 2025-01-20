@@ -17,22 +17,24 @@ import { useSearchRecordGroupField } from '@/object-record/object-options-dropdo
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { getIcon } = useIcons();
 
   const {
+    viewType,
     currentContentId,
     recordIndexId,
     objectMetadataItem,
@@ -66,7 +68,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newSelectFieldSettingsUrl = getSettingsPagePath(
+  const newSelectFieldSettingsUrl = getSettingsPath(
     SettingsPath.ObjectNewFieldConfigure,
     {
       objectNamePlural,
@@ -121,11 +123,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          text="None"
-          selected={!isDefined(recordGroupFieldMetadata)}
-          onClick={handleResetRecordGroupField}
-        />
+        {viewType === ViewType.Table && (
+          <MenuItemSelect
+            text="None"
+            selected={!isDefined(recordGroupFieldMetadata)}
+            onClick={handleResetRecordGroupField}
+          />
+        )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}

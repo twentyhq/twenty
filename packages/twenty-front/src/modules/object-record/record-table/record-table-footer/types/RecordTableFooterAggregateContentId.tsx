@@ -1,4 +1,5 @@
 export type RecordTableFooterAggregateContentId =
   | 'moreAggregateOperationOptions'
   | 'countAggregateOperationsOptions'
-  | 'percentAggregateOperationsOptions';
+  | 'percentAggregateOperationsOptions'
+  | 'datesAggregateOperationsOptions';

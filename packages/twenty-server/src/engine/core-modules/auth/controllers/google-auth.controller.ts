@@ -11,7 +11,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -20,8 +23,7 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -30,9 +32,8 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
   ) {}
 
   @Get()
@@ -46,57 +47,64 @@ export class GoogleAuthController {
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
+    const {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      workspaceId,
+      billingCheckoutSessionState,
+    } = req.user;
+
+    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
+      workspaceId,
+      workspaceInviteHash,
+      email,
+      authProvider: 'google',
+    });
+
     try {
-      const {
-        firstName,
-        lastName,
-        email,
-        picture,
+      const invitation =
+        currentWorkspace && workspacePersonalInviteToken && email
+          ? await this.authService.findInvitationForSignInUp({
+              currentWorkspace,
+              workspacePersonalInviteToken,
+              email,
+            })
+          : undefined;
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      const { userData } = this.authService.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+        },
+        existingUser,
+      );
+
+      await this.authService.checkAccessForSignIn({
+        userData,
+        invitation,
         workspaceInviteHash,
-        workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
+        workspace: currentWorkspace,
+      });
+
+      const { user, workspace } = await this.authService.signInUp({
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: 'google',
+        },
         billingCheckoutSessionState,
-      } = req.user;
-
-      const signInUpParams = {
-        email,
-        firstName,
-        lastName,
-        picture,
-        workspaceInviteHash,
-        workspacePersonalInviteToken,
-        targetWorkspaceSubdomain,
-        fromSSO: true,
-        isAuthEnabled: 'google',
-      };
-
-      if (
-        this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        (targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
-          !targetWorkspaceSubdomain)
-      ) {
-        const workspaceWithGoogleAuthActive =
-          await this.workspaceRepository.findOne({
-            where: {
-              isGoogleAuthEnabled: true,
-              workspaceUsers: {
-                user: {
-                  email,
-                },
-              },
-            },
-            relations: ['workspaceUsers', 'workspaceUsers.user'],
-          });
-
-        if (workspaceWithGoogleAuthActive) {
-          signInUpParams.targetWorkspaceSubdomain =
-            workspaceWithGoogleAuthActive.subdomain;
-        }
-      }
-
-      const { user, workspace } =
-        await this.authService.signInUp(signInUpParams);
+      });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
@@ -104,24 +112,21 @@ export class GoogleAuthController {
       );
 
       return res.redirect(
-        this.authService.computeRedirectURI(
-          loginToken.token,
-          workspace.subdomain,
+        this.authService.computeRedirectURI({
+          loginToken: loginToken.token,
+          subdomain: workspace.subdomain,
           billingCheckoutSessionState,
-        ),
+        }),
       );
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl({
-            subdomain:
-              req.user.targetWorkspaceSubdomain ??
-              this.environmentService.get('DEFAULT_SUBDOMAIN'),
-            errorMessage: err.message,
+          this.domainManagerService.computeRedirectErrorUrl(err.message, {
+            subdomain: currentWorkspace?.subdomain,
           }),
         );
       }
-      throw err;
+      throw new AuthException(err, AuthExceptionCode.INTERNAL_SERVER_ERROR);
     }
   }
 }

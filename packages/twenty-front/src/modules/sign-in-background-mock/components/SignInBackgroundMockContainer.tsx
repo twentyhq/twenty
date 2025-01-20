@@ -42,9 +42,7 @@ export const SignInBackgroundMockContainer = () => {
           value={{ instanceId: recordIndexId }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{
-              instanceId: recordIndexId,
-            }}
+            value={{ instanceId: recordIndexId }}
           >
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}

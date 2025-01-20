@@ -25,6 +25,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -43,6 +44,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -79,6 +81,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
+    EmailVerificationModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -103,6 +106,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     SwitchWorkspaceService,
     TransientTokenService,
     ApiKeyService,
+    SocialSsoService,
     // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
     // OAuthService,
   ],

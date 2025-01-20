@@ -1,8 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 import { useCallback } from 'react';
-import { IconChevronDown, isDefined, Tag } from 'twenty-ui';
+import {
+  AnimatedLightIconButton,
+  IconChevronDown,
+  isDefined,
+  Tag,
+} from 'twenty-ui';
 
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -28,6 +32,11 @@ const StyledChevronContainer = styled(RecordTableTd)`
   vertical-align: middle;
 `;
 
+const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+  display: block;
+  margin: auto;
+`;
+
 const StyledTotalRow = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -38,6 +47,8 @@ const StyledTotalRow = styled.span`
 const StyledRecordGroupSection = styled(RecordTableTd)`
   border-right: none;
   height: 32px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledEmptyTd = styled.td`
@@ -82,17 +93,15 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <td aria-hidden />
       <StyledChevronContainer>
-        <motion.span
+        <StyledAnimatedLightIconButton
+          Icon={IconChevronDown}
+          size="small"
+          accent="secondary"
           animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{ duration: theme.animation.duration.normal }}
-          style={{
-            display: 'inline-block',
-          }}
-        >
-          <IconChevronDown size={theme.icon.size.md} />
-        </motion.span>
+        />
       </StyledChevronContainer>
-      <StyledRecordGroupSection>
+      <StyledRecordGroupSection className="disable-shadow">
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue

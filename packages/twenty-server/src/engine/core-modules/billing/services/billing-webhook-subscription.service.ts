@@ -2,27 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
 import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
     BillingWebhookSubscriptionService.name,
   );
   constructor(
-    private readonly stripeService: StripeService,
+    private readonly stripeCustomerService: StripeCustomerService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem, 'core')
@@ -45,7 +43,7 @@ export class BillingWebhookSubscriptionService {
     });
 
     if (!workspace) {
-      return;
+      return { noWorkspace: true };
     }
 
     await this.billingCustomerRepository.upsert(
@@ -88,10 +86,11 @@ export class BillingWebhookSubscriptionService {
 
     if (
       data.object.status === SubscriptionStatus.Canceled ||
-      data.object.status === SubscriptionStatus.Unpaid
+      data.object.status === SubscriptionStatus.Unpaid ||
+      data.object.status === SubscriptionStatus.Paused
     ) {
       await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.INACTIVE,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       });
     }
 
@@ -99,16 +98,21 @@ export class BillingWebhookSubscriptionService {
       (data.object.status === SubscriptionStatus.Active ||
         data.object.status === SubscriptionStatus.Trialing ||
         data.object.status === SubscriptionStatus.PastDue) &&
-      workspace.activationStatus == WorkspaceActivationStatus.INACTIVE
+      workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
     }
 
-    await this.stripeService.updateCustomerMetadataWorkspaceId(
+    await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(
       String(data.object.customer),
       workspaceId,
     );
+
+    return {
+      stripeSubscriptionId: data.object.id,
+      stripeCustomerId: data.object.customer,
+    };
   }
 }

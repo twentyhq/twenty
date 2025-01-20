@@ -1,38 +1,28 @@
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { H2Title, Section } from 'twenty-ui';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useNavigate } from 'react-router-dom';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isDefined } from '~/utils/isDefined';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { Controller, useForm } from 'react-hook-form';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { H2Title, Section } from 'twenty-ui';
+import { z } from 'zod';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const validationSchema = z
-  .object({
-    subdomain: z
-      .string()
-      .min(3, { message: 'Subdomain can not be shorter than 3 characters' })
-      .max(30, { message: 'Subdomain can not be longer than 30 characters' })
-      .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
-        message:
-          'Use letter, number and dash only. Start and finish with a letter or a number',
-      }),
-  })
-  .required();
-
-type Form = z.infer<typeof validationSchema>;
+type Form = {
+  subdomain: string;
+};
 
 const StyledDomainFromWrapper = styled.div`
   align-items: center;
@@ -48,7 +38,20 @@ const StyledDomain = styled.h2`
 `;
 
 export const SettingsDomain = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
+  const { t } = useLingui();
+
+  const validationSchema = z
+    .object({
+      subdomain: z
+        .string()
+        .min(3, { message: t`Subdomain can not be shorter than 3 characters` })
+        .max(30, { message: t`Subdomain can not be longer than 30 characters` })
+        .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+          message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
+        }),
+    })
+    .required();
 
   const domainConfiguration = useRecoilValue(domainConfigurationState);
 
@@ -81,7 +84,7 @@ export const SettingsDomain = () => {
       const values = getValues();
 
       if (!values || !isValid || !currentWorkspace) {
-        throw new Error('Invalid form values');
+        throw new Error(t`Invalid form values`);
       }
 
       await updateWorkspace({
@@ -101,8 +104,8 @@ export const SettingsDomain = () => {
     } catch (error) {
       if (
         error instanceof Error &&
-        (error.message === 'Subdomain already taken' ||
-          error.message.endsWith('not allowed'))
+        (error.message === t`Subdomain already taken` ||
+          error.message.endsWith(t`not allowed`))
       ) {
         control.setError('subdomain', {
           type: 'manual',
@@ -119,24 +122,24 @@ export const SettingsDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="General"
+      title={t`Domain`}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: 'General',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>General</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Domain' },
+        { children: <Trans>Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
             !isValid || subdomainValue === currentWorkspace?.subdomain
           }
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
+          onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
         />
       }
@@ -144,8 +147,8 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title="Domain"
-            description="Set the name of your subdomain"
+            title={t`Domain`}
+            description={t`Set the name of your subdomain`}
           />
           {currentWorkspace?.subdomain && (
             <StyledDomainFromWrapper>

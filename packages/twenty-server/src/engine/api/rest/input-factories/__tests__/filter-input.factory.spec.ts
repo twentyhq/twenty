@@ -47,7 +47,7 @@ describe('FilterInputFactory', () => {
       };
 
       expect(() => service.create(request, objectMetadata)).toThrow(
-        "'filter' invalid for 'fieldNumber[wrongComparator]:1', comparator wrongComparator not in eq,neq,in,is,gt,gte,lt,lte,startsWith,like,ilike",
+        "'filter' invalid for 'fieldNumber[wrongComparator]:1', comparator wrongComparator not in eq, neq, in, containsAny, is, gt, gte, lt, lte, startsWith, like, ilike",
       );
     });
 

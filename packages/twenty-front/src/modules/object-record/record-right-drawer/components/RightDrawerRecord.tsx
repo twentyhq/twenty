@@ -12,12 +12,14 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 
-const StyledRightDrawerRecord = styled.div`
-  height: ${({ theme }) =>
-    useIsMobile() ? `calc(100% - ${theme.spacing(16)})` : '100%'};
+const StyledRightDrawerRecord = styled.div<{ isMobile: boolean }>`
+  height: ${({ theme, isMobile }) =>
+    isMobile ? `calc(100% - ${theme.spacing(16)})` : '100%'};
 `;
 
 export const RightDrawerRecord = () => {
+  const isMobile = useIsMobile();
+
   const viewableRecordNameSingular = useRecoilValue(
     viewableRecordNameSingularState,
   );
@@ -48,7 +50,7 @@ export const RightDrawerRecord = () => {
       <ActionMenuComponentInstanceContext.Provider
         value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <StyledRightDrawerRecord>
+        <StyledRightDrawerRecord isMobile={isMobile}>
           <RecordFieldValueSelectorContextProvider>
             {!isNewViewableRecordLoading && (
               <RecordValueSetterEffect recordId={objectRecordId} />
