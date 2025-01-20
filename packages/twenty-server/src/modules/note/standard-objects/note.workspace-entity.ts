@@ -7,6 +7,7 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -33,10 +34,12 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 
 const TITLE_FIELD_NAME = 'title';
 const BODY_FIELD_NAME = 'body';
+const BODY_V2_FIELD_NAME = 'bodyV2';
 
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
@@ -79,6 +82,16 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   [BODY_FIELD_NAME]: string | null;
+
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
+    type: FieldMetadataType.RICH_TEXT_V2,
+    label: 'Body',
+    description: 'Note body',
+    icon: 'IconFilePencil',
+  })
+  @WorkspaceIsNullable()
+  [BODY_V2_FIELD_NAME]: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,

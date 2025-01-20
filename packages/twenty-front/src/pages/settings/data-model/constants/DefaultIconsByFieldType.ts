@@ -23,5 +23,6 @@ export const DEFAULT_ICONS_BY_FIELD_TYPE: Record<FieldMetadataType, string> = {
   [FieldMetadataType.Numeric]: 'IconUsers',
   [FieldMetadataType.Position]: 'IconUsers',
   [FieldMetadataType.RichText]: 'IconUsers',
+  [FieldMetadataType.RichTextV2]: 'IconUsers',
   [FieldMetadataType.TsVector]: 'IconUsers',
 };

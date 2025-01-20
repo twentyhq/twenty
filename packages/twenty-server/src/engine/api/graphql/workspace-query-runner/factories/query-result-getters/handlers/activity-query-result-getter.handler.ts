@@ -17,11 +17,13 @@ export class ActivityQueryResultGetterHandler
     activity: TaskWorkspaceEntity | NoteWorkspaceEntity,
     workspaceId: string,
   ): Promise<TaskWorkspaceEntity | NoteWorkspaceEntity> {
-    if (!activity.id || !activity.body) {
+    const rawBody = activity.bodyV2?.blocknote || activity.body;
+
+    if (!activity.id || !rawBody) {
       return activity;
     }
 
-    const body: RichTextBody = JSON.parse(activity.body);
+    const body: RichTextBody = JSON.parse(rawBody);
 
     const bodyWithSignedPayload = await Promise.all(
       body.map(async (block: RichTextBlock) => {
@@ -52,6 +54,10 @@ export class ActivityQueryResultGetterHandler
     return {
       ...activity,
       body: JSON.stringify(bodyWithSignedPayload),
+      bodyV2: {
+        blocknote: JSON.stringify(bodyWithSignedPayload),
+        markdown: activity.bodyV2?.markdown ?? null,
+      },
     };
   }
 }

@@ -94,6 +94,10 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.TS_VECTOR,
         { factory: this.tsVectorColumnActionFactory },
       ],
+      [
+        FieldMetadataType.RICH_TEXT_V2,
+        { factory: this.compositeColumnActionFactory },
+      ],
     ]);
   }
 

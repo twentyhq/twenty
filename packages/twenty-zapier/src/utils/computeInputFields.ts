@@ -223,6 +223,7 @@ export const computeInputFields = (
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.LINKS:
       case FieldMetadataType.ADDRESS:
+      case FieldMetadataType.RICH_TEXT_V2:
         for (const subNodeField of get_subfieldsFromField(nodeField)) {
           const field = {
             key: `${nodeField.name}__${subNodeField.name}`,

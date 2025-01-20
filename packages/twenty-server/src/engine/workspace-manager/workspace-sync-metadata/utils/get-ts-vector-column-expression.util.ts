@@ -14,6 +14,7 @@ import {
   isSearchableFieldType,
   SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { isSearchableSubfield } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-subfield.util';
 
 export type FieldTypeAndNameMetadata = {
   name: string;
@@ -55,7 +56,9 @@ const getColumnExpressionsFromField = (
     }
 
     return compositeType.properties
-      .filter((property) => property.type === FieldMetadataType.TEXT)
+      .filter((property) =>
+        isSearchableSubfield(compositeType.type, property.type, property.name),
+      )
       .map((property) => {
         const columnName = computeCompositeColumnName(
           fieldMetadataTypeAndName,
@@ -88,6 +91,16 @@ const getColumnExpression = (
         ''
       )
     `;
+    /* case FieldMetadataType.RICH_TEXT_V2:
+      return `
+        COALESCE(
+          CASE
+            WHEN to_regclass('${columnName}') IS NOT NULL THEN ${quotedColumnName}
+            ELSE NULL
+          END,
+          ''
+        )
+      `; */
     default:
       return `COALESCE(${quotedColumnName}, '')`;
   }
