@@ -5,7 +5,6 @@ import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInU
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -18,6 +17,7 @@ import {
 import { isDefined } from '~/utils/isDefined';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -32,9 +32,9 @@ export const Invite = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUser = useRecoilValue(currentUserState);
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const [addUserToWorkspaceByInviteToken] =
     useAddUserToWorkspaceByInviteTokenMutation();
-  const { switchWorkspace } = useWorkspaceSwitching();
   const [searchParams] = useSearchParams();
   const workspaceInviteToken = searchParams.get('inviteToken');
 
@@ -62,7 +62,9 @@ export const Invite = () => {
       return;
     }
 
-    await switchWorkspace(workspaceFromInviteHash.id);
+    if (isDefined(workspaceFromInviteHash)) {
+      redirectToWorkspaceDomain(workspaceFromInviteHash.subdomain);
+    }
   };
 
   if (
