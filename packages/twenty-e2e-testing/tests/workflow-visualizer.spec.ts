@@ -13,9 +13,7 @@ test('Create workflow with every possible step', async ({
   await workflowVisualizer.createStep('code');
   await workflowVisualizer.createStep('send-email');
 
-  const workflowVisualizerBackground = page.locator('.react-flow__pane');
-
-  await workflowVisualizerBackground.click();
+  await workflowVisualizer.background.click();
 
   const draftWorkflowStatus =
     workflowVisualizer.workflowStatus.getByText('Draft');
@@ -104,4 +102,42 @@ test('Delete steps from draft version', async ({
   ]);
 
   await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(0);
+});
+
+test('Add a step to an active version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
+
+  await workflowVisualizer.createStep('create-record');
+
+  await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await expect(workflowVisualizer.activateWorkflowButton).not.toBeVisible();
+
+  const assertEndState = async () => {
+    await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
+    await expect(workflowVisualizer.triggerNode).toContainText(
+      'Record is Created',
+    );
+    await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+      'Create Record',
+    ]);
+    await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  };
+
+  await assertEndState();
+
+  await page.reload();
+
+  await assertEndState();
 });

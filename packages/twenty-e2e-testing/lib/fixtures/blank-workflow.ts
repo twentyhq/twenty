@@ -31,6 +31,7 @@ export class WorkflowVisualizerPage {
   readonly commandMenu: Locator;
   readonly workflowNameButton: Locator;
   readonly triggerNode: Locator;
+  readonly background: Locator;
 
   #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
@@ -80,6 +81,7 @@ export class WorkflowVisualizerPage {
       name: this.workflowName,
     });
     this.triggerNode = this.#page.getByTestId('rf__node-trigger');
+    this.background = page.locator('.react-flow__pane');
   }
 
   async createOneWorkflow() {
