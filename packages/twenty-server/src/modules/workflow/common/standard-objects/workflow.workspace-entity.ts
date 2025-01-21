@@ -1,11 +1,12 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -13,7 +14,6 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -25,7 +25,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -63,9 +62,6 @@ const WorkflowStatusOptions: FieldMetadataComplexOption[] = [
   icon: STANDARD_OBJECT_ICONS.workflow,
   shortcut: 'W',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
-})
-@WorkspaceGate({
-  featureFlag: FeatureFlagKey.IsWorkflowEnabled,
 })
 export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

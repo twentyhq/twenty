@@ -1,12 +1,14 @@
 import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
@@ -17,6 +19,7 @@ const StyledInputContainer = styled.div`
   border-radius: 0;
 
   display: flex;
+  justify-content: space-between;
   font-size: ${({ theme }) => theme.font.size.lg};
   height: ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px;
   margin: 0;
@@ -25,6 +28,7 @@ const StyledInputContainer = styled.div`
 
   padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
   gap: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 0;
 `;
 
 const StyledInput = styled.input`
@@ -43,6 +47,13 @@ const StyledInput = styled.input`
     color: ${({ theme }) => theme.font.color.light};
     font-weight: ${({ theme }) => theme.font.weight.medium};
   }
+`;
+
+const StyledContentContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledCloseButtonContainer = styled.div`
@@ -69,19 +80,25 @@ export const CommandMenuTopBar = () => {
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   return (
     <StyledInputContainer>
-      {isDefined(contextStoreCurrentObjectMetadataId) && (
-        <CommandMenuContextRecordChip
-          objectMetadataItemId={contextStoreCurrentObjectMetadataId}
-        />
-      )}
-      <StyledInput
-        autoFocus
-        value={commandMenuSearch}
-        placeholder="Type anything"
-        onChange={handleSearchChange}
-      />
+      <StyledContentContainer>
+        {isDefined(contextStoreCurrentObjectMetadataId) && (
+          <CommandMenuContextRecordChip
+            objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+          />
+        )}
+        {commandMenuPage === CommandMenuPages.Root && (
+          <StyledInput
+            autoFocus
+            value={commandMenuSearch}
+            placeholder="Type anything"
+            onChange={handleSearchChange}
+          />
+        )}
+      </StyledContentContainer>
       {!isMobile && (
         <StyledCloseButtonContainer>
           <LightIconButton

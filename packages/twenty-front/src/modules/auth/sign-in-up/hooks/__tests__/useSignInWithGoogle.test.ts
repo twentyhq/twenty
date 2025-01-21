@@ -16,10 +16,9 @@ jest.mock('@/auth/hooks/useAuth', () => ({
 
 describe('useSignInWithGoogle', () => {
   const mockBillingCheckoutSession = {
-    plan: BillingPlanKey.Pro,
+    plan: BillingPlanKey.PRO,
     interval: SubscriptionInterval.Month,
     requirePaymentMethod: true,
-    skipPlanPage: false,
   };
 
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -31,7 +30,7 @@ describe('useSignInWithGoogle', () => {
     const mockUseParams = { workspaceInviteHash: 'testHash' };
 
     const mockSearchParams = new URLSearchParams(
-      'inviteToken=testToken&billingCheckoutSessionState={"plan":"Pro","interval":"Month","requirePaymentMethod":true,"skipPlanPage":false}',
+      'inviteToken=testToken&billingCheckoutSessionState={"plan":"Pro","interval":"Month","requirePaymentMethod":true}',
     );
 
     (useParams as jest.Mock).mockReturnValue(mockUseParams);

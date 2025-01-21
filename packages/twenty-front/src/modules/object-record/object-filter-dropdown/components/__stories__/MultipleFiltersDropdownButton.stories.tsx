@@ -4,7 +4,6 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
@@ -49,7 +48,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           isVisible: true,
           metadata: {
             fieldName: 'text',
@@ -59,7 +58,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           isVisible: true,
           metadata: {
             fieldName: 'number',
@@ -69,7 +68,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '4',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           isVisible: true,
           metadata: {
             fieldName: 'date',
@@ -82,19 +81,19 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         },
       ]);
       return (
@@ -115,9 +114,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
               value={{ instanceId: instanceId, onColumnsChange: () => {} }}
             >
               <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <ObjectFilterDropdownScope filterScopeId={instanceId}>
-                  <Story />
-                </ObjectFilterDropdownScope>
+                <Story />
               </ViewComponentInstanceContext.Provider>
             </RecordTableComponentInstanceContext.Provider>
           </ObjectFilterDropdownComponentInstanceContext.Provider>

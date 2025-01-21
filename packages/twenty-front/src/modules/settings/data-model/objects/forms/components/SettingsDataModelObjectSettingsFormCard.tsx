@@ -11,6 +11,7 @@ import {
   SettingsDataModelObjectIdentifiersForm,
   SettingsDataModelObjectIdentifiersFormValues,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
+import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
@@ -57,7 +58,9 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   return (
     <Card fullWidth>
       <StyledTopCardContent divider>
-        <SettingsDataModelCardTitle>Preview</SettingsDataModelCardTitle>
+        <SettingsDataModelCardTitle>
+          <Trans>Preview</Trans>
+        </SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
             objectMetadataItem={objectMetadataItem}

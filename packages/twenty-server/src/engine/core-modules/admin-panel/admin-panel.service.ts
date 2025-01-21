@@ -8,13 +8,18 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagException,
+  FeatureFlagExceptionCode,
+} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Injectable()
 export class AdminPanelService {
@@ -44,14 +49,9 @@ export class AdminPanelService {
 
     userValidator.assertIsDefinedOrThrow(
       user,
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
-    );
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      user.workspaces[0].workspace,
       new AuthException(
-        'Impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        'User not found or impersonation not enable on workspace',
+        AuthExceptionCode.INVALID_INPUT,
       ),
     );
 
@@ -125,6 +125,14 @@ export class AdminPanelService {
     featureFlag: FeatureFlagKey,
     value: boolean,
   ) {
+    featureFlagValidator.assertIsFeatureFlagKey(
+      featureFlag,
+      new FeatureFlagException(
+        'Invalid feature flag key',
+        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+      ),
+    );
+
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['featureFlags'],
@@ -136,14 +144,14 @@ export class AdminPanelService {
     );
 
     const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === featureFlag,
+      (flag) => flag.key === FeatureFlagKey[featureFlag],
     );
 
     if (existingFlag) {
       await this.featureFlagRepository.update(existingFlag.id, { value });
     } else {
       await this.featureFlagRepository.save({
-        key: featureFlag,
+        key: FeatureFlagKey[featureFlag],
         value,
         workspaceId: workspace.id,
       });

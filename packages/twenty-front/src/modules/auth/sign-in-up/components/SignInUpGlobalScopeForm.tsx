@@ -26,6 +26,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -48,6 +49,10 @@ export const SignInUpGlobalScopeForm = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+
+  const isRequestingCaptchaToken = useRecoilValue(
+    isRequestingCaptchaTokenState,
+  );
 
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -118,8 +123,8 @@ export const SignInUpGlobalScopeForm = () => {
                 signInUpMode={signInUpMode}
               />
             )}
-
             <MainButton
+              disabled={isRequestingCaptchaToken}
               title={
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }

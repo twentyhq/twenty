@@ -1,10 +1,12 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { capitalize } from 'twenty-shared';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type NameForAggregation = {
-  [T in AGGREGATE_OPERATIONS]?: string;
+  [T in ExtendedAggregateOperations]?: string;
 };
 
 type Aggregations = {
@@ -19,7 +21,7 @@ export const getAvailableAggregationsFromObjectFields = (
       return acc;
     }
 
-    if (field.type === FieldMetadataType.Relation) {
+    if (field.type === FieldMetadataType.RELATION) {
       acc[field.name] = {
         [AGGREGATE_OPERATIONS.count]: 'totalCount',
       };
@@ -35,7 +37,7 @@ export const getAvailableAggregationsFromObjectFields = (
       [AGGREGATE_OPERATIONS.count]: 'totalCount',
     };
 
-    if (field.type === FieldMetadataType.Number) {
+    if (field.type === FieldMetadataType.NUMBER) {
       acc[field.name] = {
         ...acc[field.name],
         [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
@@ -45,7 +47,7 @@ export const getAvailableAggregationsFromObjectFields = (
       };
     }
 
-    if (field.type === FieldMetadataType.Currency) {
+    if (field.type === FieldMetadataType.CURRENCY) {
       acc[field.name] = {
         ...acc[field.name],
         [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}AmountMicros`,
@@ -55,11 +57,11 @@ export const getAvailableAggregationsFromObjectFields = (
       };
     }
 
-    if (field.type === FieldMetadataType.DateTime) {
+    if (isFieldMetadataDateKind(field.type) === true) {
       acc[field.name] = {
         ...acc[field.name],
-        [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.max]: `max${capitalize(field.name)}`,
+        [DATE_AGGREGATE_OPERATIONS.earliest]: `min${capitalize(field.name)}`,
+        [DATE_AGGREGATE_OPERATIONS.latest]: `max${capitalize(field.name)}`,
       };
     }
 

@@ -13,7 +13,6 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
-
 export const useWorkflowRunRecordActions = ({
   objectMetadataItem,
 }: {

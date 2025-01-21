@@ -10,7 +10,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     id: '9a6b35f1-6078-415b-9540-f62671bb81d0',
     isFullDay: false,
     startsAt: addDays(new Date().setHours(10, 0), 1).toISOString(),
-    visibility: CalendarChannelVisibility.Metadata,
+    visibility: CalendarChannelVisibility.METADATA,
     calendarEventParticipants: [
       {
         id: '1',
@@ -44,7 +44,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: new Date(new Date().setHours(18, 0)).toISOString(),
     title: 'Bug solving',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     __typename: 'CalendarEvent',
   },
   {
@@ -54,7 +54,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: new Date(new Date().setHours(15, 15)).toISOString(),
     title: 'Onboarding Follow-Up Call',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     __typename: 'CalendarEvent',
   },
   {
@@ -64,7 +64,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: new Date(new Date().setHours(10, 0)).toISOString(),
     title: 'Onboarding Call',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     __typename: 'CalendarEvent',
   },
   {
@@ -72,7 +72,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     id: '5a792d11-259a-4099-af51-59eb85e15d83',
     isFullDay: true,
     startsAt: subMonths(new Date().setHours(8, 0), 1).toISOString(),
-    visibility: CalendarChannelVisibility.Metadata,
+    visibility: CalendarChannelVisibility.METADATA,
     __typename: 'CalendarEvent',
   },
   {
@@ -82,7 +82,7 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: subMonths(new Date().setHours(14, 0), 3).toISOString(),
     title: 'Alan x Garry',
-    visibility: CalendarChannelVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     __typename: 'CalendarEvent',
   },
 ];

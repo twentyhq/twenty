@@ -57,11 +57,11 @@ export const NavigationDrawerHeader = ({
     isNavigationDrawerExpandedState,
   );
 
+  const isMultiWorkspace = isMultiWorkspaceEnabled && workspaces.length > 1;
+
   return (
     <StyledContainer>
-      {isMultiWorkspaceEnabled &&
-      workspaces !== null &&
-      workspaces.length > 1 ? (
+      {isMultiWorkspace ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>

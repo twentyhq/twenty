@@ -11,10 +11,6 @@ export const AppRouter = () => {
   const isFreeAccessEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFreeAccessEnabled,
   );
-  const isCRMMigrationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCrmMigrationEnabled,
-  );
-  const isSSOEnabled = useIsFeatureEnabled(FeatureFlagKey.IsSsoEnabled);
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFunctionSettingsEnabled,
   );
@@ -30,9 +26,7 @@ export const AppRouter = () => {
     <RouterProvider
       router={useCreateAppRouter(
         isBillingPageEnabled,
-        isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
-        isSSOEnabled,
         isAdminPageEnabled,
       )}
     />

@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -17,6 +18,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
+  const { closeCommandMenu } = useCommandMenu();
+
   const setHotkeyScope = useSetHotkeyScope();
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
@@ -28,7 +31,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       if (isClosingStep) {
         closeRightDrawer();
-
+        closeCommandMenu();
         return;
       }
 
@@ -55,10 +58,11 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     },
     [
-      setHotkeyScope,
-      closeRightDrawer,
-      openRightDrawer,
       setWorkflowSelectedNode,
+      setHotkeyScope,
+      openRightDrawer,
+      closeRightDrawer,
+      closeCommandMenu,
       startNodeCreation,
     ],
   );

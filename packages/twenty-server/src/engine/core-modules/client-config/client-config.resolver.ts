@@ -2,6 +2,7 @@ import { Query, Resolver } from '@nestjs/graphql';
 
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 
 import { ClientConfig } from './client-config.entity';
 
@@ -18,9 +19,20 @@ export class ClientConfigResolver {
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
         billingUrl: this.environmentService.get('BILLING_PLAN_REQUIRED_LINK'),
-        billingFreeTrialDurationInDays: this.environmentService.get(
-          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
-        ),
+        trialPeriods: [
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: true,
+          },
+          {
+            duration: this.environmentService.get(
+              'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+            ),
+            isCreditCardRequired: false,
+          },
+        ],
       },
       authProviders: {
         google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
@@ -29,10 +41,12 @@ export class ClientConfigResolver {
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       },
-      isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
       isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isEmailVerificationRequired: this.environmentService.get(
+        'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
@@ -59,6 +73,10 @@ export class ClientConfigResolver {
         ),
       },
       analyticsEnabled: this.environmentService.get('ANALYTICS_ENABLED'),
+      canManageFeatureFlags:
+        this.environmentService.get('DEBUG_MODE') ||
+        this.environmentService.get('IS_BILLING_ENABLED'),
+      publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
     };
 
     return Promise.resolve(clientConfig);
