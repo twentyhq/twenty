@@ -160,6 +160,10 @@ export const queries = {
           status
           interval
         }
+        billingSubscriptions {
+          id
+          status
+        }
         workspaceMembersCount
       }
       workspaces {
@@ -300,6 +304,8 @@ export const responseData = {
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
       },
+      currentBillingSubscription: null,
+      billingSubscriptions: [],
       workspaces: [],
       userVars: null,
     },
