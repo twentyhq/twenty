@@ -36,12 +36,14 @@ export const useRequestFreshCaptchaToken = () => {
 
         switch (captchaProvider.provider) {
           case CaptchaDriverType.GoogleRecaptcha:
-            setCaptchaToken(
-              await window.grecaptcha.execute(captchaProvider.siteKey, {
+            window.grecaptcha
+              .execute(captchaProvider.siteKey, {
                 action: 'submit',
-              }),
-            );
-            setIsRequestingCaptchaToken(false);
+              })
+              .then((token: string) => {
+                setCaptchaToken(token);
+                setIsRequestingCaptchaToken(false);
+              });
             break;
           case CaptchaDriverType.Turnstile:
             // TODO: fix workspace-no-hardcoded-colors rule
