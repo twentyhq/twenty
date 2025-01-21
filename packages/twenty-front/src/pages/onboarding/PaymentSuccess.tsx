@@ -71,7 +71,7 @@ export const PaymentSuccess = () => {
     );
   };
 
-  if (onboardingStatus === OnboardingStatus.Completed) {
+  if (onboardingStatus === OnboardingStatus.COMPLETED) {
     return <></>;
   }
 

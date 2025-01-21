@@ -9,7 +9,7 @@ describe('isSelectOptionDefaultValue', () => {
       const optionValue = 'OPTION_1';
       const fieldMetadataItem = {
         defaultValue: `'${optionValue}'`,
-        type: FieldMetadataType.Select,
+        type: FieldMetadataType.SELECT,
       };
 
       // When
@@ -24,7 +24,7 @@ describe('isSelectOptionDefaultValue', () => {
       const optionValue = 'OPTION_1';
       const fieldMetadataItem = {
         defaultValue: "'OPTION_2'",
-        type: FieldMetadataType.Select,
+        type: FieldMetadataType.SELECT,
       };
 
       // When
@@ -41,7 +41,7 @@ describe('isSelectOptionDefaultValue', () => {
       const optionValue = 'OPTION_1';
       const fieldMetadataItem = {
         defaultValue: ["'OPTION_1'", "'OPTION_2'"],
-        type: FieldMetadataType.MultiSelect,
+        type: FieldMetadataType.MULTI_SELECT,
       };
 
       // When
@@ -56,7 +56,7 @@ describe('isSelectOptionDefaultValue', () => {
       const optionValue = 'OPTION_1';
       const fieldMetadataItem = {
         defaultValue: ["'OPTION_2'", "'OPTION_3'"],
-        type: FieldMetadataType.MultiSelect,
+        type: FieldMetadataType.MULTI_SELECT,
       };
 
       // When

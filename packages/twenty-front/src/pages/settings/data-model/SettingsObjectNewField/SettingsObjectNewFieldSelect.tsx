@@ -41,14 +41,14 @@ export const SettingsObjectNewFieldSelect = () => {
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.TEXT,
     },
   });
   const excludedFieldTypes: SettingsFieldType[] = (
     [
-      FieldMetadataType.Numeric,
-      FieldMetadataType.RichText,
-      FieldMetadataType.Actor,
+      FieldMetadataType.NUMERIC,
+      FieldMetadataType.RICH_TEXT,
+      FieldMetadataType.ACTOR,
     ] as const
   ).filter(isDefined);
 
