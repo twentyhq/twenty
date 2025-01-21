@@ -185,7 +185,6 @@ export const queries = {
           displayName
           domainName
           subdomain
-          creatorEmail
         }
       }
       userVars
