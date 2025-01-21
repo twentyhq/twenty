@@ -94,7 +94,7 @@ export const WorkflowEditActionFormCreateRecord = ({
   const inlineFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.Relation &&
+        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive,
     )

@@ -8,7 +8,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
   fieldName: string,
 ): FieldValidationDefinition[] => {
   switch (type) {
-    case FieldMetadataType.FullName:
+    case FieldMetadataType.FULL_NAME:
       return [
         {
           rule: 'object',
@@ -30,7 +30,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
           level: 'error',
         },
       ];
-    case FieldMetadataType.Number:
+    case FieldMetadataType.NUMBER:
       return [
         {
           rule: 'function',
@@ -39,7 +39,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
           level: 'error',
         },
       ];
-    case FieldMetadataType.Relation:
+    case FieldMetadataType.RELATION:
       return [
         {
           rule: 'function',

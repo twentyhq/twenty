@@ -171,7 +171,7 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
     return <></>;
   }
 

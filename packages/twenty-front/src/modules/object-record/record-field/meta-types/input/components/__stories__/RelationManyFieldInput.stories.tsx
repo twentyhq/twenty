@@ -46,7 +46,7 @@ const RelationManyFieldInputWithContext = () => {
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'People',
-          type: FieldMetadataType.Relation,
+          type: FieldMetadataType.RELATION,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'people',
