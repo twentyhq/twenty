@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1513,7 +1513,7 @@ export type WorkflowRun = {
 
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
-  workflowVersionId: Scalars['UUID'];
+  id: Scalars['UUID'];
 };
 
 export type Workspace = {
@@ -2202,7 +2202,7 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
 }>;
 
 
-export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', workflowVersionId: any } };
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: any } };
 
 export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
@@ -4118,7 +4118,7 @@ export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<
 export const CreateDraftFromWorkflowVersionDocument = gql`
     mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
   createDraftFromWorkflowVersion(input: $input) {
-    workflowVersionId
+    id
   }
 }
     `;

@@ -5,5 +5,5 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @ObjectType('WorkflowVersion')
 export class WorkflowVersionDTO {
   @Field(() => UUIDScalarType)
-  workflowVersionId: string;
+  id: string;
 }

@@ -5,7 +5,7 @@ export const CREATE_DRAFT_FROM_WORKFLOW_VERSION = gql`
     $input: CreateDraftFromWorkflowVersionInput!
   ) {
     createDraftFromWorkflowVersion(input: $input) {
-      workflowVersionId
+      id
     }
   }
 `;

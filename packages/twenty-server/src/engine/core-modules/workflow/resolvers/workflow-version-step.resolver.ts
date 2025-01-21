@@ -71,14 +71,13 @@ export class WorkflowVersionStepResolver {
     }: CreateDraftFromWorkflowVersionInput,
   ): Promise<WorkflowVersionDTO> {
     return {
-      workflowVersionId:
-        await this.workflowVersionStepWorkspaceService.createDraftFromWorkflowVersion(
-          {
-            workspaceId,
-            workflowId,
-            workflowVersionIdToCopy,
-          },
-        ),
+      id: await this.workflowVersionStepWorkspaceService.createDraftFromWorkflowVersion(
+        {
+          workspaceId,
+          workflowId,
+          workflowVersionIdToCopy,
+        },
+      ),
     };
   }
 }

@@ -41,7 +41,7 @@ export const useCreateDraftFromWorkflowVersion = () => {
       ],
     });
 
-    return result?.data?.createDraftFromWorkflowVersion.workflowVersionId;
+    return result?.data?.createDraftFromWorkflowVersion.id;
   };
 
   return {

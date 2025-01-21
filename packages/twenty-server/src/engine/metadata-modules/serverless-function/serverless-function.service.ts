@@ -58,6 +58,10 @@ export class ServerlessFunctionService {
     return this.serverlessFunctionRepository.findBy(where);
   }
 
+  async findOneByOrFail(where) {
+    return this.serverlessFunctionRepository.findOneByOrFail(where);
+  }
+
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
     return await this.serverlessFunctionRepository.exists({
       where: {
@@ -367,7 +371,7 @@ export class ServerlessFunctionService {
     });
   }
 
-  async resetServerlessFunctionToOldVersion({
+  async usePublishedVersionAsDraft({
     id,
     version,
     workspaceId,
@@ -376,15 +380,15 @@ export class ServerlessFunctionService {
     version: string;
     workspaceId: string;
   }) {
-    const serverlessFunctionToReset =
+    const serverlessFunction =
       await this.serverlessFunctionRepository.findOneBy({
         workspaceId,
         id,
       });
 
-    if (!serverlessFunctionToReset) {
+    if (!serverlessFunction) {
       throw new ServerlessFunctionException(
-        'Function to reset does not exist',
+        'Function does not exist',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
     }
@@ -392,13 +396,13 @@ export class ServerlessFunctionService {
     await this.fileStorageService.copy({
       from: {
         folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunctionToReset,
+          serverlessFunction: serverlessFunction,
           version,
         }),
       },
       to: {
         folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunctionToReset,
+          serverlessFunction: serverlessFunction,
           version: 'draft',
         }),
       },
@@ -409,8 +413,6 @@ export class ServerlessFunctionService {
       serverlessFunctionVersion: 'draft',
       workspaceId,
     });
-
-    return serverlessFunctionToReset;
   }
 
   private async throttleExecution(workspaceId: string) {
