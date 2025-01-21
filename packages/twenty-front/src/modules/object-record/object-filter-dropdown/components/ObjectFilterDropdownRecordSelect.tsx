@@ -17,16 +17,9 @@ import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { IconUserCircle } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-
-export const EMPTY_FILTER_VALUE: string = JSON.stringify({
-  isCurrentWorkspaceMemberSelected: false,
-  selectedRecordIds: [],
-} satisfies RelationFilterValue);
 
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
@@ -64,14 +57,13 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const [fieldId] = useState(v4());
 
-  const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
-        selectedFilter?.value,
-      ),
-    })
-    .parse(selectedFilter?.value);
+  const parsedFilterValue = relationFilterValueSchema.parse(
+    selectedFilter?.value,
+  );
+
+  const isCurrentWorkspaceMemberSelected = parsedFilterValue.includes(
+    '{{CURRENT_WORKSPACE_MEMBER}}',
+  );
 
   const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular;
@@ -178,11 +170,14 @@ export const ObjectFilterDropdownRecordSelect = ({
     ) {
       const newFilterValue =
         newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
-          ? JSON.stringify({
-              isCurrentWorkspaceMemberSelected:
-                newIsCurrentWorkspaceMemberSelected,
-              selectedRecordIds: newSelectedRecordIds,
-            } satisfies RelationFilterValue)
+          ? JSON.stringify(
+              [
+                ...newSelectedRecordIds,
+                newIsCurrentWorkspaceMemberSelected
+                  ? '{{CURRENT_WORKSPACE_MEMBER}}'
+                  : undefined,
+              ].filter(isDefined),
+            )
           : '';
 
       const viewFilter =

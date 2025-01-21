@@ -35,8 +35,7 @@ import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
@@ -306,22 +305,13 @@ const computeFilterRecordGqlOperationFilter = (
       }
     case 'RELATION': {
       if (!isEmptyOperand) {
-        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-          jsonRelationFilterValueSchema
-            .catch({
-              isCurrentWorkspaceMemberSelected: false,
-              selectedRecordIds: simpleRelationFilterValueSchema.parse(
-                filter.value,
-              ),
-            })
-            .parse(filter.value);
+        const parsedFilterValue = relationFilterValueSchema.parse(filter.value);
 
-        const recordIds = isCurrentWorkspaceMemberSelected
-          ? [
-              ...selectedRecordIds,
-              filterValueDependencies.currentWorkspaceMemberId,
-            ]
-          : selectedRecordIds;
+        const recordIds = parsedFilterValue.map((item) =>
+          item === '{{CURRENT_WORKSPACE_MEMBER}}'
+            ? filterValueDependencies.currentWorkspaceMemberId
+            : item,
+        );
 
         if (recordIds.length === 0) return;
         switch (filter.operand) {
