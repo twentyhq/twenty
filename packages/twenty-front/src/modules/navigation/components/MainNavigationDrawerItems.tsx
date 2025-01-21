@@ -66,7 +66,7 @@ export const MainNavigationDrawerItems = () => {
           />
           <ChatNavigationNavItem />
           <NavigationDrawerItem
-            label="Chatbot"
+            label="Bot"
             to={'/chatbot'}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);

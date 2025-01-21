@@ -2,7 +2,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { ChatbotPageContainer } from '@/chatbot/components/ui/ChatbotPageContainer';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilValue } from 'recoil';
+import { IconRobot } from 'twenty-ui';
 
 export const Chatbot = () => {
   const currentUser = useRecoilValue(currentUserState);
@@ -12,6 +14,7 @@ export const Chatbot = () => {
   return (
     <ChatbotPageContainer>
       <PageContainer>
+        <PageHeader title="Bot" Icon={IconRobot} />
         <PageBody>
           {currentUser?.email && (
             <iframe
