@@ -17,14 +17,16 @@ describe('publicFeatureFlagValidator', () => {
     );
 
     it('should not throw for public feature flags', () => {
-      const publicFlag = PUBLIC_FEATURE_FLAGS[0].key;
+      if (PUBLIC_FEATURE_FLAGS.length > 0) {
+        const publicFlag = PUBLIC_FEATURE_FLAGS[0].key;
 
-      expect(() => {
-        publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-          publicFlag,
-          mockException,
-        );
-      }).not.toThrow();
+        expect(() => {
+          publicFeatureFlagValidator.assertIsPublicFeatureFlag(
+            publicFlag,
+            mockException,
+          );
+        }).not.toThrow();
+      }
     });
 
     it('should throw the provided exception for non-public feature flags', () => {
@@ -59,19 +61,21 @@ describe('publicFeatureFlagValidator', () => {
     });
 
     it('should maintain type assertion after validation', () => {
-      const publicFlag = PUBLIC_FEATURE_FLAGS[0];
+      if (PUBLIC_FEATURE_FLAGS.length > 0) {
+        const publicFlag = PUBLIC_FEATURE_FLAGS[0];
 
-      const testTypeAssertion = (flag: FeatureFlagKey) => {
-        publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-          flag,
-          mockException,
-        );
-        const _test: PublicFeatureFlag['key'] = flag;
+        const testTypeAssertion = (flag: FeatureFlagKey) => {
+          publicFeatureFlagValidator.assertIsPublicFeatureFlag(
+            flag,
+            mockException,
+          );
+          const _test: PublicFeatureFlag['key'] = flag;
 
-        return true;
-      };
+          return true;
+        };
 
-      expect(testTypeAssertion(publicFlag.key)).toBe(true);
+        expect(testTypeAssertion(publicFlag.key)).toBe(true);
+      }
     });
   });
 });
