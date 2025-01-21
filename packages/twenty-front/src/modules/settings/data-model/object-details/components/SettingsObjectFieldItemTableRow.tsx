@@ -247,8 +247,8 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationDefinitionType.ManyToOne ||
-            relationType === RelationDefinitionType.OneToOne
+            relationType === RelationDefinitionType.MANY_TO_ONE ||
+            relationType === RelationDefinitionType.ONE_TO_ONE
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }

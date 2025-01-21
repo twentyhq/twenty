@@ -81,11 +81,11 @@ export const SettingsBilling = () => {
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
   const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStatus.COMPLETED;
 
   const cancelPlanButtonDisabled =
     billingPortalButtonDisabled ||
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStatus.COMPLETED;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
