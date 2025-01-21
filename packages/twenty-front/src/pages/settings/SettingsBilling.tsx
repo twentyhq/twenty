@@ -14,7 +14,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -28,6 +27,7 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -81,11 +81,11 @@ export const SettingsBilling = () => {
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
   const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStatus.COMPLETED;
 
   const cancelPlanButtonDisabled =
     billingPortalButtonDisabled ||
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStatus.COMPLETED;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
@@ -130,7 +130,7 @@ export const SettingsBilling = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Billing</Trans> },
       ]}

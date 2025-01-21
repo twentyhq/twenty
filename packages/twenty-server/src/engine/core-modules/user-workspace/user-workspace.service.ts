@@ -125,10 +125,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
-    const appToken = await this.workspaceInvitationService.validateInvitation({
-      workspacePersonalInviteToken: inviteToken,
-      email: user.email,
-    });
+    const appToken =
+      await this.workspaceInvitationService.validatePersonalInvitation({
+        workspacePersonalInviteToken: inviteToken,
+        email: user.email,
+      });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       appToken.workspace.id,

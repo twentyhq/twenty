@@ -1,8 +1,8 @@
 import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Button, IconPlus, Section, UndecoratedLink } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServerlessFunctions = () => {
   return (
@@ -10,7 +10,7 @@ export const SettingsServerlessFunctions = () => {
       title="Functions"
       actionButton={
         <UndecoratedLink
-          to={getSettingsPagePath(SettingsPath.NewServerlessFunction)}
+          to={getSettingsPath(SettingsPath.NewServerlessFunction)}
         >
           <Button
             Icon={IconPlus}
@@ -23,7 +23,7 @@ export const SettingsServerlessFunctions = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Functions',

@@ -4,6 +4,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
+import { t } from '@lingui/core/macro';
 
 type DateTimeSettingsDateFormatSelectProps = {
   value: DateFormat;
@@ -22,6 +23,12 @@ export const DateTimeSettingsDateFormatSelect = ({
 
   const systemDateFormat = DateFormat[detectDateFormat()];
 
+  const systemDateFormatLabel = formatInTimeZone(
+    Date.now(),
+    usedTimeZone,
+    systemDateFormat,
+  );
+
   return (
     <Select
       dropdownId="datetime-settings-date-format"
@@ -32,11 +39,7 @@ export const DateTimeSettingsDateFormatSelect = ({
       value={value}
       options={[
         {
-          label: `System settings - ${formatInTimeZone(
-            Date.now(),
-            usedTimeZone,
-            systemDateFormat,
-          )}`,
+          label: t`System settings - ${systemDateFormatLabel}`,
           value: DateFormat.SYSTEM,
         },
         {

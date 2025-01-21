@@ -48,7 +48,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           isVisible: true,
           metadata: {
             fieldName: 'text',
@@ -58,7 +58,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           isVisible: true,
           metadata: {
             fieldName: 'number',
@@ -68,7 +68,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '4',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           isVisible: true,
           metadata: {
             fieldName: 'date',
@@ -81,19 +81,19 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         },
       ]);
       return (

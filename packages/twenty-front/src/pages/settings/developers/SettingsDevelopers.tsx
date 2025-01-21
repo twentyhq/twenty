@@ -2,13 +2,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -37,7 +37,7 @@ export const SettingsDevelopers = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Developers</Trans> },
       ]}
@@ -56,7 +56,7 @@ export const SettingsDevelopers = () => {
                 title={t`Create API key`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/api-keys/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
               />
             </StyledButtonContainer>
           </Section>
@@ -72,7 +72,7 @@ export const SettingsDevelopers = () => {
                 title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/webhooks/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
               />
             </StyledButtonContainer>
           </Section>

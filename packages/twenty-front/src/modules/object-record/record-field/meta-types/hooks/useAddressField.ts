@@ -16,7 +16,7 @@ export const useAddressField = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.Address,
+    FieldMetadataType.ADDRESS,
     isFieldAddress,
     fieldDefinition,
   );
