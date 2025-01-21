@@ -33,7 +33,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize' | 'sizeVariant'
+    'fullWidth' | 'LeftIcon' | 'error' | 'autoGrow' | 'sizeVariant'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -73,7 +73,7 @@ const StyledInput = styled.input<
     }};
   }
 
-  position: ${({ autoSize }) => (autoSize ? 'absolute' : 'relative')};
+  position: ${({ autoGrow }) => (autoGrow ? 'absolute' : 'relative')};
 `;
 
 const StyledErrorHelper = styled.div`
@@ -117,7 +117,7 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-const StyledAutoSizeInputContainer = styled.div<{
+const StyledAutoGrowInputContainer = styled.div<{
   sizeVariant: TextInputV2Size;
 }>`
   display: inline-flex;
@@ -126,7 +126,7 @@ const StyledAutoSizeInputContainer = styled.div<{
   overflow: hidden;
 `;
 
-const StyledAutoSizeSpan = styled.span`
+const StyledAutoGrowSpan = styled.span`
   padding: 0 ${({ theme }) => theme.spacing(2)};
   visibility: hidden;
   text-overflow: ellipsis;
@@ -147,7 +147,7 @@ export type TextInputV2ComponentProps = Omit<
   noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
-  autoSize?: boolean;
+  autoGrow?: boolean;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
@@ -175,7 +175,7 @@ const TextInputV2Component = (
     RightIcon,
     LeftIcon,
     autoComplete,
-    autoSize,
+    autoGrow,
     maxLength,
     sizeVariant = 'md',
     dataTestId,
@@ -211,9 +211,9 @@ const TextInputV2Component = (
             </StyledTrailingIcon>
           </StyledLeftIconContainer>
         )}
-        {autoSize ? (
-          <StyledAutoSizeInputContainer sizeVariant={sizeVariant}>
-            <StyledAutoSizeSpan>{value || placeholder}</StyledAutoSizeSpan>
+        {autoGrow ? (
+          <StyledAutoGrowInputContainer sizeVariant={sizeVariant}>
+            <StyledAutoGrowSpan>{value || placeholder}</StyledAutoGrowSpan>
             <StyledInput
               id={inputId}
               data-testid={dataTestId}
@@ -221,7 +221,7 @@ const TextInputV2Component = (
               ref={combinedRef}
               tabIndex={tabIndex ?? 0}
               onFocus={onFocus}
-              autoSize={autoSize}
+              autoGrow={autoGrow}
               onBlur={onBlur}
               type={passwordVisible ? 'text' : type}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -242,7 +242,7 @@ const TextInputV2Component = (
                 sizeVariant,
               }}
             />
-          </StyledAutoSizeInputContainer>
+          </StyledAutoGrowInputContainer>
         ) : (
           <StyledInput
             id={inputId}

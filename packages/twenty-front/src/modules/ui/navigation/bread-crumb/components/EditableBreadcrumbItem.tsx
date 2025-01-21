@@ -103,8 +103,8 @@ export const EditableBreadcrumbItem = ({
   return isRenaming ? (
     <StyledInput
       className={className}
-      autoSize
-      height="sm"
+      autoGrow
+      sizeVariant="sm"
       ref={inputRef}
       value={value}
       onChange={setValue}
