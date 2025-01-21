@@ -25,18 +25,24 @@ const StyledInput = styled(TextInputV2)`
 `;
 
 const StyledButton = styled('button')`
-  box-sizing: content-box;
   align-items: center;
   background: inherit;
-  height: 20px;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  text-decoration: none;
+  box-sizing: content-box;
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
+  height: 20px;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};

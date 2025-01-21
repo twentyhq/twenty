@@ -128,7 +128,7 @@ const StyledAutoSizeInputContainer = styled.div<{ height: 'sm' | 'md' }>`
 `;
 
 const StyledAutoSizeSpan = styled.span`
-  padding: 0 8px;
+  padding: 0 ${({ theme }) => theme.spacing(2)};
   visibility: hidden;
   white-space: pre;
 `;

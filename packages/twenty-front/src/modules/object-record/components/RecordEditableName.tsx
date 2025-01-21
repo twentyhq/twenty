@@ -7,9 +7,11 @@ import styled from '@emotion/styled';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex-direction: row;
+  min-width: 0;
+  overflow: hidden;
   width: 100%;
 `;
 
@@ -17,8 +19,15 @@ const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.spacing(0.75)};
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(0.75)};
+`;
+
+const StyledEditableBreadcrumbItemWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 export const RecordEditableName = ({
@@ -73,16 +82,18 @@ export const RecordEditableName = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <EditableBreadcrumbItem
-        isRenaming={isRenaming}
-        setIsRenaming={setIsRenaming}
-        defaultValue={record?.name ?? ''}
-        placeholder={'Name'}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        onClickOutside={handleCancel}
-        hotkeyScope="editable-breadcrumb-item"
-      />
+      <StyledEditableBreadcrumbItemWrapper>
+        <EditableBreadcrumbItem
+          isRenaming={isRenaming}
+          setIsRenaming={setIsRenaming}
+          defaultValue={record?.name ?? ''}
+          placeholder={'Name'}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          onClickOutside={handleCancel}
+          hotkeyScope="editable-breadcrumb-item"
+        />
+      </StyledEditableBreadcrumbItemWrapper>
     </StyledEditableTitleContainer>
   );
 };
