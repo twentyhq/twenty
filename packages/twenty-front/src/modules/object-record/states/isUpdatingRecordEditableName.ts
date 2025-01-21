@@ -1,8 +1,6 @@
-import { RecordComponentInstanceContext } from '@/object-record/states/contexts/RecordComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
+import { createState } from 'twenty-ui';
 
-export const isUpdatingRecordEditableName = createComponentStateV2<boolean>({
-  key: 'isUpdatingRecordEditableName',
+export const isUpdatingRecordEditableNameState = createState<boolean>({
+  key: 'isUpdatingRecordEditableNameState',
   defaultValue: false,
-  componentInstanceContext: RecordComponentInstanceContext,
 });

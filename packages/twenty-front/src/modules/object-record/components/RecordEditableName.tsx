@@ -1,9 +1,9 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isUpdatingRecordEditableName } from '@/object-record/states/isUpdatingRecordEditableName';
+import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
@@ -31,9 +31,8 @@ export const RecordEditableName = ({
   objectRecordId: string;
   objectLabelPlural: string;
 }) => {
-  const [isRenaming, setIsRenaming] = useRecoilComponentStateV2(
-    isUpdatingRecordEditableName,
-  );
+  const [isUpdatingRecordEditableName, setIsUpdatingRecordEditableName] =
+    useRecoilState(isUpdatingRecordEditableNameState);
 
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
@@ -57,11 +56,11 @@ export const RecordEditableName = ({
         name: value,
       },
     });
-    setIsRenaming(false);
+    setIsUpdatingRecordEditableName(false);
   };
 
   const handleCancel = () => {
-    setIsRenaming(false);
+    setIsUpdatingRecordEditableName(false);
   };
 
   if (loading) {
@@ -75,8 +74,8 @@ export const RecordEditableName = ({
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
       <EditableBreadcrumbItem
-        isRenaming={isRenaming}
-        setIsRenaming={setIsRenaming}
+        isRenaming={isUpdatingRecordEditableName}
+        setIsRenaming={setIsUpdatingRecordEditableName}
         defaultValue={record?.name ?? ''}
         placeholder={'Name'}
         onSubmit={handleSubmit}
