@@ -98,7 +98,7 @@ jobs:
             exit 1
           fi
       - name: GraphQL / Check for Pending Generation
-         if: steps.changed-files.outputs.any_changed == 'true'
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           GRAPHQL_GENERATE_OUTPUT=$(npx nx run twenty-front:graphql:generate || true)
           GRAPHQL_METADATA_OUTPUT=$(npx nx run twenty-front:graphql:generate --configuration=metadata || true)
