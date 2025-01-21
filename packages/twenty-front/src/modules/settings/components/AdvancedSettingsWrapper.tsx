@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { AnimatedExpandableContainer, IconPoint, MAIN_COLORS } from 'twenty-ui';
 
 const StyledAdvancedWrapper = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
   position: relative;
   width: 100%;
 `;
