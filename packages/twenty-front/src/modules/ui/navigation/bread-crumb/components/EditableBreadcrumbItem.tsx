@@ -1,22 +1,20 @@
+import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { useOpenEditableBreadCrumbItem } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
 import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/types/EditableBreadcrumbItemHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-ui';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type EditableBreadcrumbItemProps = {
-  isRenaming: boolean;
   className?: string;
-  setIsRenaming: (isRenaming: boolean) => void;
   defaultValue: string;
   placeholder: string;
   onSubmit: (value: string) => void;
-  onCancel: (value: string) => void;
-  onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
 };
 
@@ -48,25 +46,20 @@ const StyledButton = styled('button')`
 
 export const EditableBreadcrumbItem = ({
   className,
-  isRenaming,
-  setIsRenaming,
   defaultValue,
   placeholder,
   onSubmit,
-  onCancel,
-  onClickOutside,
 }: EditableBreadcrumbItemProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useHotkeyScopeOnMount(
-    EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
-  );
+  const [isUpdatingRecordEditableName, setIsUpdatingRecordEditableName] =
+    useRecoilState(isUpdatingRecordEditableNameState);
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      onCancel(value);
+      setIsUpdatingRecordEditableName(false);
     },
     EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
   );
@@ -75,6 +68,7 @@ export const EditableBreadcrumbItem = ({
     [Key.Enter],
     () => {
       onSubmit(value);
+      setIsUpdatingRecordEditableName(false);
     },
     EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
   );
@@ -86,8 +80,8 @@ export const EditableBreadcrumbItem = ({
 
   useListenClickOutside({
     refs: clickOutsideRefs,
-    callback: (event) => {
-      onClickOutside(event, value);
+    callback: () => {
+      setIsUpdatingRecordEditableName(false);
     },
     listenerId: 'editable-breadcrumb-item',
   });
@@ -100,7 +94,9 @@ export const EditableBreadcrumbItem = ({
 
   const [value, setValue] = useState<string>(defaultValue);
 
-  return isRenaming ? (
+  const { openEditableBreadCrumbItem } = useOpenEditableBreadCrumbItem();
+
+  return isUpdatingRecordEditableName ? (
     <StyledInput
       className={className}
       autoGrow
@@ -113,7 +109,7 @@ export const EditableBreadcrumbItem = ({
       autoFocus
     />
   ) : (
-    <StyledButton ref={buttonRef} onClick={() => setIsRenaming(true)}>
+    <StyledButton ref={buttonRef} onClick={openEditableBreadCrumbItem}>
       {value}
     </StyledButton>
   );

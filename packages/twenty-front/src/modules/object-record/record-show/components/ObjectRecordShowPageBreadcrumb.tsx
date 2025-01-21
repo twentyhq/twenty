@@ -1,9 +1,7 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
@@ -31,9 +29,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectRecordId: string;
   objectLabelPlural: string;
 }) => {
-  const [isUpdatingRecordEditableName, setIsUpdatingRecordEditableName] =
-    useRecoilState(isUpdatingRecordEditableNameState);
-
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -56,11 +51,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
         name: value,
       },
     });
-    setIsUpdatingRecordEditableName(false);
-  };
-
-  const handleCancel = () => {
-    setIsUpdatingRecordEditableName(false);
   };
 
   if (loading) {
@@ -74,13 +64,9 @@ export const ObjectRecordShowPageBreadcrumb = ({
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
       <EditableBreadcrumbItem
-        isRenaming={isUpdatingRecordEditableName}
-        setIsRenaming={setIsUpdatingRecordEditableName}
         defaultValue={record?.name ?? ''}
         placeholder={'Name'}
         onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        onClickOutside={handleCancel}
         hotkeyScope="editable-breadcrumb-item"
       />
     </StyledEditableTitleContainer>

@@ -1,20 +1,18 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { useOpenEditableBreadCrumbItem } from '@/ui/navigation/bread-crumb/hooks/useOpenEditableBreadCrumbItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
@@ -62,65 +60,52 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
+  const { openEditableBreadCrumbItem } = useOpenEditableBreadCrumbItem();
+
   const createNewTableRecord = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        const recordId = v4();
+    () => async () => {
+      const recordId = v4();
 
-        if (isCommandMenuV2Enabled) {
-          // TODO: Generalize this behaviour, there will be a view setting to specify
-          // if the new record should be displayed in the side panel or on the record page
-          if (
-            shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
-          ) {
-            await createOneRecord({
-              id: recordId,
-              name: 'Untitled',
-            });
+      if (isCommandMenuV2Enabled) {
+        // TODO: Generalize this behaviour, there will be a view setting to specify
+        // if the new record should be displayed in the side panel or on the record page
+        if (
+          shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
+        ) {
+          await createOneRecord({
+            id: recordId,
+            name: 'Untitled',
+          });
 
-            navigate(
-              AppPath.RecordIndexPage,
-              {
-                objectNamePlural: CoreObjectNamePlural.WorkflowRun,
-              },
-              {
-                filter: {
-                  workflow: {
-                    [ViewFilterOperand.Is]: {
-                      selectedRecordIds: [recordId],
-                    },
-                  },
-                },
-              },
-            );
+          navigate(AppPath.RecordShowPage, {
+            objectNameSingular: objectMetadataItem.nameSingular,
+            objectRecordId: recordId,
+          });
 
-            set(isUpdatingRecordEditableNameState, true);
-            return;
-          }
-
-          await createOneRecord({ id: recordId });
-          openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
-
+          openEditableBreadCrumbItem();
           return;
         }
 
-        setPendingRecordId(recordId);
-        setSelectedTableCellEditMode(-1, 0);
-        setHotkeyScope(
-          DEFAULT_CELL_SCOPE.scope,
-          DEFAULT_CELL_SCOPE.customScopes,
-        );
+        await createOneRecord({ id: recordId });
+        openRecordInCommandMenu(recordId, objectMetadataItem.nameSingular);
 
-        if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
-          setActiveDropdownFocusIdAndMemorizePrevious(
-            getDropdownFocusIdForRecordField(
-              recordId,
-              objectMetadataItem.labelIdentifierFieldMetadataId,
-              'table-cell',
-            ),
-          );
-        }
-      },
+        return;
+      }
+
+      setPendingRecordId(recordId);
+      setSelectedTableCellEditMode(-1, 0);
+      setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+
+      if (isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)) {
+        setActiveDropdownFocusIdAndMemorizePrevious(
+          getDropdownFocusIdForRecordField(
+            recordId,
+            objectMetadataItem.labelIdentifierFieldMetadataId,
+            'table-cell',
+          ),
+        );
+      }
+    },
     [
       createOneRecord,
       isCommandMenuV2Enabled,
