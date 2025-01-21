@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type EditableBreadcrumbItemProps = {
   className?: string;
@@ -55,6 +56,11 @@ export const EditableBreadcrumbItem = ({
 
   const [isUpdatingRecordEditableName, setIsUpdatingRecordEditableName] =
     useRecoilState(isUpdatingRecordEditableNameState);
+
+  // TODO: remove this and set the hokey scopes synchronously on page change inside the useNavigateApp hook
+  useHotkeyScopeOnMount(
+    EditableBreadcrumbItemHotkeyScope.EditableBreadcrumbItem,
+  );
 
   useScopedHotkeys(
     [Key.Escape],
