@@ -1729,6 +1729,7 @@ export type Workspace = {
   allowImpersonation: Scalars['Boolean']['output'];
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
+  creatorEmail?: Maybe<Scalars['String']['output']>;
   currentBillingSubscription?: Maybe<BillingSubscription>;
   databaseSchema: Scalars['String']['output'];
   databaseUrl: Scalars['String']['output'];

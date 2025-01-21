@@ -26,36 +26,47 @@ export const queries = {
     }
   `,
   findManyViewsQuery: gql`
-    query FindManyViews($filter: ViewFilterInput, $orderBy: [ViewOrderByInput], $lastCursor: String, $limit: Int) {
-        views(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
-          edges {
-            node {
-              __typename
-              id
-              viewGroups {
-                edges {
-                  node {
-                    __typename
-                    fieldMetadataId
-                    fieldValue
-                    id
-                    isVisible
-                    position
-                  }
+    query FindManyViews(
+      $filter: ViewFilterInput
+      $orderBy: [ViewOrderByInput]
+      $lastCursor: String
+      $limit: Int
+    ) {
+      views(
+        filter: $filter
+        orderBy: $orderBy
+        first: $limit
+        after: $lastCursor
+      ) {
+        edges {
+          node {
+            __typename
+            id
+            viewGroups {
+              edges {
+                node {
+                  __typename
+                  fieldMetadataId
+                  fieldValue
+                  id
+                  isVisible
+                  position
                 }
               }
             }
-            cursor
           }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-          totalCount
+          cursor
         }
-      }`,
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        totalCount
+      }
+    }
+  `,
   deleteMetadataFieldRelation: gql`
     mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
       deleteOneRelation(input: { id: $idToDelete }) {
@@ -148,6 +159,7 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEntrepriseKey
+        creatorEmail
         featureFlags {
           id
           key
@@ -173,6 +185,7 @@ export const queries = {
           displayName
           domainName
           subdomain
+          creatorEmail
         }
       }
       userVars

@@ -1501,6 +1501,7 @@ export type Workspace = {
   allowImpersonation: Scalars['Boolean'];
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
+  creatorEmail?: Maybe<Scalars['String']>;
   currentBillingSubscription?: Maybe<BillingSubscription>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];

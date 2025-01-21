@@ -98,6 +98,10 @@ export class Workspace {
   })
   activationStatus: WorkspaceActivationStatus;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorEmail: string;
+
   @OneToMany(
     () => PostgresCredentials,
     (postgresCredentials) => postgresCredentials.workspace,

@@ -102,6 +102,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.workspaceRepository.update(workspace.id, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+      creatorEmail: user.email,
     });
 
     await this.featureFlagService.enableFeatureFlags(

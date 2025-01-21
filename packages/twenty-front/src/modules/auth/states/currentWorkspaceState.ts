@@ -21,6 +21,7 @@ export type CurrentWorkspace = Pick<
   | 'hasValidEntrepriseKey'
   | 'subdomain'
   | 'metadataVersion'
+  | 'creatorEmail'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
