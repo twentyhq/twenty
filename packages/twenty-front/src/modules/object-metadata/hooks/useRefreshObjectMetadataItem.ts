@@ -8,7 +8,10 @@ import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowS
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
-import { FeatureFlagKey, ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ObjectMetadataItemsQuery,
+} from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type FetchPolicy = 'network-only' | 'cache-first';
@@ -34,9 +37,10 @@ export const useRefreshObjectMetadataItems = (
       });
 
     const filteredObjectMetadataItems = objectMetadataItems.filter((object) => {
-      return isWorkflowEnabled || (
-        object.nameSingular !== CoreObjectNameSingular.Workflow && 
-        !isWorkflowSubObjectMetadata(object.nameSingular)
+      return (
+        isWorkflowEnabled ||
+        (object.nameSingular !== CoreObjectNameSingular.Workflow &&
+          !isWorkflowSubObjectMetadata(object.nameSingular))
       );
     });
 
