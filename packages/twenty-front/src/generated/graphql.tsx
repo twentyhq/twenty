@@ -750,9 +750,7 @@ export type MutationTrackArgs = {
 
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
-  publicFeatureFlag: Scalars['String'];
-  value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
+  input: UpdateLabPublicFeatureFlagInput;
 };
 
 
@@ -1378,6 +1376,11 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateLabPublicFeatureFlagInput = {
+  publicFeatureFlag: Scalars['String'];
+  value: Scalars['Boolean'];
 };
 
 export type UpdateObjectPayload = {
@@ -2149,9 +2152,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
-  workspaceId: Scalars['String'];
-  publicFeatureFlag: Scalars['String'];
-  value: Scalars['Boolean'];
+  input: UpdateLabPublicFeatureFlagInput;
 }>;
 
 
@@ -3809,12 +3810,8 @@ export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLo
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
-    mutation UpdateLabPublicFeatureFlag($workspaceId: String!, $publicFeatureFlag: String!, $value: Boolean!) {
-  updateLabPublicFeatureFlag(
-    workspaceId: $workspaceId
-    publicFeatureFlag: $publicFeatureFlag
-    value: $value
-  )
+    mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
+  updateLabPublicFeatureFlag(input: $input)
 }
     `;
 export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
@@ -3832,9 +3829,7 @@ export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<Updat
  * @example
  * const [updateLabPublicFeatureFlagMutation, { data, loading, error }] = useUpdateLabPublicFeatureFlagMutation({
  *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *      publicFeatureFlag: // value for 'publicFeatureFlag'
- *      value: // value for 'value'
+ *      input: // value for 'input'
  *   },
  * });
  */

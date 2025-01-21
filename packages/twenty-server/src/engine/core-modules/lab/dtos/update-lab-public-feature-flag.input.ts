@@ -1,16 +1,11 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty } from 'class-validator';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
-@ArgsType()
+@InputType()
 export class UpdateLabPublicFeatureFlagInput {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  workspaceId: string;
-
   @Field(() => String)
   @IsNotEmpty()
   publicFeatureFlag: FeatureFlagKey;

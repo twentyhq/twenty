@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { UpdateLabPublicFeatureFlagInput } from 'src/engine/core-modules/lab/dtos/update-lab-public-feature-flag.input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
@@ -29,11 +30,10 @@ export class LabService {
 
   async updateLabPublicFeatureFlag(
     workspaceId: string,
-    publicFeatureFlag: FeatureFlagKey,
-    value: boolean,
+    payload: UpdateLabPublicFeatureFlagInput,
   ): Promise<void> {
     featureFlagValidator.assertIsFeatureFlagKey(
-      publicFeatureFlag,
+      payload.publicFeatureFlag,
       new FeatureFlagException(
         'Invalid feature flag key',
         FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
@@ -41,7 +41,7 @@ export class LabService {
     );
 
     publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-      FeatureFlagKey[publicFeatureFlag],
+      FeatureFlagKey[payload.publicFeatureFlag],
       new FeatureFlagException(
         'Feature flag is not public',
         FeatureFlagExceptionCode.FEATURE_FLAG_IS_NOT_PUBLIC,
@@ -59,7 +59,7 @@ export class LabService {
     );
 
     const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === FeatureFlagKey[publicFeatureFlag],
+      (flag) => flag.key === FeatureFlagKey[payload.publicFeatureFlag],
     );
 
     if (!existingFlag) {
@@ -69,6 +69,8 @@ export class LabService {
       );
     }
 
-    await this.featureFlagRepository.update(existingFlag.id, { value });
+    await this.featureFlagRepository.update(existingFlag.id, {
+      value: payload.value,
+    });
   }
 }

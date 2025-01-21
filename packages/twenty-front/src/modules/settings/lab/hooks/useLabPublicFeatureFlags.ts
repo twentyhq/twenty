@@ -27,28 +27,27 @@ export const useLabPublicFeatureFlags = () => {
     }
 
     setError(null);
-    const previousWorkspace = currentWorkspace;
-
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      featureFlags: currentWorkspace.featureFlags?.map((flag) =>
-        flag.key === publicFeatureFlag ? { ...flag, value } : flag,
-      ),
-    });
 
     const response = await updateLabPublicFeatureFlag({
       variables: {
-        workspaceId: currentWorkspace.id,
-        publicFeatureFlag,
-        value,
+        input: {
+          publicFeatureFlag,
+          value,
+        },
       },
       onError: (error) => {
-        if (isDefined(previousWorkspace)) {
-          setCurrentWorkspace(previousWorkspace);
-        }
         setError(error.message);
       },
     });
+
+    if (isDefined(response.data)) {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        featureFlags: currentWorkspace.featureFlags?.map((flag) =>
+          flag.key === publicFeatureFlag ? { ...flag, value } : flag,
+        ),
+      });
+    }
 
     return !!response.data;
   };
