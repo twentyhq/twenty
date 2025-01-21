@@ -39,10 +39,8 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
   onBlur,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const { control, watch } =
+  const { control } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
-  watch(LABEL_IDENTIFIER_FIELD_METADATA_ID);
-  watch(IMAGE_IDENTIFIER_FIELD_METADATA_ID);
   const { getIcon } = useIcons();
   const labelIdentifierFieldOptions = useMemo(
     () =>
@@ -96,8 +94,10 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               emptyOption={emptyOption}
               options={options}
               value={value}
-              onChange={onChange}
-              onBlur={onBlur}
+              onChange={(value) => {
+                onChange(value);
+                onBlur();
+              }}
             />
           )}
         />

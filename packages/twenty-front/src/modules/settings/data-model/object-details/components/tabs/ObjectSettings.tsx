@@ -23,7 +23,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
-import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -70,6 +69,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
     mode: 'onTouched',
     resolver: zodResolver(objectEditFormSchema),
   });
+  const { isDirty } = formConfig.formState;
 
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -124,7 +124,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
-    if (isEmpty(formConfig.formState.dirtyFields) === true) {
+    if (!isDirty) {
       return;
     }
     try {
