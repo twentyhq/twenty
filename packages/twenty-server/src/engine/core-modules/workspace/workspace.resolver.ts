@@ -167,6 +167,10 @@ export class WorkspaceResolver {
   async billingSubscriptions(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription[] | undefined> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
     try {
       return this.billingSubscriptionRepository.find({
         where: { workspaceId: workspace.id },
