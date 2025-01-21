@@ -168,7 +168,7 @@ export class WorkspaceResolver {
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription[] | undefined> {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
-      return;
+      return [];
     }
 
     try {
