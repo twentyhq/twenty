@@ -34,12 +34,11 @@ const StyledTopBarContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
     box-sizing: border-box;
     padding: ${({ theme }) => theme.spacing(3)};
-    overflow: hidden;
   }
 `;
 
@@ -48,8 +47,8 @@ const StyledLeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  min-width: 0;
   padding-left: ${({ theme }) => theme.spacing(1)};
+  overflow-x: hidden;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(1)};
@@ -61,23 +60,19 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  min-width: 0;
-  overflow: hidden;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
-  min-width: 0;
-  overflow: hidden;
 `;
 
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  flex: 1 0 1;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
@@ -86,7 +81,7 @@ const StyledTopBarButtonContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  flex: 1 0 auto;
+  flex: 1 0 1;
   display: flex;
   flex-direction: row;
   align-items: center;

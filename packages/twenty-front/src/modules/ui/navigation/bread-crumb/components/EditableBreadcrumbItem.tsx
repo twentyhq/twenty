@@ -36,13 +36,10 @@ const StyledButton = styled('button')`
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
   height: 20px;
-  max-width: 100%;
-  min-width: 0;
   overflow: hidden;
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
 
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};

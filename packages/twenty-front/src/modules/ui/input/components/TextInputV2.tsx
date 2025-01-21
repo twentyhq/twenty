@@ -21,15 +21,13 @@ const StyledContainer = styled.div<
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
-  min-width: ${({ autoSize }) => (autoSize ? '100px' : 'auto')};
 `;
 
 const StyledInputContainer = styled.div`
+  background-color: inherit;
   display: flex;
   flex-direction: row;
-  width: 100%;
   position: relative;
-  background-color: inherit;
 `;
 
 const StyledInput = styled.input<
@@ -56,7 +54,6 @@ const StyledInput = styled.input<
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
-  min-width: ${({ autoSize }) => (autoSize ? '100px' : 'auto')};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -121,16 +118,17 @@ const StyledTrailingIcon = styled.div`
 const INPUT_TYPE_PASSWORD = 'password';
 
 const StyledAutoSizeInputContainer = styled.div<{ height: 'sm' | 'md' }>`
-  align-items: center;
   display: inline-flex;
   height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
   position: relative;
+  overflow: hidden;
 `;
 
 const StyledAutoSizeSpan = styled.span`
   padding: 0 ${({ theme }) => theme.spacing(2)};
   visibility: hidden;
-  white-space: pre;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export type TextInputV2ComponentProps = Omit<
@@ -215,7 +213,7 @@ const TextInputV2Component = (
         )}
         {autoSize ? (
           <StyledAutoSizeInputContainer height={height}>
-            <StyledAutoSizeSpan>{value}</StyledAutoSizeSpan>
+            <StyledAutoSizeSpan>{value || placeholder}</StyledAutoSizeSpan>
             <StyledInput
               id={inputId}
               height={height}
