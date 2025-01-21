@@ -20,6 +20,7 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    console.log('>>>>>>>>>>>>>>', exception);
     switch (exception.code) {
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
         response

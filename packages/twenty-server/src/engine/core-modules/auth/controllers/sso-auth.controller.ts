@@ -32,9 +32,9 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 
 @Controller('auth')
-@UseFilters(AuthRestApiExceptionFilter)
 export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
@@ -49,6 +49,7 @@ export class SSOAuthController {
 
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard)
+  @UseFilters(AuthRestApiExceptionFilter)
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,
@@ -65,6 +66,7 @@ export class SSOAuthController {
 
   @Get('oidc/login/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)
+  @UseFilters(AuthRestApiExceptionFilter)
   async oidcAuth() {
     // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
     return;
@@ -72,6 +74,7 @@ export class SSOAuthController {
 
   @Get('saml/login/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
+  @UseFilters(AuthRestApiExceptionFilter)
   async samlAuth() {
     // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow
     return;
@@ -79,14 +82,30 @@ export class SSOAuthController {
 
   @Get('oidc/callback')
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)
+  @UseFilters(AuthOAuthExceptionFilter)
   async oidcAuthCallback(@Req() req: any, @Res() res: Response) {
-    return this.authCallback(req, res);
+    try {
+      return await this.authCallback(req, res);
+    } catch (err) {
+      return new AuthException(
+        err.message ?? 'Access denied',
+        AuthExceptionCode.OAUTH_ACCESS_DENIED,
+      );
+    }
   }
 
   @Post('saml/callback/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
+  @UseFilters(AuthOAuthExceptionFilter)
   async samlAuthCallback(@Req() req: any, @Res() res: Response) {
-    return this.authCallback(req, res);
+    try {
+      return await this.authCallback(req, res);
+    } catch (err) {
+      return new AuthException(
+        err.message ?? 'Access denied',
+        AuthExceptionCode.OAUTH_ACCESS_DENIED,
+      );
+    }
   }
 
   private async authCallback({ user }: any, res: Response) {
