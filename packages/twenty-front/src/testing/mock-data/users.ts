@@ -73,6 +73,13 @@ export const mockCurrentWorkspace: Workspace = {
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
   },
+  billingSubscriptions: [
+    {
+      __typename: 'BillingSubscription',
+      id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
+      status: SubscriptionStatus.Active,
+    },
+  ],
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
