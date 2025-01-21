@@ -1,6 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
+import { isUpdatingRecordEditableName } from '@/object-record/states/isUpdatingRecordEditableName';
 import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
@@ -32,7 +32,7 @@ export const RecordEditableName = ({
   objectLabelPlural: string;
 }) => {
   const [isRenaming, setIsRenaming] = useRecoilComponentStateV2(
-    isRecordEditableNameRenamingComponentState,
+    isUpdatingRecordEditableName,
   );
 
   const { record, loading } = useFindOneRecord({

@@ -6,7 +6,7 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { isRecordEditableNameRenamingComponentState } from '@/object-record/states/isRecordEditableNameRenamingState';
+import { isUpdatingRecordEditableName } from '@/object-record/states/isUpdatingRecordEditableName';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -76,7 +76,7 @@ export const useCreateNewTableRecord = ({
             });
             navigate(`/object/workflow/${recordId}`);
             set(
-              isRecordEditableNameRenamingComponentState.atomFamily({
+              isUpdatingRecordEditableName.atomFamily({
                 instanceId: recordId,
               }),
               true,
