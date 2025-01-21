@@ -78,7 +78,8 @@ jobs:
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
-        run: npx nx run twenty-server:worker:ci
+        run: |
+         npx nx run twenty-server:worker:ci
       - name: GraphQL / Check for Pending Generation
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
