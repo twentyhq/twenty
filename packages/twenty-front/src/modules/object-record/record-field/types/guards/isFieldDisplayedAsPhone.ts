@@ -10,5 +10,5 @@ export const isFieldDisplayedAsPhone = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldTextMetadata> =>
   field.metadata.objectMetadataNameSingular === CoreObjectNameSingular.Person &&
-  field.type === FieldMetadataType.Text &&
+  field.type === FieldMetadataType.TEXT &&
   field.metadata.fieldName === 'phone';

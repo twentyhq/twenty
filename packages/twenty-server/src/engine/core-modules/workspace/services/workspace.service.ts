@@ -159,6 +159,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId,
+      },
+    });
+
+    if (userWorkspaces.length === 0) {
+      await this.userRepository.softDelete(userId);
+    }
   }
 
   async isSubdomainAvailable(subdomain: string) {

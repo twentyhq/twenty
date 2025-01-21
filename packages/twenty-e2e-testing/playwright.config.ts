@@ -30,10 +30,6 @@ export default defineConfig({
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
     testIdAttribute: 'data-testid', // taken from Twenty source
-    viewport: { width: 1920, height: 1080 }, // most laptops use this resolution
-    launchOptions: {
-      slowMo: 500, // time in milliseconds between each step, better to use it than explicitly define timeout in tests
-    },
   },
   expect: {
     timeout: 5000,
@@ -41,24 +37,17 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   projects: [
     {
-      name: 'Login setup',
-      testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
     },
     {
-      name: 'Demo check',
+      name: 'chrome',
       use: {
         ...devices['Desktop Chrome'],
-      },
-      testMatch: /demo\/demo_basic\.e2e-spec\.ts/,
-    },
-    {
-      name: 'Authentication',
-      use: {
         permissions: ['clipboard-read', 'clipboard-write'],
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
-      dependencies: ['Login setup'],
-      testMatch: /authentication\/.+\.e2e-spec\.ts/, // forces to run login setup before running tests from this project - CASE SENSITIVE
+      dependencies: ['setup'],
     },
 
     //{

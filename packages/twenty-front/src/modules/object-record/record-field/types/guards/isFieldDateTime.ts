@@ -6,4 +6,4 @@ import { FieldDateTimeMetadata, FieldMetadata } from '../FieldMetadata';
 export const isFieldDateTime = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldDateTimeMetadata> =>
-  field.type === FieldMetadataType.DateTime;
+  field.type === FieldMetadataType.DATE_TIME;

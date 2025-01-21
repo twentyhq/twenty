@@ -10,6 +10,7 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -50,6 +51,10 @@ export const ClientConfigProviderEffect = () => {
 
   const setCanManageFeatureFlags = useSetRecoilState(
     canManageFeatureFlagsState,
+  );
+
+  const setLabPublicFeatureFlags = useSetRecoilState(
+    labPublicFeatureFlagsState,
   );
 
   const { data, loading, error } = useGetClientConfigQuery({
@@ -117,6 +122,7 @@ export const ClientConfigProviderEffect = () => {
       frontDomain: data?.clientConfig?.frontDomain,
     });
     setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
+    setLabPublicFeatureFlags(data?.clientConfig?.publicFeatureFlags);
   }, [
     data,
     setIsDebugMode,
@@ -136,6 +142,7 @@ export const ClientConfigProviderEffect = () => {
     setDomainConfiguration,
     setAuthProviders,
     setCanManageFeatureFlags,
+    setLabPublicFeatureFlags,
   ]);
 
   return <></>;

@@ -66,11 +66,13 @@ export class GoogleAuthController {
     });
 
     try {
-      const invitation = await this.authService.findInvitationForSignInUp({
-        currentWorkspace,
-        workspacePersonalInviteToken,
-        email,
-      });
+      const invitation =
+        currentWorkspace && workspacePersonalInviteToken && email
+          ? await this.authService.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
 
       const existingUser = await this.userRepository.findOne({
         where: { email },

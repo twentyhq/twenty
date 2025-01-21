@@ -19,7 +19,7 @@ export const useRichTextField = () => {
     useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichText,
+    FieldMetadataType.RICH_TEXT,
     isFieldRichText,
     fieldDefinition,
   );

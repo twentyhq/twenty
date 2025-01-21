@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { AppPath } from '@/types/AppPath';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
@@ -9,7 +9,6 @@ import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWork
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
-import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import {
   Button,
@@ -18,6 +17,7 @@ import {
   IconPower,
   isDefined,
 } from 'twenty-ui';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const RecordShowPageWorkflowVersionHeader = ({
   workflowVersionId,
@@ -81,7 +81,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
     openOverrideWorkflowDraftConfirmationModalState,
   );
 
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   return (
     <>
@@ -100,12 +100,10 @@ export const RecordShowPageWorkflowVersionHeader = ({
                 workflowVersionIdToCopy: workflowVersion.id,
               });
 
-              navigate(
-                buildShowPageURL(
-                  CoreObjectNameSingular.Workflow,
-                  workflowVersion.workflow.id,
-                ),
-              );
+              navigate(AppPath.RecordShowPage, {
+                objectNameSingular: CoreObjectNameSingular.Workflow,
+                objectRecordId: workflowVersion.workflow.id,
+              });
             }
           }}
         />

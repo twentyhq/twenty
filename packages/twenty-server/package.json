@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.35.4",
+  "version": "0.41.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -74,6 +74,8 @@
     "@types/react": "^18.2.39",
     "@types/unzipper": "^0",
     "rimraf": "^5.0.5",
+    "twenty-emails": "workspace:*",
+    "twenty-shared": "workspace:*",
     "typescript": "5.3.3"
   },
   "engines": {

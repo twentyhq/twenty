@@ -98,7 +98,6 @@ export class SignInUpService {
       };
     }
 
-    // with global invitation flow
     if (params.workspace) {
       const updatedUser = await this.signInUpOnExistingWorkspace({
         workspace: params.workspace,
@@ -138,10 +137,7 @@ export class SignInUpService {
     password: string;
     passwordHash: string;
   }) {
-    const isValid = await compareHash(
-      await this.generateHash(password),
-      passwordHash,
-    );
+    const isValid = await compareHash(password, passwordHash);
 
     if (!isValid) {
       throw new AuthException(
@@ -174,7 +170,7 @@ export class SignInUpService {
     }
 
     const invitationValidation =
-      await this.workspaceInvitationService.validateInvitation({
+      await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: params.invitation.value,
         email,
       });
@@ -246,7 +242,9 @@ export class SignInUpService {
 
     const user = Object.assign(currentUser, updatedUser);
 
-    await this.activateOnboardingForUser(user, params.workspace);
+    if (params.userData.type === 'newUserWithPicture') {
+      await this.activateOnboardingForUser(user, params.workspace);
+    }
 
     return user;
   }
