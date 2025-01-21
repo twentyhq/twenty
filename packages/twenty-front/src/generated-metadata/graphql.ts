@@ -170,6 +170,7 @@ export type ClientConfig = {
   frontDomain: Scalars['String']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
+  publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
@@ -545,8 +546,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
-  addUserToWorkspace: User;
-  addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
@@ -595,6 +594,7 @@ export type Mutation = {
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateBillingSubscription: UpdateBillingEntity;
+  updateLabPublicFeatureFlag: Scalars['Boolean']['output'];
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -619,16 +619,6 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
-};
-
-
-export type MutationAddUserToWorkspaceArgs = {
-  inviteHash: Scalars['String']['input'];
-};
-
-
-export type MutationAddUserToWorkspaceByInviteTokenArgs = {
-  inviteToken: Scalars['String']['input'];
 };
 
 
@@ -853,6 +843,11 @@ export type MutationUnsyncRemoteTableArgs = {
 };
 
 
+export type MutationUpdateLabPublicFeatureFlagArgs = {
+  input: UpdateLabPublicFeatureFlagInput;
+};
+
+
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
@@ -999,6 +994,19 @@ export type ProductPricesEntity = {
   __typename?: 'ProductPricesEntity';
   productPrices: Array<ProductPriceEntity>;
   totalNumberOfPrices: Scalars['Int']['output'];
+};
+
+export type PublicFeatureFlag = {
+  __typename?: 'PublicFeatureFlag';
+  key: FeatureFlagKey;
+  metadata: PublicFeatureFlagMetadata;
+};
+
+export type PublicFeatureFlagMetadata = {
+  __typename?: 'PublicFeatureFlagMetadata';
+  description: Scalars['String']['output'];
+  imagePath: Scalars['String']['output'];
+  label: Scalars['String']['output'];
 };
 
 export type PublicWorkspaceDataOutput = {
@@ -1534,6 +1542,11 @@ export type UpdateFieldInput = {
   settings?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type UpdateLabPublicFeatureFlagInput = {
+  publicFeatureFlag: Scalars['String']['input'];
+  value: Scalars['Boolean']['input'];
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -1707,7 +1720,7 @@ export type WorkflowRun = {
 
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
-  workflowVersionId: Scalars['UUID']['output'];
+  id: Scalars['UUID']['output'];
 };
 
 export type Workspace = {
@@ -1738,11 +1751,11 @@ export type Workspace = {
 };
 
 export enum WorkspaceActivationStatus {
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  OngoingCreation = 'ONGOING_CREATION',
-  PendingCreation = 'PENDING_CREATION',
-  Suspended = 'SUSPENDED'
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ONGOING_CREATION = 'ONGOING_CREATION',
+  PENDING_CREATION = 'PENDING_CREATION',
+  SUSPENDED = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
