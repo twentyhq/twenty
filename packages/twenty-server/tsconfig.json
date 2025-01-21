@@ -27,7 +27,6 @@
     "paths": {
       "src/*": ["./src/*"],
       "test/*": ["./test/*"],
-      "twenty-emails": ["../twenty-emails/dist"]
     }
   },
   "ts-node": {
