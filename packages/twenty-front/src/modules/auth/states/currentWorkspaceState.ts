@@ -23,6 +23,7 @@ export type CurrentWorkspace = Pick<
   | 'customDomain'
   | 'workspaceUrls'
   | 'metadataVersion'
+  | 'creatorEmail'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
