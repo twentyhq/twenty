@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
 import { useOverlayScrollbars } from 'overlayscrollbars-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
   ContextProviderName,
@@ -96,7 +96,6 @@ export const ScrollWrapper = ({
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
-  const [isScrollHandlerDragging, setIsScrollHandlerDragging] = useState(false);
 
   const setScrollTop = useSetRecoilComponentStateV2(
     scrollWrapperScrollTopComponentState,
@@ -126,19 +125,6 @@ export const ScrollWrapper = ({
     scrollWrapperInstanceComponentState,
     componentInstanceId,
   );
-
-  const handleMouseDown = (e: React.MouseEvent<Element, MouseEvent>) => {
-    const target = e.target as HTMLElement;
-    const isTargetScrollbarHandle: boolean =
-      target.classList.contains(`os-scrollbar-handle`);
-    if (isTargetScrollbarHandle) {
-      setIsScrollHandlerDragging(true);
-    }
-  };
-
-  const handleMouseUp = (_: React.MouseEvent<Element, MouseEvent>) => {
-    setIsScrollHandlerDragging(false);
-  };
 
   const [initialize, instance] = useOverlayScrollbars({
     options: {
@@ -189,6 +175,13 @@ export const ScrollWrapper = ({
     const currentRef = scrollableRef.current;
     if (currentRef !== null) {
       initialize(currentRef);
+      // Add data-select-disable to scrollbars
+      const scrollbars = currentRef.querySelectorAll('.os-scrollbar');
+      scrollbars.forEach((scrollbar) => {
+        if (scrollbar instanceof HTMLElement) {
+          scrollbar.dataset.selectDisable = 'true';
+        }
+      });
     }
     return () => {
       // Reset vertical scroll component-specific Recoil state
@@ -210,7 +203,6 @@ export const ScrollWrapper = ({
         value={{
           ref: scrollableRef,
           id: contextProviderName,
-          isScrollHandlerDragging,
         }}
       >
         <StyledScrollWrapper
@@ -218,8 +210,6 @@ export const ScrollWrapper = ({
           className={className}
           heightMode={heightMode}
           scrollbarVariant={scrollbarVariant}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
         >
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>

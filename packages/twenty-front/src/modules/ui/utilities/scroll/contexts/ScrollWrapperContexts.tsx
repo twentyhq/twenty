@@ -3,7 +3,6 @@ import { createContext, RefObject } from 'react';
 type ScrollWrapperContextValue = {
   ref: RefObject<HTMLDivElement>;
   id: string;
-  isScrollHandlerDragging: boolean;
 };
 
 export type ContextProviderName =
@@ -27,7 +26,6 @@ const createScrollWrapperContext = (id: string) =>
   createContext<ScrollWrapperContextValue>({
     ref: { current: null },
     id,
-    isScrollHandlerDragging: false,
   });
 
 export const EventListScrollWrapperContext =
