@@ -13,7 +13,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
-import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
+import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
@@ -53,7 +53,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
-  const [apiKeyToken, setApiKeyToken] = useRecoilState(apiKeyTokenState);
+  const [apiKeyToken, setApiKeyToken] = useRecoilState(
+    apiKeyTokenFamilyState(apiKeyId),
+  );
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
