@@ -3,8 +3,8 @@ import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
 import {
-    MultiItemBaseInput,
-    MultiItemBaseInputProps,
+  MultiItemBaseInput,
+  MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';

@@ -14,8 +14,8 @@ import { availableFilterDefinitionsComponentState } from '@/views/states/availab
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
 import {
-    ComponentDecorator,
-    getCanvasElementForDropdownTesting,
+  ComponentDecorator,
+  getCanvasElementForDropdownTesting,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';

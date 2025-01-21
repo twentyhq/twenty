@@ -8,8 +8,8 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';

@@ -8,8 +8,8 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
@@ -25,7 +25,9 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUserData(OnboardingStatus.SYNC_EMAIL),
+              currentUser: mockedOnboardingUserData(
+                OnboardingStatus.SYNC_EMAIL,
+              ),
             },
           });
         }),

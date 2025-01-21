@@ -1,9 +1,9 @@
 import { RelationType } from '@/settings/data-model/types/RelationType';
 import {
-    CreateRelationInput,
-    Field,
-    RelationDefinitionType,
-    RelationMetadataType,
+  CreateRelationInput,
+  Field,
+  RelationDefinitionType,
+  RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
 import { formatFieldMetadataItemInput } from './formatFieldMetadataItemInput';

@@ -1,7 +1,7 @@
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-    FieldMetadata,
-    FieldMultiSelectMetadata,
+  FieldMetadata,
+  FieldMultiSelectMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

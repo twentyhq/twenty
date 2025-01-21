@@ -7,14 +7,14 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { RelationDefinitionType } from '~/generated/graphql';
 
 import {
-    query,
-    responseData,
-    variables,
+  query,
+  responseData,
+  variables,
 } from '../__mocks__/useCreateOneRelationMetadataItem';
 
 import {
-    query as findManyObjectMetadataItemsQuery,
-    responseData as findManyObjectMetadataItemsResponseData,
+  query as findManyObjectMetadataItemsQuery,
+  responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [

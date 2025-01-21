@@ -2,8 +2,8 @@ import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-    RecordGroupDefinition,
-    RecordGroupDefinitionType,
+  RecordGroupDefinition,
+  RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

@@ -8,8 +8,8 @@ import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import {
-    BooleanFieldInput,
-    BooleanFieldInputProps,
+  BooleanFieldInput,
+  BooleanFieldInputProps,
 } from '../BooleanFieldInput';
 
 const BooleanFieldValueSetterEffect = ({

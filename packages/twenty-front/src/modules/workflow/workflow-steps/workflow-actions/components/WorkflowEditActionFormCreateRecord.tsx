@@ -11,10 +11,10 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
-    HorizontalSeparator,
-    IconAddressBook,
-    isDefined,
-    useIcons,
+  HorizontalSeparator,
+  IconAddressBook,
+  isDefined,
+  useIcons,
 } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';

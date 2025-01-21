@@ -4,10 +4,10 @@ import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
-    HorizontalSeparator,
-    IconAddressBook,
-    isDefined,
-    useIcons,
+  HorizontalSeparator,
+  IconAddressBook,
+  isDefined,
+  useIcons,
 } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';

@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-    Button,
-    H2Title,
-    IconArchive,
-    IconArchiveOff,
-    Section,
+  Button,
+  H2Title,
+  IconArchive,
+  IconArchiveOff,
+  Section,
 } from 'twenty-ui';
 import { z } from 'zod';
 

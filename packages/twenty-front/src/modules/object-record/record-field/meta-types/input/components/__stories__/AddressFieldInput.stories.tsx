@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import {
-    AddressInput,
-    AddressInputProps,
+  AddressInput,
+  AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
