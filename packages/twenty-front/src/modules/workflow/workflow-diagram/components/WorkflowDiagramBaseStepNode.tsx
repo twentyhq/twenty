@@ -76,9 +76,11 @@ const StyledSourceHandle = styled(Handle)`
   border: none;
   width: 4px;
   height: 4px;
+  left: 40px;
 `;
 
 export const StyledTargetHandle = styled(Handle)`
+  left: 40px;
   visibility: hidden;
 `;
 
