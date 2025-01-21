@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useFormContext } from 'react-hook-form';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -8,11 +7,10 @@ import { SettingsDataModelCardTitle } from '@/settings/data-model/components/Set
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import {
-  SettingsDataModelObjectIdentifiersForm,
-  SettingsDataModelObjectIdentifiersFormValues,
+  SettingsDataModelObjectIdentifiersForm
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent, isDefined } from 'twenty-ui';
+import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -41,24 +39,12 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
   onBlur,
 }: SettingsDataModelObjectSettingsFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
-
-  const labelIdentifierFieldMetadataIdFormValue = watchFormValue(
-    'labelIdentifierFieldMetadataId',
-  );
   const labelIdentifierFieldMetadataItem = useMemo(() => {
-    const labelIdentifierFieldMetadataId = isDefined(
-      labelIdentifierFieldMetadataIdFormValue,
-    )
-      ? labelIdentifierFieldMetadataIdFormValue
-      : objectMetadataItem.labelIdentifierFieldMetadataId;
-
     return getLabelIdentifierFieldMetadataItem({
       fields: objectMetadataItem.fields,
-      labelIdentifierFieldMetadataId,
+      labelIdentifierFieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
     });
-  }, [labelIdentifierFieldMetadataIdFormValue, objectMetadataItem]);
+  }, [objectMetadataItem]);
 
   return (
     <Card fullWidth>
@@ -86,7 +72,6 @@ export const SettingsDataModelObjectSettingsFormCard = ({
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
           onBlur={onBlur}
-          defaultLabelIdentifierFieldMetadataId={labelIdentifierFieldMetadataItem?.id}
         />
       </CardContent>
     </Card>

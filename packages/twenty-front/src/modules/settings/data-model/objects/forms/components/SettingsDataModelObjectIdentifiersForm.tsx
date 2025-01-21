@@ -23,11 +23,12 @@ export type SettingsDataModelObjectIdentifiers =
   keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
-  defaultLabelIdentifierFieldMetadataId: string | null;
   onBlur: () => void;
 };
-const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'labelIdentifierFieldMetadataId';
-const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'imageIdentifierFieldMetadataId';
+const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
+  'labelIdentifierFieldMetadataId';
+const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
+  'imageIdentifierFieldMetadataId';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,11 +37,12 @@ const StyledContainer = styled.div`
 
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
-  defaultLabelIdentifierFieldMetadataId,
-  onBlur
+  onBlur,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const { control } =
+  const { control, watch } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
+  watch(LABEL_IDENTIFIER_FIELD_METADATA_ID);
+  watch(IMAGE_IDENTIFIER_FIELD_METADATA_ID);
   const { getIcon } = useIcons();
   const labelIdentifierFieldOptions = useMemo(
     () =>
@@ -66,31 +68,26 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   };
   return (
     <StyledContainer>
-      {(
-        [
-          {
-            label: 'Record label',
-            fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
-            options: labelIdentifierFieldOptions,
-            defaultValue:
-              objectMetadataItem[
-                LABEL_IDENTIFIER_FIELD_METADATA_ID
-              ] ?? defaultLabelIdentifierFieldMetadataId, // defaultLabelIdentifierFieldMetadataId could be undefined as it's injected as any
-          },
-          {
-            label: 'Record image',
-            fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
-            options: imageIdentifierFieldOptions,
-            defaultValue: null,
-          },
-        ]
-      ).map(({ fieldName, label, options, defaultValue}) => (
+      {[
+        {
+          label: 'Record label',
+          fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
+          options: labelIdentifierFieldOptions,
+          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId
+        },
+        {
+          label: 'Record image',
+          fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
+          options: imageIdentifierFieldOptions,
+          defaultValue: null,
+        },
+      ].map(({ fieldName, label, options, defaultValue }) => (
         <Controller
           key={fieldName}
           name={fieldName}
           control={control}
           defaultValue={defaultValue}
-          render={({ field: {onChange, value } }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               label={label}
               disabled={!objectMetadataItem.isCustom || !options.length}
