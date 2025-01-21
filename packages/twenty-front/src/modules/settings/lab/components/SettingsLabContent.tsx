@@ -58,30 +58,28 @@ export const SettingsLabContent = () => {
   };
 
   return (
-    currentWorkspace?.id && (
-      <StyledCardGrid>
-        {labPublicFeatureFlags.map((flag, index) => (
-          <Card key={flag.key} rounded>
-            {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
-              <StyledImage
-                src={flag.metadata.imagePath}
-                alt={flag.metadata.label}
-                isFirstCard={index === 0}
-                onError={() => handleImageError(flag.key)}
-              />
-            ) : (
-              <StyledFallbackDiv isFirstCard={index === 0} />
-            )}
-            <SettingsOptionCardContentToggle
-              title={flag.metadata.label}
-              description={flag.metadata.description}
-              checked={flag.value}
-              onChange={(value) => handleToggle(flag.key, value)}
-              toggleCentered={false}
+    <StyledCardGrid>
+      {labPublicFeatureFlags.map((flag, index) => (
+        <Card key={flag.key} rounded>
+          {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
+            <StyledImage
+              src={flag.metadata.imagePath}
+              alt={flag.metadata.label}
+              isFirstCard={index === 0}
+              onError={() => handleImageError(flag.key)}
             />
-          </Card>
-        ))}
-      </StyledCardGrid>
-    )
+          ) : (
+            <StyledFallbackDiv isFirstCard={index === 0} />
+          )}
+          <SettingsOptionCardContentToggle
+            title={flag.metadata.label}
+            description={flag.metadata.description}
+            checked={flag.value}
+            onChange={(value) => handleToggle(flag.key, value)}
+            toggleCentered={false}
+          />
+        </Card>
+      ))}
+    </StyledCardGrid>
   );
 };
