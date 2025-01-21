@@ -49,8 +49,8 @@ const StyledInput = styled.input<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
   outline: none;
-  padding: ${({ theme, autoSize }) =>
-    autoSize ? `${theme.spacing(2)} 0` : theme.spacing(2)};
+  padding: ${({ theme, height }) =>
+    height === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
