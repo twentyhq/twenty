@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -53,9 +53,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
-  const [apiKeyToken, setApiKeyToken] = useRecoilState(
-    apiKeyTokenFamilyState(apiKeyId),
-  );
+  const apiKeyToken = useRecoilValue(apiKeyTokenFamilyState(apiKeyId));
 
   const setApiKeyTokenCallback = useRecoilCallback(
     ({ set }) =>
