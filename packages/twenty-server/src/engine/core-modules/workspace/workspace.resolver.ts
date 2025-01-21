@@ -109,7 +109,7 @@ export class WorkspaceResolver {
     @AuthWorkspace() workspace: Workspace,
   ) {
     try {
-      return this.workspaceService.updateWorkspaceById({
+      return await this.workspaceService.updateWorkspaceById({
         ...data,
         id: workspace.id,
       });
