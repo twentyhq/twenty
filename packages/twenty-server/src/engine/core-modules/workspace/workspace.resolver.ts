@@ -7,8 +7,10 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -63,6 +65,8 @@ export class WorkspaceResolver {
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -162,8 +166,14 @@ export class WorkspaceResolver {
   @ResolveField(() => [BillingSubscription])
   async billingSubscriptions(
     @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription[]> {
-    return this.billingSubscriptionService.findMany(workspace.id);
+  ): Promise<BillingSubscription[] | undefined> {
+    try {
+      return this.billingSubscriptionRepository.find({
+        where: { workspaceId: workspace.id },
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })

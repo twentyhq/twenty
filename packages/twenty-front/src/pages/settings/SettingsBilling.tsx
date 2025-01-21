@@ -18,6 +18,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -60,12 +61,12 @@ export const SettingsBilling = () => {
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const subscriptions = currentWorkspace?.billingSubscriptions;
-  const hasSubscriptions = subscriptions && subscriptions.length > 0;
+  const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
+  const subscriptionStatus = useSubscriptionStatus();
   const hasNotCanceledCurrentSubscription =
-    isDefined(currentWorkspace?.currentBillingSubscription) &&
-    currentWorkspace?.currentBillingSubscription?.status !==
-      SubscriptionStatus.Canceled;
+    isDefined(subscriptionStatus) &&
+    subscriptionStatus !== SubscriptionStatus.Canceled;
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
