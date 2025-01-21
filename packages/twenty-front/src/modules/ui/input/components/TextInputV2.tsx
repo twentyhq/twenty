@@ -16,7 +16,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
-  Pick<TextInputV2ComponentProps, 'fullWidth' | 'autoSize'>
+  Pick<TextInputV2ComponentProps, 'fullWidth'>
 >`
   display: inline-flex;
   flex-direction: column;
@@ -33,7 +33,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize' | 'height'
+    'fullWidth' | 'LeftIcon' | 'error' | 'autoSize' | 'sizeVariant'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -47,10 +47,10 @@ const StyledInput = styled.input<
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
+  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
   outline: none;
-  padding: ${({ theme, height }) =>
-    height === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
+  padding: ${({ theme, sizeVariant }) =>
+    sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
@@ -117,9 +117,11 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-const StyledAutoSizeInputContainer = styled.div<{ height: 'sm' | 'md' }>`
+const StyledAutoSizeInputContainer = styled.div<{
+  sizeVariant: TextInputV2Size;
+}>`
   display: inline-flex;
-  height: ${({ height }) => (height === 'sm' ? '20px' : '32px')};
+  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
   position: relative;
   overflow: hidden;
 `;
@@ -130,6 +132,8 @@ const StyledAutoSizeSpan = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
+
+export type TextInputV2Size = 'sm' | 'md';
 
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -144,10 +148,10 @@ export type TextInputV2ComponentProps = Omit<
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
   autoSize?: boolean;
-  height?: 'sm' | 'md';
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
+  sizeVariant?: TextInputV2Size;
 };
 
 const TextInputV2Component = (
@@ -173,7 +177,7 @@ const TextInputV2Component = (
     autoComplete,
     autoSize,
     maxLength,
-    height = 'md',
+    sizeVariant = 'md',
     dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
@@ -193,11 +197,7 @@ const TextInputV2Component = (
   const inputId = useId();
 
   return (
-    <StyledContainer
-      className={className}
-      fullWidth={fullWidth ?? false}
-      autoSize={autoSize}
-    >
+    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && (
         <InputLabel htmlFor={inputId}>
           {label + (required ? '*' : '')}
@@ -212,11 +212,10 @@ const TextInputV2Component = (
           </StyledLeftIconContainer>
         )}
         {autoSize ? (
-          <StyledAutoSizeInputContainer height={height}>
+          <StyledAutoSizeInputContainer sizeVariant={sizeVariant}>
             <StyledAutoSizeSpan>{value || placeholder}</StyledAutoSizeSpan>
             <StyledInput
               id={inputId}
-              height={height}
               data-testid={dataTestId}
               autoComplete={autoComplete || 'off'}
               ref={combinedRef}
@@ -240,6 +239,7 @@ const TextInputV2Component = (
                 LeftIcon,
                 maxLength,
                 error,
+                sizeVariant,
               }}
             />
           </StyledAutoSizeInputContainer>
@@ -268,6 +268,7 @@ const TextInputV2Component = (
               LeftIcon,
               maxLength,
               error,
+              sizeVariant,
             }}
           />
         )}

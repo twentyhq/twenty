@@ -62,7 +62,6 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
-
   const createNewTableRecord = useRecoilCallback(
     ({ set }) =>
       async () => {
@@ -79,7 +78,8 @@ export const useCreateNewTableRecord = ({
               name: 'Untitled',
             });
 
-            navigate(AppPath.RecordIndexPage,
+            navigate(
+              AppPath.RecordIndexPage,
               {
                 objectNamePlural: CoreObjectNamePlural.WorkflowRun,
               },
@@ -91,7 +91,8 @@ export const useCreateNewTableRecord = ({
                     },
                   },
                 },
-              });
+              },
+            );
 
             set(isUpdatingRecordEditableNameState, true);
             return;
