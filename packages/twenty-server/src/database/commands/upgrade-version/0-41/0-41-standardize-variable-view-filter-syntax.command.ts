@@ -146,7 +146,10 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
       jsonRelationFilterValueResult.data;
 
     if (isCurrentWorkspaceMemberSelected) {
-      return JSON.stringify([...selectedRecordIds, '{{CURRENT_WORKSPACE_MEMBER}}']);
+      return JSON.stringify([
+        ...selectedRecordIds,
+        '{{CURRENT_WORKSPACE_MEMBER}}',
+      ]);
     }
 
     return JSON.stringify(selectedRecordIds);
