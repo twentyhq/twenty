@@ -5,7 +5,7 @@ describe('isLabelIdentifierField', () => {
     const res = isLabelIdentifierField({
       fieldMetadataItem: { id: 'fieldId', name: 'fieldName' },
       objectMetadataItem: {
-        labelIdentifierFieldMetadataId: 'unknown'
+        labelIdentifierFieldMetadataId: 'unknown',
       },
     });
     expect(res).toBe(false);
@@ -15,7 +15,7 @@ describe('isLabelIdentifierField', () => {
     const res = isLabelIdentifierField({
       fieldMetadataItem: { id: 'fieldId', name: 'fieldName' },
       objectMetadataItem: {
-        labelIdentifierFieldMetadataId: 'fieldId'
+        labelIdentifierFieldMetadataId: 'fieldId',
       },
     });
     expect(res).toBe(true);

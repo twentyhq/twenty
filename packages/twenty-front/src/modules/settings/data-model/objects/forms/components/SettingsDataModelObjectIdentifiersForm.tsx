@@ -73,7 +73,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
           label: 'Record label',
           fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
           options: labelIdentifierFieldOptions,
-          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId
+          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
         },
         {
           label: 'Record image',

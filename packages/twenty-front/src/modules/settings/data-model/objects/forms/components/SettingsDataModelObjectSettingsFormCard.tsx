@@ -6,9 +6,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { SettingsDataModelCardTitle } from '@/settings/data-model/components/SettingsDataModelCardTitle';
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
-import {
-  SettingsDataModelObjectIdentifiersForm
-} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
+import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui';
 
@@ -42,7 +40,8 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   const labelIdentifierFieldMetadataItem = useMemo(() => {
     return getLabelIdentifierFieldMetadataItem({
       fields: objectMetadataItem.fields,
-      labelIdentifierFieldMetadataId: objectMetadataItem.labelIdentifierFieldMetadataId,
+      labelIdentifierFieldMetadataId:
+        objectMetadataItem.labelIdentifierFieldMetadataId,
     });
   }, [objectMetadataItem]);
 
