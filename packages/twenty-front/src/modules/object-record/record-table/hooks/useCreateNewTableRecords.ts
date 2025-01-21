@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -8,15 +9,17 @@ import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from '~/utils/isDefined';
 
 export const useCreateNewTableRecord = ({
@@ -57,7 +60,7 @@ export const useCreateNewTableRecord = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const createNewTableRecord = useRecoilCallback(
     ({ set }) =>
@@ -74,7 +77,21 @@ export const useCreateNewTableRecord = ({
               id: recordId,
               name: 'Untitled',
             });
-            navigate(`/object/workflow/${recordId}`);
+
+            navigate(AppPath.RecordIndexPage,
+              {
+                objectNamePlural: CoreObjectNamePlural.WorkflowRun,
+              },
+              {
+                filter: {
+                  workflow: {
+                    [ViewFilterOperand.Is]: {
+                      selectedRecordIds: [recordId],
+                    },
+                  },
+                },
+              });
+              
             set(isUpdatingRecordEditableNameState, true);
             return;
           }
