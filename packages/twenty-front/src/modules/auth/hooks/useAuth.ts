@@ -349,7 +349,7 @@ export const useAuth = () => {
     [setIsVerifyPendingState, verify, setTokenPair, loadCurrentUser],
   );
 
-  const handleCrendentialsSignIn = useCallback(
+  const handleCredentialsSignIn = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       const { loginToken } = await handleChallenge(
         email,
@@ -499,7 +499,7 @@ export const useAuth = () => {
     clearSession,
     signOut: handleSignOut,
     signUpWithCredentials: handleCredentialsSignUp,
-    signInWithCredentials: handleCrendentialsSignIn,
+    signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
   };

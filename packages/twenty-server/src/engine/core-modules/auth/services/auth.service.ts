@@ -475,35 +475,29 @@ export class AuthService {
     return url.toString();
   }
 
-  async findInvitationForSignInUp({
-    currentWorkspace,
-    workspacePersonalInviteToken,
-    email,
-  }: {
-    currentWorkspace: Workspace | null;
-    workspacePersonalInviteToken?: string;
-    email?: string;
-  }) {
-    if (!currentWorkspace || !workspacePersonalInviteToken) return undefined;
-
+  async findInvitationForSignInUp(
+    params: {
+      currentWorkspace: Workspace;
+    } & ({ workspacePersonalInviteToken: string } | { email: string }),
+  ) {
     const qr = this.appTokenRepository
       .createQueryBuilder('appToken')
       .where('"appToken"."workspaceId" = :workspaceId', {
-        workspaceId: currentWorkspace.id,
+        workspaceId: params.currentWorkspace.id,
       })
       .andWhere('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       });
 
-    if (workspacePersonalInviteToken) {
+    if ('workspacePersonalInviteToken' in params) {
       qr.andWhere('"appToken".value = :personalInviteToken', {
-        personalInviteToken: workspacePersonalInviteToken,
+        personalInviteToken: params.workspacePersonalInviteToken,
       });
     }
 
-    if (email) {
+    if ('email' in params) {
       qr.andWhere('"appToken".context->>\'email\' = :email', {
-        email,
+        email: params.email,
       });
     }
 

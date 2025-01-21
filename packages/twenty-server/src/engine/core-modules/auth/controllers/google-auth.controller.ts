@@ -70,7 +70,6 @@ export class GoogleAuthController {
         currentWorkspace && workspacePersonalInviteToken && email
           ? await this.authService.findInvitationForSignInUp({
               currentWorkspace,
-              workspacePersonalInviteToken,
               email,
             })
           : undefined;

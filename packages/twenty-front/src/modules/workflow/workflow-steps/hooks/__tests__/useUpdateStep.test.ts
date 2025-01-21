@@ -2,8 +2,8 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { renderHook } from '@testing-library/react';
 
-const mockCreateNewWorkflowVersion = jest.fn();
 const mockUpdateWorkflowVersionStep = jest.fn();
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 
 jest.mock('recoil', () => ({
   useRecoilValue: () => 'parent-step-id',
@@ -20,9 +20,9 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
-  useCreateNewWorkflowVersion: () => ({
-    createNewWorkflowVersion: mockCreateNewWorkflowVersion,
+jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
+  useCreateDraftFromWorkflowVersion: () => ({
+    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
   }),
 }));
 
