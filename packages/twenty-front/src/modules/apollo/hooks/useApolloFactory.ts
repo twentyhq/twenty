@@ -69,7 +69,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
-        setWorkspaces(null);
+        setWorkspaces([]);
         if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignInUp) &&
