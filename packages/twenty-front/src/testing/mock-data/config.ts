@@ -52,4 +52,5 @@ export const mockedClientConfig: ClientConfig = {
   },
   api: { mutationMaximumAffectedRecords: 100 },
   canManageFeatureFlags: true,
+  publicFeatureFlags: [],
 };

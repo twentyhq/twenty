@@ -74,7 +74,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       objectNamePlural,
     },
     {
-      fieldType: FieldMetadataType.Select,
+      fieldType: FieldMetadataType.SELECT,
     },
   );
 

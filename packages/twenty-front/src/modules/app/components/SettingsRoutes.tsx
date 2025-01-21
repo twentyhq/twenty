@@ -253,6 +253,12 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
+const SettingsLab = lazy(() =>
+  import('~/pages/settings/lab/SettingsLab').then((module) => ({
+    default: module.SettingsLab,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
@@ -379,6 +385,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
     </Routes>
   </Suspense>
 );

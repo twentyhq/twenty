@@ -6,4 +6,4 @@ import { FieldMetadata, FieldPositionMetadata } from '../FieldMetadata';
 export const isFieldPosition = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldPositionMetadata> =>
-  field.type === FieldMetadataType.Position;
+  field.type === FieldMetadataType.POSITION;

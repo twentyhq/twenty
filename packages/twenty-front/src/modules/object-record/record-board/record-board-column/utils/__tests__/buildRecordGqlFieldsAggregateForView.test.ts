@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { buildRecordGqlFieldsAggregateForRecordBoard } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForRecordBoard';
+import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 const MOCK_KANBAN_FIELD = 'stage';
 
-describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
+describe('buildRecordGqlFieldsAggregateForView', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
     id: '123',
     nameSingular: 'opportunity',
@@ -26,17 +26,17 @@ describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
       {
         id: MOCK_FIELD_ID,
         name: 'amount',
-        type: FieldMetadataType.Number,
+        type: FieldMetadataType.NUMBER,
       } as FieldMetadataItem,
       {
         id: '06b33746-5293-4d07-9f7f-ebf5ad396064',
         name: 'name',
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
       } as FieldMetadataItem,
       {
         id: 'e46b9ba4-144b-4d10-a092-03a7521c8aa0',
         name: 'createdAt',
-        type: FieldMetadataType.DateTime,
+        type: FieldMetadataType.DATE_TIME,
       } as FieldMetadataItem,
     ],
     indexMetadatas: [],
@@ -50,10 +50,10 @@ describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
       operation: AGGREGATE_OPERATIONS.sum,
     };
 
-    const result = buildRecordGqlFieldsAggregateForRecordBoard({
+    const result = buildRecordGqlFieldsAggregateForView({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: kanbanAggregateOperation,
-      kanbanFieldName: MOCK_KANBAN_FIELD,
+      fieldNameForCount: MOCK_KANBAN_FIELD,
     });
 
     expect(result).toEqual({
@@ -67,10 +67,10 @@ describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
       operation: AGGREGATE_OPERATIONS.count,
     };
 
-    const result = buildRecordGqlFieldsAggregateForRecordBoard({
+    const result = buildRecordGqlFieldsAggregateForView({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: operation,
-      kanbanFieldName: MOCK_KANBAN_FIELD,
+      fieldNameForCount: MOCK_KANBAN_FIELD,
     });
 
     expect(result).toEqual({
@@ -85,10 +85,10 @@ describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
     };
 
     expect(() =>
-      buildRecordGqlFieldsAggregateForRecordBoard({
+      buildRecordGqlFieldsAggregateForView({
         objectMetadataItem: mockObjectMetadata,
         recordIndexKanbanAggregateOperation: operation,
-        kanbanFieldName: MOCK_KANBAN_FIELD,
+        fieldNameForCount: MOCK_KANBAN_FIELD,
       }),
     ).toThrow(
       `No field found to compute aggregate operation ${AGGREGATE_OPERATIONS.sum} on object ${mockObjectMetadata.nameSingular}`,
