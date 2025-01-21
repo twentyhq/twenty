@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { FieldMetadataType } from 'packages/twenty-shared/dist/types/FieldMetadataType';
+import { FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -13,7 +13,6 @@ import {
 import { isCommandLogger } from 'src/database/commands/logger';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -49,7 +48,6 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -82,6 +80,7 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             workspaceId,
             'viewFilter',
+            false,
           );
 
         const relationFieldMetadata = await this.fieldMetadataRepository.find({
@@ -123,12 +122,9 @@ export class StandardizeVariableViewFilterSyntaxCommand extends ActiveWorkspaces
           chalk.green(`Command completed for workspace ${workspaceId}.`),
         );
       } catch (error) {
-        this.logger.log(
-          chalk.red(
-            `Error in workspace ${workspaceId}: ${(error as Error).message}`,
-          ),
+        this.logger.error(
+          `Error running command for workspace ${workspaceId}: ${error}`,
         );
-        workspaceIterator++;
       }
     }
     this.logger.log(chalk.green(`Command completed!`));
