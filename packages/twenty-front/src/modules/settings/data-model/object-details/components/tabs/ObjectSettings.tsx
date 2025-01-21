@@ -191,7 +191,13 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               disableEdition={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
-                formConfig.handleSubmit(handleSave)();
+                console.log('*'.repeat(10));
+                console.log(formConfig.formState.errors);
+                console.log(formConfig.formState.dirtyFields);
+                formConfig.handleSubmit(handleSave, (e) =>
+                  console.log('error', e),
+                )();
+                console.log('*'.repeat(10));
               }}
             />
           </StyledFormSection>
@@ -202,6 +208,11 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
                 description="Choose the fields that will identify your records"
               />
               <SettingsDataModelObjectSettingsFormCard
+                onBlur={() =>
+                  formConfig.handleSubmit(handleSave, (e) =>
+                    console.log('error', e),
+                  )()
+                }
                 objectMetadataItem={objectMetadataItem}
               />
             </Section>

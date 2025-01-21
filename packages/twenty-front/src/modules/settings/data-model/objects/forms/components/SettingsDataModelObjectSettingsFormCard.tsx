@@ -12,10 +12,11 @@ import {
   SettingsDataModelObjectIdentifiersFormValues,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui';
+import { Card, CardContent, isDefined } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
+  onBlur: () => void
 };
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -38,6 +39,7 @@ const StyledObjectSummaryCardContent = styled(CardContent)`
 
 export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
+  onBlur
 }: SettingsDataModelObjectSettingsFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
@@ -54,13 +56,14 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       }),
     [labelIdentifierFieldMetadataIdFormValue, objectMetadataItem],
   );
-
+  
   return (
     <Card fullWidth>
       <StyledTopCardContent divider>
         <SettingsDataModelCardTitle>
           <Trans>Preview</Trans>
         </SettingsDataModelCardTitle>
+        {JSON.stringify(labelIdentifierFieldMetadataItem)}
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
             objectMetadataItem={objectMetadataItem}
@@ -80,8 +83,14 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
+          onBlur={onBlur}
           defaultLabelIdentifierFieldMetadataId={
-            labelIdentifierFieldMetadataItem?.id
+            (() => {
+              // TMP is any here as the ternary might return any it overrides the null
+              // Why is it any ? what if it was unknonw ?
+              const tmp = isDefined(labelIdentifierFieldMetadataItem) ? labelIdentifierFieldMetadataItem.id : null
+              return tmp
+            })()
           }
         />
       </CardContent>

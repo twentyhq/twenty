@@ -23,7 +23,8 @@ export type SettingsDataModelObjectIdentifiers =
   keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
-  defaultLabelIdentifierFieldMetadataId: string;
+  defaultLabelIdentifierFieldMetadataId: string | null;
+  onBlur: () => void;
 };
 const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'labelIdentifierFieldMetadataId';
 const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'imageIdentifierFieldMetadataId';
@@ -36,6 +37,7 @@ const StyledContainer = styled.div`
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
   defaultLabelIdentifierFieldMetadataId,
+  onBlur
 }: SettingsDataModelObjectIdentifiersFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
@@ -73,7 +75,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
             defaultValue:
               objectMetadataItem[
                 LABEL_IDENTIFIER_FIELD_METADATA_ID
-              ] ?? defaultLabelIdentifierFieldMetadataId,
+              ] ?? defaultLabelIdentifierFieldMetadataId, // defaultLabelIdentifierFieldMetadataId as in injected as any could be undefined 
           },
           {
             label: 'Record image',
@@ -88,7 +90,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
           name={fieldName}
           control={control}
           defaultValue={defaultValue}
-          render={({ field: { onBlur, onChange, value } }) => (
+          render={({ field: {onChange, value } }) => (
             <Select
               label={label}
               disabled={!objectMetadataItem.isCustom || !options.length}
