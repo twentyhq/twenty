@@ -379,7 +379,7 @@ export class ServerlessFunctionService {
     const serverlessFunctionToReset =
       await this.serverlessFunctionRepository.findOneBy({
         workspaceId,
-        id: id,
+        id,
       });
 
     if (!serverlessFunctionToReset) {

@@ -3,17 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useCreateStep } from '../useCreateStep';
 
 const mockOpenRightDrawer = jest.fn();
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue({
-  id: '457',
-  name: 'toto',
-  createdAt: '2024-07-03T20:03:35.064Z',
-  updatedAt: '2024-07-03T20:03:35.064Z',
-  workflowId: '123',
-  __typename: 'WorkflowVersion',
-  status: 'DRAFT',
-  steps: [],
-  trigger: null,
-});
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: { createWorkflowVersionStep: { id: '1' } },
 });

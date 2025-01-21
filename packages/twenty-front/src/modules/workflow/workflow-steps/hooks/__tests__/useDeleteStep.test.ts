@@ -6,17 +6,7 @@ import { RecoilRoot } from 'recoil';
 const mockCloseRightDrawer = jest.fn();
 const mockDeleteWorkflowVersionStep = jest.fn();
 const updateOneRecordMock = jest.fn();
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue({
-  id: '457',
-  name: 'toto',
-  createdAt: '2024-07-03T20:03:35.064Z',
-  updatedAt: '2024-07-03T20:03:35.064Z',
-  workflowId: '123',
-  __typename: 'WorkflowVersion',
-  status: 'DRAFT',
-  steps: [],
-  trigger: null,
-});
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({

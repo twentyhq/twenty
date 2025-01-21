@@ -2,17 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue({
-  id: '457',
-  name: 'toto',
-  createdAt: '2024-07-03T20:03:35.064Z',
-  updatedAt: '2024-07-03T20:03:35.064Z',
-  workflowId: '123',
-  __typename: 'WorkflowVersion',
-  status: 'DRAFT',
-  steps: [],
-  trigger: null,
-});
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 
 jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
   useCreateDraftFromWorkflowVersion: () => ({
@@ -48,7 +38,7 @@ describe('useGetUpdatableWorkflowVersion', () => {
       mockWorkflow('DRAFT'),
     );
     expect(mockCreateDraftFromWorkflowVersion).not.toHaveBeenCalled();
-    expect(workflowVersionId === '456');
+    expect(workflowVersionId).toEqual('456');
   });
 
   it('should create workflow version if no draft version exists', async () => {
@@ -57,6 +47,6 @@ describe('useGetUpdatableWorkflowVersion', () => {
       mockWorkflow('ACTIVE'),
     );
     expect(mockCreateDraftFromWorkflowVersion).toHaveBeenCalled();
-    expect(workflowVersionId === '457');
+    expect(workflowVersionId).toEqual('457');
   });
 });
