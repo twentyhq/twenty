@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { Controller, ControllerProps, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { IconCircleOff, useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -9,7 +9,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { Maybe } from 'graphql/jsutils/Maybe';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -20,20 +19,14 @@ export const settingsDataModelObjectIdentifiersFormSchema =
 export type SettingsDataModelObjectIdentifiersFormValues = z.infer<
   typeof settingsDataModelObjectIdentifiersFormSchema
 >;
-export type SettingsDataModelIdentifiers =
+export type SettingsDataModelObjectIdentifiers =
   keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
   defaultLabelIdentifierFieldMetadataId: string;
 };
-// Could this be done using generic ?
-type AllObjectMetadataIdentifiers = {
-  label: string;
-  fieldName: SettingsDataModelIdentifiers;
-  options: SelectOption<string | null>[];
-  defaultValue: Maybe<string> | undefined;
-  rules?: ControllerProps['rules']
-}[];
+const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'labelIdentifierFieldMetadataId';
+const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers = 'imageIdentifierFieldMetadataId';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -69,27 +62,26 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     label: 'None',
     value: null,
   };
-  // Should we declare below array within component function to avoid satisfies assertion
   return (
     <StyledContainer>
       {(
         [
           {
             label: 'Record label',
-            fieldName: 'labelIdentifierFieldMetadataId',
+            fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
             options: labelIdentifierFieldOptions,
             defaultValue:
               objectMetadataItem[
-                'labelIdentifierFieldMetadataId' satisfies SettingsDataModelIdentifiers
+                LABEL_IDENTIFIER_FIELD_METADATA_ID
               ] ?? defaultLabelIdentifierFieldMetadataId,
           },
           {
             label: 'Record image',
-            fieldName: 'imageIdentifierFieldMetadataId',
+            fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
             options: imageIdentifierFieldOptions,
-            defaultValue: undefined,
+            defaultValue: null,
           },
-        ] satisfies AllObjectMetadataIdentifiers
+        ]
       ).map(({ fieldName, label, options, defaultValue}) => (
         <Controller
           key={fieldName}
