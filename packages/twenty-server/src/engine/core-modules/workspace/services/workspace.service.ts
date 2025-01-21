@@ -46,6 +46,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { FeatureFlag } from '../../feature-flag/feature-flag.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -72,6 +73,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {
     super(workspaceRepository);
   }
@@ -275,6 +278,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
+
+    const stripeFeatureFlag = this.featureFlagRepository.create({
+      key: FeatureFlagKey.IsStripeIntegrationEnabled,
+      workspaceId: user.currentWorkspace.id,
+      value: true,
+    });
+
+    await this.featureFlagRepository.save(stripeFeatureFlag);
 
     return await this.workspaceRepository.findOneBy({
       id: workspace.id,

@@ -21,6 +21,7 @@ import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integ
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -59,6 +60,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         Sector,
         Agent,
         Inbox,
+        StripeIntegration,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')

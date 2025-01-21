@@ -55,6 +55,7 @@ import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { FileModule } from './file/file.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
+    StripeModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     MetaModule,
@@ -139,6 +141,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
+    StripeModule,
   ],
 })
 export class CoreEngineModule {}

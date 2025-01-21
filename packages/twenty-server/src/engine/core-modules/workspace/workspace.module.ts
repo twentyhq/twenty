@@ -28,6 +28,8 @@ import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+import { FeatureFlagEntity } from '../feature-flag/feature-flag.entity';
+import { StripeIntegration } from '../stripe/integrations/stripe-integration.entity';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { WorkspaceService } from './services/workspace.service';
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace],
+          [User, Workspace, UserWorkspace, FeatureFlagEntity, StripeIntegration],
           'core',
         ),
         UserWorkspaceModule,

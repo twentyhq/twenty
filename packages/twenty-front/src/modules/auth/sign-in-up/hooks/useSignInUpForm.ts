@@ -55,6 +55,10 @@ export const useSignInUpForm = () => {
     resolver: zodResolver(validationSchema),
   });
 
+  const {
+    formState: { isValid },
+  } = form;
+
   useEffect(() => {
     if (isDefined(prefilledEmail)) {
       form.setValue('email', prefilledEmail);

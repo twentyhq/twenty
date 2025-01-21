@@ -20,6 +20,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { StripeIntegration } from '../stripe/integrations/stripe-integration.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -145,4 +146,10 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
+  @Field(() => [StripeIntegration])
+  @OneToMany(
+    () => StripeIntegration,
+    (stripeIntegration) => stripeIntegration.workspace,
+  )
+  stripeIntegrations: Relation<StripeIntegration[]>;
 }

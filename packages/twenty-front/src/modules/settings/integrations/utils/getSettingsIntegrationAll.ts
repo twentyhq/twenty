@@ -42,7 +42,7 @@ export const getSettingsIntegrationAll = ({
         key: 'stripe',
         image: '/images/integrations/stripe-logo.png',
       },
-      type: isStripeIntegrationActive ? 'Active' : 'Add',
+      type: 'Add',
       text: 'Stripe',
       link: '/settings/integrations/stripe',
     },
