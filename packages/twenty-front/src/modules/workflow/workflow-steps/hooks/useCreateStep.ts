@@ -35,11 +35,11 @@ export const useCreateStep = ({
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     const createdStep = (
       await createWorkflowVersionStep({
-        workflowVersionId: workflowVersion.id,
+        workflowVersionId,
         stepType: newStepType,
       })
     )?.data?.createWorkflowVersionStep;

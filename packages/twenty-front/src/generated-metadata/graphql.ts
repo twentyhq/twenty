@@ -551,7 +551,7 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   computeStepOutputSchema: Scalars['JSON']['output'];
-  createDraftFromWorkflowVersion: Scalars['Boolean']['output'];
+  createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -1709,6 +1709,11 @@ export type WorkflowAction = {
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
   workflowRunId: Scalars['UUID']['output'];
+};
+
+export type WorkflowVersion = {
+  __typename?: 'WorkflowVersion';
+  workflowVersionId: Scalars['UUID']['output'];
 };
 
 export type Workspace = {
