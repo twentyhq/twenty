@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -127,22 +127,6 @@ export type BillingSubscription = {
   interval?: Maybe<SubscriptionInterval>;
   status: SubscriptionStatus;
 };
-
-export type BillingSubscriptionFilter = {
-  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
-};
-
-export type BillingSubscriptionSort = {
-  direction: SortDirection;
-  field: BillingSubscriptionSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingSubscriptionSortFields {
-  id = 'id'
-}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
@@ -1208,18 +1192,6 @@ export type SignUpOutput = {
   workspace: WorkspaceSubdomainAndId;
 };
 
-/** Sort Directions */
-export enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-/** Sort Nulls Options */
-export enum SortNulls {
-  NULLS_FIRST = 'NULLS_FIRST',
-  NULLS_LAST = 'NULLS_LAST'
-}
-
 export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
@@ -1615,51 +1587,6 @@ export type WorkspaceSubdomainAndId = {
   id: Scalars['String'];
   subdomain: Scalars['String'];
 };
-
-export type BillingCustomer = {
-  __typename?: 'billingCustomer';
-  id: Scalars['UUID'];
-};
-
-export type BillingCustomerFilter = {
-  and?: InputMaybe<Array<BillingCustomerFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingCustomerFilter>>;
-};
-
-export type BillingCustomerSort = {
-  direction: SortDirection;
-  field: BillingCustomerSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingCustomerSortFields {
-  id = 'id'
-}
-
-export type BillingEntitlement = {
-  __typename?: 'billingEntitlement';
-  id: Scalars['UUID'];
-  key: Scalars['String'];
-  value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
-};
-
-export type BillingEntitlementFilter = {
-  and?: InputMaybe<Array<BillingEntitlementFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingEntitlementFilter>>;
-};
-
-export type BillingEntitlementSort = {
-  direction: SortDirection;
-  field: BillingEntitlementSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingEntitlementSortFields {
-  id = 'id'
-}
 
 export type Field = {
   __typename?: 'field';

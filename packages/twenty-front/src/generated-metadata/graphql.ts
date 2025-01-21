@@ -135,22 +135,6 @@ export type BillingSubscription = {
   status: SubscriptionStatus;
 };
 
-export type BillingSubscriptionFilter = {
-  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
-};
-
-export type BillingSubscriptionSort = {
-  direction: SortDirection;
-  field: BillingSubscriptionSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingSubscriptionSortFields {
-  id = 'id'
-}
-
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1418,18 +1402,6 @@ export type SignUpOutput = {
   workspace: WorkspaceSubdomainAndId;
 };
 
-/** Sort Directions */
-export enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-/** Sort Nulls Options */
-export enum SortNulls {
-  NULLS_FIRST = 'NULLS_FIRST',
-  NULLS_LAST = 'NULLS_LAST'
-}
-
 export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
@@ -1767,11 +1739,11 @@ export type Workspace = {
 };
 
 export enum WorkspaceActivationStatus {
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  OngoingCreation = 'ONGOING_CREATION',
-  PendingCreation = 'PENDING_CREATION',
-  Suspended = 'SUSPENDED'
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ONGOING_CREATION = 'ONGOING_CREATION',
+  PENDING_CREATION = 'PENDING_CREATION',
+  SUSPENDED = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
@@ -1843,51 +1815,6 @@ export type WorkspaceSubdomainAndId = {
   id: Scalars['String']['output'];
   subdomain: Scalars['String']['output'];
 };
-
-export type BillingCustomer = {
-  __typename?: 'billingCustomer';
-  id: Scalars['UUID']['output'];
-};
-
-export type BillingCustomerFilter = {
-  and?: InputMaybe<Array<BillingCustomerFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingCustomerFilter>>;
-};
-
-export type BillingCustomerSort = {
-  direction: SortDirection;
-  field: BillingCustomerSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingCustomerSortFields {
-  id = 'id'
-}
-
-export type BillingEntitlement = {
-  __typename?: 'billingEntitlement';
-  id: Scalars['UUID']['output'];
-  key: Scalars['String']['output'];
-  value: Scalars['Boolean']['output'];
-  workspaceId: Scalars['String']['output'];
-};
-
-export type BillingEntitlementFilter = {
-  and?: InputMaybe<Array<BillingEntitlementFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingEntitlementFilter>>;
-};
-
-export type BillingEntitlementSort = {
-  direction: SortDirection;
-  field: BillingEntitlementSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingEntitlementSortFields {
-  id = 'id'
-}
 
 export type Field = {
   __typename?: 'field';
