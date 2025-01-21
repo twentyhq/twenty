@@ -44,7 +44,7 @@ Follow these steps for a manual setup.
 
     Copy the example environment file to a new .env file in your working directory:
     ```bash
-    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/tags/v0.35.0/packages/twenty-docker/.env.example
+    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
     ```
 
 2. **Generate Secret Tokens**
@@ -65,7 +65,7 @@ Follow these steps for a manual setup.
 
 4. **Set the Postgres Password**
 
-    Update the `PGPASSWORD_SUPERUSER` value in the .env file with a strong password.
+    Update the `PGPASSWORD_SUPERUSER` value in the .env file with a strong password that is URL-safe or properly URL-encoded.
 
     ```ini
     PGPASSWORD_SUPERUSER=my_strong_password
@@ -76,7 +76,7 @@ Follow these steps for a manual setup.
 Download the `docker-compose.yml` file to your working directory:
 
 ```bash
-curl -O https://raw.githubusercontent.com/twentyhq/twenty/refs/tags/v0.35.0/packages/twenty-docker/docker-compose.yml
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
 ```
 
 ### Step 3: Launch the Application
