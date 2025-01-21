@@ -20,6 +20,7 @@ export const useUpdateStep = ({
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+
     await updateWorkflowVersionStep({
       workflowVersionId,
       step: updatedStep,

@@ -198,8 +198,6 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    const newStepId = v4();
-
     switch (step.type) {
       case WorkflowActionType.CODE: {
         const copiedServerlessFunction =
@@ -213,7 +211,6 @@ export class WorkflowVersionStepWorkspaceService {
 
         return {
           ...step,
-          id: newStepId,
           settings: {
             ...step.settings,
             input: {
@@ -225,10 +222,7 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       default: {
-        return {
-          ...step,
-          id: newStepId,
-        };
+        return step;
       }
     }
   }
