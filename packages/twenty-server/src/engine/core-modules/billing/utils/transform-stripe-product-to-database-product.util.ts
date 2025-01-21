@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 
-export const transformStripeProductDataToProductRepositoryData = (
+export const transformStripeProductToDatabaseProduct = (
   data: Stripe.Product,
 ) => {
   return {

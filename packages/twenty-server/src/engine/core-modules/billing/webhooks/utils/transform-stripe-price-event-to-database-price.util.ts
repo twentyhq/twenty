@@ -7,7 +7,7 @@ import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
-export const transformStripePriceEventToPriceRepositoryData = (
+export const transformStripePriceEventToDatabasePrice = (
   data: Stripe.PriceCreatedEvent.Data | Stripe.PriceUpdatedEvent.Data,
 ) => {
   return {

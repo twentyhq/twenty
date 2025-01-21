@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { BillingMeterEventTimeWindow } from 'src/engine/core-modules/billing/enums/billing-meter-event-time-window.enum';
 import { BillingMeterStatus } from 'src/engine/core-modules/billing/enums/billing-meter-status.enum';
 
-export const transformStripeMeterDataToMeterRepositoryData = (
+export const transformStripeMeterToDatabaseMeter = (
   data: Stripe.Billing.Meter,
 ) => {
   return {

@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
-export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
+export const transformStripeSubscriptionEventToDatabaseSubscription = (
   workspaceId: string,
   data:
     | Stripe.CustomerSubscriptionUpdatedEvent.Data

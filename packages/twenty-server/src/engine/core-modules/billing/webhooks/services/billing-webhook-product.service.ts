@@ -9,7 +9,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeProductEventToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-event-to-product-repository-data.util';
+import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-product-event-to-database-product.util';
 @Injectable()
 export class BillingWebhookProductService {
   protected readonly logger = new Logger(BillingWebhookProductService.name);
@@ -24,10 +24,10 @@ export class BillingWebhookProductService {
     const metadata = data.object.metadata;
     const productRepositoryData = isStripeValidProductMetadata(metadata)
       ? {
-          ...transformStripeProductEventToProductRepositoryData(data),
+          ...transformStripeProductEventToDatabaseProduct(data),
           metadata,
         }
-      : transformStripeProductEventToProductRepositoryData(data);
+      : transformStripeProductEventToDatabaseProduct(data);
 
     await this.billingProductRepository.upsert(productRepositoryData, {
       conflictPaths: ['stripeProductId'],

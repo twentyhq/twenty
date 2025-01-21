@@ -10,9 +10,9 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
-import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
-import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
+import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
+import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
+import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingWebhookSubscriptionService {
@@ -47,10 +47,7 @@ export class BillingWebhookSubscriptionService {
     }
 
     await this.billingCustomerRepository.upsert(
-      transformStripeSubscriptionEventToCustomerRepositoryData(
-        workspaceId,
-        data,
-      ),
+      transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, data),
       {
         conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
@@ -58,10 +55,7 @@ export class BillingWebhookSubscriptionService {
     );
 
     await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToSubscriptionRepositoryData(
-        workspaceId,
-        data,
-      ),
+      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, data),
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
@@ -74,7 +68,7 @@ export class BillingWebhookSubscriptionService {
       });
 
     await this.billingSubscriptionItemRepository.upsert(
-      transformStripeSubscriptionEventToSubscriptionItemRepositoryData(
+      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         billingSubscription.id,
         data,
       ),

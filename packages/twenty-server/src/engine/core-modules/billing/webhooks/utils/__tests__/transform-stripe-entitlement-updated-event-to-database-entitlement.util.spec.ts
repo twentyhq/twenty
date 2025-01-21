@@ -1,9 +1,9 @@
 import Stripe from 'stripe';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { transformStripeEntitlementUpdatedEventToEntitlementRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-entitlement-updated-event-to-entitlement-repository-data.util';
+import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 
-describe('transformStripeEntitlementUpdatedEventToEntitlementRepositoryData', () => {
+describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
   it('should return the SSO key with true value', () => {
     const data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data = {
       object: {
@@ -27,11 +27,10 @@ describe('transformStripeEntitlementUpdatedEventToEntitlementRepositoryData', ()
       },
     };
 
-    const result =
-      transformStripeEntitlementUpdatedEventToEntitlementRepositoryData(
-        'workspaceId',
-        data,
-      );
+    const result = transformStripeEntitlementUpdatedEventToDatabaseEntitlement(
+      'workspaceId',
+      data,
+    );
 
     expect(result).toEqual([
       {
@@ -66,11 +65,10 @@ describe('transformStripeEntitlementUpdatedEventToEntitlementRepositoryData', ()
       },
     };
 
-    const result =
-      transformStripeEntitlementUpdatedEventToEntitlementRepositoryData(
-        'workspaceId',
-        data,
-      );
+    const result = transformStripeEntitlementUpdatedEventToDatabaseEntitlement(
+      'workspaceId',
+      data,
+    );
 
     expect(result).toEqual([
       {

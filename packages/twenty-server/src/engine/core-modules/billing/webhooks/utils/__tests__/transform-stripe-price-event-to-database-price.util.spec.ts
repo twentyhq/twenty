@@ -4,9 +4,9 @@ import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/bil
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { transformStripePriceEventToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-event-to-price-repository-data.util';
+import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-price-event-to-database-price.util';
 
-describe('transformStripePriceEventToPriceRepositoryData', () => {
+describe('transformStripePriceEventToDatabasePrice', () => {
   const createMockPriceData = (overrides = {}) => ({
     object: {
       id: 'price_123',
@@ -34,9 +34,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
 
   it('should transform basic price data correctly', () => {
     const mockData = createMockPriceData();
-    const result = transformStripePriceEventToPriceRepositoryData(
-      mockData as any,
-    );
+    const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
     expect(result).toEqual({
       stripePriceId: 'price_123',
@@ -74,9 +72,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       const mockData = createMockPriceData({
         tax_behavior: stripeTaxBehavior,
       });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.taxBehavior).toBe(expectedTaxBehavior);
     });
@@ -90,9 +86,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
 
     priceTypes.forEach(([stripeType, expectedType]) => {
       const mockData = createMockPriceData({ type: stripeType });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.type).toBe(expectedType);
     });
@@ -106,9 +100,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
 
     billingSchemes.forEach(([stripeScheme, expectedScheme]) => {
       const mockData = createMockPriceData({ billing_scheme: stripeScheme });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.billingScheme).toBe(expectedScheme);
     });
@@ -124,9 +116,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       const mockData = createMockPriceData({
         recurring: { usage_type: stripeUsageType, interval: 'month' },
       });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.usageType).toBe(expectedUsageType);
     });
@@ -140,9 +130,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
 
     tiersModes.forEach(([stripeTiersMode, expectedTiersMode]) => {
       const mockData = createMockPriceData({ tiers_mode: stripeTiersMode });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.tiersMode).toBe(expectedTiersMode);
     });
@@ -160,9 +148,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       const mockData = createMockPriceData({
         recurring: { usage_type: 'licensed', interval: stripeInterval },
       });
-      const result = transformStripePriceEventToPriceRepositoryData(
-        mockData as any,
-      );
+      const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
       expect(result.interval).toBe(expectedInterval);
     });
@@ -180,9 +166,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       tiers_mode: 'graduated',
     });
 
-    const result = transformStripePriceEventToPriceRepositoryData(
-      mockData as any,
-    );
+    const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
     expect(result.billingScheme).toBe(BillingPriceBillingScheme.TIERED);
     expect(result.tiers).toEqual(mockTiers);
@@ -204,9 +188,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       transform_quantity: mockTransformQuantity,
     });
 
-    const result = transformStripePriceEventToPriceRepositoryData(
-      mockData as any,
-    );
+    const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
     expect(result.stripeMeterId).toBe('meter_123');
     expect(result.usageType).toBe(BillingUsageType.METERED);
@@ -225,9 +207,7 @@ describe('transformStripePriceEventToPriceRepositoryData', () => {
       currency_options: mockCurrencyOptions,
     });
 
-    const result = transformStripePriceEventToPriceRepositoryData(
-      mockData as any,
-    );
+    const result = transformStripePriceEventToDatabasePrice(mockData as any);
 
     expect(result.currencyOptions).toEqual(mockCurrencyOptions);
   });

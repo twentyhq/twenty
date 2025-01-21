@@ -10,7 +10,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { transformStripeEntitlementUpdatedEventToEntitlementRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-entitlement-updated-event-to-entitlement-repository-data.util';
+import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 @Injectable()
 export class BillingWebhookEntitlementService {
   protected readonly logger = new Logger(BillingWebhookEntitlementService.name);
@@ -39,7 +39,7 @@ export class BillingWebhookEntitlementService {
     const workspaceId = billingSubscription.workspaceId;
 
     await this.billingEntitlementRepository.upsert(
-      transformStripeEntitlementUpdatedEventToEntitlementRepositoryData(
+      transformStripeEntitlementUpdatedEventToDatabaseEntitlement(
         workspaceId,
         data,
       ),

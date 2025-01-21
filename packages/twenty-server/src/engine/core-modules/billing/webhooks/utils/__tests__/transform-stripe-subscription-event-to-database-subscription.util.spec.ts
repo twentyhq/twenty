@@ -1,8 +1,8 @@
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
+import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 
-describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
+describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockTimestamp = 1672531200; // 2023-01-01 00:00:00 UTC
 
@@ -39,7 +39,7 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
 
   it('should transform basic subscription data correctly', () => {
     const mockData = createMockSubscriptionData();
-    const result = transformStripeSubscriptionEventToSubscriptionRepositoryData(
+    const result = transformStripeSubscriptionEventToDatabaseSubscription(
       mockWorkspaceId,
       mockData as any,
     );
@@ -83,11 +83,10 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       const mockData = createMockSubscriptionData({
         status: stripeStatus,
       });
-      const result =
-        transformStripeSubscriptionEventToSubscriptionRepositoryData(
-          mockWorkspaceId,
-          mockData as any,
-        );
+      const result = transformStripeSubscriptionEventToDatabaseSubscription(
+        mockWorkspaceId,
+        mockData as any,
+      );
 
       expect(result.status).toBe(expectedStatus);
     });
@@ -102,7 +101,7 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       trial_end: trialEnd,
     });
 
-    const result = transformStripeSubscriptionEventToSubscriptionRepositoryData(
+    const result = transformStripeSubscriptionEventToDatabaseSubscription(
       mockWorkspaceId,
       mockData as any,
     );
@@ -125,7 +124,7 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       },
     });
 
-    const result = transformStripeSubscriptionEventToSubscriptionRepositoryData(
+    const result = transformStripeSubscriptionEventToDatabaseSubscription(
       mockWorkspaceId,
       mockData as any,
     );
@@ -148,7 +147,7 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       },
     });
 
-    const result = transformStripeSubscriptionEventToSubscriptionRepositoryData(
+    const result = transformStripeSubscriptionEventToDatabaseSubscription(
       mockWorkspaceId,
       mockData as any,
     );
@@ -172,11 +171,10 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       const mockData = createMockSubscriptionData({
         collection_method: stripeMethod,
       });
-      const result =
-        transformStripeSubscriptionEventToSubscriptionRepositoryData(
-          mockWorkspaceId,
-          mockData as any,
-        );
+      const result = transformStripeSubscriptionEventToDatabaseSubscription(
+        mockWorkspaceId,
+        mockData as any,
+      );
 
       expect(result.collectionMethod).toBe(expectedMethod);
     });
@@ -187,7 +185,7 @@ describe('transformStripeSubscriptionEventToSubscriptionRepositoryData', () => {
       currency: 'eur',
     });
 
-    const result = transformStripeSubscriptionEventToSubscriptionRepositoryData(
+    const result = transformStripeSubscriptionEventToDatabaseSubscription(
       mockWorkspaceId,
       mockData as any,
     );

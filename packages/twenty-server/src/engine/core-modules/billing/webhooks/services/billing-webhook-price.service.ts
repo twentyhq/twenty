@@ -12,8 +12,9 @@ import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-m
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
-import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
-import { transformStripePriceEventToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-event-to-price-repository-data.util';
+import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
+import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-price-event-to-database-price.util';
+
 @Injectable()
 export class BillingWebhookPriceService {
   protected readonly logger = new Logger(BillingWebhookPriceService.name);
@@ -48,7 +49,7 @@ export class BillingWebhookPriceService {
       const meterData = await this.stripeBillingMeterService.getMeter(meterId);
 
       await this.billingMeterRepository.upsert(
-        transformStripeMeterDataToMeterRepositoryData(meterData),
+        transformStripeMeterToDatabaseMeter(meterData),
         {
           conflictPaths: ['stripeMeterId'],
           skipUpdateIfNoValuesChanged: true,
@@ -57,7 +58,7 @@ export class BillingWebhookPriceService {
     }
 
     await this.billingPriceRepository.upsert(
-      transformStripePriceEventToPriceRepositoryData(data),
+      transformStripePriceEventToDatabasePrice(data),
       {
         conflictPaths: ['stripePriceId'],
         skipUpdateIfNoValuesChanged: true,

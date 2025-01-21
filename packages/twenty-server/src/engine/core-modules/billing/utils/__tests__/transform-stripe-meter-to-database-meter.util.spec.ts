@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 import { BillingMeterEventTimeWindow } from 'src/engine/core-modules/billing/enums/billing-meter-event-time-window.enum';
 import { BillingMeterStatus } from 'src/engine/core-modules/billing/enums/billing-meter-status.enum';
-import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
+import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
 
 describe('transformStripeMeterDataToMeterRepositoryData', () => {
   it('should return the correct data with customer mapping', () => {
@@ -31,7 +31,7 @@ describe('transformStripeMeterDataToMeterRepositoryData', () => {
       },
     };
 
-    const result = transformStripeMeterDataToMeterRepositoryData(data);
+    const result = transformStripeMeterToDatabaseMeter(data);
 
     expect(result).toEqual({
       stripeMeterId: 'met_123',
@@ -74,7 +74,7 @@ describe('transformStripeMeterDataToMeterRepositoryData', () => {
       },
     };
 
-    const result = transformStripeMeterDataToMeterRepositoryData(data);
+    const result = transformStripeMeterToDatabaseMeter(data);
 
     expect(result).toEqual({
       stripeMeterId: 'met_1234',

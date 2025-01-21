@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
 
-import { transformStripeProductEventToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-event-to-product-repository-data.util';
+import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-product-event-to-database-product.util';
 
-describe('transformStripeProductEventToProductRepositoryData', () => {
+describe('transformStripeProductEventToDatabaseProduct', () => {
   it('should return the correct data', () => {
     const data: Stripe.ProductCreatedEvent.Data = {
       object: {
@@ -31,7 +31,7 @@ describe('transformStripeProductEventToProductRepositoryData', () => {
       },
     };
 
-    const result = transformStripeProductEventToProductRepositoryData(data);
+    const result = transformStripeProductEventToDatabaseProduct(data);
 
     expect(result).toEqual({
       stripeProductId: 'prod_123',
@@ -71,7 +71,7 @@ describe('transformStripeProductEventToProductRepositoryData', () => {
       },
     };
 
-    const result = transformStripeProductEventToProductRepositoryData(data);
+    const result = transformStripeProductEventToDatabaseProduct(data);
 
     expect(result).toEqual({
       stripeProductId: 'prod_456',

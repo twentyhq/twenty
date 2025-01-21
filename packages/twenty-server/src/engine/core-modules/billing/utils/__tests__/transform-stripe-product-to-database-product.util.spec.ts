@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 
-import { transformStripeProductDataToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-data-to-product-repository-data.util';
-describe('transformStripeProductDataToProductRepositoryData', () => {
+import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
+describe('transformStripeProductToDatabaseProduct', () => {
   it('should return the correct data', () => {
     const data: Stripe.Product = {
       id: 'prod_123',
@@ -28,7 +28,7 @@ describe('transformStripeProductDataToProductRepositoryData', () => {
       metadata: { key: 'value' },
     };
 
-    const result = transformStripeProductDataToProductRepositoryData(data);
+    const result = transformStripeProductToDatabaseProduct(data);
 
     expect(result).toEqual({
       stripeProductId: 'prod_123',
@@ -67,7 +67,7 @@ describe('transformStripeProductDataToProductRepositoryData', () => {
       metadata: {},
     };
 
-    const result = transformStripeProductDataToProductRepositoryData(data);
+    const result = transformStripeProductToDatabaseProduct(data);
 
     expect(result).toEqual({
       stripeProductId: 'prod_456',

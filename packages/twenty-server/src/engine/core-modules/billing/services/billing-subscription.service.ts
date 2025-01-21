@@ -6,7 +6,10 @@ import assert from 'assert';
 import Stripe from 'stripe';
 import { Not, Repository } from 'typeorm';
 
-import { BillingException, BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
@@ -73,9 +76,8 @@ export class BillingSubscriptionService {
     );
 
     const getStripeProductId = isBillingPlansEnabled
-      ? (
-          await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO)
-          )?.stripeProductId
+      ? (await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO))
+          ?.stripeProductId
       : stripeProductId;
 
     if (!getStripeProductId) {
@@ -168,7 +170,9 @@ export class BillingSubscriptionService {
     let productPrice;
 
     if (isBillingPlansEnabled) {
-      const baseProduct = await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO);
+      const baseProduct = await this.billingPlanService.getPlanBaseProduct(
+        BillingPlanKey.PRO,
+      );
 
       if (!baseProduct) {
         throw new BillingException(
@@ -186,7 +190,7 @@ export class BillingSubscriptionService {
         newInterval,
       );
     }
-      
+
     if (!productPrice) {
       throw new Error(
         `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,

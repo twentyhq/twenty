@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 
-export const transformStripeSubscriptionEventToCustomerRepositoryData = (
+export const transformStripeSubscriptionEventToDatabaseCustomer = (
   workspaceId: string,
   data:
     | Stripe.CustomerSubscriptionUpdatedEvent.Data

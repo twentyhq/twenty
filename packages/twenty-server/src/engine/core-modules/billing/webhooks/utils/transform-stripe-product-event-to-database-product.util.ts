@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 
-export const transformStripeProductEventToProductRepositoryData = (
+export const transformStripeProductEventToDatabaseProduct = (
   data: Stripe.ProductUpdatedEvent.Data | Stripe.ProductCreatedEvent.Data,
 ) => {
   return {
