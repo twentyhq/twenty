@@ -56,7 +56,7 @@ describe('useCreateOneRelationMetadataItem', () => {
 
     await act(async () => {
       const res = await result.current.createOneRelationMetadataItem({
-        relationType: RelationDefinitionType.OneToOne,
+        relationType: RelationDefinitionType.ONE_TO_ONE,
         field: {
           label: 'label',
           name: 'name',

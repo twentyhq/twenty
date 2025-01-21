@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client';
 
-export const OVERRIDE_WORKFLOW_DRAFT_VERSION = gql`
+export const CREATE_DRAFT_FROM_WORKFLOW_VERSION = gql`
   mutation CreateDraftFromWorkflowVersion(
     $input: CreateDraftFromWorkflowVersionInput!
   ) {
-    createDraftFromWorkflowVersion(input: $input)
+    createDraftFromWorkflowVersion(input: $input) {
+      id
+    }
   }
 `;
