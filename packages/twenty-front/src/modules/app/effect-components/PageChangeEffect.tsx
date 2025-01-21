@@ -195,7 +195,12 @@ export const PageChangeEffect = () => {
       }
     };
     requestFreshCaptchaTokenFn();
-  }, [isCaptchaScriptLoaded, isMatchingLocation, requestFreshCaptchaToken]);
+  }, [
+    isCaptchaScriptLoaded,
+    isMatchingLocation,
+    requestFreshCaptchaToken,
+    setIsCheckUserExistsQueryReady,
+  ]);
 
   return <></>;
 };
