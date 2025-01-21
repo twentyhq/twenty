@@ -79,6 +79,19 @@ jobs:
           npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
         run: npx nx run twenty-server:worker:ci
+      - name: GraphQL / Check for Pending Generation
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          GRAPHQL_GENERATE_OUTPUT=$(npx nx run twenty-front:graphql:generate || true)
+          GRAPHQL_METADATA_OUTPUT=$(npx nx run twenty-front:graphql:generate --configuration=metadata || true)
+         if [[ $GRAPHQL_GENERATE_OUTPUT == *"No changes detected"* && $GRAPHQL_METADATA_OUTPUT == *"No changes detected"* ]]; then
+           echo "GraphQL generation check passed."
+           else
+           echo "::error::Unexpected GraphQL changes detected. Please run the required commands and commit the changes."
+           echo "$GRAPHQL_GENERATE_OUTPUT"
+           echo "$GRAPHQL_METADATA_OUTPUT"
+           exit 1    
+          fi  
       - name: Server / Check for Pending Migrations
         run: |
           METADATA_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate metadata-migration-check -d src/database/typeorm/metadata/metadata.datasource.ts || true)
@@ -96,25 +109,6 @@ jobs:
             rm -f packages/twenty-server/*metadata-migration-check.ts packages/twenty-server/*core-migration-check.ts
             
             exit 1
-          fi
-      - name: GraphQL / Check for Pending Generation
-        run: |
-         GRAPHQL_GENERATION_OUTPUT=$(npx nx run twenty-front:graphql:generate || true)
-
-         GRAPHQL_METADATA_OUTPUT=$(npx nx run twenty-front:graphql:generate --configuration=metadata || true)
-
-         GENERATED_GRAPHQL_FILE=$(ls packages/twenty-front/*graphql.ts 2>/dev/null || echo "")
-    
-          if [ -n "$GENERATED_GRAPHQL_FILE" ]; then
-            echo "::error::GraphQL generation is pending. Please run the GraphQL generation commands before committing."
-            echo "$GRAPHQL_GENERATION_OUTPUT"
-            echo "$GRAPHQL_METADATA_OUTPUT"
-      
-            rm -f packages/twenty-front/*graphql.ts
-
-           exit 1
-           else
-            echo "No GraphQL generation issues detected."
           fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache
