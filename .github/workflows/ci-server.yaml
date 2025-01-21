@@ -102,13 +102,13 @@ jobs:
         run: |
           GRAPHQL_GENERATE_OUTPUT=$(npx nx run twenty-front:graphql:generate || true)
           GRAPHQL_METADATA_OUTPUT=$(npx nx run twenty-front:graphql:generate --configuration=metadata || true)
-         if [[ $GRAPHQL_GENERATE_OUTPUT == *"No changes detected"* && $GRAPHQL_METADATA_OUTPUT == *"No changes detected"* ]]; then
-           echo "GraphQL generation check passed."
-           else
-           echo "::error::Unexpected GraphQL changes detected. Please run the required commands and commit the changes."
-           echo "$GRAPHQL_GENERATE_OUTPUT"
-           echo "$GRAPHQL_METADATA_OUTPUT"
-           exit 1    
+          if [[ $GRAPHQL_GENERATE_OUTPUT == *"No changes detected"* && $GRAPHQL_METADATA_OUTPUT == *"No changes detected"* ]]; then
+            echo "GraphQL generation check passed."
+          else
+            echo "::error::Unexpected GraphQL changes detected. Please run the required commands and commit the changes."
+            echo "$GRAPHQL_GENERATE_OUTPUT"
+            echo "$GRAPHQL_METADATA_OUTPUT"
+            exit 1    
           fi
       - name: Save server setup
         uses: ./.github/workflows/actions/save-cache
