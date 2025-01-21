@@ -47,10 +47,7 @@ export const SettingsLabContent = () => {
   >({});
 
   const handleToggle = async (key: FeatureFlagKey, value: boolean) => {
-    return (
-      currentWorkspace?.id &&
-      (await handleLabPublicFeatureFlagUpdate(key, value))
-    );
+    await handleLabPublicFeatureFlagUpdate(key, value);
   };
 
   const handleImageError = (key: string) => {
@@ -58,28 +55,30 @@ export const SettingsLabContent = () => {
   };
 
   return (
-    <StyledCardGrid>
-      {labPublicFeatureFlags.map((flag, index) => (
-        <Card key={flag.key} rounded>
-          {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
-            <StyledImage
-              src={flag.metadata.imagePath}
-              alt={flag.metadata.label}
-              isFirstCard={index === 0}
-              onError={() => handleImageError(flag.key)}
+    currentWorkspace?.id && (
+      <StyledCardGrid>
+        {labPublicFeatureFlags.map((flag, index) => (
+          <Card key={flag.key} rounded>
+            {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
+              <StyledImage
+                src={flag.metadata.imagePath}
+                alt={flag.metadata.label}
+                isFirstCard={index === 0}
+                onError={() => handleImageError(flag.key)}
+              />
+            ) : (
+              <StyledFallbackDiv isFirstCard={index === 0} />
+            )}
+            <SettingsOptionCardContentToggle
+              title={flag.metadata.label}
+              description={flag.metadata.description}
+              checked={flag.value}
+              onChange={(value) => handleToggle(flag.key, value)}
+              toggleCentered={false}
             />
-          ) : (
-            <StyledFallbackDiv isFirstCard={index === 0} />
-          )}
-          <SettingsOptionCardContentToggle
-            title={flag.metadata.label}
-            description={flag.metadata.description}
-            checked={flag.value}
-            onChange={(value) => handleToggle(flag.key, value)}
-            toggleCentered={false}
-          />
-        </Card>
-      ))}
-    </StyledCardGrid>
+          </Card>
+        ))}
+      </StyledCardGrid>
+    )
   );
 };
