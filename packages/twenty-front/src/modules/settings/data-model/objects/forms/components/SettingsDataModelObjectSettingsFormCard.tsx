@@ -16,7 +16,7 @@ import { Card, CardContent, isDefined } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onBlur: () => void
+  onBlur: () => void;
 };
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -39,7 +39,7 @@ const StyledObjectSummaryCardContent = styled(CardContent)`
 
 export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
-  onBlur
+  onBlur,
 }: SettingsDataModelObjectSettingsFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
@@ -47,23 +47,25 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   const labelIdentifierFieldMetadataIdFormValue = watchFormValue(
     'labelIdentifierFieldMetadataId',
   );
+  const labelIdentifierFieldMetadataItem = useMemo(() => {
+    const labelIdentifierFieldMetadataId = isDefined(
+      labelIdentifierFieldMetadataIdFormValue,
+    )
+      ? labelIdentifierFieldMetadataIdFormValue
+      : objectMetadataItem.labelIdentifierFieldMetadataId;
 
-  const labelIdentifierFieldMetadataItem = useMemo(
-    () =>
-      getLabelIdentifierFieldMetadataItem({
-        fields: objectMetadataItem.fields,
-        labelIdentifierFieldMetadataId: labelIdentifierFieldMetadataIdFormValue,
-      }),
-    [labelIdentifierFieldMetadataIdFormValue, objectMetadataItem],
-  );
-  
+    return getLabelIdentifierFieldMetadataItem({
+      fields: objectMetadataItem.fields,
+      labelIdentifierFieldMetadataId,
+    });
+  }, [labelIdentifierFieldMetadataIdFormValue, objectMetadataItem]);
+
   return (
     <Card fullWidth>
       <StyledTopCardContent divider>
         <SettingsDataModelCardTitle>
           <Trans>Preview</Trans>
         </SettingsDataModelCardTitle>
-        {JSON.stringify(labelIdentifierFieldMetadataItem)}
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
             objectMetadataItem={objectMetadataItem}
@@ -84,14 +86,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
           onBlur={onBlur}
-          defaultLabelIdentifierFieldMetadataId={
-            (() => {
-              // TMP is any here as the ternary might return any it overrides the null
-              // Why is it any ? what if it was unknonw ?
-              const tmp = isDefined(labelIdentifierFieldMetadataItem) ? labelIdentifierFieldMetadataItem.id : null
-              return tmp
-            })()
-          }
+          defaultLabelIdentifierFieldMetadataId={labelIdentifierFieldMetadataItem?.id}
         />
       </CardContent>
     </Card>

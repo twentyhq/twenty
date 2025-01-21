@@ -75,7 +75,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
             defaultValue:
               objectMetadataItem[
                 LABEL_IDENTIFIER_FIELD_METADATA_ID
-              ] ?? defaultLabelIdentifierFieldMetadataId, // defaultLabelIdentifierFieldMetadataId as in injected as any could be undefined 
+              ] ?? defaultLabelIdentifierFieldMetadataId, // defaultLabelIdentifierFieldMetadataId could be undefined as it's injected as any
           },
           {
             label: 'Record image',
