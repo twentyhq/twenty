@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -56,6 +56,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [apiKeyToken, setApiKeyToken] = useRecoilState(
     apiKeyTokenFamilyState(apiKeyId),
   );
+
+  const setApiKeyTokenCallback = useRecoilCallback(
+    ({ set }) =>
+      (apiKeyId: string, token: string) => {
+        set(apiKeyTokenFamilyState(apiKeyId), token);
+      },
+    [],
+  );
+
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
@@ -131,7 +140,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         await deleteIntegration(false);
 
         if (isNonEmptyString(apiKey?.token)) {
-          setApiKeyToken(apiKey.token);
+          setApiKeyTokenCallback(apiKey.id, apiKey.token);
           navigate(SettingsPath.DevelopersApiKeyDetail, {
             apiKeyId: apiKey.id,
           });
