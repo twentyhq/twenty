@@ -19,7 +19,7 @@ describe('computeAggregateValueAndLabel', () => {
         id: MOCK_FIELD_ID,
         name: 'amount',
         label: 'amount',
-        type: FieldMetadataType.Currency,
+        type: FieldMetadataType.CURRENCY,
       } as FieldMetadataItem,
     ],
   } as ObjectMetadataItem;
@@ -74,7 +74,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'percentage',
           label: 'percentage',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           settings: {
             type: 'percentage',
           },
@@ -112,7 +112,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'decimals',
           label: 'decimals',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           settings: {
             decimals: 2,
           },
@@ -150,7 +150,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'createdAt',
           label: 'Created At',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         } as FieldMetadataItem,
       ],
     } as ObjectMetadataItem;
@@ -185,7 +185,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'updatedAt',
           label: 'Updated At',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         } as FieldMetadataItem,
       ],
     } as ObjectMetadataItem;

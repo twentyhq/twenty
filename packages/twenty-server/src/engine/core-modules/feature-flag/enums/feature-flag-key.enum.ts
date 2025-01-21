@@ -13,7 +13,7 @@ export enum FeatureFlagKey {
   IsMicrosoftSyncEnabled = 'IS_MICROSOFT_SYNC_ENABLED',
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
-  IsCrmMigrationEnabled = 'IS_CRM_MIGRATION_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
+  IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
 }

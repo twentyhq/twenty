@@ -1,62 +1,68 @@
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import {
   GithubVersionLink,
   H2Title,
-  Section,
   IconWorld,
+  Section,
   UndecoratedLink,
 } from 'twenty-ui';
-import { useRecoilValue } from 'recoil';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import packageJson from '../../../package.json';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { t } = useLingui();
+
   return (
     <SubMenuTopBarContainer
-      title="General"
+      title={t`General`}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'General' },
+        { children: t`General` },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Picture" />
+          <H2Title title={t`Picture`} />
           <WorkspaceLogoUploader />
         </Section>
         <Section>
-          <H2Title title="Name" description="Name of your workspace" />
+          <H2Title title={t`Name`} description={t`Name of your workspace`} />
           <NameField />
         </Section>
         {isMultiWorkspaceEnabled && (
           <>
             <Section>
               <H2Title
-                title="Domain"
-                description="Edit your subdomain name or set a custom domain."
+                title={t`Domain`}
+                description={t`Edit your subdomain name or set a custom domain.`}
               />
-              <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
-                <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
+              <UndecoratedLink to={getSettingsPath(SettingsPath.Domain)}>
+                <SettingsCard
+                  title={t`Customize Domain`}
+                  Icon={<IconWorld />}
+                />
               </UndecoratedLink>
             </Section>
             <Section>
               <H2Title
-                title="Support"
+                title={t`Support`}
                 adornment={<ToggleImpersonate />}
-                description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+                description={t`Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time.`}
               />
             </Section>
           </>

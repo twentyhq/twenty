@@ -65,6 +65,13 @@
 - Types in types/
 - PascalCase components, camelCase others
 
+## Translation
+- Use @lingui/react/macro
+- Use <Trans> within components
+- Use t`string` elsewhere (from useLingui hook)
+- Don't translate metadata (field names, object names, etc)
+- Don't translate mocks
+
 ## Code Style
 - Early returns
 - No nested ternaries

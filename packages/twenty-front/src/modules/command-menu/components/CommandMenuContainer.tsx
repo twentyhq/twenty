@@ -91,15 +91,14 @@ export const CommandMenuContainer = ({
           <ActionMenuConfirmationModals />
           {isCommandMenuOpened && (
             <StyledCommandMenu
+              data-testid="command-menu"
               ref={commandMenuRef}
               className="command-menu"
               animate={targetVariantForAnimation}
               initial="closed"
               exit="closed"
               variants={COMMAND_MENU_ANIMATION_VARIANTS}
-              transition={{
-                duration: theme.animation.duration.normal,
-              }}
+              transition={{ duration: theme.animation.duration.normal }}
             >
               {children}
             </StyledCommandMenu>

@@ -8,6 +8,7 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFlask,
   IconFunction,
   IconHierarchy2,
   IconKey,
@@ -22,9 +23,9 @@ import {
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
   NavigationDrawerItem,
@@ -35,8 +36,10 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationItem = {
   label: string;
@@ -49,6 +52,8 @@ type SettingsNavigationItem = {
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
 
+  const { t } = useLingui();
+
   const billing = useRecoilValue(billingState);
   const isFunctionSettingsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFunctionSettingsEnabled,
@@ -56,26 +61,24 @@ export const SettingsNavigationDrawerItems = () => {
   const isFreeAccessEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFreeAccessEnabled,
   );
-  const isCRMMigrationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCrmMigrationEnabled,
-  );
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
+  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
   const accountSubSettings: SettingsNavigationItem[] = [
     {
-      label: 'Emails',
+      label: t`Emails`,
       path: SettingsPath.AccountsEmails,
       Icon: IconMail,
       indentationLevel: 2,
     },
     {
-      label: 'Calendars',
+      label: t`Calendars`,
       path: SettingsPath.AccountsCalendars,
       Icon: IconCalendarEvent,
       indentationLevel: 2,
@@ -83,7 +86,7 @@ export const SettingsNavigationDrawerItems = () => {
   ];
 
   const selectedIndex = accountSubSettings.findIndex((accountSubSetting) => {
-    const href = getSettingsPagePath(accountSubSetting.path);
+    const href = getSettingsPath(accountSubSetting.path);
     const pathName = resolvePath(href).pathname;
 
     return matchPath(
@@ -98,20 +101,20 @@ export const SettingsNavigationDrawerItems = () => {
   return (
     <>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="User" />
+        <NavigationDrawerSectionTitle label={t`User`} />
         <SettingsNavigationDrawerItem
-          label="Profile"
+          label={t`Profile`}
           path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
         />
         <SettingsNavigationDrawerItem
-          label="Experience"
-          path={SettingsPath.Appearance}
+          label={t`Experience`}
+          path={SettingsPath.Experience}
           Icon={IconColorSwatch}
         />
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
-            label="Accounts"
+            label={t`Accounts`}
             path={SettingsPath.Accounts}
             Icon={IconAt}
             matchSubPages={false}
@@ -133,44 +136,37 @@ export const SettingsNavigationDrawerItems = () => {
         </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
+        <NavigationDrawerSectionTitle label={t`Workspace`} />
         <SettingsNavigationDrawerItem
-          label="General"
+          label={t`General`}
           path={SettingsPath.Workspace}
           Icon={IconSettings}
         />
         <SettingsNavigationDrawerItem
-          label="Members"
+          label={t`Members`}
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Billing"
+            label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
           />
         )}
         <SettingsNavigationDrawerItem
-          label="Data model"
+          label={t`Data model`}
           path={SettingsPath.Objects}
           Icon={IconHierarchy2}
         />
         <SettingsNavigationDrawerItem
-          label="Integrations"
+          label={t`Integrations`}
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
-        {isCRMMigrationEnabled && (
-          <SettingsNavigationDrawerItem
-            label="CRM Migration"
-            path={SettingsPath.CRMMigration}
-            Icon={IconCode}
-          />
-        )}
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
-            label="Security"
+            label={t`Security`}
             path={SettingsPath.Security}
             Icon={IconKey}
           />
@@ -183,7 +179,7 @@ export const SettingsNavigationDrawerItems = () => {
         </AdvancedSettingsWrapper>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
-            label="API & Webhooks"
+            label={t`API & Webhooks`}
             path={SettingsPath.Developers}
             Icon={IconCode}
           />
@@ -191,7 +187,7 @@ export const SettingsNavigationDrawerItems = () => {
         {isFunctionSettingsEnabled && (
           <AdvancedSettingsWrapper navigationDrawerItem={true}>
             <SettingsNavigationDrawerItem
-              label="Functions"
+              label={t`Functions`}
               path={SettingsPath.ServerlessFunctions}
               Icon={IconFunction}
             />
@@ -199,21 +195,28 @@ export const SettingsNavigationDrawerItems = () => {
         )}
       </NavigationDrawerSection>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Other" />
+        <NavigationDrawerSectionTitle label={t`Other`} />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Server Admin Panel"
+            label={t`Server Admin Panel`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />
         )}
+        {labPublicFeatureFlags?.length > 0 && (
+          <SettingsNavigationDrawerItem
+            label={t`Lab`}
+            path={SettingsPath.Lab}
+            Icon={IconFlask}
+          />
+        )}
         <SettingsNavigationDrawerItem
-          label="Releases"
+          label={t`Releases`}
           path={SettingsPath.Releases}
           Icon={IconRocket}
         />
         <NavigationDrawerItem
-          label="Logout"
+          label={t`Logout`}
           onClick={signOut}
           Icon={IconDoorEnter}
         />

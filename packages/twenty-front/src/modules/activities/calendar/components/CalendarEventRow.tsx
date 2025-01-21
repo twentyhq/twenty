@@ -6,11 +6,11 @@ import { useRecoilValue } from 'recoil';
 import {
   Avatar,
   AvatarGroup,
+  Card,
+  CardContent,
   IconArrowRight,
   IconLock,
   isDefined,
-  Card,
-  CardContent,
 } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
@@ -126,7 +126,7 @@ export const CalendarEventRow = ({
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
   const showTitle =
-    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
+    calendarEvent.visibility === CalendarChannelVisibility.SHARE_EVERYTHING;
 
   return (
     <StyledContainer

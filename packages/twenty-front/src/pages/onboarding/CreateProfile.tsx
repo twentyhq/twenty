@@ -142,7 +142,7 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.ProfileCreation) {
+  if (onboardingStatus !== OnboardingStatus.PROFILE_CREATION) {
     return null;
   }
 
