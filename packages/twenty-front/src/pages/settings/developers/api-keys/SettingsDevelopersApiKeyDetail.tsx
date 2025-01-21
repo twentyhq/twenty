@@ -180,12 +180,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 <>
                   <H2Title
                     title={t`API Key`}
-                    description={t`Copy this key as it will only be visible this one time`}
+                    description={t`Copy this key as it will not be visible again`}
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
-                  <StyledInfo>
-                    {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
-                  </StyledInfo>
                 </>
               ) : (
                 <>
