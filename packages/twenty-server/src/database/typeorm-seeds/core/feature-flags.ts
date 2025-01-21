@@ -51,6 +51,11 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKey.IsBillingPlansEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId: workspaceId,
         value: true,
