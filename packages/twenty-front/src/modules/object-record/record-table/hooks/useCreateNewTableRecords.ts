@@ -1,6 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
@@ -9,6 +8,7 @@ import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { isUpdatingRecordEditableNameState } from '@/object-record/states/isUpdatingRecordEditableName';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { shouldRedirectToShowPageOnCreation } from '@/object-record/utils/shouldRedirectToShowPageOnCreation';
 import { AppPath } from '@/types/AppPath';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -62,6 +62,7 @@ export const useCreateNewTableRecord = ({
 
   const navigate = useNavigateApp();
 
+
   const createNewTableRecord = useRecoilCallback(
     ({ set }) =>
       async () => {
@@ -71,7 +72,7 @@ export const useCreateNewTableRecord = ({
           // TODO: Generalize this behaviour, there will be a view setting to specify
           // if the new record should be displayed in the side panel or on the record page
           if (
-            objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
+            shouldRedirectToShowPageOnCreation(objectMetadataItem.nameSingular)
           ) {
             await createOneRecord({
               id: recordId,
@@ -91,7 +92,7 @@ export const useCreateNewTableRecord = ({
                   },
                 },
               });
-              
+
             set(isUpdatingRecordEditableNameState, true);
             return;
           }
