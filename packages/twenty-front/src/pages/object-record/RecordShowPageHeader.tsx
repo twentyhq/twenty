@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordEditableName } from '@/object-record/components/RecordEditableName';
+import { ObjectRecordShowPageBreadcrumb } from '@/object-record/record-show/components/ObjectRecordShowPageBreadcrumb';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
@@ -38,7 +38,7 @@ export const RecordShowPageHeader = ({
     <PageHeader
       title={
         hasEditableName ? (
-          <RecordEditableName
+          <ObjectRecordShowPageBreadcrumb
             objectNameSingular={objectNameSingular}
             objectRecordId={objectRecordId}
             objectLabelPlural={objectMetadataItem.labelPlural}

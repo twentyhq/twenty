@@ -22,7 +22,7 @@ const StyledEditableTitlePrefix = styled.div`
   padding: ${({ theme }) => theme.spacing(0.75)};
 `;
 
-export const RecordEditableName = ({
+export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
   objectLabelPlural,
