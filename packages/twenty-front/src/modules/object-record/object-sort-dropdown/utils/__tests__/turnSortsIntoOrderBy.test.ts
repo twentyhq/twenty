@@ -18,6 +18,7 @@ const objectMetadataItem: ObjectMetadataItem = {
   updatedAt: '2021-01-01',
   nameSingular: 'object1',
   namePlural: 'object1s',
+  labelIdentifierFieldMetadataId: '',
   icon: 'icon',
   isActive: true,
   isSystem: false,

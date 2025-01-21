@@ -1,5 +1,4 @@
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
-
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
@@ -11,6 +10,7 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
     pagedObjectMetadataItems?.objects.edges.map((object) => ({
       ...object.node,
       fields: object.node.fields.edges.map((field) => field.node),
+      labelIdentifierFieldMetadataId: object.node.labelIdentifierFieldMetadataId as string,
       indexMetadatas: object.node.indexMetadatas?.edges.map((index) => ({
         ...index.node,
         indexFieldMetadatas: index.node.indexFieldMetadatas?.edges.map(

@@ -28,6 +28,7 @@ export const useFieldPreviewValue = ({
     relationObjectMetadataItem: relationObjectMetadataItem ?? {
       fields: [],
       labelSingular: '',
+      labelIdentifierFieldMetadataId: '',
       nameSingular: CoreObjectNameSingular.Company,
     },
     skip:
