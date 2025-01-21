@@ -5,12 +5,16 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
+import { isCheckUserExistsQueryReadyState } from '@/auth/states/isCheckUserQueryReadyState';
 
 const searchParams = new URLSearchParams(window.location.search);
 const email = searchParams.get('email');
 
 export const SignInUpWorkspaceScopeFormEffect = () => {
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const isCheckUserExistsQueryReady = useRecoilValue(
+    isCheckUserExistsQueryReadyState,
+  );
 
   const { form } = useSignInUpForm();
 
@@ -27,7 +31,11 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return continueWithEmail();
     }
 
-    if (isDefined(email) && workspaceAuthProviders.password) {
+    if (
+      isDefined(email) &&
+      workspaceAuthProviders.password &&
+      isCheckUserExistsQueryReady
+    ) {
       return continueWithCredentials();
     }
   }, [
@@ -38,6 +46,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     workspaceAuthProviders.password,
     continueWithEmail,
     continueWithCredentials,
+    isCheckUserExistsQueryReady,
   ]);
 
   useEffect(() => {

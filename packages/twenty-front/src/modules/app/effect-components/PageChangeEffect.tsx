@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   setSessionId,
@@ -25,12 +25,17 @@ import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
+import { isCheckUserExistsQueryReadyState } from '@/auth/states/isCheckUserQueryReadyState';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
+
+  const setIsCheckUserExistsQueryReady = useSetRecoilState(
+    isCheckUserExistsQueryReadyState,
+  );
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -178,14 +183,18 @@ export const PageChangeEffect = () => {
   const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
-    if (
-      isCaptchaScriptLoaded &&
-      (isMatchingLocation(AppPath.SignInUp) ||
-        isMatchingLocation(AppPath.Invite) ||
-        isMatchingLocation(AppPath.ResetPassword))
-    ) {
-      requestFreshCaptchaToken();
-    }
+    const requestFreshCaptchaTokenFn = async () => {
+      if (
+        isCaptchaScriptLoaded &&
+        (isMatchingLocation(AppPath.SignInUp) ||
+          isMatchingLocation(AppPath.Invite) ||
+          isMatchingLocation(AppPath.ResetPassword))
+      ) {
+        await requestFreshCaptchaToken();
+        setIsCheckUserExistsQueryReady(true);
+      }
+    };
+    requestFreshCaptchaTokenFn();
   }, [isCaptchaScriptLoaded, isMatchingLocation, requestFreshCaptchaToken]);
 
   return <></>;
