@@ -15,9 +15,9 @@ import { StripeBillingMeterService } from 'src/engine/core-modules/billing/strip
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
-import { transformStripePriceDataToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-data-to-price-repository-data.util';
-import { transformStripeProductDataToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-data-to-product-repository-data.util';
+import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
+import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
+import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
 @Command({
   name: 'billing:sync-plans-data',
   description:
@@ -47,7 +47,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
       try {
         if (!options.dryRun) {
           await this.billingMeterRepository.upsert(
-            transformStripeMeterDataToMeterRepositoryData(meter),
+            transformStripeMeterToDatabaseMeter(meter),
             {
               conflictPaths: ['stripeMeterId'],
             },
@@ -67,7 +67,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     try {
       if (!options.dryRun) {
         await this.billingProductRepository.upsert(
-          transformStripeProductDataToProductRepositoryData(product),
+          transformStripeProductToDatabaseProduct(product),
           {
             conflictPaths: ['stripeProductId'],
           },
@@ -148,9 +148,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
       options,
     );
     const transformedPrices = billingPrices.flatMap((prices) =>
-      prices.map((price) =>
-        transformStripePriceDataToPriceRepositoryData(price),
-      ),
+      prices.map((price) => transformStripePriceToDatabasePrice(price)),
     );
 
     this.logger.log(`Upserting ${transformedPrices.length} transformed prices`);
