@@ -174,8 +174,9 @@ export class WorkflowStatusesUpdateJob {
           }
 
           const serverlessFunction =
-            await this.serverlessFunctionService.findOneByOrFail({
+            await this.serverlessFunctionService.findOneOrFail({
               id: step.settings.input.serverlessFunctionId,
+              workspaceId,
             });
 
           const newStepSettings = { ...step.settings };
