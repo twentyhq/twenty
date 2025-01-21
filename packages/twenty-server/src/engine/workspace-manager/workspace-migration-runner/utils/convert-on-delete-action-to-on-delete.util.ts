@@ -1,7 +1,8 @@
+import { RelationOnDeleteActionV2 } from 'src/engine/metadata-modules/relation-metadata-v2/relation-metadata-v2.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export const convertOnDeleteActionToOnDelete = (
-  onDeleteAction: RelationOnDeleteAction | undefined,
+  onDeleteAction: RelationOnDeleteAction | RelationOnDeleteActionV2 | undefined,
 ): 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | undefined => {
   switch (onDeleteAction) {
     case 'CASCADE':

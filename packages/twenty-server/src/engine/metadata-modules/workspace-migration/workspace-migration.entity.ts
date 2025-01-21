@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { RelationOnDeleteActionV2 } from 'src/engine/metadata-modules/relation-metadata-v2/relation-metadata-v2.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceMigrationColumnActionType {
@@ -62,7 +63,7 @@ export type WorkspaceMigrationColumnCreateRelation = {
   referencedTableName: string;
   referencedTableColumnName: string;
   isUnique?: boolean;
-  onDelete?: RelationOnDeleteAction;
+  onDelete?: RelationOnDeleteAction | RelationOnDeleteActionV2;
 };
 
 export type WorkspaceMigrationColumnDropRelation = {

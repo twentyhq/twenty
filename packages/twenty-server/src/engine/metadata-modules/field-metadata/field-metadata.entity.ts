@@ -20,6 +20,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationMetadataV2Entity } from 'src/engine/metadata-modules/relation-metadata-v2/relation-metadata-v2.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('fieldMetadata')
@@ -106,6 +107,18 @@ export class FieldMetadataEntity<
     (relation: RelationMetadataEntity) => relation.toFieldMetadata,
   )
   toRelationMetadata: Relation<RelationMetadataEntity>;
+
+  @OneToOne(
+    () => RelationMetadataV2Entity,
+    (relation: RelationMetadataV2Entity) => relation.sourceFieldMetadata,
+  )
+  sourceRelationMetadata: Relation<RelationMetadataV2Entity>;
+
+  @OneToOne(
+    () => RelationMetadataV2Entity,
+    (relation: RelationMetadataV2Entity) => relation.targetFieldMetadata,
+  )
+  targetRelationMetadata: Relation<RelationMetadataV2Entity>;
 
   @OneToMany(
     () => IndexFieldMetadataEntity,
