@@ -3,19 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { createWorkflow } from '../requests/create-workflow';
 import { deleteWorkflow } from '../requests/delete-workflow';
 import { destroyWorkflow } from '../requests/destroy-workflow';
-
-type WorkflowTriggerType =
-  | 'record-created'
-  | 'record-updated'
-  | 'record-deleted'
-  | 'manual';
-
-type WorkflowActionType =
-  | 'create-record'
-  | 'update-record'
-  | 'delete-record'
-  | 'code'
-  | 'send-email';
+import { WorkflowActionType, WorkflowTriggerType } from '../types/workflows';
 
 export class WorkflowVisualizerPage {
   #page: Page;
