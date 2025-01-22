@@ -9,6 +9,7 @@ import { isDefined } from '~/utils/isDefined';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -213,6 +214,10 @@ export const useCommandMenu = () => {
 
           set(viewableRecordIdState, null);
           set(commandMenuPageState, CommandMenuPages.Root);
+          set(commandMenuPageInfoState, {
+            title: undefined,
+            Icon: undefined,
+          });
           set(isCommandMenuOpenedState, false);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();

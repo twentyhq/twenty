@@ -42,5 +42,11 @@ export const CommandMenuContextRecordChip = ({
           .name
       : `${totalCount} ${capitalize(objectMetadataItem.namePlural)}`;
 
-  return <CommandMenuContextChip text={text} Icons={Avatars} />;
+  return (
+    <CommandMenuContextChip
+      text={text}
+      Icons={Avatars}
+      withIconBackground={true}
+    />
+  );
 };

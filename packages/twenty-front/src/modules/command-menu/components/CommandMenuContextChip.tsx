@@ -20,8 +20,9 @@ const StyledIconsContainer = styled.div`
   display: flex;
 `;
 
-const StyledIconWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
+  background: ${({ theme, withIconBackground }) =>
+    withIconBackground ? theme.background.primary : 'unset'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(0.5)};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -36,15 +37,22 @@ const StyledIconWrapper = styled.div`
 export const CommandMenuContextChip = ({
   Icons,
   text,
+  withIconBackground,
 }: {
   Icons: React.ReactNode[];
-  text: string;
+  text?: string;
+  withIconBackground?: boolean;
 }) => {
   return (
     <StyledChip>
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
-          <StyledIconWrapper key={index}>{Icon}</StyledIconWrapper>
+          <StyledIconWrapper
+            key={index}
+            withIconBackground={withIconBackground}
+          >
+            {Icon}
+          </StyledIconWrapper>
         ))}
       </StyledIconsContainer>
       {text}

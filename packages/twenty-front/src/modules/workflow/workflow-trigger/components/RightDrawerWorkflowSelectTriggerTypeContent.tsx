@@ -63,7 +63,10 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
 
             setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-            openRightDrawer(RightDrawerPages.WorkflowStepEdit);
+            openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
+              title: action.name,
+              Icon: action.icon,
+            });
           }}
         />
       ))}

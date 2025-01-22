@@ -7,6 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { getWorkflowStepTypeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowStepTypeIcon';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -17,7 +18,6 @@ export const useCreateStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { openRightDrawer } = useRightDrawer();
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setWorkflowLastCreatedStepId = useSetRecoilState(
@@ -29,6 +29,8 @@ export const useCreateStep = ({
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+
+  const { openRightDrawer } = useRightDrawer();
 
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowCreateStepFromParentStepId)) {
@@ -50,7 +52,11 @@ export const useCreateStep = ({
 
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
-    openRightDrawer(RightDrawerPages.WorkflowStepEdit);
+
+    openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
+      title: createdStep.name,
+      Icon: getWorkflowStepTypeIcon(createdStep.type as WorkflowStepType),
+    });
   };
 
   return {
