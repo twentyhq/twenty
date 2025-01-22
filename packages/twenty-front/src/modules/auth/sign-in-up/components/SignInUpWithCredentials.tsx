@@ -11,12 +11,11 @@ import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { useRecoilValue } from 'recoil';
 import { Loader, MainButton } from 'twenty-ui';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -26,10 +25,9 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpWithCredentials = () => {
-  const { t } = useLingui();
   const form = useFormContext<Form>();
 
-  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const signInUpStep = useRecoilValue(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
   const captcha = useRecoilValue(captchaState);
   const isRequestingCaptchaToken = useRecoilValue(
@@ -64,33 +62,27 @@ export const SignInUpWithCredentials = () => {
     }
   };
 
-  const onEmailChange = (email: string) => {
-    if (email !== form.getValues('email')) {
-      setSignInUpStep(SignInUpStep.Email);
-    }
-  };
-
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return t`Continue with Email`;
+      return 'Continue With Email';
     }
 
     if (
       signInUpMode === SignInUpMode.SignIn &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return t`Sign in`;
+      return 'Sign in';
     }
 
     if (
       signInUpMode === SignInUpMode.SignUp &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return t`Sign up`;
+      return 'Sign up';
     }
 
-    return t`Continue`;
-  }, [signInUpMode, signInUpStep, t]);
+    return 'Continue';
+  }, [signInUpMode, signInUpStep]);
 
   const shouldWaitForCaptchaToken =
     signInUpStep !== SignInUpStep.Init &&
@@ -120,10 +112,7 @@ export const SignInUpWithCredentials = () => {
         signInUpStep === SignInUpStep.Init) && (
         <StyledForm onSubmit={handleSubmit}>
           {signInUpStep !== SignInUpStep.Init && (
-            <SignInUpEmailField
-              showErrors={showErrors}
-              onInputChange={onEmailChange}
-            />
+            <SignInUpEmailField showErrors={showErrors} />
           )}
           {signInUpStep === SignInUpStep.Password && (
             <SignInUpPasswordField
