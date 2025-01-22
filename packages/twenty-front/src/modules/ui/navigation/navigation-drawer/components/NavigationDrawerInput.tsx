@@ -4,8 +4,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import styled from '@emotion/styled';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
-import { IconComponent, TablerIconsProps } from 'twenty-ui';
+import { IconComponent, TablerIconsProps, isDefined } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
@@ -79,7 +78,6 @@ export const NavigationDrawerInput = ({
       onChange={onChange}
       placeholder={placeholder}
       onFocus={handleFocus}
-      sizeVariant="md"
       fullWidth
       autoFocus
     />
