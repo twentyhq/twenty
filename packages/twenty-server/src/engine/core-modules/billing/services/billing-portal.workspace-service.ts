@@ -2,18 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
-
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
+import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
+import Stripe from 'stripe';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -22,20 +24,31 @@ export class BillingPortalWorkspaceService {
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   async computeCheckoutSessionURL(
-    user: User,
-    workspace: Workspace,
-    priceId: string,
-    successUrlPath?: string,
-    plan?: BillingPlanKey,
-    requirePaymentMethod?: boolean,
+    {
+      user,
+      workspace,
+      prices,
+      successUrlPath,
+      plan,
+      priceId,
+      requirePaymentMethod,
+    }: {
+      user: User;
+      workspace: Workspace;
+      prices?: BillingGetPricesPerPlanResult;
+      successUrlPath?: string;
+      plan?: BillingPlanKey;
+      priceId?: string;
+      requirePaymentMethod?: boolean;
+    },
   ): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       subdomain: workspace.subdomain,
@@ -56,18 +69,48 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeCustomerId = subscription?.stripeCustomerId;
+    const isFeatureFlagEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsBillingPlansEnabled,
+      workspace.id,
+    );
+    let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    if (isFeatureFlagEnabled && prices) {
+      lineItems = [
+        {
+          price: prices.baseProductPrice.stripePriceId,
+          quantity,
+        },
+        ...prices.meteredProductsPrices.map(price => ({
+          price: price.stripePriceId,
+        })),
+      ];
+    } else if (priceId && !isFeatureFlagEnabled) {
+      lineItems = [
+        {
+          price: priceId,
+          quantity,
+        },
+      ];
+    }
+    if (!lineItems.length) {
+      throw new Error(
+        isFeatureFlagEnabled
+          ? 'Error: missing prices'
+          : 'Error: missing price id'
+      );
+    }
 
     const session = await this.stripeCheckoutService.createCheckoutSession({
       user,
       workspaceId: workspace.id,
-      priceId,
-      quantity,
+      lineItems,
       successUrl,
       cancelUrl,
       stripeCustomerId,
       plan,
       requirePaymentMethod,
       withTrialPeriod: !isDefined(subscription),
+      isFeatureFlagEnabled,
     });
 
     assert(session.url, 'Error: missing checkout.session.url');

@@ -84,26 +84,32 @@ export class BillingResolver {
         workspace.id,
       );
 
-    let productPrice;
+    const checkoutSessionParams = {
+      user,
+      workspace,
+      successUrlPath,
+      plan: plan ?? BillingPlanKey.PRO,
+      requirePaymentMethod,
+    };
 
     if (isBillingPlansEnabled) {
-      const baseProduct = await this.billingPlanService.getPlanBaseProduct(
-        plan ?? BillingPlanKey.PRO,
-      );
+      const planPrices = await this.billingPlanService.getPricesPerPlan({
+        planKey: checkoutSessionParams.plan,
+        interval: recurringInterval,
+      });
 
-      if (!baseProduct) {
-        throw new GraphQLError('Base product not found');
-      }
-
-      productPrice = baseProduct.billingPrices.find(
-        (price) => price.interval === recurringInterval,
-      );
-    } else {
-      productPrice = await this.stripePriceService.getStripePrice(
-        AvailableProduct.BasePlan,
-        recurringInterval,
-      );
+      return {
+        url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+          ...checkoutSessionParams,
+          prices: planPrices,
+        }),
+      };
     }
+
+    const productPrice = await this.stripePriceService.getStripePrice(
+      AvailableProduct.BasePlan,
+      recurringInterval,
+    );
 
     if (!productPrice) {
       throw new GraphQLError(
@@ -112,14 +118,10 @@ export class BillingResolver {
     }
 
     return {
-      url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
-        user,
-        workspace,
-        productPrice.stripePriceId,
-        successUrlPath,
-        plan,
-        requirePaymentMethod,
-      ),
+      url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+        ...checkoutSessionParams,
+        priceId: productPrice.stripePriceId,
+      }),
     };
   }
 
