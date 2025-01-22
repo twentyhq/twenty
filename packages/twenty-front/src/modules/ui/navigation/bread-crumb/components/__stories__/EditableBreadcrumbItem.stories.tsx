@@ -3,7 +3,9 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { EditableBreadcrumbItemHotkeyScope } from '@/ui/navigation/bread-crumb/types/EditableBreadcrumbItemHotkeyScope';
+
 import { findByText, userEvent } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 import { EditableBreadcrumbItem } from '../EditableBreadcrumbItem';
 
 const onSubmit = jest.fn();
@@ -17,6 +19,7 @@ const meta: Meta<typeof EditableBreadcrumbItem> = {
         <Story />
       </RecoilRoot>
     ),
+    ComponentDecorator,
   ],
   args: {
     defaultValue: 'Company Name',

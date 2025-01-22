@@ -20,10 +20,6 @@ type EditableBreadcrumbItemProps = {
   hotkeyScope: string;
 };
 
-const StyledInput = styled(TextInputV2)`
-  background-color: white;
-`;
-
 const StyledButton = styled('button')`
   align-items: center;
   background: inherit;
@@ -105,7 +101,7 @@ export const EditableBreadcrumbItem = ({
   const { openEditableBreadCrumbItem } = useOpenEditableBreadCrumbItem();
 
   return isUpdatingRecordEditableName ? (
-    <StyledInput
+    <TextInputV2
       className={className}
       autoGrow
       sizeVariant="sm"
