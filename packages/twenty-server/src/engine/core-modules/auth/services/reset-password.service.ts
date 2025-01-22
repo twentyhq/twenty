@@ -25,6 +25,9 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ResetPasswordService {
@@ -35,6 +38,8 @@ export class ResetPasswordService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
     private readonly emailService: EmailService,
   ) {}
 
@@ -106,6 +111,7 @@ export class ResetPasswordService {
   async sendEmailPasswordResetLink(
     resetToken: PasswordResetToken,
     email: string,
+    workspaceId: string,
   ): Promise<EmailPasswordResetLink> {
     const user = await this.userRepository.findOneBy({
       email,
@@ -117,6 +123,9 @@ export class ResetPasswordService {
         AuthExceptionCode.INVALID_INPUT,
       );
     }
+
+    const currentWorkspaceMember =
+      await this.workspaceMemberRepository.getByIdOrFail(user.id, workspaceId);
 
     const frontBaseURL = this.domainManagerService.getBaseUrl();
 
@@ -133,12 +142,10 @@ export class ResetPasswordService {
           long: true,
         },
       ),
+      locale: currentWorkspaceMember.locale,
     };
 
-    const emailTemplate = PasswordResetLinkEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
+    const emailTemplate = await PasswordResetLinkEmail(emailData);
 
     const text = render(emailTemplate, {
       plainText: true,
