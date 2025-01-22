@@ -12,9 +12,7 @@ import {
   IconFunction,
   IconHierarchy2,
   IconKey,
-  IconLock,
   IconMail,
-  IconPhone,
   IconRocket,
   IconServer,
   IconSettings,
@@ -42,8 +40,6 @@ import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-// eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2, IconMailCog } from '@tabler/icons-react';
 
 type SettingsNavigationItem = {
   label: string;
@@ -59,15 +55,16 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
-  const isPermissionsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsEnabled,
-  );
 
   // We want to disable this serverless function setting menu but keep the code
   // for now
   const isFunctionSettingsEnabled = false;
 
-  const isBillingPageEnabled = billing?.isBillingEnabled;
+  const isFreeAccessEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsFreeAccessEnabled,
+  );
+  const isBillingPageEnabled =
+    billing?.isBillingEnabled && !isFreeAccessEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
@@ -90,27 +87,6 @@ export const SettingsNavigationDrawerItems = () => {
     },
   ];
 
-  const serviceCenterSubSettings: SettingsNavigationItem[] = [
-    {
-      label: 'Agents',
-      path: SettingsPath.ServiceCenterAgents,
-      Icon: IconUsers,
-      indentationLevel: 2,
-    },
-    {
-      label: 'Sectors',
-      path: SettingsPath.ServiceCenterSectors,
-      Icon: IconIdBadge2,
-      indentationLevel: 2,
-    },
-    {
-      label: 'Service Level',
-      path: SettingsPath.ServiceCenterServiceLevel,
-      Icon: IconMailCog,
-      indentationLevel: 2,
-    },
-  ];
-
   const selectedIndex = accountSubSettings.findIndex((accountSubSetting) => {
     const href = getSettingsPath(accountSubSetting.path);
     const pathName = resolvePath(href).pathname;
@@ -123,21 +99,6 @@ export const SettingsNavigationDrawerItems = () => {
       currentPathName,
     );
   });
-
-  const selectedServiceCenter = serviceCenterSubSettings.findIndex(
-    (serviceCenterSubSetting) => {
-      const href = getSettingsPath(serviceCenterSubSetting.path);
-      const pathName = resolvePath(href).pathname;
-
-      return matchPath(
-        {
-          path: pathName,
-          end: serviceCenterSubSetting.matchSubPages === false,
-        },
-        currentPathName,
-      );
-    },
-  );
 
   return (
     <>
@@ -188,37 +149,11 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
-        <SettingsNavigationDrawerItem
-          label={'Service Center'}
-          path={SettingsPath.ServiceCenter}
-          Icon={IconPhone}
-        />
-        {serviceCenterSubSettings.map((navigationItem, index) => (
-          <SettingsNavigationDrawerItem
-            key={index}
-            label={navigationItem.label}
-            path={navigationItem.path}
-            Icon={navigationItem.Icon}
-            indentationLevel={navigationItem.indentationLevel}
-            subItemState={getNavigationSubItemLeftAdornment({
-              arrayLength: serviceCenterSubSettings.length,
-              index,
-              selectedIndex: selectedServiceCenter,
-            })}
-          />
-        ))}
         {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
             label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
-          />
-        )}
-        {isPermissionsEnabled && (
-          <SettingsNavigationDrawerItem
-            label={t`Roles`}
-            path={SettingsPath.Roles}
-            Icon={IconLock}
           />
         )}
         <SettingsNavigationDrawerItem
@@ -242,7 +177,7 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <AdvancedSettingsWrapper hideIcon>
-          <NavigationDrawerSectionTitle label={t`Developers`} />
+          <NavigationDrawerSectionTitle label="Developers" />
         </AdvancedSettingsWrapper>
         <AdvancedSettingsWrapper navigationDrawerItem={true}>
           <SettingsNavigationDrawerItem
@@ -265,7 +200,7 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label={t`Other`} />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label={t`Server Admin`}
+            label={t`Server Admin Panel`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />
