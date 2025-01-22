@@ -49,7 +49,9 @@ export class RestApiCoreServiceV2 {
     });
 
     if (!itemToDelete) {
-      throw new BadRequestException('Object to delete not found');
+      throw new BadRequestException(
+        `${capitalize(objectMetadataNameSingular)} to delete not found`,
+      );
     }
 
     await repository.delete(objectId);
