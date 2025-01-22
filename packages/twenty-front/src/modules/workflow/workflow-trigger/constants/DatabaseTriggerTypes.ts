@@ -1,6 +1,6 @@
 import { WorkflowTriggerType } from '@/workflow/types/Workflow';
 import { DatabaseTriggerName } from '@/workflow/workflow-trigger/constants/DatabaseTriggerName';
-import { IconClick, IconComponent, IconPlus, IconTrash } from 'twenty-ui';
+import { IconComponent, IconPlus, IconRefreshDot, IconTrash } from 'twenty-ui';
 
 export const DATABASE_TRIGGER_TYPES: Array<{
   name: DatabaseTriggerName;
@@ -15,7 +15,7 @@ export const DATABASE_TRIGGER_TYPES: Array<{
   {
     name: DatabaseTriggerName.RECORD_IS_UPDATED,
     type: 'DATABASE_EVENT',
-    icon: IconClick,
+    icon: IconRefreshDot,
   },
   {
     name: DatabaseTriggerName.RECORD_IS_DELETED,

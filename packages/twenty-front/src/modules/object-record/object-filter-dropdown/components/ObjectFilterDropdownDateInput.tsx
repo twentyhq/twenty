@@ -41,7 +41,7 @@ export const ObjectFilterDropdownDateInput = () => {
   );
 
   const isDateTimeInput =
-    filterDefinitionUsedInDropdown?.type === FieldMetadataType.DateTime;
+    filterDefinitionUsedInDropdown?.type === FieldMetadataType.DATE_TIME;
 
   const handleAbsoluteDateChange = (newDate: Date | null) => {
     setInternalDate(newDate);

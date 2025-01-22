@@ -27,7 +27,7 @@ export const useGetAvailableFieldsForKanban = () => {
 
   const availableFieldsForKanban =
     objectMetadataItem?.fields.filter(
-      (field) => field.type === FieldMetadataType.Select,
+      (field) => field.type === FieldMetadataType.SELECT,
     ) ?? [];
 
   const navigate = useNavigateSettings();
@@ -42,7 +42,7 @@ export const useGetAvailableFieldsForKanban = () => {
           objectNamePlural: objectMetadataItem.namePlural,
         },
         {
-          fieldType: FieldMetadataType.Select,
+          fieldType: FieldMetadataType.SELECT,
         },
       );
     } else {
