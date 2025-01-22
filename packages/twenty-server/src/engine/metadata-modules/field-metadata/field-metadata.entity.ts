@@ -95,6 +95,14 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
+  @Column({ nullable: true, type: 'uuid' })
+  targetFieldMetadataId: string;
+  @OneToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata: FieldMetadataEntity) => fieldMetadata.targetFieldMetadataId,
+  )
+  targetFieldMetadata: Relation<FieldMetadataEntity>;
+
   @OneToOne(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromFieldMetadata,
