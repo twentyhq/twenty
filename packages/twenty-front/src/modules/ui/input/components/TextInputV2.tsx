@@ -61,7 +61,7 @@ const StyledInput = styled.input<
   padding-left: ${({ theme, LeftIcon }) =>
     LeftIcon ? `px` : theme.spacing(2)};
   width: ${({ theme, width }) =>
-    width ? `calc(${width}px + ${theme.spacing(4)})` : '100%'};
+    width ? `calc(${width}px + ${theme.spacing(5)})` : '100%'};
 
   &::placeholder,
   &::-webkit-input-placeholder {
