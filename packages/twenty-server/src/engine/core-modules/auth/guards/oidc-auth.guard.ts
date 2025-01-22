@@ -71,7 +71,8 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
-        subdomain: identityProvider?.workspace.subdomain,
+        subdomain:
+          request.query?.origin_url ?? identityProvider?.workspace.subdomain,
       });
 
       return false;

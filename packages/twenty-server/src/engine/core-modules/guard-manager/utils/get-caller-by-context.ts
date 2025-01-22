@@ -1,4 +1,4 @@
-export const getRequestOriginByHeaders = (
+export const getCallerByContext = (
   context: any,
   frontHostname: string,
 ):

@@ -1,9 +1,9 @@
-import { getRequestOriginByHeaders } from 'src/engine/core-modules/auth/utils/get-request-origin-by-headers';
+import { getCallerByContext } from 'src/engine/core-modules/auth/utils/get-caller-by-context';
 
 describe('getRequestOriginByHeaders', () => {
   it('should return "internal-graphql-caller" when contextType is graphql', () => {
     const contextMock = { contextType: 'graphql' };
-    const result = getRequestOriginByHeaders(contextMock, 'twenty.com');
+    const result = getCallerByContext(contextMock, 'twenty.com');
 
     expect(result).toEqual({ callerType: 'internal-graphql-caller' });
   });
@@ -16,7 +16,7 @@ describe('getRequestOriginByHeaders', () => {
         }),
       }),
     };
-    const result = getRequestOriginByHeaders(contextMock, 'twenty.com');
+    const result = getCallerByContext(contextMock, 'twenty.com');
 
     expect(result).toEqual({
       callerType: 'internal-caller',
@@ -32,7 +32,7 @@ describe('getRequestOriginByHeaders', () => {
         }),
       }),
     };
-    const result = getRequestOriginByHeaders(contextMock, 'twenty.com');
+    const result = getCallerByContext(contextMock, 'twenty.com');
 
     expect(result).toEqual({
       callerType: 'external-caller',

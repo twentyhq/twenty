@@ -26,16 +26,6 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
           .status(403)
           .redirect(this.domainManagerService.getBaseUrl().toString());
         break;
-      case AuthExceptionCode.OAUTH_INVALID_PAYLOAD:
-        response
-          .status(403)
-          .redirect(
-            this.domainManagerService.computeRedirectErrorUrl(
-              exception.message,
-              { subdomain: exception.metadata?.subdomain },
-            ),
-          );
-        break;
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,

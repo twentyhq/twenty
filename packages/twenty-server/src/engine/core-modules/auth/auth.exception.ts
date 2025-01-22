@@ -1,12 +1,8 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class AuthException extends CustomException {
-  constructor(
-    message: string,
-    code: AuthExceptionCode,
-    metadata?: Record<string, string>,
-  ) {
-    super(message, code, metadata);
+  constructor(message: string, code: AuthExceptionCode) {
+    super(message, code);
   }
 }
 
@@ -27,5 +23,4 @@ export enum AuthExceptionCode {
   GOOGLE_API_AUTH_DISABLED = 'GOOGLE_API_AUTH_DISABLED',
   MICROSOFT_API_AUTH_DISABLED = 'MICROSOFT_API_AUTH_DISABLED',
   MISSING_ENVIRONMENT_VARIABLE = 'MISSING_ENVIRONMENT_VARIABLE',
-  OAUTH_INVALID_PAYLOAD = 'OAUTH_INVALID_PAYLOAD',
 }

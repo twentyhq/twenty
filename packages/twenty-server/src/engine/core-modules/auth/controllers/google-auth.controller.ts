@@ -24,7 +24,6 @@ import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.au
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -45,11 +44,7 @@ export class GoogleAuthController {
   }
 
   @Get('redirect')
-  @UseGuards(
-    EnterpriseFeaturesEnabledGuard,
-    GoogleProviderEnabledGuard,
-    GoogleOauthGuard,
-  )
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const {

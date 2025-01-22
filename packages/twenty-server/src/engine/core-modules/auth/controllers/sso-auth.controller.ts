@@ -111,15 +111,14 @@ export class SSOAuthController {
       if (!workspaceIdentityProvider) {
         throw new AuthException(
           'Identity provider not found',
-          AuthExceptionCode.OAUTH_INVALID_PAYLOAD,
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
         );
       }
 
       if (!user.user.email) {
         throw new AuthException(
           'Email not found from identity provider.',
-          AuthExceptionCode.OAUTH_INVALID_PAYLOAD,
-          { subdomain: workspaceIdentityProvider.workspace.subdomain },
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
         );
       }
 

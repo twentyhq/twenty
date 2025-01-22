@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { getRequestOriginByHeaders } from 'src/engine/core-modules/auth/utils/get-request-origin-by-headers';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { getCallerByContext } from 'src/engine/core-modules/guard-manager/utils/get-caller-by-context';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -16,7 +16,7 @@ export class GuardErrorManagerService {
       baseUrl?: string;
     },
   ) {
-    const caller = getRequestOriginByHeaders(
+    const caller = getCallerByContext(
       context,
       this.domainManagerService.getFrontUrl().hostname,
     );
