@@ -84,7 +84,7 @@ export const ViewPickerListContent = () => {
                 isDragDisabled={viewsOnCurrentObject.length === 1}
                 itemComponent={
                   <ViewPickerOptionDropdown
-                    view={view}
+                    view={{ ...view, __typename: 'View' }}
                     handleViewSelect={handleViewSelect}
                     isIndexView={isIndexView}
                     onEdit={handleEditViewButtonClick}
