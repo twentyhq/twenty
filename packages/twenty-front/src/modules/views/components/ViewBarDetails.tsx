@@ -14,7 +14,8 @@ import { EditableFilterDropdownButton } from '@/views/components/EditableFilterD
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
+
+import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -168,13 +169,13 @@ export const ViewBarDetails = ({
     };
   }, [currentViewWithCombinedFiltersAndSorts]);
 
-  const { applyViewFiltersToCurrentRecordFilters } =
-    useApplyViewFiltersToCurrentRecordFilters();
+  const { applyCurrentViewFiltersToCurrentRecordFilters } =
+    useApplyCurrentViewFiltersToCurrentRecordFilters();
 
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
       resetUnsavedViewStates(viewId);
-      applyViewFiltersToCurrentRecordFilters();
+      applyCurrentViewFiltersToCurrentRecordFilters();
       toggleSoftDeleteFilterState(false);
     }
   };
