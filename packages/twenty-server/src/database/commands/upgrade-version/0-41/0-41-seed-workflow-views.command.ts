@@ -77,8 +77,6 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
       workflowObjectMetadata.id,
       dryRun,
     );
-
-    this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
   }
 
   private async seedWorkflowViews(
