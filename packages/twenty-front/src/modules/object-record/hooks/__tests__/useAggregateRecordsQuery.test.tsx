@@ -17,13 +17,13 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   labelSingular: 'Company',
   labelPlural: 'Companies',
   isCustom: false,
-  labelIdentifierFieldMetadataId: 'field-2',
+  labelIdentifierFieldMetadataId: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
   isActive: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   fields: [
     {
-      id: 'field-1',
+      id: '20202020-fed9-4ce5-9502-02a8efaf46e1',
       name: 'amount',
       label: 'Amount',
       type: FieldMetadataType.NUMBER,
@@ -33,7 +33,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
       updatedAt: new Date().toISOString(),
     } as FieldMetadataItem,
     {
-      id: 'field-2',
+      id: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
       name: 'name',
       label: 'Name',
       type: FieldMetadataType.TEXT,

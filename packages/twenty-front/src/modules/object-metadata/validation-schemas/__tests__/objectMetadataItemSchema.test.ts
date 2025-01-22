@@ -16,6 +16,25 @@ describe('objectMetadataItemSchema', () => {
     expect(result).toEqual(validObjectMetadataItem);
   });
 
+  it('fails for an invalid object metadata item that has null labelIdentifier', () => {
+    // Given
+    const validObjectMetadataItem = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'company',
+    );
+    expect(validObjectMetadataItem).not.toBeUndefined();
+    if (validObjectMetadataItem === undefined)
+      throw new Error('Should never occurs');
+
+    // When
+    const result = objectMetadataItemSchema.safeParse({
+      ...validObjectMetadataItem,
+      labelIdentifierFieldMetadataId: null,
+    });
+
+    // Then
+    expect(result.success).toEqual(false);
+  });
+
   it('fails for an invalid object metadata item', () => {
     // Given
     const invalidObjectMetadataItem: Partial<
