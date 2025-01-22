@@ -333,9 +333,11 @@ export class AuthResolver {
     );
   }
 
+  @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<EmailPasswordResetLink> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
@@ -345,6 +347,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
+      workspaceId,
     );
   }
 
