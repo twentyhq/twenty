@@ -23,9 +23,9 @@ import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/in
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
-import { CommonMiddlewareOperationsModule } from 'src/engine/middlewares/common/common-middleware-operations.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
-import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core-middleware';
+import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
+import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
@@ -60,7 +60,7 @@ const MIGRATED_REST_METHODS = [RequestMethod.DELETE];
     MetadataGraphQLApiModule,
     RestApiModule,
     DataSourceModule,
-    CommonMiddlewareOperationsModule,
+    MiddlewareModule,
     WorkspaceMetadataCacheModule,
     // I18n module for translations
     I18nModule,
