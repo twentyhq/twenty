@@ -21,7 +21,6 @@ type UseAggregateRecordsProps = {
 export const useAggregateRecordsForHeader = ({
   objectMetadataItem,
   additionalFilters = {},
-  fallbackFieldName,
 }: UseAggregateRecordsProps) => {
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
@@ -47,7 +46,6 @@ export const useAggregateRecordsForHeader = ({
   const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregateForView({
     objectMetadataItem,
     recordIndexKanbanAggregateOperation,
-    fieldNameForCount: fallbackFieldName,
   });
 
   const { data } = useAggregateRecords({
@@ -61,7 +59,6 @@ export const useAggregateRecordsForHeader = ({
     objectMetadataItem,
     fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
     aggregateOperation: recordIndexKanbanAggregateOperation?.operation,
-    fallbackFieldName,
     dateFormat,
     timeFormat,
     timeZone,
