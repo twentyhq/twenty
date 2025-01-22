@@ -45613,6 +45613,7 @@ __metadata:
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"
+    twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -45689,7 +45690,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-ui@workspace:packages/twenty-ui":
+"twenty-ui@workspace:*, twenty-ui@workspace:packages/twenty-ui":
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
   dependencies:
@@ -45712,6 +45713,7 @@ __metadata:
     gray-matter: "npm:^4.0.3"
     next-runtime-env: "npm:^3.2.2"
     postgres: "npm:^3.4.3"
+    twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft
 
