@@ -55,9 +55,10 @@ export class EmailVerificationService {
 
     const emailData = {
       link: verificationLink.toString(),
+      locale: 'en',
     };
 
-    const emailTemplate = SendEmailVerificationLinkEmail(emailData);
+    const emailTemplate = await SendEmailVerificationLinkEmail(emailData);
 
     const html = render(emailTemplate, {
       pretty: true,
