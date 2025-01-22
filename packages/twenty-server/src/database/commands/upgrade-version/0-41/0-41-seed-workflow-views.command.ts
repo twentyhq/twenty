@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, IsNull, Not, Repository } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -17,6 +17,7 @@ import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-obje
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 @Command({
   name: 'upgrade-0.41:workflow-seed-views',
@@ -56,7 +57,7 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
       workspaceId,
       {
         where: {
-          nameSingular: 'workflow',
+          standardId: STANDARD_OBJECT_IDS.workflow,
         },
       },
     );
@@ -155,7 +156,6 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
     const workflowView = await viewRepository.findOne({
       where: {
         objectMetadataId: workflowObjectMetadataId,
-        name: 'All Workflows',
       },
     });
 
@@ -175,20 +175,23 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
         'favorite',
       );
 
-    const existingFavorite = await favoriteRepository.findOne({
+    const existingFavorites = await favoriteRepository.find({
       where: {
-        viewId: workflowView.id,
+        viewId: Not(IsNull())
       },
     });
 
-    if (existingFavorite) {
-      this.logger.log(`Favorite already exists: ${existingFavorite.id}`);
+    const workflowFavorite = existingFavorites.find(favorite => favorite.viewId === workflowView.id);
+
+    if (workflowFavorite) {
+      this.logger.log(`Favorite already exists: ${workflowFavorite.id}`);
       return;
     }
 
+
     await favoriteRepository.insert({
       viewId: workflowView.id,
-      position: 5,
+      position: existingFavorites.length,
     });
   }
 }

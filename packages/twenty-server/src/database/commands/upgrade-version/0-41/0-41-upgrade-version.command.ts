@@ -31,9 +31,12 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     this.logger.log('Running command to upgrade to 0.41');
     
     await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
-        passedParam,
-        options,
-        workspaceIds,
+      passedParam,
+      {
+        ...options,
+        force: true,
+      },
+      workspaceIds,
     );
 
     await this.seedWorkflowViewsCommand.executeActiveWorkspacesCommand(
