@@ -8,7 +8,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common.service';
+import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common-middleware-operations.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
