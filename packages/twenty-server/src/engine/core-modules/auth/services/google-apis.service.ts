@@ -5,8 +5,6 @@ import { v4 } from 'uuid';
 
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -47,7 +45,6 @@ export class GoogleAPIsService {
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -99,12 +96,7 @@ export class GoogleAPIsService {
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
-    const isGmailSendEmailScopeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsGmailSendEmailScopeEnabled,
-        workspaceId,
-      );
-    const scopes = getGoogleApisOauthScopes(isGmailSendEmailScopeEnabled);
+    const scopes = getGoogleApisOauthScopes();
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
