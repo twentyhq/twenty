@@ -133,12 +133,6 @@ export type FieldRichTextMetadata = {
   settings?: null;
 };
 
-export type FieldRichTextV2Metadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
-  settings?: null;
-};
-
 export type FieldPositionMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -209,8 +203,6 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
-  | FieldRichTextMetadata
-  | FieldRichTextV2Metadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
   | FieldTextMetadata
@@ -271,11 +263,6 @@ export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
 export type FieldRichTextValue = null | string;
-
-export type FieldRichTextV2Value = {
-  blocknote: string | null;
-  markdown: string | null;
-};
 
 export type FieldActorValue = {
   source: string;

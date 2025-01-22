@@ -85,6 +85,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IsRichTextV2Enabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };
