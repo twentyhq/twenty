@@ -1,4 +1,4 @@
-import { getCallerByContext } from 'src/engine/core-modules/auth/utils/get-caller-by-context';
+import { getCallerByContext } from 'src/engine/core-modules/guard-manager/utils/get-caller-by-context';
 
 describe('getRequestOriginByHeaders', () => {
   it('should return "internal-graphql-caller" when contextType is graphql', () => {
