@@ -1,50 +1,49 @@
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { capitalize } from 'twenty-shared';
 
 const StyledEditableTitleContainer = styled.div`
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   flex-direction: row;
+  overflow-x: hidden;
 `;
 
 const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  line-height: 24px;
   display: flex;
+  flex: 1 0 auto;
   flex-direction: row;
-  padding: ${({ theme }) => theme.spacing(0.75)};
   gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(0.75)};
 `;
 
-export const RecordEditableName = ({
+export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
   objectLabelPlural,
+  labelIdentifierFieldMetadataItem,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   objectLabelPlural: string;
+  labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
-      name: true,
+      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
     },
   });
-
-  const [recordName, setRecordName] = useState(record?.name);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
     recordGqlFields: {
-      name: true,
+      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
     },
   });
 
@@ -55,17 +54,7 @@ export const RecordEditableName = ({
         name: value,
       },
     });
-    setIsRenaming(false);
   };
-
-  const handleCancel = () => {
-    setRecordName(record?.name);
-    setIsRenaming(false);
-  };
-
-  useEffect(() => {
-    setRecordName(record?.name);
-  }, [record?.name]);
 
   if (loading) {
     return null;
@@ -77,24 +66,13 @@ export const RecordEditableName = ({
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      {isRenaming ? (
-        <NavigationDrawerInput
-          value={recordName}
-          onChange={setRecordName}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-          onClickOutside={handleCancel}
-          hotkeyScope="favorites-folder-input"
-        />
-      ) : (
-        <NavigationDrawerItem
-          label={recordName}
-          onClick={() => setIsRenaming(true)}
-          rightOptions={undefined}
-          className="navigation-drawer-item"
-          active
-        />
-      )}
+      <EditableBreadcrumbItem
+        defaultValue={record?.name ?? ''}
+        noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
+        placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
+        onSubmit={handleSubmit}
+        hotkeyScope="editable-breadcrumb-item"
+      />
     </StyledEditableTitleContainer>
   );
 };
