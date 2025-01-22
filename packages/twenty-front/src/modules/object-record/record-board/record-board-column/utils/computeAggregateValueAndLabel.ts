@@ -8,15 +8,12 @@ import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/Agg
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
-import {
-  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
-  isDefined,
-} from 'twenty-shared';
+import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
+import { isDefined } from '~/utils/isDefined';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -50,10 +47,8 @@ export const computeAggregateValueAndLabel = ({
         data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
           AGGREGATE_OPERATIONS.count
         ],
-      label: getAggregateOperationLabel(AGGREGATE_OPERATIONS.count),
-      labelWithFieldName: getAggregateOperationLabel(
-        AGGREGATE_OPERATIONS.count,
-      ),
+      label: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
+      labelWithFieldName: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
     };
   }
 
@@ -123,16 +118,15 @@ export const computeAggregateValueAndLabel = ({
       }
     }
   }
-  const aggregateLabel = t(getAggregateOperationShortLabel(aggregateOperation));
-  const fieldLabel = field.label;
+  const label = getAggregateOperationShortLabel(aggregateOperation);
   const labelWithFieldName =
     aggregateOperation === AGGREGATE_OPERATIONS.count
       ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`
-      : t`${aggregateLabel} of ${fieldLabel}`;
+      : `${getAggregateOperationLabel(aggregateOperation)} of ${field.label}`;
 
   return {
     value,
-    label: aggregateLabel,
+    label,
     labelWithFieldName,
   };
 };

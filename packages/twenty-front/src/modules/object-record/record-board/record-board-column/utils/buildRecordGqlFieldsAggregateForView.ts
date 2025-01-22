@@ -2,10 +2,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import {
-  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
-  isDefined,
-} from 'twenty-shared';
+import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared';
+import { isDefined } from '~/utils/isDefined';
 
 export const buildRecordGqlFieldsAggregateForView = ({
   objectMetadataItem,
