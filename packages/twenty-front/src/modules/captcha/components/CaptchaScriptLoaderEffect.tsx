@@ -3,23 +3,23 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated/graphql';
 
-export const CaptchaProviderScriptLoaderEffect = () => {
-  const captchaProvider = useRecoilValue(captchaProviderState);
+export const CaptchaScriptLoaderEffect = () => {
+  const captcha = useRecoilValue(captchaState);
   const setIsCaptchaScriptLoaded = useSetRecoilState(
     isCaptchaScriptLoadedState,
   );
 
   useEffect(() => {
-    if (!captchaProvider?.provider || !captchaProvider.siteKey) {
+    if (!captcha?.provider || !captcha.siteKey) {
       return;
     }
 
     const scriptUrl = getCaptchaUrlByProvider(
-      captchaProvider.provider,
-      captchaProvider.siteKey,
+      captcha.provider,
+      captcha.siteKey,
     );
     if (!scriptUrl) {
       return;
@@ -32,7 +32,7 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       scriptElement = document.createElement('script');
       scriptElement.src = scriptUrl;
       scriptElement.onload = () => {
-        if (captchaProvider.provider === CaptchaDriverType.GoogleRecaptcha) {
+        if (captcha.provider === CaptchaDriverType.GoogleRecaptcha) {
           window.grecaptcha?.ready(() => {
             setIsCaptchaScriptLoaded(true);
           });
@@ -42,11 +42,7 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       };
       document.body.appendChild(scriptElement);
     }
-  }, [
-    captchaProvider?.provider,
-    captchaProvider?.siteKey,
-    setIsCaptchaScriptLoaded,
-  ]);
+  }, [captcha?.provider, captcha?.siteKey, setIsCaptchaScriptLoaded]);
 
   return <></>;
 };

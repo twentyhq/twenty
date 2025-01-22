@@ -21,13 +21,12 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -54,8 +53,6 @@ export const SignInUpGlobalScopeForm = () => {
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
-
-  const captchaProvider = useRecoilValue(captchaProviderState);
 
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -108,11 +105,6 @@ export const SignInUpGlobalScopeForm = () => {
     });
   };
 
-  const shouldWaitForCaptchaToken =
-    isDefined(captchaProvider?.provider) && isRequestingCaptchaToken;
-
-  const isSubmitButtonDisabled = shouldWaitForCaptchaToken;
-
   return (
     <>
       <StyledContentContainer>
@@ -132,7 +124,7 @@ export const SignInUpGlobalScopeForm = () => {
               />
             )}
             <MainButton
-              disabled={isSubmitButtonDisabled}
+              disabled={isRequestingCaptchaToken}
               title={
                 signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
               }
