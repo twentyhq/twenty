@@ -9,33 +9,43 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
 
 @Injectable()
 export class SAMLAuthGuard extends AuthGuard('saml') {
-  constructor(private readonly sSOService: SSOService) {
+  constructor(
+    private readonly sSOService: SSOService,
+    private readonly guardErrorManagerService: GuardErrorManagerService,
+  ) {
     super();
   }
 
   async canActivate(context: ExecutionContext) {
-    try {
-      const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
 
-      if (!request.params.identityProviderId) {
+    let identityProvider: Awaited<
+      ReturnType<typeof this.sSOService.findSSOIdentityProviderById>
+    >;
+
+    try {
+      identityProvider = await this.sSOService.findSSOIdentityProviderById(
+        request.params.identityProviderId,
+      );
+
+      if (!identityProvider) {
         throw new AuthException(
-          'Invalid SAML identity provider',
+          'Identity provider not found',
           AuthExceptionCode.INVALID_DATA,
         );
       }
-
       new SamlAuthStrategy(this.sSOService);
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      if (err instanceof AuthException) {
-        return false;
-      }
+      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
+        subdomain: identityProvider?.workspace.subdomain,
+      });
 
-      // TODO AMOREAUX: trigger sentry error
       return false;
     }
   }

@@ -1,6 +1,4 @@
-import { CanActivate, Injectable } from '@nestjs/common';
-
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import {
   AuthException,
@@ -8,21 +6,35 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleStrategy } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
 
 @Injectable()
 export class GoogleProviderEnabledGuard implements CanActivate {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly guardErrorManagerService: GuardErrorManagerService,
+  ) {}
 
-  canActivate(): boolean | Promise<boolean> | Observable<boolean> {
-    if (!this.environmentService.get('AUTH_GOOGLE_ENABLED')) {
-      throw new AuthException(
-        'Google auth is not enabled',
-        AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
-      );
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+
+    try {
+      if (!this.environmentService.get('AUTH_GOOGLE_ENABLED')) {
+        throw new AuthException(
+          'Google auth is not enabled',
+          AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
+        );
+      }
+
+      new GoogleStrategy(this.environmentService);
+
+      return true;
+    } catch (err) {
+      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
+        baseUrl: request.query?.origin_url,
+      });
+
+      return false;
     }
-
-    new GoogleStrategy(this.environmentService);
-
-    return true;
   }
 }

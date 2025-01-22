@@ -11,10 +11,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
-  constructor(private readonly ssoService: SSOService) {
+  constructor(
+    private readonly sSOService: SSOService,
+    private readonly guardErrorManagerService: GuardErrorManagerService,
+  ) {
     super();
   }
 
@@ -38,13 +42,17 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    try {
-      const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
 
+    let identityProvider: Awaited<
+      ReturnType<typeof this.sSOService.findSSOIdentityProviderById>
+    >;
+
+    try {
       const identityProviderId = this.getIdentityProviderId(request);
 
-      const identityProvider =
-        await this.ssoService.findSSOIdentityProviderById(identityProviderId);
+      identityProvider =
+        await this.sSOService.findSSOIdentityProviderById(identityProviderId);
 
       if (!identityProvider) {
         throw new AuthException(
@@ -56,17 +64,16 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
-        this.ssoService.getOIDCClient(identityProvider, issuer),
+        this.sSOService.getOIDCClient(identityProvider, issuer),
         identityProvider.id,
       );
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      if (err instanceof AuthException) {
-        return false;
-      }
+      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
+        subdomain: identityProvider?.workspace.subdomain,
+      });
 
-      // TODO AMOREAUX: trigger sentry error
       return false;
     }
   }

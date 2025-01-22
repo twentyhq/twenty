@@ -79,12 +79,14 @@ export class DomainManagerService {
     subdomain,
     pathname,
     searchParams,
+    baseUrl,
   }: {
     subdomain?: string;
     pathname?: string;
     searchParams?: Record<string, string | number>;
+    baseUrl?: string;
   }) {
-    const url = this.getBaseUrl();
+    const url = baseUrl ? new URL(baseUrl) : this.getBaseUrl();
 
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
@@ -147,14 +149,15 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    {
-      subdomain,
-    }: {
+    params?: {
       subdomain?: string;
+      baseUrl?: string;
     },
   ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      baseUrl: params?.baseUrl,
+      subdomain:
+        params?.subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
       pathname: '/verify',
       searchParams: { errorMessage },
     });

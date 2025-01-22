@@ -6,7 +6,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 @Catch(AuthException)
@@ -20,12 +20,21 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    console.log('>>>>>>>>>>>>>>', exception);
     switch (exception.code) {
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
         response
           .status(403)
           .redirect(this.domainManagerService.getBaseUrl().toString());
+        break;
+      case AuthExceptionCode.OAUTH_INVALID_PAYLOAD:
+        response
+          .status(403)
+          .redirect(
+            this.domainManagerService.computeRedirectErrorUrl(
+              exception.message,
+              { subdomain: exception.metadata?.subdomain },
+            ),
+          );
         break;
       default:
         return this.httpExceptionHandlerService.handleError(

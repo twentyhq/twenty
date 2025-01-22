@@ -41,6 +41,12 @@ export const useSSO = () => {
       );
     }
 
+    const url = new URL(
+      authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL,
+    );
+
+    url.searchParams.set('origin_url', window.origin);
+
     window.location.href =
       authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL;
     return;
