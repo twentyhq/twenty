@@ -99,10 +99,12 @@ export class BillingResolver {
       });
 
       return {
-        url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
-          prices: planPrices,
-        }),
+        url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+          {
+            ...checkoutSessionParams,
+            prices: planPrices,
+          },
+        ),
       };
     }
 

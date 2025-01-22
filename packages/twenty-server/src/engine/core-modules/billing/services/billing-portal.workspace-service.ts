@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
+import Stripe from 'stripe';
+import { Repository } from 'typeorm';
+
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
@@ -14,8 +17,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import Stripe from 'stripe';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -31,25 +32,23 @@ export class BillingPortalWorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
-  async computeCheckoutSessionURL(
-    {
-      user,
-      workspace,
-      prices,
-      successUrlPath,
-      plan,
-      priceId,
-      requirePaymentMethod,
-    }: {
-      user: User;
-      workspace: Workspace;
-      prices?: BillingGetPricesPerPlanResult;
-      successUrlPath?: string;
-      plan?: BillingPlanKey;
-      priceId?: string;
-      requirePaymentMethod?: boolean;
-    },
-  ): Promise<string> {
+  async computeCheckoutSessionURL({
+    user,
+    workspace,
+    prices,
+    successUrlPath,
+    plan,
+    priceId,
+    requirePaymentMethod,
+  }: {
+    user: User;
+    workspace: Workspace;
+    prices?: BillingGetPricesPerPlanResult;
+    successUrlPath?: string;
+    plan?: BillingPlanKey;
+    priceId?: string;
+    requirePaymentMethod?: boolean;
+  }): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       subdomain: workspace.subdomain,
     });
@@ -74,13 +73,14 @@ export class BillingPortalWorkspaceService {
       workspace.id,
     );
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+
     if (isFeatureFlagEnabled && prices) {
       lineItems = [
         {
           price: prices.baseProductPrice.stripePriceId,
           quantity,
         },
-        ...prices.meteredProductsPrices.map(price => ({
+        ...prices.meteredProductsPrices.map((price) => ({
           price: price.stripePriceId,
         })),
       ];
@@ -96,7 +96,7 @@ export class BillingPortalWorkspaceService {
       throw new Error(
         isFeatureFlagEnabled
           ? 'Error: missing prices'
-          : 'Error: missing price id'
+          : 'Error: missing price id',
       );
     }
 
