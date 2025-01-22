@@ -9,7 +9,6 @@ import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
@@ -30,11 +29,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
     const { workspaceId, userId } =
       await this.transientTokenService.verifyTransientToken(
         request.query.transientToken,
-      );
-    const isGmailSendEmailScopeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsGmailSendEmailScopeEnabled,
-        workspaceId,
       );
 
     setRequestExtraParams(request, {
@@ -57,11 +51,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       );
     }
 
-    new GoogleAPIsOauthRequestCodeStrategy(
-      this.environmentService,
-      {},
-      isGmailSendEmailScopeEnabled,
-    );
+    new GoogleAPIsOauthRequestCodeStrategy(this.environmentService, {});
 
     const activate = (await super.canActivate(context)) as boolean;
 
