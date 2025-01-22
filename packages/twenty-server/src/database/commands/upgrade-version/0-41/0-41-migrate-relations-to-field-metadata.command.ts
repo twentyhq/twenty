@@ -44,12 +44,10 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
       this.logger.setVerbose(options.verbose ?? false);
     }
 
-    const workspacePromises = workspaceIds.map((workspaceId, index) =>
-      this.processWorkspace(workspaceId, index, workspaceIds.length),
-    );
-
     try {
-      await Promise.all(workspacePromises);
+      for (const [index, workspaceId] of workspaceIds.entries()) {
+        await this.processWorkspace(workspaceId, index, workspaceIds.length);
+      }
 
       this.logger.log(chalk.green('Command completed!'));
     } catch (error) {
