@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: |
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
-        echo "CACHE_KEY_PREFIX=node_modules-cache-node-${{ inputs.node-version }}-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
+        echo "CACHE_KEY_PREFIX=unique-node_modules-cache-node-${{ inputs.node-version }}-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
         echo 'PATH_TO_CACHE<<EOF' >> $GITHUB_OUTPUT
         echo "node_modules" >> $GITHUB_OUTPUT
         echo "packages/*/node_modules" >> $GITHUB_OUTPUT
