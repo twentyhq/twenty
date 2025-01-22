@@ -76,8 +76,8 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 
       this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
         res,
-        error,
         'graphql',
+        error,
         errors,
       );
 
