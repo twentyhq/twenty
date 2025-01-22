@@ -22,9 +22,12 @@ import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
@@ -126,5 +129,51 @@ export class FieldMetadataResolver {
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => RelationDTO, { nullable: true })
+  async relation(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
+  ): Promise<RelationDTO | null | undefined> {
+    if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+      return null;
+    }
+
+    if (!fieldMetadata.targetFieldMetadataId) {
+      throw new BadRequestException('Target field metadata id is required');
+    }
+
+    const sourceFieldMetadata =
+      await this.fieldMetadataService.findOneWithinWorkspace(workspace.id, {
+        where: {
+          id: fieldMetadata.id,
+        },
+        relations: ['object'],
+      });
+
+    const targetFieldMetadata =
+      await this.fieldMetadataService.findOneWithinWorkspace(workspace.id, {
+        where: {
+          id: fieldMetadata.targetFieldMetadataId,
+        },
+        relations: ['object'],
+      });
+
+    if (!targetFieldMetadata) {
+      throw new BadRequestException('Target field metadata not found');
+    }
+
+    if (!fieldMetadata.settings) {
+      throw new BadRequestException('Relation settings are required');
+    }
+
+    return {
+      type: fieldMetadata.settings.relationType,
+      sourceObjectMetadata: sourceFieldMetadata.object,
+      targetObjectMetadata: targetFieldMetadata.object,
+      sourceFieldMetadata: fieldMetadata,
+      targetFieldMetadata: targetFieldMetadata,
+    };
   }
 }
