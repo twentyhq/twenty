@@ -418,10 +418,8 @@ export class AuthService {
       locale:"en"
     });
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 
