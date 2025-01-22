@@ -6,14 +6,12 @@ import { capitalize } from 'twenty-shared';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { extractObjectIdFromPath } from 'src/engine/api/rest/core/utils/extract-id-from-path.utils';
-import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
   constructor(
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
-    private readonly restApiService: RestApiService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 

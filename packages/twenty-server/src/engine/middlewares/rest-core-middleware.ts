@@ -67,8 +67,8 @@ export class RestCoreMiddleware implements NestMiddleware {
 
       this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
         res,
-        error,
         'rest',
+        error,
         errors,
       );
 
