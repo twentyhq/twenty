@@ -50,6 +50,12 @@ export class RestApiCoreServiceV2 {
       },
     });
 
+    if (!recordToDelete) {
+      throw new BadRequestException(
+        `${capitalize(objectMetadataNameSingular)} to delete not found`,
+      );
+    }
+
     await repository.delete(recordId);
 
     return {
