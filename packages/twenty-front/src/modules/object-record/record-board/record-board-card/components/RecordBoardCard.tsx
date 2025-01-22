@@ -44,6 +44,7 @@ import {
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
+import { useNavigate } from 'react-router-dom';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -97,6 +98,7 @@ export const StyledBoardCardHeader = styled.div<{
   align-items: center;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 24px;
   padding-bottom: ${({ theme, showCompactView }) =>
@@ -132,9 +134,7 @@ export const StyledBoardCardBody = styled.div`
 `;
 
 const StyledCheckboxContainer = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: end;
+  margin-left: auto;
 `;
 
 const StyledFieldContainer = styled.div`
@@ -160,6 +160,8 @@ export const RecordBoardCard = ({
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
 }) => {
+  const navigate = useNavigate();
+
   const { recordId } = useContext(RecordBoardCardContext);
 
   const [newLabelValue, setNewLabelValue] = useState('');
@@ -221,8 +223,7 @@ export const RecordBoardCard = ({
 
   const handleCardClick = () => {
     if (!isCreating) {
-      setIsCurrentCardSelected(!isCurrentCardSelected);
-      checkIfLastUnselectAndCloseDropdown();
+      navigate(indexIdentifierUrl(recordId));
     }
   };
 
@@ -325,26 +326,31 @@ export const RecordBoardCard = ({
               <>
                 {isCompactModeActive && (
                   <StyledCompactIconContainer className="compact-icon-container">
-                    <LightIconButton
-                      Icon={isCardExpanded ? IconEyeOff : IconEye}
-                      accent="tertiary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsCardExpanded((prev) => !prev);
-                      }}
-                    />
+                    <PreventSelectOnClickContainer>
+                      <LightIconButton
+                        Icon={isCardExpanded ? IconEyeOff : IconEye}
+                        accent="tertiary"
+                        onClick={() => {
+                          setIsCardExpanded((prev) => !prev);
+                        }}
+                      />
+                    </PreventSelectOnClickContainer>
                   </StyledCompactIconContainer>
                 )}
 
                 <StyledCheckboxContainer className="checkbox-container">
-                  <Checkbox
-                    hoverable
-                    checked={isCurrentCardSelected}
-                    onChange={() =>
-                      setIsCurrentCardSelected(!isCurrentCardSelected)
-                    }
-                    variant={CheckboxVariant.Secondary}
-                  />
+                  {' '}
+                  <PreventSelectOnClickContainer>
+                    <Checkbox
+                      hoverable
+                      checked={isCurrentCardSelected}
+                      onChange={() => {
+                        setIsCurrentCardSelected(!isCurrentCardSelected);
+                        checkIfLastUnselectAndCloseDropdown();
+                      }}
+                      variant={CheckboxVariant.Secondary}
+                    />
+                  </PreventSelectOnClickContainer>
                 </StyledCheckboxContainer>
               </>
             )}
