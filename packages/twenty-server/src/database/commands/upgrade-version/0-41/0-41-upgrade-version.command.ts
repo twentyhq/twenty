@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-relations-to-field-metadata.command';
 import { SeedWorkflowViewsCommand } from 'src/database/commands/upgrade-version/0-41/0-41-seed-workflow-views.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -19,6 +20,7 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly seedWorkflowViewsCommand: SeedWorkflowViewsCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
+    private readonly migrateRelationsToFieldMetadata: MigrateRelationsToFieldMetadataCommand,
   ) {
     super(workspaceRepository);
   }
@@ -40,6 +42,12 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.seedWorkflowViewsCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.migrateRelationsToFieldMetadata.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
