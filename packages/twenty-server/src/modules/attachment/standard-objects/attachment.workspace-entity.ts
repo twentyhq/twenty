@@ -23,6 +23,8 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
@@ -136,6 +138,36 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.charge,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Charge',
+    description: 'Attachment charge',
+    icon: 'IconPhone',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+  })
+  @WorkspaceIsNullable()
+  charge: Relation<ChargeWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('charge')
+  chargeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.integration,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Integration',
+    description: 'Attachment integration',
+    icon: 'IconPhone',
+    inverseSideTarget: () => IntegrationWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+  })
+  @WorkspaceIsNullable()
+  integration: Relation<IntegrationWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('integration')
+  integrationId: string | null;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,

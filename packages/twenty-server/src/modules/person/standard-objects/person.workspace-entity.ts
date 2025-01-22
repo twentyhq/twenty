@@ -41,6 +41,7 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -191,6 +192,21 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.charge,
+    type: RelationMetadataType.ONE_TO_ONE,
+    label: 'Charge',
+    description: 'Person linked to the charge',
+    icon: 'IconPhone',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+  })
+  @WorkspaceIsNullable()
+  charge: Relation<ChargeWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('charge')
+  chargeId: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,

@@ -1,0 +1,95 @@
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
+import { CHARGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+export const chargesAllView = (
+    objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  ) => {
+  return {
+    name: 'All',
+    objectMetadataId: objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].id,
+    type: 'table',
+    key: 'INDEX',
+    position: 0,
+    icon: 'IconList',
+    kanbanFieldMetadataId: '',
+    filters: [],
+    fields: [
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.product
+          ],
+        position: 0,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.quantity
+          ],
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.price
+          ],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.discount
+          ],
+        position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.recurrence
+          ],
+        position: 4,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.customer
+          ],
+        position: 5,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.people
+          ],
+        position: 6,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.charge].fields[
+            CHARGE_STANDARD_FIELD_IDS.integration
+          ],
+        position: 7,
+        isVisible: true,
+        size: 150,
+        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+      },
+    ],
+  };
+};

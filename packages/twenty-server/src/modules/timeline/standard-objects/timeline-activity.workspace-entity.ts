@@ -26,6 +26,8 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ChargeWorkspaceEntity } from 'src/modules/charges/standard-objects/charge.workspace-entity';
+import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
@@ -142,6 +144,36 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.charge,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Charge',
+    description: 'Event charge',
+    icon: 'IconTargetArrow',
+    inverseSideTarget: () => ChargeWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  charge: Relation<ChargeWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('charge')
+  chargeId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.integration,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Integration',
+    description: 'Event integration',
+    icon: 'IconTargetArrow',
+    inverseSideTarget: () => IntegrationWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+  })
+  @WorkspaceIsNullable()
+  integration: Relation<IntegrationWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('integration')
+  integrationId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,

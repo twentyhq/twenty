@@ -47,6 +47,8 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
+  charge: '20202020-e674-48e5-a542-72570eee7216',
+  integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7d5b',
 };
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -141,6 +143,37 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
+  charge: '20202020-e674-48e5-a542-72570eee7216',
+};
+
+export const CHARGE_STANDARD_FIELD_IDS = {
+  name: '20202020-0b7b-4d0d-8b5d-4b7c3d2b8u2r',
+  customer: '20202020-0b7b-4d0d-8b5d-4b7c3d2b0f9f',
+  contact: '20202020-0b7b-4d0d-8b5d-4b7c3d2bm9pe',
+  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3a',
+  price: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3b',
+  createdAt: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3c',
+  quantity: '20202020-0b7b-4d0d-867a-4b7c3d2b6f3d',
+  discount: '20202020-0b7b-4d0d-8b5d-4b7c3d2b6f3e',
+  recurrence: '20202020-0b7b-4d0d-8b5d-4b7c3d2b623a',
+  paymentGateway: '20202020-0b7b-4d0d-8b5d-4b7c3d2b234f',
+  activityTargets: '20202020-0b7b-4d0d-8b5d-4b7c3d2b259c',
+  position: '20202020-fcd5-4231-aff5-fff583eaa0a1',
+  attachments: 'bdc8497f-9ecb-451d-aa35-17dbade48b71',
+  people: '20202020-3213-4ddf-9494-6422bcff8d7c',
+  timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
+  integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
+  searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
+};
+
+export const INTEGRATION_STANDARD_FIELD_IDS = {
+  name: '20202020-9f5a-4f9b-8b7e-6e2d9e8e0a5d',
+  activityTargets: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5b',
+  charge: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5c',
+  timelineActivities: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5d',
+  attachments: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5e',
+  position: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5f',
+  searchVector: '85c71601-72f9-4b7b-b343-d00000b2a27a',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -202,6 +235,8 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
+  charge: '20202020-e674-48e5-a542-72570eee7215',
+  integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -357,6 +392,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
+  charge: '20202020-e674-48e5-a542-72570eec4216',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {
