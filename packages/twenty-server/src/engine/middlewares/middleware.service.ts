@@ -3,30 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
+import { EXCLUDED_MIDDLEWARE_OPERATIONS } from 'src/engine/middlewares/constants/excluded-middleware-operations.constant';
+
 @Injectable()
-export class CommonMiddlewareOperationsService {
+export class MiddlewareService {
   constructor() {}
 
-  public excludedOperations = [
-    'GetClientConfig',
-    'GetCurrentUser',
-    'GetWorkspaceFromInviteHash',
-    'Track',
-    'CheckUserExists',
-    'Challenge',
-    'Verify',
-    'GetLoginTokenFromEmailVerificationToken',
-    'ResendEmailVerificationToken',
-    'SignUp',
-    'RenewToken',
-    'EmailPasswordResetLink',
-    'ValidatePasswordResetToken',
-    'UpdatePasswordViaResetToken',
-    'IntrospectionQuery',
-    'ExchangeAuthorizationCode',
-    'GetAuthorizationUrl',
-    'GetPublicWorkspaceDataBySubdomain',
-  ];
+  public excludedOperations = EXCLUDED_MIDDLEWARE_OPERATIONS;
 
   public isTokenPresent(request: Request): boolean {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);

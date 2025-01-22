@@ -8,7 +8,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common-middleware-operations.service';
+import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -20,18 +20,16 @@ export class RestCoreMiddleware implements NestMiddleware {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly commonMiddlewareOperationsService: CommonMiddlewareOperationsService,
+    private readonly middlewareService: MiddlewareService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const { body } = req;
 
     if (
-      !this.commonMiddlewareOperationsService.isTokenPresent(req) &&
+      !this.middlewareService.isTokenPresent(req) &&
       (!body?.operationName ||
-        this.commonMiddlewareOperationsService.excludedOperations.includes(
-          body.operationName,
-        ))
+        this.middlewareService.excludedOperations.includes(body.operationName))
     ) {
       return next();
     }
@@ -61,11 +59,11 @@ export class RestCoreMiddleware implements NestMiddleware {
         throw new Error('No data sources found');
       }
 
-      bindDataToRequestObject(data)(req, metadataVersion);
+      bindDataToRequestObject(data, req, metadataVersion);
     } catch (error) {
       const errors = [handleException(error, this.exceptionHandlerService)];
 
-      this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
+      this.middlewareService.writeResponseOnExceptionCaught(
         res,
         'rest',
         error,

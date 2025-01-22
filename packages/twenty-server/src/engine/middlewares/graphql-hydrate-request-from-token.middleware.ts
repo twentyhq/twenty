@@ -6,7 +6,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common-middleware-operations.service';
+import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -36,18 +36,16 @@ export class GraphQLHydrateRequestFromTokenMiddleware
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly commonMiddlewareOperationsService: CommonMiddlewareOperationsService,
+    private readonly middlewareService: MiddlewareService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const body = req.body;
 
     if (
-      !this.commonMiddlewareOperationsService.isTokenPresent(req) &&
+      !this.middlewareService.isTokenPresent(req) &&
       (!body?.operationName ||
-        this.commonMiddlewareOperationsService.excludedOperations.includes(
-          body.operationName,
-        ))
+        this.middlewareService.excludedOperations.includes(body.operationName))
     ) {
       return next();
     }
@@ -65,7 +63,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
           data.workspace.id,
         );
 
-      bindDataToRequestObject(data)(req, metadataVersion);
+      bindDataToRequestObject(data, req, metadataVersion);
     } catch (error) {
       const errors = [
         handleExceptionAndConvertToGraphQLError(
@@ -74,7 +72,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
         ),
       ];
 
-      this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
+      this.middlewareService.writeResponseOnExceptionCaught(
         res,
         'graphql',
         error,
