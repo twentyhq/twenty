@@ -55,9 +55,11 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
-  const isFunctionSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFunctionSettingsEnabled,
-  );
+
+  // We want to disable this serverless function setting menu but keep the code
+  // for now
+  const isFunctionSettingsEnabled = false;
+
   const isFreeAccessEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFreeAccessEnabled,
   );

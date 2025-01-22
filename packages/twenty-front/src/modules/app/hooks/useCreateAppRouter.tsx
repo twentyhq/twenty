@@ -29,7 +29,7 @@ import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
-  isServerlessFunctionSettingsEnabled?: boolean,
+  isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -63,9 +63,7 @@ export const useCreateAppRouter = (
             element={
               <SettingsRoutes
                 isBillingEnabled={isBillingEnabled}
-                isServerlessFunctionSettingsEnabled={
-                  isServerlessFunctionSettingsEnabled
-                }
+                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }
