@@ -2,41 +2,25 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { NextFunction, Request, Response } from 'express';
 
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
 import { skipIfExcludedOperation } from 'src/engine/middlewares/utils/skip-if-excluded-operation.utils';
 import { writeResponseOnExceptionCaught } from 'src/engine/middlewares/utils/write-response-on-exception-caught.utils';
-import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-class GraphqlTokenValidationProxy {
-  private accessTokenService: AccessTokenService;
-
-  constructor(accessTokenService: AccessTokenService) {
-    this.accessTokenService = accessTokenService;
-  }
-
-  async validateToken(req: Request) {
-    try {
-      return await this.accessTokenService.validateTokenByRequest(req);
-    } catch (error) {
-      const authGraphqlApiExceptionFilter = new AuthGraphqlApiExceptionFilter();
-
-      throw authGraphqlApiExceptionFilter.catch(error);
-    }
-  }
-}
 
 @Injectable()
-export class GraphQLHydrateRequestFromTokenMiddleware
-  implements NestMiddleware
-{
+export class RestCoreMiddleware implements NestMiddleware {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -45,26 +29,33 @@ export class GraphQLHydrateRequestFromTokenMiddleware
     let data: AuthContext;
 
     try {
-      const graphqlTokenValidationProxy = new GraphqlTokenValidationProxy(
-        this.accessTokenService,
-      );
-
-      data = await graphqlTokenValidationProxy.validateToken(req);
+      data = await this.accessTokenService.validateTokenByRequest(req);
       const metadataVersion =
         await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,
         );
 
+      if (metadataVersion === undefined) {
+        await this.workspaceMetadataCacheService.recomputeMetadataCache({
+          workspaceId: data.workspace.id,
+        });
+        throw new Error('Metadata cache version not found');
+      }
+
+      const dataSourcesMetadata =
+        await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+          data.workspace.id,
+        );
+
+      if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
+        throw new Error('No data sources found');
+      }
+
       bindDataToRequestObject(data)(req, metadataVersion);
     } catch (error) {
-      const errors = [
-        handleExceptionAndConvertToGraphQLError(
-          error,
-          this.exceptionHandlerService,
-        ),
-      ];
+      const errors = [handleException(error, this.exceptionHandlerService)];
 
-      writeResponseOnExceptionCaught(res, error, 'graphql', errors);
+      writeResponseOnExceptionCaught(res, error, 'rest', errors);
 
       return;
     }
