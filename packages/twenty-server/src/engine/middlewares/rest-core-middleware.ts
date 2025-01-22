@@ -8,9 +8,8 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
-import { skipIfExcludedOperation } from 'src/engine/middlewares/utils/skip-if-excluded-operation.utils';
-import { writeResponseOnExceptionCaught } from 'src/engine/middlewares/utils/write-response-on-exception-caught.utils';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -21,10 +20,21 @@ export class RestCoreMiddleware implements NestMiddleware {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly commonMiddlewareOperationsService: CommonMiddlewareOperationsService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    skipIfExcludedOperation(req, next);
+    const { body } = req;
+
+    if (
+      !this.commonMiddlewareOperationsService.isTokenPresent(req) &&
+      (!body?.operationName ||
+        this.commonMiddlewareOperationsService.excludedOperations.includes(
+          body.operationName,
+        ))
+    ) {
+      return next();
+    }
 
     let data: AuthContext;
 
@@ -55,7 +65,12 @@ export class RestCoreMiddleware implements NestMiddleware {
     } catch (error) {
       const errors = [handleException(error, this.exceptionHandlerService)];
 
-      writeResponseOnExceptionCaught(res, error, 'rest', errors);
+      this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
+        res,
+        error,
+        'rest',
+        errors,
+      );
 
       return;
     }

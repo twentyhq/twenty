@@ -6,9 +6,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CommonMiddlewareOperationsService } from 'src/engine/middlewares/common/common.service';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
-import { skipIfExcludedOperation } from 'src/engine/middlewares/utils/skip-if-excluded-operation.utils';
-import { writeResponseOnExceptionCaught } from 'src/engine/middlewares/utils/write-response-on-exception-caught.utils';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 class GraphqlTokenValidationProxy {
@@ -37,10 +36,21 @@ export class GraphQLHydrateRequestFromTokenMiddleware
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly commonMiddlewareOperationsService: CommonMiddlewareOperationsService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    skipIfExcludedOperation(req, next);
+    const body = req.body;
+
+    if (
+      !this.commonMiddlewareOperationsService.isTokenPresent(req) &&
+      (!body?.operationName ||
+        this.commonMiddlewareOperationsService.excludedOperations.includes(
+          body.operationName,
+        ))
+    ) {
+      return next();
+    }
 
     let data: AuthContext;
 
@@ -64,7 +74,12 @@ export class GraphQLHydrateRequestFromTokenMiddleware
         ),
       ];
 
-      writeResponseOnExceptionCaught(res, error, 'graphql', errors);
+      this.commonMiddlewareOperationsService.writeResponseOnExceptionCaught(
+        res,
+        error,
+        'graphql',
+        errors,
+      );
 
       return;
     }
