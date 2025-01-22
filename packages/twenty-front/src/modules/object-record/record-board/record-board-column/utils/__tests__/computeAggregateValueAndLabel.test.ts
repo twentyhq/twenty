@@ -9,7 +9,6 @@ import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constant
 import { FieldMetadataType } from '~/generated/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
-const MOCK_KANBAN_FIELD_NAME = 'stage';
 
 describe('computeAggregateValueAndLabel', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
@@ -36,7 +35,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -55,7 +53,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -93,7 +90,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithPercentageField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.avg,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -131,7 +127,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithDecimalsField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -166,7 +161,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: DATE_AGGREGATE_OPERATIONS.earliest,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -201,7 +195,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: DATE_AGGREGATE_OPERATIONS.latest,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -214,7 +207,7 @@ describe('computeAggregateValueAndLabel', () => {
 
   it('should default to count when field not found', () => {
     const mockData = {
-      [MOCK_KANBAN_FIELD_NAME]: {
+      id: {
         [AGGREGATE_OPERATIONS.count]: 42,
       },
     } as AggregateRecordsData;
@@ -222,7 +215,6 @@ describe('computeAggregateValueAndLabel', () => {
     const result = computeAggregateValueAndLabel({
       data: mockData,
       objectMetadataItem: mockObjectMetadata,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
