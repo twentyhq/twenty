@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -27,6 +28,12 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
   'name',
   'objectMetadataId',
   'workspaceId',
+])
+@Index('IndexOnRelationTargetFieldMetadataId', [
+  'relationTargetFieldMetadataId',
+])
+@Index('IndexOnRelationTargetObjectMetadataId', [
+  'relationTargetObjectMetadataId',
 ])
 export class FieldMetadataEntity<
   T extends FieldMetadataType | 'default' = 'default',
@@ -102,6 +109,7 @@ export class FieldMetadataEntity<
     (fieldMetadata: FieldMetadataEntity) =>
       fieldMetadata.relationTargetFieldMetadataId,
   )
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
   relationTargetFieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: true, type: 'uuid' })
@@ -111,6 +119,7 @@ export class FieldMetadataEntity<
     (objectMetadata: ObjectMetadataEntity) =>
       objectMetadata.targetRelationFields,
   )
+  @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @OneToOne(
