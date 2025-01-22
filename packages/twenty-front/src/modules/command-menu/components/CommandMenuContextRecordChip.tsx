@@ -1,3 +1,4 @@
+import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -43,21 +44,19 @@ export const CommandMenuContextRecordChip = ({
     return null;
   }
 
-  return (
-    <StyledChip>
-      <StyledAvatarContainer>
-        {records.map((record) => (
-          <CommandMenuContextRecordChipAvatars
-            objectMetadataItem={objectMetadataItem}
-            key={record.id}
-            record={record}
-          />
-        ))}
-      </StyledAvatarContainer>
-      {totalCount === 1
-        ? getObjectRecordIdentifier({ objectMetadataItem, record: records[0] })
-            .name
-        : `${totalCount} ${capitalize(objectMetadataItem.namePlural)}`}
-    </StyledChip>
-  );
+  const Avatars = records.map((record) => (
+    <CommandMenuContextRecordChipAvatars
+      objectMetadataItem={objectMetadataItem}
+      key={record.id}
+      record={record}
+    />
+  ));
+
+  const text =
+    totalCount === 1
+      ? getObjectRecordIdentifier({ objectMetadataItem, record: records[0] })
+          .name
+      : `${totalCount} ${capitalize(objectMetadataItem.namePlural)}`;
+
+  return <CommandMenuContextChip text={text} Icons={Avatars} />;
 };
