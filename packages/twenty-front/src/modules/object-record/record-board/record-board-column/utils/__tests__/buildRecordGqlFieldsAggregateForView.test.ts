@@ -53,7 +53,6 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     const result = buildRecordGqlFieldsAggregateForView({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: kanbanAggregateOperation,
-      fieldNameForCount: MOCK_KANBAN_FIELD,
     });
 
     expect(result).toEqual({
@@ -70,7 +69,6 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     const result = buildRecordGqlFieldsAggregateForView({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: operation,
-      fieldNameForCount: MOCK_KANBAN_FIELD,
     });
 
     expect(result).toEqual({
@@ -88,7 +86,6 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
       buildRecordGqlFieldsAggregateForView({
         objectMetadataItem: mockObjectMetadata,
         recordIndexKanbanAggregateOperation: operation,
-        fieldNameForCount: MOCK_KANBAN_FIELD,
       }),
     ).toThrow(
       `No field found to compute aggregate operation ${AGGREGATE_OPERATIONS.sum} on object ${mockObjectMetadata.nameSingular}`,
