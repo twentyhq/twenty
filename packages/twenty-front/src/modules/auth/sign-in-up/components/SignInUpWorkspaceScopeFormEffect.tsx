@@ -1,16 +1,12 @@
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 const searchParams = new URLSearchParams(window.location.search);
 const email = searchParams.get('email');
@@ -35,31 +31,9 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   );
 
   const { form } = useSignInUpForm();
-  const { redirectToSSOLoginPage } = useSSO();
 
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
-
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
-
-  useEffect(() => {
-    if (!workspaceAuthProviders) {
-      return;
-    }
-
-    const hasOnlySSOProvidersEnabled =
-      !workspaceAuthProviders.google &&
-      !workspaceAuthProviders.microsoft &&
-      !workspaceAuthProviders.password;
-
-    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length > 1) {
-      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
-    }
-
-    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length === 1) {
-      redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
-    }
-  }, [redirectToSSOLoginPage, setSignInUpStep, workspaceAuthProviders]);
 
   useEffect(() => {
     if (loadingStatus === LoadingStatus.Done) {
@@ -84,8 +58,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   }, [captcha?.provider, isRequestingCaptchaToken, loadingStatus]);
 
   useEffect(() => {
-    if (!workspaceAuthProviders) return;
-
     if (
       signInUpStep === SignInUpStep.Init &&
       !workspaceAuthProviders.google &&
@@ -105,7 +77,10 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     }
   }, [
     signInUpStep,
-    workspaceAuthProviders,
+    workspaceAuthProviders.google,
+    workspaceAuthProviders.microsoft,
+    workspaceAuthProviders.sso,
+    workspaceAuthProviders.password,
     continueWithEmail,
     continueWithCredentials,
     loadingStatus,
