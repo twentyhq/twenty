@@ -24,47 +24,73 @@ export class EntityEventsToDbListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleCreate(batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
-    return this.handle(batchEvent);
+    return this.handleRegularEvent(batchEvent);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleUpdate(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
-    return this.handle(batchEvent);
+    return this.handleRegularEvent(batchEvent);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   async handleDelete(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
-    return this.handle(batchEvent);
+    return this.handleRegularEvent(batchEvent);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleDestroy(
     batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
-    return this.handle(batchEvent);
+    return this.handleDestroyEvent(batchEvent);
   }
 
-  private async handle(batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+  private async handleRegularEvent(
+    batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+  ) {
     const filteredEvents = batchEvent.events.filter(
-      (event) => event.objectMetadata?.isAuditLogged && event.properties.after, // We ignore events on a destroyed record
+      (event) => event.objectMetadata?.isAuditLogged,
     );
 
-    await this.entityEventsToDbQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CreateAuditLogFromInternalEvent.name, {
-      ...batchEvent,
-      events: filteredEvents,
-    });
+    await Promise.all([
+      this.webhookQueueService.add<WorkspaceEventBatch<ObjectRecordBaseEvent>>(
+        CallWebhookJobsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
+      this.entityEventsToDbQueueService.add<
+        WorkspaceEventBatch<ObjectRecordBaseEvent>
+      >(CreateAuditLogFromInternalEvent.name, {
+        ...batchEvent,
+        events: filteredEvents,
+      }),
+      this.entityEventsToDbQueueService.add<
+        WorkspaceEventBatch<ObjectRecordBaseEvent>
+      >(UpsertTimelineActivityFromInternalEvent.name, {
+        ...batchEvent,
+        events: filteredEvents,
+      }),
+    ]);
+  }
 
-    await this.entityEventsToDbQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(UpsertTimelineActivityFromInternalEvent.name, {
-      ...batchEvent,
-      events: filteredEvents,
-    });
+  private async handleDestroyEvent(
+    batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+  ) {
+    const filteredEvents = batchEvent.events.filter(
+      (event) => event.objectMetadata?.isAuditLogged,
+    );
 
-    await this.webhookQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CallWebhookJobsJob.name, batchEvent, { retryLimit: 3 });
+    await Promise.all([
+      this.webhookQueueService.add<WorkspaceEventBatch<ObjectRecordBaseEvent>>(
+        CallWebhookJobsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
+      this.entityEventsToDbQueueService.add<
+        WorkspaceEventBatch<ObjectRecordBaseEvent>
+      >(CreateAuditLogFromInternalEvent.name, {
+        ...batchEvent,
+        events: filteredEvents,
+      }),
+    ]);
   }
 }
