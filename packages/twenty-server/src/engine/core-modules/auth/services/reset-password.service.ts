@@ -147,7 +147,9 @@ export class ResetPasswordService {
 
     const emailTemplate = await PasswordResetLinkEmail(emailData);
 
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 

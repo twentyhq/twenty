@@ -300,8 +300,9 @@ export class WorkspaceInvitationService {
         };
 
         const emailTemplate = await SendInviteLinkEmail(emailData);
+        const html = await render(emailTemplate);
 
-        const text = render(emailTemplate, {
+        const text = await render(emailTemplate, {
           plainText: true,
         });
 

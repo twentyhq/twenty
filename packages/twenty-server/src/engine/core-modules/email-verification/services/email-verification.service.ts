@@ -60,11 +60,9 @@ export class EmailVerificationService {
 
     const emailTemplate = await SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
+    const html = await render(emailTemplate);
 
-    const text = render(emailTemplate, {
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 
