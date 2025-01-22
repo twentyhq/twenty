@@ -14,7 +14,6 @@ import {
   ForbiddenError,
   InternalServerError,
   NotFoundError,
-  TimeoutError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -82,8 +81,6 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       case WorkspaceQueryRunnerExceptionCode.TOO_MANY_ROWS_AFFECTED:
       case WorkspaceQueryRunnerExceptionCode.NO_ROWS_AFFECTED:
         throw new ForbiddenError(error.message);
-      case WorkspaceQueryRunnerExceptionCode.QUERY_TIMEOUT:
-        throw new TimeoutError(error.message);
       case WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       default:
         throw new InternalServerError(error.message);
