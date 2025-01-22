@@ -53,17 +53,16 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
   private async execute(workspaceId: string, dryRun = false): Promise<void> {
     this.logger.log(`Seeding workflow views for workspace: ${workspaceId}`);
 
-    const workflowObjectMetadata = await this.objectMetadataService.findOneWithinWorkspace(
-      workspaceId,
-      {
+    const workflowObjectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
         where: {
           standardId: STANDARD_OBJECT_IDS.workflow,
         },
-      },
-    );
+      });
 
     if (!workflowObjectMetadata) {
       this.logger.error('Workflow object metadata not found');
+
       return;
     }
 
@@ -99,11 +98,13 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
 
     if (existingWorkflowView) {
       this.logger.log(`View already exists: ${existingWorkflowView.id}`);
+
       return;
     }
 
     if (dryRun) {
       this.logger.log(`Dry run: not creating view`);
+
       return;
     }
 
@@ -114,23 +115,24 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-      workspaceId,
-    );
-  
+        workspaceId,
+      );
+
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
-    
+
     if (!workspaceDataSource) {
       this.logger.error('Could not connect to workspace data source');
+
       return;
-    } 
-  
+    }
+
     const viewDefinitions = [
       workflowsAllView(objectMetadataStandardIdToIdMap),
       workflowVersionsAllView(objectMetadataStandardIdToIdMap),
       workflowRunsAllView(objectMetadataStandardIdToIdMap),
     ];
-  
+
     await workspaceDataSource.transaction(
       async (entityManager: EntityManager) => {
         return createWorkspaceViews(
@@ -146,7 +148,7 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
     workspaceId: string,
     workflowObjectMetadataId: string,
     dryRun = false,
-  ) {   
+  ) {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -161,11 +163,13 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
 
     if (!workflowView) {
       this.logger.error('Workflow view not found');
+
       return;
     }
 
     if (dryRun) {
       this.logger.log(`Dry run: not creating favorite`);
+
       return;
     }
 
@@ -177,17 +181,19 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
 
     const existingFavorites = await favoriteRepository.find({
       where: {
-        viewId: Not(IsNull())
+        viewId: Not(IsNull()),
       },
     });
 
-    const workflowFavorite = existingFavorites.find(favorite => favorite.viewId === workflowView.id);
+    const workflowFavorite = existingFavorites.find(
+      (favorite) => favorite.viewId === workflowView.id,
+    );
 
     if (workflowFavorite) {
       this.logger.log(`Favorite already exists: ${workflowFavorite.id}`);
+
       return;
     }
-
 
     await favoriteRepository.insert({
       viewId: workflowView.id,

@@ -29,7 +29,7 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log('Running command to upgrade to 0.41');
-    
+
     await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
       passedParam,
       {
