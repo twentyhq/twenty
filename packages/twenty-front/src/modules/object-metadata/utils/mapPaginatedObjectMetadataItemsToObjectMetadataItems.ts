@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -9,11 +9,10 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
 }) => {
   const formattedObjects: ObjectMetadataItem[] =
     pagedObjectMetadataItems?.objects.edges.map((object) => {
-      const {labelIdentifierFieldMetadataId} = object.node;
-      // Could be zod parse tbh to gain grain on uuid parse
-      if (!isString(labelIdentifierFieldMetadataId)) {
-        throw new Error("Should never occurs, labelIdentifierFieldMetadataId is not a string")
-      };
+      const labelIdentifierFieldMetadataId =
+        objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.parse(
+          object.node.labelIdentifierFieldMetadataId,
+        );
 
       return {
         ...object.node,
@@ -24,8 +23,8 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
           indexFieldMetadatas: index.node.indexFieldMetadatas?.edges.map(
             (indexField) => indexField.node,
           ),
-        }))
-      }
+        })),
+      };
     }) ?? [];
 
   return formattedObjects;
