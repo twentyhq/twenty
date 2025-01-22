@@ -21,9 +21,14 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
     new Map<string, boolean>(),
   );
 
+  // TODO : find a better way to enable organization1.onmicrosoft.com to add user from organization2.onmicrosoft.com
+  const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
+    getDomainNameFromHandle(contact.handle) !== selfDomainName ||
+    selfDomainName === 'onmicrosoft.com';
+
   return contacts.filter(
     (contact) =>
-      getDomainNameFromHandle(contact.handle) !== selfDomainName &&
+      isDifferentDomain(contact, selfDomainName) &&
       !workspaceMembersMap[contact.handle] &&
       !handleAliases.includes(contact.handle),
   );
