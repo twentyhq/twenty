@@ -1,5 +1,5 @@
 import { AppRouter } from '@/app/components/AppRouter';
-import { Captcha } from '@/captcha/components/Captcha';
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -24,7 +24,7 @@ export const App = () => {
       <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
         <AppErrorBoundary>
           <I18nProvider i18n={i18n}>
-            <Captcha>
+            <CaptchaProvider>
               <RecoilDebugObserverEffect />
               <ApolloDevLogEffect />
               <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
@@ -36,7 +36,7 @@ export const App = () => {
                   </ExceptionHandlerProvider>
                 </IconsProvider>
               </SnackBarProviderScope>
-            </Captcha>
+            </CaptchaProvider>
           </I18nProvider>
         </AppErrorBoundary>
       </RecoilURLSyncJSON>

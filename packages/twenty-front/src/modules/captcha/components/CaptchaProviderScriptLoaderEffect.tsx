@@ -6,7 +6,7 @@ import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated/graphql';
 
-export const CaptchaScriptLoaderEffect = () => {
+export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);
   const setIsCaptchaScriptLoaded = useSetRecoilState(
     isCaptchaScriptLoadedState,
