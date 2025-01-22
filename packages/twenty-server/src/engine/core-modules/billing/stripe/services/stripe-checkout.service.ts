@@ -27,7 +27,7 @@ export class StripeCheckoutService {
   async createCheckoutSession({
     user,
     workspaceId,
-    lineItems,
+    stripeSubscriptionLineItems,
     successUrl,
     cancelUrl,
     stripeCustomerId,
@@ -38,7 +38,7 @@ export class StripeCheckoutService {
   }: {
     user: User;
     workspaceId: string;
-    lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     successUrl?: string;
     cancelUrl?: string;
     stripeCustomerId?: string;
@@ -48,7 +48,7 @@ export class StripeCheckoutService {
     isFeatureFlagEnabled: boolean;
   }): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
-      line_items: lineItems,
+      line_items: stripeSubscriptionLineItems,
       mode: 'subscription',
       subscription_data: {
         metadata: {

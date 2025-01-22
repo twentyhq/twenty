@@ -16,6 +16,7 @@ import { BillingPlanService } from 'src/engine/core-modules/billing/services/bil
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -84,7 +85,7 @@ export class BillingResolver {
         workspace.id,
       );
 
-    const checkoutSessionParams = {
+    const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
       user,
       workspace,
       successUrlPath,
@@ -93,18 +94,19 @@ export class BillingResolver {
     };
 
     if (isBillingPlansEnabled) {
-      const planPrices = await this.billingPlanService.getPricesPerPlan({
-        planKey: checkoutSessionParams.plan,
-        interval: recurringInterval,
-      });
+      const billingPricesPerPlan =
+        await this.billingPlanService.getPricesPerPlan({
+          planKey: checkoutSessionParams.plan,
+          interval: recurringInterval,
+        });
+      const checkoutSessionURL =
+        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+          ...checkoutSessionParams,
+          billingPricesPerPlan,
+        });
 
       return {
-        url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
-          {
-            ...checkoutSessionParams,
-            prices: planPrices,
-          },
-        ),
+        url: checkoutSessionURL,
       };
     }
 
@@ -118,12 +120,14 @@ export class BillingResolver {
         'Product price not found for the given recurring interval',
       );
     }
-
-    return {
-      url: await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+    const checkoutSessionURL =
+      await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
         ...checkoutSessionParams,
         priceId: productPrice.stripePriceId,
-      }),
+      });
+
+    return {
+      url: checkoutSessionURL,
     };
   }
 
