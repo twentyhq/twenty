@@ -20,7 +20,7 @@ import {
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
-  view: View;
+  view: Pick<View, 'id' | 'name' | 'icon'>;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
 };

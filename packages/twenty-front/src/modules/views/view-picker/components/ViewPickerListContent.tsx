@@ -11,7 +11,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
-import { View } from '@/views/types/View';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
@@ -85,7 +84,7 @@ export const ViewPickerListContent = () => {
                 isDragDisabled={viewsOnCurrentObject.length === 1}
                 itemComponent={
                   <ViewPickerOptionDropdown
-                    view={view as View}
+                    view={view}
                     handleViewSelect={handleViewSelect}
                     isIndexView={isIndexView}
                     onEdit={handleEditViewButtonClick}
