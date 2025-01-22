@@ -26,8 +26,6 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
   const applyCurrentViewFiltersToCurrentRecordFilters = () => {
     const currentView = views.find((view) => view.id === currentViewId);
 
-    console.log('currentView', currentView);
-
     if (isDefined(currentView)) {
       setCurrentRecordFilters(
         mapViewFiltersToFilters(
