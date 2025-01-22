@@ -1,3 +1,4 @@
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -10,14 +11,20 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
+import {
+  ComputeNodeDimensions,
+  IconComponent,
+  IconEye,
+  IconEyeOff,
+  RGBA,
+} from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
 >`
+  box-sizing: border-box;
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
@@ -33,7 +40,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'fullWidth' | 'LeftIcon' | 'error' | 'autoGrow' | 'sizeVariant'
+    'LeftIcon' | 'error' | 'sizeVariant' | 'width'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -52,8 +59,9 @@ const StyledInput = styled.input<
   padding: ${({ theme, sizeVariant }) =>
     sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
-    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
-  width: 100%;
+    LeftIcon ? `px` : theme.spacing(2)};
+  width: ${({ theme, width }) =>
+    width ? `calc(${width}px + ${theme.spacing(4)})` : '100%'};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -72,8 +80,6 @@ const StyledInput = styled.input<
       border-color: ${theme.color.blue};`;
     }};
   }
-
-  position: ${({ autoGrow }) => (autoGrow ? 'absolute' : 'relative')};
 `;
 
 const StyledErrorHelper = styled.div`
@@ -117,22 +123,6 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-const StyledAutoGrowInputContainer = styled.div<{
-  sizeVariant: TextInputV2Size;
-}>`
-  display: inline-flex;
-  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
-  position: relative;
-  overflow: hidden;
-`;
-
-const StyledAutoGrowSpan = styled.span`
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  visibility: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 export type TextInputV2Size = 'sm' | 'md';
 
 export type TextInputV2ComponentProps = Omit<
@@ -154,6 +144,8 @@ export type TextInputV2ComponentProps = Omit<
   sizeVariant?: TextInputV2Size;
 };
 
+type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
+
 const TextInputV2Component = (
   {
     className,
@@ -164,6 +156,7 @@ const TextInputV2Component = (
     onBlur,
     onKeyDown,
     fullWidth,
+    width,
     error,
     noErrorHelper = false,
     required,
@@ -175,7 +168,6 @@ const TextInputV2Component = (
     RightIcon,
     LeftIcon,
     autoComplete,
-    autoGrow,
     maxLength,
     sizeVariant = 'md',
     dataTestId,
@@ -211,67 +203,36 @@ const TextInputV2Component = (
             </StyledTrailingIcon>
           </StyledLeftIconContainer>
         )}
-        {autoGrow ? (
-          <StyledAutoGrowInputContainer sizeVariant={sizeVariant}>
-            <StyledAutoGrowSpan>{value || placeholder}</StyledAutoGrowSpan>
-            <StyledInput
-              id={inputId}
-              data-testid={dataTestId}
-              autoComplete={autoComplete || 'off'}
-              ref={combinedRef}
-              tabIndex={tabIndex ?? 0}
-              onFocus={onFocus}
-              autoGrow={autoGrow}
-              onBlur={onBlur}
-              type={passwordVisible ? 'text' : type}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                onChange?.(
-                  turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-                );
-              }}
-              onKeyDown={onKeyDown}
-              {...{
-                autoFocus,
-                disabled,
-                placeholder,
-                required,
-                value,
-                LeftIcon,
-                maxLength,
-                error,
-                sizeVariant,
-              }}
-            />
-          </StyledAutoGrowInputContainer>
-        ) : (
-          <StyledInput
-            id={inputId}
-            data-testid={dataTestId}
-            autoComplete={autoComplete || 'off'}
-            ref={combinedRef}
-            tabIndex={tabIndex ?? 0}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            type={passwordVisible ? 'text' : type}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              onChange?.(
-                turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-              );
-            }}
-            onKeyDown={onKeyDown}
-            {...{
-              autoFocus,
-              disabled,
-              placeholder,
-              required,
-              value,
-              LeftIcon,
-              maxLength,
-              error,
-              sizeVariant,
-            }}
-          />
-        )}
+
+        <StyledInput
+          id={inputId}
+          width={width}
+          data-testid={dataTestId}
+          autoComplete={autoComplete || 'off'}
+          ref={combinedRef}
+          tabIndex={tabIndex ?? 0}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          type={passwordVisible ? 'text' : type}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            onChange?.(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            );
+          }}
+          onKeyDown={onKeyDown}
+          {...{
+            autoFocus,
+            disabled,
+            placeholder,
+            required,
+            value,
+            LeftIcon,
+            maxLength,
+            error,
+            sizeVariant,
+          }}
+        />
+
         <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
@@ -299,4 +260,22 @@ const TextInputV2Component = (
   );
 };
 
-export const TextInputV2 = forwardRef(TextInputV2Component);
+const TextInputV2WithAutoGrowWrapper = (
+  props: TextInputV2WithAutoGrowWrapperProps,
+) => (
+  <>
+    {props.autoGrow ? (
+      <ComputeNodeDimensions node={props.value || props.placeholder}>
+        {(nodeDimensions) => (
+          // eslint-disable-next-line
+          <TextInputV2Component {...props} width={nodeDimensions?.width} />
+        )}
+      </ComputeNodeDimensions>
+    ) : (
+      // eslint-disable-next-line
+      <TextInputV2Component {...props} />
+    )}
+  </>
+);
+
+export const TextInputV2 = forwardRef(TextInputV2WithAutoGrowWrapper);

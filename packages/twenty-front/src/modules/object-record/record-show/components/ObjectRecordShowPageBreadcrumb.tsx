@@ -1,3 +1,4 @@
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { EditableBreadcrumbItem } from '@/ui/navigation/bread-crumb/components/EditableBreadcrumbItem';
@@ -24,23 +25,25 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectNameSingular,
   objectRecordId,
   objectLabelPlural,
+  labelIdentifierFieldMetadataItem,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   objectLabelPlural: string;
+  labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
   const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
-      name: true,
+      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
     },
   });
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
     recordGqlFields: {
-      name: true,
+      [labelIdentifierFieldMetadataItem?.name ?? 'name']: true,
     },
   });
 
@@ -65,7 +68,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
       </StyledEditableTitlePrefix>
       <EditableBreadcrumbItem
         defaultValue={record?.name ?? ''}
-        placeholder={'Name'}
+        noValuePlaceholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
+        placeholder={labelIdentifierFieldMetadataItem?.label ?? 'Name'}
         onSubmit={handleSubmit}
         hotkeyScope="editable-breadcrumb-item"
       />

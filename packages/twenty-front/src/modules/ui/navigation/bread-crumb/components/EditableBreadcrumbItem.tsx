@@ -14,6 +14,7 @@ import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 type EditableBreadcrumbItemProps = {
   className?: string;
   defaultValue: string;
+  noValuePlaceholder?: string;
   placeholder: string;
   onSubmit: (value: string) => void;
   hotkeyScope: string;
@@ -48,6 +49,7 @@ const StyledButton = styled('button')`
 export const EditableBreadcrumbItem = ({
   className,
   defaultValue,
+  noValuePlaceholder,
   placeholder,
   onSubmit,
 }: EditableBreadcrumbItemProps) => {
@@ -116,7 +118,7 @@ export const EditableBreadcrumbItem = ({
     />
   ) : (
     <StyledButton ref={buttonRef} onClick={openEditableBreadCrumbItem}>
-      {value}
+      {value || noValuePlaceholder}
     </StyledButton>
   );
 };
