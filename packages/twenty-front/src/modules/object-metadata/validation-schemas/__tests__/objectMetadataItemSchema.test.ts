@@ -18,7 +18,9 @@ describe('objectMetadataItemSchema', () => {
 
   it('fails for an invalid object metadata item', () => {
     // Given
-    const invalidObjectMetadataItem: Partial<Record<keyof ObjectMetadataItem, unknown>> = {
+    const invalidObjectMetadataItem: Partial<
+      Record<keyof ObjectMetadataItem, unknown>
+    > = {
       createdAt: 'invalid date',
       fields: 'not an array',
       icon: 'invalid icon',
@@ -45,13 +47,19 @@ describe('objectMetadataItemSchema', () => {
 
   it('should fail to parse empty string as LabelIdentifier', () => {
     const emptyString = '';
-    const result = objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.safeParse(emptyString);
-    expect(result.success).toBe(false)
-  })
+    const result =
+      objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.safeParse(
+        emptyString,
+      );
+    expect(result.success).toBe(false);
+  });
 
   it('should succeed to parse valid uuid as LabelIdentifier', () => {
     const validUuid = '20202020-ae24-4871-b445-10cc8872cb10';
-    const result = objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.safeParse(validUuid);
-    expect(result.success).toBe(true)
-  })
+    const result =
+      objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.safeParse(
+        validUuid,
+      );
+    expect(result.success).toBe(true);
+  });
 });
