@@ -6,7 +6,6 @@ import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/Agg
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
-const MOCK_KANBAN_FIELD = 'stage';
 
 describe('buildRecordGqlFieldsAggregateForView', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
@@ -72,7 +71,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     });
 
     expect(result).toEqual({
-      [MOCK_KANBAN_FIELD]: [AGGREGATE_OPERATIONS.count],
+      id: [AGGREGATE_OPERATIONS.count],
     });
   });
 
