@@ -117,19 +117,24 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
       relationType = RelationType.MANY_TO_ONE;
     }
 
-    const targetFieldMetadataId =
+    const relationTargetFieldMetadataId =
       relationDirection === RelationDirection.FROM
         ? relationMetadata.toFieldMetadataId
         : relationMetadata.fromFieldMetadataId;
 
+    const relationTargetObjectMetadataId =
+      relationDirection === RelationDirection.FROM
+        ? relationMetadata.toObjectMetadataId
+        : relationMetadata.fromObjectMetadataId;
+
     return {
       ...fieldMetadata,
       settings: {
-        ...fieldMetadata.settings,
         relationType,
         onDelete: relationMetadata.onDeleteAction,
       },
-      targetFieldMetadataId,
+      relationTargetFieldMetadataId,
+      relationTargetObjectMetadataId,
     };
   }
 }
