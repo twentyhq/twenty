@@ -54,7 +54,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const [searchParams] = useSearchParams();
   const fieldType =
     (searchParams.get('fieldType') as SettingsFieldType) ||
-    FieldMetadataType.Text;
+    FieldMetadataType.TEXT;
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -138,7 +138,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   ) => {
     try {
       if (
-        formValues.type === FieldMetadataType.Relation &&
+        formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
@@ -242,7 +242,7 @@ export const SettingsObjectNewFieldConfigure = () => {
               <SettingsDataModelFieldIconLabelForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
-                  fieldType !== FieldMetadataType.Relation
+                  fieldType !== FieldMetadataType.RELATION
                 }
               />
             </Section>

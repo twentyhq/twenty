@@ -7,7 +7,6 @@ export enum FeatureFlagKey {
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
-  IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
   IsMicrosoftSyncEnabled = 'IS_MICROSOFT_SYNC_ENABLED',
@@ -15,4 +14,5 @@ export enum FeatureFlagKey {
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
+  IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
 }
