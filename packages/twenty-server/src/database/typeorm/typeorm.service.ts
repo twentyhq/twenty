@@ -15,6 +15,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
@@ -51,6 +52,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
         TwoFactorMethod,
+        WhatsappIntegration,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
