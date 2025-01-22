@@ -23,7 +23,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -55,7 +54,6 @@ const StyledFormSection = styled(Section)`
 `;
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
-  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
   const setUpdatedObjectNamePlural = useSetRecoilState(
@@ -186,8 +184,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         <StyledContentContainer>
           <StyledFormSection>
             <H2Title
-              title={t`About`}
-              description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm
               disableEdition={!objectMetadataItem.isCustom}
@@ -200,8 +198,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           <StyledFormSection>
             <Section>
               <H2Title
-                title={t`Options`}
-                description={t`Choose the fields that will identify your records`}
+                title="Options"
+                description="Choose the fields that will identify your records"
               />
               <SettingsDataModelObjectSettingsFormCard
                 onBlur={() => formConfig.handleSubmit(handleSave)()}
@@ -211,13 +209,10 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
           </StyledFormSection>
           <StyledFormSection>
             <Section>
-              <H2Title
-                title={t`Danger zone`}
-                description={t`Deactivate object`}
-              />
+              <H2Title title="Danger zone" description="Deactivate object" />
               <Button
                 Icon={IconArchive}
-                title={t`Deactivate`}
+                title="Deactivate"
                 size="small"
                 onClick={handleDisable}
               />
