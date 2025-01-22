@@ -12,8 +12,11 @@ export type GoogleAPIScopeConfig = {
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauthCommonStrategy {
-  constructor(environmentService: EnvironmentService) {
-    super(environmentService);
+  constructor(
+    environmentService: EnvironmentService,
+    scopeConfig: GoogleAPIScopeConfig,
+  ) {
+    super(environmentService, scopeConfig);
   }
 
   async validate(
