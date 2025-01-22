@@ -1,14 +1,14 @@
 import {
-  Columns,
-  ColumnType,
+    Columns,
+    ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import {
-  Fields,
-  ImportedRow,
-  ImportedStructuredRow,
+    Fields,
+    ImportedRow,
+    ImportedStructuredRow,
 } from '@/spreadsheet-import/types';
 
-import { isDefined } from '@ui/utilities/isDefined';
+import { isDefined } from 'twenty-ui';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 

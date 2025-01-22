@@ -2,10 +2,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
 import {
-  CatalogDecorator,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+    CatalogDecorator,
+    CatalogStory,
+    ComponentDecorator,
+} from 'twenty-ui';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';

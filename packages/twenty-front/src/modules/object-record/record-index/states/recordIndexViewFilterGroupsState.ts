@@ -1,5 +1,5 @@
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 
 export const recordIndexViewFilterGroupsState = createState<ViewFilterGroup[]>({
   key: 'recordIndexViewFilterGroupsState',
