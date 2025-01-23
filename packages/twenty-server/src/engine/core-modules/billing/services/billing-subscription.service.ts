@@ -11,6 +11,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -59,7 +60,7 @@ export class BillingSubscriptionService {
     return notCanceledSubscriptions?.[0];
   }
 
-  async getCurrentBillingSubscriptionItemOrThrow(
+  async getCurrentBaseProductBillingSubscriptionItemOrThrow(
     workspaceId: string,
     stripeProductId = this.environmentService.get(
       'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
@@ -164,42 +165,75 @@ export class BillingSubscriptionService {
         ? SubscriptionInterval.Month
         : SubscriptionInterval.Year;
 
-    const billingSubscriptionItem =
-      await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
-
-    let productPrice;
+    const billingBaseProductSubscriptionItem =
+      await this.getCurrentBaseProductBillingSubscriptionItemOrThrow(
+        workspace.id,
+      );
 
     if (isBillingPlansEnabled) {
-      const baseProduct = await this.billingPlanService.getPlanBaseProduct(
-        BillingPlanKey.PRO,
+      const pricesPerPlan = await this.billingPlanService.getPricesPerPlan({
+        planKey: BillingPlanKey.PRO,
+        interval: newInterval,
+      });
+      const billingPricesPerPlanArray = [
+        pricesPerPlan.baseProductPrice,
+        ...pricesPerPlan.meteredProductsPrices,
+      ].filter((price): price is BillingPrice => price !== undefined);
+
+      const updatedSubscriptionItems = this.getUpdatedSubscriptionItems(
+        billingSubscription,
+        billingPricesPerPlanArray,
       );
 
-      if (!baseProduct) {
-        throw new BillingException(
-          'Base product not found',
-          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-        );
-      }
-
-      productPrice = baseProduct.billingPrices.find(
-        (price) => price.interval === newInterval,
+      await this.stripeSubscriptionService.updateSubscriptionItems(
+        billingSubscription.stripeSubscriptionId,
+        updatedSubscriptionItems,
       );
     } else {
-      productPrice = await this.stripePriceService.getStripePrice(
+      const productPrice = await this.stripePriceService.getStripePrice(
         AvailableProduct.BasePlan,
         newInterval,
       );
-    }
 
-    if (!productPrice) {
-      throw new Error(
-        `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,
+      if (!productPrice) {
+        throw new Error(
+          `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,
+        );
+      }
+
+      await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
+        billingBaseProductSubscriptionItem,
+        productPrice.stripePriceId,
       );
     }
+  }
 
-    await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
-      billingSubscriptionItem,
-      productPrice.stripePriceId,
+  private getUpdatedSubscriptionItems(
+    billingSubscription: BillingSubscription,
+    billingPricesPerPlanArray: BillingPrice[],
+  ): Stripe.SubscriptionItemUpdateParams[] {
+    return billingSubscription.billingSubscriptionItems.map(
+      (subscriptionItem) => {
+        const matchingPrice = billingPricesPerPlanArray.find(
+          (price) => price.stripeProductId === subscriptionItem.stripeProductId,
+        );
+
+        if (!matchingPrice) {
+          throw new BillingException(
+            `Cannot find matching price for product ${subscriptionItem.stripeProductId}`,
+            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+          );
+        }
+
+        return {
+          id: subscriptionItem.stripeSubscriptionItemId,
+          price: matchingPrice.stripePriceId,
+          quantity:
+            subscriptionItem.quantity === null
+              ? undefined
+              : subscriptionItem.quantity,
+        };
+      },
     );
   }
 }
