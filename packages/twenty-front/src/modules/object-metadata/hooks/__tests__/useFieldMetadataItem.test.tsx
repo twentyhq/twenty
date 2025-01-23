@@ -26,7 +26,7 @@ const fieldMetadataItem: FieldMetadataItem = {
   createdAt: '',
   label: 'label',
   name: 'name',
-  type: FieldMetadataType.Text,
+  type: FieldMetadataType.TEXT,
   updatedAt: '',
   isLabelSyncedWithName: true,
 };
@@ -36,12 +36,12 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
   createdAt: '',
   label: 'label',
   name: 'name',
-  type: FieldMetadataType.Relation,
+  type: FieldMetadataType.RELATION,
   updatedAt: '',
   isLabelSyncedWithName: true,
   relationDefinition: {
     relationId: RELATION_METADATA_ID,
-    direction: RelationDefinitionType.OneToMany,
+    direction: RelationDefinitionType.ONE_TO_MANY,
     sourceFieldMetadata: {
       id: 'e5903d91-9b10-4f3e-b761-35c36e93b7c1',
       name: 'sourceField',
@@ -204,7 +204,7 @@ describe('useFieldMetadataItem', () => {
       const res = await result.current.createMetadataField({
         label: 'fieldLabel',
         objectMetadataId,
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
         name: 'fieldName',
         isLabelSyncedWithName: true,
       });

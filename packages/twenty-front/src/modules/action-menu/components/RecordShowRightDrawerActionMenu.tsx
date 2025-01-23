@@ -21,11 +21,7 @@ export const RecordShowRightDrawerActionMenu = () => {
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: true,
-          }}
-        >
+        <ActionMenuContext.Provider value={{ isInRightDrawer: true }}>
           <RightDrawerActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />

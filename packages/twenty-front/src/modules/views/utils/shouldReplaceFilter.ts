@@ -1,9 +1,9 @@
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-ui';
 
 export const shouldReplaceFilter = (
-  oldFilter: Pick<Filter, 'id' | 'fieldMetadataId' | 'viewFilterGroupId'>,
-  newFilter: Pick<Filter, 'id' | 'fieldMetadataId' | 'viewFilterGroupId'>,
+  oldFilter: Pick<RecordFilter, 'id' | 'fieldMetadataId' | 'viewFilterGroupId'>,
+  newFilter: Pick<RecordFilter, 'id' | 'fieldMetadataId' | 'viewFilterGroupId'>,
 ) => {
   const isNewFilterAdvancedFilter = isDefined(newFilter.viewFilterGroupId);
 

@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
-import { useSetRecoilState } from 'recoil';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ export const VerifyEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const isLogged = useIsLogged();
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const { verify } = useAuth();
 
@@ -27,22 +28,18 @@ export const VerifyEffect = () => {
   );
 
   useEffect(() => {
-    const getTokens = async () => {
-      if (isDefined(errorMessage)) {
-        enqueueSnackBar(errorMessage, {
-          variant: SnackBarVariant.Error,
-        });
-      }
-      if (!loginToken) {
-        navigate(AppPath.SignInUp);
-      } else {
-        setIsAppWaitingForFreshObjectMetadata(true);
-        await verify(loginToken);
-      }
-    };
+    if (isDefined(errorMessage)) {
+      enqueueSnackBar(errorMessage, {
+        dedupeKey: 'verify-failed-dedupe-key',
+        variant: SnackBarVariant.Error,
+      });
+    }
 
-    if (!isLogged) {
-      getTokens();
+    if (isDefined(loginToken)) {
+      setIsAppWaitingForFreshObjectMetadata(true);
+      verify(loginToken);
+    } else if (!isLogged) {
+      navigate(AppPath.SignInUp);
     }
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps

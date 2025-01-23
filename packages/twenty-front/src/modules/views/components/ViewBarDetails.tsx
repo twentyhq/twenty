@@ -3,8 +3,8 @@ import { ReactNode, useMemo } from 'react';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -14,6 +14,8 @@ import { EditableFilterDropdownButton } from '@/views/components/EditableFilterD
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+
+import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -167,9 +169,13 @@ export const ViewBarDetails = ({
     };
   }, [currentViewWithCombinedFiltersAndSorts]);
 
+  const { applyCurrentViewFiltersToCurrentRecordFilters } =
+    useApplyCurrentViewFiltersToCurrentRecordFilters();
+
   const handleCancelClick = () => {
     if (isDefined(viewId)) {
       resetUnsavedViewStates(viewId);
+      applyCurrentViewFiltersToCurrentRecordFilters();
       toggleSoftDeleteFilterState(false);
     }
   };
@@ -199,7 +205,7 @@ export const ViewBarDetails = ({
               // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
               // Also as filter is spread into viewFilter, definition is present
               // FixMe: Ugly hack to make it work
-              viewFilter={viewFilter as unknown as Filter}
+              viewFilter={viewFilter as unknown as RecordFilter}
               viewBarId={viewBarId}
             />
           ))}
@@ -226,9 +232,9 @@ export const ViewBarDetails = ({
             defaultViewFilters,
             availableFilterDefinitions,
           ).map((viewFilter) => (
-            <ObjectFilterDropdownScope
+            <ObjectFilterDropdownComponentInstanceContext.Provider
               key={viewFilter.id}
-              filterScopeId={viewFilter.id}
+              value={{ instanceId: viewFilter.id }}
             >
               <DropdownScope dropdownScopeId={viewFilter.id}>
                 <ViewBarFilterEffect filterDropdownId={viewFilter.id} />
@@ -240,7 +246,7 @@ export const ViewBarDetails = ({
                   viewFilterDropdownId={viewFilter.id}
                 />
               </DropdownScope>
-            </ObjectFilterDropdownScope>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
           ))}
         </StyledChipcontainer>
         {hasFilterButton && (

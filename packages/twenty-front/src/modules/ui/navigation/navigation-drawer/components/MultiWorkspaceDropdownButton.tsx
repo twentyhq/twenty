@@ -3,16 +3,13 @@ import { Workspaces } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MulitWorkspaceDropdownId';
-import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Avatar,
@@ -20,6 +17,7 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
@@ -45,6 +43,7 @@ const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
 const StyledLabel = styled.div`
   align-items: center;
   display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
@@ -55,7 +54,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
 `;
 
 type MultiWorkspaceDropdownButtonProps = {
-  workspaces: Workspaces[];
+  workspaces: Workspaces;
 };
 
 export const MultiWorkspaceDropdownButton = ({
@@ -63,19 +62,12 @@ export const MultiWorkspaceDropdownButton = ({
 }: MultiWorkspaceDropdownButtonProps) => {
   const theme = useTheme();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const [isMultiWorkspaceDropdownOpen, setToggleMultiWorkspaceDropdown] =
-    useState(false);
-
-  const { switchWorkspace } = useWorkspaceSwitching();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
-  const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-
-  const handleChange = async (workspaceId: string) => {
-    setToggleMultiWorkspaceDropdown(!isMultiWorkspaceDropdownOpen);
-    closeDropdown();
-    await switchWorkspace(workspaceId);
+  const handleChange = async (workspace: Workspaces[0]) => {
+    redirectToWorkspaceDomain(workspace.subdomain);
   };
   const [isNavigationDrawerExpanded] = useRecoilState(
     isNavigationDrawerExpandedState,
@@ -115,7 +107,7 @@ export const MultiWorkspaceDropdownButton = ({
               to={buildWorkspaceUrl(workspace.subdomain)}
               onClick={(event) => {
                 event?.preventDefault();
-                handleChange(workspace.id);
+                handleChange(workspace);
               }}
             >
               <MenuItemSelectAvatar

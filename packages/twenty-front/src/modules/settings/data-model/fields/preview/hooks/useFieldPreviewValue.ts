@@ -28,28 +28,29 @@ export const useFieldPreviewValue = ({
     relationObjectMetadataItem: relationObjectMetadataItem ?? {
       fields: [],
       labelSingular: '',
+      labelIdentifierFieldMetadataId: '20202020-1000-4629-87e5-9a1fae1cc2fd',
       nameSingular: CoreObjectNameSingular.Company,
     },
     skip:
       skip ||
-      fieldMetadataItem.type !== FieldMetadataType.Relation ||
+      fieldMetadataItem.type !== FieldMetadataType.RELATION ||
       !relationObjectMetadataItem,
   });
 
   if (skip === true) return null;
 
   switch (fieldMetadataItem.type) {
-    case FieldMetadataType.Currency:
+    case FieldMetadataType.CURRENCY:
       return getCurrencyFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Relation:
+    case FieldMetadataType.RELATION:
       return relationFieldPreviewValue;
-    case FieldMetadataType.Select:
+    case FieldMetadataType.SELECT:
       return getSelectFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.MultiSelect:
+    case FieldMetadataType.MULTI_SELECT:
       return getMultiSelectFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Address:
+    case FieldMetadataType.ADDRESS:
       return getAddressFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.Phones:
+    case FieldMetadataType.PHONES:
       return getPhonesFieldPreviewValue({ fieldMetadataItem });
     default:
       return getFieldPreviewValue({ fieldMetadataItem });

@@ -41,16 +41,16 @@ type UpdateRecordFormData = {
 };
 
 const AVAILABLE_FIELD_METADATA_TYPES = [
-  FieldMetadataType.Text,
-  FieldMetadataType.Number,
-  FieldMetadataType.Date,
-  FieldMetadataType.Boolean,
-  FieldMetadataType.Select,
-  FieldMetadataType.MultiSelect,
-  FieldMetadataType.Emails,
-  FieldMetadataType.Links,
-  FieldMetadataType.FullName,
-  FieldMetadataType.Address,
+  FieldMetadataType.TEXT,
+  FieldMetadataType.NUMBER,
+  FieldMetadataType.DATE,
+  FieldMetadataType.BOOLEAN,
+  FieldMetadataType.SELECT,
+  FieldMetadataType.MULTI_SELECT,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
 ];
 
 export const WorkflowEditActionFormUpdateRecord = ({
@@ -222,6 +222,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
           onPersist={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
+          placeholder="Select fields to update"
         />
 
         <HorizontalSeparator noMargin />
@@ -248,6 +249,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
+              readonly={isFormDisabled}
             />
           );
         })}

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -14,10 +15,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
@@ -161,6 +159,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId,
+      },
+    });
+
+    if (userWorkspaces.length === 0) {
+      await this.userRepository.softDelete(userId);
+    }
   }
 
   async isSubdomainAvailable(subdomain: string) {

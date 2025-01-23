@@ -2,7 +2,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export const onEntityCountChangeComponentState = createComponentStateV2<
-  ((entityCount?: number) => void) | undefined
+  ((entityCount?: number, currentRecordGroupId?: string) => void) | undefined
 >({
   key: 'onEntityCountChangeComponentState',
   defaultValue: undefined,

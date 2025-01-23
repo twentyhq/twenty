@@ -39,10 +39,10 @@ export class GoogleOauthGuard extends AuthGuard('google') {
     }
 
     if (
-      request.query.workspaceSubdomain &&
-      typeof request.query.workspaceSubdomain === 'string'
+      request.query.workspaceId &&
+      typeof request.query.workspaceId === 'string'
     ) {
-      request.params.workspaceSubdomain = request.query.workspaceSubdomain;
+      request.params.workspaceId = request.query.workspaceId;
     }
 
     if (

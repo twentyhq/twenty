@@ -5,6 +5,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -40,72 +41,74 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
     <RecordFieldValueSelectorContextProvider>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: `record-show-${objectRecordId}`,
-        }}
+      <RecordFiltersComponentInstanceContext.Provider
+        value={{ instanceId: `record-show-${objectRecordId}` }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: `record-show-${objectRecordId}` }}
         >
-          <RecordValueSetterEffect recordId={objectRecordId} />
-          <PageContainer>
-            <PageTitle title={pageTitle} />
-            <RecordShowPageHeader
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-              headerIcon={headerIcon}
-            >
-              <>
-                {!isPageHeaderV2Enabled &&
-                  objectNameSingular === CoreObjectNameSingular.Workflow && (
-                    <RecordShowPageWorkflowHeader workflowId={objectRecordId} />
-                  )}
-                {!isPageHeaderV2Enabled &&
-                  objectNameSingular ===
-                    CoreObjectNameSingular.WorkflowVersion && (
-                    <RecordShowPageWorkflowVersionHeader
-                      workflowVersionId={objectRecordId}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: `record-show-${objectRecordId}` }}
+          >
+            <RecordValueSetterEffect recordId={objectRecordId} />
+            <PageContainer>
+              <PageTitle title={pageTitle} />
+              <RecordShowPageHeader
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
+                headerIcon={headerIcon}
+              >
+                <>
+                  {!isCommandMenuV2Enabled &&
+                    objectNameSingular === CoreObjectNameSingular.Workflow && (
+                      <RecordShowPageWorkflowHeader
+                        workflowId={objectRecordId}
+                      />
+                    )}
+                  {!isCommandMenuV2Enabled &&
+                    objectNameSingular ===
+                      CoreObjectNameSingular.WorkflowVersion && (
+                      <RecordShowPageWorkflowVersionHeader
+                        workflowVersionId={objectRecordId}
+                      />
+                    )}
+                  {(isCommandMenuV2Enabled ||
+                    (objectNameSingular !== CoreObjectNameSingular.Workflow &&
+                      objectNameSingular !==
+                        CoreObjectNameSingular.WorkflowVersion)) && (
+                    <RecordShowActionMenu
+                      {...{
+                        isFavorite,
+                        record,
+                        handleFavoriteButtonClick,
+                        objectMetadataItem,
+                        objectNameSingular,
+                      }}
                     />
                   )}
-                {(isPageHeaderV2Enabled ||
-                  (objectNameSingular !== CoreObjectNameSingular.Workflow &&
-                    objectNameSingular !==
-                      CoreObjectNameSingular.WorkflowVersion)) && (
-                  <RecordShowActionMenu
-                    {...{
-                      isFavorite,
-                      record,
-                      handleFavoriteButtonClick,
-                      objectMetadataItem,
-                      objectNameSingular,
-                    }}
+                </>
+              </RecordShowPageHeader>
+              <PageBody>
+                <TimelineActivityContext.Provider
+                  value={{ labelIdentifierValue: pageName }}
+                >
+                  <RecordShowContainer
+                    objectNameSingular={objectNameSingular}
+                    objectRecordId={objectRecordId}
+                    loading={loading}
                   />
-                )}
-              </>
-            </RecordShowPageHeader>
-            <PageBody>
-              <TimelineActivityContext.Provider
-                value={{
-                  labelIdentifierValue: pageName,
-                }}
-              >
-                <RecordShowContainer
-                  objectNameSingular={objectNameSingular}
-                  objectRecordId={objectRecordId}
-                  loading={loading}
-                />
-              </TimelineActivityContext.Provider>
-            </PageBody>
-          </PageContainer>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+                </TimelineActivityContext.Provider>
+              </PageBody>
+            </PageContainer>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
     </RecordFieldValueSelectorContextProvider>
   );
 };

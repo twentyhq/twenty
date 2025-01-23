@@ -15,6 +15,7 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsString,
   IsUUID,
 } from 'class-validator';
@@ -57,6 +58,10 @@ export class ServerlessFunctionDTO {
   @IsNotEmpty()
   @Field()
   runtime: string;
+
+  @IsNumber()
+  @Field()
+  timeoutSeconds: number;
 
   @IsString()
   @Field({ nullable: true })
