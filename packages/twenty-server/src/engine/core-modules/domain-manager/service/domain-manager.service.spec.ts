@@ -106,10 +106,32 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'test',
+        workspaceSubdomainAndHostname: { subdomain: 'test' },
       });
 
       expect(result.toString()).toBe('https://test.example.com/');
+    });
+    it('should build workspace URL with given hostname', () => {
+      jest
+        .spyOn(environmentService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONT_PROTOCOL: 'https',
+            FRONT_DOMAIN: 'example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          return env[key];
+        });
+
+      const result = domainManagerService.buildWorkspaceURL({
+        workspaceSubdomainAndHostname: {
+          hostname: 'custom-host.com',
+          subdomain: 'subdomain',
+        },
+      });
+
+      expect(result.toString()).toBe('https://custom-host.com/');
     });
 
     it('should set the pathname if provided', () => {

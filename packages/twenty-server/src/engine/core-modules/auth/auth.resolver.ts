@@ -214,7 +214,10 @@ export class AuthResolver {
     await this.emailVerificationService.sendVerificationEmail(
       user.id,
       user.email,
-      workspace.subdomain,
+      {
+        subdomain: workspace.subdomain,
+        hostname: workspace.hostname,
+      },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

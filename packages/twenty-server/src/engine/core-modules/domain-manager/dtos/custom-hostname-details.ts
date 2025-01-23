@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname';
+import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname.type';
 
 @ObjectType()
 export class OwnershipVerification {

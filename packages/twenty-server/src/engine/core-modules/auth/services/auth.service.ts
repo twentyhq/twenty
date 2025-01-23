@@ -456,18 +456,16 @@ export class AuthService {
 
   computeRedirectURI({
     loginToken,
-    subdomain,
-    hostname,
+    workspaceSubdomainAndHostname,
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain?: string;
-    hostname?: string;
+    workspaceSubdomainAndHostname: Pick<Workspace, 'subdomain' | 'hostname'>;
+
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
-      hostname,
-      subdomain,
+      workspaceSubdomainAndHostname,
       pathname: '/verify',
       searchParams: {
         loginToken,

@@ -175,6 +175,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
       subdomain: userWorkspace.workspace.subdomain,
+      hostname: userWorkspace.workspace.hostname,
       logo: userWorkspace.workspace.logo,
       sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
         (acc, identityProvider) =>

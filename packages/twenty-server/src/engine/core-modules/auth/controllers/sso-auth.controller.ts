@@ -118,17 +118,16 @@ export class SSOAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: identityProvider.workspace.subdomain,
-          hostname: identityProvider.workspace.hostname,
+          workspaceSubdomainAndHostname: identityProvider.workspace,
         }),
       );
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            subdomain: workspaceIdentityProvider.workspace.subdomain,
-            hostname: workspaceIdentityProvider.workspace.hostname,
-          }),
+          this.domainManagerService.computeRedirectErrorUrl(
+            err.message,
+            workspaceIdentityProvider.workspace,
+          ),
         );
       }
       throw err;

@@ -32,6 +32,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
@@ -104,7 +106,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     let customDomainRegistered = false;
 
-    if (payload.hostname === null) {
+    if (payload.hostname === null && isDefined(workspace.hostname)) {
       await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
         workspace.hostname,
       );
@@ -121,6 +123,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         ...payload,
       });
     } catch (e) {
+      // revert custom domain registration on error
       if (payload.hostname && customDomainRegistered) {
         await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
           payload.hostname,

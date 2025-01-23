@@ -113,17 +113,17 @@ export class GoogleAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
+          workspaceSubdomainAndHostname: workspace,
           billingCheckoutSessionState,
         }),
       );
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            hostname: currentWorkspace?.hostname,
-            subdomain: currentWorkspace?.subdomain,
-          }),
+          this.domainManagerService.computeRedirectErrorUrl(
+            err.message,
+            currentWorkspace,
+          ),
         );
       }
       throw new AuthException(err, AuthExceptionCode.INTERNAL_SERVER_ERROR);

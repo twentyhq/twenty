@@ -14,6 +14,13 @@ import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain'
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { z } from 'zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -76,7 +83,7 @@ export const SettingsDomain = () => {
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
         ) {
-          return control.setError('subdomain', {
+          return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
           });
@@ -125,7 +132,9 @@ export const SettingsDomain = () => {
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           {isCustomDomainEnabled && <SettingsHostname />}
-          {!currentWorkspace?.hostname && <SettingsSubdomain />}
+          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
+            <SettingsSubdomain />
+          )}
         </FormProvider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

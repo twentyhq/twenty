@@ -8,7 +8,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isDefined } from 'src/utils/is-defined';
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
-import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname';
+import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname.type';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
@@ -74,51 +74,52 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    workspaceSubdomain,
+    workspaceSubdomainAndHostname,
   }: {
     emailVerificationToken: string;
     email: string;
-    workspaceSubdomain?: string;
+    workspaceSubdomainAndHostname: Pick<Workspace, 'subdomain' | 'hostname'>;
   }) {
     return this.buildWorkspaceURL({
-      subdomain: workspaceSubdomain,
+      workspaceSubdomainAndHostname: workspaceSubdomainAndHostname,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
   }
 
   buildWorkspaceURL({
-    subdomain,
-    hostname,
+    workspaceSubdomainAndHostname,
     pathname,
     searchParams,
   }: {
-    subdomain?: string;
-    hostname?: string;
+    workspaceSubdomainAndHostname?: Pick<Workspace, 'subdomain' | 'hostname'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = hostname ? new URL(hostname) : this.getBaseUrl();
+    const url = this.getBaseUrl();
 
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      !subdomain &&
-      !hostname
+      !workspaceSubdomainAndHostname?.subdomain &&
+      !workspaceSubdomainAndHostname?.hostname
     ) {
       throw new Error(
         'subdomain or hostname is required when multiworkspace is enable',
       );
     }
 
+    if (workspaceSubdomainAndHostname?.hostname) {
+      url.hostname = workspaceSubdomainAndHostname?.hostname;
+    }
+
     if (
-      !hostname &&
-      subdomain &&
-      subdomain.length > 0 &&
+      !workspaceSubdomainAndHostname?.hostname &&
+      workspaceSubdomainAndHostname?.subdomain &&
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
     ) {
       url.hostname = url.hostname.replace(
         this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        subdomain,
+        workspaceSubdomainAndHostname?.subdomain,
       );
     }
 
@@ -161,17 +162,18 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    {
-      subdomain,
-      hostname,
-    }: {
+    workspaceSubdomainAndHostname?: {
       subdomain?: string;
       hostname?: string;
     },
   ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
-      hostname,
+      workspaceSubdomainAndHostname: {
+        subdomain:
+          workspaceSubdomainAndHostname?.subdomain ??
+          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        hostname: workspaceSubdomainAndHostname?.hostname,
+      },
       pathname: '/verify',
       searchParams: { errorMessage },
     });
