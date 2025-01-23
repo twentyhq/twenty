@@ -57,6 +57,7 @@ export const WorkspaceProviderEffect = () => {
     if (isWorkspaceDefaultDomainWithLastAuthenticatedParamsExist) {
       return redirectToWorkspaceDomain(
         lastAuthenticatedWorkspaceDomain.subdomain,
+        lastAuthenticatedWorkspaceDomain.hostname,
       );
     }
   }, [

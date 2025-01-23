@@ -8,7 +8,11 @@ export const useLastAuthenticatedWorkspaceDomain = () => {
     lastAuthenticatedWorkspaceDomainState,
   );
   const setLastAuthenticateWorkspaceDomainWithCookieAttributes = (
-    params: { workspaceId: string; subdomain: string } | null,
+    params: {
+      workspaceId: string;
+      subdomain: string;
+      hostname?: string | null;
+    } | null,
   ) => {
     setLastAuthenticatedWorkspaceDomain({
       ...(params ? params : {}),

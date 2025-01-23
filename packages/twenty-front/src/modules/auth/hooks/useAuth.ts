@@ -289,6 +289,7 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
         subdomain: workspace.subdomain,
+        hostname: workspace.hostname,
       });
     }
 

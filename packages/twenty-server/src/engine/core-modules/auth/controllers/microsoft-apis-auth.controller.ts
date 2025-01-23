@@ -119,8 +119,7 @@ export class MicrosoftAPIsAuthController {
     return res.redirect(
       this.domainManagerService
         .buildWorkspaceURL({
-          hostname: workspace.hostname,
-          subdomain: workspace.subdomain,
+          workspaceSubdomainAndHostname: workspace,
           pathname: redirectLocation || '/settings/accounts',
         })
         .toString(),
