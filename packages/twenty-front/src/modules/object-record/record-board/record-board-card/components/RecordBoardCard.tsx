@@ -2,28 +2,14 @@ import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
-import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
+
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -32,21 +18,12 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AnimatedEaseInOut,
-  AvatarChipVariant,
-  Checkbox,
-  CheckboxVariant,
-  IconEye,
-  IconEyeOff,
-  LightIconButton,
-} from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
+import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 import { useNavigate } from 'react-router-dom';
-import { StopPropagationContainer } from '@/object-record/record-board/utils/StopPropagationContainer';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
+import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -84,48 +61,9 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   }
 `;
 
-const StyledTextInput = styled(TextInput)`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  width: ${({ theme }) => theme.spacing(53)};
-`;
-
 const StyledBoardCardWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
-`;
-
-export const StyledBoardCardHeader = styled.div<{
-  showCompactView: boolean;
-}>`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: 24px;
-  padding-bottom: ${({ theme, showCompactView }) =>
-    theme.spacing(showCompactView ? 2 : 1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  transition: padding ease-in-out 160ms;
-
-  img {
-    height: ${({ theme }) => theme.icon.size.md}px;
-    object-fit: cover;
-    width: ${({ theme }) => theme.icon.size.md}px;
-  }
-`;
-
-const StyledCheckboxContainer = styled.div`
-  margin-left: auto;
-`;
-
-const StyledCompactIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const RecordBoardCard = ({
@@ -140,13 +78,6 @@ export const RecordBoardCard = ({
   const navigate = useNavigate();
 
   const { recordId } = useContext(RecordBoardCardContext);
-
-  const [newLabelValue, setNewLabelValue] = useState('');
-
-  const { handleBlur, handleInputEnter } = useAddNewCard();
-
-  const { updateOneRecord, objectMetadataItem } =
-    useContext(RecordBoardContext);
 
   const visibleFieldDefinitions = useRecoilComponentValueV2(
     recordBoardVisibleFieldDefinitionsComponentSelector,
@@ -164,15 +95,11 @@ export const RecordBoardCard = ({
       recordId,
     );
 
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
   );
-
-  const { checkIfLastUnselectAndCloseDropdown } =
-    useRecordBoardSelection(recordBoardId);
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
 
@@ -210,17 +137,6 @@ export const RecordBoardCard = ({
     }
   }, 800);
 
-  const useUpdateOneRecordHook: RecordUpdateHook = () => {
-    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
-        idToUpdate: variables.where.id as string,
-        updateOneRecordInput: variables.updateOneRecordInput,
-      });
-    };
-
-    return [updateEntity, { loading: false }];
-  };
-
   const scrollWrapperRef = useContext(RecordBoardScrollWrapperContext);
 
   const { ref: cardRef } = useInView({
@@ -250,116 +166,19 @@ export const RecordBoardCard = ({
           onClick={handleCardClick}
         >
           {labelIdentifierField && (
-            <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-              <StopPropagationContainer>
-                {isCreating && position !== undefined ? (
-                  <RecordInlineCellEditMode>
-                    <StyledTextInput
-                      autoFocus
-                      value={newLabelValue}
-                      onInputEnter={() =>
-                        handleInputEnter(
-                          labelIdentifierField.label ?? '',
-                          newLabelValue,
-                          position,
-                          onCreateSuccess,
-                        )
-                      }
-                      onBlur={() =>
-                        handleBlur(
-                          labelIdentifierField.label ?? '',
-                          newLabelValue,
-                          position,
-                          onCreateSuccess,
-                        )
-                      }
-                      onChange={(text: string) => setNewLabelValue(text)}
-                      placeholder={labelIdentifierField.label}
-                    />
-                  </RecordInlineCellEditMode>
-                ) : (
-                    record?.[labelIdentifierField.metadata.fieldName] || ''
-                  ).trim() === '' ? (
-                  <FieldContext.Provider
-                    value={{
-                      recordId: (record as ObjectRecord).id,
-                      maxWidth: 156,
-                      recoilScopeId:
-                        (isCreating ? 'new' : recordId) +
-                        labelIdentifierField.fieldMetadataId,
-                      isLabelIdentifier: true,
-                      fieldDefinition: {
-                        disableTooltip: false,
-                        fieldMetadataId: labelIdentifierField.fieldMetadataId,
-                        label: `Set ${labelIdentifierField.label}`,
-                        iconName: labelIdentifierField.iconName,
-                        type: labelIdentifierField.type,
-                        metadata: labelIdentifierField.metadata,
-                        defaultValue: labelIdentifierField.defaultValue,
-                        editButtonIcon: getFieldButtonIcon({
-                          metadata: labelIdentifierField.metadata,
-                          type: labelIdentifierField.type,
-                        }),
-                      },
-                      useUpdateRecord: useUpdateOneRecordHook,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordInlineCell />
-                  </FieldContext.Provider>
-                ) : (
-                  <RecordIdentifierChip
-                    objectNameSingular={objectMetadataItem.nameSingular}
-                    record={record as ObjectRecord}
-                    variant={AvatarChipVariant.Transparent}
-                    maxWidth={150}
-                    to={indexIdentifierUrl(recordId)}
-                  />
-                )}
-              </StopPropagationContainer>
-
-              {!isCreating && (
-                <>
-                  {isCompactModeActive && (
-                    <StyledCompactIconContainer className="compact-icon-container">
-                      <StopPropagationContainer>
-                        <LightIconButton
-                          Icon={isCardExpanded ? IconEyeOff : IconEye}
-                          accent="tertiary"
-                          onClick={() => {
-                            setIsCardExpanded((prev) => !prev);
-                          }}
-                        />
-                      </StopPropagationContainer>
-                    </StyledCompactIconContainer>
-                  )}
-
-                  <StyledCheckboxContainer className="checkbox-container">
-                    {' '}
-                    <StopPropagationContainer>
-                      <Checkbox
-                        hoverable
-                        checked={isCurrentCardSelected}
-                        onChange={() => {
-                          setIsCurrentCardSelected(!isCurrentCardSelected);
-                          checkIfLastUnselectAndCloseDropdown();
-                        }}
-                        variant={CheckboxVariant.Secondary}
-                      />
-                    </StopPropagationContainer>
-                  </StyledCheckboxContainer>
-                </>
-              )}
-            </StyledBoardCardHeader>
+            <RecordBoardCardHeader
+              identifierFieldDefinition={labelIdentifierField}
+              isCreating={isCreating}
+              onCreateSuccess={onCreateSuccess}
+              position={position}
+            />
           )}
-
           <AnimatedEaseInOut
             isOpen={isCardExpanded || !isCompactModeActive}
             initial={false}
           >
             <RecordBoardCardBody
               fieldDefinitions={visibleFieldDefinitionsFiltered}
-              recordId={recordId}
             />
           </AnimatedEaseInOut>
         </StyledBoardCard>

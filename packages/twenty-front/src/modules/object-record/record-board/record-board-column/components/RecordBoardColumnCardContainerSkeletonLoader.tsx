@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { StyledBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
+import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
 const StyledSkeletonIconAndText = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -39,14 +39,14 @@ export const RecordBoardColumnCardContainerSkeletonLoader = ({
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <StyledBoardCardHeader showCompactView={isCompactModeActive}>
+      <RecordBoardCardHeaderContainer showCompactView={isCompactModeActive}>
         <StyledSkeletonTitle>
           <Skeleton
             width={titleSkeletonWidth}
             height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
           />
         </StyledSkeletonTitle>
-      </StyledBoardCardHeader>
+      </RecordBoardCardHeaderContainer>
       <StyledSeparator />
       {!isCompactModeActive &&
         skeletonItems.map(({ id }) => (

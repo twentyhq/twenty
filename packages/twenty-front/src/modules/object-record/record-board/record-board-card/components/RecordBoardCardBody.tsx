@@ -12,14 +12,15 @@ import { StopPropagationContainer } from '@/object-record/record-board/utils/Sto
 import { useContext } from 'react';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 
 export const RecordBoardCardBody = ({
   fieldDefinitions,
-  recordId,
 }: {
   fieldDefinitions: RecordBoardFieldDefinition<FieldMetadata>[];
-  recordId?: string;
 }) => {
+  const { recordId } = useContext(RecordBoardCardContext);
+
   const { updateOneRecord } = useContext(RecordBoardContext);
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
@@ -32,6 +33,7 @@ export const RecordBoardCardBody = ({
 
     return [updateEntity, { loading: false }];
   };
+
   return (
     <RecordBoardCardBodyContainer>
       {fieldDefinitions.map((fieldDefinition) => (
