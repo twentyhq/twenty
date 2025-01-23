@@ -199,7 +199,6 @@ export const RecordBoardCardHeader = ({
             </StyledCompactIconContainer>
           )}
           <StyledCheckboxContainer className="checkbox-container">
-            {' '}
             <StopPropagationContainer>
               <Checkbox
                 hoverable

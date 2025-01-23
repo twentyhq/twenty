@@ -40,7 +40,7 @@ export const RecordBoardCardBody = ({
         <StopPropagationContainer key={fieldDefinition.fieldMetadataId}>
           <FieldContext.Provider
             value={{
-              recordId: recordId || '',
+              recordId,
               maxWidth: 156,
               recoilScopeId:
                 (recordId || 'new') + fieldDefinition.fieldMetadataId,
