@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 
 export type BillingGetPricesPerPlanResult = {

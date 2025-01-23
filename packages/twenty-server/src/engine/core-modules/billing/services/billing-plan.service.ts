@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -127,12 +125,12 @@ export class BillingPlanService {
     }
     const { baseProduct, meteredProducts, otherLicensedProducts } = plan;
     const baseProductPrice = baseProduct.billingPrices.find(
-      (price) => price.interval === interval && price.active,
+      (price) => price.interval === interval,
     );
 
     if (!baseProductPrice) {
       throw new BillingException(
-        'Base product active price not found for given interval',
+        'Base product price not found for given interval',
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }
