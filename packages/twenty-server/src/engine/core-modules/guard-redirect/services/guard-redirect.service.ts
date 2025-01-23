@@ -10,8 +10,6 @@ export class GuardRedirectService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-
-
   dispatchErrorFromGuard(context: any, err: any, subdomain: string) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw err;
