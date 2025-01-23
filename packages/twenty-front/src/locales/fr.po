@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-18 21:38+0100\n"
+"POT-Creation-Date: 2025-01-21 13:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,8 +28,8 @@ msgstr "24h ({hour24Label})"
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:171
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:182
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:190
 msgid "API Key"
 msgstr "Clé API"
 
@@ -45,7 +45,7 @@ msgstr "Clés API"
 msgid "Abort"
 msgstr "Abandonner"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:86
+#: src/pages/settings/data-model/SettingsNewObject.tsx:93
 msgid "About"
 msgstr "A propos de"
 
@@ -76,6 +76,10 @@ msgstr "Actif"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "Active API keys created by you or your team."
 msgstr "Clés API actives créées par vous ou votre équipe."
+
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
+msgid "Add Field"
+msgstr "Ajouter un champ"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:59
 msgid "Add SSO Identity Provider"
@@ -263,9 +267,9 @@ msgstr "Copilote"
 msgid "Copy invitation link"
 msgstr "Copier le lien de l'invitation"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
-msgid "Copy this key as it will only be visible this one time"
-msgstr "Copiez cette clé car elle ne sera visible qu'une seule fois"
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:183
+msgid "Copy this key as it will not be visible again"
+msgstr "Copiez cette clé car elle ne sera pas visible à nouveau"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
@@ -283,6 +287,10 @@ msgstr "Objets personnalisés"
 msgid "Custom objects"
 msgstr "Objets personnalisés"
 
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
+msgid "Customise the fields available in the {objectLabelSingular} views."
+msgstr "Personnaliser les champs disponibles dans les vues {objectLabelSingular}."
+
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
 msgstr "Personnaliser le domaine"
@@ -292,7 +300,7 @@ msgid "Customize your workspace security"
 msgstr "Personnalisez la sécurité de votre espace de travail"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:229
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:237
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
@@ -320,16 +328,16 @@ msgstr "Désactiver la fonction \"Synchroniser les étiquettes des objets et les
 msgid "Deactivate this field"
 msgstr "Désactiver ce champ"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:87
+#: src/pages/settings/data-model/SettingsNewObject.tsx:94
 msgid "Define the name and description of your object"
 msgstr "Définir le nom et la description de votre objet"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:243
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:248
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Delete API key"
 msgstr "Supprimer la clé API"
 
@@ -344,7 +352,7 @@ msgid "Delete account and all the associated data"
 msgstr "Supprimer le compte et toutes les données associées"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:230
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:238
 msgid "Delete this integration"
 msgstr "Supprimer cette intégration"
 
@@ -372,8 +380,8 @@ msgstr "Description"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:78
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:160
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:171
 msgid "Developers"
 msgstr "Développeurs"
 
@@ -388,8 +396,8 @@ msgstr "Affichage en tant que date relative"
 msgid "Domain"
 msgstr "Domaine"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:97
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:217
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:225
 msgid "E.g. backoffice integration"
 msgstr "Par exemple, l'intégration du backoffice"
 
@@ -446,11 +454,11 @@ msgstr "Profitez d'un essai gratuit de {withCreditCardTrialPeriodDuration}-jours
 msgid "Enterprise"
 msgstr "Entreprise"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:87
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:98
 msgid "Error deleting api key: {err}"
 msgstr "Erreur lors de la suppression de la clé api : {err}"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:139
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:150
 msgid "Error regenerating api key: {err}"
 msgstr "Erreur de régénération de la clé api : {err}"
 
@@ -480,11 +488,11 @@ msgstr "Quitter les paramètres"
 msgid "Experience"
 msgstr "Expérience"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:213
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:221
 msgid "Expiration"
 msgstr "Expiration"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:115
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
 msgid "Expiration Date"
 msgstr "Date d'expiration"
 
@@ -492,11 +500,8 @@ msgstr "Date d'expiration"
 msgid "Expires in"
 msgstr "Expire en"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:57
-msgid "Failed to create object"
-msgstr "Échec de la création de l'objet"
-
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "Domaines"
 
@@ -544,7 +549,7 @@ msgstr "Accordez à Twenty support un accès temporaire à votre espace de trava
 msgid "Icon and Name"
 msgstr "Icône et nom"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:267
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:275
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Si vous avez perdu cette clé, vous pouvez la régénérer, mais sachez que tout script utilisant cette clé devra être mis à jour. Veuillez taper \"{confirmationValue}\" pour confirmer."
 
@@ -579,10 +584,6 @@ msgstr "Courriel ou domaine invalide"
 #: src/pages/settings/workspace/SettingsDomain.tsx:87
 msgid "Invalid form values"
 msgstr "Valeurs de formulaire non valides"
-
-#: src/pages/settings/data-model/SettingsNewObject.tsx:53
-msgid "Invalid object data"
-msgstr "Données d'objet non valides"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
 msgid "Invite by Link"
@@ -649,14 +650,14 @@ msgstr "Les membres"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:95
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:203
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "Nom"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:95
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:203
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
 msgid "Name of your API key"
 msgstr "Nom de votre clé API"
 
@@ -668,15 +669,15 @@ msgstr "Nom de votre espace de travail"
 msgid "Navigate"
 msgstr "Naviguer"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:77
+#: src/pages/settings/data-model/SettingsNewObject.tsx:79
 msgid "New"
 msgstr "Nouveau"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:81
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
 msgstr "Nouvelle clé"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:67
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 msgid "New Object"
 msgstr "Nouvel objet"
 
@@ -692,7 +693,7 @@ msgstr "Nouveau Webhook"
 msgid "New account"
 msgstr "Nouveau compte"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:71
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
 msgid "New key"
 msgstr "Nouvelle clé"
 
@@ -704,13 +705,9 @@ msgstr "Pas de compte connecté"
 msgid "Notes"
 msgstr "Notes"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:46
-msgid "Object created successfully"
-msgstr "Objet créé avec succès"
-
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:74
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr "Objets"
@@ -752,7 +749,7 @@ msgstr "Photo"
 msgid "Please enter a valid URL"
 msgstr "Veuillez saisir une URL valide"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:250
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:258
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Veuillez taper \"{confirmationValue}\" pour confirmer que vous souhaitez supprimer cette clé API. Sachez que tout script utilisant cette clé cessera de fonctionner."
 
@@ -791,16 +788,16 @@ msgstr "Recevoir un courriel contenant un lien de mise à jour du mot de passe"
 msgid "Record Selection"
 msgstr "Sélection des enregistrements"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:187
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:195
 msgid "Regenerate Key"
 msgstr "Régénérer la clé"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:183
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:265
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:191
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "Regenerate an API key"
 msgstr "Régénérer une clé API"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:274
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:282
 msgid "Regenerate key"
 msgstr "Régénérer la clé"
 
@@ -1051,11 +1048,11 @@ msgstr "Crochet Web"
 msgid "Webhooks"
 msgstr "Crochets Web"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:116
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
 msgstr "Date d'expiration de la clé API."
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:214
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:222
 msgid "When the key will be disabled"
 msgstr "Quand la clé sera désactivée"
 
@@ -1077,11 +1074,11 @@ msgstr "Flux de travail"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:74
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:167
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/pages/settings/data-model/SettingsNewObject.tsx:72
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
@@ -1141,10 +1138,10 @@ msgid "to yearly"
 msgstr "à l'année"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:147
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:158
 msgid "yes"
 msgstr "oui"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:163
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:174
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} Clé API"

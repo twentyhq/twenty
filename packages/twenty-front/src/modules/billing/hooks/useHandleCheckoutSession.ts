@@ -8,6 +8,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useCheckoutSessionMutation } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
@@ -18,6 +19,8 @@ export const useHandleCheckoutSession = ({
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
 }) => {
+  const { redirect } = useRedirect();
+
   const { enqueueSnackBar } = useSnackBar();
 
   const [checkoutSession] = useCheckoutSessionMutation();
@@ -44,7 +47,7 @@ export const useHandleCheckoutSession = ({
       );
       return;
     }
-    window.location.replace(data.checkoutSession.url);
+    redirect(data.checkoutSession.url);
   };
   return { isSubmitting, handleCheckoutSession };
 };

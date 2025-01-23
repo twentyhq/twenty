@@ -1,3 +1,4 @@
+import { ApolloError } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -80,44 +81,43 @@ export const SettingsDomain = () => {
   const subdomainValue = watch('subdomain');
 
   const handleSave = async () => {
-    try {
-      const values = getValues();
+    const values = getValues();
 
-      if (!values || !isValid || !currentWorkspace) {
-        throw new Error(t`Invalid form values`);
-      }
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            subdomain: values.subdomain,
-          },
-        },
-      });
-
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subdomain: values.subdomain,
-      });
-
-      redirectToWorkspaceDomain(values.subdomain);
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        (error.message === t`Subdomain already taken` ||
-          error.message.endsWith(t`not allowed`))
-      ) {
-        control.setError('subdomain', {
-          type: 'manual',
-          message: (error as Error).message,
-        });
-        return;
-      }
-
-      enqueueSnackBar((error as Error).message, {
+    if (!values || !isValid || !currentWorkspace) {
+      return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
     }
+
+    await updateWorkspace({
+      variables: {
+        input: {
+          subdomain: values.subdomain,
+        },
+      },
+      onError: (error) => {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+        ) {
+          return control.setError('subdomain', {
+            type: 'manual',
+            message: t`Subdomain already taken`,
+          });
+        }
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          subdomain: values.subdomain,
+        });
+
+        redirectToWorkspaceDomain(values.subdomain);
+      },
+    });
   };
 
   return (

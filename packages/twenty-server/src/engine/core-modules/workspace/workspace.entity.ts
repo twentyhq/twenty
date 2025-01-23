@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import {
   Column,
@@ -15,9 +15,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
@@ -30,15 +27,6 @@ registerEnumType(WorkspaceActivationStatus, {
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
-@UnPagedRelation('billingSubscriptions', () => BillingSubscription, {
-  nullable: true,
-})
-@UnPagedRelation('billingEntitlements', () => BillingEntitlement, {
-  nullable: true,
-})
-@UnPagedRelation('billingCustomers', () => BillingCustomer, {
-  nullable: true,
-})
 export class Workspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -147,6 +135,6 @@ export class Workspace {
   isPasswordAuthEnabled: boolean;
 
   @Field()
-  @Column({ default: false })
+  @Column({ default: true })
   isMicrosoftAuthEnabled: boolean;
 }

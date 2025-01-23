@@ -206,10 +206,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
-  AUTH_MICROSOFT_TENANT_ID: string;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false, require_protocol: true })

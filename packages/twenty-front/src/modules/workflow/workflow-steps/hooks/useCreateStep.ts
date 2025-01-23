@@ -7,6 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -17,7 +18,6 @@ export const useCreateStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { openRightDrawer } = useRightDrawer();
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setWorkflowLastCreatedStepId = useSetRecoilState(
@@ -30,16 +30,18 @@ export const useCreateStep = ({
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
+  const { openRightDrawer } = useRightDrawer();
+
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowCreateStepFromParentStepId)) {
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     const createdStep = (
       await createWorkflowVersionStep({
-        workflowVersionId: workflowVersion.id,
+        workflowVersionId,
         stepType: newStepType,
       })
     )?.data?.createWorkflowVersionStep;
@@ -50,7 +52,14 @@ export const useCreateStep = ({
 
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
-    openRightDrawer(RightDrawerPages.WorkflowStepEdit);
+
+    openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
+      title: createdStep.name,
+      Icon: getWorkflowNodeIcon({
+        nodeType: 'action',
+        actionType: createdStep.type as WorkflowStepType,
+      }),
+    });
   };
 
   return {

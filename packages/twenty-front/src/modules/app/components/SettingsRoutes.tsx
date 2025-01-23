@@ -253,15 +253,21 @@ const SettingsAdminContent = lazy(() =>
   ),
 );
 
+const SettingsLab = lazy(() =>
+  import('~/pages/settings/lab/SettingsLab').then((module) => ({
+    default: module.SettingsLab,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
-  isServerlessFunctionSettingsEnabled?: boolean;
+  isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
-  isServerlessFunctionSettingsEnabled,
+  isFunctionSettingsEnabled,
   isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
@@ -299,7 +305,6 @@ export const SettingsRoutes = ({
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
-
       <Route
         path={SettingsPath.DevelopersNewApiKey}
         element={<SettingsDevelopersApiKeysNew />}
@@ -316,7 +321,7 @@ export const SettingsRoutes = ({
         path={SettingsPath.DevelopersNewWebhookDetail}
         element={<SettingsDevelopersWebhooksDetail />}
       />
-      {isServerlessFunctionSettingsEnabled && (
+      {isFunctionSettingsEnabled && (
         <>
           <Route
             path={SettingsPath.ServerlessFunctions}
@@ -379,6 +384,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route path={SettingsPath.Lab} element={<SettingsLab />} />
     </Routes>
   </Suspense>
 );
