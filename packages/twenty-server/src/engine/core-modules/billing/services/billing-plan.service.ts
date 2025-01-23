@@ -9,8 +9,10 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 
 @Injectable()
 export class BillingPlanService {
@@ -103,5 +105,49 @@ export class BillingPlanService {
         otherLicensedProducts,
       };
     });
+  }
+
+  async getPricesPerPlan({
+    planKey,
+    interval,
+  }: {
+    planKey: BillingPlanKey;
+    interval: SubscriptionInterval;
+  }): Promise<BillingGetPricesPerPlanResult> {
+    const plans = await this.getPlans();
+    const plan = plans.find((plan) => plan.planKey === planKey);
+
+    if (!plan) {
+      throw new BillingException(
+        'Billing plan not found',
+        BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
+      );
+    }
+    const { baseProduct, meteredProducts, otherLicensedProducts } = plan;
+    const baseProductPrice = baseProduct.billingPrices.find(
+      (price) => price.interval === interval,
+    );
+
+    if (!baseProductPrice) {
+      throw new BillingException(
+        'Base product price not found for given interval',
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+    const filterPricesByInterval = (product: BillingProduct) =>
+      product.billingPrices.filter((price) => price.interval === interval);
+
+    const meteredProductsPrices = meteredProducts.flatMap(
+      filterPricesByInterval,
+    );
+    const otherLicensedProductsPrices = otherLicensedProducts.flatMap(
+      filterPricesByInterval,
+    );
+
+    return {
+      baseProductPrice,
+      meteredProductsPrices,
+      otherLicensedProductsPrices,
+    };
   }
 }
