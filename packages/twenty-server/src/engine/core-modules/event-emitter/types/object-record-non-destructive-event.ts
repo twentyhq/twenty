@@ -3,7 +3,7 @@ import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/t
 import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 
-export type ObjectRecordNonDestructiveEvent<T extends object> =
+export type ObjectRecordNonDestructiveEvent<T = object> =
   | ObjectRecordCreateEvent<T>
   | ObjectRecordUpdateEvent<T>
   | ObjectRecordDeleteEvent<T>
