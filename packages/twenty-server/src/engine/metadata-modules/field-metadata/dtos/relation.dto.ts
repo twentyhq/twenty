@@ -5,8 +5,8 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 registerEnumType(RelationType, {
   name: 'RelationType',
@@ -21,18 +21,18 @@ export class RelationDTO {
   type: RelationType;
 
   @IsNotEmpty()
-  @Field(() => ObjectMetadataEntity)
-  sourceObjectMetadata: Relation<ObjectMetadataEntity>;
+  @Field(() => ObjectMetadataDTO)
+  sourceObjectMetadata: Relation<ObjectMetadataDTO>;
 
   @IsNotEmpty()
-  @Field(() => ObjectMetadataEntity)
-  targetObjectMetadata: Relation<ObjectMetadataEntity>;
+  @Field(() => ObjectMetadataDTO)
+  targetObjectMetadata: Relation<ObjectMetadataDTO>;
 
   @IsNotEmpty()
-  @Field(() => FieldMetadataEntity)
-  sourceFieldMetadata: Relation<FieldMetadataEntity>;
+  @Field(() => FieldMetadataDTO)
+  sourceFieldMetadata: Relation<FieldMetadataDTO>;
 
   @IsNotEmpty()
-  @Field(() => FieldMetadataEntity)
-  targetFieldMetadata: Relation<FieldMetadataEntity>;
+  @Field(() => FieldMetadataDTO)
+  targetFieldMetadata: Relation<FieldMetadataDTO>;
 }
