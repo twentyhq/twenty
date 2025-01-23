@@ -112,7 +112,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
-  trialPeriods: Array<TrialPeriodDto>;
+  trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
 /** The different billing plans available */
@@ -121,12 +121,95 @@ export enum BillingPlanKey {
   PRO = 'PRO'
 }
 
+export type BillingPlanOutput = {
+  __typename?: 'BillingPlanOutput';
+  baseProduct: BillingProductDto;
+  meteredProducts: Array<BillingProductDto>;
+  otherLicensedProducts: Array<BillingProductDto>;
+  planKey: BillingPlanKey;
+};
+
+export type BillingPriceLicensedDto = {
+  __typename?: 'BillingPriceLicensedDTO';
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String'];
+  unitAmount: Scalars['Float'];
+};
+
+export type BillingPriceMeteredDto = {
+  __typename?: 'BillingPriceMeteredDTO';
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String'];
+  tiers?: Maybe<Array<BillingPriceTierDto>>;
+  tiersMode?: Maybe<BillingPriceTiersMode>;
+};
+
+export type BillingPriceTierDto = {
+  __typename?: 'BillingPriceTierDTO';
+  flatAmount?: Maybe<Scalars['Float']>;
+  unitAmount?: Maybe<Scalars['Float']>;
+  upTo?: Maybe<Scalars['Float']>;
+};
+
+/** The different billing price tiers modes */
+export enum BillingPriceTiersMode {
+  GRADUATED = 'GRADUATED',
+  VOLUME = 'VOLUME'
+}
+
+export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
+
+export type BillingProductDto = {
+  __typename?: 'BillingProductDTO';
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  prices: Array<Maybe<BillingPriceUnionDto>>;
+  type: BillingUsageType;
+};
+
+export type BillingProductPriceDto = {
+  __typename?: 'BillingProductPriceDTO';
+  created: Scalars['Float'];
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String'];
+  unitAmount: Scalars['Float'];
+};
+
+export type BillingProductPricesOutput = {
+  __typename?: 'BillingProductPricesOutput';
+  productPrices: Array<BillingProductPriceDto>;
+  totalNumberOfPrices: Scalars['Int'];
+};
+
+export type BillingSessionOutput = {
+  __typename?: 'BillingSessionOutput';
+  url?: Maybe<Scalars['String']>;
+};
+
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
   status: SubscriptionStatus;
 };
+
+export type BillingTrialPeriodDto = {
+  __typename?: 'BillingTrialPeriodDTO';
+  duration: Scalars['Float'];
+  isCreditCardRequired: Scalars['Boolean'];
+};
+
+export type BillingUpdateOutput = {
+  __typename?: 'BillingUpdateOutput';
+  /** Boolean that confirms query was successful */
+  success: Scalars['Boolean'];
+};
+
+export enum BillingUsageType {
+  LICENSED = 'LICENSED',
+  METERED = 'METERED'
+}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
@@ -304,12 +387,11 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsFreeAccessEnabled = 'IsFreeAccessEnabled',
-  IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
-  IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
@@ -473,7 +555,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
-  checkoutSession: SessionEntity;
+  checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -511,7 +593,7 @@ export type Mutation = {
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
-  updateBillingSubscription: UpdateBillingEntity;
+  updateBillingSubscription: BillingUpdateOutput;
   updateLabPublicFeatureFlag: Scalars['Boolean'];
   updateOneField: Field;
   updateOneObject: Object;
@@ -849,20 +931,6 @@ export type PostgresCredentials = {
   workspaceId: Scalars['String'];
 };
 
-export type ProductPriceEntity = {
-  __typename?: 'ProductPriceEntity';
-  created: Scalars['Float'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String'];
-  unitAmount: Scalars['Float'];
-};
-
-export type ProductPricesEntity = {
-  __typename?: 'ProductPricesEntity';
-  productPrices: Array<ProductPriceEntity>;
-  totalNumberOfPrices: Scalars['Int'];
-};
-
 export type PublicFeatureFlag = {
   __typename?: 'PublicFeatureFlag';
   key: FeatureFlagKey;
@@ -892,7 +960,7 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  billingPortalSession: SessionEntity;
+  billingPortalSession: BillingSessionOutput;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -907,7 +975,7 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getProductPrices: ProductPricesEntity;
+  getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -919,6 +987,7 @@ export type Query = {
   listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
+  plans: Array<BillingPlanOutput>;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -1158,11 +1227,6 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
-export type SessionEntity = {
-  __typename?: 'SessionEntity';
-  url?: Maybe<Scalars['String']>;
-};
-
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -1287,12 +1351,6 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
-export type TrialPeriodDto = {
-  __typename?: 'TrialPeriodDTO';
-  duration: Scalars['Float'];
-  isCreditCardRequired: Scalars['Boolean'];
-};
-
 export type UuidFilterComparison = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -1308,12 +1366,6 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']>;
   notIn?: InputMaybe<Array<Scalars['UUID']>>;
   notLike?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateBillingEntity = {
-  __typename?: 'UpdateBillingEntity';
-  /** Boolean that confirms query was successful */
-  success: Scalars['Boolean'];
 };
 
 export type UpdateFieldInput = {
@@ -1988,7 +2040,7 @@ export type BillingPortalSessionQueryVariables = Exact<{
 }>;
 
 
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url?: string | null } };
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
@@ -1998,24 +2050,24 @@ export type CheckoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url?: string | null } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
 }>;
 
 
-export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'ProductPricesEntity', productPrices: Array<{ __typename?: 'ProductPriceEntity', created: number, recurringInterval: SubscriptionInterval, stripePriceId: string, unitAmount: number }> } };
+export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'BillingProductPricesOutput', productPrices: Array<{ __typename?: 'BillingProductPriceDTO', created: number, recurringInterval: SubscriptionInterval, stripePriceId: string, unitAmount: number }> } };
 
 export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updateBillingSubscription: { __typename?: 'UpdateBillingEntity', success: boolean } };
+export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updateBillingSubscription: { __typename?: 'BillingUpdateOutput', success: boolean } };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'TrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
