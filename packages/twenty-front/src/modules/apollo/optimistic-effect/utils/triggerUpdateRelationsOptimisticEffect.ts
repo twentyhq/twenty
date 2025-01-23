@@ -19,63 +19,23 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
-// TODO should be extracted outside of the file
-type ComputeRecordsToAttachAndDetachArgs = {
-  relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>;
-  currentFieldValueOnSourceRecord: RecordGqlConnection | RecordGqlNode | null;
-  updatedFieldValueOnSourceRecord: RecordGqlConnection | RecordGqlNode | null;
-};
-type ComputeRecordToAttachAndDetachReport = {
-  targetRecordsToDetachFrom: RecordGqlNode[];
-  targetRecordsToAttachTo: RecordGqlNode[];
-};
-const computeRecordsToAttachAndDetach = ({
-  currentFieldValueOnSourceRecord,
-  relationDefinition,
-  updatedFieldValueOnSourceRecord,
-}: ComputeRecordsToAttachAndDetachArgs): ComputeRecordToAttachAndDetachReport => {
-  const computeIsRecordConnection = () => {
-    switch (relationDefinition.direction) {
-      case RelationDefinitionType.MANY_TO_MANY:
-      case RelationDefinitionType.ONE_TO_MANY: {
-        return true;
-      }
-      case RelationDefinitionType.MANY_TO_ONE:
-      case RelationDefinitionType.ONE_TO_ONE: {
-        return false;
-      }
-      default: {
-        return assertUnreachable(relationDefinition.direction);
-      }
+// TODO relocate
+const computeIsRecordConnection = (
+  relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>,
+) => {
+  switch (relationDefinition.direction) {
+    case RelationDefinitionType.MANY_TO_MANY:
+    case RelationDefinitionType.ONE_TO_MANY: {
+      return true;
     }
-  };
-  const isRecordConnection = computeIsRecordConnection();
-  // TODO refactor typing as possible ? review  RecordGqlConnection | RecordGqlNode | null
-  const extractTargetFromFieldValue = (value: RecordGqlConnection | RecordGqlNode | null): RecordGqlNode[] => {
-    // I don't understand typing here, we sometimes received empty array ?
-    // Zod schema validation was stripping this use case before
-    if (!isDefined(value) || isEmpty(value)) {
-      return [];
+    case RelationDefinitionType.MANY_TO_ONE:
+    case RelationDefinitionType.ONE_TO_ONE: {
+      return false;
     }
-
-    if (isRecordConnection) {
-      return value?.edges.map(({ node }: any) => node as RecordGqlNode);
+    default: {
+      return assertUnreachable(relationDefinition.direction);
     }
-
-    return [value] as RecordGqlNode[];
-  };
-
-  const targetRecordsToDetachFrom = extractTargetFromFieldValue(
-    currentFieldValueOnSourceRecord,
-  );
-  const targetRecordsToAttachTo = extractTargetFromFieldValue(
-    updatedFieldValueOnSourceRecord,
-  );
-
-  return {
-    targetRecordsToDetachFrom,
-    targetRecordsToAttachTo,
-  };
+  }
 };
 
 type triggerUpdateRelationsOptimisticEffectArgs = {
@@ -146,15 +106,31 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       ) {
         return;
       }
-      const { targetRecordsToAttachTo, targetRecordsToDetachFrom } =
-        computeRecordsToAttachAndDetach({
-          currentFieldValueOnSourceRecord,
-          relationDefinition,
-          updatedFieldValueOnSourceRecord,
-        });
+      const isRecordConnection = computeIsRecordConnection(relationDefinition);
+      // TODO refactor typing as possible ? review  RecordGqlConnection | RecordGqlNode | null
+      const extractTargetFromFieldValue = (
+        value: RecordGqlConnection | RecordGqlNode | null,
+      ): RecordGqlNode[] => {
+        // I don't understand typing here, we sometimes received empty array ?
+        // Zod schema validation was stripping this use case before
+        if (!isDefined(value) || isEmpty(value)) {
+          return [];
+        }
 
-      // From my understanding could be named
-      // hasCachedSourceThatCouldBeDetach
+        if (isRecordConnection) {
+          return value?.edges.map(({ node }: any) => node as RecordGqlNode);
+        }
+
+        return [value] as RecordGqlNode[];
+      };
+      const targetRecordsToDetachFrom = extractTargetFromFieldValue(
+        currentFieldValueOnSourceRecord,
+      );
+      const targetRecordsToAttachTo = extractTargetFromFieldValue(
+        updatedFieldValueOnSourceRecord,
+      );
+
+      // Is something like hasCachedSourceThatCouldBeDetach ?
       const shouldDetachSourceFromAllTargets =
         isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
 
