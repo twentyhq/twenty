@@ -9,6 +9,6 @@ export const isWorkEmail = (email: string) => {
   }
 };
 
-export const isPersonalDomain = (domain: string) => {
+export const isWorkDomain = (domain: string) => {
   return !emailProvidersSet.has(domain);
 };
