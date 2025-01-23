@@ -139,7 +139,18 @@ export const ScrollWrapper = ({
     },
     events: {
       updated: (osInstance) => {
-        const { scrollOffsetElement: target } = osInstance.elements();
+        const {
+          scrollOffsetElement: target,
+          scrollbarVertical,
+          scrollbarHorizontal,
+        } = osInstance.elements();
+
+        if (scrollbarVertical !== null) {
+          scrollbarVertical.track.dataset.selectDisable = 'true';
+        }
+        if (scrollbarHorizontal !== null) {
+          scrollbarHorizontal.track.dataset.selectDisable = 'true';
+        }
         setScrollBottom(
           target.scrollHeight - target.clientHeight - target.scrollTop,
         );
@@ -175,13 +186,6 @@ export const ScrollWrapper = ({
     const currentRef = scrollableRef.current;
     if (currentRef !== null) {
       initialize(currentRef);
-      // Add data-select-disable to scrollbars
-      const scrollbars = currentRef.querySelectorAll('.os-scrollbar');
-      scrollbars.forEach((scrollbar) => {
-        if (scrollbar instanceof HTMLElement) {
-          scrollbar.dataset.selectDisable = 'true';
-        }
-      });
     }
     return () => {
       // Reset vertical scroll component-specific Recoil state
