@@ -1,12 +1,15 @@
+import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
 import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
@@ -82,6 +85,10 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
+  const { title, Icon } = useRecoilValue(commandMenuPageInfoState);
+
+  const theme = useTheme();
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
@@ -90,6 +97,13 @@ export const CommandMenuTopBar = () => {
             objectMetadataItemId={contextStoreCurrentObjectMetadataId}
           />
         )}
+        {isDefined(Icon) && (
+          <CommandMenuContextChip
+            Icons={[<Icon size={theme.icon.size.sm} />]}
+            text={title}
+          />
+        )}
+
         {commandMenuPage === CommandMenuPages.Root && (
           <StyledInput
             autoFocus
