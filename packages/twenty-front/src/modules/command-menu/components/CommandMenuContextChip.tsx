@@ -25,7 +25,9 @@ const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
     withIconBackground ? theme.background.primary : 'unset'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(0.5)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, withIconBackground }) =>
+      withIconBackground ? theme.border.color.medium : 'transparent'};
   &:not(:first-of-type) {
     margin-left: -${({ theme }) => theme.spacing(1)};
   }
