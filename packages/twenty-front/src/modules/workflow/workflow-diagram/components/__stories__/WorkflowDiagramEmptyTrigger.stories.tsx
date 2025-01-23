@@ -15,27 +15,29 @@ type Story = StoryObj<typeof WorkflowDiagramEmptyTrigger>;
 
 export const Default: Story = {
   decorators: [
-    ComponentDecorator,
     (Story) => (
       <ReactFlowProvider>
-        <Story />
+        <div style={{ position: 'relative' }}>
+          <Story />
+        </div>
       </ReactFlowProvider>
     ),
+    ComponentDecorator,
   ],
 };
 
 export const Selected: Story = {
   decorators: [
-    ComponentDecorator,
+    (Story) => (
+      <div className="selectable selected" style={{ position: 'relative' }}>
+        <Story />
+      </div>
+    ),
     (Story) => (
       <ReactFlowProvider>
         <Story />
       </ReactFlowProvider>
     ),
-    (Story) => (
-      <div className="selectable selected">
-        <Story />
-      </div>
-    ),
+    ComponentDecorator,
   ],
 };

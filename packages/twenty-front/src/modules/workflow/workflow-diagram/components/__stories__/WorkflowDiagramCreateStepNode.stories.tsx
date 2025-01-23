@@ -21,12 +21,20 @@ const meta: Meta<typeof WorkflowDiagramCreateStepNode> = {
 export default meta;
 type Story = StoryObj<typeof WorkflowDiagramCreateStepNode>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ position: 'relative' }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
 
 export const Selected: Story = {
   decorators: [
     (Story) => (
-      <div className="selectable selected">
+      <div className="selectable selected" style={{ position: 'relative' }}>
         <Story />
       </div>
     ),
