@@ -90,28 +90,28 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           currentFieldValueOnSourceRecord,
         );
 
-      const targetRecordsToDetachFrom =
-        currentFieldValueOnSourceRecordIsARecordConnection
-          ? currentFieldValueOnSourceRecord.edges.map(
-              ({ node }) => node as RecordGqlNode,
-            )
-          : [currentFieldValueOnSourceRecord].filter(isDefined);
+      // const targetRecordsToDetachFrom =
+      //   currentFieldValueOnSourceRecordIsARecordConnection
+      //     ? currentFieldValueOnSourceRecord.edges.map(
+      //         ({ node }) => node as RecordGqlNode,
+      //       )
+      //     : [currentFieldValueOnSourceRecord].filter(isDefined);
 
-      const updatedFieldValueOnSourceRecordIsARecordConnection =
-        isObjectRecordConnection(
-          targetObjectMetadata.nameSingular,
-          updatedFieldValueOnSourceRecord,
-        );
+      // const updatedFieldValueOnSourceRecordIsARecordConnection =
+      //   isObjectRecordConnection(
+      //     targetObjectMetadata.nameSingular,
+      //     updatedFieldValueOnSourceRecord,
+      //   );
 
-      const targetRecordsToAttachTo =
-        updatedFieldValueOnSourceRecordIsARecordConnection
-          ? updatedFieldValueOnSourceRecord.edges.map(
-              ({ node }) => node as RecordGqlNode,
-            )
-          : [updatedFieldValueOnSourceRecord].filter(isDefined);
+      // const targetRecordsToAttachTo =
+      //   updatedFieldValueOnSourceRecordIsARecordConnection
+      //     ? updatedFieldValueOnSourceRecord.edges.map(
+      //         ({ node }) => node as RecordGqlNode,
+      //       )
+      //     : [updatedFieldValueOnSourceRecord].filter(isDefined);
 
-      const shouldDetachSourceFromAllTargets =
-        isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
+      // const shouldDetachSourceFromAllTargets =
+      //   isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
 
       if (shouldDetachSourceFromAllTargets) {
         // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
