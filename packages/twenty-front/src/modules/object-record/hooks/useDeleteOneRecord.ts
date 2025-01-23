@@ -49,7 +49,10 @@ export const useDeleteOneRecord = ({
     async (idToDelete: string) => {
       const currentTimestamp = new Date().toISOString();
 
-      const preDeletionCachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
+      const preDeletionCachedRecord = getRecordFromCache(
+        idToDelete,
+        apolloClient.cache,
+      );
 
       const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
         record: preDeletionCachedRecord,
@@ -64,16 +67,20 @@ export const useDeleteOneRecord = ({
         __typename: capitalize(objectMetadataItem.nameSingular),
       };
 
-      const postDeletionOptimisticRecordWithConnection = getRecordNodeFromRecord({
-        record: computedOptimisticRecord,
-        objectMetadataItem,
-        objectMetadataItems,
-        computeReferences: true,
-      });
+      const postDeletionOptimisticRecordWithConnection =
+        getRecordNodeFromRecord({
+          record: computedOptimisticRecord,
+          objectMetadataItem,
+          objectMetadataItems,
+          computeReferences: true,
+        });
 
       // I don't understand this condition
       // We should not delete the record if it has no relations ?
-      if (!postDeletionOptimisticRecordWithConnection || !cachedRecordWithConnection) {
+      if (
+        !postDeletionOptimisticRecordWithConnection ||
+        !cachedRecordWithConnection
+      ) {
         return null;
       }
 
@@ -82,8 +89,8 @@ export const useDeleteOneRecord = ({
           cache: apolloClient.cache,
           objectMetadataItem,
           objectMetadataItems,
-          recordToDestroy: preDeletionCachedRecord
-        })
+          recordToDestroy: preDeletionCachedRecord,
+        });
       }
 
       // I think this is used to only update relations to the current record ?
@@ -130,12 +137,13 @@ export const useDeleteOneRecord = ({
             record: preDeletionCachedRecord,
           });
 
-          const preDeletionOptimisticRecordWithConnection = getRecordNodeFromRecord({
-            record: preDeletionCachedRecord,
-            objectMetadataItem,
-            objectMetadataItems,
-            computeReferences: true,
-          });
+          const preDeletionOptimisticRecordWithConnection =
+            getRecordNodeFromRecord({
+              record: preDeletionCachedRecord,
+              objectMetadataItem,
+              objectMetadataItems,
+              computeReferences: true,
+            });
 
           if (isDefined(preDeletionOptimisticRecordWithConnection)) {
             triggerUpdateRecordOptimisticEffect({
@@ -145,8 +153,7 @@ export const useDeleteOneRecord = ({
               updatedRecord: cachedRecordWithConnection,
               objectMetadataItems,
             });
-          };
-    
+          }
 
           throw error;
         });
