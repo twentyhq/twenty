@@ -7,7 +7,6 @@ import { Position } from '@xyflow/react';
 import { IconButton, IconPlus } from 'twenty-ui';
 
 const StyledContainer = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(6)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   transform: translateX(-50%);
   position: relative;
