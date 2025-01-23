@@ -283,6 +283,11 @@ export const useCommandMenu = () => {
         }),
         null,
       );
+
+      set(commandMenuPageInfoState, {
+        title: undefined,
+        Icon: undefined,
+      });
     };
   }, []);
 

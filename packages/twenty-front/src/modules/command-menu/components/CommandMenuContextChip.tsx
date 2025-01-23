@@ -57,7 +57,7 @@ export const CommandMenuContextChip = ({
           </StyledIconWrapper>
         ))}
       </StyledIconsContainer>
-      {text}
+      <span>{text}</span>
     </StyledChip>
   );
 };

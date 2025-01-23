@@ -149,10 +149,7 @@ const createContextStoreWrapper = ({
           variables: {
             filter: {
               id: { in: companies.map((company) => company.id) },
-              or: [
-                { deletedAt: { is: 'NULL' } },
-                { deletedAt: { is: 'NOT_NULL' } },
-              ],
+              deletedAt: { is: 'NOT_NULL' },
             },
             orderBy: [{ position: 'AscNullsFirst' }],
             limit: 3,
