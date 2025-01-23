@@ -11,7 +11,7 @@ export type UsePrefetchRunQuery = {
   prefetchKey: PrefetchKey;
 };
 
-export const usePrefetchRunQuery = <T extends ObjectRecord>({
+export const useUpsertRecordsInCacheForPrefetchKey = <T extends ObjectRecord>({
   prefetchKey,
 }: UsePrefetchRunQuery) => {
   const setPrefetchDataIsLoaded = useSetRecoilState(
@@ -45,7 +45,6 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
 
   return {
     objectMetadataItem,
-    setPrefetchDataIsLoaded,
     upsertRecordsInCache,
   };
 };

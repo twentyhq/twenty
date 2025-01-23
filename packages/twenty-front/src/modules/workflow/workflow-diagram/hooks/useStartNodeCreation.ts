@@ -5,6 +5,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { IconSettingsAutomation } from 'twenty-ui';
 
 export const useStartNodeCreation = () => {
   const { openRightDrawer } = useRightDrawer();
@@ -22,7 +23,10 @@ export const useStartNodeCreation = () => {
       setWorkflowCreateStepFromParentStepId(parentNodeId);
 
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepSelectAction);
+      openRightDrawer(RightDrawerPages.WorkflowStepSelectAction, {
+        title: 'Select Action',
+        Icon: IconSettingsAutomation,
+      });
     },
     [openRightDrawer, setWorkflowCreateStepFromParentStepId, setHotkeyScope],
   );
