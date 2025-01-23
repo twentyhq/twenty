@@ -86,7 +86,10 @@ export const useRecordGroupActions = ({
           icon: IconEyeOff,
           position: 1,
           callback: () => {
-            handleRecordGroupVisibilityChange(recordGroupDefinition);
+            handleRecordGroupVisibilityChange({
+              ...recordGroupDefinition,
+              isVisible: false,
+            });
           },
         },
       ].filter(isDefined),
