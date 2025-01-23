@@ -39,8 +39,8 @@ export class DataloaderService {
   ) {}
 
   createLoaders(): IDataloaders {
-    const relationMetadataLoader = this._createRelationMetadataLoader();
-    const relationLoader = this._createRelationLoader();
+    const relationMetadataLoader = this.createRelationMetadataLoader();
+    const relationLoader = this.createRelationLoader();
 
     return {
       relationMetadataLoader,
@@ -48,7 +48,7 @@ export class DataloaderService {
     };
   }
 
-  private _createRelationMetadataLoader() {
+  private createRelationMetadataLoader() {
     return new DataLoader<
       RelationMetadataLoaderPayload,
       RelationMetadataEntity
@@ -68,7 +68,7 @@ export class DataloaderService {
     });
   }
 
-  private _createRelationLoader() {
+  private createRelationLoader() {
     return new DataLoader<
       RelationLoaderPayload,
       {
