@@ -6,7 +6,6 @@ import {
   IconEye,
   IconEyeOff,
 } from 'twenty-ui';
-import { StopPropagationContainer } from '@/object-record/record-board/utils/StopPropagationContainer';
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import styled from '@emotion/styled';
@@ -37,6 +36,7 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 
 const StyledTextInput = styled(TextInput)`
   border-radius: ${({ theme }) => theme.border.radius.sm};
