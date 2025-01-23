@@ -1,21 +1,16 @@
+import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
+import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
+import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
+import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
+import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
 import { capitalize } from 'twenty-shared';
-import { isDefined, OverflowingTextWithTooltip, THEME_COMMON } from 'twenty-ui';
+import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 
 type Variant = 'placeholder';
-
-const NODE_HANDLE_WIDTH_PX = 4;
-const NODE_HANDLE_HEIGHT_PX = NODE_HANDLE_WIDTH_PX;
-export const NODE_ICON_WIDTH = Number(
-  THEME_COMMON.spacing(6).replace('px', ''),
-);
-export const NODE_ICON_LEFT_MARGIN = Number(
-  THEME_COMMON.spacing(2).replace('px', ''),
-);
-export const NODE_BORDER_WIDTH = 1;
 
 const StyledStepNodeContainer = styled.div`
   display: flex;

@@ -1,9 +1,7 @@
-import {
-  NODE_BORDER_WIDTH,
-  NODE_ICON_LEFT_MARGIN,
-  NODE_ICON_WIDTH,
-  StyledHandle,
-} from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
+import { StyledHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
+import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
+import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
+import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
 import { IconButton, IconPlus } from 'twenty-ui';
