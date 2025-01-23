@@ -5,6 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -18,7 +19,9 @@ export class UpsertTimelineActivityFromInternalEvent {
 
   @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<
+      ObjectRecordNonDestructiveEvent<TimelineActivityWorkspaceEntity>
+    >,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {
       if (eventData.userId) {

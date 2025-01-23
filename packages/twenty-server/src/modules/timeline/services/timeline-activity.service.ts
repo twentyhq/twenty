@@ -7,7 +7,10 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
+type TimelineActivity = Omit<
+  ObjectRecordNonDestructiveEvent<TimelineActivityWorkspaceEntity>,
+  'properties'
+> & {
   name: string;
   objectName?: string;
   linkedRecordCachedName?: string;
@@ -34,7 +37,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     eventName: string;
     workspaceId: string;
   }) {
