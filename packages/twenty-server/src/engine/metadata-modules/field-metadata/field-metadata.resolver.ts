@@ -27,6 +27,10 @@ import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadat
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
@@ -146,18 +150,19 @@ export class FieldMetadataResolver {
       return null;
     }
 
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspace.id,
-    );
-
-    if (!isNewRelationEnabled) {
-      throw new BadRequestException(
-        'New relation feature is not enabled for this workspace',
-      );
-    }
-
     try {
+      const isNewRelationEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsNewRelationEnabled,
+          workspace.id,
+        );
+
+      if (!isNewRelationEnabled) {
+        throw new FieldMetadataException(
+          'New relation feature is not enabled for this workspace',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED,
+        );
+      }
       const {
         sourceObjectMetadata,
         targetObjectMetadata,
@@ -169,7 +174,10 @@ export class FieldMetadataResolver {
       });
 
       if (!fieldMetadata.settings) {
-        throw new BadRequestException('Relation settings are required');
+        throw new FieldMetadataException(
+          'Relation settings are required',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
       }
 
       return {
