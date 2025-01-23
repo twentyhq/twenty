@@ -9,11 +9,12 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconMail, IconPlus, isDefined } from 'twenty-ui';
+import { IconPlus, IconSend, isDefined } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -165,6 +166,9 @@ export const WorkflowEditActionFormSendEmail = ({
   });
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
+  const headerIcon = OTHER_ACTIONS.find(
+    (item) => item.type === action.type,
+  )?.icon ?? IconSend;
 
   return (
     !loading && (
@@ -180,7 +184,7 @@ export const WorkflowEditActionFormSendEmail = ({
               name: newName,
             });
           }}
-          Icon={IconMail}
+          Icon={headerIcon}
           iconColor={theme.color.blue}
           initialTitle={headerTitle}
           headerType="Email"

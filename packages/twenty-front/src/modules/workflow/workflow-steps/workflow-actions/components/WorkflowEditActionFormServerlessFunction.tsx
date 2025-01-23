@@ -22,6 +22,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
+import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -270,6 +271,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
     setFunctionInput(action.settings.input.serverlessFunctionInput);
   }, [action]);
 
+  const headerTitle = isDefined(action.name) ? action.name : 'Code - Serverless Function';
+  const headerIcon = OTHER_ACTIONS.find(
+    (item) => item.type === action.type,
+  )?.icon ?? IconCode;
+
   return (
     !loading && (
       <StyledContainer>
@@ -284,9 +290,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
           }}
-          Icon={IconCode}
+          Icon={headerIcon}
           iconColor={theme.color.orange}
-          initialTitle={action.name || 'Code - Serverless Function'}
+          initialTitle={headerTitle}
           headerType="Code"
         />
         <WorkflowStepBody>

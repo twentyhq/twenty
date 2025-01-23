@@ -1,52 +1,29 @@
-import {
-  WorkflowActionType,
-  WorkflowTriggerType,
-} from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import {
-  IconAddressBook,
-  IconCode,
-  IconHandMove,
-  IconMail,
-  IconPlaylistAdd,
-} from 'twenty-ui';
+import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 
 export const getWorkflowNodeIcon = (
-  data:
-    | {
-        nodeType: 'trigger';
-        triggerType: WorkflowTriggerType;
-      }
-    | {
-        nodeType: 'action';
-        actionType: WorkflowActionType;
-      },
+  data: WorkflowDiagramStepNodeData,
 ) => {
   switch (data.nodeType) {
     case 'trigger': {
-      switch (data.triggerType) {
-        case 'DATABASE_EVENT': {
-          return IconPlaylistAdd;
-        }
-        case 'MANUAL': {
-          return IconHandMove;
-        }
-      }
-
-      return assertUnreachable(data.triggerType);
+      return data.icon;
     }
     case 'action': {
       switch (data.actionType) {
-        case 'CODE': {
-          return IconCode;
-        }
+        case 'CODE':
         case 'SEND_EMAIL': {
-          return IconMail;
+          return OTHER_ACTIONS.find(
+            (action) => action.type === data.actionType,
+          )?.icon;
         }
         case 'CREATE_RECORD':
         case 'UPDATE_RECORD':
         case 'DELETE_RECORD': {
-          return IconAddressBook;
+          return RECORD_ACTIONS.find(
+            (action) => action.type === data.actionType,
+          )?.icon;
         }
       }
 

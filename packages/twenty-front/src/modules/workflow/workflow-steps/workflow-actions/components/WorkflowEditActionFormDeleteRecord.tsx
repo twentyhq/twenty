@@ -7,12 +7,13 @@ import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
   HorizontalSeparator,
-  IconAddressBook,
+  IconTrash,
   isDefined,
-  useIcons,
+  useIcons
 } from 'twenty-ui';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -110,6 +111,9 @@ export const WorkflowEditActionFormDeleteRecord = ({
   }, [saveAction]);
 
   const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
+  const headerIcon = RECORD_ACTIONS.find(
+    (item) => item.type === action.type,
+  )?.icon ?? IconTrash;
 
   return (
     <>
@@ -124,7 +128,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
             name: newName,
           });
         }}
-        Icon={IconAddressBook}
+        Icon={headerIcon}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"

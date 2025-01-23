@@ -4,6 +4,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/W
 import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconPlaylistAdd } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -23,7 +24,7 @@ export const WorkflowDiagramStepNodeBase = ({
 }) => {
   const theme = useTheme();
 
-  const Icon = getWorkflowNodeIcon(data);
+  const Icon = getWorkflowNodeIcon(data) ?? IconPlaylistAdd;
 
   const renderStepIcon = () => {
     switch (data.nodeType) {
@@ -73,9 +74,7 @@ export const WorkflowDiagramStepNodeBase = ({
               </StyledStepNodeLabelIconContainer>
             );
           }
-          case 'CREATE_RECORD':
-          case 'UPDATE_RECORD':
-          case 'DELETE_RECORD': {
+          default: {
             return (
               <StyledStepNodeLabelIconContainer>
                 <Icon
@@ -89,8 +88,6 @@ export const WorkflowDiagramStepNodeBase = ({
         }
       }
     }
-
-    return assertUnreachable(data);
   };
 
   return (

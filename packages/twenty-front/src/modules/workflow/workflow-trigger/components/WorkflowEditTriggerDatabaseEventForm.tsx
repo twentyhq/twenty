@@ -5,6 +5,7 @@ import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTri
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
+import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { useTheme } from '@emotion/react';
 import { IconPlaylistAdd, isDefined, useIcons } from 'twenty-ui';
 
@@ -57,6 +58,10 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     ? `Trigger · ${selectedEvent.label}`
     : '-';
 
+  const headerIcon = DATABASE_TRIGGER_TYPES.find(
+    (event) => event.name === selectedEvent?.label,
+  )?.icon ?? IconPlaylistAdd;
+
   return (
     <>
       <WorkflowStepHeader
@@ -70,7 +75,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             name: newName,
           });
         }}
-        Icon={IconPlaylistAdd}
+        Icon={headerIcon}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType={headerType}

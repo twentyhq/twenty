@@ -5,9 +5,9 @@ import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
   HorizontalSeparator,
-  IconAddressBook,
+  IconRefreshDot,
   isDefined,
-  useIcons,
+  useIcons
 } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -16,6 +16,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -157,6 +158,9 @@ export const WorkflowEditActionFormUpdateRecord = ({
   }, [saveAction]);
 
   const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
+  const headerIcon = RECORD_ACTIONS.find(
+    (item) => item.type === action.type,
+  )?.icon ?? IconRefreshDot;
 
   return (
     <>
@@ -171,7 +175,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
             name: newName,
           });
         }}
-        Icon={IconAddressBook}
+        Icon={headerIcon}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
