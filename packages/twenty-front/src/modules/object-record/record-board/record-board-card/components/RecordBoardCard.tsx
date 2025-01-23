@@ -171,6 +171,8 @@ export const RecordBoardCard = ({
               isCreating={isCreating}
               onCreateSuccess={onCreateSuccess}
               position={position}
+              isCardExpanded={isCardExpanded}
+              setIsCardExpanded={setIsCardExpanded}
             />
           )}
           <AnimatedEaseInOut

@@ -11,7 +11,7 @@ import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/rec
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import styled from '@emotion/styled';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -59,6 +59,8 @@ type RecordBoardCardHeaderProps = {
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
   identifierFieldDefinition: RecordBoardFieldDefinition<FieldMetadata>;
+  isCardExpanded?: boolean;
+  setIsCardExpanded?: Dispatch<SetStateAction<boolean>>;
 };
 
 export const RecordBoardCardHeader = ({
@@ -66,10 +68,10 @@ export const RecordBoardCardHeader = ({
   onCreateSuccess,
   position,
   identifierFieldDefinition,
+  isCardExpanded,
+  setIsCardExpanded,
 }: RecordBoardCardHeaderProps) => {
   const [newLabelValue, setNewLabelValue] = useState('');
-
-  const [isCardExpanded, setIsCardExpanded] = useState(false);
 
   const { handleBlur, handleInputEnter } = useAddNewCard();
 
@@ -190,7 +192,7 @@ export const RecordBoardCardHeader = ({
                   Icon={isCardExpanded ? IconEyeOff : IconEye}
                   accent="tertiary"
                   onClick={() => {
-                    setIsCardExpanded((prev) => !prev);
+                    setIsCardExpanded?.((prev) => !prev);
                   }}
                 />
               </StopPropagationContainer>
