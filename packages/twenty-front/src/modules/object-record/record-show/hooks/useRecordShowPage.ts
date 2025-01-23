@@ -81,7 +81,7 @@ export const useRecordShowPage = (
   const labelIdentifierFieldValue =
     record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
   const pageName =
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,

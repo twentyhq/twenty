@@ -112,6 +112,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   )
   toRelations: Relation<RelationMetadataEntity[]>;
 
+  @OneToMany(
+    () => FieldMetadataEntity,
+    (field) => field.relationTargetObjectMetadataId,
+  )
+  targetRelationFields: Relation<FieldMetadataEntity[]>;
+
   @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
     onDelete: 'CASCADE',
   })

@@ -37,6 +37,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   );
 
   const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
+    fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEntrepriseKey === false,
     onCompleted: (data) => {
       setSSOIdentitiesProviders(

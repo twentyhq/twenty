@@ -5,6 +5,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -48,7 +49,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           isVisible: true,
           metadata: {
             fieldName: 'text',
@@ -58,7 +59,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           isVisible: true,
           metadata: {
             fieldName: 'number',
@@ -68,7 +69,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '4',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
           isVisible: true,
           metadata: {
             fieldName: 'date',
@@ -81,19 +82,19 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           fieldMetadataId: '1',
           iconName: 'IconUser',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconNumber',
           label: 'Number',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
         },
         {
           fieldMetadataId: '3',
           iconName: 'IconCalendar',
           label: 'Date',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         },
       ]);
       return (
@@ -107,17 +108,21 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
             recordIndexId: instanceId,
           }}
         >
-          <ObjectFilterDropdownComponentInstanceContext.Provider
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <RecordTableComponentInstanceContext.Provider
-              value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId }}
             >
-              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <Story />
-              </ViewComponentInstanceContext.Provider>
-            </RecordTableComponentInstanceContext.Provider>
-          </ObjectFilterDropdownComponentInstanceContext.Provider>
+              <RecordTableComponentInstanceContext.Provider
+                value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+              >
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <Story />
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
         </RecordIndexContextProvider>
       );
     },

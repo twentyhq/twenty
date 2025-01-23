@@ -4,13 +4,15 @@ import {
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { OBJECT_EVENT_TRIGGERS } from '@/workflow/workflow-trigger/constants/ObjectEventTriggers';
+import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 
 export const getTriggerDefaultDefinition = ({
+  name,
   type,
   activeObjectMetadataItems,
 }: {
+  name: string;
   type: WorkflowTriggerType;
   activeObjectMetadataItems: ObjectMetadataItem[];
 }): WorkflowTrigger => {
@@ -25,7 +27,11 @@ export const getTriggerDefaultDefinition = ({
       return {
         type,
         settings: {
-          eventName: `${activeObjectMetadataItems[0].nameSingular}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+          eventName: `${activeObjectMetadataItems[0].nameSingular}.${
+            DATABASE_TRIGGER_EVENTS.find(
+              (availableEvent) => availableEvent.label === name,
+            )?.value
+          }`,
           outputSchema: {},
         },
       };

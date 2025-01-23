@@ -30,7 +30,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
-        fieldMetadataItemOnSourceRecord.type !== FieldMetadataType.Relation;
+        fieldMetadataItemOnSourceRecord.type !== FieldMetadataType.RELATION;
 
       if (notARelationField) {
         return;
