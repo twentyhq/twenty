@@ -1,8 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
-import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
-import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -23,7 +20,7 @@ import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.secondary};
@@ -48,6 +45,9 @@ export const CommandMenuContainer = ({
 }) => {
   const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
 
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
@@ -74,10 +74,6 @@ export const CommandMenuContainer = ({
 
   const theme = useTheme();
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   return (
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
@@ -91,21 +87,11 @@ export const CommandMenuContainer = ({
           <ActionMenuContext.Provider
             value={{
               isInRightDrawer: false,
-              onActionExecutedCallback: ({ key }) => {
-                if (
-                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
-                  key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                ) {
-                  toggleCommandMenu();
-                }
-              },
+              onActionExecutedCallback: toggleCommandMenu,
             }}
           >
             <RecordActionMenuEntriesSetter />
-            <RecordAgnosticActionMenuEntriesSetter />
-            {isWorkflowEnabled && (
-              <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-            )}
+            {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
             <ActionMenuConfirmationModals />
             {isCommandMenuOpened && (
               <StyledCommandMenu

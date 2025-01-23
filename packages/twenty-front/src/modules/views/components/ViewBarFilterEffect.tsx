@@ -4,13 +4,14 @@ import { useEffect } from 'react';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
   filterDropdownId: string;
@@ -21,8 +22,12 @@ export const ViewBarFilterEffect = ({
 }: ViewBarFilterEffectProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
+  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
+    filterDefinitionUsedInDropdownComponentState,
     filterDropdownId,
   );
 
@@ -37,12 +42,25 @@ export const ViewBarFilterEffect = ({
       filterDropdownId,
     );
 
+  // TODO: verify this instance id works
+  const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
+    availableFilterDefinitionsComponentState,
+    filterDropdownId,
+  );
+
   useEffect(() => {
-    if (fieldMetadataItemUsedInDropdown?.type === 'RELATION') {
+    if (isDefined(availableFilterDefinitions)) {
+      setAvailableFilterDefinitions(availableFilterDefinitions);
+    }
+  }, [availableFilterDefinitions, setAvailableFilterDefinitions]);
+
+  useEffect(() => {
+    if (filterDefinitionUsedInDropdown?.type === 'RELATION') {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>
-            filter.fieldMetadataId === fieldMetadataItemUsedInDropdown?.id,
+            filter.fieldMetadataId ===
+            filterDefinitionUsedInDropdown?.fieldMetadataId,
         );
 
       const { selectedRecordIds } = jsonRelationFilterValueSchema
@@ -56,13 +74,14 @@ export const ViewBarFilterEffect = ({
 
       setObjectFilterDropdownSelectedRecordIds(selectedRecordIds);
     } else if (
-      isDefined(fieldMetadataItemUsedInDropdown) &&
-      ['SELECT', 'MULTI_SELECT'].includes(fieldMetadataItemUsedInDropdown.type)
+      isDefined(filterDefinitionUsedInDropdown) &&
+      ['SELECT', 'MULTI_SELECT'].includes(filterDefinitionUsedInDropdown.type)
     ) {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>
-            filter.fieldMetadataId === fieldMetadataItemUsedInDropdown?.id,
+            filter.fieldMetadataId ===
+            filterDefinitionUsedInDropdown?.fieldMetadataId,
         );
 
       const viewFilterSelectedRecords = isNonEmptyString(
@@ -73,7 +92,7 @@ export const ViewBarFilterEffect = ({
       setObjectFilterDropdownSelectedOptionValues(viewFilterSelectedRecords);
     }
   }, [
-    fieldMetadataItemUsedInDropdown,
+    filterDefinitionUsedInDropdown,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
     currentViewWithCombinedFiltersAndSorts,
