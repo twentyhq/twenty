@@ -135,6 +135,6 @@ export class Workspace {
   isPasswordAuthEnabled: boolean;
 
   @Field()
-  @Column({ default: true })
+  @Column({ default: false })
   isMicrosoftAuthEnabled: boolean;
 }
