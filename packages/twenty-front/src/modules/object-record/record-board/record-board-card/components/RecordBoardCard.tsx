@@ -30,7 +30,7 @@ import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
-import { ReactNode, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -45,6 +45,8 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 import { useNavigate } from 'react-router-dom';
+import { StopPropagationContainer } from '@/object-record/record-board/utils/StopPropagationContainer';
+import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -115,33 +117,8 @@ export const StyledBoardCardHeader = styled.div<{
   }
 `;
 
-export const StyledBoardCardBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2.5)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  span {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    svg {
-      color: ${({ theme }) => theme.font.color.tertiary};
-      margin-right: ${({ theme }) => theme.spacing(2)};
-    }
-  }
-`;
-
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
-`;
-
-const StyledFieldContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: fit-content;
-  max-width: 100%;
 `;
 
 const StyledCompactIconContainer = styled.div`
@@ -227,20 +204,6 @@ export const RecordBoardCard = ({
     }
   };
 
-  const PreventSelectOnClickContainer = ({
-    children,
-  }: {
-    children: ReactNode;
-  }) => (
-    <StyledFieldContainer
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-    >
-      {children}
-    </StyledFieldContainer>
-  );
-
   const onMouseLeaveBoard = useDebouncedCallback(() => {
     if (isCompactModeActive && isCardExpanded) {
       setIsCardExpanded(false);
@@ -286,104 +249,56 @@ export const RecordBoardCard = ({
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
-          <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-            {isCreating && position !== undefined ? (
-              <RecordInlineCellEditMode>
-                <StyledTextInput
-                  autoFocus
-                  value={newLabelValue}
-                  onInputEnter={() =>
-                    handleInputEnter(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onBlur={() =>
-                    handleBlur(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onChange={(text: string) => setNewLabelValue(text)}
-                  placeholder={labelIdentifierField?.label}
-                />
-              </RecordInlineCellEditMode>
-            ) : (
-              <RecordIdentifierChip
-                objectNameSingular={objectMetadataItem.nameSingular}
-                record={record as ObjectRecord}
-                variant={AvatarChipVariant.Transparent}
-                maxWidth={150}
-                to={indexIdentifierUrl(recordId)}
-              />
-            )}
-
-            {!isCreating && (
-              <>
-                {isCompactModeActive && (
-                  <StyledCompactIconContainer className="compact-icon-container">
-                    <PreventSelectOnClickContainer>
-                      <LightIconButton
-                        Icon={isCardExpanded ? IconEyeOff : IconEye}
-                        accent="tertiary"
-                        onClick={() => {
-                          setIsCardExpanded((prev) => !prev);
-                        }}
-                      />
-                    </PreventSelectOnClickContainer>
-                  </StyledCompactIconContainer>
-                )}
-
-                <StyledCheckboxContainer className="checkbox-container">
-                  {' '}
-                  <PreventSelectOnClickContainer>
-                    <Checkbox
-                      hoverable
-                      checked={isCurrentCardSelected}
-                      onChange={() => {
-                        setIsCurrentCardSelected(!isCurrentCardSelected);
-                        checkIfLastUnselectAndCloseDropdown();
-                      }}
-                      variant={CheckboxVariant.Secondary}
+          {labelIdentifierField && (
+            <StyledBoardCardHeader showCompactView={isCompactModeActive}>
+              <StopPropagationContainer>
+                {isCreating && position !== undefined ? (
+                  <RecordInlineCellEditMode>
+                    <StyledTextInput
+                      autoFocus
+                      value={newLabelValue}
+                      onInputEnter={() =>
+                        handleInputEnter(
+                          labelIdentifierField.label ?? '',
+                          newLabelValue,
+                          position,
+                          onCreateSuccess,
+                        )
+                      }
+                      onBlur={() =>
+                        handleBlur(
+                          labelIdentifierField.label ?? '',
+                          newLabelValue,
+                          position,
+                          onCreateSuccess,
+                        )
+                      }
+                      onChange={(text: string) => setNewLabelValue(text)}
+                      placeholder={labelIdentifierField.label}
                     />
-                  </PreventSelectOnClickContainer>
-                </StyledCheckboxContainer>
-              </>
-            )}
-          </StyledBoardCardHeader>
-
-          <AnimatedEaseInOut
-            isOpen={isCardExpanded || !isCompactModeActive}
-            initial={false}
-          >
-            <StyledBoardCardBody>
-              {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
-                <PreventSelectOnClickContainer
-                  key={fieldDefinition.fieldMetadataId}
-                >
+                  </RecordInlineCellEditMode>
+                ) : (
+                    record?.[labelIdentifierField.metadata.fieldName] || ''
+                  ).trim() === '' ? (
                   <FieldContext.Provider
                     value={{
-                      recordId: isCreating ? '' : recordId,
+                      recordId: (record as ObjectRecord).id,
                       maxWidth: 156,
                       recoilScopeId:
                         (isCreating ? 'new' : recordId) +
-                        fieldDefinition.fieldMetadataId,
-                      isLabelIdentifier: false,
+                        labelIdentifierField.fieldMetadataId,
+                      isLabelIdentifier: true,
                       fieldDefinition: {
                         disableTooltip: false,
-                        fieldMetadataId: fieldDefinition.fieldMetadataId,
-                        label: fieldDefinition.label,
-                        iconName: fieldDefinition.iconName,
-                        type: fieldDefinition.type,
-                        metadata: fieldDefinition.metadata,
-                        defaultValue: fieldDefinition.defaultValue,
+                        fieldMetadataId: labelIdentifierField.fieldMetadataId,
+                        label: `Set ${labelIdentifierField.label}`,
+                        iconName: labelIdentifierField.iconName,
+                        type: labelIdentifierField.type,
+                        metadata: labelIdentifierField.metadata,
+                        defaultValue: labelIdentifierField.defaultValue,
                         editButtonIcon: getFieldButtonIcon({
-                          metadata: fieldDefinition.metadata,
-                          type: fieldDefinition.type,
+                          metadata: labelIdentifierField.metadata,
+                          type: labelIdentifierField.type,
                         }),
                       },
                       useUpdateRecord: useUpdateOneRecordHook,
@@ -392,9 +307,60 @@ export const RecordBoardCard = ({
                   >
                     <RecordInlineCell />
                   </FieldContext.Provider>
-                </PreventSelectOnClickContainer>
-              ))}
-            </StyledBoardCardBody>
+                ) : (
+                  <RecordIdentifierChip
+                    objectNameSingular={objectMetadataItem.nameSingular}
+                    record={record as ObjectRecord}
+                    variant={AvatarChipVariant.Transparent}
+                    maxWidth={150}
+                    to={indexIdentifierUrl(recordId)}
+                  />
+                )}
+              </StopPropagationContainer>
+
+              {!isCreating && (
+                <>
+                  {isCompactModeActive && (
+                    <StyledCompactIconContainer className="compact-icon-container">
+                      <StopPropagationContainer>
+                        <LightIconButton
+                          Icon={isCardExpanded ? IconEyeOff : IconEye}
+                          accent="tertiary"
+                          onClick={() => {
+                            setIsCardExpanded((prev) => !prev);
+                          }}
+                        />
+                      </StopPropagationContainer>
+                    </StyledCompactIconContainer>
+                  )}
+
+                  <StyledCheckboxContainer className="checkbox-container">
+                    {' '}
+                    <StopPropagationContainer>
+                      <Checkbox
+                        hoverable
+                        checked={isCurrentCardSelected}
+                        onChange={() => {
+                          setIsCurrentCardSelected(!isCurrentCardSelected);
+                          checkIfLastUnselectAndCloseDropdown();
+                        }}
+                        variant={CheckboxVariant.Secondary}
+                      />
+                    </StopPropagationContainer>
+                  </StyledCheckboxContainer>
+                </>
+              )}
+            </StyledBoardCardHeader>
+          )}
+
+          <AnimatedEaseInOut
+            isOpen={isCardExpanded || !isCompactModeActive}
+            initial={false}
+          >
+            <RecordBoardCardBody
+              fieldDefinitions={visibleFieldDefinitionsFiltered}
+              recordId={recordId}
+            />
           </AnimatedEaseInOut>
         </StyledBoardCard>
       </InView>
