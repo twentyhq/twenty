@@ -2,6 +2,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isPersonalDomain } from 'src/utils/is-work-email';
 
 export function filterOutSelfAndContactsFromCompanyOrWorkspace(
   contacts: Contact[],
@@ -21,14 +22,13 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
     new Map<string, boolean>(),
   );
 
-  // TODO : find a better way to enable organization1.onmicrosoft.com to add user from organization2.onmicrosoft.com
   const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
-    getDomainNameFromHandle(contact.handle) !== selfDomainName ||
-    selfDomainName === 'onmicrosoft.com';
+    getDomainNameFromHandle(contact.handle) !== selfDomainName;
 
   return contacts.filter(
     (contact) =>
-      isDifferentDomain(contact, selfDomainName) &&
+      (isDifferentDomain(contact, selfDomainName) ||
+        isPersonalDomain(selfDomainName)) &&
       !workspaceMembersMap[contact.handle] &&
       !handleAliases.includes(contact.handle),
   );
