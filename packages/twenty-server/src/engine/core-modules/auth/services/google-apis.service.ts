@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   CalendarEventListFetchJob,
   CalendarEventListFetchJobData,
@@ -45,6 +49,9 @@ export class GoogleAPIsService {
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -100,7 +107,7 @@ export class GoogleAPIsService {
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
-        await connectedAccountRepository.save(
+        const newConnectedAccount = await connectedAccountRepository.save(
           {
             id: newOrExistingConnectedAccountId,
             handle,
@@ -114,7 +121,27 @@ export class GoogleAPIsService {
           manager,
         );
 
-        await messageChannelRepository.save(
+        const connectedAccountMetadata =
+          await this.objectMetadataRepository.findOneOrFail({
+            where: { nameSingular: 'connectedAccount' },
+          });
+
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'connectedAccount',
+          action: DatabaseEventAction.CREATED,
+          events: [
+            {
+              recordId: newConnectedAccount.id,
+              objectMetadata: connectedAccountMetadata,
+              properties: {
+                after: newConnectedAccount,
+              },
+            },
+          ],
+          workspaceId,
+        });
+
+        const newMessageChannel = await messageChannelRepository.save(
           {
             id: v4(),
             connectedAccountId: newOrExistingConnectedAccountId,
@@ -128,8 +155,28 @@ export class GoogleAPIsService {
           manager,
         );
 
+        const messageChannelMetadata =
+          await this.objectMetadataRepository.findOneOrFail({
+            where: { nameSingular: 'messageChannel' },
+          });
+
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'messageChannel',
+          action: DatabaseEventAction.CREATED,
+          events: [
+            {
+              recordId: newMessageChannel.id,
+              objectMetadata: messageChannelMetadata,
+              properties: {
+                after: newMessageChannel,
+              },
+            },
+          ],
+          workspaceId,
+        });
+
         if (isCalendarEnabled) {
-          await calendarChannelRepository.save(
+          const newCalendarChannel = await calendarChannelRepository.save(
             {
               id: v4(),
               connectedAccountId: newOrExistingConnectedAccountId,
@@ -141,9 +188,29 @@ export class GoogleAPIsService {
             {},
             manager,
           );
+
+          const calendarChannelMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: { nameSingular: 'calendarChannel' },
+            });
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'calendarChannel',
+            action: DatabaseEventAction.CREATED,
+            events: [
+              {
+                recordId: newCalendarChannel.id,
+                objectMetadata: calendarChannelMetadata,
+                properties: {
+                  after: newCalendarChannel,
+                },
+              },
+            ],
+            workspaceId,
+          });
         }
       } else {
-        await connectedAccountRepository.update(
+        const updatedConnectedAccount = await connectedAccountRepository.update(
           {
             id: newOrExistingConnectedAccountId,
           },
@@ -154,6 +221,30 @@ export class GoogleAPIsService {
           },
           manager,
         );
+
+        const connectedAccountMetadata =
+          await this.objectMetadataRepository.findOneOrFail({
+            where: { nameSingular: 'connectedAccount' },
+          });
+
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'connectedAccount',
+          action: DatabaseEventAction.UPDATED,
+          events: [
+            {
+              recordId: newOrExistingConnectedAccountId,
+              objectMetadata: connectedAccountMetadata,
+              properties: {
+                before: connectedAccount,
+                after: {
+                  ...connectedAccount,
+                  ...updatedConnectedAccount.raw[0],
+                },
+              },
+            },
+          ],
+          workspaceId,
+        });
 
         const workspaceMemberRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
@@ -173,7 +264,11 @@ export class GoogleAPIsService {
           newOrExistingConnectedAccountId,
         );
 
-        await messageChannelRepository.update(
+        const messageChannels = await messageChannelRepository.find({
+          where: { connectedAccountId: newOrExistingConnectedAccountId },
+        });
+
+        const messageChannelUpdates = await messageChannelRepository.update(
           {
             connectedAccountId: newOrExistingConnectedAccountId,
           },
@@ -185,6 +280,25 @@ export class GoogleAPIsService {
           },
           manager,
         );
+
+        const messageChannelMetadata =
+          await this.objectMetadataRepository.findOneOrFail({
+            where: { nameSingular: 'messageChannel' },
+          });
+
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'messageChannel',
+          action: DatabaseEventAction.UPDATED,
+          events: messageChannels.map((messageChannel) => ({
+            recordId: messageChannel.id,
+            objectMetadata: messageChannelMetadata,
+            properties: {
+              before: messageChannel,
+              after: { ...messageChannel, ...messageChannelUpdates.raw[0] },
+            },
+          })),
+          workspaceId,
+        });
       }
     });
 
