@@ -115,7 +115,6 @@ export class BillingPlanService {
     interval: SubscriptionInterval;
   }): Promise<BillingGetPricesPerPlanResult> {
     const plans = await this.getPlans();
-    //I used this approach to avoid using the repository to get the plan and reuse the existing code
     const plan = plans.find((plan) => plan.planKey === planKey);
 
     if (!plan) {
@@ -135,17 +134,20 @@ export class BillingPlanService {
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }
+    const filterPricesByInterval = (product: BillingProduct) =>
+      product.billingPrices.filter((price) => price.interval === interval);
 
-    const pricesPerPlan = {
+    const meteredProductsPrices = meteredProducts.flatMap(
+      filterPricesByInterval,
+    );
+    const otherLicensedProductsPrices = otherLicensedProducts.flatMap(
+      filterPricesByInterval,
+    );
+
+    return {
       baseProductPrice,
-      meteredProductsPrices: meteredProducts.flatMap((product) =>
-        product.billingPrices.filter((price) => price.interval === interval),
-      ),
-      otherLicensedProductsPrices: otherLicensedProducts.flatMap((product) =>
-        product.billingPrices.filter((price) => price.interval === interval),
-      ),
+      meteredProductsPrices,
+      otherLicensedProductsPrices,
     };
-
-    return pricesPerPlan;
   }
 }

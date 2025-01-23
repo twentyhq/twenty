@@ -34,7 +34,7 @@ export class StripeCheckoutService {
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = true,
     withTrialPeriod,
-    isFeatureFlagEnabled = false,
+    isBillingPlansEnabled = false,
   }: {
     user: User;
     workspaceId: string;
@@ -45,7 +45,7 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
-    isFeatureFlagEnabled: boolean;
+    isBillingPlansEnabled: boolean;
   }): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
       line_items: stripeSubscriptionLineItems,
@@ -64,7 +64,7 @@ export class StripeCheckoutService {
               ),
               trial_settings: {
                 end_behavior: {
-                  missing_payment_method: isFeatureFlagEnabled
+                  missing_payment_method: isBillingPlansEnabled
                     ? 'create_invoice'
                     : 'pause',
                 },

@@ -12,6 +12,7 @@ import {
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
+import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -62,56 +63,37 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeCustomerId = subscription?.stripeCustomerId;
-    const isFeatureFlagEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsBillingPlansEnabled,
-      workspace.id,
-    );
-    let stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
-      [];
-
-    if (isFeatureFlagEnabled && billingPricesPerPlan) {
-      stripeSubscriptionLineItems = [
-        {
-          price: billingPricesPerPlan.baseProductPrice.stripePriceId,
-          quantity,
-        },
-        ...billingPricesPerPlan.meteredProductsPrices.map((price) => ({
-          price: price.stripePriceId,
-        })),
-      ];
-    } else if (priceId && !isFeatureFlagEnabled) {
-      stripeSubscriptionLineItems = [
-        {
-          price: priceId,
-          quantity,
-        },
-      ];
-    }
-    if (!stripeSubscriptionLineItems.length) {
-      throw new BillingException(
-        isFeatureFlagEnabled
-          ? 'Missing Billing prices per plan'
-          : 'Missing price id',
-        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+    const isBillingPlansEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsBillingPlansEnabled,
+        workspace.id,
       );
-    }
 
-    const session = await this.stripeCheckoutService.createCheckoutSession({
-      user,
-      workspaceId: workspace.id,
-      stripeSubscriptionLineItems,
-      successUrl,
-      cancelUrl,
-      stripeCustomerId,
-      plan,
-      requirePaymentMethod,
-      withTrialPeriod: !isDefined(subscription),
-      isFeatureFlagEnabled,
-    });
+    const stripeSubscriptionLineItems =
+      await this.getStripeSubscriptionLineItems({
+        quantity,
+        isBillingPlansEnabled,
+        billingPricesPerPlan,
+        priceId,
+      });
 
-    assert(session.url, 'Error: missing checkout.session.url');
+    const checkoutSession =
+      await this.stripeCheckoutService.createCheckoutSession({
+        user,
+        workspaceId: workspace.id,
+        stripeSubscriptionLineItems,
+        successUrl,
+        cancelUrl,
+        stripeCustomerId,
+        plan,
+        requirePaymentMethod,
+        withTrialPeriod: !isDefined(subscription),
+        isBillingPlansEnabled,
+      });
 
-    return session.url;
+    assert(checkoutSession.url, 'Error: missing checkout.session.url');
+
+    return checkoutSession.url;
   }
 
   async computeBillingPortalSessionURLOrThrow(
@@ -151,5 +133,40 @@ export class BillingPortalWorkspaceService {
     assert(session.url, 'Error: missing billingPortal.session.url');
 
     return session.url;
+  }
+
+  private getStripeSubscriptionLineItems({
+    quantity,
+    isBillingPlansEnabled,
+    billingPricesPerPlan,
+    priceId,
+  }: {
+    quantity: number;
+    isBillingPlansEnabled: boolean;
+    billingPricesPerPlan?: BillingGetPricesPerPlanResult;
+    priceId?: string;
+  }): Stripe.Checkout.SessionCreateParams.LineItem[] {
+    if (isBillingPlansEnabled && billingPricesPerPlan) {
+      return [
+        {
+          price: billingPricesPerPlan.baseProductPrice.stripePriceId,
+          quantity,
+        },
+        ...billingPricesPerPlan.meteredProductsPrices.map((price) => ({
+          price: price.stripePriceId,
+        })),
+      ];
+    }
+
+    if (priceId && !isBillingPlansEnabled) {
+      return [{ price: priceId, quantity }];
+    }
+
+    throw new BillingException(
+      isBillingPlansEnabled
+        ? 'Missing Billing prices per plan'
+        : 'Missing price id',
+      BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+    );
   }
 }
