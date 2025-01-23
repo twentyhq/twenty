@@ -43,7 +43,6 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  console.log('CommandMenuContainer');
   const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
 
   const isWorkflowEnabled = useIsFeatureEnabled(
