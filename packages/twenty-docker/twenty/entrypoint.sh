@@ -2,7 +2,7 @@
 set -e
 
 # Check if the initialization has already been done and that we enabled automatic migration
-if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ]; then
+if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ] && [ "$@" == "node dist/src/main" ]; then
     echo "Running database setup and migrations..."
 
     # Creating the database if it doesn't exist
@@ -19,6 +19,7 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
 
     # Mark initialization as done
     echo "Successfuly migrated DB!"
+    mkdir -p /app/docker-data
     touch /app/docker-data/db_status
 fi
 
