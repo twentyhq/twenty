@@ -17,10 +17,6 @@ export class MicrosoftOAuth2ClientManagerService {
       callback: AuthProviderCallback,
     ) => {
       try {
-        const tenantId = this.environmentService.get(
-          'AUTH_MICROSOFT_TENANT_ID',
-        );
-
         const urlData = new URLSearchParams();
 
         urlData.append(
@@ -36,7 +32,7 @@ export class MicrosoftOAuth2ClientManagerService {
         urlData.append('grant_type', 'refresh_token');
 
         const res = await fetch(
-          `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+          `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
           {
             method: 'POST',
             body: urlData,
