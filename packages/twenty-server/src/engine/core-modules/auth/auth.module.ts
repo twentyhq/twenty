@@ -44,7 +44,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
-import { GuardManagerModule } from 'src/engine/core-modules/guard-manager/guard-manager.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -82,7 +82,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     FeatureFlagModule,
     WorkspaceInvitationModule,
     EmailVerificationModule,
-    GuardManagerModule,
+    GuardRedirectModule,
   ],
   controllers: [
     GoogleAuthController,

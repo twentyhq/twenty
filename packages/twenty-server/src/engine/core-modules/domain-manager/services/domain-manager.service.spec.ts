@@ -125,6 +125,7 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
+        subdomain: 'subdomain',
         pathname: '/path/to/resource',
       });
 
@@ -144,6 +145,8 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
+        subdomain: 'subdomain',
+
         searchParams: {
           foo: 'bar',
           baz: 123,

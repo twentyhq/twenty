@@ -460,7 +460,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain?: string;
+    subdomain: string;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

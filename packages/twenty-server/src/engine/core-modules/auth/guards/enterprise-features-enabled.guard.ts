@@ -6,19 +6,17 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 export class EnterpriseFeaturesEnabledGuard implements CanActivate {
   constructor(
-    private readonly guardErrorManagerService: GuardErrorManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const response = context.switchToHttp().getResponse();
-
     try {
       if (!this.environmentService.get('ENTERPRISE_KEY')) {
         throw new AuthException(
@@ -29,7 +27,11 @@ export class EnterpriseFeaturesEnabledGuard implements CanActivate {
 
       return true;
     } catch (err) {
-      this.guardErrorManagerService.dispatchErrorFromGuard(context, err);
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        this.guardRedirectService.getSubdomainFromContext(context),
+      );
 
       return false;
     }

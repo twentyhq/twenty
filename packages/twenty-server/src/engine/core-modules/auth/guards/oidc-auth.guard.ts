@@ -11,13 +11,17 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly sSOService: SSOService,
-    private readonly guardErrorManagerService: GuardErrorManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
+    private readonly environmentService: EnvironmentService,
   ) {
     super();
   }
@@ -44,9 +48,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    let identityProvider: Awaited<
-      ReturnType<typeof this.sSOService.findSSOIdentityProviderById>
-    >;
+    let identityProvider:
+      | (SSOConfiguration & WorkspaceSSOIdentityProvider)
+      | null = null;
 
     try {
       const identityProviderId = this.getIdentityProviderId(request);
@@ -70,10 +74,12 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
-        subdomain:
-          request.query?.origin_url ?? identityProvider?.workspace.subdomain,
-      });
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        identityProvider?.workspace.subdomain ??
+          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      );
 
       return false;
     }

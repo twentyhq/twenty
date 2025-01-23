@@ -33,6 +33,7 @@ import {
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -40,6 +41,7 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly environmentService: EnvironmentService,
     private readonly sSOService: SSOService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -134,14 +136,13 @@ export class SSOAuthController {
         }),
       );
     } catch (err) {
-      if (err instanceof AuthException) {
-        return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            subdomain: workspaceIdentityProvider?.workspace.subdomain,
-          }),
-        );
-      }
-      throw err;
+      return res.redirect(
+        this.domainManagerService.computeRedirectErrorUrl(
+          err.message,
+          workspaceIdentityProvider?.workspace.subdomain ??
+            this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        ),
+      );
     }
   }
 

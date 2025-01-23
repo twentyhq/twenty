@@ -1,16 +1,24 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class GoogleOauthGuard extends AuthGuard('google') {
   constructor(
-    private readonly guardErrorManagerService: GuardErrorManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
+    private readonly environmentService: EnvironmentService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {
     super({
       prompt: 'select_account',
@@ -19,8 +27,19 @@ export class GoogleOauthGuard extends AuthGuard('google') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
+    let workspace: Workspace | null = null;
 
     try {
+      if (
+        request.query.workspaceId &&
+        typeof request.query.workspaceId === 'string'
+      ) {
+        request.params.workspaceId = request.query.workspaceId;
+        workspace = await this.workspaceRepository.findOneBy({
+          id: request.query.workspaceId,
+        });
+      }
+
       const workspaceInviteHash = request.query.inviteHash;
       const workspacePersonalInviteToken = request.query.inviteToken;
 
@@ -44,13 +63,6 @@ export class GoogleOauthGuard extends AuthGuard('google') {
       }
 
       if (
-        request.query.workspaceId &&
-        typeof request.query.workspaceId === 'string'
-      ) {
-        request.params.workspaceId = request.query.workspaceId;
-      }
-
-      if (
         request.query.billingCheckoutSessionState &&
         typeof request.query.billingCheckoutSessionState === 'string'
       ) {
@@ -60,9 +72,12 @@ export class GoogleOauthGuard extends AuthGuard('google') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
-        baseUrl: request.query?.origin_url,
-      });
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        workspace?.subdomain ??
+          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      );
 
       return false;
     }

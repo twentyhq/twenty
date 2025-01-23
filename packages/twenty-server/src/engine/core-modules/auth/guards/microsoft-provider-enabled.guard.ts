@@ -6,18 +6,16 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { MicrosoftStrategy } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { GuardErrorManagerService } from 'src/engine/core-modules/guard-manager/services/guard-error-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 export class MicrosoftProviderEnabledGuard implements CanActivate {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly guardErrorManagerService: GuardErrorManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-
     try {
       if (!this.environmentService.get('AUTH_MICROSOFT_ENABLED')) {
         throw new AuthException(
@@ -30,9 +28,11 @@ export class MicrosoftProviderEnabledGuard implements CanActivate {
 
       return true;
     } catch (err) {
-      this.guardErrorManagerService.dispatchErrorFromGuard(context, err, {
-        baseUrl: request.query?.origin_url,
-      });
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        this.guardRedirectService.getSubdomainFromContext(context),
+      );
 
       return false;
     }

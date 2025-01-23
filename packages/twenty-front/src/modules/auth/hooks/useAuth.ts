@@ -458,12 +458,6 @@ export const useAuth = () => {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
-      if (isDefined(workspacePublicData)) {
-        url.searchParams.set('workspaceId', workspacePublicData.id);
-      }
-
-      url.searchParams.set('origin_url', window.origin);
-
       return url.toString();
     },
     [workspacePublicData],

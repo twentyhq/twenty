@@ -12,7 +12,7 @@ import { SSOResolver } from 'src/engine/core-modules/sso/sso.resolver';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
-import { GuardManagerModule } from 'src/engine/core-modules/guard-manager/guard-manager.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { GuardManagerModule } from 'src/engine/core-modules/guard-manager/guard-
     ),
     BillingModule,
     DomainManagerModule,
-    GuardManagerModule,
+    GuardRedirectModule,
   ],
   exports: [SSOService],
   providers: [SSOService, SSOResolver],
