@@ -21,9 +21,10 @@ import { InView, useInView } from 'react-intersection-observer';
 import { useSetRecoilState } from 'recoil';
 import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useNavigate } from 'react-router-dom';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AppPath } from '@/types/AppPath';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -75,7 +76,7 @@ export const RecordBoardCard = ({
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
 }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
 
   const { recordId } = useContext(RecordBoardCardContext);
 
@@ -95,7 +96,7 @@ export const RecordBoardCard = ({
       recordId,
     );
 
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
@@ -127,7 +128,10 @@ export const RecordBoardCard = ({
 
   const handleCardClick = () => {
     if (!isCreating) {
-      navigate(indexIdentifierUrl(recordId));
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      });
     }
   };
 
