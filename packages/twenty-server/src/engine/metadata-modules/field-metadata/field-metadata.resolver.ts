@@ -14,6 +14,8 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -33,7 +35,10 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
 export class FieldMetadataResolver {
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
@@ -140,6 +145,17 @@ export class FieldMetadataResolver {
   ): Promise<RelationDTO | null | undefined> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
       return null;
+    }
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspace.id,
+    );
+
+    if (!isNewRelationEnabled) {
+      throw new BadRequestException(
+        'New relation feature is not enabled for this workspace',
+      );
     }
 
     try {

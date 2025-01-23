@@ -14,4 +14,5 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
+  IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
 }
