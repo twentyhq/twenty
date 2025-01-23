@@ -7,5 +7,7 @@ export class ObjectRecordUpdateEvent<
   properties: {
     updatedFields?: string[];
     diff?: Partial<ObjectRecordDiff<T>>;
+    before: T;
+    after: T;
   };
 }

@@ -30,13 +30,6 @@ export class UpsertTimelineActivityFromInternalEvent {
         eventData.workspaceMemberId = workspaceMember.id;
       }
 
-      if ('diff' in eventData.properties && eventData.properties.diff) {
-        // we remove "before" and "after" property for a cleaner/slimmer event payload
-        eventData.properties = {
-          diff: eventData.properties.diff,
-        };
-      }
-
       // Temporary
       // We ignore every that is not a LinkedObject or a Business Object
       if (
@@ -48,7 +41,16 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
 
       await this.timelineActivityService.upsertEvent({
-        event: eventData,
+        event:
+          // we remove "before" and "after" property for a cleaner/slimmer event payload
+          'diff' in eventData.properties && eventData.properties.diff
+            ? {
+                ...eventData,
+                properties: {
+                  diff: eventData.properties.diff,
+                },
+              }
+            : eventData,
         eventName: workspaceEventBatch.name,
         workspaceId: workspaceEventBatch.workspaceId,
       });

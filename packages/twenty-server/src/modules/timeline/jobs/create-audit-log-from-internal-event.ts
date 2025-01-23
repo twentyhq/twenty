@@ -34,16 +34,14 @@ export class CreateAuditLogFromInternalEvent {
         workspaceMemberId = workspaceMember.id;
       }
 
-      if (eventData.properties.diff) {
-        // we remove "before" and "after" property for a cleaner/slimmer event payload
-        eventData.properties = {
-          diff: eventData.properties.diff,
-        };
-      }
-
       await this.auditLogRepository.insert(
         workspaceEventBatch.name,
-        eventData.properties,
+        'diff' in eventData.properties
+          ? {
+              // we remove "before" and "after" property for a cleaner/slimmer event payload
+              diff: eventData.properties.diff,
+            }
+          : eventData.properties,
         workspaceMemberId,
         workspaceEventBatch.name.split('.')[0],
         eventData.objectMetadata.id,

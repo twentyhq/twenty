@@ -60,8 +60,16 @@ export class CallWebhookJobsJob {
         nameSingular: eventData.objectMetadata.nameSingular,
       };
       const workspaceId = workspaceEventBatch.workspaceId;
-      const record = eventData.properties.after || eventData.properties.before;
-      const updatedFields = eventData.properties.updatedFields;
+      const record =
+        'after' in eventData.properties
+          ? eventData.properties.after
+          : 'before' in eventData.properties
+            ? eventData.properties.before
+            : {};
+      const updatedFields =
+        'updatedFields' in eventData.properties
+          ? eventData.properties.updatedFields
+          : undefined;
 
       const isWebhookEvent = nameSingular === 'webhook';
       const sanitizedRecord = removeSecretFromWebhookRecord(
