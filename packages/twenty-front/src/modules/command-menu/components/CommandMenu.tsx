@@ -85,28 +85,29 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const selectableItems: Command[] = [
-    resetContextCommand,
-    ...copilotCommands,
-    ...matchingStandardActionRecordSelectionCommands,
-    ...matchingWorkflowRunRecordSelectionCommands,
-    ...matchingStandardActionGlobalCommands,
-    ...matchingWorkflowRunGlobalCommands,
-    ...matchingNavigateCommand,
-    ...peopleCommands,
-    ...companyCommands,
-    ...opportunityCommands,
-    ...noteCommands,
-    ...tasksCommands,
-    ...customObjectCommands,
-  ].filter(isDefined);
+  const selectableItems: Command[] = [resetContextCommand]
+    .concat(
+      copilotCommands,
+      matchingStandardActionRecordSelectionCommands,
+      matchingWorkflowRunRecordSelectionCommands,
+      matchingStandardActionGlobalCommands,
+      matchingWorkflowRunGlobalCommands,
+      matchingNavigateCommand,
+      peopleCommands,
+      companyCommands,
+      opportunityCommands,
+      noteCommands,
+      tasksCommands,
+      customObjectCommands,
+    )
+    .filter(isDefined);
 
   const selectableItemIds = selectableItems.map((item) => item.id);
 
   const commandGroups: CommandGroupConfig[] = [
     {
       heading: t`Context`,
-      items: [resetContextCommand],
+      items: isDefined(resetContextCommand) ? [resetContextCommand] : [],
     },
     {
       heading: t`Copilot`,

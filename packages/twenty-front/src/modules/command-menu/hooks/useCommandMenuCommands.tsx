@@ -9,6 +9,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
+import { useResetContextToSelection } from '@/command-menu/hooks/useResetContextCommand';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -26,7 +27,6 @@ import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/ob
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useMemo } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -50,12 +50,7 @@ export const useCommandMenuCommands = () => {
   const setCopilotQuery = useSetRecoilState(copilotQueryState);
   const openCopilotRightDrawer = useOpenCopilotRightDrawer();
 
-  const resetContextCommand: Command = {
-    id: 'reset-context',
-    label: t`Reset context to`,
-    Icon: IconCheckbox,
-    onCommandClick: () => {},
-  };
+  const { resetContextCommand } = useResetContextToSelection();
 
   const copilotCommand: Command = {
     id: 'copilot',

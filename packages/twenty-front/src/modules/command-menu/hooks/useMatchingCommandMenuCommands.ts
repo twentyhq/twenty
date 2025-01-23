@@ -43,6 +43,7 @@ export const useMatchingCommandMenuCommands = ({
   );
 
   const isNoResults =
+    !resetContextCommand &&
     !matchingStandardActionRecordSelectionCommands.length &&
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
