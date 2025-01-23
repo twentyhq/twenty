@@ -76,10 +76,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
           return [
             fieldName,
-            getRecordConnectionFromRecords({
+            getRecordConnectionFromRecords<ObjectRecord>({
               objectMetadataItems,
               objectMetadataItem: oneToManyObjectMetadataItem,
-              records: value as ObjectRecord[],
+              records: value,
               recordGqlFields:
                 recordGqlFields?.[fieldName] === true ||
                 isUndefined(recordGqlFields?.[fieldName])

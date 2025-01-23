@@ -5,6 +5,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
@@ -12,6 +13,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from 'twenty-shared';
+import { isDefined } from 'twenty-ui';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
@@ -47,45 +49,51 @@ export const useDeleteOneRecord = ({
     async (idToDelete: string) => {
       const currentTimestamp = new Date().toISOString();
 
-      const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
+      const preDeletionCachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
 
       const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
-        record: cachedRecord,
+        record: preDeletionCachedRecord,
         objectMetadataItem,
         objectMetadataItems,
         computeReferences: true,
       });
 
       const computedOptimisticRecord = {
-        ...cachedRecord,
-        ...{ id: idToDelete, deletedAt: currentTimestamp },
-        ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+        id: idToDelete,
+        deletedAt: currentTimestamp, // this is never sent to the api so that's ok
+        __typename: capitalize(objectMetadataItem.nameSingular),
       };
 
-      const optimisticRecordWithConnection =
-        getRecordNodeFromRecord<ObjectRecord>({
-          record: computedOptimisticRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          computeReferences: true,
-        });
+      const postDeletionOptimisticRecordWithConnection = getRecordNodeFromRecord({
+        record: computedOptimisticRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        computeReferences: true,
+      });
 
-      if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
+      // I don't understand this condition
+      // We should not delete the record if it has no relations ?
+      if (!postDeletionOptimisticRecordWithConnection || !cachedRecordWithConnection) {
         return null;
       }
 
-      updateRecordFromCache({
-        objectMetadataItems,
-        objectMetadataItem,
-        cache: apolloClient.cache,
-        record: computedOptimisticRecord,
-      });
+      if (isDefined(preDeletionCachedRecord)) {
+        deleteRecordFromCache({
+          cache: apolloClient.cache,
+          objectMetadataItem,
+          objectMetadataItems,
+          recordToDestroy: preDeletionCachedRecord
+        })
+      }
 
+      // I think this is used to only update relations to the current record ?
+      // Should be replaced by something like triggerDeleteRecordOptimisticEffect
+      // If we do an eviction above is this really necessary ?
       triggerUpdateRecordOptimisticEffect({
         cache: apolloClient.cache,
         objectMetadataItem,
         currentRecord: cachedRecordWithConnection,
-        updatedRecord: optimisticRecordWithConnection,
+        updatedRecord: postDeletionOptimisticRecordWithConnection,
         objectMetadataItems,
       });
 
@@ -97,36 +105,48 @@ export const useDeleteOneRecord = ({
           },
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
+            if (!record || !postDeletionOptimisticRecordWithConnection) return;
+            console.log({ record, postDeletionOptimisticRecordWithConnection });
 
-            if (!record || !cachedRecord) return;
-
+            // we're updating the cache twice ?
             triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
-              currentRecord: cachedRecord,
+              currentRecord: postDeletionOptimisticRecordWithConnection,
               updatedRecord: record,
               objectMetadataItems,
             });
           },
         })
         .catch((error: Error) => {
-          if (!cachedRecord) {
+          if (!preDeletionCachedRecord) {
             throw error;
           }
+          // Will it does a create ?
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            record: cachedRecord,
+            record: preDeletionCachedRecord,
           });
 
-          triggerUpdateRecordOptimisticEffect({
-            cache: apolloClient.cache,
+          const preDeletionOptimisticRecordWithConnection = getRecordNodeFromRecord({
+            record: preDeletionCachedRecord,
             objectMetadataItem,
-            currentRecord: optimisticRecordWithConnection,
-            updatedRecord: cachedRecordWithConnection,
             objectMetadataItems,
+            computeReferences: true,
           });
+
+          if (isDefined(preDeletionOptimisticRecordWithConnection)) {
+            triggerUpdateRecordOptimisticEffect({
+              cache: apolloClient.cache,
+              objectMetadataItem,
+              currentRecord: preDeletionOptimisticRecordWithConnection,
+              updatedRecord: cachedRecordWithConnection,
+              objectMetadataItems,
+            });
+          };
+    
 
           throw error;
         });
