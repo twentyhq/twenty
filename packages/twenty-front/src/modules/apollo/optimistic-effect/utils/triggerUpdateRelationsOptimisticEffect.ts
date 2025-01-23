@@ -20,7 +20,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
 // TODO relocate
-const computeIsRecordConnection = (
+const hasManyTargetRecords = (
   relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>,
 ) => {
   switch (relationDefinition.direction) {
@@ -106,13 +106,15 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       ) {
         return;
       }
-      const isRecordConnection = computeIsRecordConnection(relationDefinition);
+      const isRecordConnection = hasManyTargetRecords(relationDefinition);
       // TODO refactor typing as possible ? review  RecordGqlConnection | RecordGqlNode | null
-      const extractTargetFromFieldValue = (
+      // TODO this should transpile from RecordGqlNode to ObjectRecord ( find utils already exising )
+      const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
       ): RecordGqlNode[] => {
         // I don't understand typing here, we sometimes received empty array ?
         // Zod schema validation was stripping this use case before
+        // TODO investigate on the root cause of empty array injection here, should never occurs
         if (!isDefined(value) || isEmpty(value)) {
           return [];
         }
@@ -123,10 +125,10 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
         return [value] as RecordGqlNode[];
       };
-      const targetRecordsToDetachFrom = extractTargetFromFieldValue(
+      const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
         currentFieldValueOnSourceRecord,
       );
-      const targetRecordsToAttachTo = extractTargetFromFieldValue(
+      const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
         updatedFieldValueOnSourceRecord,
       );
 
@@ -166,6 +168,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       const shouldAttachSourceToAllTargets =
         isDefined(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
 
+      // TODO remove below condition that is not usefull as if array is empty it will noop
       if (shouldAttachSourceToAllTargets) {
         targetRecordsToAttachTo.forEach((targetRecordsToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
