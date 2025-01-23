@@ -6,11 +6,11 @@ import { useRecoilValue } from 'recoil';
 import {
   Avatar,
   AvatarGroup,
+  Card,
+  CardContent,
   IconArrowRight,
   IconLock,
   isDefined,
-  Card,
-  CardContent,
 } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
@@ -70,7 +70,10 @@ const StyledTime = styled.div`
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
   flex: 1 0 auto;
-
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: ${({ theme }) => theme.spacing(10)};
   ${({ theme, active }) =>
     active &&
     css`
