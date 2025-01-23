@@ -29,7 +29,6 @@ import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -175,13 +174,10 @@ export class FieldMetadataResolver {
 
       return {
         type: fieldMetadata.settings.relationType,
-        // TODO: Fix the typing issues
-        sourceObjectMetadata:
-          sourceObjectMetadata as unknown as ObjectMetadataDTO,
-        targetObjectMetadata:
-          targetObjectMetadata as unknown as ObjectMetadataDTO,
-        sourceFieldMetadata: sourceFieldMetadata as unknown as FieldMetadataDTO,
-        targetFieldMetadata: targetFieldMetadata as unknown as FieldMetadataDTO,
+        sourceObjectMetadata,
+        targetObjectMetadata,
+        sourceFieldMetadata,
+        targetFieldMetadata,
       };
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);

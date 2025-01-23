@@ -1,12 +1,11 @@
 import DataLoader from 'dataloader';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import {
   RelationLoaderPayload,
   RelationMetadataLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export interface IDataloaders {
@@ -18,10 +17,10 @@ export interface IDataloaders {
   relationLoader: DataLoader<
     RelationLoaderPayload,
     {
-      sourceObjectMetadata: ObjectMetadataInterface;
-      targetObjectMetadata: ObjectMetadataInterface;
-      sourceFieldMetadata: FieldMetadataInterface;
-      targetFieldMetadata: FieldMetadataInterface;
+      sourceObjectMetadata: ObjectMetadataEntity;
+      targetObjectMetadata: ObjectMetadataEntity;
+      sourceFieldMetadata: FieldMetadataEntity;
+      targetFieldMetadata: FieldMetadataEntity;
     }
   >;
 }

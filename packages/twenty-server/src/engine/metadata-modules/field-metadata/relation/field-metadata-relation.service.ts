@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { cleanObjectMetadata } from 'src/engine/metadata-modules/utils/clean-object-metadata.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -26,10 +27,10 @@ export class FieldMetadataRelationService {
     workspaceId: string,
   ): Promise<
     Array<{
-      sourceObjectMetadata: ObjectMetadataInterface;
-      sourceFieldMetadata: FieldMetadataInterface;
-      targetObjectMetadata: ObjectMetadataInterface;
-      targetFieldMetadata: FieldMetadataInterface;
+      sourceObjectMetadata: ObjectMetadataEntity;
+      sourceFieldMetadata: FieldMetadataEntity;
+      targetObjectMetadata: ObjectMetadataEntity;
+      targetFieldMetadata: FieldMetadataEntity;
     }>
   > {
     const metadataVersion =
@@ -86,10 +87,14 @@ export class FieldMetadataRelationService {
       }
 
       return {
-        sourceObjectMetadata: cleanObjectMetadata(sourceObjectMetadata),
-        sourceFieldMetadata,
-        targetObjectMetadata: cleanObjectMetadata(targetObjectMetadata),
-        targetFieldMetadata,
+        sourceObjectMetadata: cleanObjectMetadata(
+          sourceObjectMetadata,
+        ) as ObjectMetadataEntity,
+        sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
+        targetObjectMetadata: cleanObjectMetadata(
+          targetObjectMetadata,
+        ) as ObjectMetadataEntity,
+        targetFieldMetadata: targetFieldMetadata as FieldMetadataEntity,
       };
     });
   }
