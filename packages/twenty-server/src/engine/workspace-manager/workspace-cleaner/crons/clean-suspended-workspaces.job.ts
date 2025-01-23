@@ -9,20 +9,29 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
+
+export const USER_WORKSPACE_DELETION_WARNING_SENT_KEY =
+  'USER_WORKSPACE_DELETION_WARNING_SENT';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanSuspendedWorkspacesJob {
   private readonly logger = new Logger(CleanSuspendedWorkspacesJob.name);
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
+  private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
 
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
+    private readonly userService: UserService,
+    private readonly userVarsService: UserVarsService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(Workspace, 'core')
@@ -33,6 +42,9 @@ export class CleanSuspendedWorkspacesJob {
     );
     this.inactiveDaysBeforeWarn = this.environmentService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
+    );
+    this.maxNumberOfWorkspacesDeletedPerExecution = this.environmentService.get(
+      'MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION',
     );
   }
 
@@ -61,21 +73,102 @@ export class CleanSuspendedWorkspacesJob {
     }
   }
 
-  warnWorkspaceMembers(workspace: Workspace) {
-    // TODO: issue #284
-    // fetch workspace members
-    // send email warning for deletion in (this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeWarn) days (cci @twenty.com)
+  chunkArray<T>(array: T[], chunkSize = 5): T[][] {
+    const chunkedArray: T[][] = [];
+    let index = 0;
 
-    this.logger.log(
-      `Warning Workspace ${workspace.id} ${workspace.displayName}`,
+    while (index < array.length) {
+      chunkedArray.push(array.slice(index, index + chunkSize));
+      index += chunkSize;
+    }
+
+    return chunkedArray;
+  }
+
+  async checkIfWorkspaceMembersWarned(
+    workspaceMembers: WorkspaceMemberWorkspaceEntity[],
+    workspaceId: string,
+  ) {
+    for (const workspaceMember of workspaceMembers) {
+      const workspaceMemberWarned =
+        (await this.userVarsService.get({
+          userId: workspaceMember.userId,
+          workspaceId: workspaceId,
+          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+        })) === true;
+
+      if (workspaceMemberWarned) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  async warnWorkspaceMembers(workspace: Workspace) {
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembers(workspace);
+
+    const workspaceMembersWarned = await this.checkIfWorkspaceMembersWarned(
+      workspaceMembers,
+      workspace.id,
     );
+
+    if (workspaceMembersWarned) {
+      this.logger.log(
+        `Workspace ${workspace.id} ${workspace.displayName} already warned`,
+      );
+
+      return;
+    } else {
+      const workspaceMembersChunks = this.chunkArray(workspaceMembers);
+
+      for (const workspaceMembersChunk of workspaceMembersChunks) {
+        await Promise.all(
+          workspaceMembersChunk.map(async (workspaceMember) => {
+            await this.userVarsService.set({
+              userId: workspaceMember.userId,
+              workspaceId: workspace.id,
+              key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+              value: true,
+            });
+          }),
+        );
+      }
+
+      // TODO: issue #284
+      // send email warning for deletion in (this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeWarn) days (cci @twenty.com)
+
+      this.logger.log(
+        `Warning Workspace ${workspace.id} ${workspace.displayName}`,
+      );
+
+      return;
+    }
   }
 
   async informWorkspaceMembersAndDeleteWorkspace(workspace: Workspace) {
-    // TODO: issue #285
-    // fetch workspace members
-    // send email informing about deletion (cci @twenty.com)
-    // remove clean-inactive-workspace.job.ts and .. files
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembers(workspace);
+
+    const workspaceMembersChunks = this.chunkArray(workspaceMembers);
+
+    for (const workspaceMembersChunk of workspaceMembersChunks) {
+      await Promise.all(
+        workspaceMembersChunk.map(async (workspaceMember) => {
+          await this.userVarsService.delete({
+            userId: workspaceMember.userId,
+            workspaceId: workspace.id,
+            key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+          });
+        }),
+
+        // TODO: issue #285
+        // send email informing about deletion (cci @twenty.com)
+        // remove clean-inactive-workspace.job.ts and .. files
+        // add new env var in infra
+      );
+    }
 
     await this.workspaceService.deleteWorkspace(workspace.id);
     this.logger.log(
@@ -91,21 +184,39 @@ export class CleanSuspendedWorkspacesJob {
       where: { activationStatus: WorkspaceActivationStatus.SUSPENDED },
     });
 
-    await Promise.all(
-      suspendedWorkspaces.map(async (workspace) => {
-        const workspaceInactivity =
-          await this.computeWorkspaceBillingInactivity(workspace);
+    const suspendedWorkspacesChunks = this.chunkArray(suspendedWorkspaces);
 
-        if (
-          workspaceInactivity &&
-          workspaceInactivity > this.inactiveDaysBeforeDelete
-        ) {
-          await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
-        } else if (workspaceInactivity === this.inactiveDaysBeforeWarn) {
-          this.warnWorkspaceMembers(workspace);
-        }
-      }),
-    );
+    let deletedWorkspacesCount = 0;
+
+    for (const suspendedWorkspacesChunk of suspendedWorkspacesChunks) {
+      await Promise.all(
+        suspendedWorkspacesChunk.map(async (workspace) => {
+          const workspaceInactivity =
+            await this.computeWorkspaceBillingInactivity(workspace);
+
+          if (
+            workspaceInactivity &&
+            workspaceInactivity > this.inactiveDaysBeforeDelete &&
+            deletedWorkspacesCount <=
+              this.maxNumberOfWorkspacesDeletedPerExecution
+          ) {
+            await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
+            deletedWorkspacesCount++;
+
+            return;
+          }
+          if (
+            workspaceInactivity &&
+            workspaceInactivity > this.inactiveDaysBeforeWarn &&
+            workspaceInactivity <= this.inactiveDaysBeforeDelete
+          ) {
+            await this.warnWorkspaceMembers(workspace);
+
+            return;
+          }
+        }),
+      );
+    }
 
     this.logger.log(`Job done!`);
   }

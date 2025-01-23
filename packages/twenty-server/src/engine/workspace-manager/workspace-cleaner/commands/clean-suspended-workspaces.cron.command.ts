@@ -7,10 +7,10 @@ import { cleanSuspendedWorkspaceCronPattern } from 'src/engine/workspace-manager
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
 
 @Command({
-  name: 'cron:clean-suspended-workspaces:stop',
-  description: 'Stops a cron job to clean suspended workspaces',
+  name: 'cron:clean-suspended-workspaces',
+  description: 'Starts a cron job to clean suspended workspaces',
 })
-export class StopCleanSuspendedWorkspacesCronCommand extends CommandRunner {
+export class CleanSuspendedWorkspacesCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -19,9 +19,12 @@ export class StopCleanSuspendedWorkspacesCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.removeCron(
+    await this.messageQueueService.addCron<undefined>(
       CleanSuspendedWorkspacesJob.name,
-      cleanSuspendedWorkspaceCronPattern,
+      undefined,
+      {
+        repeat: { pattern: cleanSuspendedWorkspaceCronPattern },
+      },
     );
   }
 }

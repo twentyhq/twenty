@@ -62,14 +62,25 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { stripeSubscriptionId: data.object.id },
-      });
+    const billingSubscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    const updatedBillingSubscription = billingSubscriptions.find(
+      (subscription) => subscription.stripeSubscriptionId === data.object.id,
+    );
+
+    if (!updatedBillingSubscription) {
+      throw new Error('Billing subscription not found');
+    }
+
+    const hasActiveSubscription = billingSubscriptions.some(
+      (subscription) => subscription.status === SubscriptionStatus.Active,
+    );
 
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        billingSubscription.id,
+        updatedBillingSubscription.id,
         data,
       ),
       {
@@ -79,9 +90,10 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (
-      data.object.status === SubscriptionStatus.Canceled ||
-      data.object.status === SubscriptionStatus.Unpaid ||
-      data.object.status === SubscriptionStatus.Paused
+      (data.object.status === SubscriptionStatus.Canceled ||
+        data.object.status === SubscriptionStatus.Unpaid ||
+        data.object.status === SubscriptionStatus.Paused) &&
+      !hasActiveSubscription
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
