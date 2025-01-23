@@ -1,5 +1,8 @@
+import {
+  WorkflowActionType,
+  WorkflowTriggerType,
+} from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import {
   IconAddressBook,
   IconCode,
@@ -8,7 +11,17 @@ import {
   IconPlaylistAdd,
 } from 'twenty-ui';
 
-export const getWorkflowNodeIcon = (data: WorkflowDiagramStepNodeData) => {
+export const getWorkflowNodeIcon = (
+  data:
+    | {
+        nodeType: 'trigger';
+        triggerType: WorkflowTriggerType;
+      }
+    | {
+        nodeType: 'action';
+        actionType: WorkflowActionType;
+      },
+) => {
   switch (data.nodeType) {
     case 'trigger': {
       switch (data.triggerType) {

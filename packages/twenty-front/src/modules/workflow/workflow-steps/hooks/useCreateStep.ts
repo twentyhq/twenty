@@ -7,7 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { getWorkflowStepTypeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowStepTypeIcon';
+import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -55,7 +55,10 @@ export const useCreateStep = ({
 
     openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
       title: createdStep.name,
-      Icon: getWorkflowStepTypeIcon(createdStep.type as WorkflowStepType),
+      Icon: getWorkflowNodeIcon({
+        nodeType: 'action',
+        actionType: createdStep.type as WorkflowStepType,
+      }),
     });
   };
 
