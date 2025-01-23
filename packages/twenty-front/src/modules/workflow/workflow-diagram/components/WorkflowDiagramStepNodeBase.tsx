@@ -33,7 +33,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <Icon
-                  size={theme.icon.size.lg}
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -43,7 +43,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <Icon
-                  size={theme.icon.size.lg}
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -58,14 +58,18 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'CODE': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <Icon size={theme.icon.size.lg} color={theme.color.orange} />
+                <Icon
+                  size={theme.icon.size.md}
+                  color={theme.color.orange}
+                  stroke={theme.icon.stroke.sm}
+                />
               </StyledStepNodeLabelIconContainer>
             );
           }
           case 'SEND_EMAIL': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <Icon size={theme.icon.size.lg} color={theme.color.blue} />
+                <Icon size={theme.icon.size.md} color={theme.color.blue} />
               </StyledStepNodeLabelIconContainer>
             );
           }
@@ -75,7 +79,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <Icon
-                  size={theme.icon.size.lg}
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                   stroke={theme.icon.stroke.sm}
                 />
