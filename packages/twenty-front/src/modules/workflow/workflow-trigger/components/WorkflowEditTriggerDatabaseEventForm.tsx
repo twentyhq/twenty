@@ -6,7 +6,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
 import { useTheme } from '@emotion/react';
-import { IconPlaylistAdd, isDefined } from 'twenty-ui';
+import { IconPlaylistAdd, isDefined, useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -26,6 +26,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -37,6 +38,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
+      Icon: getIcon(item.icon)
     }));
 
   const selectedEvent = isDefined(triggerEvent)
