@@ -403,8 +403,7 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
-          signUpResult.data.signUp.workspace.subdomain,
-          signUpResult.data.signUp.workspace.hostname,
+          signUpResult.data.signUp.workspace,
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {

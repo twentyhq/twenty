@@ -55,14 +55,9 @@ export const useImpersonate = () => {
         return;
       }
 
-      return redirectToWorkspaceDomain(
-        workspace.subdomain,
-        workspace.hostname,
-        AppPath.Verify,
-        {
-          loginToken: loginToken.token,
-        },
-      );
+      return redirectToWorkspaceDomain(workspace, AppPath.Verify, {
+        loginToken: loginToken.token,
+      });
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);

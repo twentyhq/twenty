@@ -102,7 +102,7 @@ export const SettingsHostname = () => {
         },
       });
 
-      redirectToWorkspaceDomain(currentWorkspace.subdomain);
+      redirectToWorkspaceDomain({ subdomain: currentWorkspace.subdomain });
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',

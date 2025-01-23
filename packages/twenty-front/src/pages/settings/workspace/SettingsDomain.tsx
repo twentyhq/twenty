@@ -98,7 +98,10 @@ export const SettingsDomain = () => {
           subdomain: values.subdomain,
         });
 
-        redirectToWorkspaceDomain(values.subdomain, currentWorkspace.hostname);
+        redirectToWorkspaceDomain({
+          subdomain: values.subdomain,
+          hostname: currentWorkspace.hostname,
+        });
       },
     });
   };

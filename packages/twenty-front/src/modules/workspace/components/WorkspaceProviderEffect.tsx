@@ -48,17 +48,11 @@ export const WorkspaceProviderEffect = () => {
 
   useEffect(() => {
     if (isWorkspaceSubdomainDifferFromCurrentWorkspaceSubdomain) {
-      return redirectToWorkspaceDomain(
-        getPublicWorkspaceData.subdomain,
-        getPublicWorkspaceData.hostname,
-      );
+      return redirectToWorkspaceDomain(getPublicWorkspaceData);
     }
 
     if (isWorkspaceDefaultDomainWithLastAuthenticatedParamsExist) {
-      return redirectToWorkspaceDomain(
-        lastAuthenticatedWorkspaceDomain.subdomain,
-        lastAuthenticatedWorkspaceDomain.hostname,
-      );
+      return redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain);
     }
   }, [
     isWorkspaceUseCustomDomain,

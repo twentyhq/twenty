@@ -67,7 +67,7 @@ export const MultiWorkspaceDropdownButton = ({
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const handleChange = async (workspace: Workspaces[0]) => {
-    redirectToWorkspaceDomain(workspace.subdomain, workspace.hostname);
+    redirectToWorkspaceDomain(workspace);
   };
   const [isNavigationDrawerExpanded] = useRecoilState(
     isNavigationDrawerExpandedState,
