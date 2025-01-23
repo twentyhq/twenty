@@ -34,13 +34,13 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: componentInstanceId }}
+      <RecordFiltersComponentInstanceContext.Provider
+        value={{
+          instanceId: componentInstanceId,
+        }}
       >
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{
-            instanceId: componentInstanceId,
-          }}
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: componentInstanceId }}
         >
           <ActionMenuComponentInstanceContext.Provider
             value={{
@@ -59,8 +59,8 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               {children}
             </JestContextStoreSetter>
           </ActionMenuComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
     </Wrapper>
   );
 };
