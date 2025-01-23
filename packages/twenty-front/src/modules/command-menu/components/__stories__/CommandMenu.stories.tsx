@@ -19,6 +19,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
@@ -29,17 +30,21 @@ const openTimeout = 50;
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
-    <ContextStoreComponentInstanceContext.Provider
+    <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <ActionMenuComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
-          <Story />
-        </JestContextStoreSetter>
-      </ActionMenuComponentInstanceContext.Provider>
-    </ContextStoreComponentInstanceContext.Provider>
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'command-menu' }}
+        >
+          <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+            <Story />
+          </JestContextStoreSetter>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordFiltersComponentInstanceContext.Provider>
   );
 };
 

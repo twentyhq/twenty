@@ -5,6 +5,7 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -33,6 +34,7 @@ export const useHandleToggleColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
+  const { upsertRecordFilter } = useUpsertRecordFilter();
 
   const openDropdown = useRecoilCallback(({ set }) => {
     return (dropdownId: string) => {
@@ -93,6 +95,8 @@ export const useHandleToggleColumnFilter = ({
           value: '',
         };
 
+        upsertRecordFilter(newFilter);
+
         await upsertCombinedViewFilter(newFilter);
 
         selectFilterDefinitionUsedInDropdown({ filterDefinition });
@@ -107,6 +111,7 @@ export const useHandleToggleColumnFilter = ({
       selectFilterDefinitionUsedInDropdown,
       currentViewWithCombinedFiltersAndSorts,
       availableFilterDefinitions,
+      upsertRecordFilter,
     ],
   );
 
