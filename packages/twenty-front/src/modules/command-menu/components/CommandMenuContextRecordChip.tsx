@@ -3,7 +3,6 @@ import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/C
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useMemo } from 'react';
 import { capitalize } from 'twenty-shared';
 
 export const CommandMenuContextRecordChip = ({
@@ -20,21 +19,17 @@ export const CommandMenuContextRecordChip = ({
       limit: 3,
     });
 
-  const Avatars = useMemo(
-    () =>
-      records.map((record) => (
-        <CommandMenuContextRecordChipAvatars
-          objectMetadataItem={objectMetadataItem}
-          key={record.id}
-          record={record}
-        />
-      )),
-    [records, objectMetadataItem],
-  );
-
   if (loading || !totalCount) {
     return null;
   }
+
+  const Avatars = records.map((record) => (
+    <CommandMenuContextRecordChipAvatars
+      objectMetadataItem={objectMetadataItem}
+      key={record.id}
+      record={record}
+    />
+  ));
 
   const text =
     totalCount === 1
