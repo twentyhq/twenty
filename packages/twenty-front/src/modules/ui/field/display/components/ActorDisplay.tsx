@@ -1,4 +1,6 @@
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { ConnectedAccountProvider } from 'twenty-shared';
+
 import { useMemo } from 'react';
 import {
   AvatarChip,
@@ -7,6 +9,7 @@ import {
   IconCalendar,
   IconCsv,
   IconGmail,
+  IconMicrosoftOutlook,
   IconRobot,
   IconSettingsAutomation,
 } from 'twenty-ui';
@@ -20,6 +23,7 @@ export const ActorDisplay = ({
   source,
   workspaceMemberId,
   avatarUrl,
+  context,
 }: ActorDisplayProps) => {
   const LeftIcon = useMemo(() => {
     switch (source) {
@@ -28,7 +32,9 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconCsv;
       case 'EMAIL':
-        return IconGmail;
+        return context?.mailProvider === ConnectedAccountProvider.MICROSOFT
+          ? IconMicrosoftOutlook
+          : IconGmail;
       case 'CALENDAR':
         return IconCalendar;
       case 'SYSTEM':
@@ -38,7 +44,7 @@ export const ActorDisplay = ({
       default:
         return undefined;
     }
-  }, [source]);
+  }, [source, context?.mailProvider]);
 
   const isIconInverted =
     source === 'API' || source === 'IMPORT' || source === 'SYSTEM';

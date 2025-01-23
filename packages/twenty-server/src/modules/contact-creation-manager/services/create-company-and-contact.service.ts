@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { Any, EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -127,6 +128,12 @@ export class CreateCompanyAndContactService {
             : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByMetadata: {
+          mailProvider:
+            connectedAccount.provider === ConnectedAccountProvider.MICROSOFT
+              ? ConnectedAccountProvider.MICROSOFT
+              : ConnectedAccountProvider.GOOGLE,
+        },
       }));
 
     return this.createContactService.createPeople(

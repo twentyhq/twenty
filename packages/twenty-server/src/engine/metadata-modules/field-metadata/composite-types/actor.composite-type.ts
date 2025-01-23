@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
 
 import {
   CompositeProperty,
@@ -41,6 +41,12 @@ export const actorCompositeType: CompositeType = {
       hidden: 'input',
       isRequired: true,
     },
+    {
+      name: 'context',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
@@ -48,4 +54,7 @@ export type ActorMetadata = {
   source: FieldActorSource;
   workspaceMemberId?: string;
   name: string;
+  context?: {
+    mailProvider?: ConnectedAccountProvider;
+  };
 };
