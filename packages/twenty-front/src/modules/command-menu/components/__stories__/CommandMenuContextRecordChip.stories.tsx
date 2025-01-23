@@ -47,7 +47,6 @@ const FIND_MANY_COMPANIES = gql`
             source
             workspaceMemberId
             name
-            context
           }
           deletedAt
           domainName {
