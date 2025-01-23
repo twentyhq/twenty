@@ -31,6 +31,7 @@ module.exports = {
         scalars: {
           DateTime: 'string',
         },
+        namingConvention: { enumValues: 'keep' },
       },
     },
   },

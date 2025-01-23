@@ -7,7 +7,7 @@ export type Workspaces = Pick<
   'id' | 'logo' | 'displayName' | 'subdomain' | 'hostname'
 >[];
 
-export const workspacesState = createState<Workspaces | null>({
+export const workspacesState = createState<Workspaces>({
   key: 'workspacesState',
   defaultValue: [],
 });

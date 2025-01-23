@@ -14,7 +14,7 @@ export const useDateField = () => {
   const { recordId, fieldDefinition, hotkeyScope, clearable } =
     useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.Date, isFieldDate, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.DATE, isFieldDate, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

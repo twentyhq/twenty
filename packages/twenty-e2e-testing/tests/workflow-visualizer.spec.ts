@@ -1,35 +1,186 @@
 import { expect } from '@playwright/test';
 import { test } from '../lib/fixtures/blank-workflow';
 
-test('Create simple workflow', async ({ workflowVisualizer, page }) => {
-  const addTriggerButton = page.getByText('Add a Trigger');
-  await addTriggerButton.click();
+test('Create workflow with every possible step', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
 
-  const triggerOption = page.getByText('Database Event');
-  await triggerOption.click();
+  await workflowVisualizer.createStep('create-record');
+  await workflowVisualizer.createStep('update-record');
+  await workflowVisualizer.createStep('delete-record');
+  await workflowVisualizer.createStep('code');
+  await workflowVisualizer.createStep('send-email');
 
-  await expect(
-    page.getByTestId('command-menu').getByRole('textbox'),
-  ).toHaveValue('When a Company is Created');
+  await workflowVisualizer.background.click();
 
-  const triggerNode = page.getByTestId('rf__node-trigger');
-  await expect(triggerNode).toHaveClass(/selected/);
-  await expect(triggerNode).toHaveText(/Company is Created/);
+  const draftWorkflowStatus =
+    workflowVisualizer.workflowStatus.getByText('Draft');
 
-  const addStepButton = page.getByLabel('Add a step');
-  await addStepButton.click();
+  await expect(draftWorkflowStatus).toBeVisible();
 
-  const createRecordOption = page.getByText('Create Record');
+  await workflowVisualizer.activateWorkflowButton.click();
 
-  await createRecordOption.click();
+  const activeWorkflowStatus =
+    workflowVisualizer.workflowStatus.getByText('Active');
 
-  await expect(
-    page.getByTestId('command-menu').getByRole('textbox').first(),
-  ).toHaveValue('Create Record');
+  await expect(draftWorkflowStatus).not.toBeVisible();
+  await expect(activeWorkflowStatus).toBeVisible();
+  await expect(workflowVisualizer.activateWorkflowButton).not.toBeVisible();
+  await expect(workflowVisualizer.deactivateWorkflowButton).toBeVisible();
+});
 
-  const createRecordNode = page
-    .locator('.react-flow__node.selected')
-    .getByText('Create Record');
-  await expect(createRecordNode).toBeVisible();
-  await expect(triggerNode).not.toHaveClass(/selected/);
+test('Delete steps from draft version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
+
+  const { createdStepId: firstStepId } =
+    await workflowVisualizer.createStep('create-record');
+  const { createdStepId: secondStepId } =
+    await workflowVisualizer.createStep('update-record');
+  const { createdStepId: thirdStepId } =
+    await workflowVisualizer.createStep('delete-record');
+  const { createdStepId: fourthStepId } =
+    await workflowVisualizer.createStep('code');
+  const { createdStepId: fifthStepId } =
+    await workflowVisualizer.createStep('send-email');
+
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+    'Update Record',
+    'Delete Record',
+    'Code - Serverless Function',
+    'Send Email',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(5);
+
+  await workflowVisualizer.deleteStep(firstStepId);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Update Record',
+    'Delete Record',
+    'Code - Serverless Function',
+    'Send Email',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(4);
+
+  await workflowVisualizer.deleteStep(fifthStepId);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Update Record',
+    'Delete Record',
+    'Code - Serverless Function',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(3);
+
+  await workflowVisualizer.deleteStep(secondStepId);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Delete Record',
+    'Code - Serverless Function',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(2);
+
+  await workflowVisualizer.deleteStep(fourthStepId);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Delete Record',
+  ]);
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+
+  await workflowVisualizer.deleteStep(thirdStepId);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(0);
+
+  await Promise.all([
+    page.reload(),
+
+    expect(workflowVisualizer.triggerNode).toBeVisible(),
+  ]);
+
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(0);
+});
+
+test('Add a step to an active version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
+
+  await workflowVisualizer.createStep('create-record');
+
+  await expect(workflowVisualizer.workflowStatus).toHaveText('Draft');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await expect(workflowVisualizer.activateWorkflowButton).not.toBeVisible();
+
+  const assertEndState = async () => {
+    await expect(workflowVisualizer.workflowStatus).toHaveText('Active');
+    await expect(workflowVisualizer.triggerNode).toContainText(
+      'Record is Created',
+    );
+    await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+      'Create Record',
+    ]);
+    await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  };
+
+  await assertEndState();
+
+  await page.reload();
+
+  await assertEndState();
+});
+
+test('Replace the trigger of an active version', async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.createInitialTrigger('record-created');
+
+  await workflowVisualizer.createStep('create-record');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Draft'),
+
+    workflowVisualizer.deleteTrigger(),
+  ]);
+
+  await workflowVisualizer.createInitialTrigger('record-deleted');
+
+  await workflowVisualizer.background.click();
+
+  await Promise.all([
+    expect(workflowVisualizer.workflowStatus).toHaveText('Active'),
+
+    workflowVisualizer.activateWorkflowButton.click(),
+  ]);
+
+  await page.reload();
+
+  await expect(workflowVisualizer.triggerNode).toContainText(
+    'Record is Deleted',
+  );
+  await expect(workflowVisualizer.getAllStepNodes()).toHaveCount(1);
+  await expect(workflowVisualizer.getAllStepNodes()).toContainText([
+    'Create Record',
+  ]);
 });

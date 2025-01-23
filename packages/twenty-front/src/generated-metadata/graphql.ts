@@ -120,14 +120,80 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
-  trialPeriods: Array<TrialPeriodDto>;
+  trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
 /** The different billing plans available */
 export enum BillingPlanKey {
-  Enterprise = 'ENTERPRISE',
-  Pro = 'PRO'
+  ENTERPRISE = 'ENTERPRISE',
+  PRO = 'PRO'
 }
+
+export type BillingPlanOutput = {
+  __typename?: 'BillingPlanOutput';
+  baseProduct: BillingProductDto;
+  meteredProducts: Array<BillingProductDto>;
+  otherLicensedProducts: Array<BillingProductDto>;
+  planKey: BillingPlanKey;
+};
+
+export type BillingPriceLicensedDto = {
+  __typename?: 'BillingPriceLicensedDTO';
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String']['output'];
+  unitAmount: Scalars['Float']['output'];
+};
+
+export type BillingPriceMeteredDto = {
+  __typename?: 'BillingPriceMeteredDTO';
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String']['output'];
+  tiers?: Maybe<Array<BillingPriceTierDto>>;
+  tiersMode?: Maybe<BillingPriceTiersMode>;
+};
+
+export type BillingPriceTierDto = {
+  __typename?: 'BillingPriceTierDTO';
+  flatAmount?: Maybe<Scalars['Float']['output']>;
+  unitAmount?: Maybe<Scalars['Float']['output']>;
+  upTo?: Maybe<Scalars['Float']['output']>;
+};
+
+/** The different billing price tiers modes */
+export enum BillingPriceTiersMode {
+  GRADUATED = 'GRADUATED',
+  VOLUME = 'VOLUME'
+}
+
+export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
+
+export type BillingProductDto = {
+  __typename?: 'BillingProductDTO';
+  description: Scalars['String']['output'];
+  images?: Maybe<Array<Scalars['String']['output']>>;
+  name: Scalars['String']['output'];
+  prices: Array<Maybe<BillingPriceUnionDto>>;
+  type: BillingUsageType;
+};
+
+export type BillingProductPriceDto = {
+  __typename?: 'BillingProductPriceDTO';
+  created: Scalars['Float']['output'];
+  recurringInterval: SubscriptionInterval;
+  stripePriceId: Scalars['String']['output'];
+  unitAmount: Scalars['Float']['output'];
+};
+
+export type BillingProductPricesOutput = {
+  __typename?: 'BillingProductPricesOutput';
+  productPrices: Array<BillingProductPriceDto>;
+  totalNumberOfPrices: Scalars['Int']['output'];
+};
+
+export type BillingSessionOutput = {
+  __typename?: 'BillingSessionOutput';
+  url?: Maybe<Scalars['String']['output']>;
+};
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
@@ -136,20 +202,21 @@ export type BillingSubscription = {
   status: SubscriptionStatus;
 };
 
-export type BillingSubscriptionFilter = {
-  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
+export type BillingTrialPeriodDto = {
+  __typename?: 'BillingTrialPeriodDTO';
+  duration: Scalars['Float']['output'];
+  isCreditCardRequired: Scalars['Boolean']['output'];
 };
 
-export type BillingSubscriptionSort = {
-  direction: SortDirection;
-  field: BillingSubscriptionSortFields;
-  nulls?: InputMaybe<SortNulls>;
+export type BillingUpdateOutput = {
+  __typename?: 'BillingUpdateOutput';
+  /** Boolean that confirms query was successful */
+  success: Scalars['Boolean']['output'];
 };
 
-export enum BillingSubscriptionSortFields {
-  Id = 'id'
+export enum BillingUsageType {
+  LICENSED = 'LICENSED',
+  METERED = 'METERED'
 }
 
 export type BooleanFieldComparison = {
@@ -158,8 +225,8 @@ export type BooleanFieldComparison = {
 };
 
 export enum CalendarChannelVisibility {
-  Metadata = 'METADATA',
-  ShareEverything = 'SHARE_EVERYTHING'
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
 }
 
 export type Captcha = {
@@ -187,6 +254,7 @@ export type ClientConfig = {
   frontDomain: Scalars['String']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
+  publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
@@ -349,10 +417,10 @@ export type DeleteWorkflowVersionStepInput = {
 
 /** Schema update on a table */
 export enum DistantTableUpdate {
-  ColumnsAdded = 'COLUMNS_ADDED',
-  ColumnsDeleted = 'COLUMNS_DELETED',
-  ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
-  TableDeleted = 'TABLE_DELETED'
+  COLUMNS_ADDED = 'COLUMNS_ADDED',
+  COLUMNS_DELETED = 'COLUMNS_DELETED',
+  COLUMNS_TYPE_CHANGED = 'COLUMNS_TYPE_CHANGED',
+  TABLE_DELETED = 'TABLE_DELETED'
 }
 
 export type EditSsoInput = {
@@ -396,17 +464,16 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
+  IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsFreeAccessEnabled = 'IsFreeAccessEnabled',
-  IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
-  IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
-  IsPostgreSqlIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
+  IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
@@ -422,29 +489,29 @@ export type FieldConnection = {
 
 /** Type of the field */
 export enum FieldMetadataType {
-  Actor = 'ACTOR',
-  Address = 'ADDRESS',
-  Array = 'ARRAY',
-  Boolean = 'BOOLEAN',
-  Currency = 'CURRENCY',
-  Date = 'DATE',
-  DateTime = 'DATE_TIME',
-  Emails = 'EMAILS',
-  FullName = 'FULL_NAME',
-  Links = 'LINKS',
-  MultiSelect = 'MULTI_SELECT',
-  Number = 'NUMBER',
-  Numeric = 'NUMERIC',
-  Phones = 'PHONES',
-  Position = 'POSITION',
-  Rating = 'RATING',
-  RawJson = 'RAW_JSON',
-  Relation = 'RELATION',
-  RichText = 'RICH_TEXT',
-  Select = 'SELECT',
-  Text = 'TEXT',
-  TsVector = 'TS_VECTOR',
-  Uuid = 'UUID'
+  ACTOR = 'ACTOR',
+  ADDRESS = 'ADDRESS',
+  ARRAY = 'ARRAY',
+  BOOLEAN = 'BOOLEAN',
+  CURRENCY = 'CURRENCY',
+  DATE = 'DATE',
+  DATE_TIME = 'DATE_TIME',
+  EMAILS = 'EMAILS',
+  FULL_NAME = 'FULL_NAME',
+  LINKS = 'LINKS',
+  MULTI_SELECT = 'MULTI_SELECT',
+  NUMBER = 'NUMBER',
+  NUMERIC = 'NUMERIC',
+  PHONES = 'PHONES',
+  POSITION = 'POSITION',
+  RATING = 'RATING',
+  RAW_JSON = 'RAW_JSON',
+  RELATION = 'RELATION',
+  RICH_TEXT = 'RICH_TEXT',
+  SELECT = 'SELECT',
+  TEXT = 'TEXT',
+  TS_VECTOR = 'TS_VECTOR',
+  UUID = 'UUID'
 }
 
 export enum FileFolder {
@@ -497,8 +564,8 @@ export type GetServerlessFunctionSourceCodeInput = {
 };
 
 export enum IdentityProviderType {
-  Oidc = 'OIDC',
-  Saml = 'SAML'
+  OIDC = 'OIDC',
+  SAML = 'SAML'
 }
 
 export type ImpersonateOutput = {
@@ -533,8 +600,8 @@ export type IndexObjectMetadataConnection = {
 
 /** Type of the index */
 export enum IndexType {
-  Btree = 'BTREE',
-  Gin = 'GIN'
+  BTREE = 'BTREE',
+  GIN = 'GIN'
 }
 
 export type InvalidatePassword = {
@@ -562,22 +629,20 @@ export type LoginToken = {
 };
 
 export enum MessageChannelVisibility {
-  Metadata = 'METADATA',
-  ShareEverything = 'SHARE_EVERYTHING',
-  Subject = 'SUBJECT'
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+  SUBJECT = 'SUBJECT'
 }
 
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
-  addUserToWorkspace: User;
-  addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
-  checkoutSession: SessionEntity;
+  checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
-  createDraftFromWorkflowVersion: Scalars['Boolean']['output'];
+  createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -620,7 +685,8 @@ export type Mutation = {
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
-  updateBillingSubscription: UpdateBillingEntity;
+  updateBillingSubscription: BillingUpdateOutput;
+  updateLabPublicFeatureFlag: Scalars['Boolean']['output'];
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -645,16 +711,6 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
-};
-
-
-export type MutationAddUserToWorkspaceArgs = {
-  inviteHash: Scalars['String']['input'];
-};
-
-
-export type MutationAddUserToWorkspaceByInviteTokenArgs = {
-  inviteToken: Scalars['String']['input'];
 };
 
 
@@ -879,6 +935,11 @@ export type MutationUnsyncRemoteTableArgs = {
 };
 
 
+export type MutationUpdateLabPublicFeatureFlagArgs = {
+  input: UpdateLabPublicFeatureFlagInput;
+};
+
+
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
@@ -979,12 +1040,12 @@ export type ObjectIndexMetadatasConnection = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
-  Completed = 'COMPLETED',
-  InviteTeam = 'INVITE_TEAM',
-  PlanRequired = 'PLAN_REQUIRED',
-  ProfileCreation = 'PROFILE_CREATION',
-  SyncEmail = 'SYNC_EMAIL',
-  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
+  COMPLETED = 'COMPLETED',
+  INVITE_TEAM = 'INVITE_TEAM',
+  PLAN_REQUIRED = 'PLAN_REQUIRED',
+  PROFILE_CREATION = 'PROFILE_CREATION',
+  SYNC_EMAIL = 'SYNC_EMAIL',
+  WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -1026,18 +1087,17 @@ export type PostgresCredentials = {
   workspaceId: Scalars['String']['output'];
 };
 
-export type ProductPriceEntity = {
-  __typename?: 'ProductPriceEntity';
-  created: Scalars['Float']['output'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  unitAmount: Scalars['Float']['output'];
+export type PublicFeatureFlag = {
+  __typename?: 'PublicFeatureFlag';
+  key: FeatureFlagKey;
+  metadata: PublicFeatureFlagMetadata;
 };
 
-export type ProductPricesEntity = {
-  __typename?: 'ProductPricesEntity';
-  productPrices: Array<ProductPriceEntity>;
-  totalNumberOfPrices: Scalars['Int']['output'];
+export type PublicFeatureFlagMetadata = {
+  __typename?: 'PublicFeatureFlagMetadata';
+  description: Scalars['String']['output'];
+  imagePath: Scalars['String']['output'];
+  label: Scalars['String']['output'];
 };
 
 export type PublicWorkspaceDataOutput = {
@@ -1057,7 +1117,7 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  billingPortalSession: SessionEntity;
+  billingPortalSession: BillingSessionOutput;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -1076,7 +1136,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON']['output'];
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getProductPrices: ProductPricesEntity;
+  getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -1088,6 +1148,7 @@ export type Query = {
   listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
+  plans: Array<BillingPlanOutput>;
   relation: Relation;
   relations: RelationConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
@@ -1250,18 +1311,18 @@ export type RelationDefinition = {
 
 /** Relation definition type */
 export enum RelationDefinitionType {
-  ManyToMany = 'MANY_TO_MANY',
-  ManyToOne = 'MANY_TO_ONE',
-  OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
+  MANY_TO_MANY = 'MANY_TO_MANY',
+  MANY_TO_ONE = 'MANY_TO_ONE',
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 /** Type of the relation */
 export enum RelationMetadataType {
-  ManyToMany = 'MANY_TO_MANY',
-  ManyToOne = 'MANY_TO_ONE',
-  OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
+  MANY_TO_MANY = 'MANY_TO_MANY',
+  MANY_TO_ONE = 'MANY_TO_ONE',
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 export type RemoteServer = {
@@ -1302,8 +1363,8 @@ export type RemoteTableInput = {
 
 /** Status of the table */
 export enum RemoteTableStatus {
-  NotSynced = 'NOT_SYNCED',
-  Synced = 'SYNCED'
+  NOT_SYNCED = 'NOT_SYNCED',
+  SYNCED = 'SYNCED'
 }
 
 export type ResendEmailVerificationTokenOutput = {
@@ -1386,8 +1447,8 @@ export type ServerlessFunctionExecutionResult = {
 
 /** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
-  Error = 'ERROR',
-  Success = 'SUCCESS'
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS'
 }
 
 export type ServerlessFunctionIdInput = {
@@ -1397,14 +1458,9 @@ export type ServerlessFunctionIdInput = {
 
 /** SyncStatus of the serverlessFunction */
 export enum ServerlessFunctionSyncStatus {
-  NotReady = 'NOT_READY',
-  Ready = 'READY'
+  NOT_READY = 'NOT_READY',
+  READY = 'READY'
 }
-
-export type SessionEntity = {
-  __typename?: 'SessionEntity';
-  url?: Maybe<Scalars['String']['output']>;
-};
 
 export type SetupOidcSsoInput = {
   clientID: Scalars['String']['input'];
@@ -1436,18 +1492,6 @@ export type SignUpOutput = {
   loginToken: AuthToken;
   workspace: WorkspaceSubdomainHostnameAndId;
 };
-
-/** Sort Directions */
-export enum SortDirection {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-/** Sort Nulls Options */
-export enum SortNulls {
-  NullsFirst = 'NULLS_FIRST',
-  NullsLast = 'NULLS_LAST'
-}
 
 export enum SubscriptionInterval {
   Day = 'Day',
@@ -1542,12 +1586,6 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
-export type TrialPeriodDto = {
-  __typename?: 'TrialPeriodDTO';
-  duration: Scalars['Float']['output'];
-  isCreditCardRequired: Scalars['Boolean']['output'];
-};
-
 export type UuidFilterComparison = {
   eq?: InputMaybe<Scalars['UUID']['input']>;
   gt?: InputMaybe<Scalars['UUID']['input']>;
@@ -1565,12 +1603,6 @@ export type UuidFilterComparison = {
   notLike?: InputMaybe<Scalars['UUID']['input']>;
 };
 
-export type UpdateBillingEntity = {
-  __typename?: 'UpdateBillingEntity';
-  /** Boolean that confirms query was successful */
-  success: Scalars['Boolean']['output'];
-};
-
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1585,6 +1617,11 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<Scalars['JSON']['input']>;
   settings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateLabPublicFeatureFlagInput = {
+  publicFeatureFlag: Scalars['String']['input'];
+  value: Scalars['Boolean']['input'];
 };
 
 export type UpdateObjectPayload = {
@@ -1759,13 +1796,16 @@ export type WorkflowRun = {
   workflowRunId: Scalars['UUID']['output'];
 };
 
+export type WorkflowVersion = {
+  __typename?: 'WorkflowVersion';
+  id: Scalars['UUID']['output'];
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
-  billingCustomers?: Maybe<Array<BillingCustomer>>;
-  billingEntitlements?: Maybe<Array<BillingEntitlement>>;
-  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
+  billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
   databaseSchema: Scalars['String']['output'];
@@ -1786,24 +1826,6 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
-};
-
-
-export type WorkspaceBillingCustomersArgs = {
-  filter?: BillingCustomerFilter;
-  sorting?: Array<BillingCustomerSort>;
-};
-
-
-export type WorkspaceBillingEntitlementsArgs = {
-  filter?: BillingEntitlementFilter;
-  sorting?: Array<BillingEntitlementSort>;
-};
-
-
-export type WorkspaceBillingSubscriptionsArgs = {
-  filter?: BillingSubscriptionFilter;
-  sorting?: Array<BillingSubscriptionSort>;
 };
 
 export enum WorkspaceActivationStatus {
@@ -1859,17 +1881,17 @@ export type WorkspaceMember = {
 
 /** Date format as Month first, Day first, Year first or system as default */
 export enum WorkspaceMemberDateFormatEnum {
-  DayFirst = 'DAY_FIRST',
-  MonthFirst = 'MONTH_FIRST',
-  System = 'SYSTEM',
-  YearFirst = 'YEAR_FIRST'
+  DAY_FIRST = 'DAY_FIRST',
+  MONTH_FIRST = 'MONTH_FIRST',
+  SYSTEM = 'SYSTEM',
+  YEAR_FIRST = 'YEAR_FIRST'
 }
 
 /** Time time as Military, Standard or system as default */
 export enum WorkspaceMemberTimeFormatEnum {
-  Hour_12 = 'HOUR_12',
-  Hour_24 = 'HOUR_24',
-  System = 'SYSTEM'
+  HOUR_12 = 'HOUR_12',
+  HOUR_24 = 'HOUR_24',
+  SYSTEM = 'SYSTEM'
 }
 
 export type WorkspaceNameAndId = {
@@ -1884,51 +1906,6 @@ export type WorkspaceSubdomainHostnameAndId = {
   id: Scalars['String']['output'];
   subdomain: Scalars['String']['output'];
 };
-
-export type BillingCustomer = {
-  __typename?: 'billingCustomer';
-  id: Scalars['UUID']['output'];
-};
-
-export type BillingCustomerFilter = {
-  and?: InputMaybe<Array<BillingCustomerFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingCustomerFilter>>;
-};
-
-export type BillingCustomerSort = {
-  direction: SortDirection;
-  field: BillingCustomerSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingCustomerSortFields {
-  Id = 'id'
-}
-
-export type BillingEntitlement = {
-  __typename?: 'billingEntitlement';
-  id: Scalars['UUID']['output'];
-  key: Scalars['String']['output'];
-  value: Scalars['Boolean']['output'];
-  workspaceId: Scalars['String']['output'];
-};
-
-export type BillingEntitlementFilter = {
-  and?: InputMaybe<Array<BillingEntitlementFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<BillingEntitlementFilter>>;
-};
-
-export type BillingEntitlementSort = {
-  direction: SortDirection;
-  field: BillingEntitlementSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingEntitlementSortFields {
-  Id = 'id'
-}
 
 export type Field = {
   __typename?: 'field';

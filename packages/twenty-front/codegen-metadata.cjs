@@ -18,6 +18,9 @@ module.exports = {
       presetConfig: {
         fragmentMasking: false,
       },
+      config: {
+        namingConvention: { enumValues: 'keep' },
+      }
     },
   },
 };

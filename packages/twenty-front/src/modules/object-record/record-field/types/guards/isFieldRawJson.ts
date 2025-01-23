@@ -6,4 +6,4 @@ import { FieldMetadata, FieldRawJsonMetadata } from '../FieldMetadata';
 export const isFieldRawJson = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldRawJsonMetadata> =>
-  field.type === FieldMetadataType.RawJson;
+  field.type === FieldMetadataType.RAW_JSON;

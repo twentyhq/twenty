@@ -32,7 +32,6 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -183,12 +182,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             dataSourceMetadata.workspaceId,
           );
 
-        const isWorkflowEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IsWorkflowEnabled,
-            dataSourceMetadata.workspaceId,
-          );
-
         await seedCompanies(entityManager, dataSourceMetadata.schema);
         await seedPeople(entityManager, dataSourceMetadata.schema);
         await seedOpportunity(entityManager, dataSourceMetadata.schema);
@@ -229,7 +222,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           entityManager,
           dataSourceMetadata.schema,
           objectMetadataStandardIdToIdMap,
-          isWorkflowEnabled,
         );
 
         const devViewDefinitionsWithId = await createWorkspaceViews(

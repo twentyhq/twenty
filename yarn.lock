@@ -45615,7 +45615,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-emails@workspace:packages/twenty-emails":
+"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
   languageName: unknown
@@ -45646,6 +45646,7 @@ __metadata:
     file-saver: "npm:^2.0.5"
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -45708,6 +45709,8 @@ __metadata:
     rimraf: "npm:^5.0.5"
     ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
+    twenty-emails: "workspace:*"
+    twenty-shared: "workspace:*"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     typescript: "npm:5.3.3"
     unzipper: "npm:^0.12.3"
@@ -45715,7 +45718,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-shared@workspace:packages/twenty-shared":
+"twenty-shared@workspace:*, twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   languageName: unknown
@@ -45724,6 +45727,8 @@ __metadata:
 "twenty-ui@workspace:packages/twenty-ui":
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
+  dependencies:
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 

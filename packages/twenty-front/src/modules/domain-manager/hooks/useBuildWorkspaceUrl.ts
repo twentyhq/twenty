@@ -20,7 +20,7 @@ export const useBuildWorkspaceUrl = () => {
         )
       : new URL(window.location.href);
 
-    if (!isDefined(hostname) && subdomain.length !== 0) {
+    if (!isDefined(hostname)) {
       url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
     }
 

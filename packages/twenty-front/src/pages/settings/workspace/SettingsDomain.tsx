@@ -1,10 +1,4 @@
-import { SettingsPath } from '@/types/SettingsPath';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { ApolloError } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -63,44 +57,43 @@ export const SettingsDomain = () => {
   const subdomainValue = form.watch('subdomain');
 
   const handleSave = async () => {
-    try {
-      const values = form.getValues();
+    const values = form.getValues();
 
-      if (!values || !form.formState.isValid || !currentWorkspace) {
-        throw new Error(t`Invalid form values`);
-      }
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            subdomain: values.subdomain,
-          },
-        },
-      });
-
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subdomain: values.subdomain,
-      });
-
-      redirectToWorkspaceDomain(values.subdomain, currentWorkspace.hostname);
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        (error.message === t`Subdomain already taken` ||
-          error.message.endsWith(t`not allowed`))
-      ) {
-        form.control.setError('subdomain', {
-          type: 'manual',
-          message: (error as Error).message,
-        });
-        return;
-      }
-
-      enqueueSnackBar((error as Error).message, {
+    if (!values || !form.formState.isValid || !currentWorkspace) {
+      return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
     }
+
+    await updateWorkspace({
+      variables: {
+        input: {
+          subdomain: values.subdomain,
+        },
+      },
+      onError: (error) => {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+        ) {
+          return control.setError('subdomain', {
+            type: 'manual',
+            message: t`Subdomain already taken`,
+          });
+        }
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          subdomain: values.subdomain,
+        });
+
+        redirectToWorkspaceDomain(values.subdomain, currentWorkspace.hostname);
+      },
+    });
   };
 
   return (

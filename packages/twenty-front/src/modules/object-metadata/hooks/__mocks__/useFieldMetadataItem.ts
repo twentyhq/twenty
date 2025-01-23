@@ -160,6 +160,10 @@ export const queries = {
           status
           interval
         }
+        billingSubscriptions {
+          id
+          status
+        }
         workspaceMembersCount
       }
       workspaces {
@@ -239,7 +243,7 @@ const defaultResponseData = {
 const fieldRelationResponseData = {
   ...defaultResponseData,
   id: FIELD_RELATION_METADATA_ID,
-  type: FieldMetadataType.Relation,
+  type: FieldMetadataType.RELATION,
 };
 
 export const responseData = {
@@ -300,6 +304,8 @@ export const responseData = {
         currentBillingSubscription: null,
         workspaceMembersCount: 1,
       },
+      currentBillingSubscription: null,
+      billingSubscriptions: [],
       workspaces: [],
       userVars: null,
     },
