@@ -49,13 +49,10 @@ export const useDeleteOneRecord = ({
     async (idToDelete: string) => {
       const currentTimestamp = new Date().toISOString();
 
-      const preDeletionCachedRecord = getRecordFromCache(
-        idToDelete,
-        apolloClient.cache,
-      );
+      const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
 
       const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
-        record: preDeletionCachedRecord,
+        record: cachedRecord,
         objectMetadataItem,
         objectMetadataItems,
         computeReferences: true,
@@ -67,27 +64,23 @@ export const useDeleteOneRecord = ({
         __typename: capitalize(objectMetadataItem.nameSingular),
       };
 
-      const postDeletionOptimisticRecordWithConnection =
-        getRecordNodeFromRecord({
-          record: computedOptimisticRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          computeReferences: true,
-        });
+      const optimisticRecordWithConnection = getRecordNodeFromRecord({
+        record: computedOptimisticRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        computeReferences: true,
+      });
 
-      if (
-        !postDeletionOptimisticRecordWithConnection ||
-        !cachedRecordWithConnection
-      ) {
+      if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
         return null;
       }
 
-      if (isDefined(preDeletionCachedRecord)) {
+      if (isDefined(cachedRecord)) {
         deleteRecordFromCache({
           cache: apolloClient.cache,
           objectMetadataItem,
           objectMetadataItems,
-          recordToDestroy: preDeletionCachedRecord,
+          recordToDestroy: cachedRecord,
         });
       }
 
@@ -95,7 +88,7 @@ export const useDeleteOneRecord = ({
         cache: apolloClient.cache,
         objectMetadataItem,
         currentRecord: cachedRecordWithConnection,
-        updatedRecord: postDeletionOptimisticRecordWithConnection,
+        updatedRecord: optimisticRecordWithConnection,
         objectMetadataItems,
       });
 
@@ -107,45 +100,35 @@ export const useDeleteOneRecord = ({
           },
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
-            if (!record || !postDeletionOptimisticRecordWithConnection) return;
+            if (!record || !optimisticRecordWithConnection) return;
 
             triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
-              currentRecord: postDeletionOptimisticRecordWithConnection,
+              currentRecord: optimisticRecordWithConnection,
               updatedRecord: record,
               objectMetadataItems,
             });
           },
         })
         .catch((error: Error) => {
-          if (!preDeletionCachedRecord) {
+          if (!cachedRecord) {
             throw error;
           }
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            record: preDeletionCachedRecord,
+            record: cachedRecord,
           });
 
-          const preDeletionOptimisticRecordWithConnection =
-            getRecordNodeFromRecord({
-              record: preDeletionCachedRecord,
-              objectMetadataItem,
-              objectMetadataItems,
-              computeReferences: true,
-            });
-
-          if (isDefined(preDeletionOptimisticRecordWithConnection)) {
-            triggerUpdateRecordOptimisticEffect({
-              cache: apolloClient.cache,
-              objectMetadataItem,
-              currentRecord: preDeletionOptimisticRecordWithConnection,
-              updatedRecord: cachedRecordWithConnection,
-              objectMetadataItems,
-            });
-          }
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            currentRecord: optimisticRecordWithConnection,
+            updatedRecord: cachedRecordWithConnection,
+            objectMetadataItems,
+          });
 
           throw error;
         });
