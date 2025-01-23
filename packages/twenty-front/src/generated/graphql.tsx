@@ -392,8 +392,6 @@ export enum FeatureFlagKey {
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsFreeAccessEnabled = 'IsFreeAccessEnabled',
-  IsFunctionSettingsEnabled = 'IsFunctionSettingsEnabled',
-  IsGmailSendEmailScopeEnabled = 'IsGmailSendEmailScopeEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
