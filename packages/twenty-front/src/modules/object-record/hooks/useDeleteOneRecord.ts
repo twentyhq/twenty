@@ -63,7 +63,7 @@ export const useDeleteOneRecord = ({
 
       const computedOptimisticRecord = {
         id: idToDelete,
-        deletedAt: currentTimestamp, // this is never sent to the api so that's ok
+        deletedAt: currentTimestamp,
         __typename: capitalize(objectMetadataItem.nameSingular),
       };
 
@@ -75,8 +75,6 @@ export const useDeleteOneRecord = ({
           computeReferences: true,
         });
 
-      // I don't understand this condition
-      // We should not delete the record if it has no relations ?
       if (
         !postDeletionOptimisticRecordWithConnection ||
         !cachedRecordWithConnection
@@ -93,9 +91,6 @@ export const useDeleteOneRecord = ({
         });
       }
 
-      // I think this is used to only update relations to the current record ?
-      // Should be replaced by something like triggerDeleteRecordOptimisticEffect
-      // If we do an eviction above is this really necessary ?
       triggerUpdateRecordOptimisticEffect({
         cache: apolloClient.cache,
         objectMetadataItem,
@@ -113,9 +108,7 @@ export const useDeleteOneRecord = ({
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
             if (!record || !postDeletionOptimisticRecordWithConnection) return;
-            console.log({ record, postDeletionOptimisticRecordWithConnection });
 
-            // we're updating the cache twice ?
             triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
@@ -129,7 +122,6 @@ export const useDeleteOneRecord = ({
           if (!preDeletionCachedRecord) {
             throw error;
           }
-          // Will it does a create ?
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,

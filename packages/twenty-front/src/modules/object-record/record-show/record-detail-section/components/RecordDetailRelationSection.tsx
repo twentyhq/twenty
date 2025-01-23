@@ -149,10 +149,6 @@ export const RecordDetailRelationSection = ({
   );
 
   const showContent = () => {
-    if (relationObjectMetadataNameSingular === 'opportunity') {
-      console.log({ relationRecords });
-    }
-
     return (
       relationRecords.length > 0 && (
         <RecordDetailRelationRecordsList relationRecords={relationRecords} />
