@@ -16,8 +16,7 @@ const StyledStepNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  padding-bottom: 12px;
-  padding-top: 6px;
+  padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledStepNodeType = styled.div`
