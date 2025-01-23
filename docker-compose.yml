@@ -1,0 +1,93 @@
+version: "3.9"
+name: twenty
+
+services:
+  change-vol-ownership:
+    image: ubuntu
+    user: root
+    volumes:
+      - server-local-data:/tmp/server-local-data
+      - docker-data:/tmp/docker-data
+    command: >
+      bash -c "
+      chown -R 1000:1000 /tmp/server-local-data
+      && chown -R 1000:1000 /tmp/docker-data"
+
+  server:
+    image: twentycrm/twenty:${TAG}
+    volumes:
+      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - docker-data:/app/docker-data
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+
+      SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+
+      APP_SECRET: ${APP_SECRET}
+    depends_on:
+      change-vol-ownership:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  worker:
+    image: twentycrm/twenty:${TAG}
+    command: ["yarn", "worker:prod"]
+    environment:
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      SERVER_URL: ${SERVER_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
+
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
+
+      APP_SECRET: ${APP_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: twentycrm/twenty-postgres-spilo:${TAG}
+    volumes:
+      - db-data:/home/postgres/pgdata
+    environment:
+      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-postgres}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
+    healthcheck:
+      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  redis:
+    image: redis
+    restart: always
+
+volumes:
+  docker-data:
+  db-data:
+  server-local-data:
