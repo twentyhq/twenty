@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
