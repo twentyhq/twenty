@@ -35,11 +35,6 @@ const getDetachMetricsToRename = ({
   relationDefinition,
   updatedFieldValueOnSourceRecord,
 }: GetDetachMetricsArgs): GetDetachMetricsReport => {
-  // console.log(
-  //   relationDefinition,
-  //   currentFieldValueOnSourceRecord,
-  //   updatedFieldValueOnSourceRecord,
-  // );
   const computeIsRecordConnection = () => {
     switch (relationDefinition.direction) {
       case RelationDefinitionType.MANY_TO_MANY:
@@ -57,7 +52,6 @@ const getDetachMetricsToRename = ({
   };
   const isRecordConnection = computeIsRecordConnection();
   const functionToGiveANameTo = (value: ToNameNode): RecordGqlNode[] => {
-    console.log(value, relationDefinition.direction);
     // I don't understand typing here, we sometimes received empty array ?
     // Zod schema validation was stripping this use case before
     if (!isDefined(value) || isEmpty(value)) {
@@ -98,13 +92,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
-  console.log({
-    cache,
-    sourceObjectMetadataItem,
-    currentSourceRecord,
-    updatedSourceRecord,
-    objectMetadataItems,
-  });
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
