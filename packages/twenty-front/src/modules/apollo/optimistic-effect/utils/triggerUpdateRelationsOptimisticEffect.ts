@@ -20,21 +20,20 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
 // TODO should be extracted outside of the file
-type ToNameNode = RecordGqlConnection | RecordGqlNode | null;
-type GetDetachMetricsArgs = {
+type ComputeRecordsToAttachAndDetachArgs = {
   relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>;
-  currentFieldValueOnSourceRecord: ToNameNode;
-  updatedFieldValueOnSourceRecord: ToNameNode;
+  currentFieldValueOnSourceRecord: RecordGqlConnection | RecordGqlNode | null;
+  updatedFieldValueOnSourceRecord: RecordGqlConnection | RecordGqlNode | null;
 };
-type GetDetachMetricsReport = {
+type ComputeRecordToAttachAndDetachReport = {
   targetRecordsToDetachFrom: RecordGqlNode[];
   targetRecordsToAttachTo: RecordGqlNode[];
 };
-const getDetachMetricsToRename = ({
+const computeRecordsToAttachAndDetach = ({
   currentFieldValueOnSourceRecord,
   relationDefinition,
   updatedFieldValueOnSourceRecord,
-}: GetDetachMetricsArgs): GetDetachMetricsReport => {
+}: ComputeRecordsToAttachAndDetachArgs): ComputeRecordToAttachAndDetachReport => {
   const computeIsRecordConnection = () => {
     switch (relationDefinition.direction) {
       case RelationDefinitionType.MANY_TO_MANY:
@@ -51,7 +50,8 @@ const getDetachMetricsToRename = ({
     }
   };
   const isRecordConnection = computeIsRecordConnection();
-  const functionToGiveANameTo = (value: ToNameNode): RecordGqlNode[] => {
+  // TODO refactor typing as possible ? review  RecordGqlConnection | RecordGqlNode | null
+  const extractTargetFromFieldValue = (value: RecordGqlConnection | RecordGqlNode | null): RecordGqlNode[] => {
     // I don't understand typing here, we sometimes received empty array ?
     // Zod schema validation was stripping this use case before
     if (!isDefined(value) || isEmpty(value)) {
@@ -65,10 +65,10 @@ const getDetachMetricsToRename = ({
     return [value] as RecordGqlNode[];
   };
 
-  const targetRecordsToDetachFrom = functionToGiveANameTo(
+  const targetRecordsToDetachFrom = extractTargetFromFieldValue(
     currentFieldValueOnSourceRecord,
   );
-  const targetRecordsToAttachTo = functionToGiveANameTo(
+  const targetRecordsToAttachTo = extractTargetFromFieldValue(
     updatedFieldValueOnSourceRecord,
   );
 
@@ -147,7 +147,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         return;
       }
       const { targetRecordsToAttachTo, targetRecordsToDetachFrom } =
-        getDetachMetricsToRename({
+        computeRecordsToAttachAndDetach({
           currentFieldValueOnSourceRecord,
           relationDefinition,
           updatedFieldValueOnSourceRecord,
