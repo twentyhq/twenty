@@ -27,6 +27,7 @@ import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -135,45 +136,39 @@ export class FieldMetadataResolver {
   async relation(
     @AuthWorkspace() workspace: Workspace,
     @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null | undefined> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
       return null;
     }
 
-    if (!fieldMetadata.targetFieldMetadataId) {
-      throw new BadRequestException('Target field metadata id is required');
-    }
-
-    const sourceFieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(workspace.id, {
-        where: {
-          id: fieldMetadata.id,
-        },
-        relations: ['object'],
+    try {
+      const {
+        sourceObjectMetadata,
+        targetObjectMetadata,
+        sourceFieldMetadata,
+        targetFieldMetadata,
+      } = await context.loaders.relationLoader.load({
+        fieldMetadata,
+        workspaceId: workspace.id,
       });
 
-    const targetFieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(workspace.id, {
-        where: {
-          id: fieldMetadata.targetFieldMetadataId,
-        },
-        relations: ['object'],
-      });
+      if (!fieldMetadata.settings) {
+        throw new BadRequestException('Relation settings are required');
+      }
 
-    if (!targetFieldMetadata) {
-      throw new BadRequestException('Target field metadata not found');
+      return {
+        type: fieldMetadata.settings.relationType,
+        // TODO: Fix the typing issues
+        sourceObjectMetadata:
+          sourceObjectMetadata as unknown as ObjectMetadataDTO,
+        targetObjectMetadata:
+          targetObjectMetadata as unknown as ObjectMetadataDTO,
+        sourceFieldMetadata: sourceFieldMetadata as unknown as FieldMetadataDTO,
+        targetFieldMetadata: targetFieldMetadata as unknown as FieldMetadataDTO,
+      };
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
     }
-
-    if (!fieldMetadata.settings) {
-      throw new BadRequestException('Relation settings are required');
-    }
-
-    return {
-      type: fieldMetadata.settings.relationType,
-      sourceObjectMetadata: sourceFieldMetadata.object,
-      targetObjectMetadata: targetFieldMetadata.object,
-      sourceFieldMetadata: fieldMetadata,
-      targetFieldMetadata: targetFieldMetadata,
-    };
   }
 }

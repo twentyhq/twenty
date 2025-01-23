@@ -15,6 +15,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
+import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
@@ -22,6 +23,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { ViewModule } from 'src/modules/view/view.module';
 
@@ -42,6 +44,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
+        WorkspaceCacheStorageModule,
         ObjectMetadataModule,
         DataSourceModule,
         TypeORMModule,
@@ -86,9 +89,14 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     IsFieldMetadataDefaultValue,
     IsFieldMetadataOptions,
     FieldMetadataService,
+    FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
     FieldMetadataResolver,
   ],
-  exports: [FieldMetadataService, FieldMetadataRelatedRecordsService],
+  exports: [
+    FieldMetadataService,
+    FieldMetadataRelationService,
+    FieldMetadataRelatedRecordsService,
+  ],
 })
 export class FieldMetadataModule {}
