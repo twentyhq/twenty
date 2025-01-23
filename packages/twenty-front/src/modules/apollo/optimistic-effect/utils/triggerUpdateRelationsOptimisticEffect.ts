@@ -118,7 +118,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         }
 
         if (isRecordConnection) {
-          return value?.edges.map(({ node }: any) => node as RecordGqlNode);
+          return value.edges.map(({ node }: any) => node as RecordGqlNode);
         }
 
         return [value] as RecordGqlNode[];
