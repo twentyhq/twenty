@@ -23,6 +23,8 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
         throw new ConflictError(error.message);
       case FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
       case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:
+      case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
+      case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:
       default:
         throw new InternalServerError(error.message);
     }

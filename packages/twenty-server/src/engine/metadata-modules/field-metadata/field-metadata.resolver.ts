@@ -14,6 +14,8 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -22,14 +24,24 @@ import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
 export class FieldMetadataResolver {
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
@@ -123,6 +135,58 @@ export class FieldMetadataResolver {
         fieldMetadata,
         relationMetadataItem,
       );
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @ResolveField(() => RelationDTO, { nullable: true })
+  async relation(
+    @AuthWorkspace() workspace: Workspace,
+    @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<RelationDTO | null | undefined> {
+    if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+      return null;
+    }
+
+    try {
+      const isNewRelationEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsNewRelationEnabled,
+          workspace.id,
+        );
+
+      if (!isNewRelationEnabled) {
+        throw new FieldMetadataException(
+          'New relation feature is not enabled for this workspace',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED,
+        );
+      }
+      const {
+        sourceObjectMetadata,
+        targetObjectMetadata,
+        sourceFieldMetadata,
+        targetFieldMetadata,
+      } = await context.loaders.relationLoader.load({
+        fieldMetadata,
+        workspaceId: workspace.id,
+      });
+
+      if (!fieldMetadata.settings) {
+        throw new FieldMetadataException(
+          'Relation settings are required',
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+
+      return {
+        type: fieldMetadata.settings.relationType,
+        sourceObjectMetadata,
+        targetObjectMetadata,
+        sourceFieldMetadata,
+        targetFieldMetadata,
+      };
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
