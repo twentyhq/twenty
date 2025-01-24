@@ -1,14 +1,17 @@
 import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
+import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { capitalize } from 'twenty-shared';
 
 export const CommandMenuContextRecordChip = ({
   objectMetadataItemId,
+  instanceId,
+  variant = 'default',
 }: {
   objectMetadataItemId: string;
+  instanceId?: string;
+  variant?: 'default' | 'small';
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
@@ -17,6 +20,7 @@ export const CommandMenuContextRecordChip = ({
   const { records, loading, totalCount } =
     useFindManyRecordsSelectedInContextStore({
       limit: 3,
+      instanceId,
     });
 
   if (loading || !totalCount) {
@@ -31,17 +35,16 @@ export const CommandMenuContextRecordChip = ({
     />
   ));
 
-  const text =
-    totalCount === 1
-      ? getObjectRecordIdentifier({ objectMetadataItem, record: records[0] })
-          .name
-      : `${totalCount} ${capitalize(objectMetadataItem.namePlural)}`;
-
   return (
     <CommandMenuContextChip
-      text={text}
+      text={getSelectedRecordsContextText(
+        objectMetadataItem,
+        records,
+        totalCount,
+      )}
       Icons={Avatars}
       withIconBackground={true}
+      variant={variant}
     />
   );
 };

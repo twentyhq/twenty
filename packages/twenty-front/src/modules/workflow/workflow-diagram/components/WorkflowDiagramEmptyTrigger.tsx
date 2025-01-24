@@ -1,7 +1,5 @@
 import { WorkflowDiagramBaseStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPlaylistAdd } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -9,25 +7,16 @@ const StyledStepNodeLabelIconContainer = styled.div`
   border-radius: ${({ theme }) => theme.spacing(1)};
   display: flex;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const WorkflowDiagramEmptyTrigger = () => {
-  const theme = useTheme();
-
   return (
     <WorkflowDiagramBaseStepNode
       name="Add a Trigger"
       nodeType="trigger"
       variant="placeholder"
-      Icon={
-        <StyledStepNodeLabelIconContainer>
-          <IconPlaylistAdd
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
-          />
-        </StyledStepNodeLabelIconContainer>
-      }
+      Icon={<StyledStepNodeLabelIconContainer />}
     />
   );
 };
