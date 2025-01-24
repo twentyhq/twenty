@@ -83,7 +83,7 @@ export const MultiItemFieldInput = <T,>({
     setInputValue(value);
     if (!validateInput) return;
 
-    if (value === '' && itemToEditIndex !== null) {
+    if (value === '' && itemToEditIndex !== -1) {
       setIsClearingInput(true);
     } else {
       setIsClearingInput(false);
@@ -135,7 +135,7 @@ export const MultiItemFieldInput = <T,>({
       }
     }
 
-    if (isClearingInput && itemToEditIndex !== null) {
+    if (isClearingInput && itemToEditIndex !== -1) {
       handleDeleteItem(itemToEditIndex);
       return;
     }
