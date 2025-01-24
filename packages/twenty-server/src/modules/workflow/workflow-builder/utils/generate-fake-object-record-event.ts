@@ -48,7 +48,9 @@ export const generateFakeObjectRecordEvent = (
       ...baseResult,
       properties: {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after, label: 'After Creation' } },
+        value: {
+          after: { isLeaf: false, value: after, label: 'After Creation' },
+        },
         label: 'Record Fields',
       },
     };
