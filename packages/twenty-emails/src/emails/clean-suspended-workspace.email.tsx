@@ -23,10 +23,10 @@ export const CleanSuspendedWorkspaceEmail = ({
         {helloString},
         <br />
         <br />
-        We wanted to inform you that your workspace{''}
-        <b>{workspaceDisplayName}</b> has been deleted as it remained suspended
-        for {inactiveDaysBeforeDelete} days following your subscription
-        expiration.
+        We wanted to inform you that your{''}
+        <b>{workspaceDisplayName}</b> workspace has been deleted as it remained
+        suspended for {inactiveDaysBeforeDelete} days following your
+        subscription expiration.
         <br />
         <br />
         All associated data within this workspace has been permanently deleted.
