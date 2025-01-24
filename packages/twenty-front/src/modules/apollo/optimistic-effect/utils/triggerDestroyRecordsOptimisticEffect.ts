@@ -4,7 +4,7 @@ import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effe
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isDefined } from '~/utils/isDefined';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
@@ -16,7 +16,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   // TODO refactor this should consume RecordObject[]
-  recordsToDestroy: ObjectRecord[];
+  recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   cache.modify<StoreObject>({

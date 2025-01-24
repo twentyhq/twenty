@@ -31,6 +31,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
+  console.log({currentSourceRecord, updatedSourceRecord})
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
@@ -95,9 +96,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         }
 
         if (isObjectRecordConnection(relationDefinition, value)) {
+          // Might not be a good idea to return RecordObject here as they might be written in cache later
           return getRecordsFromRecordConnection({recordConnection: value})
         }
 
+        // Might not be a good idea to return RecordObject here as they might be written in cache later
         return [getRecordFromRecordNode({recordNode: value})];
       };
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
