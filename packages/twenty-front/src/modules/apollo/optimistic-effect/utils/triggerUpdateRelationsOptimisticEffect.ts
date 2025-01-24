@@ -1,4 +1,3 @@
-import { ApolloCache } from '@apollo/client';
 
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
@@ -12,7 +11,8 @@ import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRe
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import isEmpty from 'lodash.isempty';
+import { ApolloCache } from '@apollo/client';
+import { isArray } from '@sniptt/guards';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
@@ -90,7 +90,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       ): ObjectRecord[] => {
         // TODO investigate on the root cause of empty array injection here, should never occurs
         // Cache might be corrupted somewhere
-        if (!isDefined(value) || isEmpty(value)) {
+        if (!isDefined(value) || isArray(value)) {
           return [];
         }
 
