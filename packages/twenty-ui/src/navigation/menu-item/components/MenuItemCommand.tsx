@@ -8,6 +8,7 @@ import {
 
 import { IconComponent } from '@ui/display';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
+import { ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`
@@ -72,6 +73,7 @@ export type MenuItemCommandProps = {
   className?: string;
   isSelected?: boolean;
   onClick?: () => void;
+  RightComponent?: ReactNode;
 };
 
 export const MenuItemCommand = ({
@@ -82,6 +84,7 @@ export const MenuItemCommand = ({
   className,
   isSelected,
   onClick,
+  RightComponent,
 }: MenuItemCommandProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -99,6 +102,7 @@ export const MenuItemCommand = ({
           </StyledBigIconContainer>
         )}
         <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
+        {RightComponent}
       </StyledMenuItemLeftContent>
       {!isMobile && (
         <MenuItemCommandHotKeys

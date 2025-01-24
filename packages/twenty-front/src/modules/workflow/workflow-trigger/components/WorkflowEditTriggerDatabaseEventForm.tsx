@@ -4,9 +4,10 @@ import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
-import { IconPlaylistAdd, isDefined } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -26,6 +27,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -37,23 +39,23 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
+      Icon: getIcon(item.icon),
     }));
 
-  const selectedEvent = isDefined(triggerEvent)
-    ? DATABASE_TRIGGER_EVENTS.find(
-        (availableEvent) => availableEvent.value === triggerEvent.event,
-      )
-    : undefined;
+  const defaultLabel =
+    getTriggerDefaultLabel({
+      type: 'DATABASE_EVENT',
+      eventName: triggerEvent.event,
+    }) ?? '-';
 
-  const headerTitle = isDefined(trigger.name)
-    ? trigger.name
-    : isDefined(selectedEvent)
-      ? selectedEvent.label
-      : '-';
+  const headerIcon = getTriggerIcon({
+    type: 'DATABASE_EVENT',
+    eventName: triggerEvent.event,
+  });
 
-  const headerType = isDefined(selectedEvent)
-    ? `Trigger · ${selectedEvent.label}`
-    : '-';
+  const headerTitle = isDefined(trigger.name) ? trigger.name : defaultLabel;
+
+  const headerType = `Trigger · ${defaultLabel}`;
 
   return (
     <>
@@ -68,7 +70,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             name: newName,
           });
         }}
-        Icon={IconPlaylistAdd}
+        Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType={headerType}
