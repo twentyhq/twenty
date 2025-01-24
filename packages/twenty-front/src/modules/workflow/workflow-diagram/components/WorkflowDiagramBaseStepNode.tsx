@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
 import { capitalize } from 'twenty-shared';
-import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
+import { isDefined, Label, OverflowingTextWithTooltip } from 'twenty-ui';
 
 type Variant = 'placeholder';
 
@@ -19,14 +19,10 @@ const StyledStepNodeContainer = styled.div`
   padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledStepNodeType = styled.div`
+const StyledStepNodeType = styled(Label)`
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.border.radius.sm}
     ${({ theme }) => theme.border.radius.sm} 0 0;
-
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: 9px;
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
   margin-left: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
@@ -119,7 +115,9 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
 
-      <StyledStepNodeType>{capitalize(nodeType)}</StyledStepNodeType>
+      <StyledStepNodeType variant="small">
+        {capitalize(nodeType)}
+      </StyledStepNodeType>
 
       <StyledStepNodeInnerContainer variant={variant}>
         <StyledStepNodeLabel variant={variant}>
