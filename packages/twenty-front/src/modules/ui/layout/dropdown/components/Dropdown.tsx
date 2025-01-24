@@ -134,10 +134,6 @@ export const Dropdown = ({
             <div
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
-              aria-controls={`${dropdownId}-options`}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup={true}
-              role="button"
             >
               {clickableComponent}
             </div>

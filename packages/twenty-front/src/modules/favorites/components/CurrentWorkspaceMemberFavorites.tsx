@@ -127,6 +127,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       onRename={() => setIsFavoriteFolderRenaming(true)}
       onDelete={handleFavoriteFolderDelete}
       closeDropdown={closeFavoriteFolderEditDropdown}
+      isDropdownOpen={isFavoriteFolderEditDropdownOpen}
     />
   );
 

@@ -1,36 +1,25 @@
+import { FavoriteFolderNavigationDrawerItemDropdownButton } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdownButton';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconDotsVertical, IconPencil, IconTrash, MenuItem } from 'twenty-ui';
+import { IconPencil, IconTrash, MenuItem } from 'twenty-ui';
 
 type FavoriteFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
   onRename: () => void;
   onDelete: () => void;
   closeDropdown: () => void;
+  isDropdownOpen: boolean;
 };
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  background: transparent;
-  height: 24px;
-  width: 24px;
-  display: flex;
-  justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-`;
 
 export const FavoriteFolderNavigationDrawerItemDropdown = ({
   folderId,
   onRename,
   onDelete,
   closeDropdown,
+  isDropdownOpen,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
-  const theme = useTheme();
-
   const handleRename = () => {
     onRename();
     closeDropdown();
@@ -49,12 +38,10 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       }}
       data-select-disable
       clickableComponent={
-        <StyledIconContainer>
-          <IconDotsVertical
-            size={theme.icon.size.sm}
-            color={theme.font.color.tertiary}
-          />
-        </StyledIconContainer>
+        <FavoriteFolderNavigationDrawerItemDropdownButton
+          dropdownId={`favorite-folder-edit-${folderId}`}
+          isDropdownOpen={isDropdownOpen}
+        />
       }
       dropdownPlacement="bottom-start"
       dropdownComponents={
