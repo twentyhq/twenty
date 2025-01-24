@@ -5,38 +5,17 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { hasManyTargetRecords } from '@/object-record/utils/hasManyTargetRecords';
 import isEmpty from 'lodash.isempty';
 import {
-  FieldMetadataType,
-  RelationDefinitionType,
+  FieldMetadataType
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
-
-// TODO relocate
-const hasManyTargetRecords = (
-  relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>,
-) => {
-  switch (relationDefinition.direction) {
-    case RelationDefinitionType.MANY_TO_MANY:
-    case RelationDefinitionType.ONE_TO_MANY: {
-      return true;
-    }
-    case RelationDefinitionType.MANY_TO_ONE:
-    case RelationDefinitionType.ONE_TO_ONE: {
-      return false;
-    }
-    default: {
-      return assertUnreachable(relationDefinition.direction);
-    }
-  }
-};
 
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
