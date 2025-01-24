@@ -23,6 +23,7 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class SSOService {
@@ -32,6 +33,7 @@ export class SSOService {
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
@@ -90,10 +92,11 @@ export class SSOService {
         issuer: identityProvider.issuer,
       };
     } catch (err) {
-      console.log('>>>>>>>>>>>>>>', err);
       if (err instanceof SSOException) {
         return err;
       }
+
+      this.exceptionHandlerService.captureExceptions([err]);
 
       return new SSOException(
         'Unknown SSO configuration error',

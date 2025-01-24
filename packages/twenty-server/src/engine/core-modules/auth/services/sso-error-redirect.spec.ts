@@ -9,7 +9,7 @@ import {
 
 import { SsoErrorRedirectService } from './sso-error-redirect.service';
 
-describe('SsoErrorService', () => {
+describe('SsoErrorRedirectService', () => {
   let service: SsoErrorRedirectService;
   let domainManagerService: DomainManagerService;
   let exceptionHandlerService: ExceptionHandlerService;
