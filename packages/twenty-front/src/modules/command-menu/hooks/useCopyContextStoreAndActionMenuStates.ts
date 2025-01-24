@@ -11,16 +11,16 @@ export const useCopyContextStoreStates = () => {
   const copyContextStoreStates = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
-        instanceIdToCopy,
+        instanceIdToCopyFrom,
         instanceIdToCopyTo,
       }: {
-        instanceIdToCopy: string;
+        instanceIdToCopyFrom: string;
         instanceIdToCopyTo: string;
       }) => {
         const contextStoreCurrentObjectMetadataId = snapshot
           .getLoadable(
             contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -35,7 +35,7 @@ export const useCopyContextStoreStates = () => {
         const contextStoreTargetedRecordsRule = snapshot
           .getLoadable(
             contextStoreTargetedRecordsRuleComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -50,7 +50,7 @@ export const useCopyContextStoreStates = () => {
         const contextStoreNumberOfSelectedRecords = snapshot
           .getLoadable(
             contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -65,7 +65,7 @@ export const useCopyContextStoreStates = () => {
         const contextStoreFilters = snapshot
           .getLoadable(
             contextStoreFiltersComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -80,7 +80,7 @@ export const useCopyContextStoreStates = () => {
         const contextStoreCurrentViewId = snapshot
           .getLoadable(
             contextStoreCurrentViewIdComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -95,7 +95,7 @@ export const useCopyContextStoreStates = () => {
         const contextStoreCurrentViewType = snapshot
           .getLoadable(
             contextStoreCurrentViewTypeComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
@@ -110,7 +110,7 @@ export const useCopyContextStoreStates = () => {
         const actionMenuEntries = snapshot
           .getLoadable(
             actionMenuEntriesComponentState.atomFamily({
-              instanceId: instanceIdToCopy,
+              instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();

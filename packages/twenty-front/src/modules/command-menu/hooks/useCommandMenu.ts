@@ -10,6 +10,8 @@ import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextSt
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -34,7 +36,7 @@ export const useCommandMenu = () => {
     ({ set }) =>
       () => {
         copyContextStoreStates({
-          instanceIdToCopy: mainContextStoreComponentInstanceId,
+          instanceIdToCopyFrom: mainContextStoreComponentInstanceId,
           instanceIdToCopyTo: 'command-menu',
         });
 
@@ -57,6 +59,7 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           resetContextStoreStates('command-menu');
+          resetContextStoreStates('command-menu-previous');
 
           set(viewableRecordIdState, null);
           set(commandMenuPageState, CommandMenuPages.Root);
@@ -108,11 +111,26 @@ export const useCommandMenu = () => {
     ({ set }) => {
       return () => {
         copyContextStoreStates({
-          instanceIdToCopy: 'command-menu',
+          instanceIdToCopyFrom: 'command-menu',
           instanceIdToCopyTo: 'command-menu-previous',
         });
 
-        resetContextStoreStates('command-menu');
+        set(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          {
+            mode: 'selection',
+            selectedRecordIds: [],
+          },
+        );
+
+        set(
+          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          0,
+        );
 
         set(commandMenuPageInfoState, {
           title: undefined,
@@ -120,7 +138,7 @@ export const useCommandMenu = () => {
         });
       };
     },
-    [copyContextStoreStates, resetContextStoreStates],
+    [copyContextStoreStates],
   );
 
   return {

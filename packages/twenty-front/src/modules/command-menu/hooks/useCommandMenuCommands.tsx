@@ -9,7 +9,6 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
-import { useResetContextToSelection } from '@/command-menu/hooks/useResetContextCommand';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -49,8 +48,6 @@ export const useCommandMenuCommands = () => {
   const isCopilotEnabled = useIsFeatureEnabled(FeatureFlagKey.IsCopilotEnabled);
   const setCopilotQuery = useSetRecoilState(copilotQueryState);
   const openCopilotRightDrawer = useOpenCopilotRightDrawer();
-
-  const { resetContextCommand } = useResetContextToSelection();
 
   const copilotCommand: Command = {
     id: 'copilot',
@@ -301,7 +298,6 @@ export const useCommandMenuCommands = () => {
   const isLoading = loading || isNotesLoading || isTasksLoading;
 
   return {
-    resetContextCommand,
     copilotCommands,
     navigateCommands,
     actionRecordSelectionCommands,
