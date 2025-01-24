@@ -51,8 +51,11 @@ export const useCommandMenuHotKeys = () => {
       if (
         commandMenuPage === CommandMenuPages.Root &&
         !isNonEmptyString(commandMenuSearch) &&
-        contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
-        contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length !== 0
+        !(
+          contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
+          contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length ===
+            0
+        )
       ) {
         setGlobalCommandMenuContext();
       }

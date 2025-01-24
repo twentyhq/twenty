@@ -10,7 +10,7 @@ import { useRecoilValue } from 'recoil';
 import { IconArrowBackUp, isDefined } from 'twenty-ui';
 
 export const ResetContextToSelectionCommandButton = () => {
-  const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
     'command-menu-previous',
   );
@@ -32,8 +32,8 @@ export const ResetContextToSelectionCommandButton = () => {
 
   if (
     !isDefined(objectMetadataItem) ||
-    contextStoreTargetedRecordsRuleComponent.mode !== 'selection' ||
-    contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length === 0
+    (contextStoreTargetedRecordsRule.mode === 'selection' &&
+      contextStoreTargetedRecordsRule.selectedRecordIds.length === 0)
   ) {
     return null;
   }
