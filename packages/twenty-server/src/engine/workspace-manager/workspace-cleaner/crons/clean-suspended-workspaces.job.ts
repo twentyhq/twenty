@@ -13,12 +13,11 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { chunkArray } from 'src/utils/chunk-array';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
-
-export const USER_WORKSPACE_DELETION_WARNING_SENT_KEY =
-  'USER_WORKSPACE_DELETION_WARNING_SENT';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanSuspendedWorkspacesJob {
@@ -73,18 +72,6 @@ export class CleanSuspendedWorkspacesJob {
     }
   }
 
-  chunkArray<T>(array: T[], chunkSize = 5): T[][] {
-    const chunkedArray: T[][] = [];
-    let index = 0;
-
-    while (index < array.length) {
-      chunkedArray.push(array.slice(index, index + chunkSize));
-      index += chunkSize;
-    }
-
-    return chunkedArray;
-  }
-
   async checkIfWorkspaceMembersWarned(
     workspaceMembers: WorkspaceMemberWorkspaceEntity[],
     workspaceId: string,
@@ -121,7 +108,7 @@ export class CleanSuspendedWorkspacesJob {
 
       return;
     } else {
-      const workspaceMembersChunks = this.chunkArray(workspaceMembers);
+      const workspaceMembersChunks = chunkArray(workspaceMembers);
 
       for (const workspaceMembersChunk of workspaceMembersChunks) {
         await Promise.all(
@@ -151,7 +138,7 @@ export class CleanSuspendedWorkspacesJob {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
-    const workspaceMembersChunks = this.chunkArray(workspaceMembers);
+    const workspaceMembersChunks = chunkArray(workspaceMembers);
 
     for (const workspaceMembersChunk of workspaceMembersChunks) {
       await Promise.all(
@@ -184,7 +171,7 @@ export class CleanSuspendedWorkspacesJob {
       where: { activationStatus: WorkspaceActivationStatus.SUSPENDED },
     });
 
-    const suspendedWorkspacesChunks = this.chunkArray(suspendedWorkspaces);
+    const suspendedWorkspacesChunks = chunkArray(suspendedWorkspaces);
 
     let deletedWorkspacesCount = 0;
 
