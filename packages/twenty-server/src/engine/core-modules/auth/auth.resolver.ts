@@ -121,7 +121,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.challenge(
+    const user = await this.authService.getLoginTokenFromCredentials(
       getLoginTokenFromCredentialsInput,
       workspace,
     );

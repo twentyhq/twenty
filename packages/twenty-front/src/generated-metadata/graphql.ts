@@ -1267,15 +1267,6 @@ export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
 };
 
-export type Relation = {
-  __typename?: 'Relation';
-  sourceFieldMetadata: Field;
-  sourceObjectMetadata: Object;
-  targetFieldMetadata: Field;
-  targetObjectMetadata: Object;
-  type: RelationType;
-};
-
 export type RelationConnection = {
   __typename?: 'RelationConnection';
   /** Array of edges. */

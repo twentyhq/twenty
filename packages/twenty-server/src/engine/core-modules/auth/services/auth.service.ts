@@ -113,8 +113,8 @@ export class AuthService {
     );
   }
 
-  async challenge(
-    challengeInput: GetLoginTokenFromCredentialsInput,
+  async getLoginTokenFromCredentials(
+    input: GetLoginTokenFromCredentialsInput,
     targetWorkspace: Workspace,
   ) {
     if (!targetWorkspace.isPasswordAuthEnabled) {
@@ -126,7 +126,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: {
-        email: challengeInput.email,
+        email: input.email,
       },
       relations: ['workspaces'],
     });
@@ -147,10 +147,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await compareHash(
-      challengeInput.password,
-      user.passwordHash,
-    );
+    const isValid = await compareHash(input.password, user.passwordHash);
 
     if (!isValid) {
       throw new AuthException(

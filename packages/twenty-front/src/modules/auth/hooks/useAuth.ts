@@ -171,22 +171,22 @@ export const useAuth = () => {
   const handleGetLoginTokenFromCredentials = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
       try {
-        const challengeResult = await getLoginTokenFromCredentials({
+        const getLoginTokenResult = await getLoginTokenFromCredentials({
           variables: {
             email,
             password,
             captchaToken,
           },
         });
-        if (isDefined(challengeResult.errors)) {
-          throw challengeResult.errors;
+        if (isDefined(getLoginTokenResult.errors)) {
+          throw getLoginTokenResult.errors;
         }
 
-        if (!challengeResult.data?.getLoginTokenFromCredentials) {
+        if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
           throw new Error('No login token');
         }
 
-        return challengeResult.data.getLoginTokenFromCredentials;
+        return getLoginTokenResult.data.getLoginTokenFromCredentials;
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
@@ -328,19 +328,21 @@ export const useAuth = () => {
     async (loginToken: string) => {
       setIsVerifyPendingState(true);
 
-      const verifyResult = await getAuthTokensFromLoginToken({
+      const getAuthTokensResult = await getAuthTokensFromLoginToken({
         variables: { loginToken },
       });
 
-      if (isDefined(verifyResult.errors)) {
-        throw verifyResult.errors;
+      if (isDefined(getAuthTokensResult.errors)) {
+        throw getAuthTokensResult.errors;
       }
 
-      if (!verifyResult.data?.getAuthTokensFromLoginToken) {
-        throw new Error('No verify result');
+      if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+        throw new Error('No getAuthTokensFromLoginToken result');
       }
 
-      setTokenPair(verifyResult.data?.getAuthTokensFromLoginToken.tokens);
+      setTokenPair(
+        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
+      );
 
       await loadCurrentUser();
 
