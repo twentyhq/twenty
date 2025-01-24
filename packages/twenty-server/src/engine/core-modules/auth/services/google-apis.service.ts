@@ -123,7 +123,7 @@ export class GoogleAPIsService {
 
         const connectedAccountMetadata =
           await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'connectedAccount' },
+            where: { nameSingular: 'connectedAccount', workspaceId },
           });
 
         this.workspaceEventEmitter.emitDatabaseBatchEvent({
@@ -157,7 +157,7 @@ export class GoogleAPIsService {
 
         const messageChannelMetadata =
           await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'messageChannel' },
+            where: { nameSingular: 'messageChannel', workspaceId },
           });
 
         this.workspaceEventEmitter.emitDatabaseBatchEvent({
@@ -191,7 +191,7 @@ export class GoogleAPIsService {
 
           const calendarChannelMetadata =
             await this.objectMetadataRepository.findOneOrFail({
-              where: { nameSingular: 'calendarChannel' },
+              where: { nameSingular: 'calendarChannel', workspaceId },
             });
 
           this.workspaceEventEmitter.emitDatabaseBatchEvent({
@@ -224,7 +224,7 @@ export class GoogleAPIsService {
 
         const connectedAccountMetadata =
           await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'connectedAccount' },
+            where: { nameSingular: 'connectedAccount', workspaceId },
           });
 
         this.workspaceEventEmitter.emitDatabaseBatchEvent({
@@ -283,7 +283,7 @@ export class GoogleAPIsService {
 
         const messageChannelMetadata =
           await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'messageChannel' },
+            where: { nameSingular: 'messageChannel', workspaceId },
           });
 
         this.workspaceEventEmitter.emitDatabaseBatchEvent({
