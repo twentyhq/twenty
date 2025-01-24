@@ -1,7 +1,9 @@
+import { FieldMetadataType } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -21,37 +23,17 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-export enum FieldMetadataType {
-  UUID = 'UUID',
-  TEXT = 'TEXT',
-  PHONES = 'PHONES',
-  EMAILS = 'EMAILS',
-  DATE_TIME = 'DATE_TIME',
-  DATE = 'DATE',
-  BOOLEAN = 'BOOLEAN',
-  NUMBER = 'NUMBER',
-  NUMERIC = 'NUMERIC',
-  LINKS = 'LINKS',
-  CURRENCY = 'CURRENCY',
-  FULL_NAME = 'FULL_NAME',
-  RATING = 'RATING',
-  SELECT = 'SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-  RELATION = 'RELATION',
-  POSITION = 'POSITION',
-  ADDRESS = 'ADDRESS',
-  RAW_JSON = 'RAW_JSON',
-  RICH_TEXT = 'RICH_TEXT',
-  ACTOR = 'ACTOR',
-  ARRAY = 'ARRAY',
-  TS_VECTOR = 'TS_VECTOR',
-}
-
 @Entity('fieldMetadata')
 @Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
   'name',
   'objectMetadataId',
   'workspaceId',
+])
+@Index('IndexOnRelationTargetFieldMetadataId', [
+  'relationTargetFieldMetadataId',
+])
+@Index('IndexOnRelationTargetObjectMetadataId', [
+  'relationTargetObjectMetadataId',
 ])
 export class FieldMetadataEntity<
   T extends FieldMetadataType | 'default' = 'default',
@@ -72,7 +54,10 @@ export class FieldMetadataEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   object: Relation<ObjectMetadataEntity>;
 
-  @Column({ nullable: false })
+  @Column({
+    nullable: false,
+    type: 'varchar',
+  })
   type: FieldMetadataType;
 
   @Column({ nullable: false })
@@ -116,6 +101,26 @@ export class FieldMetadataEntity<
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
+  relationTargetFieldMetadataId: string;
+  @OneToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata: FieldMetadataEntity) =>
+      fieldMetadata.relationTargetFieldMetadataId,
+  )
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
+  relationTargetFieldMetadata: Relation<FieldMetadataEntity>;
+
+  @Column({ nullable: true, type: 'uuid' })
+  relationTargetObjectMetadataId: string;
+  @ManyToOne(
+    () => ObjectMetadataEntity,
+    (objectMetadata: ObjectMetadataEntity) =>
+      objectMetadata.targetRelationFields,
+  )
+  @JoinColumn({ name: 'relationTargetObjectMetadataId' })
+  relationTargetObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @OneToOne(
     () => RelationMetadataEntity,

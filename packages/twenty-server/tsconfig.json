@@ -25,9 +25,8 @@
     "resolveJsonModule": true,
     "types": ["jest", "node"],
     "paths": {
-      "src/*": ["packages/twenty-server/src/*"],
-      "test/*": ["packages/twenty-server/test/*"],
-      "twenty-emails": ["packages/twenty-emails/dist"]
+      "src/*": ["./src/*"],
+      "test/*": ["./test/*"]
     }
   },
   "ts-node": {

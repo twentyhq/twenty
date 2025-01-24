@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { ReactNode, act } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
@@ -13,12 +14,14 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 import { renderHook } from '@testing-library/react';
+import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
-    <RecoilRoot>{children}</RecoilRoot>
+    <RecoilRoot>
+      <MemoryRouter>{children}</MemoryRouter>
+    </RecoilRoot>
   </MockedProvider>
 );
 
@@ -141,10 +144,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      const res = await result.current.signUpWithCredentials(email, password);
-      expect(res).toHaveProperty('user');
-      expect(res).toHaveProperty('workspaceMember');
-      expect(res).toHaveProperty('workspace');
+      await result.current.signUpWithCredentials(email, password);
     });
 
     expect(mocks[2].result).toHaveBeenCalled();

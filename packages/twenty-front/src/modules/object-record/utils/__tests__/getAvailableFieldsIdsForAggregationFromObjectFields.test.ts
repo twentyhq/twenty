@@ -2,7 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
-import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOption';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -11,9 +11,9 @@ const PRICE_FIELD_ID = '9d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0b';
 const NAME_FIELD_ID = '5d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0c';
 
 const FIELDS_MOCKS = [
-  { id: AMOUNT_FIELD_ID, type: FieldMetadataType.Number, name: 'amount' },
-  { id: PRICE_FIELD_ID, type: FieldMetadataType.Currency, name: 'price' },
-  { id: NAME_FIELD_ID, type: FieldMetadataType.Text, name: 'name' },
+  { id: AMOUNT_FIELD_ID, type: FieldMetadataType.NUMBER, name: 'amount' },
+  { id: PRICE_FIELD_ID, type: FieldMetadataType.CURRENCY, name: 'price' },
+  { id: NAME_FIELD_ID, type: FieldMetadataType.TEXT, name: 'name' },
 ];
 
 jest.mock(

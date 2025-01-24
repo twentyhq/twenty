@@ -51,7 +51,7 @@ export const RecordTableDraggableTr = forwardRef<
               ...draggableProvided.draggableProps.style,
               background: draggableSnapshot.isDragging
                 ? theme.background.transparent.light
-                : 'none',
+                : undefined,
               borderColor: draggableSnapshot.isDragging
                 ? `${theme.border.color.medium}`
                 : 'transparent',

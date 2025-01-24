@@ -1,7 +1,7 @@
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterValueDependencies } from '@/object-record/record-filter/types/FilterValueDependencies';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { expect } from '@storybook/test';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -11,7 +11,7 @@ describe('computeContextStoreFilters', () => {
     (item) => item.nameSingular === 'person',
   )!;
 
-  const mockFilterValueDependencies: FilterValueDependencies = {
+  const mockFilterValueDependencies: RecordFilterValueDependencies = {
     currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
   };
 
@@ -42,7 +42,7 @@ describe('computeContextStoreFilters', () => {
       excludedRecordIds: ['1', '2', '3'],
     };
 
-    const contextStoreFilters: Filter[] = [
+    const contextStoreFilters: RecordFilter[] = [
       {
         id: 'name-filter',
         variant: 'default',

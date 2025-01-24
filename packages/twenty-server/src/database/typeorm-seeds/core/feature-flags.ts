@@ -36,11 +36,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsFunctionSettingsEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -51,12 +46,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsSSOEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
+        key: FeatureFlagKey.IsBillingPlansEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -76,12 +66,12 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAggregateQueryEnabled,
+        key: FeatureFlagKey.IsCommandMenuV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsCommandMenuV2Enabled,
+        key: FeatureFlagKey.IsLocalizationEnabled,
         workspaceId: workspaceId,
         value: true,
       },

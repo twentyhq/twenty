@@ -22,9 +22,13 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { IconsProvider } from 'twenty-ui';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
 export type PageDecoratorArgs = {
@@ -63,35 +67,45 @@ const ApolloStorybookDevLogEffect = () => {
   return <></>;
 };
 
+dynamicActivate('en');
+
 const Providers = () => {
   return (
     <RecoilRoot>
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
         <RecoilDebugObserverEffect />
         <ApolloProvider client={mockedApolloClient}>
-          <ApolloStorybookDevLogEffect />
-          <ClientConfigProviderEffect />
-          <ClientConfigProvider>
-            <UserProviderEffect />
-            <WorkspaceProviderEffect />
-            <UserProvider>
-              <ApolloMetadataClientMockedProvider>
-                <ObjectMetadataItemsProvider>
-                  <FullHeightStorybookLayout>
-                    <HelmetProvider>
-                      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                        <IconsProvider>
-                          <PrefetchDataProvider>
-                            <Outlet />
-                          </PrefetchDataProvider>
-                        </IconsProvider>
-                      </SnackBarProviderScope>
-                    </HelmetProvider>
-                  </FullHeightStorybookLayout>
-                </ObjectMetadataItemsProvider>
-              </ApolloMetadataClientMockedProvider>
-            </UserProvider>
-          </ClientConfigProvider>
+          <I18nProvider i18n={i18n}>
+            <ApolloStorybookDevLogEffect />
+            <ClientConfigProviderEffect />
+            <ClientConfigProvider>
+              <UserProviderEffect />
+              <WorkspaceProviderEffect />
+              <UserProvider>
+                <ApolloMetadataClientMockedProvider>
+                  <ObjectMetadataItemsProvider>
+                    <FullHeightStorybookLayout>
+                      <HelmetProvider>
+                        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                          <IconsProvider>
+                            <PrefetchDataProvider>
+                              <RecordFiltersComponentInstanceContext.Provider
+                                value={{
+                                  instanceId: 'storybook-test-record-filters',
+                                }}
+                              >
+                                <Outlet />
+                              </RecordFiltersComponentInstanceContext.Provider>
+                            </PrefetchDataProvider>
+                          </IconsProvider>
+                        </SnackBarProviderScope>
+                      </HelmetProvider>
+                    </FullHeightStorybookLayout>
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientMockedProvider>
+              </UserProvider>
+            </ClientConfigProvider>
+          </I18nProvider>
         </ApolloProvider>
       </SnackBarProviderScope>
     </RecoilRoot>

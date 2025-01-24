@@ -7,8 +7,14 @@ import { Repository } from 'typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -118,20 +124,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user;
   }
 
-  async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
-    const appToken = await this.workspaceInvitationService.validateInvitation({
-      workspacePersonalInviteToken: inviteToken,
-      email: user.email,
-    });
-
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      appToken.workspace.id,
-      user.email,
-    );
-
-    return await this.addUserToWorkspace(user, appToken.workspace);
-  }
-
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
     return await this.userWorkspaceRepository.countBy({
       workspaceId,
@@ -160,5 +152,47 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         user: true,
       },
     });
+  }
+
+  async findAvailableWorkspacesByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: [
+        'workspaces',
+        'workspaces.workspace',
+        'workspaces.workspace.workspaceSSOIdentityProviders',
+      ],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
+      id: userWorkspace.workspaceId,
+      displayName: userWorkspace.workspace.displayName,
+      subdomain: userWorkspace.workspace.subdomain,
+      logo: userWorkspace.workspace.logo,
+      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
   }
 }

@@ -21,7 +21,7 @@ export type MicrosoftRequest = Omit<
     picture: string | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
-    targetWorkspaceSubdomain?: string;
+    workspaceId?: string;
     billingCheckoutSessionState?: string;
   };
 };
@@ -32,7 +32,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: environmentService.get('AUTH_MICROSOFT_CALLBACK_URL'),
-      tenant: environmentService.get('AUTH_MICROSOFT_TENANT_ID'),
+      tenant: 'common',
       scope: ['user.read'],
       passReqToCallback: true,
     });
@@ -43,7 +43,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       ...options,
       state: JSON.stringify({
         workspaceInviteHash: req.params.workspaceInviteHash,
-        workspaceSubdomain: req.params.workspaceSubdomain,
+        workspaceId: req.params.workspaceId,
         ...(req.params.billingCheckoutSessionState
           ? {
               billingCheckoutSessionState:
@@ -92,7 +92,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: state.workspaceSubdomain,
+      workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
     };
 

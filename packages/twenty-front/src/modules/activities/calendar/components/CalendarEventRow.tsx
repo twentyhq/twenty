@@ -129,7 +129,7 @@ export const CalendarEventRow = ({
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
   const showTitle =
-    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
+    calendarEvent.visibility === CalendarChannelVisibility.SHARE_EVERYTHING;
 
   return (
     <StyledContainer

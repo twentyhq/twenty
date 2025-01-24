@@ -24,7 +24,6 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
@@ -74,7 +73,13 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS = 7;
+  BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
+
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -201,10 +206,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
-  AUTH_MICROSOFT_TENANT_ID: string;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -231,11 +232,6 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  AUTH_SSO_ENABLED = false;
 
   @IsString()
   @IsOptional()
@@ -419,6 +415,15 @@ export class EnvironmentVariables {
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_EMAIL_VERIFICATION_REQUIRED = false;
+
+  @IsDuration()
+  @IsOptional()
+  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
+
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
   EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
@@ -459,16 +464,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  @AssertOrWarn(
-    (env, value) =>
-      !env.AUTH_SSO_ENABLED ||
-      (env.AUTH_SSO_ENABLED &&
-        value !== 'replace_me_with_a_random_string_session'),
-    {
-      message:
-        'SESSION_STORE_SECRET should be changed to a secure, random string.',
-    },
-  )
   SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()

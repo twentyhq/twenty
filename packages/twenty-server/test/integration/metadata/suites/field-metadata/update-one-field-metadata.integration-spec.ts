@@ -1,4 +1,4 @@
-import { createTestTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-test-field-metadata.util';
+import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
 import { deleteFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
@@ -17,7 +17,7 @@ describe('updateOne', () => {
       listingObjectId = createdObjectId;
 
       const { fieldMetadataId: createdFieldMetadaId } =
-        await createTestTextFieldMetadata(createdObjectId);
+        await createCustomTextFieldMetadata(createdObjectId);
 
       testFieldId = createdFieldMetadaId;
     });

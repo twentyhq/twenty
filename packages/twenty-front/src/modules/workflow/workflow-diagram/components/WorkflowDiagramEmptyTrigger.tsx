@@ -22,7 +22,10 @@ export const WorkflowDiagramEmptyTrigger = () => {
       variant="placeholder"
       Icon={
         <StyledStepNodeLabelIconContainer>
-          <IconPlaylistAdd size={16} color={theme.font.color.tertiary} />
+          <IconPlaylistAdd
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
         </StyledStepNodeLabelIconContainer>
       }
     />
