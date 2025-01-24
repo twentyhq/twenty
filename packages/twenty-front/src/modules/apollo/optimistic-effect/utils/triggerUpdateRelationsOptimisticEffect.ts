@@ -11,9 +11,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { hasManyTargetRecords } from '@/object-record/utils/hasManyTargetRecords';
 import isEmpty from 'lodash.isempty';
-import {
-  FieldMetadataType
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
@@ -90,10 +88,9 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       // TODO this should transpile from RecordGqlNode to ObjectRecord ( find utils already exising )
       const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
-      ): RecordGqlNode[] => {
-        // I don't understand typing here, we sometimes received empty array ?
-        // Zod schema validation was stripping this use case before
+      ): ObjectRecord[] => {
         // TODO investigate on the root cause of empty array injection here, should never occurs
+        // Cache might be corrupted somewhere
         if (!isDefined(value) || isEmpty(value)) {
           return [];
         }
@@ -111,44 +108,35 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         updatedFieldValueOnSourceRecord,
       );
 
-      // Is something like hasCachedSourceThatCouldBeDetach ?
-      const shouldDetachSourceFromAllTargets =
-        isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
-
-      if (shouldDetachSourceFromAllTargets) {
-        // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
-        //   Instead of hardcoding it here
-        const shouldCascadeDeleteTargetRecords =
-          CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
-            targetObjectMetadata.nameSingular as CoreObjectNameSingular,
-          );
-
-        if (shouldCascadeDeleteTargetRecords) {
-          triggerDestroyRecordsOptimisticEffect({
+      // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
+      //   Instead of hardcoding it here
+      const shouldCascadeDeleteTargetRecords =
+        CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
+          targetObjectMetadata.nameSingular as CoreObjectNameSingular,
+        );
+      if (shouldCascadeDeleteTargetRecords) {
+        triggerDestroyRecordsOptimisticEffect({
+          cache,
+          objectMetadataItem: fullTargetObjectMetadataItem,
+          recordsToDestroy: targetRecordsToDetachFrom,
+          objectMetadataItems,
+        });
+        // Could be an invariant ?
+      } else if (isDefined(currentSourceRecord)) {
+        targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
+          triggerDetachRelationOptimisticEffect({
             cache,
-            objectMetadataItem: fullTargetObjectMetadataItem,
-            recordsToDestroy: targetRecordsToDetachFrom,
-            objectMetadataItems,
+            sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
+            sourceRecordId: currentSourceRecord.id,
+            fieldNameOnTargetRecord: targetFieldMetadata.name,
+            targetObjectNameSingular: targetObjectMetadata.nameSingular,
+            targetRecordId: targetRecordToDetachFrom.id,
           });
-        } else {
-          targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
-            triggerDetachRelationOptimisticEffect({
-              cache,
-              sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
-              sourceRecordId: currentSourceRecord.id,
-              fieldNameOnTargetRecord: targetFieldMetadata.name,
-              targetObjectNameSingular: targetObjectMetadata.nameSingular,
-              targetRecordId: targetRecordToDetachFrom.id,
-            });
-          });
-        }
+        });
       }
 
-      const shouldAttachSourceToAllTargets =
-        isDefined(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
-
-      // TODO remove below condition that is not usefull as if array is empty it will noop
-      if (shouldAttachSourceToAllTargets) {
+      // Could it be an invariant ?
+      if (isDefined(updatedSourceRecord)) {
         targetRecordsToAttachTo.forEach((targetRecordsToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
             cache,
