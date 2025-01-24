@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledChip = styled.div`
+const StyledChip = styled.div<{ variant?: 'default' | 'small' }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -8,7 +8,8 @@ const StyledChip = styled.div`
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${({ theme, variant }) =>
+    variant === 'small' ? theme.spacing(6) : theme.spacing(8)};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -40,13 +41,15 @@ export const CommandMenuContextChip = ({
   Icons,
   text,
   withIconBackground,
+  variant = 'default',
 }: {
   Icons: React.ReactNode[];
   text?: string;
   withIconBackground?: boolean;
+  variant?: 'default' | 'small';
 }) => {
   return (
-    <StyledChip>
+    <StyledChip variant={variant}>
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <StyledIconWrapper
