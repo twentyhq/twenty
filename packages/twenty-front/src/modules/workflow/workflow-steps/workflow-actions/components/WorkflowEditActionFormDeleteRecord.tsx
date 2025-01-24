@@ -145,6 +145,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
 
             saveAction(newFormData);
           }}
+          withSearchInput
         />
 
         <HorizontalSeparator noMargin />
