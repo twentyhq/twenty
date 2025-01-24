@@ -9,7 +9,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 // Note: This is probably not the right way to do this.
 export const computePathWithoutToken = (attachmentPath: string): string => {
@@ -56,11 +55,9 @@ export const useUploadAttachmentFile = () => {
       updatedAt: new Date().toISOString(),
     } as Partial<Attachment>;
 
-    await createOneAttachment(attachmentToCreate);
+    const createdAttachment = await createOneAttachment(attachmentToCreate);
 
-    const attachementAbsoluteURL = getFileAbsoluteURI(attachmentPath);
-
-    return { attachementAbsoluteURL };
+    return { attachmentAbsoluteURL: createdAttachment.fullPath };
   };
 
   return { uploadAttachmentFile };

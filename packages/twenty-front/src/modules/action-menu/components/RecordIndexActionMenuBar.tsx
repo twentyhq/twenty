@@ -39,9 +39,7 @@ export const RecordIndexActionMenuBar = () => {
   return (
     <BottomBar
       bottomBarId={getActionBarIdFromActionMenuId(actionMenuId)}
-      bottomBarHotkeyScopeFromParent={{
-        scope: ActionBarHotkeyScope.ActionBar,
-      }}
+      bottomBarHotkeyScopeFromParent={{ scope: ActionBarHotkeyScope.ActionBar }}
     >
       <StyledLabel>{contextStoreNumberOfSelectedRecords} selected:</StyledLabel>
       {pinnedEntries.map((entry, index) => (

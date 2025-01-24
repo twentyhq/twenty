@@ -176,7 +176,7 @@ export const useCommandMenuCommands = () => {
 
   const peopleCommands = useMemo(
     () =>
-      people?.map(({ id, name: { firstName, lastName } }) => ({
+      people?.map(({ id, name: { firstName, lastName }, avatarUrl }) => ({
         id,
         label: `${firstName} ${lastName}`,
         to: `object/person/${id}`,
@@ -184,7 +184,7 @@ export const useCommandMenuCommands = () => {
         Icon: () => (
           <Avatar
             type="rounded"
-            avatarUrl={null}
+            avatarUrl={avatarUrl}
             placeholderColorSeed={id}
             placeholder={`${firstName} ${lastName}`}
           />
@@ -283,7 +283,7 @@ export const useCommandMenuCommands = () => {
           Icon: () => (
             <Avatar
               type="rounded"
-              avatarUrl={null}
+              avatarUrl={objectRecord.record.avatarUrl}
               placeholderColorSeed={objectRecord.record.id}
               placeholder={objectRecord.recordIdentifier.name ?? ''}
             />

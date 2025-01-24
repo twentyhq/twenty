@@ -1,5 +1,7 @@
+import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
+import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -11,6 +13,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
@@ -24,7 +27,6 @@ import {
   Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -47,7 +49,7 @@ const StyledUserInfo = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(0.5)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledTabListContainer = styled.div`
@@ -86,6 +88,8 @@ export const SettingsAdminContent = () => {
     isLoading,
     error,
   } = useFeatureFlagsManagement();
+
+  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');
@@ -151,37 +155,39 @@ export const SettingsAdminContent = () => {
           />
         )}
 
-        <StyledTable>
-          <TableRow
-            gridAutoColumns="1fr 100px"
-            mobileGridAutoColumns="1fr 80px"
-          >
-            <TableHeader>Feature Flag</TableHeader>
-            <TableHeader align="right">Status</TableHeader>
-          </TableRow>
-
-          {activeWorkspace.featureFlags.map((flag) => (
+        {canManageFeatureFlags && (
+          <StyledTable>
             <TableRow
               gridAutoColumns="1fr 100px"
               mobileGridAutoColumns="1fr 80px"
-              key={flag.key}
             >
-              <TableCell>{flag.key}</TableCell>
-              <TableCell align="right">
-                <Toggle
-                  value={flag.value}
-                  onChange={(newValue) =>
-                    handleFeatureFlagUpdate(
-                      activeWorkspace.id,
-                      flag.key,
-                      newValue,
-                    )
-                  }
-                />
-              </TableCell>
+              <TableHeader>Feature Flag</TableHeader>
+              <TableHeader align="right">Status</TableHeader>
             </TableRow>
-          ))}
-        </StyledTable>
+
+            {activeWorkspace.featureFlags.map((flag) => (
+              <TableRow
+                gridAutoColumns="1fr 100px"
+                mobileGridAutoColumns="1fr 80px"
+                key={flag.key}
+              >
+                <TableCell>{flag.key}</TableCell>
+                <TableCell align="right">
+                  <Toggle
+                    value={flag.value}
+                    onChange={(newValue) =>
+                      handleFeatureFlagUpdate(
+                        activeWorkspace.id,
+                        flag.key,
+                        newValue,
+                      )
+                    }
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </StyledTable>
+        )}
       </>
     );
   };
@@ -190,8 +196,16 @@ export const SettingsAdminContent = () => {
     <>
       <Section>
         <H2Title
-          title="Feature Flags & Impersonation"
-          description="Look up users and manage their workspace feature flags or impersonate it."
+          title={
+            canManageFeatureFlags
+              ? 'Feature Flags & Impersonation'
+              : 'User Impersonation'
+          }
+          description={
+            canManageFeatureFlags
+              ? 'Look up users and manage their workspace feature flags or impersonate them.'
+              : 'Look up users to impersonate them.'
+          }
         />
 
         <StyledContainer>

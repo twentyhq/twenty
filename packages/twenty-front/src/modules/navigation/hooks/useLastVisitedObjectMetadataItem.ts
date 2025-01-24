@@ -1,11 +1,13 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { AppPath } from '@/types/AppPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useLastVisitedObjectMetadataItem = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -44,7 +46,9 @@ export const useLastVisitedObjectMetadataItem = () => {
     if (isDeactivateDefault) {
       setLastVisitedObjectMetadataItemId(newFallbackObjectMetadataItem.id);
       setNavigationMemorizedUrl(
-        `/objects/${newFallbackObjectMetadataItem.namePlural}`,
+        getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: newFallbackObjectMetadataItem.namePlural,
+        }),
       );
     }
   };

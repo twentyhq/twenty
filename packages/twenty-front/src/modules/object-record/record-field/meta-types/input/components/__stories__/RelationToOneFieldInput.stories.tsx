@@ -61,7 +61,7 @@ const RelationToOneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'Relation',
-          type: FieldMetadataType.Relation,
+          type: FieldMetadataType.RELATION,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',

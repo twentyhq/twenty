@@ -3,6 +3,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { useIsMobile } from '@ui/utilities';
+import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -29,7 +31,7 @@ export type ButtonProps = {
   to?: string;
   target?: string;
   dataTestId?: string;
-  shortcut?: string;
+  hotkeys?: string[];
   ariaLabel?: string;
 } & React.ComponentProps<'button'>;
 
@@ -417,10 +419,12 @@ export const Button = ({
   to,
   target,
   dataTestId,
-  shortcut,
+  hotkeys,
   ariaLabel,
 }: ButtonProps) => {
   const theme = useTheme();
+
+  const isMobile = useIsMobile();
 
   return (
     <StyledButton
@@ -443,11 +447,11 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {shortcut && (
+      {hotkeys && !isMobile && (
         <>
           <StyledSeparator buttonSize={size} accent={accent} />
           <StyledShortcutLabel variant={variant} accent={accent}>
-            {shortcut}
+            {hotkeys.join(getOsShortcutSeparator())}
           </StyledShortcutLabel>
         </>
       )}

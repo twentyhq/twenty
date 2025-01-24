@@ -7,12 +7,12 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { recordIndexEntityCountComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexEntityCountComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { entityCountInCurrentViewComponentState } from '@/views/states/entityCountInCurrentViewComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
@@ -55,8 +55,8 @@ export const ViewPickerDropdown = () => {
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const entityCountInCurrentView = useRecoilComponentValueV2(
-    entityCountInCurrentViewComponentState,
+  const entityCount = useRecoilComponentValueV2(
+    recordIndexEntityCountComponentSelector,
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
@@ -94,9 +94,7 @@ export const ViewPickerDropdown = () => {
             {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            {isDefined(entityCountInCurrentView) && (
-              <>· {entityCountInCurrentView} </>
-            )}
+            {isDefined(entityCount) && <>· {entityCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

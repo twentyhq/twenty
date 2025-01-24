@@ -44,7 +44,6 @@ export const RecordBoardColumn = ({
     <RecordBoardColumnContext.Provider
       value={{
         columnDefinition: recordGroupDefinition,
-        recordCount: recordIdsByGroup.length,
         columnId: recordBoardColumnId,
         recordIds: recordIdsByGroup,
       }}

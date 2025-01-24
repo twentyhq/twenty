@@ -106,7 +106,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
+  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,

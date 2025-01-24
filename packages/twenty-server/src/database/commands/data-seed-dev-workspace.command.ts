@@ -32,7 +32,6 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -45,7 +44,9 @@ import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/
 import { SeederService } from 'src/engine/seeder/seeder.service';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
+import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -181,12 +182,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             dataSourceMetadata.workspaceId,
           );
 
-        const isWorkflowEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IsWorkflowEnabled,
-            dataSourceMetadata.workspaceId,
-          );
-
         await seedCompanies(entityManager, dataSourceMetadata.schema);
         await seedPeople(entityManager, dataSourceMetadata.schema);
         await seedOpportunity(entityManager, dataSourceMetadata.schema);
@@ -227,8 +222,15 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           entityManager,
           dataSourceMetadata.schema,
           objectMetadataStandardIdToIdMap,
-          isWorkflowEnabled,
         );
+
+        const devViewDefinitionsWithId = await createWorkspaceViews(
+          entityManager,
+          dataSourceMetadata.schema,
+          [opportunitiesTableByStageView(objectMetadataStandardIdToIdMap)],
+        );
+
+        viewDefinitionsWithId.push(...devViewDefinitionsWithId);
 
         await seedWorkspaceFavorites(
           viewDefinitionsWithId

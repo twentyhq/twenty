@@ -1,3 +1,6 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
-export type RecordGqlFieldsAggregate = Record<string, AGGREGATE_OPERATIONS[]>;
+export type RecordGqlFieldsAggregate = Record<
+  string,
+  ExtendedAggregateOperations[]
+>;

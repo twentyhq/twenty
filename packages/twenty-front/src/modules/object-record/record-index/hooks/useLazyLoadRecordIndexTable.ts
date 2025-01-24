@@ -7,7 +7,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 
 export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -44,10 +44,9 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   return {
     findManyRecords,
-    records:
-      currentWorkspace?.activationStatus === WorkspaceActivationStatus.Active
-        ? records
-        : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
+    records: isWorkspaceActiveOrSuspended(currentWorkspace)
+      ? records
+      : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
     totalCount: totalCount,
     loading,
     fetchMoreRecords,

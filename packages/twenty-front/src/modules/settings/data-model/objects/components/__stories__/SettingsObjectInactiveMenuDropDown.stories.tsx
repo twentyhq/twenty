@@ -38,7 +38,9 @@ export const Open: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
   },
@@ -48,7 +50,9 @@ export const WithActivate: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
 
@@ -69,7 +73,9 @@ export const WithDelete: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const dropdownButton = await canvas.getByRole('button');
+    const dropdownButton = await canvas.findByRole('button', {
+      name: 'Inactive Object Options',
+    });
 
     await userEvent.click(dropdownButton);
 

@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-import { pascalCase } from 'src/utils/pascal-case';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   InputTypeDefinition,
   InputTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-property-target.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { pascalCase } from 'src/utils/pascal-case';
 
 import { InputTypeFactory } from './input-type.factory';
 

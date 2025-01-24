@@ -3,17 +3,30 @@ on:
   push:
     branches:
       - main
-    
+
   pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
+
 jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-front/**
+        packages/twenty-ui/**
+        packages/twenty-shared/**
   front-sb-build:
+    needs: [changed-files-check]
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -26,47 +39,34 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            package.json
-            packages/twenty-front/**
-            packages/twenty-ui/**
-            packages/twenty-shared/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true' 
         uses: ./.github/workflows/actions/yarn-install
       - name: Diagnostic disk space issue
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: df -h
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore storybook build cache
+        id: restore-storybook-build-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:frontend
-          tasks: storybook:build
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
+      - name: Save storybook build cache
+        uses: ./.github/workflows/actions/save-cache
+        with:
+          key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-build
     strategy:
+      fail-fast: false
       matrix:
-        storybook_scope: [pages, modules]
+        shard: [1, 2, 3, 4]
+        storybook_scope: [modules, pages, performance]
     env:
+      SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
@@ -74,73 +74,57 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/twenty-front/**  
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI." 
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Install Playwright
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore storybook build cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:frontend
-          tasks: storybook:build
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
-  front-sb-test-performance:
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --checkCoverage=false
+      - name: Rename coverage file
+        run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
+          path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+  merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: shipfox-8vcpu-ubuntu-2204
+    runs-on: depot-ubuntu-24.04-8
+    needs: front-sb-test
     env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
+    strategy:
+      matrix:
+        storybook_scope: [modules, pages, performance]
     steps:
-      - name: Fetch local actions
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/twenty-front/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Install Playwright
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: cd packages/twenty-front && npx playwright install
-      - name: Front / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx run twenty-front:storybook:serve-and-test:static:performance
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
+          merge-multiple: true
+          path: coverage-artifacts
+      - name: Merge coverage reports
+        run: |
+          mkdir -p ${{ env.PATH_TO_COVERAGE }}
+          npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
+      - name: Checking coverage
+        run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -149,41 +133,27 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/twenty-front/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore Storybook Task Cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore storybook build cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:frontend
-          tasks: storybook:build
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           cd packages/twenty-front
           touch .env
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Publish to Chromatic
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-front:chromatic:ci
   front-task:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
         task: [lint, typecheck, test]
@@ -196,35 +166,41 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/twenty-front/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
-
       - name: Install dependencies
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore ${{ matrix.task }} task cache
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./.github/workflows/actions/task-cache
+      - name: Restore ${{ matrix.task }} cache
+        id: restore-task-cache
+        uses: ./.github/workflows/actions/restore-cache
         with:
-          tag: scope:frontend
-          tasks: ${{ matrix.task }}
+          key: ${{ env.TASK_CACHE_KEY }}
       - name: Reset .env
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: reset:env
       - name: Run ${{ matrix.task }} task
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
+      - name: Save ${{ matrix.task }} cache
+        uses: ./.github/workflows/actions/save-cache
+        with:
+          key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
+  ci-front-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 1
+    runs-on: depot-ubuntu-24.04-8
+    needs:
+      [
+        changed-files-check,
+        front-task,
+        front-chromatic-deployment,
+        merge-reports-and-check-coverage,
+        front-sb-test,
+        front-sb-build,
+      ]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

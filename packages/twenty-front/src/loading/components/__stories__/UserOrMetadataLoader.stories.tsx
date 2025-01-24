@@ -2,8 +2,9 @@ import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 
+import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -14,6 +15,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 const userMetadataLoaderMocks = {
@@ -33,6 +35,17 @@ const userMetadataLoaderMocks = {
           },
         });
       }),
+      graphql.query(
+        getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
+        () => {
+          return HttpResponse.json({
+            data: {
+              publicWorkspaceDataBySubdomain:
+                mockedPublicWorkspaceDataBySubdomain,
+            },
+          });
+        },
+      ),
       metadataGraphql.query(
         getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
         () => {

@@ -11,7 +11,7 @@ const inboxSettingsVisibilityOptions = [
   {
     title: 'Everything',
     description: 'Subject, body and attachments will be shared with your team.',
-    value: MessageChannelVisibility.ShareEverything,
+    value: MessageChannelVisibility.SHARE_EVERYTHING,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
         metadata="active"
@@ -23,7 +23,7 @@ const inboxSettingsVisibilityOptions = [
   {
     title: 'Subject and metadata',
     description: 'Subject and metadata will be shared with your team.',
-    value: MessageChannelVisibility.Subject,
+    value: MessageChannelVisibility.SUBJECT,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
         metadata="active"
@@ -35,7 +35,7 @@ const inboxSettingsVisibilityOptions = [
   {
     title: 'Metadata',
     description: 'Timestamp and participants will be shared with your team.',
-    value: MessageChannelVisibility.Metadata,
+    value: MessageChannelVisibility.METADATA,
     cardMedia: (
       <SettingsAccountsVisibilityIcon
         metadata="active"
@@ -48,7 +48,7 @@ const inboxSettingsVisibilityOptions = [
 
 export const SettingsAccountsMessageVisibilityCard = ({
   onChange,
-  value = MessageChannelVisibility.ShareEverything,
+  value = MessageChannelVisibility.SHARE_EVERYTHING,
 }: SettingsAccountsMessageVisibilityCardProps) => (
   <SettingsAccountsRadioSettingsCard
     name="message-visibility"

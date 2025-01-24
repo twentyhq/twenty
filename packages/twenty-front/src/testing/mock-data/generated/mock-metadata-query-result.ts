@@ -2868,7 +2868,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                         "isSystem": false,
                         "createdAt": "2024-11-06T08:55:38.993Z",
                         "updatedAt": "2024-11-06T08:55:38.993Z",
-                        "labelIdentifierFieldMetadataId": null,
+                        "labelIdentifierFieldMetadataId": "7896a006-eb14-481e-8197-661b7009a22e",
                         "imageIdentifierFieldMetadataId": null,
                         "shortcut": null,
                         "isLabelSyncedWithName": false,

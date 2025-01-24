@@ -2,6 +2,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isWorkDomain } from 'src/utils/is-work-email';
 
 export function filterOutSelfAndContactsFromCompanyOrWorkspace(
   contacts: Contact[],
@@ -21,9 +22,13 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
     new Map<string, boolean>(),
   );
 
+  const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
+    getDomainNameFromHandle(contact.handle) !== selfDomainName;
+
   return contacts.filter(
     (contact) =>
-      getDomainNameFromHandle(contact.handle) !== selfDomainName &&
+      (isDifferentDomain(contact, selfDomainName) ||
+        !isWorkDomain(selfDomainName)) &&
       !workspaceMembersMap[contact.handle] &&
       !handleAliases.includes(contact.handle),
   );

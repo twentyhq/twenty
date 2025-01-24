@@ -16,7 +16,7 @@ export enum TooltipDelay {
   mediumDelay = '500ms',
 }
 
-const StyledAppTooltip = styled(Tooltip)`
+const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -27,7 +27,7 @@ const StyledAppTooltip = styled(Tooltip)`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
-  max-width: 40%;
+  max-width: ${({ width }) => width || '40%'};
   overflow: visible;
 
   padding: ${({ theme }) => theme.spacing(2)};
@@ -49,6 +49,7 @@ export type AppTooltipProps = {
   delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
   clickable?: boolean;
+  width?: string;
 };
 
 export const AppTooltip = ({
@@ -63,6 +64,7 @@ export const AppTooltip = ({
   positionStrategy,
   children,
   clickable,
+  width,
 }: AppTooltipProps) => {
   const delayInMs =
     delay === TooltipDelay.noDelay
@@ -86,6 +88,7 @@ export const AppTooltip = ({
         positionStrategy,
         children,
         clickable,
+        width,
       }}
     />
   );

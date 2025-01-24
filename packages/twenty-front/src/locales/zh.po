@@ -1,0 +1,590 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-16 21:57+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: zh\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:126
+#~ msgid "{0}"
+#~ msgstr ""
+
+#: src/modules/ui/input/components/ImageInput.tsx:157
+msgid "Abort"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:86
+msgid "About"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:321
+msgid "Account Deletion"
+msgstr ""
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
+msgid "Accounts"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:193
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:201
+msgid "Active"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+msgid "Active API keys created by you or your team."
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:50
+#~ msgid "Active APIs keys created by you or your team."
+#~ msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:149
+msgid "Add object"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
+msgid "Appearance"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:190
+msgid "Are you sure that you want to change your billing interval?"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:190
+#~ msgid "Are you sure that you want to change your billing interval? {5}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:189
+#~ msgid "Are you sure that you want to change your billing interval? {impact}"
+#~ msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:63
+msgid "Authentication"
+msgstr ""
+
+#: src/pages/not-found/NotFound.tsx:58
+msgid "Back to content"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:129
+#: src/pages/settings/SettingsBilling.tsx:135
+msgid "Billing"
+msgstr ""
+
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
+msgid "Calendars"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:175
+msgid "Cancel Plan"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:170
+msgid "Cancel your subscription"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:194
+#~ msgid "Change {6}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:194
+msgid "Change {to}"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+msgid "Chinese"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:48
+msgid "Configure an SSO connection"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
+msgid "Configure how dates are displayed across the app"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:228
+msgid "Continue"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:217
+msgid "Copy invitation link"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:56
+msgid "Create API key"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:72
+msgid "Create Webhook"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:56
+msgid "Customize Domain"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:64
+msgid "Customize your workspace security"
+msgstr ""
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
+msgid "Danger zone"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Data model"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
+msgid "Date and time"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:87
+msgid "Define the name and description of your object"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:332
+msgid "Delete account"
+msgstr ""
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
+msgid "Delete workspace"
+msgstr ""
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
+msgid "Delete your whole workspace"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:35
+#: src/pages/settings/developers/SettingsDevelopers.tsx:42
+msgid "Developers"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:51
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
+#: src/pages/settings/workspace/SettingsDomain.tsx:135
+#: src/pages/settings/workspace/SettingsDomain.tsx:150
+msgid "Domain"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:157
+msgid "Edit billing interval"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:145
+msgid "Edit payment method, see your invoices and more"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:52
+msgid "Edit your subdomain name or set a custom domain."
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:180
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:256
+#: src/pages/settings/SettingsProfile.tsx:42
+msgid "Email"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
+msgid "English"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:51
+msgid "Enterprise"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:118
+#~ msgid "Error while switching subscription {1}."
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:121
+msgid "Error while switching subscription {to}."
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:66
+msgid "Establish Webhook endpoints for notifications on asynchronous events."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:167
+msgid "Existing objects"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
+msgid "Experience"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:259
+msgid "Expires in"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:57
+msgid "Failed to create object"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+msgid "Fields"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+msgid "French"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:45
+msgid "from monthly to yearly"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:52
+msgid "from yearly to monthly"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:29
+#: src/pages/settings/SettingsWorkspace.tsx:35
+#: src/pages/settings/workspace/SettingsDomain.tsx:132
+msgid "General"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
+msgid "German"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:184
+msgid "Get the most out of your workspace by inviting your team."
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:65
+msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:217
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
+msgid "Inactive"
+msgstr ""
+
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:15
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:21
+msgid "Integrations"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:87
+msgid "Invalid form values"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:53
+msgid "Invalid object data"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:244
+msgid "Invite by email"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:157
+msgid "Invite by link"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:152
+msgid "Invite link sent to email addresses"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:181
+msgid "Invite your team"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
+msgid "Italian"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
+msgid "Language"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:127
+msgid "Link copied to clipboard"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:167
+msgid "Manage Members"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:168
+msgid "Manage the members of your space here"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:144
+msgid "Manage your subscription"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:143
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:149
+msgid "Members"
+msgstr ""
+
+#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:22
+#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:28
+msgid "Migrate"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:177
+#: src/pages/settings/SettingsWorkspace.tsx:44
+#: src/pages/settings/SettingsProfile.tsx:35
+msgid "Name"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:44
+msgid "Name of your workspace"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:77
+msgid "New"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:67
+msgid "New Object"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:108
+msgid "not allowed"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsNewObject.tsx:46
+msgid "Object created successfully"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:160
+#: src/pages/settings/data-model/SettingsNewObject.tsx:74
+msgid "Objects"
+msgstr ""
+
+#: src/pages/not-found/NotFound.tsx:47
+msgid "Off the beaten path"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr ""
+
+#: src/pages/not-found/NotFound.tsx:41
+msgid "Page Not Found | Twenty"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:40
+#: src/pages/settings/SettingsProfile.tsx:30
+msgid "Picture"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
+msgid "Portuguese"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:19
+#: src/pages/settings/SettingsProfile.tsx:25
+msgid "Profile"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
+msgid "Pseudo-English"
+msgstr ""
+
+#: src/pages/settings/Releases.tsx:111
+#: src/pages/settings/Releases.tsx:117
+msgid "Releases"
+msgstr ""
+
+#: src/modules/ui/input/components/ImageInput.tsx:173
+msgid "Remove"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
+msgid "Search a field..."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:116
+msgid "Search an index..."
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:171
+#~ msgid "Search an object..."
+#~ msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:171
+msgid "Search for an object..."
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:33
+#: src/pages/settings/security/SettingsSecurity.tsx:40
+msgid "Security"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
+msgid "Select your preferred language"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:245
+msgid "Send an invite email to your team"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:151
+msgid "Set the name of your subdomain"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:158
+msgid "Share this link to invite users to join your workspace"
+msgstr ""
+
+#: src/pages/onboarding/InviteTeam.tsx:236
+msgid "Skip"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
+msgid "Spanish"
+msgstr ""
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:107
+msgid "Subdomain already taken"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:49
+msgid "Subdomain can not be longer than 30 characters"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:48
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:113
+#~ msgid "Subscription has been switched {0}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:117
+msgid "Subscription has been switched {to}"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspace.tsx:63
+msgid "Support"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:157
+#~ msgid "Switch {2}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:161
+#~ msgid "Switch {3}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:158
+msgid "Switch {from}"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:162
+msgid "Switch {to}"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:187
+#~ msgid "Switch billing {4}"
+#~ msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:188
+msgid "Switch billing {to}"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:43
+msgid "The email associated to your account"
+msgstr ""
+
+#: src/pages/not-found/NotFound.tsx:50
+msgid "The page you're seeking is either gone or never was. Let's get you back on track"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:323
+msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignements."
+msgstr ""
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
+msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:51
+msgid "to monthly"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:44
+msgid "to yearly"
+msgstr ""
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
+msgid "Type"
+msgstr ""
+
+#: src/modules/ui/input/components/ImageInput.tsx:165
+msgid "Upload"
+msgstr ""
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:51
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:22
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
+#: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
+msgid "User"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:149
+msgid "View billing details"
+msgstr ""
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:65
+msgid "Webhooks"
+msgstr ""
+
+#: src/pages/settings/SettingsWorkspaceMembers.tsx:146
+#: src/pages/settings/SettingsWorkspace.tsx:32
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/Releases.tsx:114
+#: src/pages/settings/workspace/SettingsDomain.tsx:128
+#: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/integrations/SettingsIntegrations.tsx:18
+#: src/pages/settings/developers/SettingsDevelopers.tsx:39
+#: src/pages/settings/data-model/SettingsObjects.tsx:157
+#: src/pages/settings/data-model/SettingsNewObject.tsx:70
+#: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:25
+msgid "Workspace"
+msgstr ""
+
+#: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
+msgid "Workspace Deletion"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "You will be charged immediately for the full year."
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "Your credit balance will be used to pay the monthly bills."
+msgstr ""
+
+#: src/pages/settings/SettingsProfile.tsx:36
+msgid "Your name as it will be displayed"
+msgstr ""
+
+#: src/pages/settings/SettingsBilling.tsx:171
+msgid "Your workspace will be disabled"
+msgstr ""

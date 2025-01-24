@@ -2,11 +2,13 @@ import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
+import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import styled from '@emotion/styled';
 
@@ -27,8 +29,13 @@ export const AdvancedFilterViewFilterFieldSelect = ({
 
   const selectedFieldLabel = filter?.definition.label ?? '';
 
-  const { setAdvancedFilterViewFilterGroupId, setAdvancedFilterViewFilterId } =
-    useFilterDropdown();
+  const setAdvancedFilterViewFilterId = useSetRecoilComponentStateV2(
+    advancedFilterViewFilterIdComponentState,
+  );
+
+  const setAdvancedFilterViewFilterGroupId = useSetRecoilComponentStateV2(
+    advancedFilterViewFilterGroupIdComponentState,
+  );
 
   const [objectFilterDropdownIsSelectingCompositeField] =
     useRecoilComponentStateV2(

@@ -12,7 +12,7 @@ export const onboardingSyncEmailsOptions = [
     title: 'Everything',
     description:
       'Your emails and events content will be shared with your team.',
-    value: MessageChannelVisibility.ShareEverything,
+    value: MessageChannelVisibility.SHARE_EVERYTHING,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="active" />
     ),
@@ -21,7 +21,7 @@ export const onboardingSyncEmailsOptions = [
     title: 'Subject and metadata',
     description:
       'Your email subjects and meeting titles will be shared with your team.',
-    value: MessageChannelVisibility.Subject,
+    value: MessageChannelVisibility.SUBJECT,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="inactive" />
     ),
@@ -30,7 +30,7 @@ export const onboardingSyncEmailsOptions = [
     title: 'Metadata',
     description:
       'Only the timestamp & participants will be shared with your team.',
-    value: MessageChannelVisibility.Metadata,
+    value: MessageChannelVisibility.METADATA,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="inactive" body="inactive" />
     ),

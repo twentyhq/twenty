@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -12,24 +11,25 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useLingui } from '@lingui/react/macro';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 
 type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
-  const navigate = useNavigate();
+  const { t } = useLingui();
+  const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
 
   const { createOneObjectMetadataItem, findManyRecordsCache } =
     useCreateOneObjectMetadataItem();
-
-  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
   const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
     mode: 'onTouched',
@@ -48,9 +48,10 @@ export const SettingsNewObject = () => {
       );
 
       navigate(
+        response ? SettingsPath.ObjectDetail : SettingsPath.Objects,
         response
-          ? `${settingsObjectsPagePath}/${response.createOneObject.namePlural}`
-          : settingsObjectsPagePath,
+          ? { objectNamePlural: response.createOneObject.namePlural }
+          : undefined,
       );
 
       await findManyRecordsCache();
@@ -65,23 +66,23 @@ export const SettingsNewObject = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
-        title="New Object"
+        title={t`New Object`}
         links={[
           {
-            children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: 'Objects',
-            href: settingsObjectsPagePath,
+            children: t`Objects`,
+            href: getSettingsPath(SettingsPath.Objects),
           },
-          { children: 'New' },
+          { children: t`New` },
         ]}
         actionButton={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
-            onCancel={() => navigate(settingsObjectsPagePath)}
+            onCancel={() => navigate(SettingsPath.Objects)}
             onSave={formConfig.handleSubmit(handleSave)}
           />
         }
@@ -89,8 +90,8 @@ export const SettingsNewObject = () => {
         <SettingsPageContainer>
           <Section>
             <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              title={t`About`}
+              description={t`Define the name and description of your object`}
             />
             <SettingsDataModelObjectAboutForm />
           </Section>

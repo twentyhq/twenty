@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -15,9 +15,11 @@ const meta: Meta<typeof TaskGroups> = {
   component: TaskGroups,
   decorators: [
     (Story) => (
-      <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
+      <ObjectFilterDropdownComponentInstanceContext.Provider
+        value={{ instanceId: 'entity-tasks-filter-scope' }}
+      >
         <Story />
-      </ObjectFilterDropdownScope>
+      </ObjectFilterDropdownComponentInstanceContext.Provider>
     ),
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,

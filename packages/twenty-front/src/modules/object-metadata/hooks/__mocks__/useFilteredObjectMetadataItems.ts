@@ -50,6 +50,6 @@ export const responseData = {
   isActive: true,
   createdAt: '',
   updatedAt: '',
-  labelIdentifierFieldMetadataId: '',
+  labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
   imageIdentifierFieldMetadataId: '',
 };

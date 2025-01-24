@@ -92,6 +92,7 @@ export const LightIconButton = ({
   title,
 }: LightIconButtonProps) => {
   const theme = useTheme();
+
   return (
     <StyledButton
       data-testid={testId}

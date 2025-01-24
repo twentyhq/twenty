@@ -16,7 +16,7 @@ export const shouldFieldBeQueried = ({
 }): any => {
   if (
     isUndefinedOrNull(recordGqlFields) &&
-    field.type !== FieldMetadataType.Relation
+    field.type !== FieldMetadataType.RELATION
   ) {
     return true;
   }

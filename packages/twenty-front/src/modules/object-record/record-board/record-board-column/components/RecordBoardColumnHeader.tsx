@@ -12,9 +12,7 @@ import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-b
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -30,6 +28,7 @@ const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
 `;
+
 const StyledHeaderContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -40,16 +39,7 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledRecordCountChildren = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  width: 22px;
+  overflow: hidden;
 `;
 
 const StyledRightContainer = styled.div`
@@ -67,6 +57,10 @@ const StyledColumn = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 
   position: relative;
+`;
+
+const StyledTag = styled(Tag)`
+  flex-shrink: 0;
 `;
 
 export const RecordBoardColumnHeader = () => {
@@ -103,10 +97,6 @@ export const RecordBoardColumnHeader = () => {
     columnDefinition.id ?? '',
   );
 
-  const isAggregateQueryEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAggregateQueryEnabled,
-  );
-
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
@@ -122,7 +112,7 @@ export const RecordBoardColumnHeader = () => {
       >
         <StyledHeaderContainer>
           <StyledLeftContainer>
-            <Tag
+            <StyledTag
               onClick={handleBoardColumnMenuOpen}
               variant={
                 columnDefinition.type === RecordGroupDefinitionType.Value
@@ -141,18 +131,12 @@ export const RecordBoardColumnHeader = () => {
                   : 'medium'
               }
             />
-            {isAggregateQueryEnabled ? (
-              <RecordBoardColumnHeaderAggregateDropdown
-                aggregateValue={aggregateValue}
-                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-                objectMetadataItem={objectMetadataItem}
-                aggregateLabel={aggregateLabel}
-              />
-            ) : (
-              <StyledRecordCountChildren>
-                {aggregateValue}
-              </StyledRecordCountChildren>
-            )}
+            <RecordBoardColumnHeaderAggregateDropdown
+              aggregateValue={aggregateValue}
+              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+              objectMetadataItem={objectMetadataItem}
+              aggregateLabel={aggregateLabel}
+            />
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (

@@ -7,6 +7,7 @@ const StyledWorkflowStepBody = styled.div`
   padding: ${({ theme }) => theme.spacing(6)};
   row-gap: ${({ theme }) => theme.spacing(6)};
   flex: 1 1 auto;
+  height: 100%;
 `;
 
 export { StyledWorkflowStepBody as WorkflowStepBody };

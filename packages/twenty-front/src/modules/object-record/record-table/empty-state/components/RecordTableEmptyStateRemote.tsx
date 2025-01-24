@@ -2,13 +2,14 @@
 import { IconSettings } from 'twenty-ui';
 
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
-import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const RecordTableEmptyStateRemote = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const handleButtonClick = () => {
-    navigate('/settings/integrations');
+    navigate(SettingsPath.Integrations);
   };
 
   return (

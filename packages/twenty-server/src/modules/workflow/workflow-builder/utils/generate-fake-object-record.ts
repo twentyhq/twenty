@@ -25,7 +25,7 @@ const generateObjectRecordFields = (
           type: field.type,
           icon: field.icon,
           label: field.label,
-          value: generateFakeValue(field.type),
+          value: generateFakeValue(field.type, 'FieldMetadataType'),
         };
       } else {
         acc[field.name] = {
@@ -37,7 +37,7 @@ const generateObjectRecordFields = (
               isLeaf: true,
               type: property.type,
               label: camelToTitleCase(property.name),
-              value: generateFakeValue(property.type),
+              value: generateFakeValue(property.type, 'FieldMetadataType'),
             };
 
             return acc;

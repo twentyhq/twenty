@@ -92,7 +92,11 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
           <DropdownMenuSeparator />
         </>
       )}
-      <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
+      <DropdownMenuSearchInput
+        onChange={handleSearchFilterChange}
+        autoFocus
+        role="combobox"
+      />
       {(dropdownPlacement?.includes('start') ||
         isUndefinedOrNull(dropdownPlacement)) && (
         <>

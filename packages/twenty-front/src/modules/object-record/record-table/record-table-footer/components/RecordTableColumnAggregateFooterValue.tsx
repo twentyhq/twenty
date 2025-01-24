@@ -1,5 +1,6 @@
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 
 const StyledText = styled.span`
@@ -36,8 +37,9 @@ const StyledValueContainer = styled(StyledScrollableContainer)`
   padding: 0 8px;
 `;
 
-const StyledValue = styled(StyledScrollableContainer)`
-  color: ${({ theme }) => theme.color.gray60};
+const StyledValue = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  max-width: 100%;
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({
@@ -66,7 +68,9 @@ export const RecordTableColumnAggregateFooterValue = ({
           )}
         </StyledValueContainer>
       ) : (
-        <StyledText id={sanitizedId}>Calculate</StyledText>
+        <StyledText id={sanitizedId}>
+          <Trans>Calculate</Trans>
+        </StyledText>
       )}
     </>
   );

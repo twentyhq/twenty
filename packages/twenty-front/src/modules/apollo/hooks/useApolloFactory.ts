@@ -54,8 +54,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         }),
       },
       defaultOptions: {
-        watchQuery: {
-          fetchPolicy: 'cache-and-network',
+        query: {
+          fetchPolicy: 'cache-first',
         },
       },
       connectToDevTools: isDebugMode,
@@ -69,7 +69,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
         setCurrentWorkspace(null);
-        setWorkspaces(null);
+        setWorkspaces([]);
         if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignInUp) &&

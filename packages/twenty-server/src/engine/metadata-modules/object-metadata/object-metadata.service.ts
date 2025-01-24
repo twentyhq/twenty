@@ -103,7 +103,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNamePlural: objectMetadataInput.namePlural,
       objectMetadataNameSingular: objectMetadataInput.nameSingular,
       workspaceId: objectMetadataInput.workspaceId,

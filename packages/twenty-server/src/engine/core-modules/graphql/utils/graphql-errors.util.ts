@@ -24,6 +24,7 @@ export enum ErrorCode {
   PERSISTED_QUERY_NOT_SUPPORTED = 'PERSISTED_QUERY_NOT_SUPPORTED',
   BAD_USER_INPUT = 'BAD_USER_INPUT',
   NOT_FOUND = 'NOT_FOUND',
+  EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   CONFLICT = 'CONFLICT',
   TIMEOUT = 'TIMEOUT',
@@ -157,6 +158,14 @@ export class NotFoundError extends BaseGraphQLError {
     super(message, ErrorCode.NOT_FOUND);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
+  }
+}
+
+export class EmailNotVerifiedError extends BaseGraphQLError {
+  constructor(message: string) {
+    super(message, ErrorCode.EMAIL_NOT_VERIFIED);
+
+    Object.defineProperty(this, 'name', { value: 'EmailNotVerifiedError' });
   }
 }
 

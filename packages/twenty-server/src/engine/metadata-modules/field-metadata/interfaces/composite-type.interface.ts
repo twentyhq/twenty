@@ -1,6 +1,6 @@
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { FieldMetadataType } from 'twenty-shared';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 export interface CompositeProperty<
   Type extends FieldMetadataType = FieldMetadataType,

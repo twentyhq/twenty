@@ -1,4 +1,5 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { isTextColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/is-text-column-type.util';
 import {
   WorkspaceMigrationException,

@@ -1,7 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
@@ -102,7 +102,9 @@ export const AdvancedFilterButton = () => {
       upsertCombinedViewFilter({
         id: v4(),
         fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-        operand: getOperandsForFilterDefinition(defaultFilterDefinition)[0],
+        operand: getRecordFilterOperandsForRecordFilterDefinition(
+          defaultFilterDefinition,
+        )[0],
         definition: defaultFilterDefinition,
         value: '',
         displayValue: '',

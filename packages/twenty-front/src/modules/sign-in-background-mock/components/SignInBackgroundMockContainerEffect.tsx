@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockFilterDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
-import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
 type SignInBackgroundMockContainerEffectProps = {
@@ -42,8 +42,7 @@ export const SignInBackgroundMockContainerEffect = ({
     setViewObjectMetadataId,
   } = useInitViewBar(viewId);
 
-  const { setRecordCountInCurrentView } =
-    useSetRecordCountInCurrentView(viewId);
+  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewId);
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
@@ -72,9 +71,9 @@ export const SignInBackgroundMockContainerEffect = ({
 
   useEffect(() => {
     setOnEntityCountChange(
-      () => (entityCount: number) => setRecordCountInCurrentView(entityCount),
+      () => (entityCount: number) => setRecordIndexEntityCount(entityCount),
     );
-  }, [setRecordCountInCurrentView, setOnEntityCountChange]);
+  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   return <></>;
 };

@@ -1,7 +1,10 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
   OutputSchema,
   StepOutputSchema,
@@ -62,11 +65,24 @@ export const useAvailableVariablesInWorkflowStep = ({
     isDefined(filteredTriggerOutputSchema) &&
     !isEmptyObject(filteredTriggerOutputSchema)
   ) {
+    const triggerIconKey =
+      workflow.currentVersion.trigger.type === 'DATABASE_EVENT'
+        ? getTriggerIcon({
+            type: workflow.currentVersion.trigger.type,
+            eventName: splitWorkflowTriggerEventName(
+              workflow.currentVersion.trigger.settings?.eventName,
+            ).event,
+          })
+        : getTriggerIcon({
+            type: workflow.currentVersion.trigger.type,
+          });
+
     result.push({
       id: 'trigger',
       name: isDefined(workflow.currentVersion.trigger.name)
         ? workflow.currentVersion.trigger.name
         : getTriggerStepName(workflow.currentVersion.trigger),
+      icon: triggerIconKey,
       outputSchema: filteredTriggerOutputSchema,
     });
   }
@@ -81,8 +97,8 @@ export const useAvailableVariablesInWorkflowStep = ({
       result.push({
         id: previousStep.id,
         name: previousStep.name,
+        icon: getActionIcon(previousStep.type),
         outputSchema: filteredOutputSchema,
-        ...(previousStep.type === 'CODE' ? { icon: 'IconCode' } : {}),
       });
     }
   });

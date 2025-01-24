@@ -62,7 +62,7 @@ export const FieldsCard = ({
         fieldMetadataItem.name !== 'deletedAt',
     ),
     (fieldMetadataItem) =>
-      fieldMetadataItem.type === FieldMetadataType.Relation
+      fieldMetadataItem.type === FieldMetadataType.RELATION
         ? 'relationFieldMetadataItems'
         : 'inlineFieldMetadataItems',
   );

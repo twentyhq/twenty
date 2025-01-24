@@ -92,7 +92,7 @@ export class WorkflowVersionStepWorkspaceService {
                 isLeaf: true,
                 icon: 'IconVariable',
                 tab: 'test',
-                label: 'Generate Function Input',
+                label: 'Generate Function Output',
               },
               _outputSchemaType: 'LINK',
             },
@@ -198,37 +198,27 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    const newStepId = v4();
-
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        const copiedServerlessFunction =
-          await this.serverlessFunctionService.copyOneServerlessFunction({
-            serverlessFunctionToCopyId:
-              step.settings.input.serverlessFunctionId,
-            serverlessFunctionToCopyVersion:
-              step.settings.input.serverlessFunctionVersion,
-            workspaceId,
-          });
+        await this.serverlessFunctionService.usePublishedVersionAsDraft({
+          id: step.settings.input.serverlessFunctionId,
+          version: step.settings.input.serverlessFunctionVersion,
+          workspaceId,
+        });
 
         return {
           ...step,
-          id: newStepId,
           settings: {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionId: copiedServerlessFunction.id,
-              serverlessFunctionVersion: copiedServerlessFunction.latestVersion,
+              serverlessFunctionVersion: 'draft',
             },
           },
         };
       }
       default: {
-        return {
-          ...step,
-          id: newStepId,
-        };
+        return step;
       }
     }
   }
@@ -473,17 +463,6 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
 
-    if (Array.isArray(draftWorkflowVersion.steps)) {
-      await Promise.all(
-        draftWorkflowVersion.steps.map((step) =>
-          this.runWorkflowVersionStepDeletionSideEffects({
-            step,
-            workspaceId,
-          }),
-        ),
-      );
-    }
-
     const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
     const newWorkflowVersionSteps: WorkflowAction[] = [];
 
@@ -500,6 +479,8 @@ export class WorkflowVersionStepWorkspaceService {
       steps: newWorkflowVersionSteps,
       trigger: newWorkflowVersionTrigger,
     });
+
+    return draftWorkflowVersion.id;
   }
 
   private async runWorkflowVersionStepDeletionSideEffects({
@@ -511,11 +492,16 @@ export class WorkflowVersionStepWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.deleteOneServerlessFunction({
-          id: step.settings.input.serverlessFunctionId,
-          workspaceId,
-        });
-
+        if (
+          !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
+            step.settings.input.serverlessFunctionId,
+          ))
+        ) {
+          await this.serverlessFunctionService.deleteOneServerlessFunction({
+            id: step.settings.input.serverlessFunctionId,
+            workspaceId,
+          });
+        }
         break;
       }
     }

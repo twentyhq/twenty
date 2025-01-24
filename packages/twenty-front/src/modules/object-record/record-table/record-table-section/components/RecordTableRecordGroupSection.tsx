@@ -1,19 +1,24 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 import { useCallback } from 'react';
-import { IconChevronDown, isDefined, Tag } from 'twenty-ui';
+import {
+  AnimatedLightIconButton,
+  IconChevronDown,
+  isDefined,
+  Tag,
+} from 'twenty-ui';
 
+import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
+import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
 
@@ -28,20 +33,25 @@ const StyledChevronContainer = styled(RecordTableTd)`
   vertical-align: middle;
 `;
 
-const StyledTotalRow = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  text-align: center;
-  vertical-align: middle;
+const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+  display: block;
+  margin: auto;
 `;
 
 const StyledRecordGroupSection = styled(RecordTableTd)`
   border-right: none;
   height: 32px;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledEmptyTd = styled.td`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
+const StyledTag = styled(Tag)`
+  flex-shrink: 0;
 `;
 
 export const RecordTableRecordGroupSection = () => {
@@ -53,10 +63,10 @@ export const RecordTableRecordGroupSection = () => {
     visibleTableColumnsComponentSelector,
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-    currentRecordGroupId,
-  );
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+
+  const { aggregateValue, aggregateLabel } =
+    useAggregateRecordsForRecordTableSection();
 
   const [
     isRecordGroupTableSectionToggled,
@@ -82,18 +92,16 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <td aria-hidden />
       <StyledChevronContainer>
-        <motion.span
+        <StyledAnimatedLightIconButton
+          Icon={IconChevronDown}
+          size="small"
+          accent="secondary"
           animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
           transition={{ duration: theme.animation.duration.normal }}
-          style={{
-            display: 'inline-block',
-          }}
-        >
-          <IconChevronDown size={theme.icon.size.md} />
-        </motion.span>
+        />
       </StyledChevronContainer>
-      <StyledRecordGroupSection>
-        <Tag
+      <StyledRecordGroupSection className="disable-shadow">
+        <StyledTag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue
               ? 'solid'
@@ -107,7 +115,12 @@ export const RecordTableRecordGroupSection = () => {
           text={recordGroup.title}
           weight="medium"
         />
-        <StyledTotalRow>{recordIdsByGroup.length}</StyledTotalRow>
+        <RecordBoardColumnHeaderAggregateDropdown
+          aggregateValue={aggregateValue}
+          dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
+          objectMetadataItem={objectMetadataItem}
+          aggregateLabel={aggregateLabel}
+        />
         <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
       <StyledEmptyTd colSpan={visibleColumns.length - 1} />

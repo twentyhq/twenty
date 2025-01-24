@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
 
 const typeOrmTypeMapping = new Map<string, FieldMetadataType>([
   ['uuid', FieldMetadataType.UUID],

@@ -1,8 +1,7 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
-import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ReactNode, useContext } from 'react';
 import { IconCheck, isDefined, MenuItem } from 'twenty-ui';
@@ -11,7 +10,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,
   children,
 }: {
-  aggregateOperations: AGGREGATE_OPERATIONS[];
+  aggregateOperations: ExtendedAggregateOperations[];
   children?: ReactNode;
 }) => {
   const {
@@ -19,7 +18,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
     currentViewFieldAggregateOperation,
   } = useViewFieldAggregateOperation();
 
-  const { dropdownId, resetContent, fieldMetadataType } = useContext(
+  const { dropdownId, resetContent } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
   const { closeDropdown } = useDropdown(dropdownId);
@@ -32,12 +31,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
             updateViewFieldAggregateOperation(operation);
             closeDropdown();
           }}
-          text={getAggregateOperationLabel(
-            convertAggregateOperationToExtendedAggregateOperation(
-              operation,
-              fieldMetadataType,
-            ),
-          )}
+          text={getAggregateOperationLabel(operation)}
           RightIcon={
             currentViewFieldAggregateOperation === operation
               ? IconCheck

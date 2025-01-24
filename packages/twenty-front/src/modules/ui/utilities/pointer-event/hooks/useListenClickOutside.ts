@@ -4,6 +4,8 @@ import { useRecoilCallback } from 'recoil';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
+const CLICK_OUTSIDE_DEBUG_MODE = false;
+
 export enum ClickOutsideMode {
   comparePixels = 'comparePixels',
   compareHTMLRef = 'compareHTMLRef',
@@ -60,52 +62,60 @@ export const useListenClickOutside = <T extends Element>({
           return;
         }
 
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => ref.current?.contains(event.target as Node));
+        switch (mode) {
+          case ClickOutsideMode.compareHTMLRef: {
+            const clickedOnAtLeastOneRef = refs
+              .filter((ref) => !!ref.current)
+              .some((ref) => ref.current?.contains(event.target as Node));
 
-          set(
-            getClickOutsideListenerIsMouseDownInsideState,
-            clickedOnAtLeastOneRef,
-          );
-        }
+            set(
+              getClickOutsideListenerIsMouseDownInsideState,
+              clickedOnAtLeastOneRef,
+            );
+            break;
+          }
 
-        if (mode === ClickOutsideMode.comparePixels) {
-          const clickedOnAtLeastOneRef = refs
-            .filter((ref) => !!ref.current)
-            .some((ref) => {
-              if (!ref.current) {
-                return false;
-              }
+          case ClickOutsideMode.comparePixels: {
+            const clickedOnAtLeastOneRef = refs
+              .filter((ref) => !!ref.current)
+              .some((ref) => {
+                if (!ref.current) {
+                  return false;
+                }
 
-              const { x, y, width, height } =
-                ref.current.getBoundingClientRect();
+                const { x, y, width, height } =
+                  ref.current.getBoundingClientRect();
 
-              const clientX =
-                'clientX' in event
-                  ? event.clientX
-                  : event.changedTouches[0].clientX;
-              const clientY =
-                'clientY' in event
-                  ? event.clientY
-                  : event.changedTouches[0].clientY;
+                const clientX =
+                  'clientX' in event
+                    ? event.clientX
+                    : event.changedTouches[0].clientX;
+                const clientY =
+                  'clientY' in event
+                    ? event.clientY
+                    : event.changedTouches[0].clientY;
 
-              if (
-                clientX < x ||
-                clientX > x + width ||
-                clientY < y ||
-                clientY > y + height
-              ) {
-                return false;
-              }
-              return true;
-            });
+                if (
+                  clientX < x ||
+                  clientX > x + width ||
+                  clientY < y ||
+                  clientY > y + height
+                ) {
+                  return false;
+                }
+                return true;
+              });
 
-          set(
-            getClickOutsideListenerIsMouseDownInsideState,
-            clickedOnAtLeastOneRef,
-          );
+            set(
+              getClickOutsideListenerIsMouseDownInsideState,
+              clickedOnAtLeastOneRef,
+            );
+            break;
+          }
+
+          default: {
+            break;
+          }
         }
       },
     [
@@ -171,13 +181,30 @@ export const useListenClickOutside = <T extends Element>({
             .filter((ref) => !!ref.current)
             .some((ref) => ref.current?.contains(event.target as Node));
 
-          if (
+          const shouldTrigger =
             isListening &&
             hasMouseDownHappened &&
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
-            !isClickedOnExcluded
-          ) {
+            !isClickedOnExcluded;
+
+          if (CLICK_OUTSIDE_DEBUG_MODE) {
+            // eslint-disable-next-line no-console
+            console.log('click outside compare refs', {
+              listenerId,
+              shouldTrigger,
+              isListening,
+              hasMouseDownHappened,
+              clickedOnAtLeastOneRef,
+              isMouseDownInside,
+              isClickedOnExcluded,
+              hotkeyScope,
+              enabled,
+              event,
+            });
+          }
+
+          if (shouldTrigger) {
             callback(event);
           }
         }
@@ -213,12 +240,28 @@ export const useListenClickOutside = <T extends Element>({
               return true;
             });
 
-          if (
+          const shouldTrigger =
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
             isListening &&
-            hasMouseDownHappened
-          ) {
+            hasMouseDownHappened;
+
+          if (CLICK_OUTSIDE_DEBUG_MODE) {
+            // eslint-disable-next-line no-console
+            console.log('click outside compare pixel', {
+              listenerId,
+              shouldTrigger,
+              clickedOnAtLeastOneRef,
+              isMouseDownInside,
+              isListening,
+              hasMouseDownHappened,
+              hotkeyScope,
+              enabled,
+              event,
+            });
+          }
+
+          if (shouldTrigger) {
             callback(event);
           }
         }
@@ -233,6 +276,7 @@ export const useListenClickOutside = <T extends Element>({
       refs,
       excludeClassNames,
       callback,
+      listenerId,
     ],
   );
 

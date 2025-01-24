@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validateSync } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared';
 
 import {
   FieldMetadataClassValidation,
@@ -24,7 +25,6 @@ import {
   FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const defaultValueValidatorsMap = {

@@ -194,7 +194,9 @@ export const ReplaceStaticValueWithVariable: Story = {
       }),
     ]);
 
-    const removeVariableButton = await canvas.findByTestId(/^remove-icon/);
+    const removeVariableButton = canvasElement.querySelector(
+      'button .tabler-icon-x',
+    );
 
     await Promise.all([
       userEvent.click(removeVariableButton),
@@ -208,5 +210,35 @@ export const ReplaceStaticValueWithVariable: Story = {
         expect(args.onPersist).toHaveBeenCalledWith(null);
       }),
     ]);
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'UUID field',
+    placeholder: 'Enter UUID',
+    readonly: true,
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('Enter UUID');
+
+    expect(input).toBeDisabled();
+
+    const variablePicker = canvas.queryByText('Add variable');
+
+    expect(variablePicker).not.toBeInTheDocument();
   },
 };

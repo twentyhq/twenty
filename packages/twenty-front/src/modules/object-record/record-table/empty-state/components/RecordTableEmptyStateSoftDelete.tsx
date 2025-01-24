@@ -1,6 +1,7 @@
 import { IconFilterOff } from 'twenty-ui';
 
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
@@ -25,14 +26,22 @@ export const RecordTableEmptyStateSoftDelete = () => {
     viewBarId: recordTableId,
   });
 
+  const { removeRecordFilter } = useRemoveRecordFilter();
+
   const handleButtonClick = async () => {
-    deleteCombinedViewFilter(
-      tableFilters.find(
-        (filter) =>
-          filter.definition.label === 'Deleted' &&
-          filter.operand === 'isNotEmpty',
-      )?.id ?? '',
+    const deletedFilter = tableFilters.find(
+      (filter) =>
+        filter.definition.label === 'Deleted' &&
+        filter.operand === 'isNotEmpty',
     );
+
+    if (!deletedFilter) {
+      throw new Error('Deleted filter not found');
+    }
+
+    removeRecordFilter(deletedFilter.fieldMetadataId);
+    deleteCombinedViewFilter(deletedFilter.id);
+
     toggleSoftDeleteFilterState(false);
   };
 

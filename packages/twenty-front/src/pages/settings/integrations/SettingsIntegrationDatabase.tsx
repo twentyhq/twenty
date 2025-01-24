@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { H2Title, Section } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
@@ -8,14 +8,15 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
-  const navigate = useNavigate();
+  const navigateApp = useNavigateApp();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -28,9 +29,9 @@ export const SettingsIntegrationDatabase = () => {
 
   useEffect(() => {
     if (!isIntegrationAvailable) {
-      navigate(AppPath.NotFound);
+      navigateApp(AppPath.NotFound);
     }
-  }, [integration, databaseKey, navigate, isIntegrationAvailable]);
+  }, [integration, databaseKey, navigateApp, isIntegrationAvailable]);
 
   const { connections } = useGetDatabaseConnections({
     databaseKey,
@@ -45,11 +46,11 @@ export const SettingsIntegrationDatabase = () => {
       links={[
         {
           children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
           children: 'Integrations',
-          href: getSettingsPagePath(SettingsPath.Integrations),
+          href: getSettingsPath(SettingsPath.Integrations),
         },
         { children: integration.text },
       ]}

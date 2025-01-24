@@ -1,4 +1,10 @@
-import { Button, IconButton, IconDotsVertical, useIsMobile } from 'twenty-ui';
+import {
+  Button,
+  IconButton,
+  IconDotsVertical,
+  getOsControlSymbol,
+  useIsMobile,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -22,7 +28,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          shortcut={isMobile ? '' : '⌘K'}
+          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel="Open command menu"
           onClick={openCommandMenu}
         />

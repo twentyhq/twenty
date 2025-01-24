@@ -1,14 +1,15 @@
 import { useIcons } from 'twenty-ui';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useParams } from 'react-router-dom';
 
 type VariantFilterChipProps = {
-  viewFilter: Filter;
+  viewFilter: RecordFilter;
   viewBarId: string;
 };
 
@@ -29,10 +30,14 @@ export const VariantFilterChip = ({
     viewBarId,
   });
 
+  const { removeRecordFilter } = useRemoveRecordFilter();
+
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
     deleteCombinedViewFilter(viewFilter.id);
+    removeRecordFilter(viewFilter.fieldMetadataId);
+
     if (
       viewFilter.definition.label === 'Deleted' &&
       viewFilter.operand === 'isNotEmpty'

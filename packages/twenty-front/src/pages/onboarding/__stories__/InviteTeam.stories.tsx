@@ -26,7 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
           return HttpResponse.json({
             data: {
               currentUser: mockedOnboardingUserData(
-                OnboardingStatus.InviteTeam,
+                OnboardingStatus.INVITE_TEAM,
               ),
             },
           });

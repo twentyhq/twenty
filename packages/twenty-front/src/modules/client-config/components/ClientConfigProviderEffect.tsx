@@ -1,14 +1,16 @@
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { captchaState } from '@/client-config/states/captchaState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -29,7 +31,9 @@ export const ClientConfigProviderEffect = () => {
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
   );
-  const setIsSSOEnabledState = useSetRecoilState(isSSOEnabledState);
+  const setIsEmailVerificationRequired = useSetRecoilState(
+    isEmailVerificationRequiredState,
+  );
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -39,11 +43,19 @@ export const ClientConfigProviderEffect = () => {
     clientConfigApiStatusState,
   );
 
-  const setCaptchaProvider = useSetRecoilState(captchaProviderState);
+  const setCaptcha = useSetRecoilState(captchaState);
 
   const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
 
   const setApiConfig = useSetRecoilState(apiConfigState);
+
+  const setCanManageFeatureFlags = useSetRecoilState(
+    canManageFeatureFlagsState,
+  );
+
+  const setLabPublicFeatureFlags = useSetRecoilState(
+    labPublicFeatureFlagsState,
+  );
 
   const { data, loading, error } = useGetClientConfigQuery({
     skip: clientConfigApiStatus.isLoaded,
@@ -86,6 +98,9 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
+    setIsEmailVerificationRequired(
+      data?.clientConfig.isEmailVerificationRequired,
+    );
     setBilling(data?.clientConfig.billing);
     setSupportChat(data?.clientConfig.support);
 
@@ -95,36 +110,39 @@ export const ClientConfigProviderEffect = () => {
       environment: data?.clientConfig?.sentry?.environment,
     });
 
-    setCaptchaProvider({
+    setCaptcha({
       provider: data?.clientConfig?.captcha?.provider,
       siteKey: data?.clientConfig?.captcha?.siteKey,
     });
 
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
-    setIsSSOEnabledState(data?.clientConfig?.isSSOEnabled);
     setDomainConfiguration({
       defaultSubdomain: data?.clientConfig?.defaultSubdomain,
       frontDomain: data?.clientConfig?.frontDomain,
     });
+    setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
+    setLabPublicFeatureFlags(data?.clientConfig?.publicFeatureFlags);
   }, [
     data,
     setIsDebugMode,
     setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
+    setIsEmailVerificationRequired,
     setSupportChat,
     setBilling,
     setSentryConfig,
     loading,
     setClientConfigApiStatus,
-    setCaptchaProvider,
+    setCaptcha,
     setChromeExtensionId,
     setApiConfig,
     setIsAnalyticsEnabled,
     error,
     setDomainConfiguration,
-    setIsSSOEnabledState,
     setAuthProviders,
+    setCanManageFeatureFlags,
+    setLabPublicFeatureFlags,
   ]);
 
   return <></>;

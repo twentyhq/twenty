@@ -46,7 +46,8 @@ export const RecordIndexPageHeader = () => {
 
   const shouldDisplayAddButton =
     (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
-    !isObjectMetadataItemReadOnly;
+    !isObjectMetadataItemReadOnly &&
+    !isCommandMenuV2Enabled;
 
   const isTable = recordIndexViewType === ViewType.Table;
 

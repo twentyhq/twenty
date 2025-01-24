@@ -4,13 +4,11 @@ import {
 } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
 import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import {
   Button,
@@ -22,6 +20,7 @@ import {
   Section,
 } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTabList = styled(TabList)`
   border-bottom: none;
@@ -91,7 +90,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
     />
   );
 
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );
@@ -99,7 +98,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+      navigate(SettingsPath.ServerlessFunctions);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionEditorTab,
   );

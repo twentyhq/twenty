@@ -1,22 +1,17 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
+import { RecoilRoot } from 'recoil';
 
 const mockCloseRightDrawer = jest.fn();
-const mockCreateNewWorkflowVersion = jest.fn();
 const mockDeleteWorkflowVersionStep = jest.fn();
 const updateOneRecordMock = jest.fn();
+const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({
     updateOneRecord: updateOneRecordMock,
   }),
-}));
-
-jest.mock('recoil', () => ({
-  useRecoilValue: () => 'parent-step-id',
-  useSetRecoilState: () => jest.fn(),
-  atom: (params: any) => params,
 }));
 
 jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
@@ -31,9 +26,9 @@ jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
-  useCreateNewWorkflowVersion: () => ({
-    createNewWorkflowVersion: mockCreateNewWorkflowVersion,
+jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
+  useCreateDraftFromWorkflowVersion: () => ({
+    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
   }),
 }));
 
@@ -50,10 +45,12 @@ describe('useDeleteStep', () => {
   };
 
   it('should delete step in draft version', async () => {
-    const { result } = renderHook(() =>
-      useDeleteStep({
-        workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
-      }),
+    const { result } = renderHook(
+      () =>
+        useDeleteStep({
+          workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
+        }),
+      { wrapper: RecoilRoot },
     );
     await result.current.deleteStep('1');
 

@@ -4,13 +4,15 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {
   viewType: ViewType;
@@ -19,7 +21,7 @@ type UseRecordGroupActionsParams = {
 export const useRecordGroupActions = ({
   viewType,
 }: UseRecordGroupActionsParams) => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const location = useLocation();
 
   const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
@@ -53,9 +55,10 @@ export const useRecordGroupActions = ({
       throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 
-    const settingsPath = `/settings/objects/${objectMetadataItem.namePlural}/${recordGroupFieldMetadata.name}`;
-
-    navigate(settingsPath);
+    navigate(SettingsPath.ObjectFieldEdit, {
+      objectNamePlural: objectMetadataItem.namePlural,
+      fieldName: recordGroupFieldMetadata.name,
+    });
   }, [
     setNavigationMemorizedUrl,
     location.pathname,
@@ -83,7 +86,10 @@ export const useRecordGroupActions = ({
           icon: IconEyeOff,
           position: 1,
           callback: () => {
-            handleRecordGroupVisibilityChange(recordGroupDefinition);
+            handleRecordGroupVisibilityChange({
+              ...recordGroupDefinition,
+              isVisible: false,
+            });
           },
         },
       ].filter(isDefined),

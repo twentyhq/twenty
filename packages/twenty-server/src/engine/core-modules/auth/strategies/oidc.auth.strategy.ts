@@ -9,11 +9,6 @@ import {
   StrategyVerifyCallbackReq,
 } from 'openid-client';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-
 @Injectable()
 export class OIDCAuthStrategy extends PassportStrategy(
   Strategy,
@@ -47,7 +42,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
   validate: StrategyVerifyCallbackReq<{
     identityProviderId: string;
     user: {
-      email: string;
+      email?: string;
       firstName?: string | null;
       lastName?: string | null;
     };
@@ -65,12 +60,6 @@ export class OIDCAuthStrategy extends PassportStrategy(
       );
 
       const userinfo = await this.client.userinfo(tokenset);
-
-      if (!userinfo || !userinfo.email) {
-        return done(
-          new AuthException('Email not found', AuthExceptionCode.INVALID_DATA),
-        );
-      }
 
       const user = {
         email: userinfo.email,

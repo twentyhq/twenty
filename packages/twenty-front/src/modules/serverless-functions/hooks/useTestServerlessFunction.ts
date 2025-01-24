@@ -3,10 +3,15 @@ import { useRecoilState } from 'recoil';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { isDefined } from 'twenty-ui';
 
-export const useTestServerlessFunction = (
-  serverlessFunctionId: string,
-  callback?: (testResult: object) => void,
-) => {
+export const useTestServerlessFunction = ({
+  serverlessFunctionId,
+  serverlessFunctionVersion = 'draft',
+  callback,
+}: {
+  serverlessFunctionId: string;
+  serverlessFunctionVersion?: string;
+  callback?: (testResult: object) => void;
+}) => {
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
@@ -15,7 +20,7 @@ export const useTestServerlessFunction = (
     const result = await executeOneServerlessFunction({
       id: serverlessFunctionId,
       payload: serverlessFunctionTestData.input,
-      version: 'draft',
+      version: serverlessFunctionVersion,
     });
 
     if (isDefined(result?.data?.executeOneServerlessFunction?.data)) {

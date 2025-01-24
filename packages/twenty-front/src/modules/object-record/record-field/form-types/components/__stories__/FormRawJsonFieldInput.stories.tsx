@@ -32,8 +32,21 @@ export const Readonly: Story = {
     placeholder: 'Enter valid json',
     readonly: true,
     onPersist: fn(),
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
   },
   play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
     const editor = canvasElement.querySelector('.ProseMirror > p');
     expect(editor).toBeVisible();
 
@@ -46,6 +59,9 @@ export const Readonly: Story = {
     });
 
     expect(args.onPersist).not.toHaveBeenCalled();
+
+    const addVariableButton = canvas.queryByText('Add variable');
+    expect(addVariableButton).not.toBeInTheDocument();
   },
 };
 
@@ -87,6 +103,7 @@ export const DisplayDefaultValueWithVariablesProperly: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": { "b" :  {{var.test}} } }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -120,6 +137,7 @@ export const InsertVariableInTheMiddleOnTextInput: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -161,6 +179,7 @@ export const CanUseVariableAsObjectProperty: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -188,6 +207,7 @@ export const ClearField: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": 2 }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const defaultValueStringLength = args.defaultValue!.length;

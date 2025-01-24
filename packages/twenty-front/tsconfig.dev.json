@@ -8,6 +8,7 @@
     "src/**/*.jsx",
     "src/**/*.d.ts",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "lingui.config.ts"
   ]
 }

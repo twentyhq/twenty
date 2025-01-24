@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 import { FormBooleanFieldInput } from '../FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
@@ -52,5 +52,39 @@ export const FalseByDefault: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('False');
+  },
+};
+
+export const WithVariablePicker: Story = {
+  args: {
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const variablePicker = await canvas.findByText('VariablePicker');
+
+    expect(variablePicker).toBeVisible();
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    readonly: true,
+    defaultValue: false,
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const toggle = await canvas.findByText('False');
+    expect(toggle).toBeVisible();
+
+    await userEvent.click(toggle);
+
+    expect(toggle).toHaveTextContent('False');
+
+    const variablePicker = canvas.queryByText('VariablePicker');
+    expect(variablePicker).not.toBeInTheDocument();
   },
 };

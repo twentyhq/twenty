@@ -6,7 +6,10 @@ export const GET_CLIENT_CONFIG = gql`
       billing {
         isBillingEnabled
         billingUrl
-        billingFreeTrialDurationInDays
+        trialPeriods {
+          duration
+          isCreditCardRequired
+        }
       }
       authProviders {
         google
@@ -22,7 +25,7 @@ export const GET_CLIENT_CONFIG = gql`
       }
       signInPrefilled
       isMultiWorkspaceEnabled
-      isSSOEnabled
+      isEmailVerificationRequired
       defaultSubdomain
       frontDomain
       debugMode
@@ -44,6 +47,15 @@ export const GET_CLIENT_CONFIG = gql`
         mutationMaximumAffectedRecords
       }
       chromeExtensionId
+      canManageFeatureFlags
+      publicFeatureFlags {
+        key
+        metadata {
+          label
+          description
+          imagePath
+        }
+      }
     }
   }
 `;

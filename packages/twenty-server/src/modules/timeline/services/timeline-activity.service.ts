@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-type TimelineActivity =
-  ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity> & {
-    name: string;
-    objectName?: string;
-    linkedRecordCachedName?: string;
-    linkedRecordId?: string;
-    linkedObjectMetadataId?: string;
-  };
+type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
+  name: string;
+  objectName?: string;
+  linkedRecordCachedName?: string;
+  linkedRecordId?: string;
+  linkedObjectMetadataId?: string;
+  properties: Record<string, any>; // more relaxed conditions than for internal events
+};
 
 @Injectable()
 export class TimelineActivityService {
@@ -33,7 +34,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
+    event: ObjectRecordBaseEvent;
     eventName: string;
     workspaceId: string;
   }) {
@@ -65,7 +66,7 @@ export class TimelineActivityService {
     workspaceId,
     eventName,
   }: {
-    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
+    event: ObjectRecordBaseEvent;
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
@@ -78,7 +79,10 @@ export class TimelineActivityService {
 
       // 2 timelines, one for the linked object and one for the task/note
       if (linkedTimelineActivities && linkedTimelineActivities?.length > 0)
-        return [...linkedTimelineActivities, { ...event, name: eventName }];
+        return [
+          ...linkedTimelineActivities,
+          { ...event, name: eventName },
+        ] satisfies TimelineActivity[];
     }
 
     if (
@@ -93,7 +97,7 @@ export class TimelineActivityService {
       });
     }
 
-    return [{ ...event, name: eventName }];
+    return [{ ...event, name: eventName }] satisfies TimelineActivity[];
   }
 
   private async getLinkedTimelineActivities({
@@ -101,7 +105,7 @@ export class TimelineActivityService {
     workspaceId,
     eventName,
   }: {
-    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
+    event: ObjectRecordBaseEvent;
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
@@ -146,7 +150,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
+    event: ObjectRecordBaseEvent;
     dataSourceSchema: string;
     activityType: string;
     eventName: string;
@@ -195,7 +199,7 @@ export class TimelineActivityService {
           linkedRecordCachedName: activity[0].title,
           linkedRecordId: activity[0].id,
           linkedObjectMetadataId: event.objectMetadata.id,
-        } as TimelineActivity;
+        } satisfies TimelineActivity;
       })
       .filter((event): event is TimelineActivity => event !== undefined);
   }
@@ -207,7 +211,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
+    event: ObjectRecordBaseEvent;
     dataSourceSchema: string;
     activityType: string;
     eventName: string;
@@ -258,7 +262,7 @@ export class TimelineActivityService {
         linkedRecordCachedName: activity[0].title,
         linkedRecordId: activity[0].id,
         linkedObjectMetadataId: activityObjectMetadataId,
-      } as TimelineActivity,
+      } satisfies TimelineActivity,
     ];
   }
 }

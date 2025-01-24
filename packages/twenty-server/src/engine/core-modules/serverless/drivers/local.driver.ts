@@ -183,7 +183,17 @@ export class LocalDriver implements ServerlessDriver {
       return await new Promise((resolve, reject) => {
         const child = fork(listenerFile, { silent: true });
 
+        const timeoutMs = serverlessFunction.timeoutSeconds * 1_000;
+
+        const timeoutHandler = setTimeout(() => {
+          child.kill();
+          const duration = Date.now() - startTime;
+
+          reject(new Error(`Task timed out after ${duration / 1_000} seconds`));
+        }, timeoutMs);
+
         child.on('message', (message: object | ServerlessExecuteError) => {
+          clearTimeout(timeoutHandler);
           const duration = Date.now() - startTime;
 
           if ('errorType' in message) {
@@ -204,6 +214,7 @@ export class LocalDriver implements ServerlessDriver {
         });
 
         child.stderr?.on('data', (data) => {
+          clearTimeout(timeoutHandler);
           const stackTrace = data
             .toString()
             .split('\n')
@@ -235,11 +246,13 @@ export class LocalDriver implements ServerlessDriver {
         });
 
         child.on('error', (error) => {
+          clearTimeout(timeoutHandler);
           reject(error);
           child.kill();
         });
 
         child.on('exit', (code) => {
+          clearTimeout(timeoutHandler);
           if (code && code !== 0) {
             reject(new Error(`Child process exited with code ${code}`));
           }

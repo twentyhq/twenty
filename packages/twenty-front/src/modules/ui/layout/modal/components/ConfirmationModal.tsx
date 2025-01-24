@@ -15,6 +15,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
+import { useLingui } from '@lingui/react/macro';
 
 export type ConfirmationModalProps = {
   isOpen: boolean;
@@ -69,13 +70,14 @@ export const ConfirmationModal = ({
   subtitle,
   setIsOpen,
   onConfirmClick,
-  deleteButtonText = 'Delete',
+  deleteButtonText = `Delete`,
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
   modalVariant = 'primary',
 }: ConfirmationModalProps) => {
+  const { t } = useLingui();
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
@@ -146,7 +148,7 @@ export const ConfirmationModal = ({
                 setIsOpen(false);
               }}
               variant="secondary"
-              title="Cancel"
+              title={t`Cancel`}
               fullWidth
             />
 

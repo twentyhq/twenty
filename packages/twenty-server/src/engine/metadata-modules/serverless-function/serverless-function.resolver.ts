@@ -159,10 +159,7 @@ export class ServerlessFunctionResolver {
       await this.checkFeatureFlag(workspaceId);
 
       return await this.serverlessFunctionService.createOneServerlessFunction(
-        {
-          name: input.name,
-          description: input.description,
-        },
+        input,
         workspaceId,
       );
     } catch (error) {

@@ -142,9 +142,9 @@ export const SettingsDataModelFieldPreview = ({
             hotkeyScope: 'field-preview',
           }}
         >
-          {fieldMetadataItem.type === FieldMetadataType.Boolean ? (
+          {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
             <BooleanFieldInput readonly />
-          ) : fieldMetadataItem.type === FieldMetadataType.Rating ? (
+          ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
             <RatingFieldInput readonly />
           ) : (
             <FieldDisplay />

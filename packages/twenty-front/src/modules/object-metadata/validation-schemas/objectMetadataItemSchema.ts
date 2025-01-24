@@ -20,7 +20,7 @@ export const objectMetadataItemSchema = z.object({
   isCustom: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
-  labelIdentifierFieldMetadataId: z.string().uuid().nullable(),
+  labelIdentifierFieldMetadataId: z.string().uuid(),
   labelPlural: metadataLabelSchema(),
   labelSingular: metadataLabelSchema(),
   namePlural: camelCaseStringSchema,

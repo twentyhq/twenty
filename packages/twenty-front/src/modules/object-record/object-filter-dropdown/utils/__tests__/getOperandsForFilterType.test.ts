@@ -1,36 +1,35 @@
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
-import { getOperandsForFilterDefinition } from '../getOperandsForFilterType';
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { getRecordFilterOperandsForRecordFilterDefinition } from '../../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [
-    ViewFilterOperand.IsEmpty,
-    ViewFilterOperand.IsNotEmpty,
+    RecordFilterOperand.IsEmpty,
+    RecordFilterOperand.IsNotEmpty,
   ];
 
   const containsOperands = [
-    ViewFilterOperand.Contains,
-    ViewFilterOperand.DoesNotContain,
+    RecordFilterOperand.Contains,
+    RecordFilterOperand.DoesNotContain,
   ];
 
   const numberOperands = [
-    ViewFilterOperand.GreaterThan,
-    ViewFilterOperand.LessThan,
+    RecordFilterOperand.GreaterThan,
+    RecordFilterOperand.LessThan,
   ];
 
   const dateOperands = [
-    ViewFilterOperand.Is,
-    ViewFilterOperand.IsRelative,
-    ViewFilterOperand.IsInPast,
-    ViewFilterOperand.IsInFuture,
-    ViewFilterOperand.IsToday,
-    ViewFilterOperand.IsBefore,
-    ViewFilterOperand.IsAfter,
+    RecordFilterOperand.Is,
+    RecordFilterOperand.IsRelative,
+    RecordFilterOperand.IsInPast,
+    RecordFilterOperand.IsInFuture,
+    RecordFilterOperand.IsToday,
+    RecordFilterOperand.IsBefore,
+    RecordFilterOperand.IsAfter,
   ];
 
-  const relationOperand = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+  const relationOperand = [RecordFilterOperand.Is, RecordFilterOperand.IsNot];
 
   const testCases = [
     ['TEXT', [...containsOperands, ...emptyOperands]],
@@ -50,9 +49,9 @@ describe('getOperandsForFilterType', () => {
 
   testCases.forEach(([filterType, expectedOperands]) => {
     it(`should return correct operands for FilterType.${filterType}`, () => {
-      const result = getOperandsForFilterDefinition({
+      const result = getRecordFilterOperandsForRecordFilterDefinition({
         type: filterType as FilterableFieldType,
-      } as FilterDefinition);
+      } as RecordFilterDefinition);
       expect(result).toEqual(expectedOperands);
     });
   });

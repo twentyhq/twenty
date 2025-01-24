@@ -1,9 +1,9 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import styled from '@emotion/styled';
-import React, { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import { IconComponent } from 'packages/twenty-ui';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useState } from 'react';
+import { IconComponent } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};

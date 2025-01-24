@@ -17,7 +17,6 @@ import { useMemo, useState } from 'react';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledLeftContent = styled.div`
@@ -139,8 +138,9 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           ) : (
             <StyledLinkContainer>
               <StyledLink
-                href={getFileAbsoluteURI(attachment.fullPath)}
-                target="__blank"
+                href={attachment.fullPath}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <OverflowingTextWithTooltip text={attachment.name} />
               </StyledLink>

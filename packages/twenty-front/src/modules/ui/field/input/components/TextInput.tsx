@@ -9,6 +9,10 @@ export const StyledTextInput = styled.input`
   margin: 0;
   ${TEXT_INPUT_STYLE}
   width: 100%;
+
+  &:disabled {
+    color: ${({ theme }) => theme.font.color.tertiary};
+  }
 `;
 
 type TextInputProps = {
@@ -25,6 +29,7 @@ type TextInputProps = {
   onChange?: (newText: string) => void;
   copyButton?: boolean;
   shouldTrim?: boolean;
+  disabled?: boolean;
 };
 
 const getValue = (value: string, shouldTrim: boolean) => {
@@ -49,6 +54,7 @@ export const TextInput = ({
   onChange,
   copyButton = true,
   shouldTrim = true,
+  disabled,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -85,6 +91,7 @@ export const TextInput = ({
         onChange={handleChange}
         autoFocus={autoFocus}
         value={internalText}
+        disabled={disabled}
       />
       {copyButton && (
         <div ref={copyRef}>

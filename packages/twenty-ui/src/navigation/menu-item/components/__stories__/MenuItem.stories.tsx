@@ -100,6 +100,11 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
             }
           },
         },
+        {
+          name: 'disabled',
+          values: [true, false],
+          props: (disabled: boolean) => ({ disabled }),
+        },
       ],
       options: {
         elementContainer: {

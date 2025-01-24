@@ -22,6 +22,7 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
 import { LLMTracingModule } from 'src/engine/core-modules/llm-tracing/llm-tracing.module';
@@ -72,6 +73,7 @@ import { FileModule } from './file/file.module';
     ActorModule,
     TelemetryModule,
     AdminPanelModule,
+    LabModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     FileStorageModule.forRootAsync({

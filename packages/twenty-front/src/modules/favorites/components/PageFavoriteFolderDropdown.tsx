@@ -42,9 +42,7 @@ export const PageFavoriteFoldersDropdown = ({
               />
             </>
           }
-          dropdownHotkeyScope={{
-            scope: dropdownId,
-          }}
+          dropdownHotkeyScope={{ scope: dropdownId }}
         />
       </DropdownScope>
     </FavoriteFolderPickerComponentInstanceContext>

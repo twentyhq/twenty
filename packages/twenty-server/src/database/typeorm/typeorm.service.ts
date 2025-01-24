@@ -15,6 +15,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,6 +48,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,
+        TwoFactorMethod,
       ],
       metadataTableName: '_typeorm_generated_columns_and_materialized_views',
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')

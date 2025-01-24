@@ -10,7 +10,7 @@ export const filterAvailableTableColumns = (
   if (
     isFieldRelation(columnDefinition) &&
     columnDefinition.metadata?.relationType ===
-      RelationDefinitionType.ManyToMany
+      RelationDefinitionType.MANY_TO_MANY
   ) {
     return false;
   }

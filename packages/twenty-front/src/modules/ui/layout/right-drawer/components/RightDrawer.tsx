@@ -83,9 +83,7 @@ export const RightDrawer = () => {
       isRightDrawerMinimized={isRightDrawerMinimized}
       animate={targetVariantForAnimation}
       variants={RIGHT_DRAWER_ANIMATION_VARIANTS}
-      transition={{
-        duration: theme.animation.duration.normal,
-      }}
+      transition={{ duration: theme.animation.duration.normal }}
       onAnimationComplete={handleAnimationComplete}
     >
       <StyledRightDrawer>

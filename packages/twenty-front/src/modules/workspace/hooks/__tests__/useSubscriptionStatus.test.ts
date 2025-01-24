@@ -16,7 +16,7 @@ import {
 const currentWorkspace = {
   id: '1',
   currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
-  activationStatus: WorkspaceActivationStatus.Active,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
   allowImpersonation: true,
 } as CurrentWorkspace;
 

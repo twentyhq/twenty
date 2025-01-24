@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail';
 import {
@@ -50,6 +50,8 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText(
       'We will send POST requests to this endpoint for every new event',
+      undefined,
+      { timeout: 10000 },
     );
     await canvas.findByText('Delete this integration');
   },

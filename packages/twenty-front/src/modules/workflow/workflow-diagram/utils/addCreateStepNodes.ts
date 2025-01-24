@@ -1,9 +1,9 @@
+import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { MarkerType } from '@xyflow/react';
 import { v4 } from 'uuid';
 
 export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
@@ -30,13 +30,10 @@ export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
     updatedNodes.push(newCreateStepNode);
 
     updatedEdges.push({
+      ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       id: v4(),
       source: node.id,
       target: newCreateStepNode.id,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-      deletable: false,
     });
   }
 

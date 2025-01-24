@@ -9,12 +9,17 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
   hasError?: boolean;
+  hasItem: boolean;
 }>`
   ${TEXT_INPUT_STYLE}
 
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  ${({ hasItem, theme }) =>
+    hasItem &&
+    css`
+      background-color: ${theme.background.transparent.lighter};
+      border-radius: 4px;
+      border: 1px solid ${theme.border.color.medium};
+    `}
 
   box-sizing: border-box;
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -70,6 +75,7 @@ export type MultiItemBaseInputProps = HTMLInputProps & {
   }) => React.ReactNode;
   error?: string | null;
   hasError?: boolean;
+  hasItem: boolean;
 };
 
 export const MultiItemBaseInput = forwardRef<
@@ -93,6 +99,7 @@ export const MultiItemBaseInput = forwardRef<
       renderInput,
       error = '',
       hasError = false,
+      hasItem,
     },
     ref,
   ) => {
@@ -129,6 +136,7 @@ export const MultiItemBaseInput = forwardRef<
               onChange={onChange}
               ref={combinedRef}
               withRightComponent={!!rightComponent}
+              hasItem={hasItem}
             />
           )}
           {!!rightComponent && (

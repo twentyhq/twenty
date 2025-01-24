@@ -12,6 +12,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-step.workspace-service';
+import { WorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version.dto';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -60,7 +61,7 @@ export class WorkflowVersionStepResolver {
     });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => WorkflowVersionDTO)
   async createDraftFromWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
@@ -68,15 +69,15 @@ export class WorkflowVersionStepResolver {
       workflowId,
       workflowVersionIdToCopy,
     }: CreateDraftFromWorkflowVersionInput,
-  ) {
-    await this.workflowVersionStepWorkspaceService.createDraftFromWorkflowVersion(
-      {
-        workspaceId,
-        workflowId,
-        workflowVersionIdToCopy,
-      },
-    );
-
-    return true;
+  ): Promise<WorkflowVersionDTO> {
+    return {
+      id: await this.workflowVersionStepWorkspaceService.createDraftFromWorkflowVersion(
+        {
+          workspaceId,
+          workflowId,
+          workflowVersionIdToCopy,
+        },
+      ),
+    };
   }
 }

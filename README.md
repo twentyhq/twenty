@@ -8,7 +8,7 @@
 
 <h2 align="center" >The #1 Open-Source CRM </h3>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
 <br />
 
 
@@ -26,12 +26,6 @@
 
 # Demo 
 
-<!--
-You can use the following url to sign up to the cloud version without providing a credit card:
-
-<a href="https://demo.twenty.com/?billingCheckoutSession={"plan":"PRO","recurringInterval":"MONTHLY","requirePaymentMethod":false,"skipPlanPage":true}">https://demo.twenty.com/?billingCheckoutSession={"plan":"PRO","recurringInterval":"MONTHLY","requirePaymentMethod":false,"skipPlanPage":true}</a>
-
--->
 Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
 
 ```
@@ -158,6 +152,7 @@ Below are a few features we have implemented to date:
 - [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
 - [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/) and [Emotion](https://emotion.sh/)
 - [Greptile](https://greptile.com) for code reviews.
+- [TranslationIO](https://translation.io/) for translations.
 
 
 # Join the Community

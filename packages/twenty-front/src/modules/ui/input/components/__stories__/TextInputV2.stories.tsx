@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import {
@@ -39,4 +39,20 @@ export const Filled: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, value: 'Tim' },
+};
+
+export const AutoGrow: Story = {
+  args: { autoGrow: true, value: 'Tim' },
+};
+
+export const AutoGrowWithPlaceholder: Story = {
+  args: { autoGrow: true, placeholder: 'Tim' },
+};
+
+export const Small: Story = {
+  args: { sizeVariant: 'sm', value: 'Tim' },
+};
+
+export const AutoGrowSmall: Story = {
+  args: { autoGrow: true, sizeVariant: 'sm', value: 'Tim' },
 };

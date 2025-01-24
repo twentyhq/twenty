@@ -22,7 +22,7 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
   const fieldMetadataId = viewGroups?.[0]?.fieldMetadataId;
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) =>
-      field.id === fieldMetadataId && field.type === FieldMetadataType.Select,
+      field.id === fieldMetadataId && field.type === FieldMetadataType.SELECT,
   );
 
   if (!selectFieldMetadataItem) {

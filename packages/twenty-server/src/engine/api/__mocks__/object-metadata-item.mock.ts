@@ -1,5 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';

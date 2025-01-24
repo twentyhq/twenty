@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { isUndefined } from '@sniptt/guards';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -9,6 +10,7 @@ export type MenuItemBaseProps = {
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
   hovered?: boolean;
+  disabled?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -35,10 +37,12 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   ${({ theme, isKeySelected }) =>
     isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
 
-  ${({ isHoverBackgroundDisabled }) =>
-    isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
+  ${({ isHoverBackgroundDisabled, disabled }) =>
+    (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
-  ${({ theme, accent }) => {
+  ${({ theme, accent, disabled }) => {
+    const isDisabled = !isUndefined(disabled) && disabled !== false;
+
     switch (accent) {
       case 'danger': {
         return css`
@@ -46,17 +50,20 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
           &:hover {
             background: ${theme.background.transparent.danger};
           }
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'placeholder': {
         return css`
           color: ${theme.font.color.tertiary};
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
       case 'default':
       default: {
         return css`
           color: ${theme.font.color.secondary};
+          ${isDisabled && `opacity: 0.4;`}
         `;
       }
     }
@@ -68,15 +75,13 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
+export const StyledMenuItemLabel = styled.div`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
   overflow: hidden;
-  padding-left: ${({ theme, hasLeftIcon }) =>
-    hasLeftIcon ? '' : theme.spacing(1)};
 
   white-space: nowrap;
 `;
@@ -114,6 +119,7 @@ export const StyledDraggableItem = styled.div`
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
+  disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
@@ -138,7 +144,11 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
-  cursor: ${({ cursor }) => {
+  cursor: ${({ cursor, disabled }) => {
+    if (!isUndefined(disabled) && disabled !== false) {
+      return 'not-allowed';
+    }
+
     switch (cursor) {
       case 'drag':
         return 'grab';

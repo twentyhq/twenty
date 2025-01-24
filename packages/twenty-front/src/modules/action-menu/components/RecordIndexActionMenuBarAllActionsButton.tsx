@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconLayoutSidebarRightExpand } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand, getOsControlSymbol } from 'twenty-ui';
 
 const StyledButton = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -46,7 +46,7 @@ export const RecordIndexActionMenuBarAllActionsButton = () => {
         <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
         <StyledButtonLabel>All Actions</StyledButtonLabel>
         <StyledSeparator size="sm" />
-        <StyledShortcutLabel>⌘K</StyledShortcutLabel>
+        <StyledShortcutLabel>{getOsControlSymbol()}K</StyledShortcutLabel>
       </StyledButton>
     </>
   );

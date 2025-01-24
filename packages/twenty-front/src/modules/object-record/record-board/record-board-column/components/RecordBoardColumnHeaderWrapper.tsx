@@ -32,7 +32,6 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: recordGroupDefinition,
-        recordCount: recordIdsByGroup.length,
         recordIds: recordIdsByGroup,
       }}
     >

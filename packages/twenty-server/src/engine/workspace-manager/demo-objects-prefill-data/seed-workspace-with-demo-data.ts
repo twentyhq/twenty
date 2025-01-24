@@ -13,7 +13,6 @@ export const seedWorkspaceWithDemoData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
-  isWorkflowEnabled: boolean,
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     acc[object.standardId ?? ''] = {
@@ -38,7 +37,6 @@ export const seedWorkspaceWithDemoData = async (
         entityManager,
         schemaName,
         objectMetadataMap,
-        isWorkflowEnabled,
       );
 
       await seedWorkspaceFavorites(

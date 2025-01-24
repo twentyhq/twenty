@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconCircleOff, isDefined, useIcons } from 'twenty-ui';
+import { IconCircleOff, useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
@@ -19,11 +19,16 @@ export const settingsDataModelObjectIdentifiersFormSchema =
 export type SettingsDataModelObjectIdentifiersFormValues = z.infer<
   typeof settingsDataModelObjectIdentifiersFormSchema
 >;
-
+export type SettingsDataModelObjectIdentifiers =
+  keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
-  defaultLabelIdentifierFieldMetadataId: string;
+  onBlur: () => void;
 };
+const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
+  'labelIdentifierFieldMetadataId';
+const IMAGE_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
+  'imageIdentifierFieldMetadataId';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -32,12 +37,11 @@ const StyledContainer = styled.div`
 
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
-  defaultLabelIdentifierFieldMetadataId,
+  onBlur,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
   const { getIcon } = useIcons();
-
   const labelIdentifierFieldOptions = useMemo(
     () =>
       getActiveFieldMetadataItems(objectMetadataItem)
@@ -65,41 +69,37 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       {[
         {
           label: 'Record label',
-          fieldName: 'labelIdentifierFieldMetadataId' as const,
+          fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
           options: labelIdentifierFieldOptions,
+          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
         },
         {
           label: 'Record image',
-          fieldName: 'imageIdentifierFieldMetadataId' as const,
+          fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
           options: imageIdentifierFieldOptions,
+          defaultValue: null,
         },
-      ].map(({ fieldName, label, options }) => (
+      ].map(({ fieldName, label, options, defaultValue }) => (
         <Controller
           key={fieldName}
           name={fieldName}
           control={control}
-          defaultValue={
-            fieldName === 'labelIdentifierFieldMetadataId'
-              ? isDefined(objectMetadataItem[fieldName])
-                ? objectMetadataItem[fieldName]
-                : defaultLabelIdentifierFieldMetadataId
-              : objectMetadataItem[fieldName]
-          }
-          render={({ field: { onBlur, onChange, value } }) => {
-            return (
-              <Select
-                label={label}
-                disabled={!objectMetadataItem.isCustom || !options.length}
-                fullWidth
-                dropdownId={`${fieldName}-select`}
-                emptyOption={emptyOption}
-                options={options}
-                value={value}
-                onChange={onChange}
-                onBlur={onBlur}
-              />
-            );
-          }}
+          defaultValue={defaultValue}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              label={label}
+              disabled={!objectMetadataItem.isCustom || !options.length}
+              fullWidth
+              dropdownId={`${fieldName}-select`}
+              emptyOption={emptyOption}
+              options={options}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                onBlur();
+              }}
+            />
+          )}
         />
       ))}
     </StyledContainer>

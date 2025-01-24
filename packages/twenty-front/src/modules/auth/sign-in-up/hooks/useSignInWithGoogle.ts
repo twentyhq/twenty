@@ -12,7 +12,6 @@ export const useSignInWithGoogle = () => {
     plan: 'PRO',
     interval: 'Month',
     requirePaymentMethod: true,
-    skipPlanPage: false,
   } as BillingCheckoutSession;
 
   const { signInWithGoogle } = useAuth();

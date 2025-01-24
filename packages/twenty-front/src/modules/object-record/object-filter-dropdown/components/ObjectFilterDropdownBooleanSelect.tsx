@@ -1,15 +1,18 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconCheck } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -36,22 +39,21 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   const theme = useTheme();
   const options = [true, false];
 
-  const {
-    filterDefinitionUsedInDropdownState,
-    selectedOperandInDropdownState,
-    selectedFilterState,
-    selectFilter,
-  } = useFilterDropdown();
+  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
+    filterDefinitionUsedInDropdownComponentState,
+  );
+
+  const selectedOperandInDropdown = useRecoilComponentValueV2(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const selectedFilter = useRecoilComponentValueV2(
+    selectedFilterComponentState,
+  );
+
+  const { applyRecordFilter } = useApplyRecordFilter();
 
   const { closeDropdown } = useDropdown();
-
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
-  const selectedOperandInDropdown = useRecoilValue(
-    selectedOperandInDropdownState,
-  );
-  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const [selectedValue, setSelectedValue] = useState<boolean | undefined>(
     selectedFilter?.value === 'true',
@@ -69,7 +71,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       return;
     }
 
-    selectFilter({
+    applyRecordFilter({
       id: selectedFilter?.id ?? v4(),
       definition: filterDefinitionUsedInDropdown,
       operand: selectedOperandInDropdown,

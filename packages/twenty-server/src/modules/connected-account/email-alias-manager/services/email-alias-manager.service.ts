@@ -17,6 +17,8 @@ export class EmailAliasManagerService {
     let handleAliases: string[];
 
     switch (connectedAccount.provider) {
+      case 'microsoft':
+        return;
       case 'google':
         handleAliases =
           await this.googleEmailAliasManagerService.getHandleAliases(

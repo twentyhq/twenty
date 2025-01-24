@@ -64,6 +64,13 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
+        await this.handlePermanentException(
+          exception,
+          messageChannel,
+          workspaceId,
+        );
+        break;
       default:
         throw exception;
     }
@@ -145,6 +152,22 @@ export class MessageImportExceptionHandlerService {
 
     throw new MessageImportException(
       `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+      MessageImportExceptionCode.UNKNOWN,
+    );
+  }
+
+  private async handlePermanentException(
+    exception: MessageImportDriverException,
+    messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      [messageChannel.id],
+      workspaceId,
+    );
+
+    throw new MessageImportException(
+      `Permanent error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
       MessageImportExceptionCode.UNKNOWN,
     );
   }

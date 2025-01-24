@@ -11,11 +11,13 @@ import {
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
+import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
+import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeMeterDataToMeterRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-data-to-meter-repository-data.util';
-import { transformStripePriceDataToPriceRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-price-data-to-price-repository-data.util';
-import { transformStripeProductDataToProductRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-product-data-to-product-repository-data.util';
+import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
+import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
+import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
 @Command({
   name: 'billing:sync-plans-data',
   description:
@@ -30,7 +32,9 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     private readonly billingProductRepository: Repository<BillingProduct>,
     @InjectRepository(BillingMeter, 'core')
     private readonly billingMeterRepository: Repository<BillingMeter>,
-    private readonly stripeService: StripeService,
+    private readonly stripeBillingMeterService: StripeBillingMeterService,
+    private readonly stripeProductService: StripeProductService,
+    private readonly stripePriceService: StripePriceService,
   ) {
     super();
   }
@@ -43,7 +47,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
       try {
         if (!options.dryRun) {
           await this.billingMeterRepository.upsert(
-            transformStripeMeterDataToMeterRepositoryData(meter),
+            transformStripeMeterToDatabaseMeter(meter),
             {
               conflictPaths: ['stripeMeterId'],
             },
@@ -63,7 +67,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     try {
       if (!options.dryRun) {
         await this.billingProductRepository.upsert(
-          transformStripeProductDataToProductRepositoryData(product),
+          transformStripeProductToDatabaseProduct(product),
           {
             conflictPaths: ['stripeProductId'],
           },
@@ -92,7 +96,7 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
         }
         await this.upsertProductRepositoryData(product, options);
 
-        const prices = await this.stripeService.getPricesByProductId(
+        const prices = await this.stripePriceService.getPricesByProductId(
           product.id,
         );
 
@@ -133,20 +137,18 @@ export class BillingSyncPlansDataCommand extends BaseCommandRunner {
     passedParams: string[],
     options: BaseCommandOptions,
   ): Promise<void> {
-    const billingMeters = await this.stripeService.getAllMeters();
+    const billingMeters = await this.stripeBillingMeterService.getAllMeters();
 
     await this.upsertMetersRepositoryData(billingMeters, options);
 
-    const billingProducts = await this.stripeService.getAllProducts();
+    const billingProducts = await this.stripeProductService.getAllProducts();
 
     const billingPrices = await this.processBillingPricesByProductBatches(
       billingProducts,
       options,
     );
     const transformedPrices = billingPrices.flatMap((prices) =>
-      prices.map((price) =>
-        transformStripePriceDataToPriceRepositoryData(price),
-      ),
+      prices.map((price) => transformStripePriceToDatabasePrice(price)),
     );
 
     this.logger.log(`Upserting ${transformedPrices.length} transformed prices`);

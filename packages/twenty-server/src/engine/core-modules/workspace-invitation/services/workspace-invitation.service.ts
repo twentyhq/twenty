@@ -17,7 +17,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -37,8 +37,6 @@ export class WorkspaceInvitationService {
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly environmentService: EnvironmentService,
@@ -47,32 +45,7 @@ export class WorkspaceInvitationService {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
-  // VALIDATIONS METHODS
-  private async validatePublicInvitation(workspaceInviteHash: string) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        inviteHash: workspaceInviteHash,
-      },
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (!workspace.isPublicInviteLinkEnabled) {
-      throw new AuthException(
-        'Workspace does not allow public invites',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    return { isValid: true, workspace };
-  }
-
-  private async validatePersonalInvitation({
+  async validatePersonalInvitation({
     workspacePersonalInviteToken,
     email,
   }: {
@@ -107,32 +80,6 @@ export class WorkspaceInvitationService {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-  }
-
-  async validateInvitation({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-    email,
-  }: {
-    workspacePersonalInviteToken?: string;
-    workspaceInviteHash?: string;
-    email: string;
-  }) {
-    if (workspacePersonalInviteToken) {
-      return await this.validatePersonalInvitation({
-        workspacePersonalInviteToken,
-        email,
-      });
-    }
-
-    if (workspaceInviteHash) {
-      return await this.validatePublicInvitation(workspaceInviteHash);
-    }
-
-    throw new AuthException(
-      'Invitation invalid',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-    );
   }
 
   async findInvitationByWorkspaceSubdomainAndUserEmail({

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -19,9 +19,11 @@ export const ObjectTasks = ({
 }) => {
   return (
     <StyledContainer>
-      <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
+      <ObjectFilterDropdownComponentInstanceContext.Provider
+        value={{ instanceId: 'entity-tasks-filter-scope' }}
+      >
         <TaskGroups targetableObjects={[targetableObject]} />
-      </ObjectFilterDropdownScope>
+      </ObjectFilterDropdownComponentInstanceContext.Provider>
     </StyledContainer>
   );
 };

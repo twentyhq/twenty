@@ -1,5 +1,5 @@
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
+import { capitalize, FieldMetadataType } from 'twenty-shared';
 
 import {
   computeDepthParameters,
@@ -10,10 +10,7 @@ import {
   computeOrderByParameters,
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 

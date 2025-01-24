@@ -34,13 +34,18 @@ export const useSelectableList = (selectableListId?: string) => {
   );
 
   const setSelectedItemId = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (itemId: string) => {
-        resetSelectedItem();
+        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+
+        if (isDefined(selectedItemId)) {
+          set(isSelectedItemIdSelector(selectedItemId), false);
+        }
+
         set(selectedItemIdState, itemId);
         set(isSelectedItemIdSelector(itemId), true);
       },
-    [resetSelectedItem, selectedItemIdState, isSelectedItemIdSelector],
+    [selectedItemIdState, isSelectedItemIdSelector],
   );
 
   return {

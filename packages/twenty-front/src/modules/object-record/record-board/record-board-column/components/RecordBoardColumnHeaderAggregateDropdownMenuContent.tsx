@@ -44,6 +44,13 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
         />
         <MenuItem
           onClick={() => {
+            onContentChange('datesAggregateOperationOptions');
+          }}
+          text={'Dates'}
+          hasSubMenu
+        />
+        <MenuItem
+          onClick={() => {
             onContentChange('moreAggregateOperationOptions');
           }}
           text={'More options'}

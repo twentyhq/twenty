@@ -93,7 +93,7 @@ export const useAddNewCard = () => {
           throw new Error('Label identifier field not found');
         }
 
-        if (labelIdentifierField.type === FieldMetadataType.FullName) {
+        if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
           computedLabelIdentifierValue = {
             firstName: labelValue,
             lastName: '',

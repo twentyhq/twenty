@@ -91,7 +91,7 @@ export const ProfilePictureUploader = () => {
       await updateOneRecord({
         idToUpdate: currentWorkspaceMember?.id,
         updateOneRecordInput: {
-          avatarUrl: null,
+          avatarUrl: '',
         },
       });
 

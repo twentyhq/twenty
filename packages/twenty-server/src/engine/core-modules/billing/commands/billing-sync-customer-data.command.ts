@@ -9,7 +9,7 @@ import {
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 interface SyncCustomerDataCommandOptions
@@ -23,7 +23,7 @@ export class BillingSyncCustomerDataCommand extends ActiveWorkspacesCommandRunne
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly stripeService: StripeService,
+    private readonly stripeSubscriptionService: StripeSubscriptionService,
     @InjectRepository(BillingCustomer, 'core')
     protected readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {
@@ -71,7 +71,7 @@ export class BillingSyncCustomerDataCommand extends ActiveWorkspacesCommandRunne
 
     if (!options.dryRun && !billingCustomer) {
       const stripeCustomerId =
-        await this.stripeService.getStripeCustomerIdFromWorkspaceId(
+        await this.stripeSubscriptionService.getStripeCustomerIdFromWorkspaceId(
           workspaceId,
         );
 

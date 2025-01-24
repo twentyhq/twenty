@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared';
 
 import {
   RecordPositionQueryFactory,
   RecordPositionQueryType,
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 

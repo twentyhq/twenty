@@ -29,9 +29,7 @@ export const Default = () => (
           onError={() => null}
           nextStep={() => null}
           setPreviousStepState={() => null}
-          currentStepState={{
-            type: SpreadsheetImportStepType.upload,
-          }}
+          currentStepState={{ type: SpreadsheetImportStepType.upload }}
         />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>

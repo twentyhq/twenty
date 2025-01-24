@@ -1,8 +1,7 @@
 import { saveAs } from 'file-saver';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 export const downloadFile = (fullPath: string, fileName: string) => {
-  fetch(getFileAbsoluteURI(fullPath))
+  fetch(fullPath)
     .then((resp) =>
       resp.status === 200
         ? resp.blob()

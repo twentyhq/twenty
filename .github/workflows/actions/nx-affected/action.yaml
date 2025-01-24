@@ -2,14 +2,11 @@ name: Nx Affected CI
 inputs:
   parallel:
     required: false
-    types: [number]
-    default: 3
+    default: '3'
   tag:
     required: false
-    types: [string]
   tasks:
     required: true
-    types: [string]
 
 runs:
   using: "composite"

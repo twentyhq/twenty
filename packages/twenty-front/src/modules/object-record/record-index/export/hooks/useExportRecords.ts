@@ -36,12 +36,12 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationDefinitionType.ManyToOne,
+      col.metadata.relationType === RelationDefinitionType.MANY_TO_ONE,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {
     fieldMetadataId: '',
-    type: FieldMetadataType.Uuid,
+    type: FieldMetadataType.UUID,
     iconName: '',
     label: `Id`,
     metadata: {

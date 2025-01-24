@@ -106,7 +106,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
           .getValue();
 
         const canOpen =
-          thread.visibility === MessageChannelVisibility.ShareEverything &&
+          thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING &&
           (!clickJustTriggeredEmailDrawerClose ||
             emailThreadIdWhenEmailThreadWasClosed !== thread.id);
 
@@ -122,7 +122,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     ],
   );
 
-  const isDisabled = visibility !== MessageChannelVisibility.ShareEverything;
+  const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
 
   return (
     <ActivityRow
@@ -167,13 +167,13 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        {visibility !== MessageChannelVisibility.Metadata && (
+        {visibility !== MessageChannelVisibility.METADATA && (
           <StyledSubject>{thread.subject}</StyledSubject>
         )}
-        {visibility === MessageChannelVisibility.ShareEverything && (
+        {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
-        {visibility !== MessageChannelVisibility.ShareEverything && (
+        {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
           <EmailThreadNotShared />
         )}
       </StyledSubjectAndBody>

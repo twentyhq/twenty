@@ -9,8 +9,6 @@ import { Repository } from 'typeorm';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
   SSOException,
   SSOExceptionCode,
@@ -30,8 +28,6 @@ import {
 export class SSOService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
   constructor(
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     private readonly environmentService: EnvironmentService,
@@ -39,27 +35,15 @@ export class SSOService {
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
-    const isSSOEnabledFeatureFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKey.IsSSOEnabled,
-      value: true,
-    });
-
-    if (!isSSOEnabledFeatureFlag?.value) {
-      throw new SSOException(
-        `${FeatureFlagKey.IsSSOEnabled} feature flag is disabled`,
-        SSOExceptionCode.SSO_DISABLE,
-      );
-    }
     const isSSOBillingEnabled =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+      await this.billingService.hasFreeAccessOrEntitlement(
         workspaceId,
         this.featureLookUpKey,
       );
 
     if (!isSSOBillingEnabled) {
       throw new SSOException(
-        `${FeatureFlagKey.IsSSOEnabled} feature is enabled but no entitlement for this workspace`,
+        `No entitlement found for this workspace`,
         SSOExceptionCode.SSO_DISABLE,
       );
     }
@@ -145,13 +129,10 @@ export class SSOService {
     };
   }
 
-  async findSSOIdentityProviderById(identityProviderId?: string) {
-    // if identityProviderId is not provide, typeorm return a random idp instead of undefined
-    if (!identityProviderId) return undefined;
-
+  async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
-    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
+    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 
   buildCallbackUrl(

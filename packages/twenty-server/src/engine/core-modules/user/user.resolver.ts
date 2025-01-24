@@ -45,7 +45,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 const getHMACKey = (email?: string, key?: string | null) => {

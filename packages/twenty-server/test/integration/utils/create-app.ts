@@ -2,6 +2,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 
 import { AppModule } from 'src/app.module';
+import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
+import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -23,9 +25,12 @@ export const createApp = async (
     appInitHook?: TestingAppCreatePreHook;
   } = {},
 ): Promise<NestExpressApplication> => {
+  const stripeSDKMockService = new StripeSDKMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [AppModule],
-  });
+  })
+    .overrideProvider(StripeSDKService)
+    .useValue(stripeSDKMockService);
 
   if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);
@@ -33,7 +38,10 @@ export const createApp = async (
 
   const moduleFixture: TestingModule = await moduleBuilder.compile();
 
-  const app = moduleFixture.createNestApplication<NestExpressApplication>();
+  const app = moduleFixture.createNestApplication<NestExpressApplication>({
+    rawBody: true,
+    cors: true,
+  });
 
   if (config.appInitHook) {
     await config.appInitHook(app);

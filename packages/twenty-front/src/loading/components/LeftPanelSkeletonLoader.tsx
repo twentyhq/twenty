@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ANIMATION, BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
+import { ANIMATION } from 'twenty-ui';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTheme } from '@emotion/react';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 
 const StyledAnimatedContainer = styled(motion.div)`
@@ -47,6 +48,7 @@ const StyledSkeletonTitleContainer = styled.div`
 
 export const LeftPanelSkeletonLoader = () => {
   const isMobile = useIsMobile();
+  const theme = useTheme();
 
   return (
     <StyledAnimatedContainer
@@ -57,15 +59,13 @@ export const LeftPanelSkeletonLoader = () => {
           : NAV_DRAWER_WIDTHS.menu.desktop.expanded,
         opacity: isMobile ? 0 : 1,
       }}
-      transition={{
-        duration: ANIMATION.duration.fast,
-      }}
+      transition={{ duration: ANIMATION.duration.fast }}
     >
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <SkeletonTheme
-            baseColor={GRAY_SCALE.gray15}
-            highlightColor={BACKGROUND_LIGHT.transparent.lighter}
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >
             <Skeleton

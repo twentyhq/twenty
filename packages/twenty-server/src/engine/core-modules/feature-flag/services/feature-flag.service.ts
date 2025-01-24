@@ -30,10 +30,15 @@ export class FeatureFlagService {
 
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
+  ): Promise<FeatureFlagEntity[]> {
+    return this.featureFlagRepository.find({ where: { workspaceId } });
+  }
+
+  public async getWorkspaceFeatureFlagsMap(
+    workspaceId: string,
   ): Promise<FeatureFlagMap> {
-    const workspaceFeatureFlags = await this.featureFlagRepository.find({
-      where: { workspaceId },
-    });
+    const workspaceFeatureFlags =
+      await this.getWorkspaceFeatureFlags(workspaceId);
 
     const workspaceFeatureFlagsMap = workspaceFeatureFlags.reduce(
       (result, currentFeatureFlag) => {

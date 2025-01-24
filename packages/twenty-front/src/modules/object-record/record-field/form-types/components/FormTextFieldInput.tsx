@@ -63,7 +63,7 @@ export const FormTextFieldInput = ({
 
       <FormFieldInputRowContainer multiline={multiline}>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
         >
           <TextVariableEditor
@@ -73,7 +73,7 @@ export const FormTextFieldInput = ({
           />
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             multiline={multiline}

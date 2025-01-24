@@ -8,7 +8,10 @@ import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useC
 export const RecordTableEmptyStateNoRecordFoundForFilter = () => {
   const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handleButtonClick = () => {
     createNewTableRecord();

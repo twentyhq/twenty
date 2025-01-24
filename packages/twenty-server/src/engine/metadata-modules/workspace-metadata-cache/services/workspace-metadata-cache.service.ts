@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import console from 'console';
-
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -72,7 +70,6 @@ export class WorkspaceMetadataCacheService {
       currentDatabaseVersion,
     );
 
-    console.time('fetching object metadata');
     const objectMetadataItems = await this.objectMetadataRepository.find({
       where: { workspaceId },
       relations: [
@@ -84,13 +81,8 @@ export class WorkspaceMetadataCacheService {
       ],
     });
 
-    console.timeEnd('fetching object metadata');
-
-    console.time('generating object metadata map');
     const freshObjectMetadataMaps =
       generateObjectMetadataMaps(objectMetadataItems);
-
-    console.timeEnd('generating object metadata map');
 
     await this.workspaceCacheStorageService.setObjectMetadataMaps(
       workspaceId,

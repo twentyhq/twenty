@@ -1,9 +1,7 @@
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { DataSource } from 'typeorm';
 
-import {
-  Workspace,
-  WorkspaceActivationStatus,
-} from 'src/engine/core-modules/workspace/workspace.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const tableName = 'workspace';
 

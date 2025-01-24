@@ -2,7 +2,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -22,11 +22,9 @@ export const useRequestFreshCaptchaToken = () => {
   const requestFreshCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const captchaProvider = snapshot
-          .getLoadable(captchaProviderState)
-          .getValue();
+        const captcha = snapshot.getLoadable(captchaState).getValue();
 
-        if (isUndefinedOrNull(captchaProvider)) {
+        if (isUndefinedOrNull(captcha?.provider)) {
           return;
         }
 
@@ -34,10 +32,10 @@ export const useRequestFreshCaptchaToken = () => {
 
         let captchaWidget: any;
 
-        switch (captchaProvider.provider) {
+        switch (captcha.provider) {
           case CaptchaDriverType.GoogleRecaptcha:
             window.grecaptcha
-              .execute(captchaProvider.siteKey, {
+              .execute(captcha.siteKey, {
                 action: 'submit',
               })
               .then((token: string) => {
@@ -49,7 +47,7 @@ export const useRequestFreshCaptchaToken = () => {
             // TODO: fix workspace-no-hardcoded-colors rule
             // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
             captchaWidget = window.turnstile.render('#captcha-widget', {
-              sitekey: captchaProvider.siteKey,
+              sitekey: captcha.siteKey,
             });
             window.turnstile.execute(captchaWidget, {
               callback: (token: string) => {

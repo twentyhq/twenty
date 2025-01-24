@@ -9,7 +9,6 @@ import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-fun
 import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,6 +24,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -37,9 +37,10 @@ export const SettingsServerlessFunctionDetail = () => {
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
   const { formValues, setFormValues, loading } =
-    useServerlessFunctionUpdateFormState(serverlessFunctionId);
-  const { testServerlessFunction } =
-    useTestServerlessFunction(serverlessFunctionId);
+    useServerlessFunctionUpdateFormState({ serverlessFunctionId });
+  const { testServerlessFunction } = useTestServerlessFunction({
+    serverlessFunctionId,
+  });
   const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: 'latest',
@@ -197,11 +198,11 @@ export const SettingsServerlessFunctionDetail = () => {
         links={[
           {
             children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
           },
           {
             children: 'Functions',
-            href: getSettingsPagePath(SettingsPath.ServerlessFunctions),
+            href: getSettingsPath(SettingsPath.ServerlessFunctions),
           },
           { children: `${formValues.name}` },
         ]}

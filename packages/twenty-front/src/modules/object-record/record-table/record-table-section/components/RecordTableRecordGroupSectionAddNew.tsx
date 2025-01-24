@@ -7,7 +7,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { IconPlus } from 'twenty-ui';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
-  const { recordTableId } = useRecordTableContextOrThrow();
+  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
@@ -15,8 +15,10 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const { createNewTableRecordInGroup } =
-    useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecordInGroup } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handleAddNewRecord = () => {
     createNewTableRecordInGroup(currentRecordGroupId);

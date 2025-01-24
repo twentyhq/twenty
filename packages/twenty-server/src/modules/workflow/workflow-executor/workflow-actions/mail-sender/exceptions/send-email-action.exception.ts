@@ -10,4 +10,5 @@ export class SendEmailActionException extends CustomException {
 export enum SendEmailActionExceptionCode {
   PROVIDER_NOT_SUPPORTED = 'PROVIDER_NOT_SUPPORTED',
   CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
+  INVALID_EMAIL = 'INVALID_EMAIL',
 }
