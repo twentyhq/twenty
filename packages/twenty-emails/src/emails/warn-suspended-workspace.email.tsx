@@ -18,7 +18,7 @@ export const WarnSuspendedWorkspaceEmail = ({
 }: WarnSuspendedWorkspaceEmailProps) => {
   const daysLeft = inactiveDaysBeforeDelete - daysSinceInactive;
   const dayOrDays = daysLeft > 1 ? 'days' : 'day';
-  const remainingDays = daysLeft > 1 ? `${daysLeft} ` : '';
+  const remainingDays = daysLeft > 0 ? `${daysLeft} ` : '';
 
   const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
 

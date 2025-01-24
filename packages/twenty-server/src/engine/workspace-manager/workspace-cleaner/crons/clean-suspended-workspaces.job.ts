@@ -166,7 +166,7 @@ export class CleanSuspendedWorkspacesJob {
               value: true,
             });
 
-            this.sendWarningEmail(
+            await this.sendWarningEmail(
               workspaceMember,
               workspace.displayName,
               daysSinceInactive,
