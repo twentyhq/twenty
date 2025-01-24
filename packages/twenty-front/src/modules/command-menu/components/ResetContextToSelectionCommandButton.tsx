@@ -8,7 +8,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconCheckbox, isDefined } from 'twenty-ui';
+import { IconTwentyCheckbox, isDefined } from 'twenty-ui';
 
 export const ResetContextToSelectionCommandButton = () => {
   const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
@@ -56,7 +56,7 @@ export const ResetContextToSelectionCommandButton = () => {
   return (
     <CommandMenuItem
       id="reset-context-to-selection"
-      Icon={IconCheckbox}
+      Icon={IconTwentyCheckbox}
       label={t`Reset context to ${selectedRecordsContextText}`}
       onClick={resetPreviousCommandMenuContext}
     />
