@@ -25,7 +25,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)

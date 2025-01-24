@@ -62,12 +62,12 @@ export const SettingsSSOSAMLForm = () => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
       const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
+      e.target.value = '';
       if (!samlMetadataParsed.success) {
-        enqueueSnackBar('Invalid File', {
+        return enqueueSnackBar('Invalid File', {
           variant: SnackBarVariant.Error,
           duration: 2000,
         });
-        return;
       }
       setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
       setValue('certificate', samlMetadataParsed.data.certificate);

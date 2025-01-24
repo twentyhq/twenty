@@ -62,14 +62,14 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    workspaceSubdomain,
+    subdomain,
   }: {
     emailVerificationToken: string;
     email: string;
-    workspaceSubdomain?: string;
+    subdomain: string;
   }) {
     return this.buildWorkspaceURL({
-      subdomain: workspaceSubdomain,
+      subdomain,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
@@ -80,28 +80,14 @@ export class DomainManagerService {
     pathname,
     searchParams,
   }: {
-    subdomain?: string;
+    subdomain: string;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getBaseUrl();
+    const url = this.getFrontUrl();
 
-    if (
-      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      !subdomain
-    ) {
-      throw new Error('subdomain is required when multiworkspace is enable');
-    }
-
-    if (
-      subdomain &&
-      subdomain.length > 0 &&
-      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-    ) {
-      url.hostname = url.hostname.replace(
-        this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        subdomain,
-      );
+    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      url.hostname = `${subdomain}.${url.hostname}`;
     }
 
     if (pathname) {
@@ -119,18 +105,18 @@ export class DomainManagerService {
     return url;
   }
 
-  getWorkspaceSubdomainByOrigin = (origin: string) => {
-    const { hostname: originHostname } = new URL(origin);
+  getWorkspaceSubdomainFromUrl = (url: string) => {
+    const { hostname: originHostname } = new URL(url);
+
+    if (!originHostname.endsWith(this.getFrontUrl().hostname)) {
+      return null;
+    }
 
     const frontDomain = this.getFrontUrl().hostname;
 
     const subdomain = originHostname.replace(`.${frontDomain}`, '');
 
-    if (this.isDefaultSubdomain(subdomain)) {
-      return;
-    }
-
-    return subdomain;
+    return this.isDefaultSubdomain(subdomain) ? null : subdomain;
   };
 
   async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
@@ -145,16 +131,9 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl(
-    errorMessage: string,
-    {
-      subdomain,
-    }: {
-      subdomain?: string;
-    },
-  ) {
+  computeRedirectErrorUrl(errorMessage: string, subdomain: string) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain ?? this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      subdomain: subdomain,
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -206,7 +185,7 @@ export class DomainManagerService {
         return this.getDefaultWorkspace();
       }
 
-      const subdomain = this.getWorkspaceSubdomainByOrigin(origin);
+      const subdomain = this.getWorkspaceSubdomainFromUrl(origin);
 
       if (!isDefined(subdomain)) return;
 

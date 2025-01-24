@@ -44,6 +44,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -81,6 +82,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     FeatureFlagModule,
     WorkspaceInvitationModule,
     EmailVerificationModule,
+    GuardRedirectModule,
   ],
   controllers: [
     GoogleAuthController,
