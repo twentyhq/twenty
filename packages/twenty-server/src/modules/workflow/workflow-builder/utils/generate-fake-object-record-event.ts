@@ -91,7 +91,11 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before Deletion' },
+          before: {
+            isLeaf: false,
+            value: before,
+            label: 'Before Permanent Deletion',
+          },
         },
         label: 'Record Fields',
       },
