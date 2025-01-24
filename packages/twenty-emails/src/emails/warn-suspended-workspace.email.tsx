@@ -29,18 +29,16 @@ export const WarnSuspendedWorkspaceEmail = ({
         {helloString},
         <br />
         <br />
-        It appears that your <b>{workspaceDisplayName}</b> workspace has been
-        suspended for {daysSinceInactive} days due to an expired subscription.
+        It appears that your workspace <b>{workspaceDisplayName}</b> has been
+        suspended for {daysSinceInactive} days.
         <br />
         <br />
-        Please note that the workspace is due for deactivation soon, and all
-        associated data within this workspace will be deleted.
+        The workspace will be deactivated in {remainingDays} {dayOrDays}, and
+        all its data will be deleted.
         <br />
         <br />
         If you wish to continue using Twenty, please update your subscription
-        within the next {remainingDays} {dayOrDays}
-        {''}
-        to retain access to your workspace and data.
+        within the next {remainingDays} {dayOrDays}.
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"

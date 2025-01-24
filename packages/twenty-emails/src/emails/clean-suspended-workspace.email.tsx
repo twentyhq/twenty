@@ -23,15 +23,14 @@ export const CleanSuspendedWorkspaceEmail = ({
         {helloString},
         <br />
         <br />
-        We wanted to inform you that your <b>{workspaceDisplayName}</b>{' '}
-        workspace has been deleted as it remained suspended for{' '}
-        {inactiveDaysBeforeDelete} days following your subscription expiration.
+        Your workspace <b>{workspaceDisplayName}</b> has been deleted as your
+        subscription expired {inactiveDaysBeforeDelete} days ago.
         <br />
         <br />
-        All associated data within this workspace has been permanently deleted.
+        All data in this workspace has been permanently deleted.
         <br />
         <br />
-        If you wish to continue using Twenty, you can create a new workspace.
+        If you wish to use Twenty again, you can create a new workspace.
       </MainText>
       <CallToAction
         href="https://app.twenty.com/"
