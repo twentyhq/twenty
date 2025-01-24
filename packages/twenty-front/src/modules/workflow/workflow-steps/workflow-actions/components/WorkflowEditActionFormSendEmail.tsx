@@ -9,12 +9,12 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPlus, IconSend, isDefined } from 'twenty-ui';
+import { IconPlus, isDefined, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -42,6 +42,7 @@ export const WorkflowEditActionFormSendEmail = ({
   actionOptions,
 }: WorkflowEditActionFormSendEmailProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
@@ -166,9 +167,7 @@ export const WorkflowEditActionFormSendEmail = ({
   });
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
-  const headerIcon = OTHER_ACTIONS.find(
-    (item) => item.type === action.type,
-  )?.icon ?? IconSend;
+  const headerIcon = getActionIcon(action.type);
 
   return (
     !loading && (
@@ -184,7 +183,7 @@ export const WorkflowEditActionFormSendEmail = ({
               name: newName,
             });
           }}
-          Icon={headerIcon}
+          Icon={getIcon(headerIcon)}
           iconColor={theme.color.blue}
           initialTitle={headerTitle}
           headerType="Email"

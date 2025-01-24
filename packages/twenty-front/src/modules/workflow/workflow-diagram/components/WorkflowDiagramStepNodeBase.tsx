@@ -4,7 +4,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/W
 import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPlaylistAdd } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -23,8 +23,8 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   const theme = useTheme();
-
-  const Icon = getWorkflowNodeIcon(data) ?? IconPlaylistAdd;
+  const { getIcon } = useIcons();
+  const Icon = getIcon(getWorkflowNodeIcon(data));
 
   const renderStepIcon = () => {
     switch (data.nodeType) {

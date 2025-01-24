@@ -1,14 +1,13 @@
 import { WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { IconComponent, IconHandMove } from 'twenty-ui';
 
 export const OTHER_TRIGGER_TYPES: Array<{
-  name: string;
+  defaultLabel: string;
   type: WorkflowTriggerType;
-  icon: IconComponent;
+  icon: string;
 }> = [
   {
-    name: 'Launch manually',
+    defaultLabel: 'Launch manually',
     type: 'MANUAL',
-    icon: IconHandMove,
+    icon: 'IconHandMove',
   },
 ];

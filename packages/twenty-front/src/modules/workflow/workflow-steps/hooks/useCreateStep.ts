@@ -11,13 +11,14 @@ import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkfl
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 export const useCreateStep = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { getIcon } = useIcons();
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setWorkflowLastCreatedStepId = useSetRecoilState(
@@ -53,13 +54,15 @@ export const useCreateStep = ({
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
 
+    const stepIcon = getWorkflowNodeIcon({
+      nodeType: 'action',
+      actionType: createdStep.type as WorkflowStepType,
+      name: createdStep.name,
+    });
+
     openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
       title: createdStep.name,
-      Icon: getWorkflowNodeIcon({
-        nodeType: 'action',
-        actionType: createdStep.type as WorkflowStepType,
-        name: createdStep.name,
-      }),
+      Icon: getIcon(stepIcon),
     });
   };
 

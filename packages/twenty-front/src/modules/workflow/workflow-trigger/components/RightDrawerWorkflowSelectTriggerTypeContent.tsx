@@ -10,7 +10,7 @@ import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hoo
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem, useIcons } from 'twenty-ui';
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -37,6 +37,7 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { getIcon } = useIcons();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -49,13 +50,13 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
       <StyledSectionTitle>Data</StyledSectionTitle>
       {DATABASE_TRIGGER_TYPES.map((action) => (
         <MenuItem
-          key={action.name}
-          LeftIcon={action.icon}
-          text={action.name}
+          key={action.defaultLabel}
+          LeftIcon={getIcon(action.icon)}
+          text={action.defaultLabel}
           onClick={async () => {
             await updateTrigger(
               getTriggerDefaultDefinition({
-                name: action.name,
+                defaultLabel: action.defaultLabel,
                 type: action.type,
                 activeObjectMetadataItems,
               }),
@@ -64,8 +65,8 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
             setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
             openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
-              title: action.name,
-              Icon: action.icon,
+              title: action.defaultLabel,
+              Icon: getIcon(action.icon),
             });
           }}
         />
@@ -73,13 +74,13 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
       <StyledSectionTitle>Others</StyledSectionTitle>
       {OTHER_TRIGGER_TYPES.map((action) => (
         <MenuItem
-          key={action.name}
-          LeftIcon={action.icon}
-          text={action.name}
+          key={action.defaultLabel}
+          LeftIcon={getIcon(action.icon)}
+          text={action.defaultLabel}
           onClick={async () => {
             await updateTrigger(
               getTriggerDefaultDefinition({
-                name: action.name,
+                defaultLabel: action.defaultLabel,
                 type: action.type,
                 activeObjectMetadataItems,
               }),
@@ -88,8 +89,8 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
             setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
             openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
-              title: action.name,
-              Icon: action.icon,
+              title: action.defaultLabel,
+              Icon: getIcon(action.icon),
             });
           }}
         />

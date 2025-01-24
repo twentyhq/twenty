@@ -3,7 +3,6 @@ import {
   WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { Edge, Node } from '@xyflow/react';
-import { IconComponent } from 'twenty-ui';
 
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
 export type WorkflowDiagramEdge = Edge;
@@ -18,7 +17,7 @@ export type WorkflowDiagramStepNodeData =
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
       name: string;
-      icon?: IconComponent;
+      icon?: string;
     }
   | {
       nodeType: 'action';
