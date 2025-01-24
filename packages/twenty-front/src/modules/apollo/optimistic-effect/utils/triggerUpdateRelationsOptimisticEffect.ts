@@ -1,4 +1,3 @@
-
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
@@ -97,11 +96,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
         if (isObjectRecordConnection(relationDefinition, value)) {
           // Might not be a good idea to return RecordObject here as they might be written in cache later
-          return getRecordsFromRecordConnection({recordConnection: value})
+          return getRecordsFromRecordConnection({ recordConnection: value });
         }
 
         // Might not be a good idea to return RecordObject here as they might be written in cache later
-        return [getRecordFromRecordNode({recordNode: value})];
+        return [getRecordFromRecordNode({ recordNode: value })];
       };
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
         currentFieldValueOnSourceRecord,

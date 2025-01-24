@@ -1,4 +1,3 @@
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
@@ -21,4 +20,4 @@ export const isObjectRecordConnection = (
       return assertUnreachable(relationDefinition.direction);
     }
   }
-}
+};
