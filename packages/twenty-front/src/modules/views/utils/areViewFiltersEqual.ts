@@ -5,12 +5,12 @@ export const areViewFiltersEqual = (
   viewFilterB: ViewFilter,
 ) => {
   const propertiesToCompare: (keyof ViewFilter)[] = [
-    'displayValue',
     'fieldMetadataId',
     'viewFilterGroupId',
-    'operand',
     'positionInViewFilterGroup',
     'value',
+    'displayValue',
+    'operand',
   ];
 
   return propertiesToCompare.every(

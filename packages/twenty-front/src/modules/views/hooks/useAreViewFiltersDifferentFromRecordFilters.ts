@@ -39,7 +39,6 @@ export const useAreViewFiltersDifferentFromRecordFilters = () => {
       viewFiltersToDelete.length > 0 ||
       viewFiltersToUpdate.length > 0;
 
-    // TODO: this is temporary, record sorts need to be refactored
     return filtersHaveChanged;
   }, [currentRecordFilters, currentView]);
 
