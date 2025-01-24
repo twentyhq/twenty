@@ -24,38 +24,60 @@ export class StripeCheckoutService {
     );
   }
 
-  async createCheckoutSession(
-    user: User,
-    workspaceId: string,
-    priceId: string,
-    quantity: number,
-    successUrl?: string,
-    cancelUrl?: string,
-    stripeCustomerId?: string,
-    plan: BillingPlanKey = BillingPlanKey.PRO,
+  async createCheckoutSession({
+    user,
+    workspaceId,
+    stripeSubscriptionLineItems,
+    successUrl,
+    cancelUrl,
+    stripeCustomerId,
+    plan = BillingPlanKey.PRO,
     requirePaymentMethod = true,
-  ): Promise<Stripe.Checkout.Session> {
+    withTrialPeriod,
+    isBillingPlansEnabled = false,
+  }: {
+    user: User;
+    workspaceId: string;
+    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    successUrl?: string;
+    cancelUrl?: string;
+    stripeCustomerId?: string;
+    plan?: BillingPlanKey;
+    requirePaymentMethod?: boolean;
+    withTrialPeriod: boolean;
+    isBillingPlansEnabled: boolean;
+  }): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity,
-        },
-      ],
+      line_items: stripeSubscriptionLineItems,
       mode: 'subscription',
       subscription_data: {
         metadata: {
           workspaceId,
           plan,
         },
-        trial_period_days: this.environmentService.get(
-          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
-        ),
+        ...(withTrialPeriod
+          ? {
+              trial_period_days: this.environmentService.get(
+                requirePaymentMethod
+                  ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
+                  : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+              ),
+              trial_settings: {
+                end_behavior: {
+                  missing_payment_method: isBillingPlansEnabled
+                    ? 'create_invoice'
+                    : 'pause',
+                },
+              },
+            }
+          : {}),
       },
       automatic_tax: { enabled: !!requirePaymentMethod },
       tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
-      customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
+      customer_update: stripeCustomerId
+        ? { name: 'auto', address: 'auto' }
+        : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,

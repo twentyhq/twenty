@@ -36,7 +36,7 @@ export class SSOService {
 
   private async isSSOEnabled(workspaceId: string) {
     const isSSOBillingEnabled =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+      await this.billingService.hasFreeAccessOrEntitlement(
         workspaceId,
         this.featureLookUpKey,
       );
@@ -129,13 +129,10 @@ export class SSOService {
     };
   }
 
-  async findSSOIdentityProviderById(identityProviderId?: string) {
-    // if identityProviderId is not provide, typeorm return a random idp instead of undefined
-    if (!identityProviderId) return undefined;
-
+  async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
-    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
+    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 
   buildCallbackUrl(

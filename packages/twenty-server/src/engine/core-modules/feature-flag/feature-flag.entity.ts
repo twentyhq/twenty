@@ -26,7 +26,7 @@ export class FeatureFlagEntity {
 
   @Field(() => FeatureFlagKey)
   @Column({ nullable: false, type: 'text' })
-  key: `${FeatureFlagKey}`;
+  key: FeatureFlagKey;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

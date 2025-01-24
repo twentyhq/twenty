@@ -16,8 +16,8 @@ import {
   IconPrinter,
   IconSettings,
 } from 'twenty-ui';
-import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlag, FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -269,7 +269,7 @@ export const useRecordShowContainerTabs = (
           !hide.ifRelationsMissing.every((rel) =>
             objectMetadataItem.fields.some(
               (field) =>
-                field.type === FieldMetadataType.Relation &&
+                field.type === FieldMetadataType.RELATION &&
                 field.name === rel &&
                 field.isActive,
             ),

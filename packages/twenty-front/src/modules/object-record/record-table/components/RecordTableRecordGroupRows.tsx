@@ -1,6 +1,7 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
@@ -59,6 +60,10 @@ export const RecordTableRecordGroupRows = () => {
       <RecordTablePendingRecordGroupRow />
       <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
+      <RecordTableAggregateFooter
+        key={currentRecordGroupId}
+        currentRecordGroupId={currentRecordGroupId}
+      />
     </>
   );
 };

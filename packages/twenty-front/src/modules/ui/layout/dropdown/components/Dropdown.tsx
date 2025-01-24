@@ -26,28 +26,8 @@ import { useDropdown } from '../hooks/useDropdown';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
-  position: absolute;
+  position: fixed;
   top: 0;
-`;
-
-type StyledHeaderDivProps = {
-  isUnfolded?: boolean;
-  isActive?: boolean;
-};
-
-const StyledHeaderDiv = styled.div<StyledHeaderDivProps>`
-  & button,
-  & > * {
-    background: ${({ theme, isUnfolded }) =>
-      isUnfolded ? theme.background.transparent.light : 'none'};
-
-    &:hover {
-      background: ${({ theme, isUnfolded }) =>
-        isUnfolded
-          ? theme.background.transparent.medium
-          : theme.background.transparent.light};
-    }
-  }
 `;
 
 type DropdownProps = {
@@ -151,17 +131,16 @@ export const Dropdown = ({
       <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
         <>
           {isDefined(clickableComponent) ? (
-            <StyledHeaderDiv
+            <div
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
               aria-controls={`${dropdownId}-options`}
               aria-expanded={isDropdownOpen}
               aria-haspopup={true}
               role="button"
-              isUnfolded={isDropdownOpen}
             >
               {clickableComponent}
-            </StyledHeaderDiv>
+            </div>
           ) : (
             <StyledDropdownFallbackAnchor ref={refs.setReference} />
           )}

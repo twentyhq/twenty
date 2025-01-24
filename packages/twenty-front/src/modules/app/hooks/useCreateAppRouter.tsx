@@ -1,6 +1,8 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
@@ -26,8 +28,7 @@ import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
-  isCRMMigrationEnabled?: boolean,
-  isServerlessFunctionSettingsEnabled?: boolean,
+  isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -40,6 +41,7 @@ export const useCreateAppRouter = (
       >
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
+          <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<Invite />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
@@ -60,10 +62,7 @@ export const useCreateAppRouter = (
             element={
               <SettingsRoutes
                 isBillingEnabled={isBillingEnabled}
-                isCRMMigrationEnabled={isCRMMigrationEnabled}
-                isServerlessFunctionSettingsEnabled={
-                  isServerlessFunctionSettingsEnabled
-                }
+                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }

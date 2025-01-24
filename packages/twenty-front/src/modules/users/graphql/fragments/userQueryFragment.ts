@@ -50,6 +50,10 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
       }
+      billingSubscriptions {
+        id
+        status
+      }
       workspaceMembersCount
     }
     workspaces {

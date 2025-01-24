@@ -94,7 +94,7 @@ export const WorkflowEditActionFormCreateRecord = ({
   const inlineFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.Relation &&
+        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive,
     )
@@ -215,6 +215,7 @@ export const WorkflowEditActionFormCreateRecord = ({
                 handleFieldChange(field.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
+              readonly={isFormDisabled}
             />
           );
         })}

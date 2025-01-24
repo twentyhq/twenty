@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
+import { BillingProductPriceDTO } from 'src/engine/core-modules/billing/dtos/billing-product-price.dto';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -46,10 +46,10 @@ export class StripePriceService {
     if (product === AvailableProduct.BasePlan) {
       return this.environmentService.get('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID');
     }
-  } // PD:,will be eliminated after refactoring
+  }
 
-  formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
-    const productPrices: ProductPriceEntity[] = Object.values(
+  formatProductPrices(prices: Stripe.Price[]): BillingProductPriceDTO[] {
+    const productPrices: BillingProductPriceDTO[] = Object.values(
       prices
         .filter((item) => item.recurring?.interval && item.unit_amount)
         .reduce((acc, item: Stripe.Price) => {
@@ -68,7 +68,7 @@ export class StripePriceService {
             };
           }
 
-          return acc satisfies Record<string, ProductPriceEntity>;
+          return acc satisfies Record<string, BillingProductPriceDTO>;
         }, {}),
     );
 
@@ -76,8 +76,10 @@ export class StripePriceService {
   }
 
   async getPricesByProductId(productId: string) {
-    const prices = await this.stripe.prices.search({
-      query: `product:'${productId}'`,
+    const prices = await this.stripe.prices.list({
+      product: productId,
+      type: 'recurring',
+      expand: ['data.currency_options', 'data.tiers'],
     });
 
     return prices.data;
