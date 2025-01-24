@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -59,10 +60,18 @@ export class StripeSubscriptionService {
 
   async updateSubscriptionItems(
     stripeSubscriptionId: string,
-    billingSubscriptionItems: Stripe.SubscriptionItemUpdateParams[],
+    billingSubscriptionItems: BillingSubscriptionItem[],
   ) {
+    const stripeSubscriptionItemsToUpdate = billingSubscriptionItems.map(
+      (item) => ({
+        id: item.stripeSubscriptionItemId,
+        price: item.stripePriceId,
+        quantity: item.quantity === null ? undefined : item.quantity,
+      }),
+    );
+
     await this.stripe.subscriptions.update(stripeSubscriptionId, {
-      items: billingSubscriptionItems,
+      items: stripeSubscriptionItemsToUpdate,
     });
   }
 }

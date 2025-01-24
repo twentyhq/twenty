@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -19,6 +20,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -36,6 +38,7 @@ export class BillingSubscriptionService {
     private readonly billingPlanService: BillingPlanService,
     private readonly environmentService: EnvironmentService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
@@ -60,9 +63,9 @@ export class BillingSubscriptionService {
     return notCanceledSubscriptions?.[0];
   }
 
-  async getCurrentBaseProductBillingSubscriptionItemOrThrow(
+  async getBaseProductCurrentBillingSubscriptionItemOrThrow(
     workspaceId: string,
-    stripeProductId = this.environmentService.get(
+    stripeBaseProductId = this.environmentService.get(
       'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
     ),
   ) {
@@ -79,7 +82,7 @@ export class BillingSubscriptionService {
     const getStripeProductId = isBillingPlansEnabled
       ? (await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO))
           ?.stripeProductId
-      : stripeProductId;
+      : stripeBaseProductId;
 
     if (!getStripeProductId) {
       throw new BillingException(
@@ -166,28 +169,27 @@ export class BillingSubscriptionService {
         : SubscriptionInterval.Year;
 
     const billingBaseProductSubscriptionItem =
-      await this.getCurrentBaseProductBillingSubscriptionItemOrThrow(
+      await this.getBaseProductCurrentBillingSubscriptionItemOrThrow(
         workspace.id,
       );
 
     if (isBillingPlansEnabled) {
-      const pricesPerPlan = await this.billingPlanService.getPricesPerPlan({
-        planKey: BillingPlanKey.PRO,
-        interval: newInterval,
-      });
-      const billingPricesPerPlanArray = [
-        pricesPerPlan.baseProductPrice,
-        ...pricesPerPlan.meteredProductsPrices,
-      ].filter((price): price is BillingPrice => price !== undefined);
+      const billingProductsByPlan =
+        await this.billingProductService.getProductsByPlan(BillingPlanKey.PRO);
+      const pricesPerPlanArray =
+        this.billingProductService.getProductPricesByInterval({
+          interval: newInterval,
+          billingProductsByPlan,
+        });
 
-      const updatedSubscriptionItems = this.getUpdatedSubscriptionItems(
+      const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
         billingSubscription,
-        billingPricesPerPlanArray,
+        pricesPerPlanArray,
       );
 
       await this.stripeSubscriptionService.updateSubscriptionItems(
         billingSubscription.stripeSubscriptionId,
-        updatedSubscriptionItems,
+        subscriptionItemsToUpdate,
       );
     } else {
       const productPrice = await this.stripePriceService.getStripePrice(
@@ -208,13 +210,13 @@ export class BillingSubscriptionService {
     }
   }
 
-  private getUpdatedSubscriptionItems(
+  private getSubscriptionItemsToUpdate(
     billingSubscription: BillingSubscription,
-    billingPricesPerPlanArray: BillingPrice[],
-  ): Stripe.SubscriptionItemUpdateParams[] {
-    return billingSubscription.billingSubscriptionItems.map(
-      (subscriptionItem) => {
-        const matchingPrice = billingPricesPerPlanArray.find(
+    billingPricesPerPlanAndIntervalArray: BillingPrice[],
+  ): BillingSubscriptionItem[] {
+    const subscriptionItemsToUpdate =
+      billingSubscription.billingSubscriptionItems.map((subscriptionItem) => {
+        const matchingPrice = billingPricesPerPlanAndIntervalArray.find(
           (price) => price.stripeProductId === subscriptionItem.stripeProductId,
         );
 
@@ -226,14 +228,11 @@ export class BillingSubscriptionService {
         }
 
         return {
-          id: subscriptionItem.stripeSubscriptionItemId,
-          price: matchingPrice.stripePriceId,
-          quantity:
-            subscriptionItem.quantity === null
-              ? undefined
-              : subscriptionItem.quantity,
+          ...subscriptionItem,
+          stripePriceId: matchingPrice.stripePriceId,
         };
-      },
-    );
+      });
+
+    return subscriptionItemsToUpdate;
   }
 }
