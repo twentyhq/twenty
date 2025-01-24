@@ -4,10 +4,8 @@ import { ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterDropdownButton';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
@@ -15,14 +13,14 @@ import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
+import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
+import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
-import { canPersistViewComponentFamilySelector } from '@/views/states/selectors/canPersistViewComponentFamilySelector';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from 'twenty-ui';
 import { VariantFilterChip } from './VariantFilterChip';
@@ -118,13 +116,8 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
-  const canPersistView = useRecoilComponentFamilyValueV2(
-    canPersistViewComponentFamilySelector,
-    { viewId },
-  );
-
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
   );
 
   const availableSortDefinitions = useRecoilComponentValueV2(
@@ -139,35 +132,34 @@ export const ViewBarDetails = ({
     viewBarId: viewBarId,
   });
   const { resetUnsavedViewStates } = useResetUnsavedViewStates();
-  const canResetView = canPersistView && !hasFiltersQueryParams;
 
-  const { otherViewFilters, defaultViewFilters } = useMemo(() => {
-    if (!currentViewWithCombinedFiltersAndSorts) {
-      return {
-        otherViewFilters: [],
-        defaultViewFilters: [],
-      };
-    }
+  const { viewFiltersAreDifferentFromRecordFilters } =
+    useAreViewFiltersDifferentFromRecordFilters();
 
-    const otherViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) =>
-          viewFilter.variant &&
-          viewFilter.variant !== 'default' &&
-          !viewFilter.viewFilterGroupId,
-      );
-    const defaultViewFilters =
-      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
-        (viewFilter) =>
-          (!viewFilter.variant || viewFilter.variant === 'default') &&
-          !viewFilter.viewFilterGroupId,
-      );
+  const { viewSortsAreDifferentFromRecordSorts } =
+    useAreViewSortsDifferentFromRecordSorts();
 
-    return {
-      otherViewFilters,
-      defaultViewFilters,
-    };
-  }, [currentViewWithCombinedFiltersAndSorts]);
+  const canResetView =
+    (viewFiltersAreDifferentFromRecordFilters ||
+      viewSortsAreDifferentFromRecordSorts) &&
+    !hasFiltersQueryParams;
+
+  const otherViewFilters = useMemo(() => {
+    return currentRecordFilters.filter(
+      (viewFilter) =>
+        viewFilter.variant &&
+        viewFilter.variant !== 'default' &&
+        !viewFilter.viewFilterGroupId,
+    );
+  }, [currentRecordFilters]);
+
+  const defaultViewFilters = useMemo(() => {
+    return currentRecordFilters.filter(
+      (viewFilter) =>
+        (!viewFilter.variant || viewFilter.variant === 'default') &&
+        !viewFilter.viewFilterGroupId,
+    );
+  }, [currentRecordFilters]);
 
   const { applyCurrentViewFiltersToCurrentRecordFilters } =
     useApplyCurrentViewFiltersToCurrentRecordFilters();
@@ -181,9 +173,9 @@ export const ViewBarDetails = ({
   };
 
   const shouldExpandViewBar =
-    canPersistView ||
+    viewFiltersAreDifferentFromRecordFilters ||
     ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
-      currentViewWithCombinedFiltersAndSorts?.viewFilters?.length) &&
+      currentRecordFilters?.length) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
@@ -201,11 +193,7 @@ export const ViewBarDetails = ({
           {otherViewFilters.map((viewFilter) => (
             <VariantFilterChip
               key={viewFilter.fieldMetadataId}
-              // Why do we have two types, Filter and ViewFilter?
-              // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
-              // Also as filter is spread into viewFilter, definition is present
-              // FixMe: Ugly hack to make it work
-              viewFilter={viewFilter as unknown as RecordFilter}
+              viewFilter={viewFilter}
               viewBarId={viewBarId}
             />
           ))}
@@ -228,10 +216,7 @@ export const ViewBarDetails = ({
               </StyledSeperatorContainer>
             )}
           {showAdvancedFilterDropdownButton && <AdvancedFilterDropdownButton />}
-          {mapViewFiltersToFilters(
-            defaultViewFilters,
-            availableFilterDefinitions,
-          ).map((viewFilter) => (
+          {defaultViewFilters.map((viewFilter) => (
             <ObjectFilterDropdownComponentInstanceContext.Provider
               key={viewFilter.id}
               value={{ instanceId: viewFilter.id }}
