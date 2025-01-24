@@ -131,14 +131,14 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       }
 
       if (isDefined(updatedSourceRecord)) {
-        targetRecordsToAttachTo.forEach((targetRecordsToAttachTo) =>
+        targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
             cache,
             sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
             sourceRecordId: updatedSourceRecord.id,
             fieldNameOnTargetRecord: targetFieldMetadata.name,
             targetObjectNameSingular: targetObjectMetadata.nameSingular,
-            targetRecordId: targetRecordsToAttachTo.id,
+            targetRecordId: targetRecordToAttachTo.id,
           }),
         );
       }

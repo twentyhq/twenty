@@ -12,12 +12,12 @@ describe('isObjectRecordConnection', () => {
   it.each(Object.entries(relationDefinitionMap))(
     '.$relation',
     (relation, expected) => {
-      const emtpyRecord = {};
+      const emptyRecord = {};
       const result = isObjectRecordConnection(
         {
           direction: relation,
         } as NonNullable<FieldMetadataItem['relationDefinition']>,
-        emtpyRecord,
+        emptyRecord,
       );
 
       expect(result).toEqual(expected);
@@ -25,13 +25,13 @@ describe('isObjectRecordConnection', () => {
   );
 
   it('should throw on unknown relation direction', () => {
-    const emtpyRecord = {};
+    const emptyRecord = {};
     expect(() =>
       isObjectRecordConnection(
         {
-          direction: '20202020-bdb9-4ac4-ad5d-932960fe879b',
+          direction: 'UNKNOWN_TYPE',
         } as any,
-        emtpyRecord,
+        emptyRecord,
       ),
     ).toThrowError();
   });
