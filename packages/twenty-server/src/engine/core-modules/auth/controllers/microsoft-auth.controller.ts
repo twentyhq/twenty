@@ -19,7 +19,7 @@ import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/micros
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SsoErrorRedirectService } from 'src/engine/core-modules/auth/services/sso-error-redirect.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -27,7 +27,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly ssoErrorService: SsoErrorRedirectService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -119,7 +119,7 @@ export class MicrosoftAuthController {
       );
     } catch (err) {
       return res.redirect(
-        this.ssoErrorService.getRedirectErrorUrlAndCaptureExceptions(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           currentWorkspace ?? {
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),

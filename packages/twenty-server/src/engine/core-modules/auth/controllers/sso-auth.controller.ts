@@ -33,14 +33,14 @@ import {
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SsoErrorRedirectService } from 'src/engine/core-modules/auth/services/sso-error-redirect.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth')
 export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly ssoErrorService: SsoErrorRedirectService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly environmentService: EnvironmentService,
     private readonly sSOService: SSOService,
     @InjectRepository(User, 'core')
@@ -137,7 +137,7 @@ export class SSOAuthController {
       );
     } catch (err) {
       return res.redirect(
-        this.ssoErrorService.getRedirectErrorUrlAndCaptureExceptions(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           workspaceIdentityProvider?.workspace ?? {
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),

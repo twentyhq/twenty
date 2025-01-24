@@ -133,6 +133,7 @@ export class SSOService {
   async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
+      relations: ['workspace'],
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 

@@ -20,7 +20,7 @@ import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.au
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SsoErrorRedirectService } from 'src/engine/core-modules/auth/services/sso-error-redirect.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,7 +29,7 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly environmentService: EnvironmentService,
-    private readonly ssoErrorService: SsoErrorRedirectService,
+    private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -117,7 +117,7 @@ export class GoogleAuthController {
       );
     } catch (err) {
       return res.redirect(
-        this.ssoErrorService.getRedirectErrorUrlAndCaptureExceptions(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           currentWorkspace ?? {
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),

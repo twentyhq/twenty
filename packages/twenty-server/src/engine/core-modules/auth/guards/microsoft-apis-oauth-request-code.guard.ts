@@ -1,5 +1,8 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -11,6 +14,8 @@ import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
@@ -20,6 +25,9 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
     private readonly environmentService: EnvironmentService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly guardRedirectService: GuardRedirectService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {
     super({
       prompt: 'select_account',
@@ -27,36 +35,53 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
   }
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    let workspace: Workspace | null = null;
 
-    const { workspaceId } =
-      await this.transientTokenService.verifyTransientToken(
-        request.query.transientToken,
-      );
-    const isMicrosoftSyncEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsMicrosoftSyncEnabled,
-        workspaceId,
+    try {
+      const request = context.switchToHttp().getRequest();
+
+      const { workspaceId } =
+        await this.transientTokenService.verifyTransientToken(
+          request.query.transientToken,
+        );
+
+      workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
+
+      const isMicrosoftSyncEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsMicrosoftSyncEnabled,
+          workspaceId,
+        );
+
+      if (!isMicrosoftSyncEnabled) {
+        throw new AuthException(
+          'Microsoft sync is not enabled',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      new MicrosoftAPIsOauthRequestCodeStrategy(this.environmentService);
+      setRequestExtraParams(request, {
+        transientToken: request.query.transientToken,
+        redirectLocation: request.query.redirectLocation,
+        calendarVisibility: request.query.calendarVisibility,
+        messageVisibility: request.query.messageVisibility,
+        loginHint: request.query.loginHint,
+      });
+
+      return (await super.canActivate(context)) as boolean;
+    } catch (err) {
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
       );
 
-    if (!isMicrosoftSyncEnabled) {
-      throw new AuthException(
-        'Microsoft sync is not enabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+      return false;
     }
-
-    new MicrosoftAPIsOauthRequestCodeStrategy(this.environmentService);
-    setRequestExtraParams(request, {
-      transientToken: request.query.transientToken,
-      redirectLocation: request.query.redirectLocation,
-      calendarVisibility: request.query.calendarVisibility,
-      messageVisibility: request.query.messageVisibility,
-      loginHint: request.query.loginHint,
-    });
-
-    const activate = (await super.canActivate(context)) as boolean;
-
-    return activate;
   }
 }
