@@ -6,10 +6,12 @@ import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { hasManyTargetRecords } from '@/object-record/utils/hasManyTargetRecords';
 import isEmpty from 'lodash.isempty';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -83,9 +85,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       ) {
         return;
       }
-      const isRecordConnection = hasManyTargetRecords(relationDefinition);
-      // TODO refactor typing as possible ? review  RecordGqlConnection | RecordGqlNode | null
-      // TODO this should transpile from RecordGqlNode to ObjectRecord ( find utils already exising )
       const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
       ): ObjectRecord[] => {
@@ -95,11 +94,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           return [];
         }
 
-        if (isRecordConnection) {
-          return value.edges.map(({ node }: any) => node as RecordGqlNode);
+        if (isObjectRecordConnection(relationDefinition, value)) {
+          return getRecordsFromRecordConnection({recordConnection: value})
         }
 
-        return [value] as RecordGqlNode[];
+        return [getRecordFromRecordNode({recordNode: value})];
       };
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
         currentFieldValueOnSourceRecord,
@@ -121,7 +120,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           recordsToDestroy: targetRecordsToDetachFrom,
           objectMetadataItems,
         });
-        // Could be an invariant ?
+        // Could it be an invariant ?
       } else if (isDefined(currentSourceRecord)) {
         targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
           triggerDetachRelationOptimisticEffect({

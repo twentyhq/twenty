@@ -2,12 +2,13 @@ import { peopleQueryResult } from '~/testing/mock-data/people';
 
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
+// TODO refactor consuming relation from mockss
 describe('isObjectRecordConnection', () => {
   it('should work with query result', () => {
     const validQueryResult = peopleQueryResult.people;
 
     const isValidQueryResult = isObjectRecordConnection(
-      'person',
+      {},
       validQueryResult,
     );
 
