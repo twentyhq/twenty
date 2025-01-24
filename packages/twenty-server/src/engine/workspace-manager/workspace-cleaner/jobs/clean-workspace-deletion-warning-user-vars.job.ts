@@ -1,6 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -10,7 +11,6 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
-import { chunkArray } from 'src/utils/chunk-array';
 
 export type CleanWorkspaceDeletionWarningUserVarsJobData = {
   workspaceId: string;
@@ -48,7 +48,7 @@ export class CleanWorkspaceDeletionWarningUserVarsJob {
       const workspaceMembers =
         await this.userService.loadWorkspaceMembers(workspace);
 
-      const workspaceMembersChunks = chunkArray(workspaceMembers);
+      const workspaceMembersChunks = chunk(workspaceMembers, 5);
 
       for (const workspaceMembersChunk of workspaceMembersChunks) {
         await Promise.all(

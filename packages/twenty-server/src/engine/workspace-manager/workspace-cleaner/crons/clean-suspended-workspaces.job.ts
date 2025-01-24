@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
@@ -15,7 +16,6 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { chunkArray } from 'src/utils/chunk-array';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -108,7 +108,7 @@ export class CleanSuspendedWorkspacesJob {
 
       return;
     } else {
-      const workspaceMembersChunks = chunkArray(workspaceMembers);
+      const workspaceMembersChunks = chunk(workspaceMembers, 5);
 
       for (const workspaceMembersChunk of workspaceMembersChunks) {
         await Promise.all(
@@ -138,7 +138,7 @@ export class CleanSuspendedWorkspacesJob {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
-    const workspaceMembersChunks = chunkArray(workspaceMembers);
+    const workspaceMembersChunks = chunk(workspaceMembers, 5);
 
     for (const workspaceMembersChunk of workspaceMembersChunks) {
       await Promise.all(
@@ -171,7 +171,7 @@ export class CleanSuspendedWorkspacesJob {
       where: { activationStatus: WorkspaceActivationStatus.SUSPENDED },
     });
 
-    const suspendedWorkspacesChunks = chunkArray(suspendedWorkspaces);
+    const suspendedWorkspacesChunks = chunk(suspendedWorkspaces, 5);
 
     let deletedWorkspacesCount = 0;
 
