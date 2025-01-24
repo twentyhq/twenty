@@ -14,17 +14,20 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
-import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
-import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
-import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
+import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -33,6 +36,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     FeatureFlagModule,
     StripeModule,
     DomainManagerModule,
+    MessageQueueModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,
@@ -55,7 +59,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingWebhookSubscriptionService,
     BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
+    BillingProductService,
     BillingResolver,
+    BillingPlanService,
     BillingWorkspaceMemberListener,
     BillingService,
     BillingWebhookProductService,

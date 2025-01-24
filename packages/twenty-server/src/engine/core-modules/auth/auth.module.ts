@@ -17,7 +17,7 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -41,10 +41,11 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -72,6 +73,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       ],
       'core',
     ),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,
@@ -82,6 +84,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     FeatureFlagModule,
     WorkspaceInvitationModule,
     EmailVerificationModule,
+    GuardRedirectModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -103,7 +106,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
-    SwitchWorkspaceService,
     TransientTokenService,
     ApiKeyService,
     SocialSsoService,

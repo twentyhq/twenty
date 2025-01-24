@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityOptionsList } from '@/settings/security/components/SettingsSecurityOptionsList';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -34,10 +34,10 @@ export const SettingsSecurity = () => {
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`Security` },
+        { children: <Trans>Security</Trans> },
       ]}
     >
       <SettingsPageContainer>

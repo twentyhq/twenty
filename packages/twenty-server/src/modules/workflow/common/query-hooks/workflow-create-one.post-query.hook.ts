@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -15,7 +16,6 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @WorkspaceQueryHook({
   key: `workflow.createOne`,
@@ -54,6 +54,7 @@ export class WorkflowCreateOnePostQueryHook
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workflowVersion',
+        workspaceId: authContext.workspace.id,
       },
     });
 

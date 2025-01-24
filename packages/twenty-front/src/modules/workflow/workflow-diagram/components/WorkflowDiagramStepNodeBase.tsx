@@ -1,15 +1,10 @@
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramBaseStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconAddressBook,
-  IconCode,
-  IconHandMove,
-  IconMail,
-  IconPlaylistAdd,
-} from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -28,6 +23,8 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
+  const Icon = getIcon(getWorkflowNodeIconKey(data));
 
   const renderStepIcon = () => {
     switch (data.nodeType) {
@@ -36,8 +33,8 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'DATABASE_EVENT': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconPlaylistAdd
-                  size={theme.icon.size.lg}
+                <Icon
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -46,8 +43,8 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'MANUAL': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconHandMove
-                  size={theme.icon.size.lg}
+                <Icon
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -62,9 +59,10 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'CODE': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconCode
-                  size={theme.icon.size.lg}
+                <Icon
+                  size={theme.icon.size.md}
                   color={theme.color.orange}
+                  stroke={theme.icon.stroke.sm}
                 />
               </StyledStepNodeLabelIconContainer>
             );
@@ -72,17 +70,15 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'SEND_EMAIL': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconMail size={theme.icon.size.lg} color={theme.color.blue} />
+                <Icon size={theme.icon.size.md} color={theme.color.blue} />
               </StyledStepNodeLabelIconContainer>
             );
           }
-          case 'CREATE_RECORD':
-          case 'UPDATE_RECORD':
-          case 'DELETE_RECORD': {
+          default: {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconAddressBook
-                  size={theme.icon.size.lg}
+                <Icon
+                  size={theme.icon.size.md}
                   color={theme.font.color.tertiary}
                   stroke={theme.icon.stroke.sm}
                 />
@@ -92,8 +88,6 @@ export const WorkflowDiagramStepNodeBase = ({
         }
       }
     }
-
-    return assertUnreachable(data);
   };
 
   return (

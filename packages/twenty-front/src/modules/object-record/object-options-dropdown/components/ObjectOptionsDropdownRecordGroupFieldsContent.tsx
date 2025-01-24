@@ -17,7 +17,6 @@ import { useSearchRecordGroupField } from '@/object-record/object-options-dropdo
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -29,6 +28,7 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { getIcon } = useIcons();
@@ -68,13 +68,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newSelectFieldSettingsUrl = getSettingsPagePath(
+  const newSelectFieldSettingsUrl = getSettingsPath(
     SettingsPath.ObjectNewFieldConfigure,
     {
       objectNamePlural,
     },
     {
-      fieldType: FieldMetadataType.Select,
+      fieldType: FieldMetadataType.SELECT,
     },
   );
 

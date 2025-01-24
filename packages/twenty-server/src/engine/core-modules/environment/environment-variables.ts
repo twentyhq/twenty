@@ -206,10 +206,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
-  AUTH_MICROSOFT_TENANT_ID: string;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -375,12 +371,17 @@ export class EnvironmentVariables {
       '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 30;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
 
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 14;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
+  MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
   @IsEnum(CaptchaDriverType)
   @IsOptional()

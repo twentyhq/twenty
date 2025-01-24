@@ -4,6 +4,7 @@ import { IconArrowUpRight, IconComponent, MenuItemCommand } from 'twenty-ui';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { ReactNode } from 'react';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -14,6 +15,7 @@ export type CommandMenuItemProps = {
   firstHotKey?: string;
   secondHotKey?: string;
   shouldCloseCommandMenuOnClick?: boolean;
+  RightComponent?: ReactNode;
 };
 
 export const CommandMenuItem = ({
@@ -25,6 +27,7 @@ export const CommandMenuItem = ({
   firstHotKey,
   secondHotKey,
   shouldCloseCommandMenuOnClick,
+  RightComponent,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
 
@@ -49,6 +52,7 @@ export const CommandMenuItem = ({
         })
       }
       isSelected={isSelectedItemId}
+      RightComponent={RightComponent}
     />
   );
 };

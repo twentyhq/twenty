@@ -1,9 +1,9 @@
+import { ApolloError } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -11,14 +11,15 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDefined } from '~/utils/isDefined';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type Form = {
   subdomain: string;
@@ -38,7 +39,7 @@ const StyledDomain = styled.h2`
 `;
 
 export const SettingsDomain = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
   const { t } = useLingui();
 
   const validationSchema = z
@@ -80,66 +81,65 @@ export const SettingsDomain = () => {
   const subdomainValue = watch('subdomain');
 
   const handleSave = async () => {
-    try {
-      const values = getValues();
+    const values = getValues();
 
-      if (!values || !isValid || !currentWorkspace) {
-        throw new Error(t`Invalid form values`);
-      }
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            subdomain: values.subdomain,
-          },
-        },
-      });
-
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subdomain: values.subdomain,
-      });
-
-      redirectToWorkspaceDomain(values.subdomain);
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        (error.message === t`Subdomain already taken` ||
-          error.message.endsWith(t`not allowed`))
-      ) {
-        control.setError('subdomain', {
-          type: 'manual',
-          message: (error as Error).message,
-        });
-        return;
-      }
-
-      enqueueSnackBar((error as Error).message, {
+    if (!values || !isValid || !currentWorkspace) {
+      return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
     }
+
+    await updateWorkspace({
+      variables: {
+        input: {
+          subdomain: values.subdomain,
+        },
+      },
+      onError: (error) => {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+        ) {
+          return control.setError('subdomain', {
+            type: 'manual',
+            message: t`Subdomain already taken`,
+          });
+        }
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          subdomain: values.subdomain,
+        });
+
+        redirectToWorkspaceDomain(values.subdomain);
+      },
+    });
   };
 
   return (
     <SubMenuTopBarContainer
-      title={t`General`}
+      title={t`Domain`}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`General`,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>General</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`Domain` },
+        { children: <Trans>Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
             !isValid || subdomainValue === currentWorkspace?.subdomain
           }
-          onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
+          onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
         />
       }

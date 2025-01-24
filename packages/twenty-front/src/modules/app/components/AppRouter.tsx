@@ -11,12 +11,9 @@ export const AppRouter = () => {
   const isFreeAccessEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsFreeAccessEnabled,
   );
-  const isCRMMigrationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCrmMigrationEnabled,
-  );
-  const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFunctionSettingsEnabled,
-  );
+
+  // We want to disable serverless function settings but keep the code for now
+  const isFunctionSettingsEnabled = false;
 
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
@@ -29,8 +26,7 @@ export const AppRouter = () => {
     <RouterProvider
       router={useCreateAppRouter(
         isBillingPageEnabled,
-        isCRMMigrationEnabled,
-        isServerlessFunctionSettingsEnabled,
+        isFunctionSettingsEnabled,
         isAdminPageEnabled,
       )}
     />

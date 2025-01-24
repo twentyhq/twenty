@@ -9847,6 +9847,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@otplib/core@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/core@npm:12.0.1"
+  checksum: 10c0/efe703d92d50cf11b39e47fc6ccd10c01d8bfbd9423724e88aecf2470f740562b2422c10b779e0b7d1d29c09f5d3d00de69200f04c8250e2adeb13a15e5dee7f
+  languageName: node
+  linkType: hard
+
+"@otplib/plugin-crypto@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/plugin-crypto@npm:12.0.1"
+  dependencies:
+    "@otplib/core": "npm:^12.0.1"
+  checksum: 10c0/7ad0cda9c643411a13a118bcf0d031ef61a9031f794a21b549fb3f1e38334f83c5481a9f706eb5b25066325759c1a598fbc1f9c05c4620dff5addccbe2ad23ad
+  languageName: node
+  linkType: hard
+
+"@otplib/plugin-thirty-two@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/plugin-thirty-two@npm:12.0.1"
+  dependencies:
+    "@otplib/core": "npm:^12.0.1"
+    thirty-two: "npm:^1.0.2"
+  checksum: 10c0/971a6f592c0f33cb258dcb750f6f0c058cbfd45e0212ea6f29d0c75dc6c5fcb67dbc8f19c3e8ae710e93292319b8d3d15fd7281714deae9fadaab794f9d44544
+  languageName: node
+  linkType: hard
+
+"@otplib/preset-default@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/preset-default@npm:12.0.1"
+  dependencies:
+    "@otplib/core": "npm:^12.0.1"
+    "@otplib/plugin-crypto": "npm:^12.0.1"
+    "@otplib/plugin-thirty-two": "npm:^12.0.1"
+  checksum: 10c0/cd683861b96d04b7581534169a5a130fc049bd3188a850a1642ba4cf2a53866dedafe5201763697e38a3f0726103783baf338448153752c464fff797948dc01c
+  languageName: node
+  linkType: hard
+
+"@otplib/preset-v11@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@otplib/preset-v11@npm:12.0.1"
+  dependencies:
+    "@otplib/core": "npm:^12.0.1"
+    "@otplib/plugin-crypto": "npm:^12.0.1"
+    "@otplib/plugin-thirty-two": "npm:^12.0.1"
+  checksum: 10c0/5a1bf8198f169182e267ab6ae3115f2441190f34a212e8232ff4b9c2c8a7253fddf3aa185ab9a6246487e9c1052b676395e80b6e0b2825fa218eb8e29bd7b14b
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-android-arm64@npm:2.4.1":
   version: 2.4.1
   resolution: "@parcel/watcher-android-arm64@npm:2.4.1"
@@ -38084,6 +38132,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"otplib@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "otplib@npm:12.0.1"
+  dependencies:
+    "@otplib/core": "npm:^12.0.1"
+    "@otplib/preset-default": "npm:^12.0.1"
+    "@otplib/preset-v11": "npm:^12.0.1"
+  checksum: 10c0/5a6cd332ed38f9fb6915407775bb9b4bf298d4d32c7c5691291add913dc1788064ab4ca353315f8add4ea704af2cb2c970d2f2d354725c6daa0c945cd5d09811
+  languageName: node
+  linkType: hard
+
 "outvariant@npm:1.4.0":
   version: 1.4.0
   resolution: "outvariant@npm:1.4.0"
@@ -44756,6 +44815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"thirty-two@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "thirty-two@npm:1.0.2"
+  checksum: 10c0/a6f8c69a153a1aa4d6948eabe004f5a38e45cb869d7d6c535df7460fc44c95c596a60efc56cce56b5e4f0988601db1298be5d1b6ae3fe12dcdeb461c9aeadd17
+  languageName: node
+  linkType: hard
+
 "throttle-debounce@npm:^3.0.1":
   version: 3.0.1
   resolution: "throttle-debounce@npm:3.0.1"
@@ -45581,7 +45647,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-emails@workspace:packages/twenty-emails":
+"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
   languageName: unknown
@@ -45612,6 +45678,7 @@ __metadata:
     file-saver: "npm:^2.0.5"
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -45667,12 +45734,15 @@ __metadata:
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
     openid-client: "npm:^5.7.0"
+    otplib: "npm:^12.0.1"
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     redis: "npm:^4.7.0"
     rimraf: "npm:^5.0.5"
     ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
+    twenty-emails: "workspace:*"
+    twenty-shared: "workspace:*"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     typescript: "npm:5.3.3"
     unzipper: "npm:^0.12.3"
@@ -45680,7 +45750,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-shared@workspace:packages/twenty-shared":
+"twenty-shared@workspace:*, twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   languageName: unknown
@@ -45689,6 +45759,8 @@ __metadata:
 "twenty-ui@workspace:packages/twenty-ui":
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
+  dependencies:
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 

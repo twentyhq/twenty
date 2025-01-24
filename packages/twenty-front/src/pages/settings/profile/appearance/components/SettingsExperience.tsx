@@ -1,16 +1,16 @@
 import { ColorSchemePicker, H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -23,24 +23,24 @@ export const SettingsExperience = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="Experience"
+      title={t`Experience`}
       links={[
         {
-          children: 'User',
-          href: getSettingsPagePath(SettingsPath.ProfilePage),
+          children: <Trans>User</Trans>,
+          href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        { children: 'Experience' },
+        { children: <Trans>Experience</Trans> },
       ]}
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="Appearance" />
+          <H2Title title={t`Appearance`} />
           <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
         </Section>
         <Section>
           <H2Title
-            title="Date and time"
-            description="Configure how dates are displayed across the app"
+            title={t`Date and time`}
+            description={t`Configure how dates are displayed across the app`}
           />
           <DateTimeSettings />
         </Section>

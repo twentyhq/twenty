@@ -47,13 +47,10 @@ export const WorkflowDiagramEffect = ({
         if (isDefined(lastCreatedStepId)) {
           mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
             (node) => {
-              if (node.id === lastCreatedStepId) {
-                return {
-                  ...node,
-                  selected: true,
-                };
-              }
-              return node;
+              return {
+                ...node,
+                selected: node.id === lastCreatedStepId,
+              };
             },
           );
 

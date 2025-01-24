@@ -22,8 +22,9 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -32,6 +33,7 @@ export class GoogleAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -66,11 +68,13 @@ export class GoogleAuthController {
     });
 
     try {
-      const invitation = await this.authService.findInvitationForSignInUp({
-        currentWorkspace,
-        workspacePersonalInviteToken,
-        email,
-      });
+      const invitation =
+        currentWorkspace && workspacePersonalInviteToken && email
+          ? await this.authService.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
 
       const existingUser = await this.userRepository.findOne({
         where: { email },
@@ -118,9 +122,11 @@ export class GoogleAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            subdomain: currentWorkspace?.subdomain,
-          }),
+          this.domainManagerService.computeRedirectErrorUrl(
+            err.message,
+            currentWorkspace?.subdomain ??
+              this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          ),
         );
       }
       throw new AuthException(err, AuthExceptionCode.INTERNAL_SERVER_ERROR);
