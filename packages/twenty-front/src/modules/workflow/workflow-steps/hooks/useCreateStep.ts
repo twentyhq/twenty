@@ -58,6 +58,7 @@ export const useCreateStep = ({
       Icon: getWorkflowNodeIcon({
         nodeType: 'action',
         actionType: createdStep.type as WorkflowStepType,
+        name: createdStep.name,
       }),
     });
   };
