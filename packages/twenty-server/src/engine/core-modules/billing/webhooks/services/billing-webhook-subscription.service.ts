@@ -13,7 +13,28 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  CleanWorkspaceDeletionWarningUserVarsJob,
+  CleanWorkspaceDeletionWarningUserVarsJobData,
+} from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
+
+const BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS = {
+  [WorkspaceActivationStatus.ACTIVE]: [
+    SubscriptionStatus.Active,
+    SubscriptionStatus.Trialing,
+    SubscriptionStatus.PastDue,
+  ],
+  [WorkspaceActivationStatus.SUSPENDED]: [
+    SubscriptionStatus.Canceled,
+    SubscriptionStatus.Unpaid,
+    SubscriptionStatus.Paused,
+  ],
+};
+
 @Injectable()
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
@@ -21,6 +42,8 @@ export class BillingWebhookSubscriptionService {
   );
   constructor(
     private readonly stripeCustomerService: StripeCustomerService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem, 'core')
@@ -62,14 +85,28 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { stripeSubscriptionId: data.object.id },
-      });
+    const billingSubscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    const updatedBillingSubscription = billingSubscriptions.find(
+      (subscription) => subscription.stripeSubscriptionId === data.object.id,
+    );
+
+    if (!updatedBillingSubscription) {
+      throw new Error('Billing subscription not found');
+    }
+
+    const hasActiveWorkspaceCompatibleSubscription = billingSubscriptions.some(
+      (subscription) =>
+        BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
+          WorkspaceActivationStatus.ACTIVE
+        ].includes(subscription.status),
+    );
 
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        billingSubscription.id,
+        updatedBillingSubscription.id,
         data,
       ),
       {
@@ -79,9 +116,10 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (
-      data.object.status === SubscriptionStatus.Canceled ||
-      data.object.status === SubscriptionStatus.Unpaid ||
-      data.object.status === SubscriptionStatus.Paused
+      BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
+        WorkspaceActivationStatus.SUSPENDED
+      ].includes(data.object.status as SubscriptionStatus) &&
+      !hasActiveWorkspaceCompatibleSubscription
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
@@ -89,14 +127,19 @@ export class BillingWebhookSubscriptionService {
     }
 
     if (
-      (data.object.status === SubscriptionStatus.Active ||
-        data.object.status === SubscriptionStatus.Trialing ||
-        data.object.status === SubscriptionStatus.PastDue) &&
+      BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
+        WorkspaceActivationStatus.ACTIVE
+      ].includes(data.object.status as SubscriptionStatus) &&
       workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
+
+      await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
+        CleanWorkspaceDeletionWarningUserVarsJob.name,
+        { workspaceId },
+      );
     }
 
     await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(
