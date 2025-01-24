@@ -24,7 +24,7 @@ import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)

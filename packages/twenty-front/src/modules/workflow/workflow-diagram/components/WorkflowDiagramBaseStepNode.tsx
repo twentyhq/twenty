@@ -1,3 +1,8 @@
+import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
+import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
+import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
+import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
+import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
@@ -11,8 +16,7 @@ const StyledStepNodeContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  padding-bottom: 12px;
-  padding-top: 6px;
+  padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledStepNodeType = styled.div`
@@ -21,7 +25,7 @@ const StyledStepNodeType = styled.div`
     ${({ theme }) => theme.border.radius.sm} 0 0;
 
   color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: 9px;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -38,9 +42,8 @@ const StyledStepNodeType = styled.div`
 
 const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
   background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-style: ${({ variant }) =>
-    variant === 'placeholder' ? 'dashed' : null};
+  border: ${NODE_BORDER_WIDTH}px solid
+    ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -61,7 +64,7 @@ const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
 const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.lg};
+  font-size: 13px;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ variant, theme }) =>
@@ -71,16 +74,19 @@ const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   max-width: 200px;
 `;
 
-const StyledSourceHandle = styled(Handle)`
+export const StyledHandle = styled(Handle)`
   background-color: ${({ theme }) => theme.grayScale.gray25};
   border: none;
-  width: 4px;
-  height: 4px;
-  left: ${({ theme }) => theme.spacing(10)};
+  width: ${NODE_HANDLE_WIDTH_PX}px;
+  height: ${NODE_HANDLE_HEIGHT_PX}px;
 `;
 
-export const StyledTargetHandle = styled(Handle)`
-  left: ${({ theme }) => theme.spacing(10)};
+const StyledSourceHandle = styled(StyledHandle)`
+  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
+`;
+
+const StyledTargetHandle = styled(StyledSourceHandle)`
+  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
   visibility: hidden;
 `;
 
@@ -88,7 +94,7 @@ const StyledRightFloatingElementContainer = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
-  right: ${({ theme }) => theme.spacing(-3)};
+  right: ${({ theme }) => theme.spacing(-4)};
   bottom: 0;
   top: 0;
   transform: translateX(100%);

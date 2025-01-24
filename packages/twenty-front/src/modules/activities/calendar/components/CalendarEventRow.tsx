@@ -70,7 +70,10 @@ const StyledTime = styled.div`
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
   flex: 1 0 auto;
-
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: ${({ theme }) => theme.spacing(10)};
   ${({ theme, active }) =>
     active &&
     css`

@@ -5,7 +5,6 @@ export enum FeatureFlagKey {
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsCopilotEnabled = 'IS_COPILOT_ENABLED',
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
-  IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -15,4 +14,5 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
+  IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
 }

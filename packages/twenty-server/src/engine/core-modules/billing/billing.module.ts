@@ -26,6 +26,7 @@ import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billi
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -34,6 +35,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     FeatureFlagModule,
     StripeModule,
     DomainManagerModule,
+    MessageQueueModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,

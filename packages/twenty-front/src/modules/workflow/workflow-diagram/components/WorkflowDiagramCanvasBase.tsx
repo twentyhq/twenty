@@ -51,6 +51,12 @@ const StyledResetReactflowStyles = styled.div`
     min-height: 0;
     min-width: 0;
   }
+  .react-flow__handle-top {
+    transform: translate(-50%, -50%);
+  }
+  .react-flow__handle-bottom {
+    transform: translate(-50%, 100%);
+  }
   .react-flow__handle.connectionindicator {
     cursor: pointer;
   }

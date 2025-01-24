@@ -1,6 +1,7 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
@@ -33,25 +34,33 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: componentInstanceId }}
+      <RecordFiltersComponentInstanceContext.Provider
+        value={{
+          instanceId: componentInstanceId,
+        }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: componentInstanceId }}
         >
-          <JestContextStoreSetter
-            contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
-            contextStoreNumberOfSelectedRecords={
-              contextStoreNumberOfSelectedRecords
-            }
-            contextStoreCurrentObjectMetadataNameSingular={
-              contextStoreCurrentObjectMetadataNameSingular
-            }
+          <ActionMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: componentInstanceId,
+            }}
           >
-            {children}
-          </JestContextStoreSetter>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+            <JestContextStoreSetter
+              contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+              contextStoreNumberOfSelectedRecords={
+                contextStoreNumberOfSelectedRecords
+              }
+              contextStoreCurrentObjectMetadataNameSingular={
+                contextStoreCurrentObjectMetadataNameSingular
+              }
+            >
+              {children}
+            </JestContextStoreSetter>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
     </Wrapper>
   );
 };

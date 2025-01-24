@@ -52,7 +52,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       getAppPath(AppPath.RecordShowPage, {
         objectNameSingular: objectMetadataItem.nameSingular,
         objectRecordId: '',
-      }).slice(0, -1),
+      }) + '/',
     );
 
   const shouldSubItemsBeDisplayed = isActive && objectMetadataViews.length > 1;

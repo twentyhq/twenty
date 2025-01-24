@@ -5,7 +5,11 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  WorkflowDiagramNode,
+  WorkflowDiagramStepNodeData,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -30,7 +34,12 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
       setWorkflowSelectedNode(selectedNode.id);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepView);
+
+      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
+      openRightDrawer(RightDrawerPages.WorkflowStepView, {
+        title: selectedNodeData.name,
+        Icon: getWorkflowNodeIcon(selectedNodeData),
+      });
     },
     [
       setWorkflowSelectedNode,

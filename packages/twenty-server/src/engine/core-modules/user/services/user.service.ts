@@ -101,7 +101,7 @@ export class UserService extends TypeOrmQueryService<User> {
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: 'workspaceMember',
-        workspaceId: workspaceId,
+        workspaceId,
       },
     });
 

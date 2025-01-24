@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class AuthException extends CustomException {
-  code: AuthExceptionCode;
   constructor(message: string, code: AuthExceptionCode) {
     super(message, code);
   }
@@ -14,6 +13,7 @@ export enum AuthExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   INVALID_INPUT = 'INVALID_INPUT',
   FORBIDDEN_EXCEPTION = 'FORBIDDEN_EXCEPTION',
+  INSUFFICIENT_SCOPES = 'INSUFFICIENT_SCOPES',
   UNAUTHENTICATED = 'UNAUTHENTICATED',
   INVALID_DATA = 'INVALID_DATA',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
