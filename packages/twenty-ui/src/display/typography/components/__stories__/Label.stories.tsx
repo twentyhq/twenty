@@ -33,7 +33,7 @@ export const Catalog: CatalogStory<Story, typeof Label> = {
       dimensions: [
         {
           name: 'Variant',
-          values: ['default', 'small'] as LabelVariant[],
+          values: ['default', 'small'] satisfies LabelVariant[],
           props: (variant: LabelVariant) => ({ variant }),
         },
       ],
