@@ -61,10 +61,6 @@ export class UserWorkspace {
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 
-  @Field({ nullable: false })
-  @Column({ default: false })
-  twoFactorEnabled: boolean;
-
   @OneToMany(
     () => TwoFactorMethod,
     (twoFactorMethod) => twoFactorMethod.userWorkspace,
