@@ -7,7 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -54,7 +54,7 @@ export const useCreateStep = ({
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
 
-    const stepIcon = getWorkflowNodeIcon({
+    const stepIcon = getWorkflowNodeIconKey({
       nodeType: 'action',
       actionType: createdStep.type as WorkflowStepType,
       name: createdStep.name,

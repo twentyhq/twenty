@@ -9,7 +9,7 @@ import {
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -39,7 +39,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
       openRightDrawer(RightDrawerPages.WorkflowStepView, {
         title: selectedNodeData.name,
-        Icon: getIcon(getWorkflowNodeIcon(selectedNodeData)),
+        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
       });
     },
     [

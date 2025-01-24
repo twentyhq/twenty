@@ -1,4 +1,3 @@
-import { IconPlus } from 'twenty-ui';
 import { getWorkflowVersionDiagram } from '../getWorkflowVersionDiagram';
 
 describe('getWorkflowVersionDiagram', () => {
@@ -58,7 +57,7 @@ describe('getWorkflowVersionDiagram', () => {
             name: 'Record is created',
             nodeType: 'trigger',
             triggerType: 'DATABASE_EVENT',
-            icon: IconPlus,
+            icon: 'IconPlus',
           },
           id: 'trigger',
           position: { x: 0, y: 0 },

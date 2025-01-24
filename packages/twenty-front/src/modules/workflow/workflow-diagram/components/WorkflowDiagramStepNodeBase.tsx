@@ -1,7 +1,7 @@
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramBaseStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
@@ -24,7 +24,7 @@ export const WorkflowDiagramStepNodeBase = ({
 }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const Icon = getIcon(getWorkflowNodeIcon(data));
+  const Icon = getIcon(getWorkflowNodeIconKey(data));
 
   const renderStepIcon = () => {
     switch (data.nodeType) {
