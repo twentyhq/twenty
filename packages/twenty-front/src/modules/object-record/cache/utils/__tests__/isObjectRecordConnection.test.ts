@@ -8,6 +8,7 @@ describe('isObjectRecordConnection', () => {
     [RelationDefinitionType.MANY_TO_ONE]: false,
     [RelationDefinitionType.ONE_TO_ONE]: false,
   };
+
   it.each(Object.entries(relationDefinitionMap))(
     '.$relation',
     (relation, expected) => {

@@ -4,8 +4,6 @@ import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
@@ -30,7 +28,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
-  console.log({currentSourceRecord, updatedSourceRecord})
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
@@ -87,20 +84,18 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       }
       const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
-      ): ObjectRecord[] => {
+      ): RecordGqlNode[] => {
         // TODO investigate on the root cause of empty array injection here, should never occurs
-        // Cache might be corrupted somewhere
+        // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
         if (!isDefined(value) || isArray(value)) {
           return [];
         }
 
         if (isObjectRecordConnection(relationDefinition, value)) {
-          // Might not be a good idea to return RecordObject here as they might be written in cache later
-          return getRecordsFromRecordConnection({ recordConnection: value });
+          return value.edges.map(({ node }) => node);
         }
 
-        // Might not be a good idea to return RecordObject here as they might be written in cache later
-        return [getRecordFromRecordNode({ recordNode: value })];
+        return [value];
       };
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
         currentFieldValueOnSourceRecord,
@@ -122,7 +117,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           recordsToDestroy: targetRecordsToDetachFrom,
           objectMetadataItems,
         });
-        // Could it be an invariant ?
       } else if (isDefined(currentSourceRecord)) {
         targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
           triggerDetachRelationOptimisticEffect({
@@ -136,7 +130,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         });
       }
 
-      // Could it be an invariant ?
       if (isDefined(updatedSourceRecord)) {
         targetRecordsToAttachTo.forEach((targetRecordsToAttachTo) =>
           triggerAttachRelationOptimisticEffect({

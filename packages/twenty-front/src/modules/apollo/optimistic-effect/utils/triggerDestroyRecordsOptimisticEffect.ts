@@ -15,7 +15,6 @@ export const triggerDestroyRecordsOptimisticEffect = ({
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  // TODO refactor this should consume RecordObject[]
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
