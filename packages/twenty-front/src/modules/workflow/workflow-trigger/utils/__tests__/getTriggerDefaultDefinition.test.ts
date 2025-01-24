@@ -1,4 +1,4 @@
-import { DatabaseTriggerName } from '@/workflow/workflow-trigger/constants/DatabaseTriggerName';
+import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
 
@@ -6,7 +6,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('throws if the activeObjectMetadataItems list is empty', () => {
     expect(() => {
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_CREATED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeObjectMetadataItems: [],
       });
@@ -16,7 +16,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('returns a valid configuration for DATABASE_EVENT trigger type creation', () => {
     expect(
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_CREATED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
@@ -32,7 +32,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('returns a valid configuration for DATABASE_EVENT trigger type update', () => {
     expect(
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_UPDATED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
@@ -48,7 +48,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('returns a valid configuration for DATABASE_EVENT trigger type deletion', () => {
     expect(
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_DELETED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
@@ -64,7 +64,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('returns a valid configuration for DATABASE_EVENT trigger type creation', () => {
     expect(
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_CREATED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
@@ -80,7 +80,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('returns a valid configuration for MANUAL trigger type', () => {
     expect(
       getTriggerDefaultDefinition({
-        name: 'Launch manually',
+        defaultLabel: 'Launch manually',
         type: 'MANUAL',
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
@@ -96,7 +96,7 @@ describe('getTriggerDefaultDefinition', () => {
   it('throws when providing an unknown trigger type', () => {
     expect(() => {
       getTriggerDefaultDefinition({
-        name: DatabaseTriggerName.RECORD_IS_CREATED,
+        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       });
