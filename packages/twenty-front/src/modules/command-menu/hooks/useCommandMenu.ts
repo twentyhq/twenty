@@ -10,9 +10,12 @@ import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextSt
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
@@ -130,6 +133,20 @@ export const useCommandMenu = () => {
             instanceId: 'command-menu',
           }),
           0,
+        );
+
+        set(
+          contextStoreFiltersComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          [],
+        );
+
+        set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          ContextStoreViewType.Table,
         );
 
         set(commandMenuPageInfoState, {
