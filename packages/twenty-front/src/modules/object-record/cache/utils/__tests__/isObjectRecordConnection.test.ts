@@ -11,11 +11,11 @@ describe('isObjectRecordConnection', () => {
 
   it.each(Object.entries(relationDefinitionMap))(
     '.$relation',
-    (relation, expected) => {
+    (direction, expected) => {
       const emptyRecord = {};
       const result = isObjectRecordConnection(
         {
-          direction: relation,
+          direction,
         } as NonNullable<FieldMetadataItem['relationDefinition']>,
         emptyRecord,
       );
