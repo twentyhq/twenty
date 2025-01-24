@@ -46,6 +46,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
+import { SsoErrorRedirectService } from 'src/engine/core-modules/auth/services/sso-error-redirect.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -109,6 +110,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     TransientTokenService,
     ApiKeyService,
     SocialSsoService,
+    SsoErrorRedirectService,
     // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
     // OAuthService,
   ],

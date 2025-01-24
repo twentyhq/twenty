@@ -49,6 +49,17 @@ export class SSOService {
     }
   }
 
+  private async getIssuerForOIDC(issuerUrl: string) {
+    try {
+      return await Issuer.discover(issuerUrl);
+    } catch (err) {
+      throw new SSOException(
+        'Invalid issuer',
+        SSOExceptionCode.INVALID_ISSUER_URL,
+      );
+    }
+  }
+
   async createOIDCIdentityProvider(
     data: Pick<
       WorkspaceSSOIdentityProvider,
@@ -59,21 +70,7 @@ export class SSOService {
     try {
       await this.isSSOEnabled(workspaceId);
 
-      if (!data.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
-
-      const issuer = await Issuer.discover(data.issuer);
-
-      if (!issuer.metadata.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL from discovery',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
+      const issuer = await this.getIssuerForOIDC(data.issuer);
 
       const identityProvider =
         await this.workspaceSSOIdentityProviderRepository.save({
@@ -93,6 +90,7 @@ export class SSOService {
         issuer: identityProvider.issuer,
       };
     } catch (err) {
+      console.log('>>>>>>>>>>>>>>', err);
       if (err instanceof SSOException) {
         return err;
       }
