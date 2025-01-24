@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
   ActorMetadata,
@@ -34,7 +35,6 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const TITLE_FIELD_NAME = 'title';
 const BODY_FIELD_NAME = 'body';
@@ -43,7 +43,7 @@ const BODY_V2_FIELD_NAME = 'bodyV2';
 export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
-  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
+  // { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
@@ -87,9 +87,6 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   [BODY_FIELD_NAME]: string | null;
 
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
-  })
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
@@ -98,6 +95,9 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
+  })
   [BODY_V2_FIELD_NAME]: RichTextV2Metadata | null;
 
   @WorkspaceField({

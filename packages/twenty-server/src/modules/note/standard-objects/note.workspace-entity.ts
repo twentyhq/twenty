@@ -41,7 +41,7 @@ const BODY_V2_FIELD_NAME = 'bodyV2';
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
-  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
+  // { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
 ];
 
 @WorkspaceEntity({
@@ -85,9 +85,6 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   [BODY_FIELD_NAME]: string | null;
 
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
-  })
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
@@ -96,6 +93,9 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
+  })
   [BODY_V2_FIELD_NAME]: RichTextV2Metadata | null;
 
   @WorkspaceField({
