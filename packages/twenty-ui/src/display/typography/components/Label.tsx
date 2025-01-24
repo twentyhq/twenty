@@ -15,4 +15,4 @@ const StyledLabel = styled.div<{ variant?: LabelVariant }>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export const Label = StyledLabel;
+export { StyledLabel as Label };
