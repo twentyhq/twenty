@@ -11,6 +11,8 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -18,6 +20,7 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -35,6 +38,7 @@ export class BillingSubscriptionService {
     private readonly billingPlanService: BillingPlanService,
     private readonly environmentService: EnvironmentService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
@@ -59,9 +63,9 @@ export class BillingSubscriptionService {
     return notCanceledSubscriptions?.[0];
   }
 
-  async getCurrentBillingSubscriptionItemOrThrow(
+  async getBaseProductCurrentBillingSubscriptionItemOrThrow(
     workspaceId: string,
-    stripeProductId = this.environmentService.get(
+    stripeBaseProductId = this.environmentService.get(
       'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
     ),
   ) {
@@ -78,7 +82,7 @@ export class BillingSubscriptionService {
     const getStripeProductId = isBillingPlansEnabled
       ? (await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO))
           ?.stripeProductId
-      : stripeProductId;
+      : stripeBaseProductId;
 
     if (!getStripeProductId) {
       throw new BillingException(
@@ -164,42 +168,71 @@ export class BillingSubscriptionService {
         ? SubscriptionInterval.Month
         : SubscriptionInterval.Year;
 
-    const billingSubscriptionItem =
-      await this.getCurrentBillingSubscriptionItemOrThrow(workspace.id);
-
-    let productPrice;
+    const billingBaseProductSubscriptionItem =
+      await this.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+        workspace.id,
+      );
 
     if (isBillingPlansEnabled) {
-      const baseProduct = await this.billingPlanService.getPlanBaseProduct(
-        BillingPlanKey.PRO,
+      const billingProductsByPlan =
+        await this.billingProductService.getProductsByPlan(BillingPlanKey.PRO);
+      const pricesPerPlanArray =
+        this.billingProductService.getProductPricesByInterval({
+          interval: newInterval,
+          billingProductsByPlan,
+        });
+
+      const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
+        billingSubscription,
+        pricesPerPlanArray,
       );
 
-      if (!baseProduct) {
-        throw new BillingException(
-          'Base product not found',
-          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-        );
-      }
-
-      productPrice = baseProduct.billingPrices.find(
-        (price) => price.interval === newInterval,
+      await this.stripeSubscriptionService.updateSubscriptionItems(
+        billingSubscription.stripeSubscriptionId,
+        subscriptionItemsToUpdate,
       );
     } else {
-      productPrice = await this.stripePriceService.getStripePrice(
+      const productPrice = await this.stripePriceService.getStripePrice(
         AvailableProduct.BasePlan,
         newInterval,
       );
-    }
 
-    if (!productPrice) {
-      throw new Error(
-        `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,
+      if (!productPrice) {
+        throw new Error(
+          `Cannot find product price for product ${AvailableProduct.BasePlan} and interval ${newInterval}`,
+        );
+      }
+
+      await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
+        billingBaseProductSubscriptionItem,
+        productPrice.stripePriceId,
       );
     }
+  }
 
-    await this.stripeSubscriptionItemService.updateBillingSubscriptionItem(
-      billingSubscriptionItem,
-      productPrice.stripePriceId,
-    );
+  private getSubscriptionItemsToUpdate(
+    billingSubscription: BillingSubscription,
+    billingPricesPerPlanAndIntervalArray: BillingPrice[],
+  ): BillingSubscriptionItem[] {
+    const subscriptionItemsToUpdate =
+      billingSubscription.billingSubscriptionItems.map((subscriptionItem) => {
+        const matchingPrice = billingPricesPerPlanAndIntervalArray.find(
+          (price) => price.stripeProductId === subscriptionItem.stripeProductId,
+        );
+
+        if (!matchingPrice) {
+          throw new BillingException(
+            `Cannot find matching price for product ${subscriptionItem.stripeProductId}`,
+            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+          );
+        }
+
+        return {
+          ...subscriptionItem,
+          stripePriceId: matchingPrice.stripePriceId,
+        };
+      });
+
+    return subscriptionItemsToUpdate;
   }
 }

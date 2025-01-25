@@ -21,7 +21,7 @@ export const VerifyEffect = () => {
   const isLogged = useIsLogged();
   const navigate = useNavigateApp();
 
-  const { verify } = useAuth();
+  const { getAuthTokensFromLoginToken } = useAuth();
 
   const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
     isAppWaitingForFreshObjectMetadataState,
@@ -30,14 +30,14 @@ export const VerifyEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueSnackBar(errorMessage, {
-        dedupeKey: 'verify-failed-dedupe-key',
+        dedupeKey: 'get-auth-tokens-from-login-token-failed-dedupe-key',
         variant: SnackBarVariant.Error,
       });
     }
 
     if (isDefined(loginToken)) {
       setIsAppWaitingForFreshObjectMetadata(true);
-      verify(loginToken);
+      getAuthTokensFromLoginToken(loginToken);
     } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }
