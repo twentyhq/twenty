@@ -30,8 +30,6 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         this.environmentService,
       );
 
-      console.log('>>>>>>>>>>>>>>', state.redirectLocation);
-
       setRequestExtraParams(request, {
         transientToken: state.transientToken,
         redirectLocation: state.redirectLocation,

@@ -15,8 +15,8 @@ export class GuardRedirectService {
   ) {}
 
   dispatchErrorFromGuard(
-    context: any,
-    error: any,
+    context: ExecutionContext,
+    error: Error | CustomException,
     workspace: { id?: string; subdomain: string },
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
