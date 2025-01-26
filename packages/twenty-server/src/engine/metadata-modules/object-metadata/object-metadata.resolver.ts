@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import console from 'console';
+
 import { i18n } from '@lingui/core';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -34,7 +36,7 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context: any,
+    @Context() context,
   ): Promise<string> {
     const locale = context.req.headers['x-locale'];
 

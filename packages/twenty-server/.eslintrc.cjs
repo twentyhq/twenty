@@ -13,6 +13,8 @@ module.exports = {
         project: ['packages/twenty-server/tsconfig.json'],
       },
       rules: {
+        // For metadata files we use to indicate it should be extracted to
+        // the translation catalog but we don't translate it directly
         'lingui/t-call-in-function': 'off',
         'no-restricted-imports': [
           'error',

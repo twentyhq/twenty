@@ -52,7 +52,7 @@ import { I18nModule } from './engine/core-modules/i18n/i18n.module';
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     RestApiModule,
-    // I18n module for internationalization
+    // I18n module for translations
     I18nModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),

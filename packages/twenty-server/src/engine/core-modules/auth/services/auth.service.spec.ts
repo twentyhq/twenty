@@ -1,14 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { expect, jest } from '@jest/globals';
 import bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -16,13 +21,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 
 import { AuthService } from './auth.service';
 

@@ -1,6 +1,4 @@
-import { JestConfigWithTsJest } from 'ts-jest';
-
-const jestConfig: JestConfigWithTsJest = {
+const jestConfig = {
   // to enable logs, comment out the following line
   silent: true,
   clearMocks: true,
@@ -10,7 +8,25 @@ const jestConfig: JestConfigWithTsJest = {
   transformIgnorePatterns: ['/node_modules/'],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: false,
+            decorators: true,
+          },
+          transform: {
+            decoratorMetadata: true,
+            legacyDecorator: true,
+          },
+          experimental: {
+            plugins: [['@lingui/swc-plugin', {}]],
+          },
+        },
+      },
+    ],
   },
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
