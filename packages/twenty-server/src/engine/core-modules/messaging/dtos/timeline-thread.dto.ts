@@ -4,7 +4,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TimelineThreadParticipant } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-@ObjectType('TimelineThread')
+@ObjectType()
 export class TimelineThread {
   @Field(() => UUIDScalarType)
   id: string;

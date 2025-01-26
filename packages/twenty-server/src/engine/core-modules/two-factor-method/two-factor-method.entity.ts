@@ -14,7 +14,7 @@ import {
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Entity({ name: 'twoFactorMethod', schema: 'core' })
-@ObjectType('TwoFactorMethod')
+@ObjectType()
 export class TwoFactorMethod {
   @Field()
   @PrimaryGeneratedColumn('uuid')

@@ -26,7 +26,7 @@ registerEnumType(WorkspaceActivationStatus, {
 });
 
 @Entity({ name: 'workspace', schema: 'core' })
-@ObjectType('Workspace')
+@ObjectType()
 export class Workspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
