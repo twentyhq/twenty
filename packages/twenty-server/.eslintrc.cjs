@@ -13,8 +13,9 @@ module.exports = {
         project: ['packages/twenty-server/tsconfig.json'],
       },
       rules: {
-        // For metadata files we use to indicate it should be extracted to
-        // the translation catalog but we don't translate it directly
+        // In workspace entities (ex: Company definition) we use Lingui to indicate labels should be
+        // the translation catalog, but we don't translate anything yet in that context
+        // This is probably not a typical use case for Lingui.
         'lingui/t-call-in-function': 'off',
         'no-restricted-imports': [
           'error',

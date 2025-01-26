@@ -19,7 +19,6 @@ const jestConfig = {
           },
           transform: {
             decoratorMetadata: true,
-            legacyDecorator: true,
           },
           experimental: {
             plugins: [['@lingui/swc-plugin', {}]],
