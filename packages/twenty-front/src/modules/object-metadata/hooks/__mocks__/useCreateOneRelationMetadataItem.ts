@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client';
 
 export const query = gql`
-  mutation CreateOneRelationMetadata($input: CreateOneRelationInput!) {
-    createOneRelation(input: $input) {
+  mutation CreateOneRelationMetadataItem(
+    $input: CreateOneRelationMetadataInput!
+  ) {
+    createOneRelationMetadata(input: $input) {
       id
       relationType
       fromObjectMetadataId
