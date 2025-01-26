@@ -40,9 +40,18 @@ export function WorkspaceEntity(
       standardId: options.standardId,
       nameSingular: objectName,
       namePlural: options.namePlural,
-      labelSingular: options.labelSingular,
-      labelPlural: options.labelPlural,
-      description: options.description,
+      labelSingular:
+        typeof options.labelSingular === 'string'
+          ? options.labelSingular
+          : (options.labelSingular?.message ?? ''),
+      labelPlural:
+        typeof options.labelPlural === 'string'
+          ? options.labelPlural
+          : (options.labelPlural?.message ?? ''),
+      description:
+        typeof options.description === 'string'
+          ? options.description
+          : (options.description?.message ?? ''),
       labelIdentifierStandardId:
         options.labelIdentifierStandardId ?? BASE_OBJECT_STANDARD_FIELD_IDS.id,
       imageIdentifierStandardId: options.imageIdentifierStandardId ?? null,
