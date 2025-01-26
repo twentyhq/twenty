@@ -31,16 +31,42 @@ export class ObjectMetadataResolver {
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
   ) {}
 
+  private async resolveLabel(
+    objectMetadata: ObjectMetadataDTO,
+    labelKey: 'labelPlural' | 'labelSingular',
+    locale: string,
+  ): Promise<string> {
+    if (objectMetadata.isCustom) {
+      return objectMetadata[labelKey];
+    }
+
+    i18n.activate(locale);
+
+    return i18n._(objectMetadata[labelKey]);
+  }
+
   @ResolveField(() => String, { nullable: true })
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context,
   ): Promise<string> {
-    const locale = context.req.headers['x-locale'];
+    return this.resolveLabel(
+      objectMetadata,
+      'labelPlural',
+      context.req.headers['x-locale'],
+    );
+  }
 
-    i18n.activate(locale);
-
-    return i18n._(objectMetadata.labelPlural);
+  @ResolveField(() => String, { nullable: true })
+  async labelSingular(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.resolveLabel(
+      objectMetadata,
+      'labelSingular',
+      context.req.headers['x-locale'],
+    );
   }
 
   @Mutation(() => ObjectMetadataDTO)
