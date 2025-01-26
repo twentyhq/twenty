@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import console from 'console';
-
 import { i18n } from '@lingui/core';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -41,8 +39,6 @@ export class ObjectMetadataResolver {
     const locale = context.req.headers['x-locale'];
 
     i18n.activate(locale);
-
-    console.log('yoooo', i18n._(objectMetadata.labelPlural));
 
     return i18n._(objectMetadata.labelPlural);
   }
