@@ -13,6 +13,7 @@ module.exports = {
         project: ['packages/twenty-server/tsconfig.json'],
       },
       rules: {
+        'lingui/t-call-in-function': 'off',
         'no-restricted-imports': [
           'error',
           {

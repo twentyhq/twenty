@@ -1,11 +1,14 @@
 import { UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+
+import { i18n } from '@lingui/core';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -31,8 +34,15 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: any,
   ): Promise<string> {
-    return 'Toto';
+    const locale = context.req.headers['x-locale'];
+
+    i18n.activate(locale);
+
+    console.log('yoooo', i18n._(objectMetadata.labelPlural));
+
+    return i18n._(objectMetadata.labelPlural);
   }
 
   @Mutation(() => ObjectMetadataDTO)
