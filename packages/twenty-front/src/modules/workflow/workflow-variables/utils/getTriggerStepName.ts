@@ -3,7 +3,7 @@ import {
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { capitalize } from 'twenty-shared';
 import { isDefined } from 'twenty-ui';
 
@@ -26,8 +26,10 @@ const getDatabaseEventTriggerStepName = (
   trigger: WorkflowDatabaseEventTrigger,
 ): string => {
   const [, action] = trigger.settings.eventName.split('.');
+  const defaultLabel = getTriggerDefaultLabel({
+    type: 'DATABASE_EVENT',
+    eventName: action,
+  });
 
-  return (
-    DATABASE_TRIGGER_EVENTS.find((event) => event.value === action)?.label ?? ''
-  );
+  return defaultLabel ?? '';
 };

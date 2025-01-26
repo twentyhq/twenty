@@ -7,9 +7,10 @@ import {
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { DATABASE_TRIGGER_EVENTS } from '@/workflow/workflow-trigger/constants/DatabaseTriggerEvents';
+import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -57,11 +58,15 @@ export const generateWorkflowDiagram = ({
   const triggerNodeId = TRIGGER_STEP_ID;
 
   if (isDefined(trigger)) {
-    let triggerLabel: string;
+    let triggerDefaultLabel: string;
+    let triggerIcon: string | undefined;
 
     switch (trigger.type) {
       case 'MANUAL': {
-        triggerLabel = 'Manual Trigger';
+        triggerDefaultLabel = 'Manual Trigger';
+        triggerIcon = getTriggerIcon({
+          type: 'MANUAL',
+        });
 
         break;
       }
@@ -70,10 +75,15 @@ export const generateWorkflowDiagram = ({
           trigger.settings.eventName,
         );
 
-        triggerLabel =
-          DATABASE_TRIGGER_EVENTS.find(
-            (event) => event.value === triggerEvent.event,
-          )?.label ?? '';
+        triggerDefaultLabel =
+          DATABASE_TRIGGER_TYPES.find(
+            (item) => item.event === triggerEvent.event,
+          )?.defaultLabel ?? '';
+
+        triggerIcon = getTriggerIcon({
+          type: 'DATABASE_EVENT',
+          eventName: triggerEvent.event,
+        });
 
         break;
       }
@@ -90,7 +100,8 @@ export const generateWorkflowDiagram = ({
       data: {
         nodeType: 'trigger',
         triggerType: trigger.type,
-        name: isDefined(trigger.name) ? trigger.name : triggerLabel,
+        name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
+        icon: triggerIcon,
       },
       position: {
         x: 0,

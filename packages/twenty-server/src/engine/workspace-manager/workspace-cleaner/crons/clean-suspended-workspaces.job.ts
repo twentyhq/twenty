@@ -1,11 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { render } from '@react-email/components';
 import chunk from 'lodash.chunk';
+import {
+  CleanSuspendedWorkspaceEmail,
+  WarnSuspendedWorkspaceEmail,
+} from 'twenty-emails';
 import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -31,6 +37,7 @@ export class CleanSuspendedWorkspacesJob {
     private readonly environmentService: EnvironmentService,
     private readonly userService: UserService,
     private readonly userVarsService: UserVarsService,
+    private readonly emailService: EmailService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(Workspace, 'core')
@@ -92,7 +99,38 @@ export class CleanSuspendedWorkspacesJob {
     return false;
   }
 
-  async warnWorkspaceMembers(workspace: Workspace) {
+  async sendWarningEmail(
+    workspaceMember: WorkspaceMemberWorkspaceEntity,
+    workspaceDisplayName: string | undefined,
+    daysSinceInactive: number,
+  ) {
+    const emailData = {
+      daysSinceInactive,
+      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
+      workspaceDisplayName: `${workspaceDisplayName}`,
+    };
+    const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    this.emailService.send({
+      to: workspaceMember.userEmail,
+      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      subject: 'Action needed to prevent workspace deletion',
+      html,
+      text,
+    });
+  }
+
+  async warnWorkspaceMembers(workspace: Workspace, daysSinceInactive: number) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
@@ -108,6 +146,14 @@ export class CleanSuspendedWorkspacesJob {
 
       return;
     } else {
+      this.logger.log(
+        `Sending ${workspace.id} ${
+          workspace.displayName
+        } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
+          .map((workspaceUser) => workspaceUser.userEmail)
+          .join(', ')}']`,
+      );
+
       const workspaceMembersChunks = chunk(workspaceMembers, 5);
 
       for (const workspaceMembersChunk of workspaceMembersChunks) {
@@ -119,24 +165,60 @@ export class CleanSuspendedWorkspacesJob {
               key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
               value: true,
             });
+
+            await this.sendWarningEmail(
+              workspaceMember,
+              workspace.displayName,
+              daysSinceInactive,
+            );
           }),
         );
       }
-
-      // TODO: issue #284
-      // send email warning for deletion in (this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeWarn) days (cci @twenty.com)
-
-      this.logger.log(
-        `Warning Workspace ${workspace.id} ${workspace.displayName}`,
-      );
 
       return;
     }
   }
 
+  async sendCleaningEmail(
+    workspaceMember: WorkspaceMemberWorkspaceEntity,
+    workspaceDisplayName: string | undefined,
+  ) {
+    const emailData = {
+      inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
+      userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
+      workspaceDisplayName: `${workspaceDisplayName}`,
+    };
+    const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    this.emailService.send({
+      to: workspaceMember.userEmail,
+      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      subject: 'Your workspace has been deleted',
+      html,
+      text,
+    });
+  }
+
   async informWorkspaceMembersAndDeleteWorkspace(workspace: Workspace) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
+
+    this.logger.log(
+      `Sending workspace ${workspace.id} ${
+        workspace.displayName
+      } deletion emails to users ['${workspaceMembers
+        .map((workspaceUser) => workspaceUser.userEmail)
+        .join(', ')}']`,
+    );
 
     const workspaceMembersChunks = chunk(workspaceMembers, 5);
 
@@ -148,12 +230,9 @@ export class CleanSuspendedWorkspacesJob {
             workspaceId: workspace.id,
             key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
           });
-        }),
 
-        // TODO: issue #285
-        // send email informing about deletion (cci @twenty.com)
-        // remove clean-inactive-workspace.job.ts and .. files
-        // add new env var in infra
+          await this.sendCleaningEmail(workspaceMember, workspace.displayName);
+        }),
       );
     }
 
@@ -197,7 +276,7 @@ export class CleanSuspendedWorkspacesJob {
             workspaceInactivity > this.inactiveDaysBeforeWarn &&
             workspaceInactivity <= this.inactiveDaysBeforeDelete
           ) {
-            await this.warnWorkspaceMembers(workspace);
+            await this.warnWorkspaceMembers(workspace, workspaceInactivity);
 
             return;
           }

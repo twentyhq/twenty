@@ -1,24 +1,23 @@
 import { WorkflowStepType } from '@/workflow/types/Workflow';
-import { IconComponent, IconPlus, IconRefreshDot, IconTrash } from 'twenty-ui';
 
 export const RECORD_ACTIONS: Array<{
   label: string;
   type: WorkflowStepType;
-  icon: IconComponent;
+  icon: string;
 }> = [
   {
     label: 'Create Record',
     type: 'CREATE_RECORD',
-    icon: IconPlus,
+    icon: 'IconPlus',
   },
   {
     label: 'Update Record',
     type: 'UPDATE_RECORD',
-    icon: IconRefreshDot,
+    icon: 'IconRefreshDot',
   },
   {
     label: 'Delete Record',
     type: 'DELETE_RECORD',
-    icon: IconTrash,
+    icon: 'IconTrash',
   },
 ];

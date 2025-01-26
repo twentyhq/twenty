@@ -164,7 +164,7 @@ describe('AuthService', () => {
 
     userWorkspaceServiceCheckUserWorkspaceExistsMock.mockReturnValueOnce({});
 
-    const response = await service.challenge(
+    const response = await service.getLoginTokenFromCredentials(
       {
         email: 'email',
         password: 'password',
@@ -200,7 +200,7 @@ describe('AuthService', () => {
     workspaceInvitationValidatePersonalInvitationMock.mockReturnValueOnce({});
     userWorkspaceAddUserToWorkspaceMock.mockReturnValueOnce({});
 
-    const response = await service.challenge(
+    const response = await service.getLoginTokenFromCredentials(
       {
         email: 'email',
         password: 'password',
