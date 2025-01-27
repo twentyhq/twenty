@@ -35,10 +35,8 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationItem = {
@@ -60,11 +58,7 @@ export const SettingsNavigationDrawerItems = () => {
   // for now
   const isFunctionSettingsEnabled = false;
 
-  const isFreeAccessEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFreeAccessEnabled,
-  );
-  const isBillingPageEnabled =
-    billing?.isBillingEnabled && !isFreeAccessEnabled;
+  const isBillingPageEnabled = billing?.isBillingEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
