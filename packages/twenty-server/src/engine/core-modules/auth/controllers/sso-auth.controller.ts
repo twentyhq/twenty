@@ -32,12 +32,8 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -45,8 +41,7 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly domainManagerService: DomainManagerService,
-
+    private readonly environmentService: EnvironmentService,
     private readonly sSOService: SSOService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -90,14 +85,14 @@ export class SSOAuthController {
   @Get('oidc/callback')
   @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
-  async oidcAuthCallback(@Req() req: OIDCRequest, @Res() res: Response) {
+  async oidcAuthCallback(@Req() req: any, @Res() res: Response) {
     return await this.authCallback(req, res);
   }
 
   @Post('saml/callback/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
-  async samlAuthCallback(@Req() req: SAMLRequest, @Res() res: Response) {
+  async samlAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
       return await this.authCallback(req, res);
     } catch (err) {
@@ -108,12 +103,11 @@ export class SSOAuthController {
     }
   }
 
-  private async authCallback(req: OIDCRequest | SAMLRequest, res: Response) {
+  private async authCallback({ user }: any, res: Response) {
     const workspaceIdentityProvider =
-      await this.workspaceSSOIdentityProviderRepository.findOne({
-        where: { id: req.user.identityProviderId },
-        relations: ['workspace'],
-      });
+      await this.findWorkspaceIdentityProviderByIdentityProviderId(
+        user.identityProviderId,
+      );
 
     try {
       if (!workspaceIdentityProvider) {
@@ -123,61 +117,63 @@ export class SSOAuthController {
         );
       }
 
-      if (!req.user.email) {
+      if (!user.user.email) {
         throw new AuthException(
           'Email not found from identity provider.',
           AuthExceptionCode.OAUTH_ACCESS_DENIED,
         );
       }
 
-      const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
-        workspaceId: workspaceIdentityProvider.workspaceId,
-        workspaceInviteHash: req.user.workspaceInviteHash,
-        email: req.user.email,
-        authProvider: 'sso',
-      });
-
-      workspaceValidator.assertIsDefinedOrThrow(
-        currentWorkspace,
-        new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
-        ),
-      );
-
-      const { loginToken } = await this.generateLoginToken(
-        req.user,
-        currentWorkspace,
+      const { loginToken, identityProvider } = await this.generateLoginToken(
+        user.user,
+        workspaceIdentityProvider,
       );
 
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          workspace: currentWorkspace,
+          subdomain: identityProvider.workspace.subdomain,
         }),
       );
     } catch (err) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            workspaceIdentityProvider?.workspace,
-          ),
+          workspaceIdentityProvider?.workspace ?? {
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          },
         ),
       );
     }
   }
 
-  private async generateLoginToken(
-    payload: { email: string; workspaceInviteHash?: string },
-    currentWorkspace: Workspace,
+  private async findWorkspaceIdentityProviderByIdentityProviderId(
+    identityProviderId: string,
   ) {
-    const invitation = payload.email
-      ? await this.authService.findInvitationForSignInUp({
-          currentWorkspace,
-          email: payload.email,
-        })
-      : undefined;
+    return await this.workspaceSSOIdentityProviderRepository.findOne({
+      where: { id: identityProviderId },
+      relations: ['workspace'],
+    });
+  }
+
+  private async generateLoginToken(
+    payload: { email: string } & Record<string, string>,
+    identityProvider: WorkspaceSSOIdentityProvider,
+  ) {
+    if (!identityProvider) {
+      throw new AuthException(
+        'Identity provider not found',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
+
+    const invitation =
+      payload.email && identityProvider.workspace
+        ? await this.authService.findInvitationForSignInUp({
+            currentWorkspace: identityProvider.workspace,
+            email: payload.email,
+          })
+        : undefined;
 
     const existingUser = await this.userRepository.findOne({
       where: {
@@ -193,13 +189,12 @@ export class SSOAuthController {
     await this.authService.checkAccessForSignIn({
       userData,
       invitation,
-      workspaceInviteHash: payload.workspaceInviteHash,
-      workspace: currentWorkspace,
+      workspace: identityProvider.workspace,
     });
 
     const { workspace, user } = await this.authService.signInUp({
       userData,
-      workspace: currentWorkspace,
+      workspace: identityProvider.workspace,
       invitation,
       authParams: {
         provider: 'sso',
@@ -207,7 +202,7 @@ export class SSOAuthController {
     });
 
     return {
-      workspace,
+      identityProvider,
       loginToken: await this.loginTokenService.generateLoginToken(
         user.email,
         workspace.id,

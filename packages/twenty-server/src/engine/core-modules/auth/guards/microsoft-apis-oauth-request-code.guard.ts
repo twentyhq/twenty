@@ -12,9 +12,10 @@ import { MicrosoftAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/a
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
@@ -22,11 +23,11 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 ) {
   constructor(
     private readonly environmentService: EnvironmentService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly domainManagerService: DomainManagerService,
   ) {
     super({
       prompt: 'select_account',
@@ -37,16 +38,6 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
     let workspace: Workspace | null = null;
 
     try {
-      if (
-        !this.environmentService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED') &&
-        !this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
-      ) {
-        throw new AuthException(
-          'Microsoft apis auth is not enabled',
-          AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED,
-        );
-      }
-
       const request = context.switchToHttp().getRequest();
 
       const { workspaceId } =
@@ -57,6 +48,19 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
+
+      const isMicrosoftSyncEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsMicrosoftSyncEnabled,
+          workspaceId,
+        );
+
+      if (!isMicrosoftSyncEnabled) {
+        throw new AuthException(
+          'Microsoft sync is not enabled',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
       new MicrosoftAPIsOauthRequestCodeStrategy(this.environmentService);
       setRequestExtraParams(request, {
@@ -72,9 +76,9 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-          workspace,
-        ),
+        workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
       );
 
       return false;

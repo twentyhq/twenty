@@ -12,27 +12,23 @@ import {
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly sSOService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly environmentService: EnvironmentService,
   ) {
     super();
   }
 
-  private getStateByRequest(request: any): {
-    identityProviderId: string;
-  } {
+  private getIdentityProviderId(request: any): string {
     if (request.params.identityProviderId) {
-      return {
-        identityProviderId: request.params.identityProviderId,
-      };
+      return request.params.identityProviderId;
     }
 
     if (
@@ -43,34 +39,24 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     ) {
       const state = JSON.parse(request.query.state);
 
-      return {
-        identityProviderId: state.identityProviderId,
-      };
+      return state.identityProviderId;
     }
 
     throw new Error('Invalid OIDC identity provider params');
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest();
 
     let identityProvider:
       | (SSOConfiguration & WorkspaceSSOIdentityProvider)
       | null = null;
 
     try {
-      const state = this.getStateByRequest(request);
+      const identityProviderId = this.getIdentityProviderId(request);
 
-      if (!state.identityProviderId) {
-        throw new AuthException(
-          'identityProviderId missing',
-          AuthExceptionCode.INVALID_DATA,
-        );
-      }
-
-      identityProvider = await this.sSOService.findSSOIdentityProviderById(
-        state.identityProviderId,
-      );
+      identityProvider =
+        await this.sSOService.findSSOIdentityProviderById(identityProviderId);
 
       if (!identityProvider) {
         throw new AuthException(
@@ -78,6 +64,7 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
+
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
@@ -90,9 +77,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-          identityProvider?.workspace,
-        ),
+        identityProvider?.workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
       );
 
       return false;

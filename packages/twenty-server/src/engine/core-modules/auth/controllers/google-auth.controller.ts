@@ -18,9 +18,9 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -28,8 +28,8 @@ export class GoogleAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
+    private readonly environmentService: EnvironmentService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -51,9 +51,9 @@ export class GoogleAuthController {
       email,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       workspaceId,
       billingCheckoutSessionState,
-      locale,
     } = req.user;
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -65,7 +65,7 @@ export class GoogleAuthController {
 
     try {
       const invitation =
-        currentWorkspace && email
+        currentWorkspace && workspacePersonalInviteToken && email
           ? await this.authService.findInvitationForSignInUp({
               currentWorkspace,
               email,
@@ -82,7 +82,6 @@ export class GoogleAuthController {
           lastName,
           email,
           picture,
-          locale,
         },
         existingUser,
       );
@@ -112,7 +111,7 @@ export class GoogleAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          workspace,
+          subdomain: workspace.subdomain,
           billingCheckoutSessionState,
         }),
       );
@@ -120,9 +119,9 @@ export class GoogleAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
+          currentWorkspace ?? {
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          },
         ),
       );
     }
