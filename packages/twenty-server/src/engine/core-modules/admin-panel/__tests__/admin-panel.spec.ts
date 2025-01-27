@@ -7,10 +7,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -19,7 +17,6 @@ const WorkspaceFindOneMock = jest.fn();
 const FeatureFlagUpdateMock = jest.fn();
 const FeatureFlagSaveMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
-const EnvironmentServiceGetAllMock = jest.fn();
 
 jest.mock(
   'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum',
@@ -30,29 +27,6 @@ jest.mock(
       },
     };
   },
-);
-
-jest.mock(
-  '../../environment/constants/environment-variables-group-metadata',
-  () => ({
-    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
-      SERVER_CONFIG: {
-        position: 100,
-        description: 'Server config description',
-        isHiddenOnLoad: false,
-      },
-      RATE_LIMITING: {
-        position: 200,
-        description: 'Rate limiting description',
-        isHiddenOnLoad: false,
-      },
-      OTHER: {
-        position: 300,
-        description: 'Other description',
-        isHiddenOnLoad: true,
-      },
-    },
-  }),
 );
 
 describe('AdminPanelService', () => {
@@ -75,7 +49,7 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: getRepositoryToken(FeatureFlag, 'core'),
+          provide: getRepositoryToken(FeatureFlagEntity, 'core'),
           useValue: {
             update: FeatureFlagUpdateMock,
             save: FeatureFlagSaveMock,
@@ -85,21 +59,6 @@ describe('AdminPanelService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
-          },
-        },
-        {
-          provide: DomainManagerService,
-          useValue: {
-            getWorkspaceUrls: jest.fn().mockReturnValue({
-              customUrl: undefined,
-              subdomainUrl: 'https://twenty.twenty.com',
-            }),
-          },
-        },
-        {
-          provide: EnvironmentService,
-          useValue: {
-            getAll: EnvironmentServiceGetAllMock,
           },
         },
       ],
@@ -231,10 +190,7 @@ describe('AdminPanelService', () => {
       expect.objectContaining({
         workspace: {
           id: 'workspace-id',
-          workspaceUrls: {
-            customUrl: undefined,
-            subdomainUrl: 'https://twenty.twenty.com',
-          },
+          subdomain: 'example-subdomain',
         },
         loginToken: expect.objectContaining({
           token: 'mock-login-token',
@@ -257,127 +213,5 @@ describe('AdminPanelService', () => {
     );
 
     expect(UserFindOneMock).toHaveBeenCalled();
-  });
-
-  describe('getEnvironmentVariablesGrouped', () => {
-    it('should correctly group and sort environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
-        SERVER_URL: {
-          value: 'http://localhost',
-          metadata: {
-            group: 'SERVER_CONFIG',
-            description: 'Server URL',
-          },
-        },
-        RATE_LIMIT_TTL: {
-          value: '60',
-          metadata: {
-            group: 'RATE_LIMITING',
-            description: 'Rate limit TTL',
-          },
-        },
-        API_KEY: {
-          value: 'secret-key',
-          metadata: {
-            group: 'SERVER_CONFIG',
-            description: 'API Key',
-            sensitive: true,
-          },
-        },
-        OTHER_VAR: {
-          value: 'other',
-          metadata: {
-            group: 'OTHER',
-            description: 'Other var',
-          },
-        },
-      });
-
-      const result = service.getEnvironmentVariablesGrouped();
-
-      expect(result).toEqual({
-        groups: [
-          {
-            name: 'SERVER_CONFIG',
-            description: 'Server config description',
-            isHiddenOnLoad: false,
-            variables: [
-              {
-                name: 'API_KEY',
-                value: 'secret-key',
-                description: 'API Key',
-                sensitive: true,
-              },
-              {
-                name: 'SERVER_URL',
-                value: 'http://localhost',
-                description: 'Server URL',
-                sensitive: false,
-              },
-            ],
-          },
-          {
-            name: 'RATE_LIMITING',
-            description: 'Rate limiting description',
-            isHiddenOnLoad: false,
-            variables: [
-              {
-                name: 'RATE_LIMIT_TTL',
-                value: '60',
-                description: 'Rate limit TTL',
-                sensitive: false,
-              },
-            ],
-          },
-          {
-            name: 'OTHER',
-            description: 'Other description',
-            isHiddenOnLoad: true,
-            variables: [
-              {
-                name: 'OTHER_VAR',
-                value: 'other',
-                description: 'Other var',
-                sensitive: false,
-              },
-            ],
-          },
-        ],
-      });
-
-      expect(result.groups[0].name).toBe('SERVER_CONFIG');
-      expect(result.groups[1].name).toBe('RATE_LIMITING');
-      expect(result.groups[2].name).toBe('OTHER');
-    });
-
-    it('should handle empty environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({});
-
-      const result = service.getEnvironmentVariablesGrouped();
-
-      expect(result).toEqual({
-        groups: [],
-      });
-    });
-
-    it('should handle variables with undefined metadata fields', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
-        TEST_VAR: {
-          value: 'test',
-          metadata: {
-            group: 'SERVER_CONFIG',
-          },
-        },
-      });
-
-      const result = service.getEnvironmentVariablesGrouped();
-
-      expect(result.groups[0].variables[0]).toEqual({
-        name: 'TEST_VAR',
-        value: 'test',
-        description: undefined,
-        sensitive: false,
-      });
-    });
   });
 });

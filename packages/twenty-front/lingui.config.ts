@@ -1,9 +1,18 @@
 import { defineConfig } from '@lingui/cli';
-import { APP_LOCALES } from 'twenty-shared';
 
 export default defineConfig({
   sourceLocale: 'en',
-  locales: Object.values(APP_LOCALES),
+  locales: [
+    'en',
+    'fr',
+    'pt',
+    'de',
+    'it',
+    'es',
+    'zh-Hans',
+    'zh-Hant',
+    'pseudo-en',
+  ],
   pseudoLocale: 'pseudo-en',
   fallbackLocales: {
     'pseudo-en': 'en',
@@ -16,4 +25,12 @@ export default defineConfig({
   ],
   catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
   compileNamespace: 'ts',
+  ...(process.env.TRANSLATION_IO_API_KEY
+    ? {
+        service: {
+          name: 'TranslationIO',
+          apiKey: process.env.TRANSLATION_IO_API_KEY,
+        },
+      }
+    : {}),
 });
