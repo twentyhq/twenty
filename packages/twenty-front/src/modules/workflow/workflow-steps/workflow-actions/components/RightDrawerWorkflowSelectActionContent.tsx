@@ -2,28 +2,9 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import styled from '@emotion/styled';
 import { MenuItemCommand, useIcons } from 'twenty-ui';
-
-const StyledActionListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
-
-  padding-block: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSectionTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
+import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
+import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 
 export const RightDrawerWorkflowSelectActionContent = ({
   workflow,
@@ -36,8 +17,10 @@ export const RightDrawerWorkflowSelectActionContent = ({
   });
 
   return (
-    <StyledActionListContainer>
-      <StyledSectionTitle>Records</StyledSectionTitle>
+    <RightDrawerStepListContainer>
+      <RightDrawerWorkflowSelectStepTitle>
+        Records
+      </RightDrawerWorkflowSelectStepTitle>
       {RECORD_ACTIONS.map((action) => (
         <MenuItemCommand
           key={action.type}
@@ -46,7 +29,9 @@ export const RightDrawerWorkflowSelectActionContent = ({
           onClick={() => createStep(action.type)}
         />
       ))}
-      <StyledSectionTitle>Other</StyledSectionTitle>
+      <RightDrawerWorkflowSelectStepTitle>
+        Other
+      </RightDrawerWorkflowSelectStepTitle>
       {OTHER_ACTIONS.map((action) => (
         <MenuItemCommand
           key={action.type}
@@ -55,6 +40,6 @@ export const RightDrawerWorkflowSelectActionContent = ({
           onClick={() => createStep(action.type)}
         />
       ))}
-    </StyledActionListContainer>
+    </RightDrawerStepListContainer>
   );
 };
