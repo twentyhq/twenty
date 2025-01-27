@@ -6,7 +6,7 @@ import { expect, jest } from '@jest/globals';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import {
   AuthException,
@@ -51,7 +51,7 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: getRepositoryToken(FeatureFlagEntity, 'core'),
+          provide: getRepositoryToken(FeatureFlag, 'core'),
           useValue: {
             update: FeatureFlagUpdateMock,
             save: FeatureFlagSaveMock,
