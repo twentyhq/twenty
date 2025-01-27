@@ -25,11 +25,7 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') verifyToken: string,
   ) {
-    console.log('Received challenge:', challenge);
-
     const integration = await this.whatsappIntegrationService.findById(id);
-
-    console.log('===== integration: ', integration);
 
     if (mode && verifyToken) {
       if (mode === 'subscribe' && verifyToken === integration?.verifyToken) {
