@@ -3,7 +3,7 @@ import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import styled from '@emotion/styled';
-import { MenuItem, useIcons } from 'twenty-ui';
+import { MenuItemCommand, useIcons } from 'twenty-ui';
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
     <StyledActionListContainer>
       <StyledSectionTitle>Records</StyledSectionTitle>
       {RECORD_ACTIONS.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.type}
           LeftIcon={getIcon(action.icon)}
           text={action.label}
@@ -48,7 +48,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
       ))}
       <StyledSectionTitle>Other</StyledSectionTitle>
       {OTHER_ACTIONS.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.type}
           LeftIcon={getIcon(action.icon)}
           text={action.label}
