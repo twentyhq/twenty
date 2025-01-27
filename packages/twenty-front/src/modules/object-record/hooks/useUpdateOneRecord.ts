@@ -63,7 +63,10 @@ export const useUpdateOneRecord = <
     const optimisticRecordInput = computeOptimisticRecordFromInput({
       objectMetadataItem,
       recordInput: updateOneRecordInput,
+      cache: apolloClient.cache,
+      objectMetadataItems,
     });
+
     console.log('optimisticRecordInput', { optimisticRecordInput });
     console.log({
       updateOneRecordInput,
