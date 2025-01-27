@@ -54,7 +54,7 @@ export const AggregateDropdownContent = () => {
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={datesAvailableAggregations}
-          title="Dates"
+          title="Date"
         />
       );
     }
