@@ -92,11 +92,12 @@ export const CommandMenuTopBar = () => {
   return (
     <StyledInputContainer>
       <StyledContentContainer>
-        {isDefined(contextStoreCurrentObjectMetadataId) && (
-          <CommandMenuContextRecordChip
-            objectMetadataItemId={contextStoreCurrentObjectMetadataId}
-          />
-        )}
+        {commandMenuPage !== CommandMenuPages.SearchRecords &&
+          isDefined(contextStoreCurrentObjectMetadataId) && (
+            <CommandMenuContextRecordChip
+              objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+            />
+          )}
         {isDefined(Icon) && (
           <CommandMenuContextChip
             Icons={[<Icon size={theme.icon.size.sm} />]}
