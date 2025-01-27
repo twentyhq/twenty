@@ -7,7 +7,9 @@ export const SearchRecordsPage = () => {
   return (
     <CommandMenuList
       commandGroups={commandGroups}
-      selectableItemIds={[]}
+      selectableItemIds={commandGroups.flatMap((group) =>
+        group.items.map((item) => item.id),
+      )}
       loading={loading}
       noResults={noResultFound}
     />
