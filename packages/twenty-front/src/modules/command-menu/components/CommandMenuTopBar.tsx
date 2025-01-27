@@ -104,7 +104,8 @@ export const CommandMenuTopBar = () => {
           />
         )}
 
-        {commandMenuPage === CommandMenuPages.Root && (
+        {(commandMenuPage === CommandMenuPages.Root ||
+          commandMenuPage === CommandMenuPages.SearchRecords) && (
           <StyledInput
             autoFocus
             value={commandMenuSearch}

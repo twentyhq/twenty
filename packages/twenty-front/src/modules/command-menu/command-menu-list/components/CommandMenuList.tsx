@@ -47,8 +47,8 @@ const StyledInnerList = styled.div<{ isMobile: boolean }>`
 export const CommandMenuList = ({
   commands,
   filtering = true,
-  isLoading = false,
-  pagination,
+  //isLoading = false,
+  //pagination,
 }: CommandMenuListProps) => {
   const isMobile = useIsMobile();
 
