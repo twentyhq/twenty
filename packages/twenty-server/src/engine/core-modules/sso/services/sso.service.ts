@@ -23,6 +23,7 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class SSOService {
@@ -32,6 +33,7 @@ export class SSOService {
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
@@ -48,6 +50,17 @@ export class SSOService {
     }
   }
 
+  private async getIssuerForOIDC(issuerUrl: string) {
+    try {
+      return await Issuer.discover(issuerUrl);
+    } catch (err) {
+      throw new SSOException(
+        'Invalid issuer',
+        SSOExceptionCode.INVALID_ISSUER_URL,
+      );
+    }
+  }
+
   async createOIDCIdentityProvider(
     data: Pick<
       WorkspaceSSOIdentityProvider,
@@ -58,21 +71,7 @@ export class SSOService {
     try {
       await this.isSSOEnabled(workspaceId);
 
-      if (!data.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
-
-      const issuer = await Issuer.discover(data.issuer);
-
-      if (!issuer.metadata.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL from discovery',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
+      const issuer = await this.getIssuerForOIDC(data.issuer);
 
       const identityProvider =
         await this.workspaceSSOIdentityProviderRepository.save({
@@ -95,6 +94,8 @@ export class SSOService {
       if (err instanceof SSOException) {
         return err;
       }
+
+      this.exceptionHandlerService.captureExceptions([err]);
 
       return new SSOException(
         'Unknown SSO configuration error',
@@ -131,6 +132,7 @@ export class SSOService {
   async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
+      relations: ['workspace'],
     })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 
