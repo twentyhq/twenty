@@ -1,6 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -12,7 +11,6 @@ import {
   IconGoogle,
   IconMicrosoft,
 } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -35,9 +33,6 @@ export const SettingsAccountsListEmptyStateCard = ({
 }: SettingsAccountsListEmptyStateCardProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const isMicrosoftSyncEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsMicrosoftSyncEnabled,
-  );
 
   const { t } = useLingui();
 
@@ -53,7 +48,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             onClick={() => triggerApisOAuth('google')}
           />
         )}
-        {isMicrosoftSyncEnabled && currentWorkspace?.isMicrosoftAuthEnabled && (
+        {currentWorkspace?.isMicrosoftAuthEnabled && (
           <Button
             Icon={IconMicrosoft}
             title={t`Connect with Microsoft`}

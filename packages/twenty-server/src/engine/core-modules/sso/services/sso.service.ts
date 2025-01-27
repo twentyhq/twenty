@@ -37,11 +37,10 @@ export class SSOService {
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
-    const isSSOBillingEnabled =
-      await this.billingService.hasFreeAccessOrEntitlement(
-        workspaceId,
-        this.featureLookUpKey,
-      );
+    const isSSOBillingEnabled = await this.billingService.hasEntitlement(
+      workspaceId,
+      this.featureLookUpKey,
+    );
 
     if (!isSSOBillingEnabled) {
       throw new SSOException(
