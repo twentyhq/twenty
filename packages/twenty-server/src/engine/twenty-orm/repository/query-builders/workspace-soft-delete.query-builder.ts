@@ -1,14 +1,15 @@
-import { ObjectLiteral } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class WorkspaceSoftDeleteQueryBuilder<
-  Entity extends ObjectLiteral,
-> extends SoftDeleteQueryBuilder<Entity> {
+  T extends ObjectRecord,
+> extends SoftDeleteQueryBuilder<T> {
   constructor(
-    queryBuilder: SoftDeleteQueryBuilder<Entity>,
+    queryBuilder: SoftDeleteQueryBuilder<T>,
     private readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     private readonly objectMetadataMaps: ObjectMetadataMaps,
   ) {
@@ -17,8 +18,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
   override async execute() {
     const result = await super.execute();
-
-    console.log('soft delete or restore result');
 
     return result;
   }

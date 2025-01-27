@@ -1,13 +1,15 @@
-import { InsertQueryBuilder, ObjectLiteral } from 'typeorm';
+import { InsertQueryBuilder } from 'typeorm';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class WorkspaceInsertQueryBuilder<
-  Entity extends ObjectLiteral,
-> extends InsertQueryBuilder<Entity> {
+  T extends ObjectRecord,
+> extends InsertQueryBuilder<T> {
   constructor(
-    queryBuilder: InsertQueryBuilder<Entity>,
+    queryBuilder: InsertQueryBuilder<T>,
     private readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     private readonly objectMetadataMaps: ObjectMetadataMaps,
   ) {
@@ -16,8 +18,6 @@ export class WorkspaceInsertQueryBuilder<
 
   override async execute() {
     const result = await super.execute();
-
-    console.log('insert result');
 
     return result;
   }

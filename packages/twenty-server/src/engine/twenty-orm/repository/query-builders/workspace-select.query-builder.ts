@@ -1,8 +1,11 @@
-import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/query-builders/workspace-update.query-builder';
 
 import { WorkspaceDeleteQueryBuilder } from './workspace-delete.query-builder';
@@ -10,41 +13,38 @@ import { WorkspaceInsertQueryBuilder } from './workspace-insert.query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from './workspace-soft-delete.query-builder';
 
 export class WorkspaceSelectQueryBuilder<
-  Entity extends ObjectLiteral,
-> extends SelectQueryBuilder<Entity> {
+  T extends ObjectRecord,
+> extends SelectQueryBuilder<T> {
   constructor(
-    queryBuilder: SelectQueryBuilder<Entity>,
+    queryBuilder: SelectQueryBuilder<T>,
     protected readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     protected readonly objectMetadataMaps: ObjectMetadataMaps,
+    protected readonly manager: WorkspaceEntityManager,
   ) {
     super(queryBuilder);
   }
 
-  override async getMany(): Promise<Entity[]> {
+  override async getMany(): Promise<T[]> {
     const result = await super.getMany();
 
-    console.log('select many result');
-
     return result;
   }
 
-  override async getOne(): Promise<Entity | null> {
+  override async getOne(): Promise<T | null> {
     const result = await super.getOne();
 
-    console.log('select one result');
-
     return result;
   }
 
-  override update(): WorkspaceUpdateQueryBuilder<Entity>;
+  override update(): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
-    updateSet: QueryDeepPartialEntity<Entity>,
-  ): WorkspaceUpdateQueryBuilder<Entity>;
+    updateSet: QueryDeepPartialEntity<T>,
+  ): WorkspaceUpdateQueryBuilder<T>;
 
   override update(
-    updateSet?: QueryDeepPartialEntity<Entity>,
-  ): WorkspaceUpdateQueryBuilder<Entity> {
+    updateSet?: QueryDeepPartialEntity<T>,
+  ): WorkspaceUpdateQueryBuilder<T> {
     const updateQueryBuilder = updateSet
       ? super.update(updateSet)
       : super.update();
@@ -56,9 +56,9 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override insert(): WorkspaceInsertQueryBuilder<Entity>;
+  override insert(): WorkspaceInsertQueryBuilder<T>;
 
-  override insert(): WorkspaceInsertQueryBuilder<Entity> {
+  override insert(): WorkspaceInsertQueryBuilder<T> {
     const insertQueryBuilder = super.insert();
 
     return new WorkspaceInsertQueryBuilder(
@@ -68,7 +68,7 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override delete(): WorkspaceDeleteQueryBuilder<Entity> {
+  override delete(): WorkspaceDeleteQueryBuilder<T> {
     const deleteQueryBuilder = super.delete();
 
     return new WorkspaceDeleteQueryBuilder(
@@ -78,7 +78,7 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override softDelete(): WorkspaceSoftDeleteQueryBuilder<Entity> {
+  override softDelete(): WorkspaceSoftDeleteQueryBuilder<T> {
     const softDeleteQueryBuilder = super.softDelete();
 
     return new WorkspaceSoftDeleteQueryBuilder(
@@ -88,7 +88,7 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
-  override restore(): WorkspaceSoftDeleteQueryBuilder<Entity> {
+  override restore(): WorkspaceSoftDeleteQueryBuilder<T> {
     const restoreQueryBuilder = super.restore();
 
     return new WorkspaceSoftDeleteQueryBuilder(

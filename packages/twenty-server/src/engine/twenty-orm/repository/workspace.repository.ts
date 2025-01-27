@@ -14,16 +14,19 @@ import {
   RemoveOptions,
   Repository,
   SaveOptions,
+  SelectQueryBuilder,
   UpdateResult,
 } from 'typeorm';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -37,7 +40,7 @@ export class WorkspaceRepository<
   constructor(
     internalContext: WorkspaceInternalContext,
     target: EntityTarget<Entity>,
-    manager: EntityManager,
+    manager: WorkspaceEntityManager,
     queryRunner?: QueryRunner,
   ) {
     super(target, manager, queryRunner);
@@ -683,14 +686,19 @@ export class WorkspaceRepository<
     return formatResult(data, objectMetadata, objectMetadataMaps) as T;
   }
 
-  override createQueryBuilder(alias: string): WorkspaceQueryBuilder<Entity> {
-    const queryBuilder = super.createQueryBuilder(alias);
+  override createQueryBuilder<T extends ObjectRecord>(
+    alias: string,
+  ): WorkspaceQueryBuilder<T> {
+    const queryBuilder = super.createQueryBuilder(
+      alias,
+    ) as unknown as SelectQueryBuilder<T>;
     const objectMetadata = this.getObjectMetadataFromTarget();
 
     return new WorkspaceQueryBuilder(
       queryBuilder,
       objectMetadata,
       this.internalContext.objectMetadataMaps,
+      this.manager as WorkspaceEntityManager,
     );
   }
 }

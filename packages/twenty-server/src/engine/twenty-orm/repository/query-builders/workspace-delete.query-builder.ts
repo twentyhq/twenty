@@ -1,13 +1,15 @@
-import { DeleteQueryBuilder, ObjectLiteral } from 'typeorm';
+import { DeleteQueryBuilder } from 'typeorm';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class WorkspaceDeleteQueryBuilder<
-  Entity extends ObjectLiteral,
-> extends DeleteQueryBuilder<Entity> {
+  T extends ObjectRecord,
+> extends DeleteQueryBuilder<T> {
   constructor(
-    queryBuilder: DeleteQueryBuilder<Entity>,
+    queryBuilder: DeleteQueryBuilder<T>,
     private readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     private readonly objectMetadataMaps: ObjectMetadataMaps,
   ) {
@@ -16,8 +18,6 @@ export class WorkspaceDeleteQueryBuilder<
 
   override async execute() {
     const result = await super.execute();
-
-    console.log('delete result');
 
     return result;
   }
