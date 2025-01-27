@@ -10,6 +10,8 @@ import {
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class BillingMeterEventService {
@@ -18,6 +20,7 @@ export class BillingMeterEventService {
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async sendBillingMeterEvent({
@@ -29,6 +32,16 @@ export class BillingMeterEventService {
     eventName: BillingMeterEventName;
     value: number;
   }) {
+    const isBillingPlansEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsBillingPlansEnabled,
+        workspaceId,
+      );
+
+    if (!isBillingPlansEnabled) {
+      return;
+    }
+
     const workspaceStripeCustomer =
       await this.billingCustomerRepository.findOne({
         where: {
