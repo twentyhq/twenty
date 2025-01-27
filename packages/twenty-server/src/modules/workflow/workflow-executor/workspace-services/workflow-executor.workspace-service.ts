@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingMeterEventService } from 'src/engine/core-modules/billing/services/billing-meter-event.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   WorkflowRunOutput,
@@ -27,6 +28,7 @@ export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly billingMeterEventService: BillingMeterEventService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -47,10 +49,7 @@ export class WorkflowExecutorWorkspaceService {
       return { ...output, status: WorkflowRunStatus.COMPLETED };
     }
 
-    const hasWorkspaceSubscriptionOrFreeAccess =
-      await this.billingService.hasWorkspaceSubscriptionOrFreeAccess(
-        String(context.workspaceId),
-      );
+    const isBillingEnabled = await this.billingService.isBillingEnabled();
 
     const step = steps[currentStepIndex];
 
@@ -78,12 +77,45 @@ export class WorkflowExecutorWorkspaceService {
       result.error?.errorMessage ??
       (result.result ? undefined : 'Execution result error, no data or error');
 
-    if (!error && hasWorkspaceSubscriptionOrFreeAccess) {
-      await this.billingMeterEventService.sendBillingMeterEvent({
-        eventName: this.workflowNodeRunBillingMeterEventName,
-        value: 1,
-        workspaceId: String(context.workspaceId),
-      });
+    if (!error) {
+      if (isBillingEnabled) {
+        try {
+          const activeWorkspaceSubscription =
+            await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+              {
+                workspaceId: String(context.workspaceId),
+              },
+            );
+
+          if (!activeWorkspaceSubscription) {
+            this.logger.warn(
+              `No active workspace subscription found for workspace ${context.workspaceId}`,
+            );
+
+            return { ...output, status: WorkflowRunStatus.FAILED };
+          }
+
+          await this.billingMeterEventService
+            .sendBillingMeterEvent({
+              eventName: this.workflowNodeRunBillingMeterEventName,
+              value: 1,
+              workspaceId: String(context.workspaceId),
+            })
+            .catch((error) => {
+              this.logger.error(
+                `Failed to send billing meter event for workspace ${context.workspaceId}`,
+                error,
+              );
+            });
+        } catch (error) {
+          this.logger.error(
+            `Error checking workspace subscription for ${context.workspaceId}`,
+            error,
+          );
+
+          return { ...output, status: WorkflowRunStatus.FAILED };
+        }
+      }
     }
 
     const updatedStepOutput = {
