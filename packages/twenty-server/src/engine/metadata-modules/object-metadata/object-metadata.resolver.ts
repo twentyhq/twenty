@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,6 +28,30 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
   ) {}
+
+  @ResolveField(() => String, { nullable: true })
+  async labelPlural(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.objectMetadataService.resolveTranslatableString(
+      objectMetadata,
+      'labelPlural',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async labelSingular(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.objectMetadataService.resolveTranslatableString(
+      objectMetadata,
+      'labelSingular',
+      context.req.headers['x-locale'],
+    );
+  }
 
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(

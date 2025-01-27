@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { expect, jest } from '@jest/globals';
 import bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
