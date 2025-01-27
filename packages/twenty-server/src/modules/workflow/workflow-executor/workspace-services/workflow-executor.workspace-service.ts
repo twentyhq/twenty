@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingMeterEventService } from 'src/engine/core-modules/billing/services/billing-meter-event.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   WorkflowRunOutput,
@@ -28,7 +28,6 @@ export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly billingMeterEventService: BillingMeterEventService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -77,39 +76,17 @@ export class WorkflowExecutorWorkspaceService {
       result.error?.errorMessage ??
       (result.result ? undefined : 'Execution result error, no data or error');
 
-    if (!error) {
-      if (isBillingEnabled) {
-        try {
-          const activeWorkspaceSubscription =
-            await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-              {
-                workspaceId: String(context.workspaceId),
-              },
-            );
-
-          if (!activeWorkspaceSubscription) {
-            this.logger.warn(
-              `No active workspace subscription found for workspace ${context.workspaceId}`,
-            );
-
-            return { ...output, status: WorkflowRunStatus.FAILED };
-          }
-
-          await this.billingMeterEventService
-            .sendBillingMeterEvent({
-              eventName: this.workflowNodeRunBillingMeterEventName,
-              value: 1,
-              workspaceId: String(context.workspaceId),
-            })
-            .catch((error) => {
-              this.logger.error(
-                `Failed to send billing meter event for workspace ${context.workspaceId}`,
-                error,
-              );
-            });
-        } catch (error) {
+    if (!error && isBillingEnabled) {
+      try {
+        await this.billingMeterEventService.sendBillingMeterEvent({
+          eventName: this.workflowNodeRunBillingMeterEventName,
+          value: 1,
+          workspaceId: String(context.workspaceId),
+        });
+      } catch (error) {
+        if (error instanceof BillingException) {
           this.logger.error(
-            `Error checking workspace subscription for ${context.workspaceId}`,
+            `Workspace has no subscription to run workflow node ${context.workspaceId}: ${error.message}`,
             error,
           );
 
