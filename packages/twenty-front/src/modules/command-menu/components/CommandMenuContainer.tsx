@@ -1,5 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -91,7 +91,7 @@ export const CommandMenuContainer = ({
             }}
           >
             <RecordActionMenuEntriesSetter />
-            {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+            <RecordAgnosticActionMenuEntriesSetter />
             <ActionMenuConfirmationModals />
             {isCommandMenuOpened && (
               <StyledCommandMenu
