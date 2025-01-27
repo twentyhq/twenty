@@ -200,12 +200,12 @@ export const useSearchRecordsAction = () => {
   }, [customObjectRecordsMap]);
 
   const commands = [
-    ...peopleCommands,
-    ...companyCommands,
-    ...opportunityCommands,
-    ...noteCommands,
-    ...tasksCommands,
-    ...customObjectCommands,
+    ...(peopleCommands ?? []),
+    ...(companyCommands ?? []),
+    ...(opportunityCommands ?? []),
+    ...(noteCommands ?? []),
+    ...(tasksCommands ?? []),
+    ...(customObjectCommands ?? []),
   ];
 
   return {

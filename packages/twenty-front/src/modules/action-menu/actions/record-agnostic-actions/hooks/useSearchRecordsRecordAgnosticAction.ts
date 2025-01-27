@@ -13,7 +13,7 @@ export const useSearchRecordsRecordAgnosticAction = () => {
       () => {
         set(commandMenuPageState, CommandMenuPages.SearchRecords);
         set(commandMenuPageInfoState, {
-          title: 'Search records',
+          title: 'Search',
           Icon: IconSearch,
         });
         openCommandMenu();

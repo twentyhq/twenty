@@ -29,5 +29,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   ],
   [CommandMenuPages.WorkflowStepEdit, <RightDrawerWorkflowEditStep />],
   [CommandMenuPages.WorkflowStepView, <RightDrawerWorkflowViewStep />],
-  [CommandMenuPages.Search, <SearchRecordsPage />],
+  [CommandMenuPages.SearchRecords, <SearchRecordsPage />],
 ]);

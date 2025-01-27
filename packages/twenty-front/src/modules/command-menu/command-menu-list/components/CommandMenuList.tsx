@@ -70,6 +70,9 @@ export const CommandMenuList = ({
           <SelectableList
             selectableListId="command-menu-list"
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+            selectableItemIdArray={filteredCommands.map(
+              (command) => command.id,
+            )}
           >
             {filteredCommands.map((command) => (
               <SelectableItem itemId={command.id} key={command.id}>
