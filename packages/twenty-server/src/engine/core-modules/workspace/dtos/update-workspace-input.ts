@@ -13,7 +13,7 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  domainName?: string;
+  hostname?: string;
 
   @Field({ nullable: true })
   @IsString()
@@ -104,6 +104,14 @@ export class UpdateWorkspaceInput {
     'america',
   ])
   subdomain?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @Matches(
+    /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+  )
+  domain?: string;
 
   @Field({ nullable: true })
   @IsString()

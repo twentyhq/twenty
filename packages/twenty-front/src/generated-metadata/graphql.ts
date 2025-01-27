@@ -375,6 +375,14 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type CustomHostnameDetails = {
+  __typename?: 'CustomHostnameDetails';
+  hostname: Scalars['String']['output'];
+  ownership_verification?: Maybe<OwnershipVerification>;
+  ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
+  status: Scalars['String']['output'];
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID']['input'];
@@ -1046,6 +1054,19 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
+export type OwnershipVerification = {
+  __typename?: 'OwnershipVerification';
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type OwnershipVerificationHttp = {
+  __typename?: 'OwnershipVerificationHttp';
+  http_body: Scalars['String']['output'];
+  http_url: Scalars['String']['output'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -1112,6 +1133,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
@@ -1804,9 +1826,9 @@ export type Workspace = {
   databaseUrl: Scalars['String']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
-  domainName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
   hasValidEntrepriseKey: Scalars['Boolean']['output'];
+  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
