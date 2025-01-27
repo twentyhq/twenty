@@ -77,7 +77,6 @@ export class MicrosoftAPIsAuthController {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-
     if (!workspaceId) {
       throw new AuthException(
         'Workspace not found',
@@ -85,6 +84,12 @@ export class MicrosoftAPIsAuthController {
       );
     }
 
+    if (emails.length === 0) {
+      throw new AuthException(
+        'No email - Ask your Azure Entra Admin to add you one on top of your User Principal Name',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
     const handle = emails[0].value;
 
     await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
