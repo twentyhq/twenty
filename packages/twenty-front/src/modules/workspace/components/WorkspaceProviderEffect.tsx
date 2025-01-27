@@ -36,7 +36,7 @@ export const WorkspaceProviderEffect = () => {
   useEffect(() => {
     if (isDefaultDomain || !getPublicWorkspaceData) return;
 
-    // check if all provider are disable except custom sso.
+    // checks if any non-SSO providers are enabled
     if (
       Object.values(getPublicWorkspaceData.authProviders).filter(
         (value) => typeof value === 'boolean' && value,
