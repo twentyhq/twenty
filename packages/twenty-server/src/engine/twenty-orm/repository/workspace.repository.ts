@@ -24,6 +24,7 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -618,7 +619,7 @@ export class WorkspaceRepository<
   /**
    * PRIVATE METHODS
    */
-  private async getObjectMetadataFromTarget() {
+  private getObjectMetadataFromTarget() {
     const objectMetadataName =
       typeof this.target === 'string'
         ? this.target
@@ -666,7 +667,7 @@ export class WorkspaceRepository<
   }
 
   private async formatData<T>(data: T): Promise<T> {
-    const objectMetadata = await this.getObjectMetadataFromTarget();
+    const objectMetadata = this.getObjectMetadataFromTarget();
 
     return formatData(data, objectMetadata) as T;
   }
@@ -675,10 +676,21 @@ export class WorkspaceRepository<
     data: T,
     objectMetadata?: ObjectMetadataItemWithFieldMaps,
   ): Promise<T> {
-    objectMetadata ??= await this.getObjectMetadataFromTarget();
+    objectMetadata ??= this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
 
     return formatResult(data, objectMetadata, objectMetadataMaps) as T;
+  }
+
+  override createQueryBuilder(alias: string): WorkspaceQueryBuilder<Entity> {
+    const queryBuilder = super.createQueryBuilder(alias);
+    const objectMetadata = this.getObjectMetadataFromTarget();
+
+    return new WorkspaceQueryBuilder(
+      queryBuilder,
+      objectMetadata,
+      this.internalContext.objectMetadataMaps,
+    );
   }
 }
