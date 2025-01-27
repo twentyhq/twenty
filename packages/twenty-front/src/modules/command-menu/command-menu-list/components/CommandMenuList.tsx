@@ -19,8 +19,7 @@ export type CommandMenuListProps = {
   filtering: boolean;
   isLoading: boolean;
   pagination: { hasMore: boolean; pageSize: number; onLoadMore: () => void };
-  searchBarPlaceholder: string;
-  throttle: boolean;
+  // throttle: boolean;
 };
 
 const StyledList = styled.div`
@@ -50,8 +49,6 @@ export const CommandMenuList = ({
   filtering = true,
   isLoading = false,
   pagination,
-  //searchBarPlaceholder = '',
-  //throttle,
 }: CommandMenuListProps) => {
   const isMobile = useIsMobile();
 

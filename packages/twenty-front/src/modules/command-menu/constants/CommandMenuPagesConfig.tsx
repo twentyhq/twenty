@@ -3,6 +3,7 @@ import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { SearchRecordsPage } from '@/command-menu/pages/components/SearchRecordsPage';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
@@ -28,4 +29,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   ],
   [CommandMenuPages.WorkflowStepEdit, <RightDrawerWorkflowEditStep />],
   [CommandMenuPages.WorkflowStepView, <RightDrawerWorkflowViewStep />],
+  [CommandMenuPages.Search, <SearchRecordsPage />],
 ]);
