@@ -115,7 +115,6 @@ export class AccessTokenService {
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {
-    // console.log('validateTokenByRequest', request.headers);
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {

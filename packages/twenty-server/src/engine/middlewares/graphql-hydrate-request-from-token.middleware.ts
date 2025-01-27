@@ -40,7 +40,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (this.middlewareService.skipMiddleware(req)) {
+    if (this.middlewareService.checkUnauthenticatedAccess(req)) {
       return next();
     }
 
