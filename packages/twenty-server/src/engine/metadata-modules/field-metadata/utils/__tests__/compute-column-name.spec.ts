@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
-describe('computeColumnName', () => {
+describe('computeCompositeColumnName', () => {
   it('should compute composite column name for rich text v2 field', () => {
     const fieldMetadata = {
       name: 'bodyV2',
