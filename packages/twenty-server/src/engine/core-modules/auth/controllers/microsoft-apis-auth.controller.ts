@@ -87,18 +87,20 @@ export class MicrosoftAPIsAuthController {
           'Workspace not found',
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
-      }   workspace = await this.workspaceRepository.findOneBy({
+      }
+
+      workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
 
-
       if (emails.length === 0) {
-      throw new AuthException(
-        'No email - Ask your Azure Entra Admin to add you one on top of your User Principal Name',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-    const handle = emails[0].value;
+        throw new AuthException(
+          'No email - Ask your Azure Entra Admin to add you one on top of your User Principal Name',
+          AuthExceptionCode.USER_NOT_FOUND,
+        );
+      }
+
+      const handle = emails[0].value;
 
       await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
         handle,
