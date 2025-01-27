@@ -15,8 +15,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-export class addContextToActorCompositeType {}
-
 @Command({
   name: 'upgrade-0.41:add-context-to-actor-composite-type',
   description: 'Add context to actor composite type.',
@@ -48,23 +46,24 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
   ): Promise<void> {
     const { dryRun } = _options;
 
+    this.logger.log(`Running add-context-to-actor-composite-type command`);
+
     if (_options.dryRun) {
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
     for (const workspaceId of _workspaceIds) {
       await this.execute(workspaceId, dryRun);
-      this.logger.log(
-        `Added context to actor composite type for workspace: ${workspaceId}`,
-      );
+      this.logger.log(`Added for workspace: ${workspaceId}`);
     }
   }
 
   private async execute(workspaceId: string, dryRun = false): Promise<void> {
-    this.logger.log(
-      `Adding context to actor composite type for workspace: ${workspaceId}`,
-    );
+    this.logger.log(`Adding for workspace: ${workspaceId}`);
     // TODO
-
+    // 1. get all FieldMetadataType.ACTOR
+    // si SOURCE is MAIL ou CALENDAR
+    // 2. if fieldMetadata.compositeType is not null, then add context to the compositeType
+    //  'context' -> 'mailProvider' set to 'google'
     console.log('here');
   }
 }

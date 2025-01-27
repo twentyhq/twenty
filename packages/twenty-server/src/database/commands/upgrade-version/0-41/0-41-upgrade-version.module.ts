@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddContextToActorCompositeTypeCommand } from 'src/database/commands/upgrade-version/0-41/0-41-add-context-to-actor-composite-type';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-relations-to-field-metadata.command';
 import { SeedWorkflowViewsCommand } from 'src/database/commands/upgrade-version/0-41/0-41-seed-workflow-views.command';
 import { UpgradeTo0_41Command } from 'src/database/commands/upgrade-version/0-41/0-41-upgrade-version.command';
@@ -32,6 +33,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     SeedWorkflowViewsCommand,
     UpgradeTo0_41Command,
     MigrateRelationsToFieldMetadataCommand,
+    AddContextToActorCompositeTypeCommand,
   ],
 })
 export class UpgradeTo0_41CommandModule {}
