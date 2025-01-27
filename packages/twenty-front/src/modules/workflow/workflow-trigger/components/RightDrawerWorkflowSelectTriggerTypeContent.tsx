@@ -8,29 +8,10 @@ import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Other
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { MenuItem, useIcons } from 'twenty-ui';
-
-const StyledActionListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
-
-  padding-block: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSectionTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
+import { MenuItemCommand, useIcons } from 'twenty-ui';
+import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
+import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 
 export const RightDrawerWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -46,10 +27,12 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
   return (
-    <StyledActionListContainer>
-      <StyledSectionTitle>Data</StyledSectionTitle>
+    <RightDrawerStepListContainer>
+      <RightDrawerWorkflowSelectStepTitle>
+        Data
+      </RightDrawerWorkflowSelectStepTitle>
       {DATABASE_TRIGGER_TYPES.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.defaultLabel}
           LeftIcon={getIcon(action.icon)}
           text={action.defaultLabel}
@@ -71,9 +54,11 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
           }}
         />
       ))}
-      <StyledSectionTitle>Others</StyledSectionTitle>
+      <RightDrawerWorkflowSelectStepTitle>
+        Others
+      </RightDrawerWorkflowSelectStepTitle>
       {OTHER_TRIGGER_TYPES.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.defaultLabel}
           LeftIcon={getIcon(action.icon)}
           text={action.defaultLabel}
@@ -95,6 +80,6 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
           }}
         />
       ))}
-    </StyledActionListContainer>
+    </RightDrawerStepListContainer>
   );
 };
