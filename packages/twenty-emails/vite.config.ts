@@ -1,3 +1,4 @@
+import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { defineConfig } from 'vite';
@@ -9,7 +10,12 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
   plugins: [
-    react(),
+    react({
+      plugins: [['@lingui/swc-plugin', {}]],
+    }),
+    lingui({
+      configPath: path.resolve(__dirname, './lingui.config.ts'),
+    }),
     tsconfigPaths(),
     dts({
       entryRoot: 'src',

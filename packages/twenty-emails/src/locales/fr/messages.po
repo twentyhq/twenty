@@ -1,0 +1,104 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-01-21 22:51+0530\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: fr\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:34
+msgid "{daysLeft, plural, one {day left} other {days left}}"
+msgstr "{daysLeft, plural, one {jour restant} other {jours restants}}"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:50
+msgid "{daysLeft, plural, one {No need for concern, though! Simply create or edit a record within the next {remainingDays} day to retain access.} other {No need for concern, though! Simply create or edit a record within the next {remainingDays} days to retain access.}}"
+msgstr "{daysLeft, plural, one {Pas d'inquiétude ! Il vous suffit de créer ou de modifier un enregistrement dans les {remainingDays} jour à venir pour conserver l'accès.} other {Pas d'inquiétude ! Il vous suffit de créer ou de modifier un enregistrement dans les {remainingDays} jours à venir pour conserver l'accès.}}"
+
+#: src/emails/send-invite-link.email.tsx:60
+msgid "Accept invite"
+msgstr "Accepter l'invitation"
+
+#: src/emails/send-email-verification-link.email.tsx:24
+msgid "Confirm your email address"
+msgstr "Confirmez votre adresse email"
+
+#: src/emails/password-update-notify.email.tsx:46
+#: src/emails/clean-inactive-workspaces.email.tsx:58
+msgid "Connect to Twenty"
+msgstr "Connectez-vous à Twenty"
+
+#: src/emails/delete-inactive-workspaces.email.tsx:31
+msgid "Dead Workspaces 😵 that should be deleted"
+msgstr "Espaces de travail morts 😵 qui devraient être supprimés"
+
+#: src/emails/password-update-notify.email.tsx:26
+msgid "Dear"
+msgstr "Cher(e)"
+
+#: src/emails/password-update-notify.email.tsx:26
+msgid "Dear {userName}"
+msgstr "Cher(e) {userName}"
+
+#: src/emails/send-invite-link.email.tsx:53
+msgid "has invited you to join a workspace called "
+msgstr "vous a invité à rejoindre un espace de travail appelé"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:28
+msgid "Hello"
+msgstr "Bonjour"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:28
+msgid "Hello {userName}"
+msgstr "Bonjour {userName}"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:32
+msgid "Inactive Workspace 😴"
+msgstr "Espace de travail inactif 😴"
+
+#: src/emails/clean-inactive-workspaces.email.tsx:40
+msgid "It appears that there has been a period of inactivity on your<0>{workspaceDisplayName}</0> workspace.<1/><2/>Please note that the account is due for deactivation soon, and all associated data within this workspace will be deleted.<3/><4/>"
+msgstr "Il semble qu'il y ait eu une période d'inactivité sur votre espace de travail <0>{workspaceDisplayName}</0>.<1/><2/>Veuillez noter que le compte sera bientôt désactivé et que toutes les données associées à cet espace de travail seront supprimées.<3/><4/>"
+
+#: src/emails/send-invite-link.email.tsx:45
+msgid "Join your team on Twenty"
+msgstr "Rejoignez votre équipe sur Twenty"
+
+#: src/emails/delete-inactive-workspaces.email.tsx:33
+msgid "List of <0>workspaceIds</0> inactive since at least <1>{minDaysSinceInactive} days</1>:"
+msgstr "Liste des <0>workspaceIds</0> inactifs depuis au moins <1>{minDaysSinceInactive} jours</1>:"
+
+#: src/emails/password-update-notify.email.tsx:31
+msgid "Password updated"
+msgstr "Mot de passe mis à jour"
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: src/emails/password-reset-link.email.tsx:25
+msgid "Reset your password 🗝"
+msgstr "Réinitialiser votre mot de passe 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:29
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "Merci de vous être inscrit sur Twenty ! Avant de commencer, nous devons simplement confirmer qu'il s'agit bien de vous. Cliquez ci-dessus pour vérifier votre adresse e-mail."
+
+#: src/emails/password-update-notify.email.tsx:36
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}.<0/><1/>Si vous n'avez pas initié cette modification, veuillez contacter immédiatement le propriétaire de votre espace de travail."
+
+
+#: src/emails/password-reset-link.email.tsx:28
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
+msgstr "Ce lien n'est valable que pour les {duration} à venir. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :<0/>"
+
+#: src/emails/send-email-verification-link.email.tsx:25
+msgid "Verify Email"
+msgstr "Vérifier l'e-mail"

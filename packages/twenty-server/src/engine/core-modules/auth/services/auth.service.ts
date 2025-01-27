@@ -415,12 +415,11 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
+      locale: 'en',
     });
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 

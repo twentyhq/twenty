@@ -7,7 +7,8 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["vite/client"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "moduleResolution": "bundler"
   },
   "files": [],
   "include": [],

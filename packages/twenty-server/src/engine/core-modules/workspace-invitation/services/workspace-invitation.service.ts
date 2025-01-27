@@ -296,14 +296,13 @@ export class WorkspaceInvitationService {
             lastName: sender.lastName,
           },
           serverUrl: this.environmentService.get('SERVER_URL'),
+          locale: 'en',
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate, {
-          pretty: true,
-        });
+        const html = await render(emailTemplate);
 
-        const text = render(emailTemplate, {
+        const text = await render(emailTemplate, {
           plainText: true,
         });
 
