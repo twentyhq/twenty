@@ -10,6 +10,7 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { capitalize } from 'twenty-shared';
@@ -65,7 +66,16 @@ export const useUpdateOneRecord = <
         recordInput: updateOneRecordInput,
       }),
     };
-
+    const tmp = computeOptimisticRecordFromInput({
+      objectMetadataItem,
+      recordInput: updateOneRecordInput
+    });
+    console.log("TMP", {tmp})
+    console.log({
+      sanitizedInput,
+      updateOneRecordInput,
+      optimisticRecord,
+    })
     const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
@@ -73,7 +83,7 @@ export const useUpdateOneRecord = <
       objectMetadataItem,
       objectMetadataItems,
       recordGqlFields: computedRecordGqlFields,
-      computeReferences: true,
+      computeReferences: false,
     });
 
     const computedOptimisticRecord = {
@@ -89,9 +99,9 @@ export const useUpdateOneRecord = <
         objectMetadataItem,
         objectMetadataItems,
         recordGqlFields: computedRecordGqlFields,
-        computeReferences: true,
+        computeReferences: false,
       });
-
+    console.log({cachedRecordWithConnection, optimisticRecordWithConnection})
     if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
       return null;
     }
@@ -126,13 +136,14 @@ export const useUpdateOneRecord = <
 
           if (!record || !cachedRecord) return;
 
-          triggerUpdateRecordOptimisticEffect({
-            cache,
-            objectMetadataItem,
-            currentRecord: cachedRecord,
-            updatedRecord: record,
-            objectMetadataItems,
-          });
+          console.log("NOT CACHING")
+          // triggerUpdateRecordOptimisticEffect({
+          //   cache,
+          //   objectMetadataItem,
+          //   currentRecord: cachedRecord,
+          //   updatedRecord: record,
+          //   objectMetadataItems,
+          // });
         },
       })
       .catch((error: Error) => {
