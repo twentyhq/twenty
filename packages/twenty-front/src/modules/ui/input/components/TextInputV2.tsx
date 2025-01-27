@@ -63,7 +63,7 @@ const StyledInput = styled.input<
   padding: ${({ theme, sizeVariant }) =>
     sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
-    LeftIcon ? `px` : theme.spacing(2)};
+    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
