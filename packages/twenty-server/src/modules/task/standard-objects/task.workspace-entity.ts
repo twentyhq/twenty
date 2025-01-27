@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -44,9 +45,9 @@ export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.task,
   namePlural: 'tasks',
-  labelSingular: 'Task',
-  labelPlural: 'Tasks',
-  description: 'A task',
+  labelSingular: msg`Task`,
+  labelPlural: msg`Tasks`,
+  description: msg`A task`,
   icon: STANDARD_OBJECT_ICONS.task,
   shortcut: 'T',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,

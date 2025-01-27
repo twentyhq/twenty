@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -56,9 +57,9 @@ const WorkflowStatusOptions: FieldMetadataComplexOption[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflow,
   namePlural: 'workflows',
-  labelSingular: 'Workflow',
-  labelPlural: 'Workflows',
-  description: 'A workflow',
+  labelSingular: msg`Workflow`,
+  labelPlural: msg`Workflows`,
+  description: msg`A workflow`,
   icon: STANDARD_OBJECT_ICONS.workflow,
   shortcut: 'W',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,

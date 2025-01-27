@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -24,9 +25,9 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
-  labelSingular: 'Message',
-  labelPlural: 'Messages',
-  description: 'Message',
+  labelSingular: msg`Message`,
+  labelPlural: msg`Messages`,
+  description: msg`Message`,
   icon: STANDARD_OBJECT_ICONS.message,
   labelIdentifierStandardId: MESSAGE_STANDARD_FIELD_IDS.subject,
 })
