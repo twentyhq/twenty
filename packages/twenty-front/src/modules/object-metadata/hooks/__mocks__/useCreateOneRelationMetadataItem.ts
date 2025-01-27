@@ -19,7 +19,7 @@ export const query = gql`
 
 export const variables = {
   input: {
-    relation: {
+    relationMetadata: {
       fromDescription: null,
       fromIcon: undefined,
       fromLabel: 'label',
