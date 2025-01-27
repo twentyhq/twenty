@@ -65,6 +65,6 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
     );
     // TODO
 
-    console.log(objectMetadatas);
+    console.log('here');
   }
 }
