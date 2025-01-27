@@ -105,7 +105,7 @@ export default defineConfig(({ command, mode }) => {
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
-      // checker(checkers),
+      checker(checkers),
       // TODO: fix this, we have to restrict the include to only the components that are using linaria
       // Otherwise the build will fail because wyw tries to include emotion styled components
       wyw({

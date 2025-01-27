@@ -43,6 +43,10 @@ export class WhatsappIntegration {
   @Column({ nullable: false })
   accessToken: string;
 
+  @Field({ nullable: false })
+  @Column({ nullable: false })
+  verifyToken: string;
+
   @Field({ defaultValue: false, nullable: false })
   @Column({ default: false })
   disabled: boolean;

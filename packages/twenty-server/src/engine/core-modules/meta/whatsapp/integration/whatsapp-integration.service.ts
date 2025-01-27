@@ -1,8 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CreateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/create-whatsapp-integration.input';
 import { UpdateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/update-whatsapp-integration.input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
@@ -14,6 +17,7 @@ export class WhatsappIntegrationService {
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async create(
@@ -29,15 +33,17 @@ export class WhatsappIntegrationService {
       throw new Error('Workspace not found');
     }
 
-    const createIntegration = this.whatsappIntegrationRepository.create({
+    const createdIntegration = this.whatsappIntegrationRepository.create({
       ...createInput,
       workspace: workspace,
       sla: 30,
+      verifyToken: v4(),
     });
 
-    await this.whatsappIntegrationRepository.save(createIntegration);
+    await this.whatsappIntegrationRepository.save(createdIntegration);
+    await this.subscribeWebhook(createdIntegration);
 
-    return createIntegration;
+    return createdIntegration;
   }
 
   async findAll(workspaceId: string): Promise<WhatsappIntegration[]> {
@@ -64,12 +70,23 @@ export class WhatsappIntegrationService {
       throw new Error('Integration not found');
     }
 
+    const oldIntegration = { ...integration };
+
     const updateIntegration = {
       ...integration,
       ...updateInput,
     };
 
     await this.whatsappIntegrationRepository.save(updateIntegration);
+
+    const hasAppIdChanged = oldIntegration.appId !== updateIntegration.appId;
+    const hasAppKeyChanged = oldIntegration.appKey !== updateIntegration.appKey;
+    const hasAccessTokenChanged =
+      oldIntegration.accessToken !== updateIntegration.accessToken;
+
+    if (hasAppIdChanged || hasAppKeyChanged || hasAccessTokenChanged) {
+      await this.subscribeWebhook(updateIntegration);
+    }
 
     return updateIntegration;
   }
@@ -103,5 +120,34 @@ export class WhatsappIntegrationService {
     await this.whatsappIntegrationRepository.save(integration);
 
     return integration;
+  }
+
+  private async subscribeWebhook(integration: WhatsappIntegration) {
+    const { id, appId, verifyToken, appKey } = integration;
+
+    const META_API_URL = this.environmentService.get('META_API_URL');
+    const META_WEBHOOK_URL = `${this.environmentService.get('META_WEBHOOK_URL')}/whatsapp/webhook/${id}`;
+
+    const fields = 'messages';
+
+    const url = `${META_API_URL}/${appId}/subscriptions`;
+
+    const params = {
+      access_token: `${appId}|${appKey}`,
+      object: 'whatsapp_business_account',
+      callback_url: META_WEBHOOK_URL,
+      verify_token: verifyToken,
+      fields: fields,
+    };
+
+    try {
+      await axios.post(url, params, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to call subscriptions API', err);
+      throw new Error('Failed to call subscriptions API');
+    }
   }
 }

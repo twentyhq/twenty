@@ -11,6 +11,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappIntegrationResolver } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.resolver';
 import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.service';
+import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -31,6 +32,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
   ],
   exports: [],
+  controllers: [WhatsappController],
   providers: [
     TypeORMService,
     WhatsappIntegrationService,
