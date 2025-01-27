@@ -25,7 +25,7 @@ export class BillingService {
     return this.environmentService.get('IS_BILLING_ENABLED');
   }
 
-  async hasWorkspaceSubscription(workspaceId: string) {
+  async hasWorkspaceAnySubscription(workspaceId: string) {
     const isBillingEnabled = this.isBillingEnabled();
 
     if (!isBillingEnabled) {
