@@ -1,20 +1,16 @@
+import { FavoriteFolderNavigationDrawerItemDropdownButton } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdownButton';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import {
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
+import { IconPencil, IconTrash, MenuItem } from 'twenty-ui';
 
 type FavoriteFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
   onRename: () => void;
   onDelete: () => void;
   closeDropdown: () => void;
+  isDropdownOpen: boolean;
 };
 
 export const FavoriteFolderNavigationDrawerItemDropdown = ({
@@ -22,6 +18,7 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
   onRename,
   onDelete,
   closeDropdown,
+  isDropdownOpen,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
   const handleRename = () => {
     onRename();
@@ -41,7 +38,10 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       }}
       data-select-disable
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <FavoriteFolderNavigationDrawerItemDropdownButton
+          dropdownId={`favorite-folder-edit-${folderId}`}
+          isDropdownOpen={isDropdownOpen}
+        />
       }
       dropdownPlacement="bottom-start"
       dropdownComponents={
