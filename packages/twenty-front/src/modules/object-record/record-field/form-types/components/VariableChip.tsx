@@ -16,6 +16,7 @@ const StyledChip = styled.div<{ deletable: boolean }>`
   column-gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   user-select: none;
+  white-space: nowrap;
 
   ${({ theme, deletable }) =>
     !deletable &&
@@ -27,7 +28,6 @@ const StyledChip = styled.div<{ deletable: boolean }>`
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.color.blue};
   line-height: 140%;
-  white-space: nowrap;
 `;
 
 const StyledDelete = styled.button`
