@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
@@ -9,9 +9,18 @@ import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/h
 
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } =
     useGetPublicWorkspaceDataBySubdomain();
+
+  const { redirectToSSOLoginPage } = useSSO();
+
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
@@ -23,6 +32,31 @@ export const WorkspaceProviderEffect = () => {
   const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+
+  useEffect(() => {
+    if (isDefaultDomain || !getPublicWorkspaceData) return;
+
+    // check if all provider are disable except custom sso.
+    if (
+      Object.values(getPublicWorkspaceData.authProviders).filter(
+        (value) => typeof value === 'boolean' && value,
+      ).length !== 0
+    )
+      return;
+
+    if (getPublicWorkspaceData.authProviders.sso.length > 1) {
+      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
+    }
+
+    if (getPublicWorkspaceData.authProviders.sso.length === 1) {
+      redirectToSSOLoginPage(getPublicWorkspaceData.authProviders.sso[0].id);
+    }
+  }, [
+    redirectToSSOLoginPage,
+    setSignInUpStep,
+    getPublicWorkspaceData,
+    isDefaultDomain,
+  ]);
 
   useEffect(() => {
     if (

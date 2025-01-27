@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -12,6 +13,8 @@ export const useSSO = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [getAuthorizationUrlMutation] = useGetAuthorizationUrlMutation();
+
+  const { redirect } = useRedirect();
 
   const getAuthorizationUrlForSSO = async ({
     identityProviderId,
@@ -41,8 +44,9 @@ export const useSSO = () => {
       );
     }
 
-    window.location.href =
-      authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL;
+    redirect(
+      authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL,
+    );
     return;
   };
 

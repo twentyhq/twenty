@@ -150,11 +150,9 @@ export class WorkspaceResolver {
       workspace.id,
     );
 
-    const filteredFeatureFlags = featureFlags.filter((flag) =>
+    return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
-
-    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)

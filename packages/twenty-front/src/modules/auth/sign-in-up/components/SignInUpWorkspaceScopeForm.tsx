@@ -28,30 +28,34 @@ export const SignInUpWorkspaceScopeForm = () => {
 
   return (
     <>
-      <StyledContentContainer>
-        {workspaceAuthProviders.google && <SignInUpWithGoogle />}
+      {workspaceAuthProviders && (
+        <>
+          <StyledContentContainer>
+            {workspaceAuthProviders.google && <SignInUpWithGoogle />}
 
-        {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
+            {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
 
-        {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
+            {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 
-        {(workspaceAuthProviders.google ||
-          workspaceAuthProviders.microsoft ||
-          workspaceAuthProviders.sso.length > 0) &&
-        workspaceAuthProviders.password ? (
-          <HorizontalSeparator />
-        ) : null}
-        {workspaceAuthProviders.password && (
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          <FormProvider {...form}>
-            <SignInUpWithCredentials />
-          </FormProvider>
-        )}
-      </StyledContentContainer>
-      {signInUpStep === SignInUpStep.Password && (
-        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
-          Forgot your password?
-        </ActionLink>
+            {(workspaceAuthProviders.google ||
+              workspaceAuthProviders.microsoft ||
+              workspaceAuthProviders.sso.length > 0) &&
+            workspaceAuthProviders.password ? (
+              <HorizontalSeparator />
+            ) : null}
+            {workspaceAuthProviders.password && (
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              <FormProvider {...form}>
+                <SignInUpWithCredentials />
+              </FormProvider>
+            )}
+          </StyledContentContainer>
+          {signInUpStep === SignInUpStep.Password && (
+            <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
+              Forgot your password?
+            </ActionLink>
+          )}
+        </>
       )}
     </>
   );
