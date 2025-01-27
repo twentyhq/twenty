@@ -42,11 +42,12 @@ export class GraphQLHydrateRequestFromTokenMiddleware
   async use(req: Request, res: Response, next: NextFunction) {
     const body = req.body;
 
-    if (
-      !this.middlewareService.isTokenPresent(req) &&
-      (!body?.operationName ||
-        this.middlewareService.excludedOperations.includes(body.operationName))
-    ) {
+    const isUserUnauthenticated = !this.middlewareService.isTokenPresent(req);
+    const isExcludedOperation =
+      !body?.operationName ||
+      this.middlewareService.excludedOperations.includes(body.operationName);
+
+    if (isUserUnauthenticated && isExcludedOperation) {
       return next();
     }
 

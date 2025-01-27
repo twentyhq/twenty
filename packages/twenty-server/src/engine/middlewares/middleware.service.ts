@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
 import { EXCLUDED_MIDDLEWARE_OPERATIONS } from 'src/engine/middlewares/constants/excluded-middleware-operations.constant';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class MiddlewareService {
@@ -17,20 +18,29 @@ export class MiddlewareService {
     return !!token;
   }
 
+  private hasErrorStatus(error: unknown): error is { status: number } {
+    return isDefined((error as { status: number }).status);
+  }
+
   public writeResponseOnExceptionCaught(
     res: Response,
     source: 'rest' | 'graphql',
-    error: any,
-    errors: any[],
+    error: unknown,
+    errors: unknown[],
   ) {
-    res.writeHead(
-      source === 'graphql'
-        ? 200
-        : error instanceof Error
-          ? 500
-          : error.status || 500,
-      { 'Content-Type': 'application/json' },
-    );
+    const getStatus = () => {
+      if (source === 'graphql') {
+        return 200;
+      }
+
+      if (this.hasErrorStatus(error)) {
+        return error.status;
+      }
+
+      return 500;
+    };
+
+    res.writeHead(getStatus(), { 'Content-Type': 'application/json' });
     res.write(
       JSON.stringify({
         errors,

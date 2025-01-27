@@ -1,7 +1,6 @@
 import {
   FAKE_PERSON_ID,
   PERSON_1_ID,
-  PERSON_2_ID,
 } from 'test/integration/constants/mock-person-ids.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
@@ -14,7 +13,6 @@ describe('REST API > Core (integration)', () => {
 
   beforeAll(async () => {
     const personCity1 = generateRecordName(PERSON_1_ID);
-    const personCity2 = generateRecordName(PERSON_2_ID);
 
     // TODO: move this creation to REST API when the POST method is migrated
     const graphqlOperation = createManyOperationFactory({
@@ -26,39 +24,34 @@ describe('REST API > Core (integration)', () => {
           id: PERSON_1_ID,
           city: personCity1,
         },
-        {
-          id: PERSON_2_ID,
-          city: personCity2,
-        },
       ],
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
     people = response.body.data.createPeople;
+    expect(people.length).toBe(1);
   });
 
   describe('Delete one', () => {
-    it('1a. should have created people before delete', async () => {
-      expect(people.length).toBeTruthy();
-    });
-
-    it('1b. should delete one person', async () => {
+    it('1a. should delete one person', async () => {
       const response = await makeRestAPIRequest(
         'delete',
         `/people/${PERSON_1_ID}`,
       );
 
       expect(response.body.data.deletePerson.id).toBeTruthy();
+      expect(response.body.data.deletePerson.id).toBe(PERSON_1_ID);
     });
 
-    it('1.c should return a BadRequestException when trying to delete a non-existing person', async () => {
+    it('1.b. should return a BadRequestException when trying to delete a non-existing person', async () => {
       const response = await makeRestAPIRequest(
         'delete',
         `/people/${FAKE_PERSON_ID}`,
       );
 
       expect(response.body.errors).toBeTruthy();
+      expect(response.statusCode).toBe(400);
     });
   });
 });
