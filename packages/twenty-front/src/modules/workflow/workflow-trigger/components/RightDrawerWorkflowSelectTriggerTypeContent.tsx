@@ -10,7 +10,7 @@ import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hoo
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { MenuItem, useIcons } from 'twenty-ui';
+import { MenuItemCommand, useIcons } from 'twenty-ui';
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -49,7 +49,7 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
     <StyledActionListContainer>
       <StyledSectionTitle>Data</StyledSectionTitle>
       {DATABASE_TRIGGER_TYPES.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.defaultLabel}
           LeftIcon={getIcon(action.icon)}
           text={action.defaultLabel}
@@ -73,7 +73,7 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
       ))}
       <StyledSectionTitle>Others</StyledSectionTitle>
       {OTHER_TRIGGER_TYPES.map((action) => (
-        <MenuItem
+        <MenuItemCommand
           key={action.defaultLabel}
           LeftIcon={getIcon(action.icon)}
           text={action.defaultLabel}
