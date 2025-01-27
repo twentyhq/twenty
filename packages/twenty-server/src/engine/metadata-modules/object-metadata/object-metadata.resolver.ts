@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { i18n } from '@lingui/core';
-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -31,26 +29,12 @@ export class ObjectMetadataResolver {
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
   ) {}
 
-  private async resolveLabel(
-    objectMetadata: ObjectMetadataDTO,
-    labelKey: 'labelPlural' | 'labelSingular',
-    locale: string,
-  ): Promise<string> {
-    if (objectMetadata.isCustom) {
-      return objectMetadata[labelKey];
-    }
-
-    i18n.activate(locale);
-
-    return i18n._(objectMetadata[labelKey]);
-  }
-
   @ResolveField(() => String, { nullable: true })
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context,
   ): Promise<string> {
-    return this.resolveLabel(
+    return this.objectMetadataService.resolveTranslatableString(
       objectMetadata,
       'labelPlural',
       context.req.headers['x-locale'],
@@ -62,7 +46,7 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context,
   ): Promise<string> {
-    return this.resolveLabel(
+    return this.objectMetadataService.resolveTranslatableString(
       objectMetadata,
       'labelSingular',
       context.req.headers['x-locale'],
