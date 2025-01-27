@@ -1,19 +1,24 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
+import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -60,6 +65,8 @@ export const CommandMenu = () => {
   const { t } = useLingui();
 
   const { onItemClick } = useCommandMenuOnItemClick();
+  const { resetPreviousCommandMenuContext } =
+    useResetPreviousCommandMenuContext();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
@@ -84,21 +91,32 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const selectableItems = copilotCommands
-    .concat(matchingStandardActionRecordSelectionCommands)
-    .concat(matchingWorkflowRunRecordSelectionCommands)
-    .concat(matchingStandardActionGlobalCommands)
-    .concat(matchingWorkflowRunGlobalCommands)
-    .concat(matchingNavigateCommand)
-    .concat(peopleCommands)
-    .concat(companyCommands)
-    .concat(opportunityCommands)
-    .concat(noteCommands)
-    .concat(tasksCommands)
-    .concat(customObjectCommands)
+  const selectableItems: Command[] = copilotCommands
+    .concat(
+      matchingStandardActionRecordSelectionCommands,
+      matchingWorkflowRunRecordSelectionCommands,
+      matchingStandardActionGlobalCommands,
+      matchingWorkflowRunGlobalCommands,
+      matchingNavigateCommand,
+      peopleCommands,
+      companyCommands,
+      opportunityCommands,
+      noteCommands,
+      tasksCommands,
+      customObjectCommands,
+    )
     .filter(isDefined);
 
+  const previousContextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
+    'command-menu-previous',
+  );
+
   const selectableItemIds = selectableItems.map((item) => item.id);
+
+  if (isNonEmptyString(previousContextStoreCurrentObjectMetadataId)) {
+    selectableItemIds.unshift('reset-context-to-selection');
+  }
 
   const commandGroups: CommandGroupConfig[] = [
     {
@@ -168,6 +186,11 @@ export const CommandMenu = () => {
               selectableItemIdArray={selectableItemIds}
               hotkeyScope={AppHotkeyScope.CommandMenu}
               onEnter={(itemId) => {
+                if (itemId === 'reset-context-to-selection') {
+                  resetPreviousCommandMenuContext();
+                  return;
+                }
+
                 const command = selectableItems.find(
                   (item) => item.id === itemId,
                 );
@@ -184,6 +207,16 @@ export const CommandMenu = () => {
                 }
               }}
             >
+              {isNonEmptyString(
+                previousContextStoreCurrentObjectMetadataId,
+              ) && (
+                <CommandGroup heading={t`Context`} key={t`Context`}>
+                  <SelectableItem itemId="reset-context-to-selection">
+                    <ResetContextToSelectionCommandButton />
+                  </SelectableItem>
+                </CommandGroup>
+              )}
+
               {isNoResults && !isLoading && (
                 <StyledEmpty>No results found</StyledEmpty>
               )}

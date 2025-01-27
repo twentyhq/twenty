@@ -9,13 +9,14 @@ import {
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasReadonlyEffect = () => {
+  const { getIcon } = useIcons();
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setHotkeyScope = useSetHotkeyScope();
@@ -38,7 +39,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
       openRightDrawer(RightDrawerPages.WorkflowStepView, {
         title: selectedNodeData.name,
-        Icon: getWorkflowNodeIcon(selectedNodeData),
+        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
       });
     },
     [
@@ -47,6 +48,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       openRightDrawer,
       closeRightDrawer,
       closeCommandMenu,
+      getIcon,
     ],
   );
 

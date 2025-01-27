@@ -39,6 +39,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,

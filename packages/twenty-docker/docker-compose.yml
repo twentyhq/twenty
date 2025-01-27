@@ -21,7 +21,7 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
@@ -47,7 +47,7 @@ services:
     image: twentycrm/twenty:${TAG:-latest}
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
@@ -70,12 +70,12 @@ services:
     volumes:
       - db-data:/home/postgres/pgdata
     environment:
-      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
-      PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-postgres}
+      PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
       ALLOW_NOSSL: "true"
       SPILO_PROVIDER: "local"
     healthcheck:
-      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10

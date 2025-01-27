@@ -26,7 +26,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
@@ -35,26 +35,26 @@ import {
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   AuthProviderWithPasswordType,
   ExistingUserOrNewUser,
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -113,7 +113,10 @@ export class AuthService {
     );
   }
 
-  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+  async getLoginTokenFromCredentials(
+    input: GetLoginTokenFromCredentialsInput,
+    targetWorkspace: Workspace,
+  ) {
     if (!targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
         'Email/Password auth is not enabled for this workspace',
@@ -123,7 +126,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: {
-        email: challengeInput.email,
+        email: input.email,
       },
       relations: ['workspaces'],
     });
@@ -144,10 +147,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await compareHash(
-      challengeInput.password,
-      user.passwordHash,
-    );
+    const isValid = await compareHash(input.password, user.passwordHash);
 
     if (!isValid) {
       throw new AuthException(
@@ -460,7 +460,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain?: string;
+    subdomain: string;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

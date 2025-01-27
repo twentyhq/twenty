@@ -463,6 +463,7 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
+  IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
@@ -629,7 +630,6 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  challenge: LoginToken;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -660,7 +660,9 @@ export type Mutation = {
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
+  getAuthTokensFromLoginToken: AuthTokens;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
@@ -690,7 +692,6 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
-  verify: AuthTokens;
 };
 
 
@@ -708,13 +709,6 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String']['input'];
   codeChallenge?: InputMaybe<Scalars['String']['input']>;
   redirectUrl: Scalars['String']['input'];
-};
-
-
-export type MutationChallengeArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
 };
 
 
@@ -847,8 +841,20 @@ export type MutationGenerateApiKeyTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromLoginTokenArgs = {
+  loginToken: Scalars['String']['input'];
+};
+
+
 export type MutationGetAuthorizationUrlArgs = {
   input: GetAuthorizationUrlInput;
+};
+
+
+export type MutationGetLoginTokenFromCredentialsArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -997,11 +1003,6 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
-};
-
-
-export type MutationVerifyArgs = {
-  loginToken: Scalars['String']['input'];
 };
 
 export type ObjectConnection = {
@@ -1295,6 +1296,13 @@ export enum RelationDefinitionType {
 /** Type of the relation */
 export enum RelationMetadataType {
   MANY_TO_MANY = 'MANY_TO_MANY',
+  MANY_TO_ONE = 'MANY_TO_ONE',
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
+}
+
+/** Relation type */
+export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
   ONE_TO_ONE = 'ONE_TO_ONE'
@@ -1898,6 +1906,7 @@ export type Field = {
   name: Scalars['String']['output'];
   object?: Maybe<Object>;
   options?: Maybe<Scalars['JSON']['output']>;
+  relation?: Maybe<Relation>;
   relationDefinition?: Maybe<RelationDefinition>;
   settings?: Maybe<Scalars['JSON']['output']>;
   toRelationMetadata?: Maybe<Relation>;
