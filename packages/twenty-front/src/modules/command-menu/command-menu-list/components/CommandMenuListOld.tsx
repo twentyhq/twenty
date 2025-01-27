@@ -1,7 +1,9 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useMatchCommands } from '@/command-menu/hooks/useMatchCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
@@ -12,7 +14,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { useIsMobile } from 'twenty-ui';
+import { isDefined, useIsMobile } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -62,8 +64,13 @@ export const CommandMenuList = ({
 
   const filteredCommands = filtering ? matchCommands(commands) : commands;
 
+  const { onItemClick } = useCommandMenuOnItemClick();
+
   return (
     <>
+      <CommandMenuDefaultSelectionEffect
+        selectableItemIds={filteredCommands.map((command) => command.id)}
+      />
       <StyledList>
         <ScrollWrapper
           contextProviderName="commandMenu"
@@ -76,6 +83,22 @@ export const CommandMenuList = ({
               selectableItemIdArray={filteredCommands.map(
                 (command) => command.id,
               )}
+              onEnter={(itemId) => {
+                const command = filteredCommands.find(
+                  (item) => item.id === itemId,
+                );
+
+                if (isDefined(command)) {
+                  const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
+                    command;
+
+                  onItemClick({
+                    shouldCloseCommandMenuOnClick,
+                    onClick: onCommandClick,
+                    to,
+                  });
+                }
+              }}
             >
               <CommandGroup heading={t`Results`}>
                 {filteredCommands.map((command) => (

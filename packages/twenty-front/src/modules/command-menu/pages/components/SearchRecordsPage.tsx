@@ -1,16 +1,15 @@
-import { CommandMenuList } from '@/command-menu/command-menu-list/components/CommandMenuList';
+import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useSearchRecordsAction } from '@/command-menu/hooks/useSearchRecordsAction';
 
 export const SearchRecordsPage = () => {
-  const { commands, loading, hasMore, pageSize, onLoadMore } =
-    useSearchRecordsAction();
+  const { commandGroups, loading, noResultFound } = useSearchRecordsAction();
 
   return (
     <CommandMenuList
-      commands={commands}
-      isLoading={loading}
-      filtering={false}
-      pagination={{ hasMore, pageSize, onLoadMore }}
+      commandGroups={commandGroups}
+      selectableItemIds={[]}
+      loading={loading}
+      noResults={noResultFound}
     />
   );
 };

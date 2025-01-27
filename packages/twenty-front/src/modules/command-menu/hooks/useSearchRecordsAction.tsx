@@ -11,6 +11,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/relation-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -208,9 +209,23 @@ export const useSearchRecordsAction = () => {
     ...(customObjectCommands ?? []),
   ];
 
+  const noResultFound =
+    !peopleCommands?.length &&
+    !companyCommands?.length &&
+    !opportunityCommands?.length &&
+    !noteCommands?.length &&
+    !tasksCommands?.length &&
+    !customObjectCommands?.length;
+
   return {
     loading: loading || isNotesLoading || isTasksLoading,
-    commands,
+    noResultFound,
+    commandGroups: [
+      {
+        heading: t`Results`,
+        items: commands,
+      },
+    ],
     hasMore: false,
     pageSize: 0,
     onLoadMore: () => {},

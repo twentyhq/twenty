@@ -295,8 +295,6 @@ export const useCommandMenuCommands = () => {
     return customObjectCommandsArray;
   }, [customObjectRecordsMap]);
 
-  const isLoading = loading || isNotesLoading || isTasksLoading;
-
   return {
     copilotCommands,
     navigateCommands,
@@ -310,6 +308,6 @@ export const useCommandMenuCommands = () => {
     noteCommands,
     tasksCommands,
     customObjectCommands,
-    isLoading,
+    loading: loading || isNotesLoading || isTasksLoading,
   };
 };

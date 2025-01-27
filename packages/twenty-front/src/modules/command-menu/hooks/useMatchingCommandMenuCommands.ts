@@ -21,7 +21,7 @@ export const useMatchingCommandMenuCommands = ({
     noteCommands,
     tasksCommands,
     customObjectCommands,
-    isLoading,
+    loading,
   } = useCommandMenuCommands();
 
   const matchingNavigateCommand = matchCommands(navigateCommands);
@@ -41,7 +41,7 @@ export const useMatchingCommandMenuCommands = ({
     workflowRunGlobalCommands,
   );
 
-  const isNoResults =
+  const noResults =
     !matchingStandardActionRecordSelectionCommands.length &&
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
@@ -55,8 +55,8 @@ export const useMatchingCommandMenuCommands = ({
     !customObjectCommands?.length;
 
   return {
-    isNoResults,
-    isLoading,
+    noResults,
+    loading,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
     matchingWorkflowRunRecordSelectionCommands,
