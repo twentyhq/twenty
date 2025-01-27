@@ -24,14 +24,7 @@ export class RestCoreMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const { body } = req;
-
-    const isUserUnauthenticated = !this.middlewareService.isTokenPresent(req);
-    const isExcludedOperation =
-      !body?.operationName ||
-      this.middlewareService.excludedOperations.includes(body.operationName);
-
-    if (isUserUnauthenticated && isExcludedOperation) {
+    if (this.middlewareService.skipMiddleware(req)) {
       return next();
     }
 
@@ -70,6 +63,8 @@ export class RestCoreMiddleware implements NestMiddleware {
         error,
         errors,
       );
+
+      res.end();
 
       return;
     }

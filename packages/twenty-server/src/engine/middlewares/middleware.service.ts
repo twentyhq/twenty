@@ -18,8 +18,15 @@ export class MiddlewareService {
     return !!token;
   }
 
-  private hasErrorStatus(error: unknown): error is { status: number } {
-    return isDefined((error as { status: number }).status);
+  public skipMiddleware(request: Request): boolean {
+    const { body } = request;
+
+    const isUserUnauthenticated = !this.isTokenPresent(request);
+    const isExcludedOperation =
+      !body?.operationName ||
+      this.excludedOperations.includes(body.operationName);
+
+    return isUserUnauthenticated && isExcludedOperation;
   }
 
   public writeResponseOnExceptionCaught(
@@ -47,5 +54,9 @@ export class MiddlewareService {
       }),
     );
     res.end();
+  }
+
+  private hasErrorStatus(error: unknown): error is { status: number } {
+    return isDefined((error as { status: number }).status);
   }
 }
