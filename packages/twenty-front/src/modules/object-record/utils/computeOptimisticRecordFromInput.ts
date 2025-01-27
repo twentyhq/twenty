@@ -21,12 +21,14 @@ export const computeOptimisticRecordFromInput = ({
     (fieldMetadataItem) => {
       const isRelationField =
         fieldMetadataItem.type === FieldMetadataType.RELATION;
-
       const recordInputMatch = recordInputEntries.find(
         ([fieldName]) => fieldName === fieldMetadataItem.name,
       );
+
       if (isDefined(recordInputMatch) && isRelationField) {
-        throw new Error("Should never provide relation mutation through anything else than the fieldId e.g companyId");
+        throw new Error(
+          'Should never provide relation mutation through anything else than the fieldId e.g companyId',
+        );
       }
 
       if (
@@ -37,10 +39,10 @@ export const computeOptimisticRecordFromInput = ({
         return [];
       }
 
-      const isManyToOne =
+      const isManyToOneRelation =
         fieldMetadataItem.relationDefinition?.direction ===
         RelationDefinitionType.MANY_TO_ONE;
-      if (isRelationField && isManyToOne) {
+      if (isRelationField && isManyToOneRelation) {
         const relationIdFieldName = `${fieldMetadataItem.name}Id`;
         const recordInputMatchId = recordInputEntries.find(
           ([fieldName]) => fieldName === relationIdFieldName,
@@ -66,17 +68,16 @@ export const computeOptimisticRecordFromInput = ({
             [fieldMetadataItem.name, null],
           ];
         } else {
-          const fromCacheStuff = { id: 'cache' };
-          
+          const fromCacheStuff = { from: 'cache', id: fieldIdValue };
           return [
-            [fieldIdName, recordInput[fieldIdName]?.id ?? null],
+            [fieldIdName, recordInput[fieldIdName] ?? null],
             [fieldMetadataItem.name, fromCacheStuff],
           ];
         }
       }
 
       if (!isDefined(recordInputMatch)) {
-        throw new Error('Should never occurs TODO TEXT');
+        return [];
       }
       const [fieldName, fieldValue] = recordInputMatch;
 

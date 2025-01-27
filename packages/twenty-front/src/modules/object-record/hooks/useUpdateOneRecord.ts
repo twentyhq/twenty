@@ -60,22 +60,15 @@ export const useUpdateOneRecord = <
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
     optimisticRecord?: Partial<ObjectRecord>;
   }) => {
-    const sanitizedInput = {
-      ...sanitizeRecordInput({
-        objectMetadataItem,
-        recordInput: updateOneRecordInput,
-      }),
-    };
-    const tmp = computeOptimisticRecordFromInput({
+    const optimisticRecordInput = computeOptimisticRecordFromInput({
       objectMetadataItem,
-      recordInput: updateOneRecordInput
+      recordInput: updateOneRecordInput,
     });
-    console.log("TMP", {tmp})
+    console.log('optimisticRecordInput', { optimisticRecordInput });
     console.log({
-      sanitizedInput,
       updateOneRecordInput,
       optimisticRecord,
-    })
+    });
     const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
@@ -88,7 +81,7 @@ export const useUpdateOneRecord = <
 
     const computedOptimisticRecord = {
       ...cachedRecord,
-      ...(optimisticRecord ?? sanitizedInput),
+      ...(optimisticRecord ?? optimisticRecordInput),
       ...{ id: idToUpdate },
       ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
     };
@@ -101,7 +94,7 @@ export const useUpdateOneRecord = <
         recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
       });
-    console.log({cachedRecordWithConnection, optimisticRecordWithConnection})
+    console.log({ cachedRecordWithConnection, optimisticRecordWithConnection });
     if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
       return null;
     }
@@ -124,6 +117,13 @@ export const useUpdateOneRecord = <
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
 
+    const sanitizedInput = {
+      ...sanitizeRecordInput({
+        objectMetadataItem,
+        recordInput: updateOneRecordInput,
+      }),
+    };
+    console.log({ sanitizedInput });
     const updatedRecord = await apolloClient
       .mutate({
         mutation: updateOneRecordMutation,
@@ -136,7 +136,7 @@ export const useUpdateOneRecord = <
 
           if (!record || !cachedRecord) return;
 
-          console.log("NOT CACHING")
+          console.log('NOT CACHING');
           // triggerUpdateRecordOptimisticEffect({
           //   cache,
           //   objectMetadataItem,
