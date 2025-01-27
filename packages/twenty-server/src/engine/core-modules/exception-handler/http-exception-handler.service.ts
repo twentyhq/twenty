@@ -14,8 +14,10 @@ export const handleException = (
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
   workspace?: ExceptionHandlerWorkspace,
-): void => {
+): CustomException => {
   exceptionHandlerService.captureExceptions([exception], { user, workspace });
+
+  return exception;
 };
 
 interface RequestAndParams {
