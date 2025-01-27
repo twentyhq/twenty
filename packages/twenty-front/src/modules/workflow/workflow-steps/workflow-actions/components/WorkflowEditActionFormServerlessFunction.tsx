@@ -61,6 +61,7 @@ const StyledTabListContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(10)};
+  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
