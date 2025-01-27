@@ -1,3 +1,4 @@
+import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
@@ -9,6 +10,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 
@@ -61,36 +63,40 @@ export const CommandMenuList = ({
   const filteredCommands = filtering ? matchCommands(commands) : commands;
 
   return (
-    <StyledList>
-      <ScrollWrapper
-        contextProviderName="commandMenu"
-        componentInstanceId={`scroll-wrapper-command-menu`}
-      >
-        <StyledInnerList isMobile={isMobile}>
-          <SelectableList
-            selectableListId="command-menu-list"
-            hotkeyScope={AppHotkeyScope.CommandMenuOpen}
-            selectableItemIdArray={filteredCommands.map(
-              (command) => command.id,
-            )}
-          >
-            {filteredCommands.map((command) => (
-              <SelectableItem itemId={command.id} key={command.id}>
-                <CommandMenuItem
-                  id={command.id}
-                  Icon={command.Icon}
-                  label={command.label}
-                  onClick={command.onCommandClick}
-                  to={command.to}
-                  shouldCloseCommandMenuOnClick={
-                    command.shouldCloseCommandMenuOnClick
-                  }
-                />
-              </SelectableItem>
-            ))}
-          </SelectableList>
-        </StyledInnerList>
-      </ScrollWrapper>
-    </StyledList>
+    <>
+      <StyledList>
+        <ScrollWrapper
+          contextProviderName="commandMenu"
+          componentInstanceId={`scroll-wrapper-command-menu`}
+        >
+          <StyledInnerList isMobile={isMobile}>
+            <SelectableList
+              selectableListId="command-menu-list"
+              hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+              selectableItemIdArray={filteredCommands.map(
+                (command) => command.id,
+              )}
+            >
+              <CommandGroup heading={t`Results`}>
+                {filteredCommands.map((command) => (
+                  <SelectableItem itemId={command.id} key={command.id}>
+                    <CommandMenuItem
+                      id={command.id}
+                      Icon={command.Icon}
+                      label={command.label}
+                      onClick={command.onCommandClick}
+                      to={command.to}
+                      shouldCloseCommandMenuOnClick={
+                        command.shouldCloseCommandMenuOnClick
+                      }
+                    />
+                  </SelectableItem>
+                ))}
+              </CommandGroup>
+            </SelectableList>
+          </StyledInnerList>
+        </ScrollWrapper>
+      </StyledList>
+    </>
   );
 };
