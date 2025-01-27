@@ -1,3 +1,4 @@
+import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -21,12 +22,9 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     label: 'Search records',
     shortLabel: 'Search',
     position: 0,
-    isPinned: true,
+    isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.ALL],
-    actionHook: () => ({
-      onClick: () => {},
-      shouldBeRegistered: true,
-    }),
+    actionHook: useSearchRecordsRecordAgnosticAction,
   },
 };

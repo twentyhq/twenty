@@ -1,5 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -13,14 +14,12 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.secondary};
@@ -45,9 +44,6 @@ export const CommandMenuContainer = ({
 }) => {
   const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
@@ -87,7 +83,11 @@ export const CommandMenuContainer = ({
           <ActionMenuContext.Provider
             value={{
               isInRightDrawer: false,
-              onActionExecutedCallback: toggleCommandMenu,
+              onActionExecutedCallback: ({ key }) => {
+                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS) {
+                  toggleCommandMenu();
+                }
+              },
             }}
           >
             <RecordActionMenuEntriesSetter />
