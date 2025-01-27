@@ -47,7 +47,6 @@ export const useSSO = () => {
     redirect(
       authorizationUrlForSSOResult.data?.getAuthorizationUrl.authorizationURL,
     );
-    return;
   };
 
   return {
