@@ -44,17 +44,11 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    const recordToDelete = await repository
-      .findOneOrFail({
-        where: {
-          id: recordId,
-        },
-      })
-      .catch(() => {
-        throw new BadRequestException(
-          `${capitalize(objectMetadataNameSingular)} to delete not found`,
-        );
-      });
+    const recordToDelete = await repository.findOneOrFail({
+      where: {
+        id: recordId,
+      },
+    });
 
     await repository.delete(recordId);
 
