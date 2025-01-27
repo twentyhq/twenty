@@ -1,3 +1,4 @@
+import { isDefined } from 'class-validator';
 import { Plugin } from 'graphql-yoga';
 
 export type CacheMetadataPluginConfig = {
@@ -13,8 +14,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       serverContext.req.workspaceMetadataVersion ?? '0';
     const operationName = getOperationName(serverContext);
     const locale = serverContext.req.headers['x-locale'] ?? '';
+    const localeCacheKey = isDefined(serverContext.req.headers['x-locale'])
+      ? `:${locale}`
+      : '';
 
-    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${locale ? ':' + locale : ''}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}`;
   };
 
   const getOperationName = (serverContext: any) =>
