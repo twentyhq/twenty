@@ -13,12 +13,12 @@ type PasswordResetLinkEmailProps = {
   locale: string;
 };
 
-export const PasswordResetLinkEmail = async ({
+export const PasswordResetLinkEmail = ({
   duration,
   link,
   locale,
 }: PasswordResetLinkEmailProps) => {
-  await loadAndActivateLocale(locale);
+  loadAndActivateLocale(locale);
 
   return (
     <BaseEmail locale={locale}>

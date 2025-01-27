@@ -27,14 +27,14 @@ type SendInviteLinkEmailProps = {
   locale: string;
 };
 
-export const SendInviteLinkEmail = async ({
+export const SendInviteLinkEmail = ({
   link,
   workspace,
   sender,
   serverUrl,
   locale,
 }: SendInviteLinkEmailProps) => {
-  await loadAndActivateLocale(locale);
+  loadAndActivateLocale(locale);
 
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })

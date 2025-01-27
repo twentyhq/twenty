@@ -411,11 +411,11 @@ export class AuthService {
       passwordHash: newPasswordHash,
     });
 
-    const emailTemplate = await PasswordUpdateNotifyEmail({
+    const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
-      locale:"en"
+      locale: 'en',
     });
 
     const html = await render(emailTemplate);
