@@ -162,7 +162,7 @@ export const RecordDetailRelationRecordsListItem = ({
     updateOneRelationRecord({
       idToUpdate: relationRecord.id,
       updateOneRecordInput: {
-        [relationFieldMetadataItem.name]: null,
+        [`${relationFieldMetadataItem.name}Id`]: null,
       },
     });
   };

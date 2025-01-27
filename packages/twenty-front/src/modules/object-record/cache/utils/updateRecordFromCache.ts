@@ -25,6 +25,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }
+  console.log("UPDATE RECORD CACHE", {record})
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
