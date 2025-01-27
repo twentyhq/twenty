@@ -14,11 +14,15 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
+// Relocate and centralize in transpiling tool
+const isAppoloCacheRef = (value: Object): value is { __ref: string } =>
+  value.hasOwnProperty('__ref');
+
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
   sourceObjectMetadataItem: ObjectMetadataItem;
-  currentSourceRecord: ObjectRecord | null;
-  updatedSourceRecord: ObjectRecord | null;
+  currentSourceRecord: RecordGqlNode | ObjectRecord | null;
+  updatedSourceRecord: RecordGqlNode | ObjectRecord | null;
   objectMetadataItems: ObjectMetadataItem[];
 };
 export const triggerUpdateRelationsOptimisticEffect = ({
@@ -28,6 +32,10 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
+  const isDeletion =
+    isDefined(updatedSourceRecord) &&
+    isDefined(updatedSourceRecord['deletedAt']);
+
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
@@ -73,20 +81,20 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         | RecordGqlNode
         | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
-      if (
-        isDeeplyEqual(
-          currentFieldValueOnSourceRecord,
-          updatedFieldValueOnSourceRecord,
-          { strict: true },
-        )
-      ) {
+      const noDiff = isDeeplyEqual(
+        currentFieldValueOnSourceRecord,
+        updatedFieldValueOnSourceRecord,
+        { strict: true },
+      );
+      if (noDiff && !isDeletion) {
         return;
       }
       const extractTargetRecordsFromRelation = (
-        value: RecordGqlConnection | RecordGqlNode | null,
+        value: RecordGqlConnection | RecordGqlNode | null | ObjectRecord,
       ): RecordGqlNode[] => {
         // TODO investigate on the root cause of array injection here, should never occurs
         // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
+        // here we're loosing cache benefit in case we cached bRecordConnection array e.g
         if (!isDefined(value) || isArray(value)) {
           return [];
         }
@@ -95,15 +103,29 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           return value.edges.map(({ node }) => node);
         }
 
+        if (isAppoloCacheRef(value)) {
+          const [__typename, id] = value.__ref.split(':');
+          if (!isDefined(__typename) || !isDefined(id)) {
+            throw new Error(
+              `Invariant should never occurs, encountered invalid appolo cache ref ${value.__ref}`,
+            );
+          }
+
+          return [
+            {
+              id,
+              __typename,
+            },
+          ];
+        }
+
         return [value];
       };
-      const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
-        currentFieldValueOnSourceRecord,
-      );
-      const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
-        updatedFieldValueOnSourceRecord,
-      );
-
+      const recordToExtractDetachFrom = isDeletion
+        ? updatedFieldValueOnSourceRecord
+        : currentFieldValueOnSourceRecord;
+      const targetRecordsToDetachFrom =
+        extractTargetRecordsFromRelation(recordToExtractDetachFrom);
       // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
       //   Instead of hardcoding it here
       const shouldCascadeDeleteTargetRecords =
@@ -128,9 +150,18 @@ export const triggerUpdateRelationsOptimisticEffect = ({
             targetRecordId: targetRecordToDetachFrom.id,
           });
         });
+
+        if (isDeletion) {
+          // Should also detach from source here ?
+          // Seems to be enough, also not doing bi-directional for classic detach anw ?
+        }
       }
 
-      if (isDefined(updatedSourceRecord)) {
+      if (!isDeletion && isDefined(updatedSourceRecord)) {
+        const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
+          updatedFieldValueOnSourceRecord,
+        );
+
         targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
             cache,
