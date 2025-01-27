@@ -14,6 +14,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingMeterEventService } from 'src/engine/core-modules/billing/services/billing-meter-event.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
@@ -69,11 +70,13 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingSyncPlansDataCommand,
+    BillingMeterEventService,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
     BillingService,
+    BillingMeterEventService,
   ],
 })
 export class BillingModule {}

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
@@ -14,6 +15,7 @@ import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-
     CodeActionModule,
     SendEmailActionModule,
     RecordCRUDActionModule,
+    BillingModule,
   ],
   providers: [
     WorkflowExecutorWorkspaceService,

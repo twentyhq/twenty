@@ -34,6 +34,7 @@ export class RunWorkflowJob {
 
   @Process(RunWorkflowJob.name)
   async handle({
+    workspaceId,
     workflowVersionId,
     workflowRunId,
     payload,
@@ -53,6 +54,7 @@ export class RunWorkflowJob {
           currentStepIndex: 0,
           steps: workflowVersion.steps || [],
           context: {
+            workspaceId,
             trigger: payload,
           },
           output: {
