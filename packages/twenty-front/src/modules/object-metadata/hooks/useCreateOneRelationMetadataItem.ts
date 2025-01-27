@@ -31,7 +31,9 @@ export const useCreateOneRelationMetadataItem = () => {
     input: FormatRelationMetadataInputParams,
   ) => {
     const result = await mutate({
-      variables: { input: { relation: formatRelationMetadataInput(input) } },
+      variables: {
+        input: { relationMetadata: formatRelationMetadataInput(input) },
+      },
     });
 
     await refreshObjectMetadataItems();
