@@ -15,13 +15,13 @@ type PasswordUpdateNotifyEmailProps = {
   locale: string;
 };
 
-export const PasswordUpdateNotifyEmail = async ({
+export const PasswordUpdateNotifyEmail = ({
   userName,
   email,
   link,
   locale,
 }: PasswordUpdateNotifyEmailProps) => {
-  await loadAndActivateLocale(locale);
+  loadAndActivateLocale(locale);
 
   const helloString = userName?.length > 1 ? t`Dear ${userName}` : t`Dear`;
   const formattedDate = i18n.date(new Date());

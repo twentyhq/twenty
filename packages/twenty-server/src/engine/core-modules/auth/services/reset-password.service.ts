@@ -145,7 +145,7 @@ export class ResetPasswordService {
       locale: currentWorkspaceMember.locale,
     };
 
-    const emailTemplate = await PasswordResetLinkEmail(emailData);
+    const emailTemplate = PasswordResetLinkEmail(emailData);
 
     const html = await render(emailTemplate);
 

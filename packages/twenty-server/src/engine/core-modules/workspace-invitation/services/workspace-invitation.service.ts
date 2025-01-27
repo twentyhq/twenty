@@ -299,7 +299,7 @@ export class WorkspaceInvitationService {
           locale: 'en',
         };
 
-        const emailTemplate = await SendInviteLinkEmail(emailData);
+        const emailTemplate = SendInviteLinkEmail(emailData);
         const html = await render(emailTemplate);
 
         const text = await render(emailTemplate, {

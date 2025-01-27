@@ -13,11 +13,11 @@ type SendEmailVerificationLinkEmailProps = {
   locale: string;
 };
 
-export const SendEmailVerificationLinkEmail = async ({
+export const SendEmailVerificationLinkEmail = ({
   link,
   locale,
 }: SendEmailVerificationLinkEmailProps) => {
-  await loadAndActivateLocale(locale);
+  loadAndActivateLocale(locale);
 
   return (
     <BaseEmail width={333} locale={locale}>

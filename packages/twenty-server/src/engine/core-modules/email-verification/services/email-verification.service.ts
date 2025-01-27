@@ -58,7 +58,7 @@ export class EmailVerificationService {
       locale: 'en',
     };
 
-    const emailTemplate = await SendEmailVerificationLinkEmail(emailData);
+    const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
     const html = await render(emailTemplate);
 
