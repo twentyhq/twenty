@@ -1,7 +1,7 @@
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
-import { expect } from '@storybook/test';
+import { expect } from '@storybook/jest';
 
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -130,5 +130,55 @@ describe('computeOptimisticRecordFromInput', () => {
       companyId: null,
       company: null,
     });
+  });
+
+  it('should throw an error if recordInput contains fiels unrelated to the current objectMetadata', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    );
+    if (!personObjectMetadataItem) {
+      throw new Error('Person object metadata item not found');
+    }
+
+    expect(() =>
+      computeOptimisticRecordFromInput({
+        objectMetadataItems: generatedMockObjectMetadataItems,
+        objectMetadataItem: personObjectMetadataItem,
+        recordInput: {
+          unknwon: 'unknown',
+          foo: 'foo',
+          bar: 'bar',
+          city: 'Paris',
+        },
+        cache,
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadaItem person"`,
+    );
+  });
+
+  it('should throw an error if recordInput contains both the relationFieldId and relationField', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    );
+    if (!personObjectMetadataItem) {
+      throw new Error('Person object metadata item not found');
+    }
+
+    expect(() =>
+      computeOptimisticRecordFromInput({
+        objectMetadataItems: generatedMockObjectMetadataItems,
+        objectMetadataItem: personObjectMetadataItem,
+        recordInput: {
+          companyId: '123',
+          company: {},
+        },
+        cache,
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"Should never provide relation mutation through anything else than the fieldId e.g companyId"`,
+    );
   });
 });
