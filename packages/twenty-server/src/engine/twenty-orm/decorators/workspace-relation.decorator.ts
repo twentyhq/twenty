@@ -11,7 +11,9 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceRelationOptions<TClass> {
   standardId: string;
-  label: string | ((objectMetadata: ObjectMetadataEntity) => string);
+  label:
+    | MessageDescriptor
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   description?:
     | MessageDescriptor
     | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
@@ -54,7 +56,15 @@ export function WorkspaceRelation<TClass extends object>(
       target: object.constructor,
       standardId: options.standardId,
       name: propertyKey.toString(),
-      label: options.label,
+      label:
+        typeof options.label === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.label as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.label.message ?? ''),
       type: options.type,
       description:
         typeof options.description === 'function'

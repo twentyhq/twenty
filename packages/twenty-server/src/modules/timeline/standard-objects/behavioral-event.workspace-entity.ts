@@ -35,7 +35,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: behavioralEventStandardFieldIds.type,
     type: FieldMetadataType.TEXT,
-    label: 'Event type',
+    label: msg`Event type`,
     description: msg`Event type`,
     icon: 'IconAbc',
   })
@@ -45,7 +45,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Event name',
+    label: msg`Event name`,
     description: msg`Event name`,
     icon: 'IconAbc',
   })
@@ -54,7 +54,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event details',
+    label: msg`Event details`,
     description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
@@ -64,7 +64,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event context',
+    label: msg`Event context`,
     description:
       'Json object to provide context (user, device, workspace, etc.)',
     icon: 'IconListDetails',
@@ -75,7 +75,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
-    label: 'Object name',
+    label: msg`Object name`,
     description: msg`If the event is related to a particular object`,
     icon: 'IconAbc',
   })
@@ -84,7 +84,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
-    label: 'Object id',
+    label: msg`Object id`,
     description: msg`Event name/type`,
     icon: 'IconAbc',
   })

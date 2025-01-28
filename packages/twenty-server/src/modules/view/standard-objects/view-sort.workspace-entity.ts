@@ -36,7 +36,7 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
+    label: msg`Field Metadata Id`,
     description: msg`View Sort target field`,
     icon: 'IconTag',
   })
@@ -45,7 +45,7 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.TEXT,
-    label: 'Direction',
+    label: msg`Direction`,
     description: msg`View Sort direction`,
     defaultValue: "'asc'",
   })
@@ -54,7 +54,7 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
+    label: msg`View`,
     description: msg`View Sort related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,

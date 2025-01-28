@@ -31,7 +31,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
+    label: msg`Field Metadata Id`,
     description: msg`View Filter target field`,
   })
   fieldMetadataId: string;
@@ -39,7 +39,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.operand,
     type: FieldMetadataType.TEXT,
-    label: 'Operand',
+    label: msg`Operand`,
     description: msg`View Filter operand`,
     defaultValue: "'Contains'",
   })
@@ -48,7 +48,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.value,
     type: FieldMetadataType.TEXT,
-    label: 'Value',
+    label: msg`Value`,
     description: msg`View Filter value`,
   })
   value: string;
@@ -56,7 +56,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.displayValue,
     type: FieldMetadataType.TEXT,
-    label: 'Display Value',
+    label: msg`Display Value`,
     description: msg`View Filter Display Value`,
   })
   displayValue: string;
@@ -64,7 +64,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
+    label: msg`View`,
     description: msg`View Filter related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
@@ -79,7 +79,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.viewFilterGroupId,
     type: FieldMetadataType.UUID,
-    label: 'View Filter Group Id',
+    label: msg`View Filter Group Id`,
     description: msg`View Filter Group`,
   })
   @WorkspaceIsNullable()
@@ -88,7 +88,7 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.positionInViewFilterGroup,
     type: FieldMetadataType.POSITION,
-    label: 'Position in view filter group',
+    label: msg`Position in view filter group`,
     description: msg`Position in the view filter group`,
     icon: 'IconHierarchy2',
   })

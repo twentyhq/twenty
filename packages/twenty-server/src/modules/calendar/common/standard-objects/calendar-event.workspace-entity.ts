@@ -5,8 +5,8 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
-    RelationMetadataType,
-    RelationOnDeleteAction,
+  RelationMetadataType,
+  RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -36,7 +36,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
+    label: msg`Title`,
     description: msg`Title`,
     icon: 'IconH1',
   })
@@ -45,7 +45,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is canceled',
+    label: msg`Is canceled`,
     description: msg`Is canceled`,
     icon: 'IconCalendarCancel',
     defaultValue: false,
@@ -55,7 +55,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Full Day',
+    label: msg`Is Full Day`,
     description: msg`Is Full Day`,
     icon: 'Icon24Hours',
     defaultValue: false,
@@ -65,7 +65,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Start Date',
+    label: msg`Start Date`,
     description: msg`Start Date`,
     icon: 'IconCalendarClock',
   })
@@ -75,7 +75,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'End Date',
+    label: msg`End Date`,
     description: msg`End Date`,
     icon: 'IconCalendarClock',
   })
@@ -85,7 +85,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation DateTime',
+    label: msg`Creation DateTime`,
     description: msg`Creation DateTime`,
     icon: 'IconCalendarPlus',
   })
@@ -95,7 +95,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Update DateTime',
+    label: msg`Update DateTime`,
     description: msg`Update DateTime`,
     icon: 'IconCalendarCog',
   })
@@ -105,7 +105,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
-    label: 'Description',
+    label: msg`Description`,
     description: msg`Description`,
     icon: 'IconFileDescription',
   })
@@ -114,7 +114,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
     type: FieldMetadataType.TEXT,
-    label: 'Location',
+    label: msg`Location`,
     description: msg`Location`,
     icon: 'IconMapPin',
   })
@@ -123,7 +123,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
     type: FieldMetadataType.TEXT,
-    label: 'iCal UID',
+    label: msg`iCal UID`,
     description: msg`iCal UID`,
     icon: 'IconKey',
   })
@@ -132,7 +132,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
     type: FieldMetadataType.TEXT,
-    label: 'Conference Solution',
+    label: msg`Conference Solution`,
     description: msg`Conference Solution`,
     icon: 'IconScreenShare',
   })
@@ -141,7 +141,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
     type: FieldMetadataType.LINKS,
-    label: 'Meet Link',
+    label: msg`Meet Link`,
     description: msg`Meet Link`,
     icon: 'IconLink',
   })
@@ -152,7 +152,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId:
       CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Channel Event Associations',
+    label: msg`Calendar Channel Event Associations`,
     description: msg`Calendar Channel Event Associations`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelEventAssociationWorkspaceEntity,
@@ -165,7 +165,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Event Participants',
+    label: msg`Event Participants`,
     description: msg`Event Participants`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,

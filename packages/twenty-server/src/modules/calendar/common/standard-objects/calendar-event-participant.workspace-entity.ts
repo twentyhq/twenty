@@ -42,7 +42,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
+    label: msg`Handle`,
     description: msg`Handle`,
     icon: 'IconMail',
   })
@@ -51,7 +51,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
-    label: 'Display Name',
+    label: msg`Display Name`,
     description: msg`Display Name`,
     icon: 'IconUser',
   })
@@ -60,7 +60,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Organizer',
+    label: msg`Is Organizer`,
     description: msg`Is Organizer`,
     icon: 'IconUser',
     defaultValue: false,
@@ -70,7 +70,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
     type: FieldMetadataType.SELECT,
-    label: 'Response Status',
+    label: msg`Response Status`,
     description: msg`Response Status`,
     icon: 'IconUser',
     options: [
@@ -106,7 +106,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Event ID',
+    label: msg`Event ID`,
     description: msg`Event ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
@@ -120,7 +120,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
+    label: msg`Person`,
     description: msg`Person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
@@ -135,7 +135,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
+    label: msg`Workspace Member`,
     description: msg`Workspace Member`,
     icon: 'IconUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,

@@ -85,7 +85,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
-    label: 'Name',
+    label: msg`Name`,
     description: msg`Workspace member name`,
     icon: 'IconCircleUser',
   })
@@ -94,7 +94,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
     type: FieldMetadataType.TEXT,
-    label: 'Color Scheme',
+    label: msg`Color Scheme`,
     description: msg`Preferred color scheme`,
     icon: 'IconColorSwatch',
     defaultValue: "'System'",
@@ -104,7 +104,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
     type: FieldMetadataType.TEXT,
-    label: 'Language',
+    label: msg`Language`,
     description: msg`Preferred language`,
     icon: 'IconLanguage',
     defaultValue: "'en'",
@@ -114,7 +114,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
-    label: 'Avatar Url',
+    label: msg`Avatar Url`,
     description: msg`Workspace member avatar`,
     icon: 'IconFileUpload',
   })
@@ -123,7 +123,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
     type: FieldMetadataType.TEXT,
-    label: 'User Email',
+    label: msg`User Email`,
     description: msg`Related user email address`,
     icon: 'IconMail',
   })
@@ -132,7 +132,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
     type: FieldMetadataType.UUID,
-    label: 'User Id',
+    label: msg`User Id`,
     description: msg`Associated User Id`,
     icon: 'IconCircleUsers',
   })
@@ -142,7 +142,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Assigned tasks',
+    label: msg`Assigned tasks`,
     description: msg`Tasks assigned to the workspace member`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
@@ -154,7 +154,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
+    label: msg`Favorites`,
     description: msg`Favorites linked to the workspace member`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
@@ -165,7 +165,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Account Owner For Companies',
+    label: msg`Account Owner For Companies`,
     description: msg`Account owner for companies`,
     icon: 'IconBriefcase',
     inverseSideTarget: () => CompanyWorkspaceEntity,
@@ -177,7 +177,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored attachments',
+    label: msg`Authored attachments`,
     description: msg`Attachments created by the workspace member`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
@@ -189,7 +189,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Connected accounts',
+    label: msg`Connected accounts`,
     description: msg`Connected accounts`,
     icon: 'IconAt',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
@@ -201,7 +201,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Participants',
+    label: msg`Message Participants`,
     description: msg`Message Participants`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
@@ -213,7 +213,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Blocklist',
+    label: msg`Blocklist`,
     description: msg`Blocklisted handles`,
     icon: 'IconForbid2',
     inverseSideTarget: () => BlocklistWorkspaceEntity,
@@ -225,7 +225,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Calendar Event Participants',
+    label: msg`Calendar Event Participants`,
     description: msg`Calendar Event Participants`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
@@ -239,7 +239,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Events',
+    label: msg`Events`,
     description: msg`Events linked to the workspace member`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
@@ -252,7 +252,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.auditLogs,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Audit Logs',
+    label: msg`Audit Logs`,
     description: msg`Audit Logs linked to the workspace member`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => AuditLogWorkspaceEntity,
@@ -265,7 +265,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
-    label: 'Time zone',
+    label: msg`Time zone`,
     defaultValue: "'system'",
     description: msg`User time zone`,
     icon: 'IconTimezone',
@@ -275,7 +275,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
-    label: 'Date format',
+    label: msg`Date format`,
     description: "User's preferred date format",
     icon: 'IconCalendarEvent',
     options: [
@@ -311,7 +311,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     type: FieldMetadataType.SELECT,
-    label: 'Time format',
+    label: msg`Time format`,
     description: "User's preferred time format",
     icon: 'IconClock2',
     options: [

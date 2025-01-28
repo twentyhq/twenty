@@ -55,7 +55,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
+    label: msg`Position`,
     description: msg`Note record position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
@@ -66,7 +66,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
+    label: msg`Title`,
     description: msg`Note title`,
     icon: 'IconNotes',
   })
@@ -75,7 +75,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: 'Body',
+    label: msg`Body`,
     description: msg`Note body`,
     icon: 'IconFilePencil',
   })
@@ -85,7 +85,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
-    label: 'Body',
+    label: msg`Body`,
     description: msg`Note body`,
     icon: 'IconFilePencil',
   })
@@ -98,7 +98,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
     defaultValue: {
@@ -110,7 +110,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Relations',
+    label: msg`Relations`,
     description: msg`Note targets`,
     icon: 'IconArrowUpRight',
     type: RelationMetadataType.ONE_TO_MANY,
@@ -122,7 +122,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
+    label: msg`Attachments`,
     description: msg`Note attachments`,
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
@@ -135,7 +135,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
+    label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the note.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
@@ -147,7 +147,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
+    label: msg`Favorites`,
     description: msg`Favorites linked to the note`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,

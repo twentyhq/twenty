@@ -31,7 +31,7 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
+    label: msg`Name`,
     description: msg`The workflow event listener name`,
   })
   eventName: string;
@@ -40,7 +40,7 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow',
+    label: msg`Workflow`,
     description: msg`WorkflowEventListener workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,

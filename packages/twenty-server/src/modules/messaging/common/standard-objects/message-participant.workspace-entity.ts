@@ -34,7 +34,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
-    label: 'Role',
+    label: msg`Role`,
     description: msg`Role`,
     icon: 'IconAt',
     options: [
@@ -50,7 +50,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
+    label: msg`Handle`,
     description: msg`Handle`,
     icon: 'IconAt',
   })
@@ -59,7 +59,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
-    label: 'Display Name',
+    label: msg`Display Name`,
     description: msg`Display Name`,
     icon: 'IconUser',
   })
@@ -68,7 +68,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message',
+    label: msg`Message`,
     description: msg`Message`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
@@ -82,7 +82,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
+    label: msg`Person`,
     description: msg`Person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
@@ -97,7 +97,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
+    label: msg`Workspace Member`,
     description: msg`Workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,

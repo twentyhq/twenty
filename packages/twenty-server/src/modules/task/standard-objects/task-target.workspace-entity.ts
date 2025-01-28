@@ -32,7 +32,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.task,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Task',
+    label: msg`Task`,
     description: msg`TaskTarget task`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
@@ -47,7 +47,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
+    label: msg`Person`,
     description: msg`TaskTarget person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
@@ -62,7 +62,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
+    label: msg`Company`,
     description: msg`TaskTarget company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
@@ -77,7 +77,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
+    label: msg`Opportunity`,
     description: msg`TaskTarget opportunity`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,

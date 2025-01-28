@@ -40,7 +40,7 @@ export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    label: 'Name',
+    label: msg`Name`,
     description: msg`Name`,
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
@@ -49,7 +49,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
-    label: 'Position',
+    label: msg`Position`,
     description: msg`Position`,
     type: FieldMetadataType.POSITION,
     icon: 'IconHierarchy2',
@@ -61,7 +61,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
     defaultValue: {
@@ -73,7 +73,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Notes',
+    label: msg`Notes`,
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
@@ -89,7 +89,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Tasks',
+    label: msg`Tasks`,
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
@@ -105,7 +105,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
-    label: 'Favorites',
+    label: msg`Favorites`,
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
@@ -122,7 +122,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
+    label: msg`Attachments`,
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;
@@ -138,7 +138,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
-    label: 'Timeline Activities',
+    label: msg`Timeline Activities`,
     type: RelationMetadataType.ONE_TO_MANY,
     description: (objectMetadata) => {
       const label = objectMetadata.labelSingular;

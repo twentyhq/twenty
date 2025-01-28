@@ -6,8 +6,8 @@ import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-    RelationMetadataType,
-    RelationOnDeleteAction,
+  RelationMetadataType,
+  RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -92,7 +92,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
-    label: 'Visibility',
+    label: msg`Visibility`,
     description: msg`Visibility`,
     icon: 'IconEyeglass',
     options: [
@@ -122,7 +122,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
+    label: msg`Handle`,
     description: msg`Handle`,
     icon: 'IconAt',
   })
@@ -131,7 +131,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
-    label: 'Type',
+    label: msg`Type`,
     description: msg`Channel Type`,
     icon: 'IconMessage',
     options: [
@@ -156,7 +156,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Contact Auto Creation Enabled',
+    label: msg`Is Contact Auto Creation Enabled`,
     description: msg`Is Contact Auto Creation Enabled`,
     icon: 'IconUserCircle',
     defaultValue: true,
@@ -166,7 +166,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
-    label: 'Contact auto creation policy',
+    label: msg`Contact auto creation policy`,
     description:
       'Automatically create People records when receiving or sending emails',
     icon: 'IconUserCircle',
@@ -197,7 +197,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Exclude non professional emails',
+    label: msg`Exclude non professional emails`,
     description: msg`Exclude non professional emails`,
     icon: 'IconBriefcase',
     defaultValue: true,
@@ -207,7 +207,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeGroupEmails,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Exclude group emails',
+    label: msg`Exclude group emails`,
     description: msg`Exclude group emails`,
     icon: 'IconUsersGroup',
     defaultValue: true,
@@ -217,7 +217,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is Sync Enabled',
+    label: msg`Is Sync Enabled`,
     description: msg`Is Sync Enabled`,
     icon: 'IconRefresh',
     defaultValue: true,
@@ -227,7 +227,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
-    label: 'Last sync cursor',
+    label: msg`Last sync cursor`,
     description: msg`Last sync cursor`,
     icon: 'IconHistory',
   })
@@ -236,7 +236,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Last sync date',
+    label: msg`Last sync date`,
     description: msg`Last sync date`,
     icon: 'IconHistory',
   })
@@ -246,7 +246,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
-    label: 'Sync status',
+    label: msg`Sync status`,
     description: msg`Sync status`,
     icon: 'IconStatusChange',
     options: [
@@ -288,7 +288,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
-    label: 'Sync stage',
+    label: msg`Sync stage`,
     description: msg`Sync stage`,
     icon: 'IconStatusChange',
     options: [
@@ -336,7 +336,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Sync stage started at',
+    label: msg`Sync stage started at`,
     description: msg`Sync stage started at`,
     icon: 'IconHistory',
   })
@@ -346,7 +346,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
-    label: 'Throttle Failure Count',
+    label: msg`Throttle Failure Count`,
     description: msg`Throttle Failure Count`,
     icon: 'IconX',
     defaultValue: 0,
@@ -356,7 +356,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Connected Account',
+    label: msg`Connected Account`,
     description: msg`Connected Account`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
@@ -371,7 +371,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId:
       MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Association',
+    label: msg`Message Channel Association`,
     description: msg`Messages from the channel.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,

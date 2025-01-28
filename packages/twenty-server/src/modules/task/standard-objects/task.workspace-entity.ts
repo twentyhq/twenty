@@ -6,14 +6,14 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
-    ActorMetadata,
-    FieldActorSource,
+  ActorMetadata,
+  FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
-    RelationMetadataType,
-    RelationOnDeleteAction,
+  RelationMetadataType,
+  RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -28,8 +28,8 @@ import { TASK_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -57,7 +57,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
-    label: 'Position',
+    label: msg`Position`,
     description: msg`Task record position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
@@ -68,7 +68,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
-    label: 'Title',
+    label: msg`Title`,
     description: msg`Task title`,
     icon: 'IconNotes',
   })
@@ -77,7 +77,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.RICH_TEXT,
-    label: 'Body',
+    label: msg`Body`,
     description: msg`Task body`,
     icon: 'IconFilePencil',
   })
@@ -87,7 +87,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
-    label: 'Body',
+    label: msg`Body`,
     description: msg`Task body`,
     icon: 'IconFilePencil',
   })
@@ -100,7 +100,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Due Date',
+    label: msg`Due Date`,
     description: msg`Task due date`,
     icon: 'IconCalendarEvent',
   })
@@ -110,7 +110,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
-    label: 'Status',
+    label: msg`Status`,
     description: msg`Task status`,
     icon: 'IconCheck',
     defaultValue: "'TODO'",
@@ -136,7 +136,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
     defaultValue: {
@@ -148,7 +148,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Relations',
+    label: msg`Relations`,
     description: msg`Task targets`,
     icon: 'IconArrowUpRight',
     type: RelationMetadataType.ONE_TO_MANY,
@@ -160,7 +160,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
+    label: msg`Attachments`,
     description: msg`Task attachments`,
     icon: 'IconFileImport',
     type: RelationMetadataType.ONE_TO_MANY,
@@ -172,7 +172,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.assignee,
-    label: 'Assignee',
+    label: msg`Assignee`,
     description: msg`Task assignee`,
     icon: 'IconUserCircle',
     type: RelationMetadataType.MANY_TO_ONE,
@@ -189,7 +189,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Timeline Activities',
+    label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the task.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
@@ -201,7 +201,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
+    label: msg`Favorites`,
     description: msg`Favorites linked to the task`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,

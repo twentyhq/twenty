@@ -14,8 +14,8 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
-    MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
-    MESSAGE_STANDARD_FIELD_IDS,
+  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
+  MESSAGE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -42,7 +42,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Message External Id',
+    label: msg`Message External Id`,
     description: msg`Message id from the messaging provider`,
     icon: 'IconHash',
   })
@@ -53,7 +53,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Thread External Id',
+    label: msg`Thread External Id`,
     description: msg`Thread id from the messaging provider`,
     icon: 'IconHash',
   })
@@ -63,7 +63,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
-    label: 'Direction',
+    label: msg`Direction`,
     description: msg`Message Direction`,
     icon: 'IconDirection',
     options: [
@@ -88,7 +88,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageChannel,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Channel Id',
+    label: msg`Message Channel Id`,
     description: msg`Message Channel Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
@@ -103,7 +103,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Id',
+    label: msg`Message Id`,
     description: msg`Message Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageWorkspaceEntity,

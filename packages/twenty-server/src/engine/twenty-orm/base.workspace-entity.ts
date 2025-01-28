@@ -11,7 +11,7 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     type: FieldMetadataType.UUID,
-    label: 'Id',
+    label: msg`Id`,
     description: msg`Id`,
     defaultValue: 'uuid',
     icon: 'Icon123',
@@ -23,7 +23,7 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation date',
+    label: msg`Creation date`,
     description: msg`Creation date`,
     icon: 'IconCalendar',
     defaultValue: 'now',
@@ -36,7 +36,7 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Last update',
+    label: msg`Last update`,
     description: msg`Last time the record was changed`,
     icon: 'IconCalendarClock',
     defaultValue: 'now',
@@ -49,7 +49,7 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Deleted at',
+    label: msg`Deleted at`,
     description: msg`Date when the record was deleted`,
     icon: 'IconCalendarMinus',
     settings: {
