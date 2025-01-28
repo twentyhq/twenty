@@ -57,7 +57,7 @@ export const useCommandMenuHotKeys = () => {
       });
       openCommandMenu();
     },
-    AppHotkeyScope.CommandMenu,
+    AppHotkeyScope.KeyboardShortcutMenu,
     [openCommandMenu],
     {
       ignoreModifiers: true,
