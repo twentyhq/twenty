@@ -180,6 +180,30 @@ const TextInputV2Component = (
   const inputRef = useRef<HTMLInputElement>(null);
   const combinedRef = useCombinedRefs(ref, inputRef);
 
+  const [localError, setLocalError] = useState('');
+
+  const validateInput = (value: string) => {
+    if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Invalid email format';
+    }
+    if (type === 'url' && !/^(https?:\/\/)?[^\s$.?#].[^\s]*$/.test(value)) {
+      return 'Invalud URL format';
+    }
+    return '';
+  };
+
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    const validationError = validateInput(event.target.value);
+    setLocalError(validationError);
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setLocalError('');
+    onChange?.(
+      turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+    );
+  };
+
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
@@ -212,7 +236,7 @@ const TextInputV2Component = (
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
           onFocus={onFocus}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(
@@ -228,7 +252,7 @@ const TextInputV2Component = (
             value,
             LeftIcon,
             maxLength,
-            error,
+            error: localError || error,
             sizeVariant,
           }}
         />
