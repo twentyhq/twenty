@@ -12,7 +12,6 @@ type WorkflowTextEditorVariableChipProps = NodeViewProps;
 export const WorkflowTextEditorVariableChip = ({
   deleteNode,
   node,
-  editor,
 }: WorkflowTextEditorVariableChipProps) => {
   const attrs = node.attrs as {
     variable: string;
@@ -20,10 +19,7 @@ export const WorkflowTextEditorVariableChip = ({
 
   return (
     <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
-      <VariableChip
-        rawVariableName={attrs.variable}
-        onRemove={editor.isEditable ? deleteNode : undefined}
-      />
+      <VariableChip rawVariableName={attrs.variable} onRemove={deleteNode} />
     </NodeViewWrapper>
   );
 };

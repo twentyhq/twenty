@@ -1,8 +1,7 @@
 import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
-import { IconX } from 'twenty-ui';
+import { IconX, isDefined } from 'twenty-ui';
 
 const StyledChip = styled.div<{ deletable: boolean }>`
   background-color: ${({ theme }) => theme.accent.quaternary};
@@ -10,6 +9,7 @@ const StyledChip = styled.div<{ deletable: boolean }>`
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   flex-direction: row;
@@ -20,13 +20,10 @@ const StyledChip = styled.div<{ deletable: boolean }>`
   white-space: nowrap;
 
   ${({ theme, deletable }) =>
-    !deletable
-      ? css`
-          padding-right: ${theme.spacing(1)};
-        `
-      : css`
-          cursor: pointer;
-        `}
+    !deletable &&
+    css`
+      padding-right: ${theme.spacing(1)};
+    `}
 `;
 
 const StyledLabel = styled.span`
@@ -73,7 +70,7 @@ export const VariableChip = ({
       <StyledLabel>{extractVariableLabel(rawVariableName)}</StyledLabel>
 
       {onRemove ? (
-        <StyledDelete onClick={onRemove} aria-label="Remove variable">
+        <StyledDelete onClick={onRemove}>
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
       ) : null}
