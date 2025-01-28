@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { getUserDevice } from 'twenty-ui';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
@@ -254,5 +255,56 @@ export const AcceptsJsonEncodedNewline: Story = {
     await userEvent.click(canvasElement);
 
     expect(args.onPersist).toHaveBeenCalledWith('"a\\nb"');
+  },
+};
+
+export const HasHistory: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const controlKey = getUserDevice() === 'mac' ? 'Meta' : 'Control';
+
+    const canvas = within(canvasElement);
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.type(editor, '{{ "a": ');
+
+    await userEvent.click(addVariableButton);
+
+    await userEvent.type(editor, ' }');
+
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+
+    await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
+
+    expect(editor).toHaveTextContent('');
+    expect(args.onPersist).toHaveBeenLastCalledWith(null);
+
+    await userEvent.type(
+      editor,
+      `{Shift>}{${controlKey}>}z{/${controlKey}}{/Shift}`,
+    );
+
+    expect(editor).toHaveTextContent('{ "a": test }');
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
   },
 };
