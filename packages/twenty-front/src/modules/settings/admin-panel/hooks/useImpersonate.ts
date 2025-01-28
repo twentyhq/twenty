@@ -1,13 +1,13 @@
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 
 export const useImpersonate = () => {
   const [currentUser] = useRecoilState(currentUserState);
@@ -16,7 +16,7 @@ export const useImpersonate = () => {
     isAppWaitingForFreshObjectMetadataState,
   );
 
-  const { verify } = useAuth();
+  const { getAuthTokensFromLoginToken } = useAuth();
 
   const [impersonate] = useImpersonateMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -50,7 +50,7 @@ export const useImpersonate = () => {
 
       if (workspace.id === currentWorkspace?.id) {
         setIsAppWaitingForFreshObjectMetadata(true);
-        await verify(loginToken.token);
+        await getAuthTokensFromLoginToken(loginToken.token);
         setIsAppWaitingForFreshObjectMetadata(false);
         return;
       }

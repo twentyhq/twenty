@@ -26,7 +26,6 @@ export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataI
 
       runWorkflowVersion({
         workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-        workflowName: workflowWithCurrentVersion.name,
       });
     };
 

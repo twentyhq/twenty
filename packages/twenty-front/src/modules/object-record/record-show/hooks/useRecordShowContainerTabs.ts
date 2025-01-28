@@ -17,7 +17,7 @@ import {
   IconSettings,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlag, FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -252,7 +252,7 @@ export const useRecordShowContainerTabs = (
           hide.ifFeaturesDisabled.length > 0 &&
           !hide.ifFeaturesDisabled.every((flagKey) => {
             return !!currentWorkspace?.featureFlags?.find(
-              (flag: FeatureFlag) => flag.key === flagKey && flag.value,
+              (flag) => flag.key === flagKey && flag.value,
             );
           });
 

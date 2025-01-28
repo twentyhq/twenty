@@ -194,6 +194,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
 
             saveAction(newFormData);
           }}
+          withSearchInput
         />
 
         <HorizontalSeparator noMargin />

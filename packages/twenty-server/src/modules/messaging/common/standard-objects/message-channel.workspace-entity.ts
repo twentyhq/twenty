@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -79,9 +80,9 @@ registerEnumType(MessageChannelContactAutoCreationPolicy, {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,
   namePlural: 'messageChannels',
-  labelSingular: 'Message Channel',
-  labelPlural: 'Message Channels',
-  description: 'Message Channels',
+  labelSingular: msg`Message Channel`,
+  labelPlural: msg`Message Channels`,
+  description: msg`Message Channels`,
   icon: STANDARD_OBJECT_ICONS.messageChannel,
   labelIdentifierStandardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
 })

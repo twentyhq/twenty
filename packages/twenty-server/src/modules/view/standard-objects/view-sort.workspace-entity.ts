@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -20,9 +21,9 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewSort,
   namePlural: 'viewSorts',
-  labelSingular: 'View Sort',
-  labelPlural: 'View Sorts',
-  description: '(System) View Sorts',
+  labelSingular: msg`View Sort`,
+  labelPlural: msg`View Sorts`,
+  description: msg`(System) View Sorts`,
   icon: STANDARD_OBJECT_ICONS.viewSort,
 })
 @WorkspaceIsNotAuditLogged()

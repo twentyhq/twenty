@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -51,9 +52,9 @@ export type WorkflowRunOutput = {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowRun,
   namePlural: 'workflowRuns',
-  labelSingular: 'Workflow Run',
-  labelPlural: 'Workflow Runs',
-  description: 'A workflow run',
+  labelSingular: msg`Workflow Run`,
+  labelPlural: msg`Workflow Runs`,
+  description: msg`A workflow run`,
   labelIdentifierStandardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
   icon: STANDARD_OBJECT_ICONS.workflowRun,
 })

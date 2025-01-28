@@ -75,8 +75,9 @@ export class GoogleOauthGuard extends AuthGuard('google') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        workspace?.subdomain ??
-          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
       );
 
       return false;

@@ -65,7 +65,7 @@ export class MessagingMessageService {
             messageExternalId: message.externalId,
             messageThreadExternalId: message.messageThreadExternalId,
           },
-          ['messageChannelId', 'messageExternalId'],
+          ['messageChannelId', 'messageId'],
           transactionManager,
         );
 

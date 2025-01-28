@@ -391,15 +391,41 @@ export enum FeatureFlagKey {
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
-  IsFreeAccessEnabled = 'IsFreeAccessEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
+  IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
+
+export type Field = {
+  __typename?: 'Field';
+  createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  fromRelationMetadata?: Maybe<RelationMetadata>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
+  isUnique?: Maybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  object?: Maybe<Object>;
+  options?: Maybe<Scalars['JSON']>;
+  relation?: Maybe<Relation>;
+  relationDefinition?: Maybe<RelationDefinition>;
+  settings?: Maybe<Scalars['JSON']>;
+  toRelationMetadata?: Maybe<RelationMetadata>;
+  type: FieldMetadataType;
+  updatedAt: Scalars['DateTime'];
+};
 
 export type FieldConnection = {
   __typename?: 'FieldConnection';
@@ -407,6 +433,23 @@ export type FieldConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type FieldEdge = {
+  __typename?: 'FieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Field */
+  node: Field;
+};
+
+export type FieldFilter = {
+  and?: InputMaybe<Array<FieldFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<FieldFilter>>;
 };
 
 /** Type of the field */
@@ -489,12 +532,77 @@ export type ImpersonateOutput = {
   workspace: WorkspaceSubdomainAndId;
 };
 
+export type Index = {
+  __typename?: 'Index';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
+  indexType: IndexType;
+  indexWhereClause?: Maybe<Scalars['String']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isUnique: Scalars['Boolean'];
+  name: Scalars['String'];
+  objectMetadata: IndexObjectMetadataConnection;
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type IndexIndexFieldMetadatasArgs = {
+  filter?: IndexFieldFilter;
+  paging?: CursorPaging;
+};
+
+
+export type IndexObjectMetadataArgs = {
+  filter?: ObjectFilter;
+  paging?: CursorPaging;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
   edges: Array<IndexEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type IndexEdge = {
+  __typename?: 'IndexEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Index */
+  node: Index;
+};
+
+export type IndexField = {
+  __typename?: 'IndexField';
+  createdAt: Scalars['DateTime'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  order: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type IndexFieldEdge = {
+  __typename?: 'IndexFieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the IndexField */
+  node: IndexField;
+};
+
+export type IndexFieldFilter = {
+  and?: InputMaybe<Array<IndexFieldFilter>>;
+  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<IndexFieldFilter>>;
+};
+
+export type IndexFilter = {
+  and?: InputMaybe<Array<IndexFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<IndexFilter>>;
 };
 
 export type IndexIndexFieldMetadatasConnection = {
@@ -554,7 +662,6 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
-  challenge: LoginToken;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -581,7 +688,9 @@ export type Mutation = {
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
+  getAuthTokensFromLoginToken: AuthTokens;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
+  getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
@@ -607,7 +716,6 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
-  verify: AuthTokens;
 };
 
 
@@ -625,13 +733,6 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
-};
-
-
-export type MutationChallengeArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  password: Scalars['String'];
 };
 
 
@@ -734,8 +835,20 @@ export type MutationGenerateApiKeyTokenArgs = {
 };
 
 
+export type MutationGetAuthTokensFromLoginTokenArgs = {
+  loginToken: Scalars['String'];
+};
+
+
 export type MutationGetAuthorizationUrlArgs = {
   input: GetAuthorizationUrlInput;
+};
+
+
+export type MutationGetLoginTokenFromCredentialsArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -866,9 +979,40 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
 };
 
+export type Object = {
+  __typename?: 'Object';
+  createdAt: Scalars['DateTime'];
+  dataSourceId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  fields: ObjectFieldsConnection;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  indexMetadatas: ObjectIndexMetadatasConnection;
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  shortcut?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
 
-export type MutationVerifyArgs = {
-  loginToken: Scalars['String'];
+
+export type ObjectFieldsArgs = {
+  filter?: FieldFilter;
+  paging?: CursorPaging;
+};
+
+
+export type ObjectIndexMetadatasArgs = {
+  filter?: IndexFilter;
+  paging?: CursorPaging;
 };
 
 export type ObjectConnection = {
@@ -879,12 +1023,30 @@ export type ObjectConnection = {
   pageInfo: PageInfo;
 };
 
+export type ObjectEdge = {
+  __typename?: 'ObjectEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Object */
+  node: Object;
+};
+
 export type ObjectFieldsConnection = {
   __typename?: 'ObjectFieldsConnection';
   /** Array of edges. */
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type ObjectFilter = {
+  and?: InputMaybe<Array<ObjectFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<ObjectFilter>>;
 };
 
 export type ObjectIndexMetadatasConnection = {
@@ -1070,12 +1232,13 @@ export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
 
-export type RelationConnection = {
-  __typename?: 'RelationConnection';
-  /** Array of edges. */
-  edges: Array<RelationEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
+export type Relation = {
+  __typename?: 'Relation';
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+  type: RelationType;
 };
 
 export type RelationDefinition = {
@@ -1096,9 +1259,46 @@ export enum RelationDefinitionType {
   ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
+export type RelationMetadata = {
+  __typename?: 'RelationMetadata';
+  createdAt: Scalars['DateTime'];
+  fromFieldMetadataId: Scalars['String'];
+  fromObjectMetadata: Object;
+  fromObjectMetadataId: Scalars['String'];
+  id: Scalars['UUID'];
+  relationType: RelationMetadataType;
+  toFieldMetadataId: Scalars['String'];
+  toObjectMetadata: Object;
+  toObjectMetadataId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RelationMetadataConnection = {
+  __typename?: 'RelationMetadataConnection';
+  /** Array of edges. */
+  edges: Array<RelationMetadataEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type RelationMetadataEdge = {
+  __typename?: 'RelationMetadataEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the RelationMetadata */
+  node: RelationMetadata;
+};
+
 /** Type of the relation */
 export enum RelationMetadataType {
   MANY_TO_MANY = 'MANY_TO_MANY',
+  MANY_TO_ONE = 'MANY_TO_ONE',
+  ONE_TO_MANY = 'ONE_TO_MANY',
+  ONE_TO_ONE = 'ONE_TO_ONE'
+}
+
+/** Relation type */
+export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
   ONE_TO_ONE = 'ONE_TO_ONE'
@@ -1652,189 +1852,6 @@ export type WorkspaceSubdomainAndId = {
   subdomain: Scalars['String'];
 };
 
-export type Field = {
-  __typename?: 'field';
-  createdAt: Scalars['DateTime'];
-  defaultValue?: Maybe<Scalars['JSON']>;
-  description?: Maybe<Scalars['String']>;
-  fromRelationMetadata?: Maybe<Relation>;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  isActive?: Maybe<Scalars['Boolean']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
-  isNullable?: Maybe<Scalars['Boolean']>;
-  isSystem?: Maybe<Scalars['Boolean']>;
-  isUnique?: Maybe<Scalars['Boolean']>;
-  label: Scalars['String'];
-  name: Scalars['String'];
-  object?: Maybe<Object>;
-  options?: Maybe<Scalars['JSON']>;
-  relationDefinition?: Maybe<RelationDefinition>;
-  settings?: Maybe<Scalars['JSON']>;
-  toRelationMetadata?: Maybe<Relation>;
-  type: FieldMetadataType;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type FieldEdge = {
-  __typename?: 'fieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the field */
-  node: Field;
-};
-
-export type FieldFilter = {
-  and?: InputMaybe<Array<FieldFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  isSystem?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<FieldFilter>>;
-};
-
-export type Index = {
-  __typename?: 'index';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
-  indexType: IndexType;
-  indexWhereClause?: Maybe<Scalars['String']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isUnique: Scalars['Boolean'];
-  name: Scalars['String'];
-  objectMetadata: IndexObjectMetadataConnection;
-  updatedAt: Scalars['DateTime'];
-};
-
-
-export type IndexIndexFieldMetadatasArgs = {
-  filter?: IndexFieldFilter;
-  paging?: CursorPaging;
-};
-
-
-export type IndexObjectMetadataArgs = {
-  filter?: ObjectFilter;
-  paging?: CursorPaging;
-};
-
-export type IndexEdge = {
-  __typename?: 'indexEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the index */
-  node: Index;
-};
-
-export type IndexField = {
-  __typename?: 'indexField';
-  createdAt: Scalars['DateTime'];
-  fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
-  order: Scalars['Float'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type IndexFieldEdge = {
-  __typename?: 'indexFieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the indexField */
-  node: IndexField;
-};
-
-export type IndexFieldFilter = {
-  and?: InputMaybe<Array<IndexFieldFilter>>;
-  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<IndexFieldFilter>>;
-};
-
-export type IndexFilter = {
-  and?: InputMaybe<Array<IndexFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type Object = {
-  __typename?: 'object';
-  createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  fields: ObjectFieldsConnection;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  indexMetadatas: ObjectIndexMetadatasConnection;
-  isActive: Scalars['Boolean'];
-  isCustom: Scalars['Boolean'];
-  isLabelSyncedWithName: Scalars['Boolean'];
-  isRemote: Scalars['Boolean'];
-  isSystem: Scalars['Boolean'];
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  labelPlural: Scalars['String'];
-  labelSingular: Scalars['String'];
-  namePlural: Scalars['String'];
-  nameSingular: Scalars['String'];
-  shortcut?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-
-export type ObjectFieldsArgs = {
-  filter?: FieldFilter;
-  paging?: CursorPaging;
-};
-
-
-export type ObjectIndexMetadatasArgs = {
-  filter?: IndexFilter;
-  paging?: CursorPaging;
-};
-
-export type ObjectEdge = {
-  __typename?: 'objectEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the object */
-  node: Object;
-};
-
-export type ObjectFilter = {
-  and?: InputMaybe<Array<ObjectFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  isRemote?: InputMaybe<BooleanFieldComparison>;
-  isSystem?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<ObjectFilter>>;
-};
-
-export type Relation = {
-  __typename?: 'relation';
-  createdAt: Scalars['DateTime'];
-  fromFieldMetadataId: Scalars['String'];
-  fromObjectMetadata: Object;
-  fromObjectMetadataId: Scalars['String'];
-  id: Scalars['UUID'];
-  relationType: RelationMetadataType;
-  toFieldMetadataId: Scalars['String'];
-  toObjectMetadata: Object;
-  toObjectMetadataId: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RelationEdge = {
-  __typename?: 'relationEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the relation */
-  node: Relation;
-};
-
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
 export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
@@ -1922,15 +1939,6 @@ export type AuthorizeAppMutationVariables = Exact<{
 
 export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
 
-export type ChallengeMutationVariables = Exact<{
-  email: Scalars['String'];
-  password: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type ChallengeMutation = { __typename?: 'Mutation', challenge: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
-
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -1951,12 +1959,28 @@ export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: nev
 
 export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
+export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
+  loginToken: Scalars['String'];
+}>;
+
+
+export type GetAuthTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAuthTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type GetAuthorizationUrlMutationVariables = Exact<{
   input: GetAuthorizationUrlInput;
 }>;
 
 
 export type GetAuthorizationUrlMutation = { __typename?: 'Mutation', getAuthorizationUrl: { __typename?: 'GetAuthorizationUrlOutput', id: string, type: string, authorizationURL: string } };
+
+export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
@@ -2007,13 +2031,6 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 
 
 export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
-
-export type VerifyMutationVariables = Exact<{
-  loginToken: Scalars['String'];
-}>;
-
-
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -2748,43 +2765,6 @@ export function useAuthorizeAppMutation(baseOptions?: Apollo.MutationHookOptions
 export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMutation>;
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
-export const ChallengeDocument = gql`
-    mutation Challenge($email: String!, $password: String!, $captchaToken: String) {
-  challenge(email: $email, password: $password, captchaToken: $captchaToken) {
-    loginToken {
-      ...AuthTokenFragment
-    }
-  }
-}
-    ${AuthTokenFragmentFragmentDoc}`;
-export type ChallengeMutationFn = Apollo.MutationFunction<ChallengeMutation, ChallengeMutationVariables>;
-
-/**
- * __useChallengeMutation__
- *
- * To run a mutation, you first call `useChallengeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChallengeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [challengeMutation, { data, loading, error }] = useChallengeMutation({
- *   variables: {
- *      email: // value for 'email'
- *      password: // value for 'password'
- *      captchaToken: // value for 'captchaToken'
- *   },
- * });
- */
-export function useChallengeMutation(baseOptions?: Apollo.MutationHookOptions<ChallengeMutation, ChallengeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ChallengeMutation, ChallengeMutationVariables>(ChallengeDocument, options);
-      }
-export type ChallengeMutationHookResult = ReturnType<typeof useChallengeMutation>;
-export type ChallengeMutationResult = Apollo.MutationResult<ChallengeMutation>;
-export type ChallengeMutationOptions = Apollo.BaseMutationOptions<ChallengeMutation, ChallengeMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
     mutation EmailPasswordResetLink($email: String!) {
   emailPasswordResetLink(email: $email) {
@@ -2886,6 +2866,41 @@ export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationH
 export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+export const GetAuthTokensFromLoginTokenDocument = gql`
+    mutation GetAuthTokensFromLoginToken($loginToken: String!) {
+  getAuthTokensFromLoginToken(loginToken: $loginToken) {
+    tokens {
+      ...AuthTokensFragment
+    }
+  }
+}
+    ${AuthTokensFragmentFragmentDoc}`;
+export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
+
+/**
+ * __useGetAuthTokensFromLoginTokenMutation__
+ *
+ * To run a mutation, you first call `useGetAuthTokensFromLoginTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetAuthTokensFromLoginTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getAuthTokensFromLoginTokenMutation, { data, loading, error }] = useGetAuthTokensFromLoginTokenMutation({
+ *   variables: {
+ *      loginToken: // value for 'loginToken'
+ *   },
+ * });
+ */
+export function useGetAuthTokensFromLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>(GetAuthTokensFromLoginTokenDocument, options);
+      }
+export type GetAuthTokensFromLoginTokenMutationHookResult = ReturnType<typeof useGetAuthTokensFromLoginTokenMutation>;
+export type GetAuthTokensFromLoginTokenMutationResult = Apollo.MutationResult<GetAuthTokensFromLoginTokenMutation>;
+export type GetAuthTokensFromLoginTokenMutationOptions = Apollo.BaseMutationOptions<GetAuthTokensFromLoginTokenMutation, GetAuthTokensFromLoginTokenMutationVariables>;
 export const GetAuthorizationUrlDocument = gql`
     mutation GetAuthorizationUrl($input: GetAuthorizationUrlInput!) {
   getAuthorizationUrl(input: $input) {
@@ -2921,6 +2936,47 @@ export function useGetAuthorizationUrlMutation(baseOptions?: Apollo.MutationHook
 export type GetAuthorizationUrlMutationHookResult = ReturnType<typeof useGetAuthorizationUrlMutation>;
 export type GetAuthorizationUrlMutationResult = Apollo.MutationResult<GetAuthorizationUrlMutation>;
 export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlMutation, GetAuthorizationUrlMutationVariables>;
+export const GetLoginTokenFromCredentialsDocument = gql`
+    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
+  getLoginTokenFromCredentials(
+    email: $email
+    password: $password
+    captchaToken: $captchaToken
+  ) {
+    loginToken {
+      ...AuthTokenFragment
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
+
+/**
+ * __useGetLoginTokenFromCredentialsMutation__
+ *
+ * To run a mutation, you first call `useGetLoginTokenFromCredentialsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetLoginTokenFromCredentialsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getLoginTokenFromCredentialsMutation, { data, loading, error }] = useGetLoginTokenFromCredentialsMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useGetLoginTokenFromCredentialsMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>(GetLoginTokenFromCredentialsDocument, options);
+      }
+export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof useGetLoginTokenFromCredentialsMutation>;
+export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
+export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
 export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
     mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
   getLoginTokenFromEmailVerificationToken(
@@ -3156,41 +3212,6 @@ export function useUpdatePasswordViaResetTokenMutation(baseOptions?: Apollo.Muta
 export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<typeof useUpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationResult = Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
-export const VerifyDocument = gql`
-    mutation Verify($loginToken: String!) {
-  verify(loginToken: $loginToken) {
-    tokens {
-      ...AuthTokensFragment
-    }
-  }
-}
-    ${AuthTokensFragmentFragmentDoc}`;
-export type VerifyMutationFn = Apollo.MutationFunction<VerifyMutation, VerifyMutationVariables>;
-
-/**
- * __useVerifyMutation__
- *
- * To run a mutation, you first call `useVerifyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useVerifyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [verifyMutation, { data, loading, error }] = useVerifyMutation({
- *   variables: {
- *      loginToken: // value for 'loginToken'
- *   },
- * });
- */
-export function useVerifyMutation(baseOptions?: Apollo.MutationHookOptions<VerifyMutation, VerifyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<VerifyMutation, VerifyMutationVariables>(VerifyDocument, options);
-      }
-export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
-export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
-export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {

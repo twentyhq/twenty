@@ -49,8 +49,9 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        identityProvider?.workspace.subdomain ??
-          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        identityProvider?.workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
       );
 
       return false;

@@ -48,7 +48,9 @@ export const generateFakeObjectRecordEvent = (
       ...baseResult,
       properties: {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after, label: 'After' } },
+        value: {
+          after: { isLeaf: false, value: after, label: 'After Creation' },
+        },
         label: 'Record Fields',
       },
     };
@@ -62,8 +64,8 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-          after: { isLeaf: false, value: after, label: 'After' },
+          before: { isLeaf: false, value: before, label: 'Before Update' },
+          after: { isLeaf: false, value: after, label: 'After Update' },
         },
         label: 'Record Fields',
       },
@@ -76,7 +78,7 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
+          before: { isLeaf: false, value: before, label: 'Before Deletion' },
         },
         label: 'Record Fields',
       },
@@ -89,7 +91,11 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
+          before: {
+            isLeaf: false,
+            value: before,
+            label: 'Before Permanent Deletion',
+          },
         },
         label: 'Record Fields',
       },
