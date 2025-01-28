@@ -11,8 +11,6 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-// TODO this should not be any
-// TODO refactor using for loop ? and strictly type ap
 // We're not strict checking that any key within recordInput exists in the objectMetadaItem
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
@@ -25,8 +23,6 @@ export const computeOptimisticRecordFromInput = ({
   cache,
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
-  console.log('computeOptimisticRecordFromInput', { recordInput });
-  const recordInputEntries = Object.entries(recordInput);
   const accumulator: Partial<ObjectRecord> = {};
   for (const fieldMetadataItem of objectMetadataItem.fields) {
     const isUuidField = fieldMetadataItem.type === FieldMetadataType.UUID;
@@ -39,7 +35,7 @@ export const computeOptimisticRecordFromInput = ({
           }
 
           if (!isDefined(relationDefinition)) {
-            throw new Error('Should never occurs ? TODO TEXT');
+            return
           }
 
           const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
@@ -55,11 +51,9 @@ export const computeOptimisticRecordFromInput = ({
 
     const isRelationField =
       fieldMetadataItem.type === FieldMetadataType.RELATION;
-    const recordInputMatch = recordInputEntries.find(
-      ([fieldName]) => fieldName === fieldMetadataItem.name,
-    );
+    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
     // Maybe we could ? consume the inputs if defined and if not try the cache idk
-    if (isDefined(recordInputMatch) && isRelationField) {
+    if (isDefined(recordInputFieldValue) && isRelationField) {
       throw new Error(
         'Should never provide relation mutation through anything else than the fieldId e.g companyId',
       );
@@ -77,71 +71,66 @@ export const computeOptimisticRecordFromInput = ({
       fieldMetadataItem.relationDefinition?.direction ===
       RelationDefinitionType.MANY_TO_ONE;
     if (isRelationField && isManyToOneRelation) {
-      const relationIdFieldName = `${fieldMetadataItem.name}Id`;
-      const recordInputMatchId = recordInputEntries.find(
-        ([fieldName]) => fieldName === relationIdFieldName,
-      );
-      if (!isDefined(recordInputMatchId)) {
+      const relationFieldIdName = `${fieldMetadataItem.name}Id`;
+      const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
+      if (!isDefined(recordInputFieldIdValue)) {
         continue;
       }
 
-      const [fieldIdName, fieldIdValue] = recordInputMatchId;
       const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
-        (field) => field.name === relationIdFieldName,
+        (field) => field.name === relationFieldIdName,
       );
       if (!isDefined(relationIdFieldMetadataItem)) {
         continue;
       }
 
-      const isRecordInputFieldIdNull = isNull(fieldIdValue);
+      const isRecordInputFieldIdNull = isNull(recordInputFieldIdValue);
       if (isRecordInputFieldIdNull) {
         return [
-          [fieldIdName, null],
+          [relationFieldIdName, null],
           [fieldMetadataItem.name, null],
         ];
       }
       const targetNameSingular =
         fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
-      const relationObjectMetataDataItem = objectMetadataItems.find(
+      const targetObjectMetataDataItem = objectMetadataItems.find(
         ({ nameSingular }) => nameSingular === targetNameSingular,
       );
       if (
         !isDefined(targetNameSingular) ||
-        !isDefined(relationObjectMetataDataItem)
+        !isDefined(targetObjectMetataDataItem)
       ) {
-        throw new Error('Should never occurs invalid relation TODO TEXT');
+        throw new Error('Should never occurs, encountered invalid relation definition');
       }
 
       const cachedRecord = getRecordFromCache({
         cache,
-        objectMetadataItem: relationObjectMetataDataItem,
+        objectMetadataItem: targetObjectMetataDataItem,
         objectMetadataItems,
-        recordId: fieldIdValue,
+        recordId: recordInputFieldIdValue as string,
       });
       if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
         continue;
       }
 
-      accumulator[fieldIdName] = fieldIdValue;
+      accumulator[relationFieldIdName] = recordInputFieldIdValue;
       accumulator[fieldMetadataItem.name] = cachedRecord;
       continue;
     }
 
-    if (!isDefined(recordInputMatch)) {
+    if (!isDefined(recordInputFieldValue)) {
       continue;
     }
 
-    const [fieldName, fieldValue] = recordInputMatch;
-    if (!fieldMetadataItem.isNullable && fieldValue == null) {
+    if (!fieldMetadataItem.isNullable && recordInputFieldValue == null) {
       continue;
     }
 
-    accumulator[fieldName] = fieldValue;
+    accumulator[fieldMetadataItem.name] = recordInputFieldValue;
   }
 
   const recordDomainNameIsDefined =
-    isDefined(accumulator?.domainName) &&
-    isString(accumulator.domainName);
+    isDefined(accumulator?.domainName) && isString(accumulator.domainName);
   if (!recordDomainNameIsDefined) {
     return accumulator;
   }
