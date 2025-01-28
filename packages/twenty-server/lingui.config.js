@@ -1,4 +1,5 @@
 import { defineConfig } from '@lingui/cli';
+import { formatter } from '@lingui/format-po';
 
 export default defineConfig({
   sourceLocale: 'en',
@@ -6,6 +7,9 @@ export default defineConfig({
   extractorParserOptions: {
     tsExperimentalDecorators: true,
   },
+  format: formatter({
+    explicitIdAsDefault: true,
+  }),
   catalogs: [
     {
       path: '<rootDir>/src/engine/core-modules/i18n/locales/{locale}',

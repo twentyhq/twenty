@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -72,9 +73,9 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
   namePlural: 'workspaceMembers',
-  labelSingular: 'Workspace Member',
-  labelPlural: 'Workspace Members',
-  description: 'A workspace member',
+  labelSingular: msg`Workspace Member`,
+  labelPlural: msg`Workspace Members`,
+  description: msg`A workspace member`,
   icon: STANDARD_OBJECT_ICONS.workspaceMember,
   labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
 })
