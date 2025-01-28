@@ -1,11 +1,9 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-
-import { IconCheck } from '@tabler/icons-react';
-
 import { isUndefined } from '@sniptt/guards';
 
+import { IconCheck } from '@ui/display';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -164,6 +162,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   }};
 `;
 
-export const StyledIconCheck = styled(IconCheck)`
-  padding-right: ${({ theme }) => theme.spacing(2)};
+export const StyledMenuItemIconCheck = styled(IconCheck)`
+  flex-shrink: 0;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;

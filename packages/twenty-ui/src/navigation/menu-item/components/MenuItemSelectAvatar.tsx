@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
 
 import {
-  StyledIconCheck,
+  StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
@@ -51,7 +51,7 @@ export const MenuItemSelectAvatar = ({
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <StyledIconCheck size={theme.icon.size.md} />}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };
