@@ -1,9 +1,17 @@
+
+PG_VECTOR_IMAGE_NAME=postgres-with-pgvector
+
+PG_VECTOR_IMAGE_TAG=15
+
+build-pg-vector-image:
+	docker build -t $(PG_VECTOR_IMAGE_NAME):$(PG_VECTOR_IMAGE_TAG) .
+
 DB_USER=kvoipv2_user
 DB_PASSWORD=kvoipv2_password
 DB_NAME=kvoipv2_db
 CONTAINER_NAME=kvoipv2_pg
 
-kvoipv2-pg-on-docker:
+kvoipv-pg-on-docker:
 	docker run -d \
 	--name $(CONTAINER_NAME) \
 	-e POSTGRES_USER=$(DB_USER) \

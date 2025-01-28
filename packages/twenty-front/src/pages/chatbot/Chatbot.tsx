@@ -13,8 +13,6 @@ export const Chatbot = () => {
 
   const chatbotBaseUrl = import.meta.env.REACT_APP_CHATBOT_BASE_URL;
 
-  console.log("Creator Email", workspace?.creatorEmail)
-
   return (
     <ChatbotPageContainer>
       <PageContainer>
