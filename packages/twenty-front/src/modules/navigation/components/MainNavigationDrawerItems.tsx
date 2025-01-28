@@ -1,8 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings, getOsControlSymbol } from 'twenty-ui';
+import { IconSearch, IconSettings } from 'twenty-ui';
 
+import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
@@ -28,7 +31,6 @@ const StyledInnerContainer = styled.div`
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
-  const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -42,6 +44,12 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
+  const { openCommandMenu } = useCommandMenu();
+
+  const setCommandMenuPageState = useSetRecoilState(commandMenuPageState);
+  const setCommandMenuPageInfoState = useSetRecoilState(
+    commandMenuPageInfoState,
+  );
   return (
     <>
       {!isMobile && (
@@ -49,8 +57,15 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label={t`Search`}
             Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={[getOsControlSymbol(), 'K']}
+            onClick={() => {
+              setCommandMenuPageState(CommandMenuPages.SearchRecords);
+              setCommandMenuPageInfoState({
+                title: 'Search',
+                Icon: IconSearch,
+              });
+              openCommandMenu();
+            }}
+            keyboard={['/']}
           />
           <NavigationDrawerItem
             label={t`Settings`}
