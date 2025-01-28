@@ -37,7 +37,7 @@ msgstr "24小时（[{hour24Label}）"
 msgid "Abort"
 msgstr "中止"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:93
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
 msgstr "关于"
 
@@ -52,7 +52,7 @@ msgid "Account Deletion"
 msgstr "账户删除"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Accounts"
 msgstr "账户"
 
@@ -106,7 +106,7 @@ msgid "An optional description"
 msgstr "可选描述"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:184
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "API & Webhooks"
 msgstr "应用程序接口和网络钩子"
 
@@ -149,7 +149,7 @@ msgstr "返回内容"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Billing"
 msgstr "账单"
 
@@ -171,13 +171,13 @@ msgstr "日历"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 msgid "Calendars"
 msgstr "日历"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:198
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
 msgstr "取消"
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Choose your Trial"
 msgstr "选择试用"
 
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:201
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "关闭"
 
@@ -327,9 +327,16 @@ msgid "Danger zone"
 msgstr "危险区"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:160
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
 msgstr "数据模型"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
@@ -347,7 +354,7 @@ msgstr "停用 \"同步对象标签和 API 名称 \"以设置自定义 API 名�
 msgid "Deactivate this field"
 msgstr "停用该字段"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:94
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
 msgstr "定义对象的名称和描述"
 
@@ -447,7 +454,7 @@ msgstr "电子邮件集成"
 msgid "Email or domain is already in blocklist"
 msgstr "电子邮件或域名已在拦截列表中"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:71
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "电子邮件"
@@ -507,7 +514,7 @@ msgstr "退出设置"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:107
 msgid "Experience"
 msgstr "经验"
 
@@ -548,14 +555,14 @@ msgstr "从每年到每月"
 msgid "Full access"
 msgstr "完全访问"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:192
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:186
 msgid "Functions"
 msgstr "功能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:132
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:137
 msgid "General"
 msgstr "一般情况"
 
@@ -595,7 +602,7 @@ msgstr "输入内容必须使用驼峰字体，且不能以数字开头"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:159
 msgid "Integrations"
 msgstr "集成"
 
@@ -640,7 +647,7 @@ msgstr "邀请您的团队"
 msgid "Italian"
 msgstr "意大利语"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
 msgid "Lab"
 msgstr ""
 
@@ -656,7 +663,7 @@ msgstr "链接复制到剪贴板"
 msgid "Log out"
 msgstr "退出登录"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:221
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:215
 msgid "Logout"
 msgstr "注销"
 
@@ -678,7 +685,7 @@ msgstr "管理您的订阅"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
 msgid "Members"
 msgstr "成员"
 
@@ -704,7 +711,7 @@ msgstr "工作区名称"
 msgid "Navigate"
 msgstr "导航"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:79
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "新"
 
@@ -720,7 +727,7 @@ msgstr "新钥匙"
 msgid "New Key"
 msgstr "新钥匙"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
 msgstr "新对象"
 
@@ -746,7 +753,7 @@ msgstr "说明"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr "对象"
@@ -763,7 +770,7 @@ msgstr "机会"
 msgid "or"
 msgstr "或"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:200
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:194
 msgid "Other"
 msgstr "其他"
 
@@ -811,7 +818,7 @@ msgstr "预览"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:102
 msgid "Profile"
 msgstr "简介"
 
@@ -846,7 +853,7 @@ msgstr "再生密钥"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:216
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Releases"
 msgstr "发布"
 
@@ -881,7 +888,7 @@ msgstr "搜索对象..."
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:171
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
 msgid "Security"
 msgstr "安全"
 
@@ -897,7 +904,7 @@ msgstr "选择您喜欢的语言"
 msgid "Send an invite email to your team"
 msgstr "向团队发送邀请电子邮件"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:203
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:197
 msgid "Server Admin Panel"
 msgstr "服务器管理面板"
 
@@ -1059,7 +1066,7 @@ msgstr "只能使用字母、数字和破折号。以字母或数字开头和结
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:100
 msgid "User"
 msgstr "用户"
 
@@ -1133,10 +1140,10 @@ msgstr "工作流程"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:72
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
 msgid "Workspace"
 msgstr "工作空间"
 
