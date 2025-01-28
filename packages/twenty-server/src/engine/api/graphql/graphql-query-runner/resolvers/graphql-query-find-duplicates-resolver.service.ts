@@ -37,7 +37,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<FindDuplicatesResolverArgs>,
   ): Promise<IConnection<ObjectRecord>[]> {
-    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps, authContext } =
       executionArgs.options;
 
     const existingRecordsQueryBuilder =
@@ -58,13 +58,22 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       );
     }
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldsMaps?.fieldsByName,
       objectMetadataMaps,
+      featureFlagsMap,
     );
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     let objectRecords: Partial<ObjectRecord>[] = [];
 

@@ -16,11 +16,13 @@ import {
 
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -52,6 +54,10 @@ export abstract class GraphqlQueryBaseResolverService<
   protected readonly apiEventEmitterService: ApiEventEmitterService;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
+  @Inject()
+  protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
+  @Inject()
+  protected readonly featureFlagService: FeatureFlagService;
 
   public async execute(
     args: Input,
@@ -86,9 +92,15 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       );
 
+      const featureFlagsMap =
+        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+          authContext.workspace.id,
+        );
+
       const graphqlQueryParser = new GraphqlQueryParser(
         objectMetadataItemWithFieldMaps.fieldsByName,
         options.objectMetadataMaps,
+        featureFlagsMap,
       );
 
       const selectedFields = graphqlFields(options.info);
