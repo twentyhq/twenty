@@ -23,7 +23,7 @@ const validationSchema = z
         /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
         {
           message:
-            'Hostname invalid. Use letters, numbers and dashes only and a valid first level domain. Example: twenty.app',
+            "Invalid custom hostname. Custom hostnames have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character.",
         },
       )
       .nullable(),
@@ -102,7 +102,7 @@ export const SettingsHostname = () => {
         },
       });
 
-      redirectToWorkspaceDomain({ subdomain: currentWorkspace.subdomain });
+      redirectToWorkspaceDomain(currentWorkspace.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
@@ -127,8 +127,6 @@ export const SettingsHostname = () => {
           },
         },
       });
-
-      console.log('>>>>>>>>>>>>>>', result);
 
       setCurrentWorkspace({
         ...currentWorkspace,

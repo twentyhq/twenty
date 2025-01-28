@@ -109,6 +109,7 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']['output']>;
+  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
@@ -1265,6 +1266,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
+  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   subdomain: Scalars['String']['output'];
@@ -1870,7 +1872,8 @@ export type UpdateWorkflowVersionStepInput = {
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
-  domainName?: InputMaybe<Scalars['String']['input']>;
+  domain?: InputMaybe<Scalars['String']['input']>;
+  hostname?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;

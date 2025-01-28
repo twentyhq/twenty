@@ -20,6 +20,7 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthEnabled'
   | 'hasValidEntrepriseKey'
   | 'subdomain'
+  | 'hostname'
   | 'metadataVersion'
 >;
 
