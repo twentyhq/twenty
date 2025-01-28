@@ -1,5 +1,9 @@
-import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import {
+  AuthProviders,
+  SSOIdentityProvider,
+} from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SSOIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 export const getAuthProvidersByWorkspace = ({
   workspace,
@@ -21,12 +25,24 @@ export const getAuthProvidersByWorkspace = ({
       workspace.isPasswordAuthEnabled && systemEnabledProviders.password,
     microsoft:
       workspace.isMicrosoftAuthEnabled && systemEnabledProviders.microsoft,
-    sso: workspace.workspaceSSOIdentityProviders.map((identityProvider) => ({
-      id: identityProvider.id,
-      name: identityProvider.name,
-      type: identityProvider.type,
-      status: identityProvider.status,
-      issuer: identityProvider.issuer,
-    })),
+    sso: workspace.workspaceSSOIdentityProviders.reduce(
+      (acc, identityProvider) =>
+        acc.concat(
+          identityProvider.status === SSOIdentityProviderStatus.Active
+            ? [
+                {
+                  id: identityProvider.id,
+                  name: identityProvider.name,
+                  type: identityProvider.type,
+                  status: identityProvider.status,
+                  issuer: identityProvider.issuer,
+                },
+              ]
+            : [],
+        ),
+      [] as Array<
+        Pick<SSOIdentityProvider, 'id' | 'name' | 'type' | 'status' | 'issuer'>
+      >,
+    ),
   };
 };
