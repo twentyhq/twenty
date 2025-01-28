@@ -8,10 +8,7 @@ import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -25,9 +22,6 @@ export class RemoveDuplicateMcmasCommand extends ActiveWorkspacesCommandRunner {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    private readonly objectMetadataService: ObjectMetadataService,
   ) {
     super(workspaceRepository);
     this.logger = new Logger(this.constructor.name);
@@ -41,7 +35,13 @@ export class RemoveDuplicateMcmasCommand extends ActiveWorkspacesCommandRunner {
     const { dryRun } = _options;
 
     for (const workspaceId of workspaceIds) {
-      await this.execute(workspaceId, dryRun);
+      try {
+        await this.execute(workspaceId, dryRun);
+      } catch (error) {
+        this.logger.error(
+          `Error removing duplicate mcmas for workspace ${workspaceId}: ${error}`,
+        );
+      }
     }
   }
 
@@ -90,5 +90,7 @@ export class RemoveDuplicateMcmasCommand extends ActiveWorkspacesCommandRunner {
         }
       }
     }
+
+    this.twentyORMGlobalManager.destroyDataSourceForWorkspace(workspaceId);
   }
 }
