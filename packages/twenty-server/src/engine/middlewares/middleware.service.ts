@@ -4,10 +4,13 @@ import { Request, Response } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { EXCLUDED_MIDDLEWARE_OPERATIONS } from 'src/engine/middlewares/constants/excluded-middleware-operations.constant';
 import { bindDataToRequestObject } from 'src/engine/middlewares/utils/bind-data-to-request-object.utils';
+import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,6 +21,7 @@ export class MiddlewareService {
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly dataSourceService: DataSourceService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   public excludedOperations = EXCLUDED_MIDDLEWARE_OPERATIONS;
@@ -39,17 +43,9 @@ export class MiddlewareService {
     return isUserUnauthenticated && isExcludedOperation;
   }
 
-  public writeResponseOnExceptionCaught(
-    res: Response,
-    source: 'rest' | 'graphql',
-    error: unknown,
-    errors: unknown[],
-  ) {
+  public writeRestResponseOnExceptionCaught(res: Response, error: any) {
+    const errors = [handleException(error, this.exceptionHandlerService)];
     const getStatus = () => {
-      if (source === 'graphql') {
-        return 200;
-      }
-
       if (this.hasErrorStatus(error)) {
         return error.status;
       }
@@ -63,6 +59,25 @@ export class MiddlewareService {
         errors,
       }),
     );
+
+    res.end();
+  }
+
+  public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
+    const errors = [
+      handleExceptionAndConvertToGraphQLError(
+        error,
+        this.exceptionHandlerService,
+      ),
+    ];
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write(
+      JSON.stringify({
+        errors,
+      }),
+    );
+
     res.end();
   }
 
@@ -93,6 +108,6 @@ export class MiddlewareService {
   }
 
   private hasErrorStatus(error: unknown): error is { status: number } {
-    return isDefined((error as { status: number }).status);
+    return isDefined((error as { status: number })?.status);
   }
 }

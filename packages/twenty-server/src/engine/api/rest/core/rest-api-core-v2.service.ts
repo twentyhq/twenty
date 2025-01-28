@@ -52,10 +52,24 @@ export class RestApiCoreServiceV2 {
 
     await repository.delete(recordId);
 
-    return {
+    return this.formatResult(
+      'delete',
+      objectMetadataNameSingular,
+      recordToDelete,
+    );
+  }
+
+  private formatResult(
+    operation: 'delete' | 'create' | 'update' | 'find',
+    objecNameSingular: string,
+    data: object,
+  ) {
+    const result = {
       data: {
-        [`delete${capitalize(objectMetadataNameSingular)}`]: recordToDelete,
+        [operation + capitalize(objecNameSingular)]: data,
       },
     };
+
+    return result;
   }
 }

@@ -1,6 +1,5 @@
 export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'GetClientConfig',
-  'GetCurrentUser',
   'GetWorkspaceFromInviteHash',
   'Track',
   'CheckUserExists',
@@ -17,4 +16,4 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'ExchangeAuthorizationCode',
   'GetAuthorizationUrl',
   'GetPublicWorkspaceDataBySubdomain',
-] as const;
+];
