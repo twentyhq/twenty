@@ -117,8 +117,7 @@ export const useCreateOneRecord = <
         },
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
-
-          if (isDefined(record) && skipPostOptmisticEffect === false) {
+          if (skipPostOptmisticEffect === false && isDefined(record)) {
             triggerCreateRecordsOptimisticEffect({
               cache,
               objectMetadataItem,

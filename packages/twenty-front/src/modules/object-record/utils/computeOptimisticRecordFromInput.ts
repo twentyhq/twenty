@@ -47,8 +47,7 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     const isRelationField = isFieldRelation(fieldMetadataItem);
-    const recordInputFieldValue: unknown =
-      recordInput[fieldMetadataItem.name];
+    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
     if (!isRelationField) {
       if (!isDefined(recordInputFieldValue)) {
         continue;
@@ -93,7 +92,7 @@ export const computeOptimisticRecordFromInput = ({
     );
     if (!isDefined(relationIdFieldMetadataItem)) {
       throw new Error(
-        'Should never occurs, encountered unknown relationId within relations definitions',
+        'Should never occur, encountered unknown relationId within relations definitions',
       );
     }
 
@@ -114,7 +113,7 @@ export const computeOptimisticRecordFromInput = ({
       !isDefined(targetObjectMetataDataItem)
     ) {
       throw new Error(
-        'Should never occurs, encountered invalid relation definition',
+        'Should never occur, encountered invalid relation definition',
       );
     }
 
