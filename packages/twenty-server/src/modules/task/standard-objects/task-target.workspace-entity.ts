@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -20,9 +22,9 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.taskTarget,
   namePlural: 'taskTargets',
-  labelSingular: 'Task Target',
-  labelPlural: 'Task Targets',
-  description: 'An task target',
+  labelSingular: msg`Task Target`,
+  labelPlural: msg`Task Targets`,
+  description: msg`A task target`,
   icon: STANDARD_OBJECT_ICONS.taskTarget,
 })
 @WorkspaceIsSystem()

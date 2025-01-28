@@ -90,6 +90,7 @@ export const WorkflowStepDetail = ({
           return (
             <Suspense fallback={<RightDrawerSkeletonLoader />}>
               <WorkflowEditActionFormServerlessFunction
+                key={stepId}
                 action={stepDefinition.definition}
                 actionOptions={props}
               />
@@ -99,6 +100,7 @@ export const WorkflowStepDetail = ({
         case 'SEND_EMAIL': {
           return (
             <WorkflowEditActionFormSendEmail
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -107,6 +109,7 @@ export const WorkflowStepDetail = ({
         case 'CREATE_RECORD': {
           return (
             <WorkflowEditActionFormCreateRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -116,6 +119,7 @@ export const WorkflowStepDetail = ({
         case 'UPDATE_RECORD': {
           return (
             <WorkflowEditActionFormUpdateRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -125,6 +129,7 @@ export const WorkflowStepDetail = ({
         case 'DELETE_RECORD': {
           return (
             <WorkflowEditActionFormDeleteRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />

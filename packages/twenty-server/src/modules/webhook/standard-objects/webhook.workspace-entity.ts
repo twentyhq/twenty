@@ -1,4 +1,6 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -13,9 +15,9 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.webhook,
   namePlural: 'webhooks',
-  labelSingular: 'Webhook',
-  labelPlural: 'Webhooks',
-  description: 'A webhook',
+  labelSingular: msg`Webhook`,
+  labelPlural: msg`Webhooks`,
+  description: msg`A webhook`,
   icon: STANDARD_OBJECT_ICONS.webhook,
   labelIdentifierStandardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
 })

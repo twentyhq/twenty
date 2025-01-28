@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import console from 'console';
 
+import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
@@ -14,6 +15,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
@@ -103,7 +105,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNamePlural: objectMetadataInput.namePlural,
       objectMetadataNameSingular: objectMetadataInput.nameSingular,
       workspaceId: objectMetadataInput.workspaceId,
@@ -533,4 +535,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
   };
+
+  async resolveTranslatableString(
+    objectMetadata: ObjectMetadataDTO,
+    labelKey: 'labelPlural' | 'labelSingular' | 'description',
+    locale: string,
+  ): Promise<string> {
+    if (objectMetadata.isCustom) {
+      return objectMetadata[labelKey];
+    }
+
+    i18n.activate(locale);
+
+    return i18n._(objectMetadata[labelKey]);
+  }
 }

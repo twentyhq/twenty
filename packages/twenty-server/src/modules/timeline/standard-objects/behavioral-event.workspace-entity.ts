@@ -1,5 +1,7 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -13,9 +15,9 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.behavioralEvent,
   namePlural: 'behavioralEvents',
-  labelSingular: 'Behavioral Event',
-  labelPlural: 'Behavioral Events',
-  description: 'An event related to user behavior',
+  labelSingular: msg`Behavioral Event`,
+  labelPlural: msg`Behavioral Events`,
+  description: msg`An event related to user behavior`,
   icon: STANDARD_OBJECT_ICONS.behavioralEvent,
 })
 @WorkspaceIsSystem()

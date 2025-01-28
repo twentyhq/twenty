@@ -115,7 +115,20 @@ export const WorkflowVariablesDropdownFieldItems = ({
     }
   };
 
-  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
+  const getHeaderLabel = () => {
+    if (currentPath.length === 0) {
+      return step.name;
+    }
+
+    const subStepName = currentPath.at(-1);
+
+    if (isDefined(subStepName) && isRecordOutputSchema(step.outputSchema)) {
+      return step.outputSchema.fields[subStepName].label;
+    }
+
+    return subStepName;
+  };
+
   const displayedObject = getDisplayedSubStepFields();
   const options = displayedObject ? Object.entries(displayedObject) : [];
 
@@ -132,11 +145,9 @@ export const WorkflowVariablesDropdownFieldItems = ({
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
         onClick={goBack}
-        style={{
-          position: 'fixed',
-        }}
+        style={{ position: 'fixed' }}
       >
-        <OverflowingTextWithTooltip text={headerLabel} />
+        <OverflowingTextWithTooltip text={getHeaderLabel()} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
@@ -145,15 +156,18 @@ export const WorkflowVariablesDropdownFieldItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {filteredOptions.map(([key, value]) => (
+        {filteredOptions.map(([key, subStep]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             hovered={false}
             onClick={() => handleSelectField(key)}
-            text={value.label || key}
-            hasSubMenu={!value.isLeaf}
-            LeftIcon={value.icon ? getIcon(value.icon) : undefined}
+            text={subStep.label || key}
+            hasSubMenu={!subStep.isLeaf}
+            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            contextualText={
+              subStep.isLeaf ? subStep?.value?.toString() : undefined
+            }
           />
         ))}
       </DropdownMenuItemsContainer>

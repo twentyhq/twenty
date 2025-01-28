@@ -1,7 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
 import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
   IconAlertTriangle,
   IconInfoCircle,
@@ -30,11 +32,16 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   duration?: number;
   icon?: ReactNode;
   message: string;
+  link?: {
+    href: string;
+    text: string;
+  };
   detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
   role?: 'alert' | 'status';
   variant?: SnackBarVariant;
+  dedupeKey?: string;
 };
 
 const StyledContainer = styled.div`
@@ -99,6 +106,20 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
+const StyledLink = styled(Link)`
+  display: block;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  &:hover {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+`;
+
 const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
   [SnackBarVariant.Default]: 'Alert',
   [SnackBarVariant.Error]: 'Error',
@@ -115,12 +136,14 @@ export const SnackBar = ({
   id,
   message,
   detailedMessage,
+  link,
   onCancel,
   onClose,
   role = 'status',
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
       autoPlay: isUndefined(overrideProgressValue),
@@ -192,16 +215,17 @@ export const SnackBar = ({
         <StyledIcon>{icon}</StyledIcon>
         <StyledMessage>{message}</StyledMessage>
         <StyledActions>
-          {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
+          {!!onCancel && <LightButton title={t`Cancel`} onClick={onCancel} />}
 
           {!!onClose && (
-            <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
+            <LightIconButton title={t`Close`} Icon={IconX} onClick={onClose} />
           )}
         </StyledActions>
       </StyledHeader>
       {detailedMessage && (
         <StyledDescription>{detailedMessage}</StyledDescription>
       )}
+      {link && <StyledLink to={link.href}>{link.text}</StyledLink>}
     </StyledContainer>
   );
 };

@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -23,9 +25,9 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
-  labelSingular: 'Message',
-  labelPlural: 'Messages',
-  description: 'Message',
+  labelSingular: msg`Message`,
+  labelPlural: msg`Messages`,
+  description: msg`A message sent or received through a messaging channel (email, chat, etc.)`,
   icon: STANDARD_OBJECT_ICONS.message,
   labelIdentifierStandardId: MESSAGE_STANDARD_FIELD_IDS.subject,
 })

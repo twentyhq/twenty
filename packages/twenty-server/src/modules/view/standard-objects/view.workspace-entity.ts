@@ -1,7 +1,9 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -26,9 +28,9 @@ import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
   namePlural: 'views',
-  labelSingular: 'View',
-  labelPlural: 'Views',
-  description: '(System) Views',
+  labelSingular: msg`View`,
+  labelPlural: msg`Views`,
+  description: msg`(System) Views`,
   icon: STANDARD_OBJECT_ICONS.view,
   labelIdentifierStandardId: VIEW_STANDARD_FIELD_IDS.name,
 })

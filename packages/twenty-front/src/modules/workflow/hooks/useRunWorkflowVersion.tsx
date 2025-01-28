@@ -1,10 +1,8 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
-import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import {
   RunWorkflowVersionMutation,
@@ -12,12 +10,12 @@ import {
 } from '~/generated/graphql';
 
 export const useRunWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
   const [mutate] = useMutation<
     RunWorkflowVersionMutation,
     RunWorkflowVersionMutationVariables
   >(RUN_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
   const { enqueueSnackBar } = useSnackBar();
@@ -26,18 +24,27 @@ export const useRunWorkflowVersion = () => {
 
   const runWorkflowVersion = async ({
     workflowVersionId,
-    workflowName,
     payload,
   }: {
     workflowVersionId: string;
-    workflowName: string;
     payload?: Record<string, any>;
   }) => {
-    await mutate({
+    const { data } = await mutate({
       variables: { input: { workflowVersionId, payload } },
     });
 
-    enqueueSnackBar(`${capitalize(workflowName)} starting...`, {
+    const workflowRunId = data?.runWorkflowVersion?.workflowRunId;
+
+    if (!workflowRunId) {
+      enqueueSnackBar('Workflow run failed', {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
+
+    const link = `/object/workflowRun/${workflowRunId}`;
+
+    enqueueSnackBar('Workflow is running...', {
       variant: SnackBarVariant.Success,
       icon: (
         <IconSettingsAutomation
@@ -45,6 +52,10 @@ export const useRunWorkflowVersion = () => {
           color={theme.snackBar.success.color}
         />
       ),
+      link: {
+        href: link,
+        text: 'View execution details',
+      },
     });
   };
 

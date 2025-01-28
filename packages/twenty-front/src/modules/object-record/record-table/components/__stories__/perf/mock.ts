@@ -723,7 +723,7 @@ export const mockPerformance = {
       options: null,
     },
     iconName: 'IconBuildingSkyscraper',
-    type: FieldMetadataType.Relation,
+    type: FieldMetadataType.RELATION,
     position: 2,
     size: 150,
     isLabelIdentifier: false,

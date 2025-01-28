@@ -2,12 +2,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -27,49 +28,51 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
+  const { t } = useLingui();
+
   return (
     <SubMenuTopBarContainer
-      title="Developers"
+      title={t`Developers`}
       actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          children: <Trans>Workspace</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Developers' },
+        { children: <Trans>Developers</Trans> },
       ]}
     >
       <SettingsPageContainer>
         <StyledContainer isMobile={isMobile}>
           <Section>
             <H2Title
-              title="API keys"
-              description="Active APIs keys created by you or your team."
+              title={t`API keys`}
+              description={t`Active API keys created by you or your team.`}
             />
             <SettingsApiKeysTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title="Create API key"
+                title={t`Create API key`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/api-keys/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
               />
             </StyledButtonContainer>
           </Section>
           <Section>
             <H2Title
-              title="Webhooks"
-              description="Establish Webhook endpoints for notifications on asynchronous events."
+              title={t`Webhooks`}
+              description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
             />
             <SettingsWebhooksTable />
             <StyledButtonContainer>
               <Button
                 Icon={IconPlus}
-                title="Create Webhook"
+                title={t`Create Webhook`}
                 size="small"
                 variant="secondary"
-                to={'/settings/developers/webhooks/new'}
+                to={getSettingsPath(SettingsPath.DevelopersNewWebhook)}
               />
             </StyledButtonContainer>
           </Section>

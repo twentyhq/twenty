@@ -3,12 +3,7 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import {
-  HorizontalSeparator,
-  IconAddressBook,
-  isDefined,
-  useIcons,
-} from 'twenty-ui';
+import { HorizontalSeparator, isDefined, useIcons } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
@@ -16,6 +11,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -41,16 +37,16 @@ type UpdateRecordFormData = {
 };
 
 const AVAILABLE_FIELD_METADATA_TYPES = [
-  FieldMetadataType.Text,
-  FieldMetadataType.Number,
-  FieldMetadataType.Date,
-  FieldMetadataType.Boolean,
-  FieldMetadataType.Select,
-  FieldMetadataType.MultiSelect,
-  FieldMetadataType.Emails,
-  FieldMetadataType.Links,
-  FieldMetadataType.FullName,
-  FieldMetadataType.Address,
+  FieldMetadataType.TEXT,
+  FieldMetadataType.NUMBER,
+  FieldMetadataType.DATE,
+  FieldMetadataType.BOOLEAN,
+  FieldMetadataType.SELECT,
+  FieldMetadataType.MULTI_SELECT,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
 ];
 
 export const WorkflowEditActionFormUpdateRecord = ({
@@ -157,6 +153,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
   }, [saveAction]);
 
   const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
+  const headerIcon = getActionIcon(action.type);
 
   return (
     <>
@@ -171,7 +168,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
             name: newName,
           });
         }}
-        Icon={IconAddressBook}
+        Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
@@ -197,6 +194,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
 
             saveAction(newFormData);
           }}
+          withSearchInput
         />
 
         <HorizontalSeparator noMargin />
@@ -222,6 +220,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
           onPersist={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
+          placeholder="Select fields to update"
         />
 
         <HorizontalSeparator noMargin />
@@ -248,6 +247,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
+              readonly={isFormDisabled}
             />
           );
         })}

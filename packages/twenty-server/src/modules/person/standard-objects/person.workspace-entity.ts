@@ -1,3 +1,6 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
@@ -9,7 +12,6 @@ import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/compo
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -55,9 +57,9 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
-  labelSingular: 'Person',
-  labelPlural: 'People',
-  description: 'A person',
+  labelSingular: msg`Person`,
+  labelPlural: msg`People`,
+  description: msg`A person`,
   icon: STANDARD_OBJECT_ICONS.person,
   shortcut: 'P',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
@@ -72,7 +74,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  [NAME_FIELD_NAME]: FullNameMetadata | null;
+  name: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.emails,
@@ -82,7 +84,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMail',
   })
   @WorkspaceIsUnique()
-  [EMAILS_FIELD_NAME]: EmailsMetadata;
+  emails: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
@@ -111,7 +113,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  [JOB_TITLE_FIELD_NAME]: string;
+  jobTitle: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -303,5 +305,5 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

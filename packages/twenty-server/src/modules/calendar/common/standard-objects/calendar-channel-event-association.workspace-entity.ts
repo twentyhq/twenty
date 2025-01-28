@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -18,9 +20,9 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
   namePlural: 'calendarChannelEventAssociations',
-  labelSingular: 'Calendar Channel Event Association',
-  labelPlural: 'Calendar Channel Event Associations',
-  description: 'Calendar Channel Event Associations',
+  labelSingular: msg`Calendar Channel Event Association`,
+  labelPlural: msg`Calendar Channel Event Associations`,
+  description: msg`Calendar Channel Event Associations`,
   icon: STANDARD_OBJECT_ICONS.calendarChannelEventAssociation,
 })
 @WorkspaceIsSystem()

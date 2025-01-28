@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -25,9 +27,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
-  labelSingular: 'Attachment',
-  labelPlural: 'Attachments',
-  description: 'An attachment',
+  labelSingular: msg`Attachment`,
+  labelPlural: msg`Attachments`,
+  description: msg`An attachment`,
   icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })

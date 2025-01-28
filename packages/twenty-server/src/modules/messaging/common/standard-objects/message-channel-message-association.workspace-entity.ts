@@ -1,10 +1,13 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -23,13 +26,17 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
   namePlural: 'messageChannelMessageAssociations',
-  labelSingular: 'Message Channel Message Association',
-  labelPlural: 'Message Channel Message Associations',
-  description: 'Message Synced with a Message Channel',
+  labelSingular: msg`Message Channel Message Association`,
+  labelPlural: msg`Message Channel Message Associations`,
+  description: msg`Message Synced with a Message Channel`,
   icon: STANDARD_OBJECT_ICONS.messageChannelMessageAssociation,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
+@WorkspaceIndex(['messageChannelId', 'messageId'], {
+  isUnique: true,
+  indexWhereClause: '"deletedAt" IS NULL',
+})
 export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId:

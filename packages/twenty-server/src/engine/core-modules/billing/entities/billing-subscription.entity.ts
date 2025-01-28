@@ -30,7 +30,7 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
-@ObjectType('BillingSubscription')
+@ObjectType()
 export class BillingSubscription {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

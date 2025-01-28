@@ -1,8 +1,8 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { createState } from '@ui/utilities/state/utils/createState';
 
 export type KanbanAggregateOperation = {
-  operation?: AGGREGATE_OPERATIONS | null;
+  operation?: ExtendedAggregateOperations | null;
   fieldMetadataId?: string | null;
 } | null;
 

@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -20,9 +22,9 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.noteTarget,
   namePlural: 'noteTargets',
-  labelSingular: 'Note Target',
-  labelPlural: 'Note Targets',
-  description: 'A note target',
+  labelSingular: msg`Note Target`,
+  labelPlural: msg`Note Targets`,
+  description: msg`A note target`,
   icon: STANDARD_OBJECT_ICONS.noteTarget,
 })
 @WorkspaceIsSystem()

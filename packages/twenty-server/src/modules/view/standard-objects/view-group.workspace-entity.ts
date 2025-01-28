@@ -1,4 +1,6 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -16,9 +18,9 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewGroup,
   namePlural: 'viewGroups',
-  labelSingular: 'View Group',
-  labelPlural: 'View Groups',
-  description: '(System) View Groups',
+  labelSingular: msg`View Group`,
+  labelPlural: msg`View Groups`,
+  description: msg`(System) View Groups`,
   icon: STANDARD_OBJECT_ICONS.viewGroup,
 })
 @WorkspaceIsNotAuditLogged()

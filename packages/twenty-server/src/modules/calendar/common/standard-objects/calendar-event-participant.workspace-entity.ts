@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -27,9 +29,9 @@ export enum CalendarEventParticipantResponseStatus {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarEventParticipant,
   namePlural: 'calendarEventParticipants',
-  labelSingular: 'Calendar event participant',
-  labelPlural: 'Calendar event participants',
-  description: 'Calendar event participants',
+  labelSingular: msg`Calendar event participant`,
+  labelPlural: msg`Calendar event participants`,
+  description: msg`Calendar event participants`,
   icon: STANDARD_OBJECT_ICONS.calendarEventParticipant,
   labelIdentifierStandardId:
     CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,

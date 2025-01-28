@@ -80,47 +80,44 @@ export class SendEmailWorkflowAction implements WorkflowAction {
     );
     const { email, body, subject } = workflowActionInput;
 
-    try {
-      const emailSchema = z.string().trim().email('Invalid email');
+    const emailSchema = z.string().trim().email('Invalid email');
 
-      const result = emailSchema.safeParse(email);
+    const result = emailSchema.safeParse(email);
 
-      if (!result.success) {
-        this.logger.warn(`Email '${email}' invalid`);
-
-        return { result: { success: false } };
-      }
-
-      const window = new JSDOM('').window;
-      const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(body || '');
-      const safeSubject = purify.sanitize(subject || '');
-
-      const message = [
-        `To: ${email}`,
-        `Subject: ${safeSubject || ''}`,
-        'MIME-Version: 1.0',
-        'Content-Type: text/plain; charset="UTF-8"',
-        '',
-        safeBody,
-      ].join('\n');
-
-      const encodedMessage = Buffer.from(message).toString('base64');
-
-      await emailProvider.users.messages.send({
-        userId: 'me',
-        requestBody: {
-          raw: encodedMessage,
-        },
-      });
-
-      this.logger.log(`Email sent successfully`);
-
-      return {
-        result: { success: true } satisfies WorkflowSendEmailStepOutputSchema,
-      };
-    } catch (error) {
-      return { error };
+    if (!result.success) {
+      throw new SendEmailActionException(
+        `Email '${email}' invalid`,
+        SendEmailActionExceptionCode.INVALID_EMAIL,
+      );
     }
+
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    const safeBody = purify.sanitize(body || '');
+    const safeSubject = purify.sanitize(subject || '');
+
+    const message = [
+      `To: ${email}`,
+      `Subject: ${safeSubject || ''}`,
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset="UTF-8"',
+      '',
+      safeBody,
+    ].join('\n');
+
+    const encodedMessage = Buffer.from(message).toString('base64');
+
+    await emailProvider.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: encodedMessage,
+      },
+    });
+
+    this.logger.log(`Email sent successfully`);
+
+    return {
+      result: { success: true } satisfies WorkflowSendEmailStepOutputSchema,
+    };
   }
 }

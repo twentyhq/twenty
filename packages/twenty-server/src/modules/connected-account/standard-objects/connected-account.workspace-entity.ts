@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -28,9 +30,9 @@ export enum ConnectedAccountProvider {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
   namePlural: 'connectedAccounts',
-  labelSingular: 'Connected Account',
-  labelPlural: 'Connected Accounts',
-  description: 'A connected account',
+  labelSingular: msg`Connected Account`,
+  labelPlural: msg`Connected Accounts`,
+  description: msg`A connected account`,
   icon: STANDARD_OBJECT_ICONS.connectedAccount,
   labelIdentifierStandardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
 })

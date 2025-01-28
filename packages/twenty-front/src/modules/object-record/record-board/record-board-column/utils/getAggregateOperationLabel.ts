@@ -1,4 +1,5 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 
 export const getAggregateOperationLabel = (
@@ -25,9 +26,9 @@ export const getAggregateOperationLabel = (
       return 'Percent empty';
     case AGGREGATE_OPERATIONS.percentageNotEmpty:
       return 'Percent not empty';
-    case 'EARLIEST':
+    case DATE_AGGREGATE_OPERATIONS.earliest:
       return 'Earliest date';
-    case 'LATEST':
+    case DATE_AGGREGATE_OPERATIONS.latest:
       return 'Latest date';
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);

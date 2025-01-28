@@ -1,11 +1,10 @@
-import { useFilteredObjectMetadataItemsForWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 
 export const WorkspaceFavorites = () => {
-  const { activeObjectMetadataItems: objectMetadataItemsToDisplay } =
-    useFilteredObjectMetadataItemsForWorkspaceFavorites();
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
 
   const loading = useIsPrefetchLoading();
 
@@ -16,7 +15,7 @@ export const WorkspaceFavorites = () => {
   return (
     <NavigationDrawerSectionForObjectMetadataItems
       sectionTitle={'Workspace'}
-      objectMetadataItems={objectMetadataItemsToDisplay}
+      objectMetadataItems={workspaceFavoritesObjectMetadataItems}
       isRemote={false}
     />
   );

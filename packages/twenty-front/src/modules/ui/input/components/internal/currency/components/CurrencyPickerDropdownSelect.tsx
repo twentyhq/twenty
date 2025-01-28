@@ -37,6 +37,7 @@ export const CurrencyPickerDropdownSelect = ({
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
         autoFocus
+        role="combobox"
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>

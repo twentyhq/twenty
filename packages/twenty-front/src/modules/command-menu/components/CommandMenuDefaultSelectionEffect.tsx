@@ -14,7 +14,10 @@ export const CommandMenuDefaultSelectionEffect = ({
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
   useEffect(() => {
-    if (isDefined(selectedItemId)) {
+    if (
+      isDefined(selectedItemId) &&
+      selectableItemIds.includes(selectedItemId)
+    ) {
       return;
     }
 

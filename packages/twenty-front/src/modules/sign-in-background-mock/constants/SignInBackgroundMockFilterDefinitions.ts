@@ -1,4 +1,4 @@
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
   {
@@ -57,4 +57,4 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     iconName: 'IconMoneybag',
     type: 'CURRENCY',
   },
-] as FilterDefinition[];
+] as RecordFilterDefinition[];
