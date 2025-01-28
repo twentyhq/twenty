@@ -4,7 +4,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-@ObjectType('LinkMetadata')
+@ObjectType()
 class LinkMetadata {
   @Field()
   label: string;
@@ -13,7 +13,7 @@ class LinkMetadata {
   url: string;
 }
 
-@ObjectType('LinksMetadata')
+@ObjectType()
 export class LinksMetadata {
   @Field()
   primaryLinkLabel: string;
@@ -25,7 +25,7 @@ export class LinksMetadata {
   secondaryLinks: LinkMetadata[] | null;
 }
 
-@ObjectType('TimelineCalendarEvent')
+@ObjectType()
 export class TimelineCalendarEvent {
   @Field(() => UUIDScalarType)
   id: string;

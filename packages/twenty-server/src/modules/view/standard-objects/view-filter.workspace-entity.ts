@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -19,9 +20,9 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,
   namePlural: 'viewFilters',
-  labelSingular: 'View Filter',
-  labelPlural: 'View Filters',
-  description: '(System) View Filters',
+  labelSingular: msg`View Filter`,
+  labelPlural: msg`View Filters`,
+  description: msg`(System) View Filters`,
   icon: STANDARD_OBJECT_ICONS.viewFilter,
 })
 @WorkspaceIsNotAuditLogged()
