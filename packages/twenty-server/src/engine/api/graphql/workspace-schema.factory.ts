@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import chalk from 'chalk';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 
@@ -13,9 +14,12 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
 @Injectable()
 export class WorkspaceSchemaFactory {
   constructor(
@@ -25,11 +29,28 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
     if (!authContext.workspace?.id) {
       return new GraphQLSchema({});
+    }
+
+    const cachedIsNewRelationEnabled =
+      await this.workspaceCacheStorageService.getIsNewRelationEnabled(
+        authContext.workspace.id,
+      );
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      authContext.workspace.id,
+    );
+
+    if (isNewRelationEnabled) {
+      console.log(
+        chalk.yellow('🚧 New relation schema generation is enabled 🚧'),
+      );
     }
 
     const dataSourcesMetadata =
@@ -50,9 +71,38 @@ export class WorkspaceSchemaFactory {
       await this.workspaceMetadataCacheService.recomputeMetadataCache({
         workspaceId: authContext.workspace.id,
       });
+
       throw new GraphqlQueryRunnerException(
         'Metadata cache version not found',
         GraphqlQueryRunnerExceptionCode.METADATA_CACHE_VERSION_NOT_FOUND,
+      );
+    }
+
+    // TODO: remove this after the feature flag is droped
+    if (
+      (isNewRelationEnabled && cachedIsNewRelationEnabled === undefined) ||
+      (isNewRelationEnabled !== cachedIsNewRelationEnabled &&
+        cachedIsNewRelationEnabled !== undefined)
+    ) {
+      console.log(
+        chalk.yellow('Recomputing due to new relation feature flag'),
+        {
+          isNewRelationEnabled,
+        },
+      );
+
+      await this.workspaceCacheStorageService.setIsNewRelationEnabled(
+        authContext.workspace.id,
+        isNewRelationEnabled,
+      );
+
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: authContext.workspace.id,
+      });
+
+      throw new GraphqlQueryRunnerException(
+        'Metadata cache recomputation required due to relation feature flag change',
+        GraphqlQueryRunnerExceptionCode.METADATA_CACHE_FEATURE_FLAG_RECOMPUTATION_REQUIRED,
       );
     }
 

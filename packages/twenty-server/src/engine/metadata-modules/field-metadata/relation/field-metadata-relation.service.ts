@@ -8,7 +8,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { cleanObjectMetadata } from 'src/engine/metadata-modules/utils/clean-object-metadata.util';
+import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -95,11 +95,11 @@ export class FieldMetadataRelationService {
       }
 
       return {
-        sourceObjectMetadata: cleanObjectMetadata(
+        sourceObjectMetadata: removeFieldMapsFromObjectMetadata(
           sourceObjectMetadata,
         ) as ObjectMetadataEntity,
         sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
-        targetObjectMetadata: cleanObjectMetadata(
+        targetObjectMetadata: removeFieldMapsFromObjectMetadata(
           targetObjectMetadata,
         ) as ObjectMetadataEntity,
         targetFieldMetadata: targetFieldMetadata as FieldMetadataEntity,
