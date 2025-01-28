@@ -65,10 +65,7 @@ export class MessagingMessageService {
             messageExternalId: message.externalId,
             messageThreadExternalId: message.messageThreadExternalId,
           },
-          {
-            conflictPaths: ['messageChannelId', 'messageId'],
-            indexPredicate: '"deletedAt" IS NULL',
-          },
+          ['messageChannelId', 'messageId'],
           transactionManager,
         );
 
