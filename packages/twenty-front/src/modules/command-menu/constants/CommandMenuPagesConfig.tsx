@@ -2,8 +2,8 @@ import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/com
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
-import { SearchRecordsPage } from '@/command-menu/pages/components/SearchRecordsPage';
+import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/components/CommandMenuSearchRecordsPage';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
@@ -29,5 +29,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   ],
   [CommandMenuPages.WorkflowStepEdit, <RightDrawerWorkflowEditStep />],
   [CommandMenuPages.WorkflowStepView, <RightDrawerWorkflowViewStep />],
-  [CommandMenuPages.SearchRecords, <SearchRecordsPage />],
+  [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
 ]);

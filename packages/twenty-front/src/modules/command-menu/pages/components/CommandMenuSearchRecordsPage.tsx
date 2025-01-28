@@ -1,7 +1,7 @@
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useSearchRecords } from '@/command-menu/hooks/useSearchRecords';
 
-export const SearchRecordsPage = () => {
+export const CommandMenuSearchRecordsPage = () => {
   const { commandGroups, loading, noResult } = useSearchRecords();
 
   return (

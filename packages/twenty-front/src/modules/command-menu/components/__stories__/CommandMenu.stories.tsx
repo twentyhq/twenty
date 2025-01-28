@@ -93,19 +93,7 @@ export const DefaultWithoutSearch: Story = {
   },
 };
 
-export const MatchingPersonCompanyActivityCreateNavigate: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Type anything');
-    await sleep(openTimeout);
-    await userEvent.type(searchInput, 'n');
-    expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
-    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
-  },
-};
-
-export const OnlyMatchingCreateAndNavigate: Story = {
+export const MatchingNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
@@ -115,12 +103,15 @@ export const OnlyMatchingCreateAndNavigate: Story = {
   },
 };
 
-export const AtleastMatchingOnePerson: Story = {
+export const SearchRecordsAction: Story = {
   play: async () => {
     const canvas = within(document.body);
+    const searchRecordsButton = await canvas.findByText('Search records');
+    await userEvent.click(searchRecordsButton);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
-    await userEvent.type(searchInput, 'alex');
-    expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();
+    await userEvent.type(searchInput, 'n');
+    expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
+    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
   },
 };
