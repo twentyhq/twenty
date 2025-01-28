@@ -1,20 +1,24 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getEmptyStateSubTitle } from '../getEmptyStateSubTitle';
 
 describe('getEmptyStateSubTitle', () => {
   it('should return the correct sub title for workflow version', () => {
     const subTitle = getEmptyStateSubTitle(
-      'workflowVersion',
+      CoreObjectNameSingular.WorkflowVersion,
       'Workflow Version',
     );
     expect(subTitle).toBe(
-      'Create a workflow and return here to view its versions.',
+      'Create a workflow and return here to view its versions',
     );
   });
 
   it('should return the correct sub title for workflow run', () => {
-    const subTitle = getEmptyStateSubTitle('workflowRun', 'Workflow Run');
+    const subTitle = getEmptyStateSubTitle(
+      CoreObjectNameSingular.WorkflowRun,
+      'Workflow Run',
+    );
     expect(subTitle).toBe(
-      'Run a workflow and return here to view its executions.',
+      'Run a workflow and return here to view its executions',
     );
   });
 
