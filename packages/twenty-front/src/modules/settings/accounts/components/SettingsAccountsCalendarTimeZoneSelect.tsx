@@ -3,6 +3,7 @@ import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableT
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/accounts/constants/AvailableTimezoneOptions';
 
 import { Select } from '@/ui/input/components/Select';
+import { VirtualizedSelect } from '@/ui/input/components/VirtualizedSelect';
 
 type SettingsAccountsCalendarTimeZoneSelectProps = {
   value?: string;
@@ -13,7 +14,17 @@ export const SettingsAccountsCalendarTimeZoneSelect = ({
   value = detectTimeZone(),
   onChange,
 }: SettingsAccountsCalendarTimeZoneSelectProps) => (
-  <Select
+  // <Select
+  //   dropdownId="settings-accounts-calendar-time-zone"
+  //   dropdownWidth={416}
+  //   label="Time zone"
+  //   fullWidth
+  //   value={findAvailableTimeZoneOption(value)?.value}
+  //   options={AVAILABLE_TIMEZONE_OPTIONS}
+  //   onChange={onChange}
+  //   withSearchInput
+  // />
+  <VirtualizedSelect
     dropdownId="settings-accounts-calendar-time-zone"
     dropdownWidth={416}
     label="Time zone"
@@ -22,5 +33,7 @@ export const SettingsAccountsCalendarTimeZoneSelect = ({
     options={AVAILABLE_TIMEZONE_OPTIONS}
     onChange={onChange}
     withSearchInput
+    itemHeight={40}
+    maxHeight={300}
   />
 );

@@ -59,7 +59,7 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends SelectValue>({
+export const Select = <Value extends SelectValue,>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,

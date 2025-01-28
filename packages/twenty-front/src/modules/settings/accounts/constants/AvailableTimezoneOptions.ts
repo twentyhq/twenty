@@ -1,18 +1,46 @@
-/* eslint-disable @nx/workspace-max-consts-per-file */
+import { memoize } from 'lodash';
 import { getTimezoneOffset } from 'date-fns-tz';
+import { IANA_TIME_ZONES } from '@/localization/constants/IanaTimeZones';
+import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
+import { SelectOption } from '@/ui/input/components/Select';
 
-import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/constants/AvailableTimezoneOptionsByLabel';
+type TimezoneSelectOption = SelectOption<string> & {
+  offset: number; // Add the offset property
+};
 
-export const AVAILABLE_TIMEZONE_OPTIONS = Object.values(
-  AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL,
-).sort((optionA, optionB) => {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const difference =
-    getTimezoneOffset(optionA.value) - getTimezoneOffset(optionB.value);
+export const createTimeZoneOptions = memoize(() => {
+  const timeZoneOptionsMap = IANA_TIME_ZONES.reduce<Record<string, TimezoneSelectOption>>(
+    (result, ianaTimeZone) => {
+      const timeZoneLabel = formatTimeZoneLabel(ianaTimeZone);
+      const timeZoneName = timeZoneLabel.slice(11);
 
-  return difference === 0
-    ? // Sort alphabetically if the time zone offsets are the same.
-      optionA.label.localeCompare(optionB.label)
-    : // Sort by time zone offset if different.
-      difference;
+      if (
+        timeZoneName.includes('GMT') ||
+        timeZoneName.includes('UTC') ||
+        timeZoneName.includes('UCT') ||
+        timeZoneLabel in result
+      ) {
+        return result;
+      }
+
+      return {
+        ...result,
+        [timeZoneLabel]: { 
+          label: timeZoneLabel, 
+          value: ianaTimeZone,
+          // Pre-calculate offset to avoid doing it during sorting
+          offset: getTimezoneOffset(ianaTimeZone)
+        },
+      };
+    },
+    {}
+  );
+
+  return Object.values(timeZoneOptionsMap).sort((a, b) => {
+    const difference = a.offset - b.offset;
+    return difference === 0 ? a.label.localeCompare(b.label) : difference;
+  });
+  
 });
+
+export const AVAILABLE_TIMEZONE_OPTIONS = createTimeZoneOptions();
