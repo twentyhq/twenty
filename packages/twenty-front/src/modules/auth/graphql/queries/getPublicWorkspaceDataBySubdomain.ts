@@ -7,6 +7,7 @@ export const GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN = gql`
       logo
       displayName
       subdomain
+      hostname
       authProviders {
         sso {
           id

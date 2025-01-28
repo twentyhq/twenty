@@ -2,24 +2,36 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import Cloudflare from 'cloudflare';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isDefined } from 'src/utils/is-defined';
-import { isWorkEmail } from 'src/utils/is-work-email';
+import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
+import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname.type';
+import {
+  DomainManagerException,
+  DomainManagerExceptionCode,
+} from 'src/engine/core-modules/domain-manager/domain-manager.exception';
+import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
+import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
+import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 
 @Injectable()
 export class DomainManagerService {
+  cloudflareClient?: Cloudflare;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: EnvironmentService,
-  ) {}
+  ) {
+    if (this.environmentService.get('CLOUDFLARE_API_KEY')) {
+      this.cloudflareClient = new Cloudflare({
+        apiToken: this.environmentService.get('CLOUDFLARE_API_KEY'),
+      });
+    }
+  }
 
   getFrontUrl() {
     let baseUrl: URL;
@@ -105,6 +117,7 @@ export class DomainManagerService {
     return url;
   }
 
+  // @Deprecated
   getWorkspaceSubdomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
@@ -117,6 +130,24 @@ export class DomainManagerService {
     const subdomain = originHostname.replace(`.${frontDomain}`, '');
 
     return this.isDefaultSubdomain(subdomain) ? null : subdomain;
+  };
+
+  getSubdomainAndHostnameFromUrl = (url: string) => {
+    const { hostname: originHostname } = new URL(url);
+
+    const frontDomain = this.getFrontUrl().hostname;
+
+    const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
+
+    const subdomain = originHostname.replace(`.${frontDomain}`, '');
+
+    return {
+      subdomain:
+        isFrontdomain && !this.isDefaultSubdomain(subdomain)
+          ? subdomain
+          : undefined,
+      hostname: isFrontdomain ? undefined : originHostname,
+    };
   };
 
   async getWorkspaceBySubdomainOrDefaultWorkspace(subdomain?: string) {
@@ -180,126 +211,140 @@ export class DomainManagerService {
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
-    try {
-      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-        return this.getDefaultWorkspace();
-      }
-
-      const subdomain = this.getWorkspaceSubdomainFromUrl(origin);
-
-      if (!isDefined(subdomain)) return;
-
-      return (
-        (await this.workspaceRepository.findOne({
-          where: { subdomain },
-          relations: ['workspaceSSOIdentityProviders'],
-        })) ?? undefined
-      );
-    } catch (e) {
-      throw new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
-      );
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      return this.getDefaultWorkspace();
     }
+
+    const { subdomain, hostname } = this.getSubdomainAndHostnameFromUrl(origin);
+
+    if (!hostname && !subdomain) return;
+
+    const where = isDefined(hostname) ? { hostname } : { subdomain };
+
+    return (
+      (await this.workspaceRepository.findOne({
+        where,
+        relations: ['workspaceSSOIdentityProviders'],
+      })) ?? undefined
+    );
   }
 
-  private generateRandomSubdomain(): string {
-    const prefixes = [
-      'cool',
-      'smart',
-      'fast',
-      'bright',
-      'shiny',
-      'happy',
-      'funny',
-      'clever',
-      'brave',
-      'kind',
-      'gentle',
-      'quick',
-      'sharp',
-      'calm',
-      'silent',
-      'lucky',
-      'fierce',
-      'swift',
-      'mighty',
-      'noble',
-      'bold',
-      'wise',
-      'eager',
-      'joyful',
-      'glad',
-      'zany',
-      'witty',
-      'bouncy',
-      'graceful',
-      'colorful',
-    ];
-    const suffixes = [
-      'raccoon',
-      'panda',
-      'whale',
-      'tiger',
-      'dolphin',
-      'eagle',
-      'penguin',
-      'owl',
-      'fox',
-      'wolf',
-      'lion',
-      'bear',
-      'hawk',
-      'shark',
-      'sparrow',
-      'moose',
-      'lynx',
-      'falcon',
-      'rabbit',
-      'hedgehog',
-      'monkey',
-      'horse',
-      'koala',
-      'kangaroo',
-      'elephant',
-      'giraffe',
-      'panther',
-      'crocodile',
-      'seal',
-      'octopus',
-    ];
+  private extractSubdomain(params?: { email?: string; displayName?: string }) {
+    if (params?.email) {
+      return getSubdomainFromEmail(params.email);
+    }
 
-    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-    const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-
-    return `${randomPrefix}-${randomSuffix}`;
-  }
-
-  private getSubdomainNameByEmail(email?: string) {
-    if (!isDefined(email) || !isWorkEmail(email)) return;
-
-    return getDomainNameByEmail(email);
-  }
-
-  private getSubdomainNameByDisplayName(displayName?: string) {
-    if (!isDefined(displayName)) return;
-    const displayNameWords = displayName.match(/(\w| |\d)+/g);
-
-    if (displayNameWords) {
-      return displayNameWords.join('-').replace(/ /g, '').toLowerCase();
+    if (params?.displayName) {
+      return getSubdomainNameFromDisplayName(params.displayName);
     }
   }
 
   async generateSubdomain(params?: { email?: string; displayName?: string }) {
     const subdomain =
-      this.getSubdomainNameByEmail(params?.email) ??
-      this.getSubdomainNameByDisplayName(params?.displayName) ??
-      this.generateRandomSubdomain();
+      this.extractSubdomain(params) ?? generateRandomSubdomain();
 
     const existingWorkspaceCount = await this.workspaceRepository.countBy({
       subdomain,
     });
 
     return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
+  }
+
+  private async getCustomHostname(
+    params: { hostnameName: string } | { hostname: CustomHostname },
+  ) {
+    return 'hostname' in params
+      ? params.hostname
+      : await this.getCustomHostnameDetails(params.hostnameName);
+  }
+
+  async registerCustomHostname(hostname: string) {
+    domainManagerValidator.isExist(this.cloudflareClient);
+
+    if (await this.getCustomHostnameDetails(hostname)) {
+      throw new DomainManagerException(
+        'Hostname already registered',
+        DomainManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
+      );
+    }
+
+    return await this.cloudflareClient.customHostnames.create({
+      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      hostname,
+      ssl: {
+        method: 'txt',
+        type: 'dv',
+        settings: {
+          http2: 'on',
+          min_tls_version: '1.2',
+          tls_1_3: 'on',
+          ciphers: ['ECDHE-RSA-AES128-GCM-SHA256', 'AES128-SHA'],
+          early_hints: 'on',
+        },
+        bundle_method: 'ubiquitous',
+        wildcard: false,
+      },
+    });
+  }
+
+  async getCustomHostnameDetails(
+    hostname: string,
+  ): Promise<CustomHostname | undefined> {
+    domainManagerValidator.isExist(this.cloudflareClient);
+
+    const response = await this.cloudflareClient.customHostnames.list({
+      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      hostname,
+    });
+
+    if (response.result.length === 0) {
+      return undefined;
+    }
+
+    if (response.result.length === 1) {
+      return response.result[0];
+    }
+
+    // should never append. error 5xx
+    throw new Error('More than one custom hostname found in cloudflare');
+  }
+
+  async updateCustomHostname(
+    fromHostname: { hostnameName: string } | { hostname: CustomHostname },
+    toHostname: string,
+  ) {
+    domainManagerValidator.isExist(this.cloudflareClient);
+
+    const fromCustomHostname = await this.getCustomHostname(fromHostname);
+
+    if (fromCustomHostname) {
+      await this.deleteCustomHostname(fromCustomHostname);
+    }
+
+    return this.registerCustomHostname(toHostname);
+  }
+
+  async deleteCustomHostnameByHostnameSilently(hostname: string) {
+    domainManagerValidator.isExist(this.cloudflareClient);
+
+    try {
+      const customHostname = await this.getCustomHostnameDetails(hostname);
+
+      if (customHostname) {
+        await this.cloudflareClient.customHostnames.delete(customHostname.id, {
+          zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+        });
+      }
+    } catch (err) {
+      return;
+    }
+  }
+
+  async deleteCustomHostname(customHostname: CustomHostname) {
+    domainManagerValidator.isExist(this.cloudflareClient);
+
+    return this.cloudflareClient.customHostnames.delete(customHostname.id, {
+      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+    });
   }
 }
