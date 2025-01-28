@@ -1,26 +1,30 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Command, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared';
+import { In, Repository, TableColumn } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
+import { CommandLogger } from 'src/database/commands/logger';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Command({
   name: 'upgrade-0.41:add-context-to-actor-composite-type',
   description: 'Add context to actor composite type.',
 })
 export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesCommandRunner {
-  protected readonly logger: Logger;
+  protected readonly logger;
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -29,41 +33,142 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly objectMetadataService: ObjectMetadataService,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super(workspaceRepository);
-    this.logger = new Logger(this.constructor.name);
+    this.logger = new CommandLogger({
+      constructorName: this.constructor.name,
+      verbose: false,
+    });
+    this.logger.setVerbose(false);
   }
 
-  @Option({
-    flags: '-w, --workspace-ids [workspaceIds]',
-    description: 'Workspace ids to process (comma separated)',
-    required: false,
-  })
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    _options: ActiveWorkspacesCommandOptions,
-    _workspaceIds: string[],
+    options: ActiveWorkspacesCommandOptions,
+    workspaceIds: string[],
   ): Promise<void> {
-    const { dryRun } = _options;
-
     this.logger.log(`Running add-context-to-actor-composite-type command`);
 
-    if (_options.dryRun) {
+    if (options?.dryRun) {
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
-    for (const workspaceId of _workspaceIds) {
-      await this.execute(workspaceId, dryRun);
-      this.logger.log(`Added for workspace: ${workspaceId}`);
+
+    for (const workspaceId of workspaceIds) {
+      try {
+        await this.execute(workspaceId, options?.dryRun);
+        this.logger.verbose(`Added for workspace: ${workspaceId}`);
+      } catch (error) {
+        this.logger.error(`Error for workspace: ${workspaceId}`, error);
+      }
     }
   }
 
   private async execute(workspaceId: string, dryRun = false): Promise<void> {
-    this.logger.log(`Adding for workspace: ${workspaceId}`);
-    // TODO
-    // 1. get all FieldMetadataType.ACTOR
-    // si SOURCE is MAIL ou CALENDAR
-    // 2. if fieldMetadata.compositeType is not null, then add context to the compositeType
-    //  'context' -> 'mailProvider' set to 'google'
-    console.log('here');
+    this.logger.verbose(`Adding for workspace: ${workspaceId}`);
+    const actorFields = await this.fieldMetadataRepository.find({
+      where: {
+        type: FieldMetadataType.ACTOR,
+        workspaceId,
+      },
+      relations: ['object'],
+    });
+
+    // Filter and update fields with EMAIL or CALENDAR source
+    for (const field of actorFields) {
+      if (!field || !field.object) {
+        this.logger.verbose(
+          'field.objectMetadata is null',
+          workspaceId,
+          field.id,
+        );
+        continue;
+      }
+
+      const fieldRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          `${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+        );
+
+      await this.addContextColumn(
+        field,
+        `${field.name}Context`,
+        workspaceId,
+        dryRun,
+      );
+
+      const rowsToUpdate = await fieldRepository.update(
+        {
+          [field.name + 'Source']: In([
+            FieldActorSource.EMAIL,
+            FieldActorSource.CALENDAR,
+          ]),
+        },
+        {
+          [field.name + 'Context']: {
+            mailProvider: 'google',
+          },
+        },
+      );
+
+      this.logger.verbose(
+        `updated ${rowsToUpdate ? rowsToUpdate.affected : 0} rows`,
+      );
+    }
+  }
+
+  private async addContextColumn(
+    field: FieldMetadataEntity,
+    newColumnName: string,
+    workspaceId: string,
+    dryRun = false,
+  ): Promise<void> {
+    // todo mutualiser les datasource pour etre plus efficient
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    const queryRunner = workspaceDataSource?.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const schemaName =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    try {
+      const hasColumn = await queryRunner.hasColumn(
+        `${schemaName}.${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+        newColumnName,
+      );
+
+      if (hasColumn) {
+        return;
+      }
+
+      if (dryRun) {
+        await queryRunner.addColumn(
+          `${schemaName}.${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+          new TableColumn({
+            name: newColumnName,
+            type: 'jsonb',
+            default: "'{}'",
+            isNullable: true,
+          }),
+        );
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
