@@ -8,9 +8,9 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 interface WorkspaceEntityOptions {
   standardId: string;
   namePlural: string;
-  labelSingular: MessageDescriptor | string; // Todo: remove string when translations are added
-  labelPlural: MessageDescriptor | string; // Todo: remove string when translations are added
-  description?: MessageDescriptor | string; // Todo: remove string when translations are added
+  labelSingular: MessageDescriptor;
+  labelPlural: MessageDescriptor;
+  description?: MessageDescriptor;
   icon?: string;
   shortcut?: string;
   labelIdentifierStandardId?: string;
@@ -40,18 +40,9 @@ export function WorkspaceEntity(
       standardId: options.standardId,
       nameSingular: objectName,
       namePlural: options.namePlural,
-      labelSingular:
-        typeof options.labelSingular === 'string'
-          ? options.labelSingular
-          : (options.labelSingular?.message ?? ''),
-      labelPlural:
-        typeof options.labelPlural === 'string'
-          ? options.labelPlural
-          : (options.labelPlural?.message ?? ''),
-      description:
-        typeof options.description === 'string'
-          ? options.description
-          : (options.description?.message ?? ''),
+      labelSingular: options.labelSingular?.message ?? '',
+      labelPlural: options.labelPlural?.message ?? '',
+      description: options.description?.message ?? '',
       labelIdentifierStandardId:
         options.labelIdentifierStandardId ?? BASE_OBJECT_STANDARD_FIELD_IDS.id,
       imageIdentifierStandardId: options.imageIdentifierStandardId ?? null,
