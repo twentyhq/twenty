@@ -16,7 +16,6 @@ type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
 } & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
-// TODO fix the BelongsTo relation update that inject both the ID and the instance
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
@@ -52,7 +51,6 @@ export const computeOptimisticRecordFromInput = ({
     const isRelationField =
       fieldMetadataItem.type === FieldMetadataType.RELATION;
     const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
-    // Maybe we could ? consume the inputs if defined and if not try the cache idk
     if (isDefined(recordInputFieldValue) && isRelationField) {
       throw new Error(
         'Should never provide relation mutation through anything else than the fieldId e.g companyId',

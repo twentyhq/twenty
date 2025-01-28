@@ -23,13 +23,6 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   recordId,
   recordGqlFields,
 }: GetRecordFromCacheArgs) => {
-  console.log({
-    objectMetadataItem,
-    objectMetadataItems,
-    cache,
-    recordId,
-    recordGqlFields,
-  })
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }
