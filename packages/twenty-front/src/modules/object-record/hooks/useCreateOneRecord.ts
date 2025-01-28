@@ -79,7 +79,7 @@ export const useCreateOneRecord = <
       cache: apolloClient.cache,
       objectMetadataItem,
       objectMetadataItems,
-      recordInput,
+      recordInput: { ...recordInput, id: idForCreation },
     });
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
@@ -115,7 +115,20 @@ export const useCreateOneRecord = <
         variables: {
           input: sanitizedInput,
         },
-        update: () => {
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
+
+          if (record && !skipPostOptmisticEffect) {
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToCreate: [record],
+              objectMetadataItems,
+              shouldMatchRootQueryFilter,
+              checkForRecordInCache: true,
+            });
+          }
+
           setLoading(false);
         },
       })

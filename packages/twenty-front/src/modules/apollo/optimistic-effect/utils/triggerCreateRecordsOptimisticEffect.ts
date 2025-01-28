@@ -11,6 +11,8 @@ import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRe
 
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -19,28 +21,53 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
   We need to refactor how the record creation works in the RecordTable so the created record row is temporarily displayed with a local state,
   then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
 */
+type TriggerCreateRecordsOptimisticEffectArgs = {
+  cache: ApolloCache<object>; //oof type signature might be necessary to provide Generic
+  objectMetadataItem: ObjectMetadataItem;
+  recordsToCreate: RecordGqlNode[];
+  objectMetadataItems: ObjectMetadataItem[];
+  shouldMatchRootQueryFilter?: boolean;
+  checkForRecordInCache?: boolean;
+};
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
   recordsToCreate,
   objectMetadataItems,
   shouldMatchRootQueryFilter,
-}: {
-  cache: ApolloCache<unknown>;
-  objectMetadataItem: ObjectMetadataItem;
-  recordsToCreate: RecordGqlNode[];
-  objectMetadataItems: ObjectMetadataItem[];
-  shouldMatchRootQueryFilter?: boolean;
-}) => {
-  recordsToCreate.forEach((record) =>
+  checkForRecordInCache,
+}: TriggerCreateRecordsOptimisticEffectArgs) => {
+  const getCurrentSourceRecord = (recordId: string): RecordGqlNode | null => {
+    if (checkForRecordInCache) {
+      const cachedRecord = getRecordFromCache({
+        cache,
+        objectMetadataItem,
+        objectMetadataItems,
+        recordId,
+      });
+      const cachedRecordNode = getRecordNodeFromRecord({
+        objectMetadataItem,
+        objectMetadataItems,
+        record: cachedRecord,
+        computeReferences: false,
+      });
+
+      return cachedRecordNode;
+    }
+
+    return null;
+  };
+
+  recordsToCreate.forEach((record) => {
+    const currentSourceRecord = getCurrentSourceRecord(record.id);
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
-      currentSourceRecord: null,
+      currentSourceRecord,
       updatedSourceRecord: record,
       objectMetadataItems,
-    }),
-  );
+    });
+  });
 
   cache.modify<StoreObject>({
     fields: {

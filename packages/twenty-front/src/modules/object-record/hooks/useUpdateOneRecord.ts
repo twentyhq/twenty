@@ -127,6 +127,19 @@ export const useUpdateOneRecord = <
           idToUpdate,
           input: sanitizedInput,
         },
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
+
+          if (!record || !cachedRecord) return;
+
+          triggerUpdateRecordOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            currentRecord: cachedRecord,
+            updatedRecord: record,
+            objectMetadataItems,
+          });
+        },
       })
       .catch((error: Error) => {
         if (isUndefinedOrNull(cachedRecord?.id)) {

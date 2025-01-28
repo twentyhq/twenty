@@ -17,8 +17,8 @@ import { isDefined } from '~/utils/isDefined';
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
   sourceObjectMetadataItem: ObjectMetadataItem;
-  currentSourceRecord: ObjectRecord | null;
-  updatedSourceRecord: ObjectRecord | null;
+  currentSourceRecord: RecordGqlNode | null;
+  updatedSourceRecord: RecordGqlNode | null;
   objectMetadataItems: ObjectMetadataItem[];
 };
 export const triggerUpdateRelationsOptimisticEffect = ({
