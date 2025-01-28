@@ -70,7 +70,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Task title',
     icon: 'IconNotes',
   })
-  [TITLE_FIELD_NAME]: string;
+  title: string;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.body,
@@ -80,7 +80,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: string | null;
+  body: string | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,
@@ -207,5 +207,5 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

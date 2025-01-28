@@ -68,7 +68,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Note title',
     icon: 'IconNotes',
   })
-  [TITLE_FIELD_NAME]: string;
+  title: string;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
@@ -78,7 +78,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFilePencil',
   })
   @WorkspaceIsNullable()
-  [BODY_FIELD_NAME]: string | null;
+  body: string | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
@@ -155,5 +155,5 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }
