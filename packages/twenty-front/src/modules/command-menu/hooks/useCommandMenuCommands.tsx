@@ -10,7 +10,6 @@ import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
   Command,
   CommandScope,
@@ -41,7 +40,6 @@ export const useCommandMenuCommands = () => {
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
 
@@ -125,6 +123,10 @@ export const useCommandMenuCommands = () => {
       scope: CommandScope.Global,
     }));
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   const {
     matchesSearchFilterObjectRecordsQueryResult,
     matchesSearchFilterObjectRecordsLoading: loading,
@@ -132,6 +134,7 @@ export const useCommandMenuCommands = () => {
     excludedObjects: [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note],
     searchFilterValue: deferredCommandMenuSearch ?? undefined,
     limit: 3,
+    skip: isCommandMenuV2Enabled,
   });
 
   const { objectRecordsMap: matchesSearchFilterObjectRecords } =
@@ -141,7 +144,7 @@ export const useCommandMenuCommands = () => {
     });
 
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
-    skip: !isCommandMenuOpened,
+    skip: isCommandMenuV2Enabled,
     objectNameSingular: CoreObjectNameSingular.Note,
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([
@@ -153,7 +156,7 @@ export const useCommandMenuCommands = () => {
   });
 
   const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Task>({
-    skip: !isCommandMenuOpened,
+    skip: isCommandMenuV2Enabled,
     objectNameSingular: CoreObjectNameSingular.Task,
     filter: deferredCommandMenuSearch
       ? makeOrFilterVariables([

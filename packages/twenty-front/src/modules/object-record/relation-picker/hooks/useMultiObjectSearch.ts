@@ -14,10 +14,12 @@ export const useMultiObjectSearch = ({
   searchFilterValue,
   limit,
   excludedObjects,
+  skip,
 }: {
   searchFilterValue: string;
   limit?: number;
   excludedObjects?: CoreObjectNameSingular[];
+  skip?: boolean;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -55,7 +57,7 @@ export const useMultiObjectSearch = ({
         search: searchFilterValue,
         ...limitPerMetadataItem,
       },
-      skip: !isDefined(multiSelectSearchQueryForSelectedIds),
+      skip: skip || !isDefined(multiSelectSearchQueryForSelectedIds),
     },
   );
 
