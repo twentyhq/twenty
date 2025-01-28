@@ -122,12 +122,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         ...workspace,
         ...payload,
       });
-    } catch (e) {
+    } catch (error) {
       // revert custom domain registration on error
       if (payload.hostname && customDomainRegistered) {
-        await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
-          payload.hostname,
-        );
+        this.domainManagerService
+          .deleteCustomHostnameByHostnameSilently(payload.hostname)
+          .catch(() => {
+            // send to sentry
+          });
       }
     }
   }

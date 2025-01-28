@@ -26,6 +26,7 @@ const validationSchema = z
             "Invalid custom hostname. Custom hostnames have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character.",
         },
       )
+      .max(256)
       .nullable(),
   })
   .required();
