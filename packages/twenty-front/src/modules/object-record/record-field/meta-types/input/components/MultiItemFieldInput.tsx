@@ -69,6 +69,7 @@ export const MultiItemFieldInput = <T,>({
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
 
+  const [isClearingInput, setIsClearingInput] = useState(false);
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
@@ -81,6 +82,12 @@ export const MultiItemFieldInput = <T,>({
   const handleOnChange = (value: string) => {
     setInputValue(value);
     if (!validateInput) return;
+
+    if (value === '' && itemToEditIndex !== -1) {
+      setIsClearingInput(true);
+    } else {
+      setIsClearingInput(false);
+    }
 
     setErrorData(
       errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
@@ -126,6 +133,11 @@ export const MultiItemFieldInput = <T,>({
         setErrorData(validationData);
         return;
       }
+    }
+
+    if (isClearingInput && itemToEditIndex !== -1) {
+      handleDeleteItem(itemToEditIndex);
+      return;
     }
 
     const newItem = formatInput
