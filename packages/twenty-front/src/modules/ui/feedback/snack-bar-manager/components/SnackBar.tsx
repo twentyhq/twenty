@@ -107,11 +107,14 @@ const StyledDescription = styled.div`
 `;
 
 const StyledLink = styled(Link)`
+  display: block;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   padding-left: ${({ theme }) => theme.spacing(6)};
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
+  max-width: 200px;
   &:hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
