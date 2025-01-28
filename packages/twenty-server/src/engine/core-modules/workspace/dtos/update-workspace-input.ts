@@ -13,11 +13,6 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  hostname?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
   @Matches(/^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
   @IsNotIn([
     'demo',
@@ -111,7 +106,7 @@ export class UpdateWorkspaceInput {
   @Matches(
     /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
   )
-  domain?: string;
+  hostname?: string;
 
   @Field({ nullable: true })
   @IsString()

@@ -5,5 +5,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 export const getSubdomainFromEmail = (email?: string) => {
   if (!isDefined(email) || !isWorkEmail(email)) return;
 
-  return getDomainNameByEmail(email);
+  const domain = getDomainNameByEmail(email);
+
+  return domain.split('.')[0];
 };
