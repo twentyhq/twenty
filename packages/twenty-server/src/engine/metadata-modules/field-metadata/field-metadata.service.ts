@@ -779,9 +779,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   async resolveTranslatableString(
     fieldMetadata: FieldMetadataDTO,
     labelKey: 'label' | 'description',
-    locale: string,
+    locale: string | undefined,
   ): Promise<string> {
     if (fieldMetadata.isCustom) {
+      return fieldMetadata[labelKey] ?? '';
+    }
+
+    if (!locale) {
       return fieldMetadata[labelKey] ?? '';
     }
 

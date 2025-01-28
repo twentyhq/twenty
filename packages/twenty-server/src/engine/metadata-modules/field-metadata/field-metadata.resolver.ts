@@ -16,6 +16,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -46,7 +47,7 @@ export class FieldMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async label(
     @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context,
+    @Context() context: I18nContext,
   ): Promise<string> {
     return this.fieldMetadataService.resolveTranslatableString(
       fieldMetadata,
@@ -58,7 +59,7 @@ export class FieldMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async description(
     @Parent() fieldMetadata: FieldMetadataDTO,
-    @Context() context,
+    @Context() context: I18nContext,
   ): Promise<string> {
     return this.fieldMetadataService.resolveTranslatableString(
       fieldMetadata,
