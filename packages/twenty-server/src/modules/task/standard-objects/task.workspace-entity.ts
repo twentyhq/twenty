@@ -8,6 +8,7 @@ import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -33,13 +34,13 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const TITLE_FIELD_NAME = 'title';
-const BODY_FIELD_NAME = 'body';
 
 export const SEARCH_FIELDS_FOR_TASK: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
 ];
 
 @WorkspaceEntity({
@@ -82,6 +83,19 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   body: string | null;
+
+  @WorkspaceField({
+    standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
+    type: FieldMetadataType.RICH_TEXT_V2,
+    label: 'Body',
+    description: 'Task body',
+    icon: 'IconFilePencil',
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
+  })
+  bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,

@@ -68,7 +68,6 @@ export const RecordShowPageWorkflowHeader = ({
 
           await runWorkflowVersion({
             workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-            workflowName: workflowWithCurrentVersion.name,
           });
         }}
       />

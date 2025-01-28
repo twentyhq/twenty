@@ -14,5 +14,6 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
+  IsRichTextV2Enabled = 'IS_RICH_TEXT_V2_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
 }
