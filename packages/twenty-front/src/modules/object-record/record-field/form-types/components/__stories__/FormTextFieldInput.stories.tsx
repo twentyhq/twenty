@@ -87,3 +87,48 @@ export const Disabled: Story = {
     expect(defaultValue).toBeVisible();
   },
 };
+
+export const HasHistory: Story = {
+  args: {
+    label: 'Text',
+    placeholder: 'Text field...',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.type(editor, 'Hello World ');
+
+    await userEvent.click(addVariableButton);
+
+    expect(args.onPersist).toHaveBeenLastCalledWith('Hello World {{test}}');
+
+    await userEvent.type(editor, '{Meta>}z{/Meta}');
+
+    expect(editor).toHaveTextContent('');
+    expect(args.onPersist).toHaveBeenLastCalledWith('');
+
+    await userEvent.type(editor, '{Shift>}{Meta>}z{/Meta}{/Shift}');
+
+    expect(editor).toHaveTextContent('Hello World test');
+    expect(args.onPersist).toHaveBeenLastCalledWith('Hello World {{test}}');
+  },
+};

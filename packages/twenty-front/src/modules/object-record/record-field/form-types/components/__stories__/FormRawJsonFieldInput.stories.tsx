@@ -256,3 +256,49 @@ export const AcceptsJsonEncodedNewline: Story = {
     expect(args.onPersist).toHaveBeenCalledWith('"a\\nb"');
   },
 };
+
+export const HasHistory: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.type(editor, '{{ "a": ');
+
+    await userEvent.click(addVariableButton);
+
+    await userEvent.type(editor, ' }');
+
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+
+    await userEvent.type(editor, '{Meta>}z{/Meta}');
+
+    expect(editor).toHaveTextContent('');
+    expect(args.onPersist).toHaveBeenLastCalledWith(null);
+
+    await userEvent.type(editor, '{Shift>}{Meta>}z{/Meta}{/Shift}');
+
+    expect(editor).toHaveTextContent('{ "a": test }');
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+  },
+};
