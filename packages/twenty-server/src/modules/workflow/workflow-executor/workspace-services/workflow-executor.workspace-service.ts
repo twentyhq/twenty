@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { BillingMeterEventService } from 'src/engine/core-modules/billing/services/billing-meter-event.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   WorkflowRunOutput,
   WorkflowRunStatus,
@@ -19,7 +23,13 @@ export type WorkflowExecutorOutput = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
-  constructor(private readonly workflowActionFactory: WorkflowActionFactory) {}
+  private readonly workflowNodeRunBillingMeterEventName =
+    BillingMeterEventName.WORKFLOW_NODE_RUN;
+  constructor(
+    private readonly workflowActionFactory: WorkflowActionFactory,
+    private readonly billingMeterEventService: BillingMeterEventService,
+    private readonly billingService: BillingService,
+  ) {}
 
   async execute({
     currentStepIndex,
@@ -37,6 +47,8 @@ export class WorkflowExecutorWorkspaceService {
     if (currentStepIndex >= steps.length) {
       return { ...output, status: WorkflowRunStatus.COMPLETED };
     }
+
+    const isBillingEnabled = await this.billingService.isBillingEnabled();
 
     const step = steps[currentStepIndex];
 
@@ -63,6 +75,25 @@ export class WorkflowExecutorWorkspaceService {
     const error =
       result.error?.errorMessage ??
       (result.result ? undefined : 'Execution result error, no data or error');
+
+    if (!error && isBillingEnabled) {
+      try {
+        await this.billingMeterEventService.sendBillingMeterEvent({
+          eventName: this.workflowNodeRunBillingMeterEventName,
+          value: 1,
+          workspaceId: String(context.workspaceId),
+        });
+      } catch (error) {
+        if (error instanceof BillingException) {
+          this.logger.error(
+            `Workspace has no subscription to run workflow node ${context.workspaceId}: ${error.message}`,
+            error,
+          );
+
+          return { ...output, status: WorkflowRunStatus.FAILED };
+        }
+      }
+    }
 
     const updatedStepOutput = {
       id: step.id,

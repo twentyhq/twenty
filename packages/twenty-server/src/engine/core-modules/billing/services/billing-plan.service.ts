@@ -125,12 +125,12 @@ export class BillingPlanService {
     }
     const { baseProduct, meteredProducts, otherLicensedProducts } = plan;
     const baseProductPrice = baseProduct.billingPrices.find(
-      (price) => price.interval === interval,
+      (price) => price.interval === interval && price.active,
     );
 
     if (!baseProductPrice) {
       throw new BillingException(
-        'Base product price not found for given interval',
+        'Base product active price not found for given interval',
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }
