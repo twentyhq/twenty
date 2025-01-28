@@ -1,7 +1,11 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+
+import { IconCheck } from '@tabler/icons-react';
+
 import { isUndefined } from '@sniptt/guards';
+
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -158,4 +162,8 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
         return 'pointer';
     }
   }};
+`;
+
+export const StyledIconCheck = styled(IconCheck)`
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
