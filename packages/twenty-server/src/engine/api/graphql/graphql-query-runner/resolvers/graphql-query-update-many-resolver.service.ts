@@ -66,7 +66,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
 
     const nonFormattedUpdatedObjectRecords = await queryBuilder
       .update(data)
-      .returning('*')
+      .returning('totoId')
       .execute();
 
     const formattedUpdatedRecords = formatResult<ObjectRecord[]>(

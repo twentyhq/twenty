@@ -15,6 +15,7 @@ import { WorkspaceSoftDeleteQueryBuilder } from './workspace-soft-delete.query-b
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectRecord,
 > extends SelectQueryBuilder<T> {
+  private userId?: string;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     protected readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
@@ -22,6 +23,23 @@ export class WorkspaceSelectQueryBuilder<
     protected readonly manager: WorkspaceEntityManager,
   ) {
     super(queryBuilder);
+  }
+
+  setUserId(userId: string): this {
+    this.userId = userId;
+
+    return this;
+  }
+
+  override clone(): this {
+    const clonedQueryBuilder = super.clone();
+
+    return new WorkspaceSelectQueryBuilder(
+      clonedQueryBuilder,
+      this.objectMetadataItem,
+      this.objectMetadataMaps,
+      this.manager,
+    ) as this;
   }
 
   override async getMany(): Promise<T[]> {
@@ -53,6 +71,7 @@ export class WorkspaceSelectQueryBuilder<
       updateQueryBuilder,
       this.objectMetadataItem,
       this.objectMetadataMaps,
+      this.userId,
     );
   }
 

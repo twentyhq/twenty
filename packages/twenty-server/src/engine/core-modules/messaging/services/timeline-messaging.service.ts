@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { Any, Not } from 'typeorm';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -123,8 +125,8 @@ export class TimelineMessagingService {
     );
 
     // This is because composite fields are not handled correctly by the ORM
-    const threadParticipantsWithCompositeFields = orderedThreadParticipants.map(
-      (threadParticipant) => ({
+    const threadParticipantsWithCompositeFields: ObjectRecord[] =
+      orderedThreadParticipants.map((threadParticipant) => ({
         ...threadParticipant,
         person: {
           id: threadParticipant.person?.id,
@@ -150,8 +152,7 @@ export class TimelineMessagingService {
           },
           avatarUrl: threadParticipant.workspaceMember?.avatarUrl,
         },
-      }),
-    );
+      }));
 
     return threadParticipantsWithCompositeFields.reduce(
       (threadParticipantsAcc, threadParticipant) => {

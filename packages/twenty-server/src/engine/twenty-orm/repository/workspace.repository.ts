@@ -27,7 +27,7 @@ import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/works
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
-import { WorkspaceQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/query-builders/workspace-select.query-builder';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -687,14 +687,14 @@ export class WorkspaceRepository<
   }
 
   override createQueryBuilder<T extends ObjectRecord>(
-    alias: string,
-  ): WorkspaceQueryBuilder<T> {
+    alias?: string,
+  ): WorkspaceSelectQueryBuilder<T> {
     const queryBuilder = super.createQueryBuilder(
       alias,
     ) as unknown as SelectQueryBuilder<T>;
     const objectMetadata = this.getObjectMetadataFromTarget();
 
-    return new WorkspaceQueryBuilder(
+    return new WorkspaceSelectQueryBuilder(
       queryBuilder,
       objectMetadata,
       this.internalContext.objectMetadataMaps,

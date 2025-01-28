@@ -12,11 +12,13 @@ export class WorkspaceUpdateQueryBuilder<
     queryBuilder: UpdateQueryBuilder<T>,
     private readonly objectMetadataItem: ObjectMetadataItemWithFieldMaps,
     private readonly objectMetadataMaps: ObjectMetadataMaps,
+    private readonly userId?: string, // TODO: use userWorkspaceId
   ) {
     super(queryBuilder);
   }
 
   override async execute() {
+    this.expressionMap.returning = 'id';
     const result = await super.execute();
 
     return result;

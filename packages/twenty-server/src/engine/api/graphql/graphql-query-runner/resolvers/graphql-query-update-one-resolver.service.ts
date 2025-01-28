@@ -19,6 +19,7 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolverService<
@@ -34,6 +35,10 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
+
+    if (isDefined(authContext?.user?.id)) {
+      queryBuilder.setUserId(authContext.user.id);
+    }
 
     const data = formatData(
       executionArgs.args.data,
