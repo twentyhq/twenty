@@ -311,7 +311,6 @@ export class SignInUpService {
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
-      domainName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       logo,

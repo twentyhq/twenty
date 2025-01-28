@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
@@ -221,7 +221,7 @@ export const FormMultiSelectFieldInput = ({
               </StyledDisplayModeContainer>
             )
           ) : (
-            <VariableChip
+            <VariableChipStandalone
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />

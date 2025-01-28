@@ -2,27 +2,31 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { CustomException } from 'src/utils/custom-exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class GuardRedirectService {
   constructor(
     private readonly domainManagerService: DomainManagerService,
     private readonly environmentService: EnvironmentService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  dispatchErrorFromGuard(context: any, err: any, subdomain: string) {
+  dispatchErrorFromGuard(
+    context: ExecutionContext,
+    error: Error | CustomException,
+    workspace: { id?: string; subdomain: string },
+  ) {
     if ('contextType' in context && context.contextType === 'graphql') {
-      throw err;
+      throw error;
     }
 
     context
       .switchToHttp()
       .getResponse()
-      .redirect(
-        this.domainManagerService
-          .computeRedirectErrorUrl(err.message ?? 'Unknown error', subdomain)
-          .toString(),
-      );
+      .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
   }
 
   getSubdomainFromContext(context: ExecutionContext) {
@@ -34,5 +38,27 @@ export class GuardRedirectService {
       );
 
     return subdomainFromUrl ?? this.environmentService.get('DEFAULT_SUBDOMAIN');
+  }
+
+  private captureException(err: Error | CustomException, workspaceId?: string) {
+    if (err instanceof AuthException) return;
+
+    this.exceptionHandlerService.captureExceptions([err], {
+      workspace: {
+        id: workspaceId,
+      },
+    });
+  }
+
+  getRedirectErrorUrlAndCaptureExceptions(
+    err: Error | CustomException,
+    workspace: { id?: string; subdomain: string },
+  ) {
+    this.captureException(err, workspace.id);
+
+    return this.domainManagerService.computeRedirectErrorUrl(
+      err instanceof AuthException ? err.message : 'Unknown error',
+      workspace.subdomain,
+    );
   }
 }

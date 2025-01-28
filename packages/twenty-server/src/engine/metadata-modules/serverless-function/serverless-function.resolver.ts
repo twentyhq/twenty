@@ -6,7 +6,7 @@ import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -30,8 +30,8 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   async checkFeatureFlag(workspaceId: string) {

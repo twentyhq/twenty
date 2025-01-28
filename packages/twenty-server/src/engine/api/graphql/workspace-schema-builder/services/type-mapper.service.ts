@@ -29,6 +29,7 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
+import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import {
   BigFloatScalarType,
@@ -116,6 +117,7 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
+      [FieldMetadataType.RICH_TEXT_V2, RichTextV2FilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],

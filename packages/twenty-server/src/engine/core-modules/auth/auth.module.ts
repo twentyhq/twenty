@@ -26,7 +26,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -67,7 +67,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         Workspace,
         User,
         AppToken,
-        FeatureFlagEntity,
+        FeatureFlag,
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
       ],
