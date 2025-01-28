@@ -9,6 +9,7 @@ import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreate
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
@@ -130,7 +131,7 @@ export const useCreateManyRecords = <
             computeReferences: false,
           }),
         )
-        .filter((el) => el !== null);
+        .filter((el): el is RecordGqlNode => el !== null);
 
       triggerCreateRecordsOptimisticEffect({
         cache: apolloClient.cache,
