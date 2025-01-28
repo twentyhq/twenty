@@ -34,7 +34,7 @@ export const computeOptimisticRecordFromInput = ({
           }
 
           if (!isDefined(relationDefinition)) {
-            return
+            return;
           }
 
           const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
@@ -50,12 +50,6 @@ export const computeOptimisticRecordFromInput = ({
 
     const isRelationField =
       fieldMetadataItem.type === FieldMetadataType.RELATION;
-    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
-    if (isDefined(recordInputFieldValue) && isRelationField) {
-      throw new Error(
-        'Should never provide relation mutation through anything else than the fieldId e.g companyId',
-      );
-    }
 
     if (
       isRelationField &&
@@ -68,6 +62,13 @@ export const computeOptimisticRecordFromInput = ({
     const isManyToOneRelation =
       fieldMetadataItem.relationDefinition?.direction ===
       RelationDefinitionType.MANY_TO_ONE;
+    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
+    if (isDefined(recordInputFieldValue) && isRelationField) {
+      throw new Error(
+        'Should never provide relation mutation through anything else than the fieldId e.g companyId',
+      );
+    }
+
     if (isRelationField && isManyToOneRelation) {
       const relationFieldIdName = `${fieldMetadataItem.name}Id`;
       const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
@@ -99,7 +100,9 @@ export const computeOptimisticRecordFromInput = ({
         !isDefined(targetNameSingular) ||
         !isDefined(targetObjectMetataDataItem)
       ) {
-        throw new Error('Should never occurs, encountered invalid relation definition');
+        throw new Error(
+          'Should never occurs, encountered invalid relation definition',
+        );
       }
 
       const cachedRecord = getRecordFromCache({
