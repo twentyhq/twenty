@@ -292,11 +292,13 @@ export const HasHistory: Story = {
     expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
 
     await userEvent.type(editor, '{Meta>}z{/Meta}');
+    await userEvent.type(editor, '{Control>}z{/Control}');
 
     expect(editor).toHaveTextContent('');
     expect(args.onPersist).toHaveBeenLastCalledWith(null);
 
     await userEvent.type(editor, '{Shift>}{Meta>}z{/Meta}{/Shift}');
+    await userEvent.type(editor, '{Shift>}{Control>}z{/Control}{/Shift}');
 
     expect(editor).toHaveTextContent('{ "a": test }');
     expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
