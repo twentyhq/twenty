@@ -3,11 +3,13 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
   RelationMetadataType,
@@ -17,6 +19,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -33,11 +36,9 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const TITLE_FIELD_NAME = 'title';
-const BODY_FIELD_NAME = 'body';
 
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
 ];
 
 @WorkspaceEntity({
@@ -80,6 +81,19 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   body: string | null;
+
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
+    type: FieldMetadataType.RICH_TEXT_V2,
+    label: 'Body',
+    description: 'Note body',
+    icon: 'IconFilePencil',
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsRichTextV2Enabled,
+  })
+  bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
