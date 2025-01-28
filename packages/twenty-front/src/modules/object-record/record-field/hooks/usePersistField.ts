@@ -153,7 +153,6 @@ export const usePersistField = () => {
               variables: {
                 where: { id: recordId },
                 updateOneRecordInput: {
-                  [fieldName]: value,
                   [`${fieldName}Id`]: value?.id ?? null,
                 },
               },

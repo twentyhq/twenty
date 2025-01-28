@@ -11,6 +11,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
+// TODO this should not be any
 // TODO refactor using for loop ? and strictly type ap
 // We're not strict checking that any key within recordInput exists in the objectMetadaItem
 type ComputeOptimisticCacheRecordInputArgs = {
@@ -56,6 +57,7 @@ export const computeOptimisticRecordFromInput = ({
       const recordInputMatch = recordInputEntries.find(
         ([fieldName]) => fieldName === fieldMetadataItem.name,
       );
+      // Maybe we could ? consume the inputs if defined and if not try the cache idk
       if (isDefined(recordInputMatch) && isRelationField) {
         throw new Error(
           'Should never provide relation mutation through anything else than the fieldId e.g companyId',
