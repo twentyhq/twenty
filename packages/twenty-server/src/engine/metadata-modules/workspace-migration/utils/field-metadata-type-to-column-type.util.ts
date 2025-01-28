@@ -38,8 +38,6 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'jsonb';
     case FieldMetadataType.TS_VECTOR:
       return 'tsvector';
-    case FieldMetadataType.RICH_TEXT:
-      return 'text';
     default:
       throw new WorkspaceMigrationException(
         `Cannot convert ${fieldMetadataType} to column type.`,
