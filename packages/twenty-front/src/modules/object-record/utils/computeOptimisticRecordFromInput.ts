@@ -29,7 +29,6 @@ export const computeOptimisticRecordFromInput = ({
       undefined,
   );
   if (unknownRecordInputFields.length > 0) {
-    // unknownRecordInputFields.forEach((field) => delete recordInput[field]);
     throw new Error(
       `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadaItem ${objectMetadataItem.nameSingular}`,
     );
@@ -120,11 +119,9 @@ export const computeOptimisticRecordFromInput = ({
 
     const targetNameSingular =
       fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
-
     const targetObjectMetataDataItem = objectMetadataItems.find(
       ({ nameSingular }) => nameSingular === targetNameSingular,
     );
-
     if (!isDefined(targetObjectMetataDataItem)) {
       throw new Error(
         'Should never occur, encountered invalid relation definition',
