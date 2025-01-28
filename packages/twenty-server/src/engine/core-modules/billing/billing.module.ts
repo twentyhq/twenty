@@ -25,7 +25,7 @@ import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webh
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -48,7 +48,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
         BillingEntitlement,
         Workspace,
         UserWorkspace,
-        FeatureFlagEntity,
+        FeatureFlag,
       ],
       'core',
     ),

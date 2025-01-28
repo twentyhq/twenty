@@ -1,5 +1,6 @@
-import { Relation } from 'typeorm';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
+import { Relation } from 'typeorm';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -23,9 +24,9 @@ export enum ViewFilterGroupLogicalOperator {
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilterGroup,
   namePlural: 'viewFilterGroups',
-  labelSingular: 'View Filter Group',
-  labelPlural: 'View Filter Groups',
-  description: '(System) View Filter Groups',
+  labelSingular: msg`View Filter Group`,
+  labelPlural: msg`View Filter Groups`,
+  description: msg`(System) View Filter Groups`,
   icon: 'IconFilterBolt',
 })
 @WorkspaceIsNotAuditLogged()

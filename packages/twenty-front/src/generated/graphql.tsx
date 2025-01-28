@@ -390,9 +390,7 @@ export enum FeatureFlagKey {
   IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
-  IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
-  IsFreeAccessEnabled = 'IsFreeAccessEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
@@ -403,12 +401,55 @@ export enum FeatureFlagKey {
   IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
+export type Field = {
+  __typename?: 'Field';
+  createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  fromRelationMetadata?: Maybe<RelationMetadata>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
+  isUnique?: Maybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  object?: Maybe<Object>;
+  options?: Maybe<Scalars['JSON']>;
+  relation?: Maybe<Relation>;
+  relationDefinition?: Maybe<RelationDefinition>;
+  settings?: Maybe<Scalars['JSON']>;
+  toRelationMetadata?: Maybe<RelationMetadata>;
+  type: FieldMetadataType;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type FieldEdge = {
+  __typename?: 'FieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Field */
+  node: Field;
+};
+
+export type FieldFilter = {
+  and?: InputMaybe<Array<FieldFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<FieldFilter>>;
 };
 
 /** Type of the field */
@@ -491,12 +532,77 @@ export type ImpersonateOutput = {
   workspace: WorkspaceSubdomainAndId;
 };
 
+export type Index = {
+  __typename?: 'Index';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
+  indexType: IndexType;
+  indexWhereClause?: Maybe<Scalars['String']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isUnique: Scalars['Boolean'];
+  name: Scalars['String'];
+  objectMetadata: IndexObjectMetadataConnection;
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type IndexIndexFieldMetadatasArgs = {
+  filter?: IndexFieldFilter;
+  paging?: CursorPaging;
+};
+
+
+export type IndexObjectMetadataArgs = {
+  filter?: ObjectFilter;
+  paging?: CursorPaging;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
   edges: Array<IndexEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type IndexEdge = {
+  __typename?: 'IndexEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Index */
+  node: Index;
+};
+
+export type IndexField = {
+  __typename?: 'IndexField';
+  createdAt: Scalars['DateTime'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  order: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type IndexFieldEdge = {
+  __typename?: 'IndexFieldEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the IndexField */
+  node: IndexField;
+};
+
+export type IndexFieldFilter = {
+  and?: InputMaybe<Array<IndexFieldFilter>>;
+  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<IndexFieldFilter>>;
+};
+
+export type IndexFilter = {
+  and?: InputMaybe<Array<IndexFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<IndexFilter>>;
 };
 
 export type IndexIndexFieldMetadatasConnection = {
@@ -873,6 +979,42 @@ export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String'];
 };
 
+export type Object = {
+  __typename?: 'Object';
+  createdAt: Scalars['DateTime'];
+  dataSourceId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  fields: ObjectFieldsConnection;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  indexMetadatas: ObjectIndexMetadatasConnection;
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  shortcut?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+
+export type ObjectFieldsArgs = {
+  filter?: FieldFilter;
+  paging?: CursorPaging;
+};
+
+
+export type ObjectIndexMetadatasArgs = {
+  filter?: IndexFilter;
+  paging?: CursorPaging;
+};
+
 export type ObjectConnection = {
   __typename?: 'ObjectConnection';
   /** Array of edges. */
@@ -881,12 +1023,30 @@ export type ObjectConnection = {
   pageInfo: PageInfo;
 };
 
+export type ObjectEdge = {
+  __typename?: 'ObjectEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Object */
+  node: Object;
+};
+
 export type ObjectFieldsConnection = {
   __typename?: 'ObjectFieldsConnection';
   /** Array of edges. */
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type ObjectFilter = {
+  and?: InputMaybe<Array<ObjectFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isRemote?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<ObjectFilter>>;
 };
 
 export type ObjectIndexMetadatasConnection = {
@@ -1081,14 +1241,6 @@ export type Relation = {
   type: RelationType;
 };
 
-export type RelationConnection = {
-  __typename?: 'RelationConnection';
-  /** Array of edges. */
-  edges: Array<RelationEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
 export type RelationDefinition = {
   __typename?: 'RelationDefinition';
   direction: RelationDefinitionType;
@@ -1106,6 +1258,36 @@ export enum RelationDefinitionType {
   ONE_TO_MANY = 'ONE_TO_MANY',
   ONE_TO_ONE = 'ONE_TO_ONE'
 }
+
+export type RelationMetadata = {
+  __typename?: 'RelationMetadata';
+  createdAt: Scalars['DateTime'];
+  fromFieldMetadataId: Scalars['String'];
+  fromObjectMetadata: Object;
+  fromObjectMetadataId: Scalars['String'];
+  id: Scalars['UUID'];
+  relationType: RelationMetadataType;
+  toFieldMetadataId: Scalars['String'];
+  toObjectMetadata: Object;
+  toObjectMetadataId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RelationMetadataConnection = {
+  __typename?: 'RelationMetadataConnection';
+  /** Array of edges. */
+  edges: Array<RelationMetadataEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type RelationMetadataEdge = {
+  __typename?: 'RelationMetadataEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the RelationMetadata */
+  node: RelationMetadata;
+};
 
 /** Type of the relation */
 export enum RelationMetadataType {
@@ -1668,190 +1850,6 @@ export type WorkspaceSubdomainAndId = {
   __typename?: 'WorkspaceSubdomainAndId';
   id: Scalars['String'];
   subdomain: Scalars['String'];
-};
-
-export type Field = {
-  __typename?: 'field';
-  createdAt: Scalars['DateTime'];
-  defaultValue?: Maybe<Scalars['JSON']>;
-  description?: Maybe<Scalars['String']>;
-  fromRelationMetadata?: Maybe<Relation>;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  isActive?: Maybe<Scalars['Boolean']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
-  isNullable?: Maybe<Scalars['Boolean']>;
-  isSystem?: Maybe<Scalars['Boolean']>;
-  isUnique?: Maybe<Scalars['Boolean']>;
-  label: Scalars['String'];
-  name: Scalars['String'];
-  object?: Maybe<Object>;
-  options?: Maybe<Scalars['JSON']>;
-  relation?: Maybe<Relation>;
-  relationDefinition?: Maybe<RelationDefinition>;
-  settings?: Maybe<Scalars['JSON']>;
-  toRelationMetadata?: Maybe<Relation>;
-  type: FieldMetadataType;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type FieldEdge = {
-  __typename?: 'fieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the field */
-  node: Field;
-};
-
-export type FieldFilter = {
-  and?: InputMaybe<Array<FieldFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  isSystem?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<FieldFilter>>;
-};
-
-export type Index = {
-  __typename?: 'index';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
-  indexType: IndexType;
-  indexWhereClause?: Maybe<Scalars['String']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isUnique: Scalars['Boolean'];
-  name: Scalars['String'];
-  objectMetadata: IndexObjectMetadataConnection;
-  updatedAt: Scalars['DateTime'];
-};
-
-
-export type IndexIndexFieldMetadatasArgs = {
-  filter?: IndexFieldFilter;
-  paging?: CursorPaging;
-};
-
-
-export type IndexObjectMetadataArgs = {
-  filter?: ObjectFilter;
-  paging?: CursorPaging;
-};
-
-export type IndexEdge = {
-  __typename?: 'indexEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the index */
-  node: Index;
-};
-
-export type IndexField = {
-  __typename?: 'indexField';
-  createdAt: Scalars['DateTime'];
-  fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
-  order: Scalars['Float'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type IndexFieldEdge = {
-  __typename?: 'indexFieldEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the indexField */
-  node: IndexField;
-};
-
-export type IndexFieldFilter = {
-  and?: InputMaybe<Array<IndexFieldFilter>>;
-  fieldMetadataId?: InputMaybe<UuidFilterComparison>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<IndexFieldFilter>>;
-};
-
-export type IndexFilter = {
-  and?: InputMaybe<Array<IndexFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type Object = {
-  __typename?: 'object';
-  createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  fields: ObjectFieldsConnection;
-  icon?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  indexMetadatas: ObjectIndexMetadatasConnection;
-  isActive: Scalars['Boolean'];
-  isCustom: Scalars['Boolean'];
-  isLabelSyncedWithName: Scalars['Boolean'];
-  isRemote: Scalars['Boolean'];
-  isSystem: Scalars['Boolean'];
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  labelPlural: Scalars['String'];
-  labelSingular: Scalars['String'];
-  namePlural: Scalars['String'];
-  nameSingular: Scalars['String'];
-  shortcut?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-
-export type ObjectFieldsArgs = {
-  filter?: FieldFilter;
-  paging?: CursorPaging;
-};
-
-
-export type ObjectIndexMetadatasArgs = {
-  filter?: IndexFilter;
-  paging?: CursorPaging;
-};
-
-export type ObjectEdge = {
-  __typename?: 'objectEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the object */
-  node: Object;
-};
-
-export type ObjectFilter = {
-  and?: InputMaybe<Array<ObjectFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  isRemote?: InputMaybe<BooleanFieldComparison>;
-  isSystem?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<ObjectFilter>>;
-};
-
-export type Relation = {
-  __typename?: 'relation';
-  createdAt: Scalars['DateTime'];
-  fromFieldMetadataId: Scalars['String'];
-  fromObjectMetadata: Object;
-  fromObjectMetadataId: Scalars['String'];
-  id: Scalars['UUID'];
-  relationType: RelationMetadataType;
-  toFieldMetadataId: Scalars['String'];
-  toObjectMetadata: Object;
-  toObjectMetadataId: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RelationEdge = {
-  __typename?: 'relationEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the relation */
-  node: Relation;
 };
 
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };

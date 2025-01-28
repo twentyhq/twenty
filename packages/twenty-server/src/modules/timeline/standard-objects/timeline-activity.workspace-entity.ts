@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -29,9 +30,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
   namePlural: 'timelineActivities',
-  labelSingular: 'Timeline Activity',
-  labelPlural: 'Timeline Activities',
-  description: 'Aggregated / filtered event to be displayed on the timeline',
+  labelSingular: msg`Timeline Activity`,
+  labelPlural: msg`Timeline Activities`,
+  description: msg`Aggregated / filtered event to be displayed on the timeline`,
   icon: STANDARD_OBJECT_ICONS.timelineActivity,
 })
 @WorkspaceIsSystem()

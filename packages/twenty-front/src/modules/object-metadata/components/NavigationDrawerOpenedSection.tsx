@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { useFilteredObjectMetadataItemsForWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,8 +14,7 @@ export const NavigationDrawerOpenedSection = () => {
 
   const loading = useIsPrefetchLoading();
 
-  const { activeObjectMetadataItems: workspaceFavoritesObjectMetadataItems } =
-    useFilteredObjectMetadataItemsForWorkspaceFavorites();
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
 
   const {
     objectNamePlural: currentObjectNamePlural,

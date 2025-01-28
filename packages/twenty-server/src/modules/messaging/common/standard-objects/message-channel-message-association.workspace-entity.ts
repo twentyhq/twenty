@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -24,9 +25,9 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
   namePlural: 'messageChannelMessageAssociations',
-  labelSingular: 'Message Channel Message Association',
-  labelPlural: 'Message Channel Message Associations',
-  description: 'Message Synced with a Message Channel',
+  labelSingular: msg`Message Channel Message Association`,
+  labelPlural: msg`Message Channel Message Associations`,
+  description: msg`Message Synced with a Message Channel`,
   icon: STANDARD_OBJECT_ICONS.messageChannelMessageAssociation,
 })
 @WorkspaceIsNotAuditLogged()
