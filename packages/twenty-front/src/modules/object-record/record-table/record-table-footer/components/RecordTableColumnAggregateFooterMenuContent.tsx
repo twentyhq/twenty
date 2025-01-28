@@ -85,7 +85,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             onClick={() => {
               onContentChange('datesAggregateOperationsOptions');
             }}
-            text={'Dates'}
+            text={'Date'}
             hasSubMenu
           />
         )}

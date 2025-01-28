@@ -74,7 +74,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="Dates"
+          title="Date"
         />
       );
     }
