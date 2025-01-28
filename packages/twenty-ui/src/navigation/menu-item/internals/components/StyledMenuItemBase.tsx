@@ -2,6 +2,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { isUndefined } from '@sniptt/guards';
+
+import { IconCheck } from '@ui/display';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -158,4 +160,9 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
         return 'pointer';
     }
   }};
+`;
+
+export const StyledMenuItemIconCheck = styled(IconCheck)`
+  flex-shrink: 0;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;

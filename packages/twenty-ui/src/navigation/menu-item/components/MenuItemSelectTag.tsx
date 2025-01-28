@@ -1,8 +1,11 @@
 import { useTheme } from '@emotion/react';
 
-import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledMenuItemIconCheck,
+  StyledMenuItemLeftContent,
+} from '../internals/components/StyledMenuItemBase';
 
-import { IconCheck, IconComponent, Tag } from '@ui/display';
+import { IconComponent, Tag } from '@ui/display';
 import { ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
@@ -43,7 +46,7 @@ export const MenuItemSelectTag = ({
           Icon={LeftIcon ?? undefined}
         />
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.sm} />}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };
