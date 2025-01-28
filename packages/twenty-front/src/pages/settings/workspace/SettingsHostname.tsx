@@ -73,11 +73,11 @@ export const SettingsHostname = () => {
             fetchPolicy: 'no-cache',
           });
           if (isDefined(data)) {
-            console.log('Hostname details updated:', data);
+            // console.log('Hostname details updated:', data);
             // Optionally, handle the data or stop polling based on conditions.
           }
         } catch (error) {
-          console.error('Error polling hostname details:', error);
+          // console.error('Error polling hostname details:', error);
         }
       }, 3000);
     }
@@ -121,7 +121,7 @@ export const SettingsHostname = () => {
         throw new Error('Invalid form values');
       }
 
-      const result = await updateWorkspace({
+      await updateWorkspace({
         variables: {
           input: {
             hostname: values.hostname,
