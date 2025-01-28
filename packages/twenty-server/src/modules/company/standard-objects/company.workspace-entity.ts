@@ -64,8 +64,8 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The company name',
+    label: msg`Name`,
+    description: msg`The company name`,
     icon: 'IconBuildingSkyscraper',
   })
   name: string;
