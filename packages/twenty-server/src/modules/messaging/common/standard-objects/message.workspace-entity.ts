@@ -27,7 +27,7 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
   namePlural: 'messages',
   labelSingular: msg`Message`,
   labelPlural: msg`Messages`,
-  description: msg`Message`,
+  description: msg`A message sent or received through a messaging channel (email, chat, etc.)`,
   icon: STANDARD_OBJECT_ICONS.message,
   labelIdentifierStandardId: MESSAGE_STANDARD_FIELD_IDS.subject,
 })

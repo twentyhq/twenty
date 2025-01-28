@@ -24,7 +24,7 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
   namePlural: 'taskTargets',
   labelSingular: msg`Task Target`,
   labelPlural: msg`Task Targets`,
-  description: msg`An task target`,
+  description: msg`A task target`,
   icon: STANDARD_OBJECT_ICONS.taskTarget,
 })
 @WorkspaceIsSystem()

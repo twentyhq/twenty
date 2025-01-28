@@ -22,7 +22,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
   namePlural: 'messageThreads',
   labelSingular: msg`Message Thread`,
   labelPlural: msg`Message Threads`,
-  description: msg`Message Thread`,
+  description: msg`A group of related messages (e.g. email thread, chat thread)`,
   icon: STANDARD_OBJECT_ICONS.messageThread,
 })
 @WorkspaceIsNotAuditLogged()

@@ -34,7 +34,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   namePlural: 'favorites',
   labelSingular: msg`Favorite`,
   labelPlural: msg`Favorites`,
-  description: msg`A favorite`,
+  description: msg`A favorite that can be accessed from the left menu`,
   icon: STANDARD_OBJECT_ICONS.favorite,
 })
 @WorkspaceIsNotAuditLogged()

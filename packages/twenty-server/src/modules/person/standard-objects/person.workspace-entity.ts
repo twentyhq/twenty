@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -57,9 +57,9 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
-  labelSingular: msg`Person`,
-  labelPlural: msg`People`,
-  description: msg`A person`,
+  labelSingular: t`Person`,
+  labelPlural: t`People`,
+  description: t`A person`,
   icon: STANDARD_OBJECT_ICONS.person,
   shortcut: 'P',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,

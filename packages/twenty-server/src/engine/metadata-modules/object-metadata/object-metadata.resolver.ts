@@ -53,6 +53,18 @@ export class ObjectMetadataResolver {
     );
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.objectMetadataService.resolveTranslatableString(
+      objectMetadata,
+      'description',
+      context.req.headers['x-locale'],
+    );
+  }
+
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
