@@ -1,17 +1,18 @@
-import { isNull, isString, isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-// We're not strict checking that any key within recordInput exists in the objectMetadaItem
+// We're not strict checking that any key within recordInput exists in the objectMetadaItem //TODO IN THE TRAIN
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
@@ -22,23 +23,20 @@ export const computeOptimisticRecordFromInput = ({
   cache,
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
-  const accumulator: Partial<ObjectRecord> = {};
+  const optimisticRecord: Partial<ObjectRecord> = {};
   for (const fieldMetadataItem of objectMetadataItem.fields) {
-    const isUuidField = fieldMetadataItem.type === FieldMetadataType.UUID;
-    if (isUuidField) {
-      // Could be a util ?
+    if (isFieldUuid(fieldMetadataItem)) {
       const isRelationFieldId = objectMetadataItem.fields.some(
         ({ type, relationDefinition }) => {
           if (type !== FieldMetadataType.RELATION) {
-            return;
+            return false;
           }
 
           if (!isDefined(relationDefinition)) {
-            return;
+            return false;
           }
 
           const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
-          // TODO we should create utils to centralized this logic
           return `${sourceFieldName}Id` === fieldMetadataItem.name;
         },
       );
@@ -48,13 +46,25 @@ export const computeOptimisticRecordFromInput = ({
       }
     }
 
-    const isRelationField =
-      fieldMetadataItem.type === FieldMetadataType.RELATION;
+    const isRelationField = isFieldRelation(fieldMetadataItem);
+    const recordInputFieldValue: unknown =
+      recordInput[fieldMetadataItem.name];
+    if (!isRelationField) {
+      if (!isDefined(recordInputFieldValue)) {
+        continue;
+      }
+
+      if (!fieldMetadataItem.isNullable && recordInputFieldValue == null) {
+        continue;
+      }
+
+      optimisticRecord[fieldMetadataItem.name] = recordInputFieldValue;
+      continue;
+    }
 
     if (
-      isRelationField &&
       fieldMetadataItem.relationDefinition?.direction ===
-        RelationDefinitionType.ONE_TO_MANY
+      RelationDefinitionType.ONE_TO_MANY
     ) {
       continue;
     }
@@ -62,83 +72,65 @@ export const computeOptimisticRecordFromInput = ({
     const isManyToOneRelation =
       fieldMetadataItem.relationDefinition?.direction ===
       RelationDefinitionType.MANY_TO_ONE;
-    const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
+    if (!isManyToOneRelation) {
+      continue;
+    }
+
     if (isDefined(recordInputFieldValue) && isRelationField) {
       throw new Error(
         'Should never provide relation mutation through anything else than the fieldId e.g companyId',
       );
     }
 
-    if (isRelationField && isManyToOneRelation) {
-      const relationFieldIdName = `${fieldMetadataItem.name}Id`;
-      const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
-      if (isUndefined(recordInputFieldIdValue)) {
-        continue;
-      }
+    const relationFieldIdName = `${fieldMetadataItem.name}Id`;
+    const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
+    if (isUndefined(recordInputFieldIdValue)) {
+      continue;
+    }
 
-      const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
-        (field) => field.name === relationFieldIdName,
+    const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
+      (field) => field.name === relationFieldIdName,
+    );
+    if (!isDefined(relationIdFieldMetadataItem)) {
+      throw new Error(
+        'Should never occurs, encountered unknown relationId within relations definitions',
       );
-      if (!isDefined(relationIdFieldMetadataItem)) {
-        // could throw ?
-        continue;
-      }
+    }
 
-      const isRecordInputFieldIdNull = isNull(recordInputFieldIdValue);
-      if (isRecordInputFieldIdNull) {
-        accumulator[relationFieldIdName] = null;
-        accumulator[fieldMetadataItem.name] = null;
-        continue;
-      }
+    const isRecordInputFieldIdNull = isNull(recordInputFieldIdValue);
+    if (isRecordInputFieldIdNull) {
+      optimisticRecord[relationFieldIdName] = null;
+      optimisticRecord[fieldMetadataItem.name] = null;
+      continue;
+    }
 
-      const targetNameSingular =
-        fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
-      const targetObjectMetataDataItem = objectMetadataItems.find(
-        ({ nameSingular }) => nameSingular === targetNameSingular,
+    const targetNameSingular =
+      fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
+    const targetObjectMetataDataItem = objectMetadataItems.find(
+      ({ nameSingular }) => nameSingular === targetNameSingular,
+    );
+    if (
+      !isDefined(targetNameSingular) ||
+      !isDefined(targetObjectMetataDataItem)
+    ) {
+      throw new Error(
+        'Should never occurs, encountered invalid relation definition',
       );
-      if (
-        !isDefined(targetNameSingular) ||
-        !isDefined(targetObjectMetataDataItem)
-      ) {
-        throw new Error(
-          'Should never occurs, encountered invalid relation definition',
-        );
-      }
-
-      const cachedRecord = getRecordFromCache({
-        cache,
-        objectMetadataItem: targetObjectMetataDataItem,
-        objectMetadataItems,
-        recordId: recordInputFieldIdValue as string,
-      });
-      if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
-        continue;
-      }
-
-      accumulator[relationFieldIdName] = recordInputFieldIdValue;
-      accumulator[fieldMetadataItem.name] = cachedRecord;
-      continue;
     }
 
-    if (!isDefined(recordInputFieldValue)) {
+    const cachedRecord = getRecordFromCache({
+      cache,
+      objectMetadataItem: targetObjectMetataDataItem,
+      objectMetadataItems,
+      recordId: recordInputFieldIdValue as string,
+    });
+    if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
       continue;
+    } else {
+      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+      optimisticRecord[fieldMetadataItem.name] = cachedRecord;
     }
-
-    if (!fieldMetadataItem.isNullable && recordInputFieldValue == null) {
-      continue;
-    }
-
-    accumulator[fieldMetadataItem.name] = recordInputFieldValue;
-  }
-  const recordDomainNameIsDefined =
-    isDefined(accumulator?.domainName) && isString(accumulator.domainName);
-  if (!recordDomainNameIsDefined) {
-    return accumulator;
   }
 
-  return {
-    ...accumulator,
-    // We should have a look to latest typeScript version that should infer typing from isDefined and IsString here
-    domainName: getUrlHostName(accumulator.domainName as string),
-  };
+  return optimisticRecord;
 };

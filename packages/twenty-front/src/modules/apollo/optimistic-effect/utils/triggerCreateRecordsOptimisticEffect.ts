@@ -22,7 +22,7 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
   then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
 */
 type TriggerCreateRecordsOptimisticEffectArgs = {
-  cache: ApolloCache<object>; //oof type signature might be necessary to provide Generic
+  cache: ApolloCache<object>;
   objectMetadataItem: ObjectMetadataItem;
   recordsToCreate: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
@@ -35,31 +35,27 @@ export const triggerCreateRecordsOptimisticEffect = ({
   recordsToCreate,
   objectMetadataItems,
   shouldMatchRootQueryFilter,
-  checkForRecordInCache,
+  checkForRecordInCache = false,
 }: TriggerCreateRecordsOptimisticEffectArgs) => {
-  const getCurrentSourceRecord = (recordId: string): RecordGqlNode | null => {
-    if (checkForRecordInCache === true) {
-      const cachedRecord = getRecordFromCache({
-        cache,
-        objectMetadataItem,
-        objectMetadataItems,
-        recordId,
-      });
-      const cachedRecordNode = getRecordNodeFromRecord({
-        objectMetadataItem,
-        objectMetadataItems,
-        record: cachedRecord,
-        computeReferences: false,
-      });
-
-      return cachedRecordNode;
-    }
-
-    return null;
+  const getRecordNodeFromCache = (recordId: string): RecordGqlNode | null => {
+    const cachedRecord = getRecordFromCache({
+      cache,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordId,
+    });
+    return getRecordNodeFromRecord({
+      objectMetadataItem,
+      objectMetadataItems,
+      record: cachedRecord,
+      computeReferences: false,
+    });
   };
 
   recordsToCreate.forEach((record) => {
-    const currentSourceRecord = getCurrentSourceRecord(record.id);
+    const currentSourceRecord = checkForRecordInCache
+      ? getRecordNodeFromCache(record.id)
+      : null;
     triggerUpdateRelationsOptimisticEffect({
       cache,
       sourceObjectMetadataItem: objectMetadataItem,
