@@ -38,7 +38,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
   checkForRecordInCache,
 }: TriggerCreateRecordsOptimisticEffectArgs) => {
   const getCurrentSourceRecord = (recordId: string): RecordGqlNode | null => {
-    if (checkForRecordInCache) {
+    if (checkForRecordInCache === true) {
       const cachedRecord = getRecordFromCache({
         cache,
         objectMetadataItem,

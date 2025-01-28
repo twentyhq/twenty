@@ -1,6 +1,9 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('computeOptimisticRecordFromInput', () => {
@@ -12,21 +15,18 @@ describe('computeOptimisticRecordFromInput', () => {
       type: FieldMetadataType.RELATION,
       relationDefinition: {
         direction: RelationDefinitionType.MANY_TO_ONE,
-      } as FieldMetadataItem['relationDefinition']
+      } as FieldMetadataItem['relationDefinition'],
     };
-    const firstOccurence = generatedMockObjectMetadataItems[0]
+    const firstOccurence = generatedMockObjectMetadataItems[0];
     const tmp = {
       ...firstOccurence,
-      fields: [
-        ...firstOccurence.fields,
-        relationField
-      ],
-      companyId: relationField.id
+      fields: [...firstOccurence.fields, relationField],
+      companyId: relationField.id,
     };
 
     const result = computeOptimisticRecordFromInput({
       objectMetadataItem,
-      recordInput
+      recordInput,
     });
   });
 });

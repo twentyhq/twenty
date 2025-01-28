@@ -7,7 +7,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

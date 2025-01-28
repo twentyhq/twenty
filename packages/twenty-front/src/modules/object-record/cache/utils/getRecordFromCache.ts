@@ -15,7 +15,7 @@ export type GetRecordFromCacheArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   recordGqlFields?: RecordGqlFields;
-}
+};
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,
   objectMetadataItems,
