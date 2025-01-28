@@ -59,7 +59,9 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     const isRelationField = isFieldRelation(fieldMetadataItem);
+
     const recordInputFieldValue: unknown = recordInput[fieldMetadataItem.name];
+
     if (!isRelationField) {
       if (!isDefined(recordInputFieldValue)) {
         continue;
@@ -87,14 +89,16 @@ export const computeOptimisticRecordFromInput = ({
       continue;
     }
 
-    if (isDefined(recordInputFieldValue) && isRelationField) {
+    if (isDefined(recordInputFieldValue)) {
       throw new Error(
         'Should never provide relation mutation through anything else than the fieldId e.g companyId',
       );
     }
 
     const relationFieldIdName = `${fieldMetadataItem.name}Id`;
-    const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
+    const recordInputFieldIdValue: string | null | undefined =
+      recordInput[relationFieldIdName];
+
     if (isUndefined(recordInputFieldIdValue)) {
       continue;
     }
@@ -108,8 +112,7 @@ export const computeOptimisticRecordFromInput = ({
       );
     }
 
-    const isRecordInputFieldIdNull = isNull(recordInputFieldIdValue);
-    if (isRecordInputFieldIdNull) {
+    if (isNull(recordInputFieldIdValue)) {
       optimisticRecord[relationFieldIdName] = null;
       optimisticRecord[fieldMetadataItem.name] = null;
       continue;
@@ -117,13 +120,12 @@ export const computeOptimisticRecordFromInput = ({
 
     const targetNameSingular =
       fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
+
     const targetObjectMetataDataItem = objectMetadataItems.find(
       ({ nameSingular }) => nameSingular === targetNameSingular,
     );
-    if (
-      !isDefined(targetNameSingular) ||
-      !isDefined(targetObjectMetataDataItem)
-    ) {
+
+    if (!isDefined(targetObjectMetataDataItem)) {
       throw new Error(
         'Should never occur, encountered invalid relation definition',
       );
@@ -135,12 +137,14 @@ export const computeOptimisticRecordFromInput = ({
       objectMetadataItems,
       recordId: recordInputFieldIdValue as string,
     });
+
+    optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
+
     if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
       continue;
-    } else {
-      optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
-      optimisticRecord[fieldMetadataItem.name] = cachedRecord;
     }
+
+    optimisticRecord[fieldMetadataItem.name] = cachedRecord;
   }
 
   return optimisticRecord;
