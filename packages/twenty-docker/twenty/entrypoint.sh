@@ -30,10 +30,12 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
         echo "Banco de dados já existe."
     fi
 
-    # Run setup and migration scripts
+    # Run setup and migration and seed scripts
     echo "Rodando migrações..."
     NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
     yarn database:migrate:prod
+    yarn
+    yes | npx nx command-no-deps -- workspace:seed:dev
 
     # Mark initialization as done
     echo "Successfuly migrated DB!"
