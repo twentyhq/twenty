@@ -28,7 +28,7 @@ export enum AppTokenType {
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
-@ObjectType('AppToken')
+@ObjectType()
 @BeforeCreateOne(BeforeCreateOneAppToken)
 export class AppToken {
   @IDField(() => UUIDScalarType)
