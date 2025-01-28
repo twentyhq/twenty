@@ -11,10 +11,9 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-// TODO refactor using for loop ?
-// We're strict checking that any key within recordInput exists in the objectMetadaItem
+// TODO refactor using for loop ? and strictly type ap
+// We're not strict checking that any key within recordInput exists in the objectMetadaItem
 type ComputeOptimisticCacheRecordInputArgs = {
-  // Could be renamed
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
 } & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
@@ -26,11 +25,9 @@ export const computeOptimisticRecordFromInput = ({
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   console.log('computeOptimisticRecordFromInput', { recordInput });
-  // TODO strictly type as possible
   const recordInputEntries = Object.entries(recordInput);
   const sanitizedEntries = objectMetadataItem.fields.flatMap(
     (fieldMetadataItem) => {
-      // if uuid check for within relation to see if the fieldName is within the relation
       const isUuidField = fieldMetadataItem.type === FieldMetadataType.UUID;
       if (isUuidField) {
         const isRelationFieldId = objectMetadataItem.fields.some(
@@ -81,7 +78,6 @@ export const computeOptimisticRecordFromInput = ({
         const recordInputMatchId = recordInputEntries.find(
           ([fieldName]) => fieldName === relationIdFieldName,
         );
-        // Should check both never undefined ?
         if (!isDefined(recordInputMatchId)) {
           return [];
         }
@@ -94,22 +90,19 @@ export const computeOptimisticRecordFromInput = ({
           return [];
         }
 
-        const isRecordInputFieldIdNull = isNull(fieldIdValue); // In fact this should never occurs ?
-        // Should check invariant in recordInput company is never defined and companyId is ?
+        const isRecordInputFieldIdNull = isNull(fieldIdValue);
         if (isRecordInputFieldIdNull) {
           return [
             [fieldIdName, null],
             [fieldMetadataItem.name, null],
           ];
         }
-        // Is it the best way to retrieve the related objectMetadaItem it's log(n)
         const targetNameSingular =
           fieldMetadataItem.relationDefinition?.targetObjectMetadata
             .nameSingular;
         const relationObjectMetataDataItem = objectMetadataItems.find(
           ({ nameSingular }) => nameSingular === targetNameSingular,
         );
-        // Could relationObjectMetataDataItem in case we haven't fetch all the related objectDataItems ? should silent error on this one ?
         if (
           !isDefined(targetNameSingular) ||
           !isDefined(relationObjectMetataDataItem)
@@ -130,26 +123,6 @@ export const computeOptimisticRecordFromInput = ({
           [fieldIdName, fieldIdValue],
           [fieldMetadataItem.name, cachedRecord],
         ];
-        // We kinda have a race condition here
-        // Should we sort and filter by relation desc ? and use reduce ? => OOF
-        // Here same id but will it stay the case in the future ?
-        // Should be integ tested
-        /*
-          [
-            [
-                "companyId",
-                "20202020-f86b-419f-b794-02319abe8637"
-            ],
-            [
-                "companyId",
-                "20202020-f86b-419f-b794-02319abe8637"
-            ],
-            [
-                "company",
-                {}
-            ]
-          ]
-        */
       }
 
       if (!isDefined(recordInputMatch)) {
