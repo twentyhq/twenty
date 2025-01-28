@@ -24,9 +24,16 @@
 
 <br>
 
-# Installation 
+# Demo 
 
-See:  
+Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
+
+```
+email: tim@apple.dev
+password: Applecar2025
+```
+
+See also:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
 🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
 
@@ -145,7 +152,7 @@ Below are a few features we have implemented to date:
 - [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
 - [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/) and [Emotion](https://emotion.sh/)
 - [Greptile](https://greptile.com) for code reviews.
-- [Lingui](https://lingui.dev/) and [Crowdin](https://twenty.crowdin.com/twenty) for translations.
+- [Lingui](https://lingui.dev/) and [TranslationIO](https://translation.io/) for translations.
 
 
 # Join the Community
@@ -154,7 +161,6 @@ Below are a few features we have implemented to date:
 - Subscribe to releases (watch -> custom -> releases)
 - Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
-- Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
 
 
