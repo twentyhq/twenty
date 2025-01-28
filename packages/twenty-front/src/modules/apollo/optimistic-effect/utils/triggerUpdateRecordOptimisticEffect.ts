@@ -35,7 +35,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
     objectMetadataItems,
   });
 
-  // What's that ?
   cache.modify<StoreObject>({
     fields: {
       [objectMetadataItem.namePlural]: (

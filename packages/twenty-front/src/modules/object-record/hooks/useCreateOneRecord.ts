@@ -115,21 +115,7 @@ export const useCreateOneRecord = <
         variables: {
           input: sanitizedInput,
         },
-        update: (_cache, { data }) => {
-          // const record = data?.[mutationResponseField];
-
-          // if (!record || skipPostOptmisticEffect) return;
-
-          // Ask Charles again but write it down this time kekw
-          // triggerCreateRecordsOptimisticEffect({
-          //   cache,
-          //   objectMetadataItem,
-          //   recordsToCreate: [record],
-          //   objectMetadataItems,
-          //   shouldMatchRootQueryFilter,
-          // });
-
-          // Skipping loading false in case with skipPostOptimistic ?
+        update: () => {
           setLoading(false);
         },
       })

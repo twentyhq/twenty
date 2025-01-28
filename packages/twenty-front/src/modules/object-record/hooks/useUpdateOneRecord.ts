@@ -67,11 +67,6 @@ export const useUpdateOneRecord = <
       objectMetadataItems,
     });
 
-    console.log('optimisticRecordInput', { optimisticRecordInput });
-    console.log({
-      updateOneRecordInput,
-      optimisticRecord,
-    });
     const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
@@ -97,7 +92,6 @@ export const useUpdateOneRecord = <
         recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
       });
-    console.log({ cachedRecordWithConnection, optimisticRecordWithConnection });
     if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
       return null;
     }
@@ -126,27 +120,12 @@ export const useUpdateOneRecord = <
         recordInput: updateOneRecordInput,
       }),
     };
-    console.log({ sanitizedInput });
     const updatedRecord = await apolloClient
       .mutate({
         mutation: updateOneRecordMutation,
         variables: {
           idToUpdate,
           input: sanitizedInput,
-        },
-        update: (cache, { data }) => {
-          const record = data?.[mutationResponseField];
-
-          if (!record || !cachedRecord) return;
-
-          console.log('NOT CACHING');
-          // triggerUpdateRecordOptimisticEffect({
-          //   cache,
-          //   objectMetadataItem,
-          //   currentRecord: cachedRecord,
-          //   updatedRecord: record,
-          //   objectMetadataItems,
-          // });
         },
       })
       .catch((error: Error) => {
