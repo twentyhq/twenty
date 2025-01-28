@@ -5,14 +5,14 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import {
-  ActorMetadata,
-  FieldActorSource,
+    ActorMetadata,
+    FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -28,8 +28,8 @@ import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wor
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -61,7 +61,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'The opportunity name',
+    description: msg`The opportunity name`,
     icon: 'IconTargetArrow',
   })
   name: string;
@@ -70,7 +70,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: 'Amount',
-    description: 'Opportunity amount',
+    description: msg`Opportunity amount`,
     icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
@@ -80,7 +80,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
     label: 'Close date',
-    description: 'Opportunity close date',
+    description: msg`Opportunity close date`,
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
@@ -90,7 +90,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',
-    description: 'Opportunity stage',
+    description: msg`Opportunity stage`,
     icon: 'IconProgressCheck',
     options: [
       { value: 'NEW', label: 'New', position: 0, color: 'red' },
@@ -113,7 +113,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Opportunity record position',
+    description: msg`Opportunity record position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
@@ -125,7 +125,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.ACTOR,
     label: 'Created by',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: msg`The creator of the record`,
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -137,7 +137,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Point of Contact',
-    description: 'Opportunity point of contact',
+    description: msg`Opportunity point of contact`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContactForOpportunities',
@@ -153,7 +153,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Company',
-    description: 'Opportunity company',
+    description: msg`Opportunity company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'opportunities',
@@ -169,7 +169,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites linked to the opportunity',
+    description: msg`Favorites linked to the opportunity`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -182,7 +182,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Tasks',
-    description: 'Tasks tied to the opportunity',
+    description: msg`Tasks tied to the opportunity`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -193,7 +193,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Notes',
-    description: 'Notes tied to the opportunity',
+    description: msg`Notes tied to the opportunity`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -204,7 +204,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Attachments',
-    description: 'Attachments linked to the opportunity',
+    description: msg`Attachments linked to the opportunity`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -216,7 +216,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the opportunity.',
+    description: msg`Timeline Activities linked to the opportunity.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -228,7 +228,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     type: FieldMetadataType.TEXT,
     label: 'Probability',
-    description: 'Opportunity probability',
+    description: msg`Opportunity probability`,
     icon: 'IconProgressCheck',
     defaultValue: "'0'",
   })

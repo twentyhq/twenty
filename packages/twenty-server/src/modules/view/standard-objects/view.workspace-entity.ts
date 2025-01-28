@@ -41,7 +41,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'View name',
+    description: msg`View name`,
   })
   name: string;
 
@@ -49,7 +49,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Object Metadata Id',
-    description: 'View target object',
+    description: msg`View target object`,
   })
   objectMetadataId: string;
 
@@ -57,7 +57,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
-    description: 'View type',
+    description: msg`View type`,
     defaultValue: "'table'",
   })
   type: string;
@@ -66,7 +66,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.key,
     type: FieldMetadataType.SELECT,
     label: 'Key',
-    description: 'View key',
+    description: msg`View key`,
     options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
     defaultValue: "'INDEX'",
   })
@@ -77,7 +77,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.icon,
     type: FieldMetadataType.TEXT,
     label: 'Icon',
-    description: 'View icon',
+    description: msg`View icon`,
   })
   icon: string;
 
@@ -85,7 +85,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanFieldMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'kanbanfieldMetadataId',
-    description: 'View Kanban column field',
+    description: msg`View Kanban column field`,
   })
   /**
    * @deprecated Use `viewGroups.fieldMetadataId` instead
@@ -96,7 +96,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'View position',
+    description: msg`View position`,
     defaultValue: 0,
   })
   @WorkspaceIsSystem()
@@ -106,7 +106,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.isCompact,
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
-    description: 'Describes if the view is in compact mode',
+    description: msg`Describes if the view is in compact mode`,
     defaultValue: false,
   })
   isCompact: boolean;
@@ -115,7 +115,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Fields',
-    description: 'View Fields',
+    description: msg`View Fields`,
     icon: 'IconTag',
     inverseSideTarget: () => ViewFieldWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -127,7 +127,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.viewGroups,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Groups',
-    description: 'View Groups',
+    description: msg`View Groups`,
     icon: 'IconTag',
     inverseSideTarget: () => ViewGroupWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -139,7 +139,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Filters',
-    description: 'View Filters',
+    description: msg`View Filters`,
     icon: 'IconFilterBolt',
     inverseSideTarget: () => ViewFilterWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -151,7 +151,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilterGroups,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Filter Groups',
-    description: 'View Filter Groups',
+    description: msg`View Filter Groups`,
     icon: 'IconFilterBolt',
     inverseSideTarget: () => ViewFilterGroupWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -163,7 +163,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Sorts',
-    description: 'View Sorts',
+    description: msg`View Sorts`,
     icon: 'IconArrowsSort',
     inverseSideTarget: () => ViewSortWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -175,7 +175,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites linked to the view',
+    description: msg`Favorites linked to the view`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -187,7 +187,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperation,
     type: FieldMetadataType.SELECT,
     label: 'Aggregate operation',
-    description: 'Optional aggregate operation',
+    description: msg`Optional aggregate operation`,
     icon: 'IconCalculator',
     options: [
       {
@@ -260,7 +260,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Field metadata used for aggregate operation',
-    description: 'Field metadata used for aggregate operation',
+    description: msg`Field metadata used for aggregate operation`,
     defaultValue: null,
   })
   @WorkspaceIsNullable()

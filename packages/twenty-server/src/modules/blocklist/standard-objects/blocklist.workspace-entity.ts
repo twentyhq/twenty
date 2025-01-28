@@ -32,7 +32,7 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
-    description: 'Handle',
+    description: msg`Handle`,
     icon: 'IconAt',
   })
   handle: string;
@@ -41,7 +41,7 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'WorkspaceMember',
-    description: 'WorkspaceMember',
+    description: msg`WorkspaceMember`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'blocklist',

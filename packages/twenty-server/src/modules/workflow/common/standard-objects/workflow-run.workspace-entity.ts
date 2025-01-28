@@ -4,12 +4,12 @@ import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  ActorMetadata,
-  FieldActorSource,
+    ActorMetadata,
+    FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -63,7 +63,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'Name of the workflow run',
+    description: msg`Name of the workflow run`,
     icon: 'IconSettingsAutomation',
   })
   name: string;
@@ -72,7 +72,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Workflow run started at',
-    description: 'Workflow run started at',
+    description: msg`Workflow run started at`,
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -82,7 +82,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Workflow run ended at',
-    description: 'Workflow run ended at',
+    description: msg`Workflow run ended at`,
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -92,7 +92,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: 'Workflow run status',
-    description: 'Workflow run status',
+    description: msg`Workflow run status`,
     icon: 'IconStatusChange',
     options: [
       {
@@ -129,7 +129,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.ACTOR,
     label: 'Executed by',
     icon: 'IconCreativeCommonsSa',
-    description: 'The executor of the workflow',
+    description: msg`The executor of the workflow`,
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -141,7 +141,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
     type: FieldMetadataType.RAW_JSON,
     label: 'Output',
-    description: 'Json object to provide output of the workflow run',
+    description: msg`Json object to provide output of the workflow run`,
     icon: 'IconText',
   })
   @WorkspaceIsNullable()
@@ -151,7 +151,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Workflow run position',
+    description: msg`Workflow run position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
@@ -163,7 +163,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow version',
-    description: 'Workflow version linked to the run.',
+    description: msg`Workflow version linked to the run.`,
     icon: 'IconVersions',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'runs',
@@ -177,7 +177,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'Workflow linked to the run.',
+    description: msg`Workflow linked to the run.`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'runs',
@@ -191,7 +191,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites linked to the workflow run',
+    description: msg`Favorites linked to the workflow run`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -203,7 +203,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Timeline Activities',
-    description: 'Timeline activities linked to the run',
+    description: msg`Timeline activities linked to the run`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

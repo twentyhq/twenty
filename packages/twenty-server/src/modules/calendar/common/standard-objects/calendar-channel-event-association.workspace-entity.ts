@@ -33,7 +33,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Event external ID',
-    description: 'Event external ID',
+    description: msg`Event external ID`,
     icon: 'IconCalendar',
   })
   eventExternalId: string;
@@ -43,7 +43,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Recurring Event ID',
-    description: 'Recurring Event ID',
+    description: msg`Recurring Event ID`,
     icon: 'IconHistory',
   })
   recurringEventExternalId: string;
@@ -53,7 +53,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Channel ID',
-    description: 'Channel ID',
+    description: msg`Channel ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
@@ -68,7 +68,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Event ID',
-    description: 'Event ID',
+    description: msg`Event ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',

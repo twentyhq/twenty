@@ -4,8 +4,8 @@ import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -38,7 +38,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: 'Header message Id',
-    description: 'Message id from the message header',
+    description: msg`Message id from the message header`,
     icon: 'IconHash',
   })
   headerMessageId: string;
@@ -47,7 +47,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: 'Subject',
-    description: 'Subject',
+    description: msg`Subject`,
     icon: 'IconMessage',
   })
   subject: string;
@@ -56,7 +56,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
     label: 'Text',
-    description: 'Text',
+    description: msg`Text`,
     icon: 'IconMessage',
   })
   text: string;
@@ -65,7 +65,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Received At',
-    description: 'The date the message was received',
+    description: msg`The date the message was received`,
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
@@ -75,7 +75,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Message Thread Id',
-    description: 'Message Thread Id',
+    description: msg`Message Thread Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
     inverseSideFieldKey: 'messages',
@@ -91,7 +91,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Message Participants',
-    description: 'Message Participants',
+    description: msg`Message Participants`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -103,7 +103,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Message Channel Association',
-    description: 'Messages from the channel.',
+    description: msg`Messages from the channel.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

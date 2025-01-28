@@ -28,7 +28,7 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WEBHOOK_STANDARD_FIELD_IDS.targetUrl,
     type: FieldMetadataType.TEXT,
     label: 'Target Url',
-    description: 'Webhook target url',
+    description: msg`Webhook target url`,
     icon: 'IconLink',
   })
   targetUrl: string;
@@ -37,7 +37,7 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operation,
     type: FieldMetadataType.TEXT,
     label: 'Operation',
-    description: 'Webhook operation',
+    description: msg`Webhook operation`,
     icon: 'IconCheckbox',
   })
   @WorkspaceIsDeprecated()
@@ -47,7 +47,7 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WEBHOOK_STANDARD_FIELD_IDS.operations,
     type: FieldMetadataType.ARRAY,
     label: 'Operations',
-    description: 'Webhook operations',
+    description: msg`Webhook operations`,
     icon: 'IconCheckbox',
     defaultValue: ['*.*'],
   })

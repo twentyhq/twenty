@@ -4,8 +4,8 @@ import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -30,7 +30,7 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
-    description: 'Favorite folder position',
+    description: msg`Favorite folder position`,
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -41,7 +41,7 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'Name of the favorite folder',
+    description: msg`Name of the favorite folder`,
     icon: 'IconText',
   })
   name: string;
@@ -50,7 +50,7 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites in this folder',
+    description: msg`Favorites in this folder`,
     icon: 'IconHeart',
     inverseSideFieldKey: 'favoriteFolder',
     inverseSideTarget: () => FavoriteWorkspaceEntity,

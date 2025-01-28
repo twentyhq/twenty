@@ -31,7 +31,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
-    description: 'Event name/type',
+    description: msg`Event name/type`,
     icon: 'IconAbc',
   })
   name: string;
@@ -40,7 +40,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
-    description: 'Json value for event details',
+    description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -61,7 +61,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
-    description: 'Object name',
+    description: msg`Object name`,
     icon: 'IconAbc',
   })
   objectName: string;
@@ -70,7 +70,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'Object metadata id',
-    description: 'Object metadata id',
+    description: msg`Object metadata id`,
     icon: 'IconAbc',
   })
   objectMetadataId: string;
@@ -79,7 +79,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
     label: 'Record id',
-    description: 'Record id',
+    description: msg`Record id`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
@@ -89,7 +89,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workspace Member',
-    description: 'Event workspace member',
+    description: msg`Event workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'auditLogs',

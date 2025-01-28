@@ -35,7 +35,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
     label: 'Role',
-    description: 'Role',
+    description: msg`Role`,
     icon: 'IconAt',
     options: [
       { value: 'from', label: 'From', position: 0, color: 'green' },
@@ -51,7 +51,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
-    description: 'Handle',
+    description: msg`Handle`,
     icon: 'IconAt',
   })
   handle: string;
@@ -60,7 +60,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: 'Display Name',
-    description: 'Display Name',
+    description: msg`Display Name`,
     icon: 'IconUser',
   })
   displayName: string;
@@ -69,7 +69,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Message',
-    description: 'Message',
+    description: msg`Message`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -83,7 +83,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Person',
-    description: 'Person',
+    description: msg`Person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -98,7 +98,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workspace Member',
-    description: 'Workspace member',
+    description: msg`Workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',

@@ -85,7 +85,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
     label: 'Employees',
-    description: 'Number of employees in the company',
+    description: msg`Number of employees in the company`,
     icon: 'IconUsers',
   })
   @WorkspaceIsNullable()
@@ -95,7 +95,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
     label: 'Linkedin',
-    description: 'The company Linkedin account',
+    description: msg`The company Linkedin account`,
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
@@ -105,7 +105,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: 'X',
-    description: 'The company Twitter/X account',
+    description: msg`The company Twitter/X account`,
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
@@ -126,7 +126,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.ADDRESS,
     label: 'Address',
-    description: 'Address of the company',
+    description: msg`Address of the company`,
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
@@ -147,7 +147,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Company record position',
+    description: msg`Company record position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
@@ -159,7 +159,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.ACTOR,
     label: 'Created by',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: msg`The creator of the record`,
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -172,7 +172,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'People',
-    description: 'People linked to the company.',
+    description: msg`People linked to the company.`,
     icon: 'IconUsers',
     inverseSideTarget: () => PersonWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -184,8 +184,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Account Owner',
-    description:
-      'Your team member responsible for managing the company account',
+    description: msg`Your team member responsible for managing the company account`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'accountOwnerForCompanies',
@@ -201,7 +200,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Tasks',
-    description: 'Tasks tied to the company',
+    description: msg`Tasks tied to the company`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -212,7 +211,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Notes',
-    description: 'Notes tied to the company',
+    description: msg`Notes tied to the company`,
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -223,7 +222,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Opportunities',
-    description: 'Opportunities linked to the company.',
+    description: msg`Opportunities linked to the company.`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -235,7 +234,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites linked to the company',
+    description: msg`Favorites linked to the company`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -248,7 +247,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.attachments,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Attachments',
-    description: 'Attachments linked to the company',
+    description: msg`Attachments linked to the company`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -260,7 +259,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the company',
+    description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

@@ -6,8 +6,8 @@ import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -84,7 +84,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
-    description: 'Handle',
+    description: msg`Handle`,
     icon: 'IconAt',
   })
   handle: string;
@@ -93,7 +93,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
     label: 'Sync status',
-    description: 'Sync status',
+    description: msg`Sync status`,
     icon: 'IconStatusChange',
     options: [
       {
@@ -135,7 +135,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
     label: 'Sync stage',
-    description: 'Sync stage',
+    description: msg`Sync stage`,
     icon: 'IconStatusChange',
     options: [
       {
@@ -184,7 +184,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
-    description: 'Visibility',
+    description: msg`Visibility`,
     icon: 'IconEyeglass',
     options: [
       {
@@ -209,7 +209,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
-    description: 'Is Contact Auto Creation Enabled',
+    description: msg`Is Contact Auto Creation Enabled`,
     icon: 'IconUserCircle',
     defaultValue: true,
   })
@@ -257,7 +257,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
-    description: 'Is Sync Enabled',
+    description: msg`Is Sync Enabled`,
     icon: 'IconRefresh',
     defaultValue: true,
   })
@@ -277,7 +277,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Last sync date',
-    description: 'Last sync date',
+    description: msg`Last sync date`,
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -287,7 +287,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Sync stage started at',
-    description: 'Sync stage started at',
+    description: msg`Sync stage started at`,
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
@@ -297,7 +297,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: 'Throttle Failure Count',
-    description: 'Throttle Failure Count',
+    description: msg`Throttle Failure Count`,
     icon: 'IconX',
     defaultValue: 0,
   })
@@ -307,7 +307,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Connected Account',
-    description: 'Connected Account',
+    description: msg`Connected Account`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannels',
@@ -322,7 +322,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Calendar Channel Event Associations',
-    description: 'Calendar Channel Event Associations',
+    description: msg`Calendar Channel Event Associations`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelEventAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

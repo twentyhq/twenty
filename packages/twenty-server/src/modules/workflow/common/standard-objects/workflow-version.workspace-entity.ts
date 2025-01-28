@@ -5,8 +5,8 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -73,7 +73,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'The workflow version name',
+    description: msg`The workflow version name`,
     icon: 'IconSettingsAutomation',
   })
   name: string;
@@ -82,7 +82,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
     type: FieldMetadataType.RAW_JSON,
     label: 'Version trigger',
-    description: 'Json object to provide trigger',
+    description: msg`Json object to provide trigger`,
     icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
@@ -92,7 +92,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps,
     type: FieldMetadataType.RAW_JSON,
     label: 'Version steps',
-    description: 'Json object to provide steps',
+    description: msg`Json object to provide steps`,
     icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
@@ -102,7 +102,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: 'Version status',
-    description: 'The workflow version status',
+    description: msg`The workflow version status`,
     icon: 'IconStatusChange',
     options: WorkflowVersionStatusOptions,
     defaultValue: "'DRAFT'",
@@ -113,7 +113,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Workflow version position',
+    description: msg`Workflow version position`,
     icon: 'IconHierarchy2',
     defaultValue: 0,
   })
@@ -125,7 +125,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'WorkflowVersion workflow',
+    description: msg`WorkflowVersion workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'versions',
@@ -140,7 +140,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.runs,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Runs',
-    description: 'Workflow runs linked to the version.',
+    description: msg`Workflow runs linked to the version.`,
     icon: 'IconRun',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -152,7 +152,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
-    description: 'Favorites linked to the workflow version',
+    description: msg`Favorites linked to the workflow version`,
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -164,7 +164,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Timeline Activities',
-    description: 'Timeline activities linked to the version',
+    description: msg`Timeline activities linked to the version`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

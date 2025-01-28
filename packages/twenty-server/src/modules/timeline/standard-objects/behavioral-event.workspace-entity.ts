@@ -36,7 +36,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: behavioralEventStandardFieldIds.type,
     type: FieldMetadataType.TEXT,
     label: 'Event type',
-    description: 'Event type',
+    description: msg`Event type`,
     icon: 'IconAbc',
   })
   type: string;
@@ -46,7 +46,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
-    description: 'Event name',
+    description: msg`Event name`,
     icon: 'IconAbc',
   })
   name: string;
@@ -55,7 +55,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
-    description: 'Json value for event details',
+    description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -76,7 +76,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
-    description: 'If the event is related to a particular object',
+    description: msg`If the event is related to a particular object`,
     icon: 'IconAbc',
   })
   objectName: string;
@@ -85,7 +85,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
-    description: 'Event name/type',
+    description: msg`Event name/type`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()

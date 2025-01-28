@@ -3,8 +3,8 @@ import { msg } from '@lingui/core/macro';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
+    RelationMetadataType,
+    RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -32,7 +32,7 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Messages',
-    description: 'Messages from the thread.',
+    description: msg`Messages from the thread.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

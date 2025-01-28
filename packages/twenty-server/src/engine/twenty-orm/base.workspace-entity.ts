@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -11,7 +12,7 @@ export abstract class BaseWorkspaceEntity {
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     type: FieldMetadataType.UUID,
     label: 'Id',
-    description: 'Id',
+    description: msg`Id`,
     defaultValue: 'uuid',
     icon: 'Icon123',
   })
@@ -23,7 +24,7 @@ export abstract class BaseWorkspaceEntity {
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Creation date',
-    description: 'Creation date',
+    description: msg`Creation date`,
     icon: 'IconCalendar',
     defaultValue: 'now',
     settings: {
@@ -36,7 +37,7 @@ export abstract class BaseWorkspaceEntity {
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Last update',
-    description: 'Last time the record was changed',
+    description: msg`Last time the record was changed`,
     icon: 'IconCalendarClock',
     defaultValue: 'now',
     settings: {
@@ -49,7 +50,7 @@ export abstract class BaseWorkspaceEntity {
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Deleted at',
-    description: 'Date when the record was deleted',
+    description: msg`Date when the record was deleted`,
     icon: 'IconCalendarMinus',
     settings: {
       displayAsRelativeDate: true,

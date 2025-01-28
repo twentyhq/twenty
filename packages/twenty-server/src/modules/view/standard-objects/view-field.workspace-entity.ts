@@ -43,7 +43,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',
-    description: 'View Field target field',
+    description: msg`View Field target field`,
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -52,7 +52,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
     label: 'Visible',
-    description: 'View Field visibility',
+    description: msg`View Field visibility`,
     icon: 'IconEye',
     defaultValue: true,
   })
@@ -62,7 +62,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.size,
     type: FieldMetadataType.NUMBER,
     label: 'Size',
-    description: 'View Field size',
+    description: msg`View Field size`,
     icon: 'IconEye',
     defaultValue: 0,
   })
@@ -72,7 +72,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
-    description: 'View Field position',
+    description: msg`View Field position`,
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -83,7 +83,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'View',
-    description: 'View Field related view',
+    description: msg`View Field related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',
@@ -94,7 +94,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.aggregateOperation,
     type: FieldMetadataType.SELECT,
     label: 'Aggregate operation',
-    description: 'Optional aggregate operation',
+    description: msg`Optional aggregate operation`,
     icon: 'IconCalculator',
     options: [
       {
