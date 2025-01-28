@@ -94,7 +94,7 @@ export class QueryRunnerArgsFactory {
             fieldMetadataMapByNameByName,
             {
               argIndex: 0,
-              shouldBackfillPosition: false,
+              shouldBackfillPosition,
             },
           ),
         } satisfies UpdateOneResolverArgs;
@@ -113,7 +113,7 @@ export class QueryRunnerArgsFactory {
                 fieldMetadataMapByNameByName,
                 {
                   argIndex: index,
-                  shouldBackfillPosition: false,
+                  shouldBackfillPosition,
                 },
               ),
             ) ?? [],
@@ -207,7 +207,7 @@ export class QueryRunnerArgsFactory {
           return [key, newValue];
         }
         case FieldMetadataType.NUMBER:
-          return [key, value === null ? null : Number(value)];
+          return [key, Number(value)] as const;
         case FieldMetadataType.RICH_TEXT_V2: {
           const richTextV2Value = richTextV2ValueSchema.parse(value);
 
