@@ -26,5 +26,6 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     Icon: IconSearch,
     availableOn: [ActionViewType.ALL],
     actionHook: useSearchRecordsRecordAgnosticAction,
+    hotKeys: ['/'],
   },
 };

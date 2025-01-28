@@ -123,8 +123,7 @@ export const CommandMenuList = ({
                             label={item.label}
                             to={item.to}
                             onClick={item.onCommandClick}
-                            firstHotKey={item.firstHotKey}
-                            secondHotKey={item.secondHotKey}
+                            hotKeys={item.hotKeys}
                             shouldCloseCommandMenuOnClick={
                               item.shouldCloseCommandMenuOnClick
                             }

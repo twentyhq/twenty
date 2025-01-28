@@ -19,8 +19,7 @@ export type Command = {
   type?: CommandType;
   scope?: CommandScope;
   Icon?: IconComponent;
-  firstHotKey?: string;
-  secondHotKey?: string;
+  hotKeys?: string[];
   onCommandClick?: () => void;
   shouldCloseCommandMenuOnClick?: boolean;
 };

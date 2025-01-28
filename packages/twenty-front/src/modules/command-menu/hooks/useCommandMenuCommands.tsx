@@ -60,6 +60,7 @@ export const useCommandMenuCommands = () => {
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.RecordSelection,
+      hotKeys: actionMenuEntry.hotKeys,
     }));
 
   const actionObjectCommands: Command[] = actionMenuEntries
@@ -75,6 +76,7 @@ export const useCommandMenuCommands = () => {
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.Object,
+      hotKeys: actionMenuEntry.hotKeys,
     }));
 
   const actionGlobalCommands: Command[] = actionMenuEntries
@@ -90,6 +92,7 @@ export const useCommandMenuCommands = () => {
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.Global,
+      hotKeys: actionMenuEntry.hotKeys,
     }));
 
   const workflowRunRecordSelectionCommands: Command[] = actionMenuEntries
@@ -105,6 +108,7 @@ export const useCommandMenuCommands = () => {
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.WorkflowRun,
       scope: CommandScope.RecordSelection,
+      hotKeys: actionMenuEntry.hotKeys,
     }));
 
   const workflowRunGlobalCommands: Command[] = actionMenuEntries
@@ -120,6 +124,7 @@ export const useCommandMenuCommands = () => {
       onCommandClick: actionMenuEntry.onClick,
       type: CommandType.WorkflowRun,
       scope: CommandScope.Global,
+      hotKeys: actionMenuEntry.hotKeys,
     }));
 
   return {

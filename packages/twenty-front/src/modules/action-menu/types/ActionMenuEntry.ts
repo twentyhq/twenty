@@ -27,4 +27,5 @@ export type ActionMenuEntry = {
   availableOn?: ActionViewType[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactElement<ConfirmationModalProps>;
+  hotKeys?: string[];
 };
