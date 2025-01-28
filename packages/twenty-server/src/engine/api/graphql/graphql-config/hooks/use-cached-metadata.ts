@@ -18,7 +18,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       ? `:${locale}`
       : '';
 
-    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}:${Math.random()}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}`;
   };
 
   const getOperationName = (serverContext: any) =>
