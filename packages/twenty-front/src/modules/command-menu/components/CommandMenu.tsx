@@ -24,19 +24,13 @@ export const CommandMenu = () => {
 
   const {
     noResults,
-    loading,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
+    matchingStandardActionObjectCommands,
     matchingWorkflowRunRecordSelectionCommands,
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommand,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
+    matchingNavigateCommands,
   } = useMatchingCommandMenuCommands({
     commandMenuSearch,
   });
@@ -44,16 +38,11 @@ export const CommandMenu = () => {
   const selectableItems: Command[] = copilotCommands
     .concat(
       matchingStandardActionRecordSelectionCommands,
+      matchingStandardActionObjectCommands,
       matchingWorkflowRunRecordSelectionCommands,
       matchingStandardActionGlobalCommands,
       matchingWorkflowRunGlobalCommands,
-      matchingNavigateCommand,
-      peopleCommands,
-      companyCommands,
-      opportunityCommands,
-      noteCommands,
-      tasksCommands,
-      customObjectCommands,
+      matchingNavigateCommands,
     )
     .filter(isDefined);
 
@@ -75,47 +64,19 @@ export const CommandMenu = () => {
     },
     {
       heading: t`Record Selection`,
-      items: matchingStandardActionRecordSelectionCommands,
+      items: matchingStandardActionRecordSelectionCommands.concat(
+        matchingWorkflowRunRecordSelectionCommands,
+      ),
     },
     {
-      heading: t`Workflow Record Selection`,
-      items: matchingWorkflowRunRecordSelectionCommands,
+      heading: t`Object`,
+      items: matchingStandardActionObjectCommands,
     },
     {
-      heading: t`View`,
-      items: matchingStandardActionGlobalCommands,
-    },
-    {
-      heading: t`Workflows`,
-      items: matchingWorkflowRunGlobalCommands,
-    },
-    {
-      heading: t`Navigate`,
-      items: matchingNavigateCommand,
-    },
-    {
-      heading: t`People`,
-      items: peopleCommands,
-    },
-    {
-      heading: t`Companies`,
-      items: companyCommands,
-    },
-    {
-      heading: t`Opportunities`,
-      items: opportunityCommands,
-    },
-    {
-      heading: t`Notes`,
-      items: noteCommands,
-    },
-    {
-      heading: t`Tasks`,
-      items: tasksCommands,
-    },
-    {
-      heading: t`Custom Objects`,
-      items: customObjectCommands,
+      heading: t`Global`,
+      items: matchingStandardActionGlobalCommands
+        .concat(matchingNavigateCommands)
+        .concat(matchingWorkflowRunGlobalCommands),
     },
   ];
 
@@ -123,7 +84,6 @@ export const CommandMenu = () => {
     <CommandMenuList
       commandGroups={commandGroups}
       selectableItemIds={selectableItemIds}
-      loading={loading}
       noResults={noResults}
     >
       {isNonEmptyString(previousContextStoreCurrentObjectMetadataId) && (

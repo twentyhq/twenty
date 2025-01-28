@@ -19,8 +19,8 @@ export type CommandMenuListProps = {
   commandGroups: CommandGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
-  loading: boolean;
-  noResults: boolean;
+  loading?: boolean;
+  noResults?: boolean;
 };
 
 const StyledList = styled.div`
@@ -59,8 +59,8 @@ export const CommandMenuList = ({
   commandGroups,
   selectableItemIds,
   children,
-  loading,
-  noResults,
+  loading = false,
+  noResults = false,
 }: CommandMenuListProps) => {
   const isMobile = useIsMobile();
 

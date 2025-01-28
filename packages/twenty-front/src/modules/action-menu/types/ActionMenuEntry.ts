@@ -11,6 +11,7 @@ export enum ActionMenuEntryType {
 export enum ActionMenuEntryScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
+  Object = 'Object',
 }
 
 export type ActionMenuEntry = {

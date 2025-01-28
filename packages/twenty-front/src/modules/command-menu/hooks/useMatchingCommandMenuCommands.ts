@@ -12,23 +12,20 @@ export const useMatchingCommandMenuCommands = ({
     copilotCommands,
     navigateCommands,
     actionRecordSelectionCommands,
+    actionObjectCommands,
     actionGlobalCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
-    loading,
   } = useCommandMenuCommands();
 
-  const matchingNavigateCommand = matchCommands(navigateCommands);
+  const matchingNavigateCommands = matchCommands(navigateCommands);
 
   const matchingStandardActionRecordSelectionCommands = matchCommands(
     actionRecordSelectionCommands,
   );
+
+  const matchingStandardActionObjectCommands =
+    matchCommands(actionObjectCommands);
 
   const matchingStandardActionGlobalCommands =
     matchCommands(actionGlobalCommands);
@@ -46,28 +43,16 @@ export const useMatchingCommandMenuCommands = ({
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
     !matchingWorkflowRunGlobalCommands.length &&
-    !matchingNavigateCommand.length &&
-    !peopleCommands?.length &&
-    !companyCommands?.length &&
-    !opportunityCommands?.length &&
-    !noteCommands?.length &&
-    !tasksCommands?.length &&
-    !customObjectCommands?.length;
+    !matchingNavigateCommands.length;
 
   return {
     noResults,
-    loading,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
+    matchingStandardActionObjectCommands,
     matchingWorkflowRunRecordSelectionCommands,
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommand,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
+    matchingNavigateCommands,
   };
 };

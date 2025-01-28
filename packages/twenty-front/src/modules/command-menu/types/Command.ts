@@ -9,6 +9,7 @@ export enum CommandType {
 export enum CommandScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
+  Object = 'Object',
 }
 
 export type Command = {
