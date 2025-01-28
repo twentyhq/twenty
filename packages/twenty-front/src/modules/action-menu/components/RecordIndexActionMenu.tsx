@@ -1,6 +1,7 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
@@ -23,6 +24,10 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
   );
 
   const isMobile = useIsMobile();
@@ -60,6 +65,9 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
           <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
           <RecordAgnosticActionMenuEntriesSetter />
+          {isWorkflowEnabled && (
+            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+          )}
         </ActionMenuContext.Provider>
       )}
     </>

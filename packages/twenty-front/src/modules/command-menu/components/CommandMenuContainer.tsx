@@ -1,5 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -14,12 +15,14 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.secondary};
@@ -70,6 +73,10 @@ export const CommandMenuContainer = ({
 
   const theme = useTheme();
 
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
+
   return (
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
@@ -92,6 +99,9 @@ export const CommandMenuContainer = ({
           >
             <RecordActionMenuEntriesSetter />
             <RecordAgnosticActionMenuEntriesSetter />
+            {isWorkflowEnabled && (
+              <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+            )}
             <ActionMenuConfirmationModals />
             {isCommandMenuOpened && (
               <StyledCommandMenu
