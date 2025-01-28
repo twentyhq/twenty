@@ -88,7 +88,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Workspace member name',
     icon: 'IconCircleUser',
   })
-  [NAME_FIELD_NAME]: FullNameMetadata;
+  name: FullNameMetadata;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
@@ -126,7 +126,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Related user email address',
     icon: 'IconMail',
   })
-  [USER_EMAIL_FIELD_NAME]: string;
+  userEmail: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
@@ -351,5 +351,5 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

@@ -73,7 +73,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  [NAME_FIELD_NAME]: FullNameMetadata | null;
+  name: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.emails,
@@ -83,7 +83,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMail',
   })
   @WorkspaceIsUnique()
-  [EMAILS_FIELD_NAME]: EmailsMetadata;
+  emails: EmailsMetadata;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
@@ -112,7 +112,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  [JOB_TITLE_FIELD_NAME]: string;
+  jobTitle: string;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -304,5 +304,5 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }
