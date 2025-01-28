@@ -10,6 +10,7 @@ import {
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { t } from '@lingui/core/macro';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   const { onContentChange, closeDropdown } =
@@ -46,7 +47,7 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
           onClick={() => {
             onContentChange('datesAggregateOperationOptions');
           }}
-          text={'Date'}
+          text={t`Date`}
           hasSubMenu
         />
         <MenuItem
