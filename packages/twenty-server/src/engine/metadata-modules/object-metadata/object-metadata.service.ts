@@ -11,6 +11,7 @@ import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -547,6 +548,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     i18n.activate(locale);
 
-    return i18n._(objectMetadata[labelKey]);
+    return i18n._(generateMessageId(objectMetadata[labelKey]));
   }
 }

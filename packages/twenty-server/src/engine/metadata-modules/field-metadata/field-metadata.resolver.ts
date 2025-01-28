@@ -43,6 +43,30 @@ export class FieldMetadataResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  @ResolveField(() => String, { nullable: true })
+  async label(
+    @Parent() fieldMetadata: FieldMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.fieldMetadataService.resolveTranslatableString(
+      fieldMetadata,
+      'label',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() fieldMetadata: FieldMetadataDTO,
+    @Context() context,
+  ): Promise<string> {
+    return this.fieldMetadataService.resolveTranslatableString(
+      fieldMetadata,
+      'description',
+      context.req.headers['x-locale'],
+    );
+  }
+
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,

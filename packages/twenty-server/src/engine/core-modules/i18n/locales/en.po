@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-25 21:24+0100\n"
+"POT-Creation-Date: 2025-01-28 18:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,20 +14,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/engine/metadata-modules/object-metadata/object-metadata.service.ts:557
-#: src/engine/metadata-modules/object-metadata/object-metadata.service.ts:561
-msgid "Company"
-msgstr "Company"
+#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#~ msgid "A company"
+#~ msgstr "A company"
 
 #. js-lingui-explicit-id
-#: src/modules/company/standard-objects/company.workspace-entity.ts:57
+#: src/modules/company/standard-objects/company.workspace-entity.ts:60
 #~ msgid "Companies"
 #~ msgstr "Companies"
 
 #. js-lingui-explicit-id
-#: src/modules/company/standard-objects/company.workspace-entity.ts:58
-#~ msgid "A company"
-#~ msgstr "A company"
+#: src/modules/company/standard-objects/company.workspace-entity.ts:56
+#~ msgid "Company"
+#~ msgstr "Company"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
 msgid "(System) View Fields"
@@ -60,10 +59,6 @@ msgstr "A company"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:35
 msgid "A connected account"
 msgstr "A connected account"
-
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
-#~ msgid "A favorite"
-#~ msgstr "A favorite"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
 msgid "A favorite that can be accessed from the left menu"
@@ -148,10 +143,6 @@ msgstr "An event related to user behavior"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:53
 msgid "An opportunity"
 msgstr "An opportunity"
-
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
-#~ msgid "An task target"
-#~ msgstr "An task target"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
 msgid "API Key"
@@ -308,6 +299,10 @@ msgstr "Message Threads"
 msgid "Messages"
 msgstr "Messages"
 
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
+msgid "Name"
+msgstr "Name"
+
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "Note"
 msgstr "Note"
@@ -355,6 +350,10 @@ msgstr "Task Targets"
 #: src/modules/task/standard-objects/task.workspace-entity.ts:49
 msgid "Tasks"
 msgstr "Tasks"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:68
+msgid "The company name"
+msgstr "The company name"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 msgid "Timeline Activities"

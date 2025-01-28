@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-28 09:39+0100\n"
+"POT-Creation-Date: 2025-01-28 20:51+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -208,12 +208,6 @@ msgstr "Entreprises"
 msgid "Company"
 msgstr "Entreprise"
 
-#. js-lingui-explicit-id
-#: src/engine/metadata-modules/object-metadata/object-metadata.service.ts:557
-#: src/engine/metadata-modules/object-metadata/object-metadata.service.ts:561
-msgid "Company"
-msgstr "Entreprise"
-
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:33
 msgid "Connected Account"
 msgstr "Compte connecté"
@@ -284,6 +278,10 @@ msgstr "Fils de messages"
 msgid "Messages"
 msgstr "Messages"
 
+#: src/modules/company/standard-objects/company.workspace-entity.ts:67
+msgid "Name"
+msgstr "Nom"
+
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "Note"
 msgstr "Note"
@@ -331,6 +329,10 @@ msgstr "Objectifs de la tâche"
 #: src/modules/task/standard-objects/task.workspace-entity.ts:49
 msgid "Tasks"
 msgstr "Tâches"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:68
+msgid "The company name"
+msgstr "Le nom de l'entreprise"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
 msgid "Timeline Activities"
