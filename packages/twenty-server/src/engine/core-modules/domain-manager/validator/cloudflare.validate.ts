@@ -5,7 +5,7 @@ import {
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 
-const isExist = (
+const isCloudflareInstanceDefined = (
   cloudflareInstance: Cloudflare | undefined | null,
 ): asserts cloudflareInstance is Cloudflare => {
   if (!cloudflareInstance) {
@@ -17,7 +17,7 @@ const isExist = (
 };
 
 export const domainManagerValidator: {
-  isExist: typeof isExist;
+  isCloudflareInstanceDefined: typeof isCloudflareInstanceDefined;
 } = {
-  isExist,
+  isCloudflareInstanceDefined,
 };

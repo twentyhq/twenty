@@ -259,7 +259,7 @@ export class DomainManagerService {
   }
 
   async registerCustomHostname(hostname: string) {
-    domainManagerValidator.isExist(this.cloudflareClient);
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     if (await this.getCustomHostnameDetails(hostname)) {
       throw new DomainManagerException(
@@ -290,7 +290,7 @@ export class DomainManagerService {
   async getCustomHostnameDetails(
     hostname: string,
   ): Promise<CustomHostname | undefined> {
-    domainManagerValidator.isExist(this.cloudflareClient);
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
@@ -313,7 +313,7 @@ export class DomainManagerService {
     fromHostname: { hostnameName: string } | { hostname: CustomHostname },
     toHostname: string,
   ) {
-    domainManagerValidator.isExist(this.cloudflareClient);
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const fromCustomHostname = await this.getCustomHostname(fromHostname);
 
@@ -325,7 +325,7 @@ export class DomainManagerService {
   }
 
   async deleteCustomHostnameByHostnameSilently(hostname: string) {
-    domainManagerValidator.isExist(this.cloudflareClient);
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     try {
       const customHostname = await this.getCustomHostnameDetails(hostname);
@@ -341,7 +341,7 @@ export class DomainManagerService {
   }
 
   async deleteCustomHostname(customHostname: CustomHostname) {
-    domainManagerValidator.isExist(this.cloudflareClient);
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     return this.cloudflareClient.customHostnames.delete(customHostname.id, {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),

@@ -307,6 +307,7 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
+        hostname: null,
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

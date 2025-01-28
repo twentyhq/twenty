@@ -118,7 +118,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     try {
-      return this.workspaceRepository.save({
+      return await this.workspaceRepository.save({
         ...workspace,
         ...payload,
       });

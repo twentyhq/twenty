@@ -7,6 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from '~/utils/isDefined';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
+import { z } from 'zod';
 
 const StyledDomainFromWrapper = styled.div`
   align-items: center;
@@ -25,6 +26,18 @@ const StyledDomain = styled.h2`
 export const SettingsSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const { t } = useLingui();
+
+  const validationSchema = z
+    .object({
+      subdomain: z
+        .string()
+        .min(3, { message: t`Subdomain can not be shorter than 3 characters` })
+        .max(30, { message: t`Subdomain can not be longer than 30 characters` })
+        .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+          message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
+        }),
+    })
+    .required();
 
   const { control } = useFormContext<{
     subdomain: string;
