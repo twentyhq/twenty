@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -43,9 +44,9 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.note,
   namePlural: 'notes',
-  labelSingular: 'Note',
-  labelPlural: 'Notes',
-  description: 'A note',
+  labelSingular: msg`Note`,
+  labelPlural: msg`Notes`,
+  description: msg`A note`,
   icon: STANDARD_OBJECT_ICONS.note,
   shortcut: 'N',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
@@ -69,7 +70,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Note title',
     icon: 'IconNotes',
   })
-  [TITLE_FIELD_NAME]: string;
+  title: string;
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.body,
@@ -169,5 +170,5 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

@@ -34,6 +34,7 @@ export const useUpsertRecordsInCacheForPrefetchKey = <T extends ObjectRecord>({
 
   const upsertRecordsInCache = (records: T[]) => {
     setPrefetchDataIsLoaded(false);
+
     upsertFindManyRecordsQueryInCache({
       queryVariables: operationSignature.variables,
       recordGqlFields: operationSignature.fields,

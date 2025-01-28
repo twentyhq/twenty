@@ -42,7 +42,6 @@ export class GraphQLHydrateRequestFromTokenMiddleware
 
     const excludedOperations = [
       'GetClientConfig',
-      'GetCurrentUser',
       'GetWorkspaceFromInviteHash',
       'Track',
       'CheckUserExists',

@@ -28,8 +28,7 @@ export const SettingsNewObject = () => {
   const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createOneObjectMetadataItem, findManyRecordsCache } =
-    useCreateOneObjectMetadataItem();
+  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
   const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
     mode: 'onTouched',
@@ -53,8 +52,6 @@ export const SettingsNewObject = () => {
           ? { objectNamePlural: response.createOneObject.namePlural }
           : undefined,
       );
-
-      await findManyRecordsCache();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,

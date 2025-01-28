@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -18,9 +19,9 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowEventListener,
   namePlural: 'workflowEventListeners',
-  labelSingular: 'WorkflowEventListener',
-  labelPlural: 'WorkflowEventListeners',
-  description: 'A workflow event listener',
+  labelSingular: msg`WorkflowEventListener`,
+  labelPlural: msg`WorkflowEventListeners`,
+  description: msg`A workflow event listener`,
   icon: STANDARD_OBJECT_ICONS.workflowEventListener,
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,

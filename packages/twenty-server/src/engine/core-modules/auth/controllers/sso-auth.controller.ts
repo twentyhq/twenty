@@ -30,17 +30,17 @@ import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth')
 export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly environmentService: EnvironmentService,
     private readonly sSOService: SSOService,
     @InjectRepository(User, 'core')
@@ -137,10 +137,11 @@ export class SSOAuthController {
       );
     } catch (err) {
       return res.redirect(
-        this.domainManagerService.computeRedirectErrorUrl(
-          err.message,
-          workspaceIdentityProvider?.workspace.subdomain ??
-            this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+          err,
+          workspaceIdentityProvider?.workspace ?? {
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+          },
         ),
       );
     }

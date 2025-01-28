@@ -4,7 +4,6 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsCopilotEnabled = 'IS_COPILOT_ENABLED',
-  IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
