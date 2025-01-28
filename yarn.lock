@@ -15818,7 +15818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tiptap/extension-history@npm:^2.11.3":
+"@tiptap/extension-history@npm:^2.10.4":
   version: 2.11.3
   resolution: "@tiptap/extension-history@npm:2.11.3"
   peerDependencies:
@@ -45823,7 +45823,7 @@ __metadata:
     "@tiptap/core": "npm:^2.10.4"
     "@tiptap/extension-document": "npm:^2.10.4"
     "@tiptap/extension-hard-break": "npm:^2.10.4"
-    "@tiptap/extension-history": "npm:^2.11.3"
+    "@tiptap/extension-history": "npm:^2.10.4"
     "@tiptap/extension-paragraph": "npm:^2.10.4"
     "@tiptap/extension-placeholder": "npm:^2.10.4"
     "@tiptap/extension-text": "npm:^2.10.4"
