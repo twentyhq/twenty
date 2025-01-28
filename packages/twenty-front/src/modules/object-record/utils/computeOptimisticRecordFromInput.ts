@@ -5,36 +5,60 @@ import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
+// TODO refactor using for loop ?
+// We're strict checking that any key within recordInput exists in the objectMetadaItem
 type ComputeOptimisticCacheRecordInputArgs = {
   // Could be renamed
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
 } & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
-// TODO refactor everything here my dude
+// TODO fix the BelongsTo relation update that inject both the ID and the instance
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
   cache,
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
-  console.log({ recordInput });
+  console.log('computeOptimisticRecordFromInput', { recordInput });
   // TODO strictly type as possible
   const recordInputEntries = Object.entries(recordInput);
   const sanitizedEntries = objectMetadataItem.fields.flatMap(
     (fieldMetadataItem) => {
+      // if uuid check for within relation to see if the fieldName is within the relation
+      const isUuidField = fieldMetadataItem.type === FieldMetadataType.UUID;
+      if (isUuidField) {
+        const isRelationFieldId = objectMetadataItem.fields.some(
+          ({ type, relationDefinition }) => {
+            if (type !== FieldMetadataType.RELATION) {
+              return;
+            }
+
+            if (!isDefined(relationDefinition)) {
+              throw new Error('Should never occurs ? TODO TEXT');
+            }
+
+            const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
+            // TODO we should create utils to centralized this logic
+            return `${sourceFieldName}Id` === fieldMetadataItem.name;
+          },
+        );
+
+        if(isRelationFieldId) {
+          return []
+        }
+      }
+
       const isRelationField =
         fieldMetadataItem.type === FieldMetadataType.RELATION;
       const recordInputMatch = recordInputEntries.find(
         ([fieldName]) => fieldName === fieldMetadataItem.name,
       );
-
       if (isDefined(recordInputMatch) && isRelationField) {
         throw new Error(
           'Should never provide relation mutation through anything else than the fieldId e.g companyId',
@@ -79,24 +103,27 @@ export const computeOptimisticRecordFromInput = ({
           ];
         }
         // Is it the best way to retrieve the related objectMetadaItem it's log(n)
-        const targetNameSingular = fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
-        const relationObjectMetataDataItem = objectMetadataItems.find(({nameSingular}) => nameSingular === targetNameSingular);
+        const targetNameSingular =
+          fieldMetadataItem.relationDefinition?.targetObjectMetadata
+            .nameSingular;
+        const relationObjectMetataDataItem = objectMetadataItems.find(
+          ({ nameSingular }) => nameSingular === targetNameSingular,
+        );
         // Could relationObjectMetataDataItem in case we haven't fetch all the related objectDataItems ? should silent error on this one ?
-        if (!isDefined(targetNameSingular) || !isDefined(relationObjectMetataDataItem)) {
-          throw new Error("Should never occurs invalid relation TODO TEXT")
+        if (
+          !isDefined(targetNameSingular) ||
+          !isDefined(relationObjectMetataDataItem)
+        ) {
+          throw new Error('Should never occurs invalid relation TODO TEXT');
         }
-        const recordGqlFields = generateDepthOneRecordGqlFields({objectMetadataItem: relationObjectMetataDataItem})
         const cachedRecord = getRecordFromCache({
           cache,
           objectMetadataItem: relationObjectMetataDataItem,
           objectMetadataItems,
           recordId: fieldIdValue,
-          recordGqlFields,
         });
-        console.log({fieldIdValue, cachedRecord})
-        if(!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
-          console.log("NOPE", {cachedRecord})
-          return []
+        if (!isDefined(cachedRecord) || Object.keys(cachedRecord).length <= 0) {
+          return [];
         }
 
         return [
@@ -137,7 +164,7 @@ export const computeOptimisticRecordFromInput = ({
       return [[fieldName, fieldValue]];
     },
   );
-  console.log({sanitizedEntries})
+  console.log({ sanitizedEntries });
   const sanitizedResultRecord = Object.fromEntries(sanitizedEntries);
   const recordDomainNameIsDefined =
     isDefined(sanitizedResultRecord?.domainName) &&
