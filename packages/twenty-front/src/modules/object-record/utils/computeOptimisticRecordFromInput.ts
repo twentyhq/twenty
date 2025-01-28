@@ -1,4 +1,4 @@
-import { isNull, isString } from '@sniptt/guards';
+import { isNull, isString, isUndefined } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -73,7 +73,7 @@ export const computeOptimisticRecordFromInput = ({
     if (isRelationField && isManyToOneRelation) {
       const relationFieldIdName = `${fieldMetadataItem.name}Id`;
       const recordInputFieldIdValue: unknown = recordInput[relationFieldIdName];
-      if (!isDefined(recordInputFieldIdValue)) {
+      if (isUndefined(recordInputFieldIdValue)) {
         continue;
       }
 
@@ -81,6 +81,7 @@ export const computeOptimisticRecordFromInput = ({
         (field) => field.name === relationFieldIdName,
       );
       if (!isDefined(relationIdFieldMetadataItem)) {
+        // could throw ?
         continue;
       }
 
@@ -90,6 +91,7 @@ export const computeOptimisticRecordFromInput = ({
         accumulator[fieldMetadataItem.name] = null;
         continue;
       }
+
       const targetNameSingular =
         fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
       const targetObjectMetataDataItem = objectMetadataItems.find(
@@ -127,7 +129,6 @@ export const computeOptimisticRecordFromInput = ({
 
     accumulator[fieldMetadataItem.name] = recordInputFieldValue;
   }
-
   const recordDomainNameIsDefined =
     isDefined(accumulator?.domainName) && isString(accumulator.domainName);
   if (!recordDomainNameIsDefined) {
