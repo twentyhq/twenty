@@ -88,6 +88,8 @@ export const useRestoreManyRecords = ({
               computeReferences: true,
             });
 
+          // Is it really enough ? sounds like yes to be confirmed tomororw morning
+          // Should comment on response api optimistic cache and attest
           const computedOptimisticRecord = {
             ...cachedRecord,
             ...{ id: cachedRecord.id, deletedAt: null },
