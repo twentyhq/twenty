@@ -12,6 +12,7 @@ import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interface
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -33,6 +34,7 @@ export class FindRecordsWorflowAction implements WorkflowAction {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async execute(
@@ -86,9 +88,13 @@ export class FindRecordsWorflowAction implements WorkflowAction {
       );
     }
 
+    const featureFlagMaps =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataItemWithFieldsMaps.fieldsByName,
       objectMetadataMaps,
+      featureFlagMaps,
     );
 
     const objectRecords = await this.getObjectRecords(

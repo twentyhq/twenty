@@ -17,7 +17,6 @@ import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-bu
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -33,8 +32,16 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     if (!isDefined(executionArgs.args.searchInput)) {
       return typeORMObjectRecordsParser.createConnection({
@@ -113,10 +120,8 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
       : 0;
     const order = undefined;
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,

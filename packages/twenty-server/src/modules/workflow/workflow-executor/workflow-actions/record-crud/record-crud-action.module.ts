@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -14,6 +15,7 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
   imports: [
     WorkspaceCacheStorageModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    FeatureFlagModule,
   ],
   providers: [
     ScopedWorkspaceContextFactory,

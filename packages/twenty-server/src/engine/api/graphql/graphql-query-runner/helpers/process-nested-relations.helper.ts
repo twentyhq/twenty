@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import {
   DataSource,
   FindOptionsRelations,
@@ -12,23 +14,28 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import {
   getRelationMetadata,
   getRelationObjectMetadata,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
+@Injectable()
 export class ProcessNestedRelationsHelper {
-  private processAggregateHelper: ProcessAggregateHelper;
-
-  constructor() {
-    this.processAggregateHelper = new ProcessAggregateHelper();
-  }
+  constructor(
+    private readonly processNestedRelationsV2Helper: ProcessNestedRelationsV2Helper,
+    private readonly processAggregateHelper: ProcessAggregateHelper,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
     objectMetadataMaps,
@@ -48,9 +55,28 @@ export class ProcessNestedRelationsHelper {
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
     limit: number;
-    authContext: any;
+    authContext: AuthContext;
     dataSource: DataSource;
   }): Promise<void> {
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      authContext.workspace.id,
+    );
+
+    if (isNewRelationEnabled) {
+      return this.processNestedRelationsV2Helper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem,
+        parentObjectRecords,
+        parentObjectRecordsAggregatedValues,
+        relations,
+        aggregate,
+        limit,
+        authContext,
+        dataSource,
+      });
+    }
+
     const processRelationTasks = Object.entries(relations).map(
       ([relationName, nestedRelations]) =>
         this.processRelation({
