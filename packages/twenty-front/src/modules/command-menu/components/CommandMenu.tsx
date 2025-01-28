@@ -23,7 +23,7 @@ export const CommandMenu = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const {
-    noResults,
+    noResult,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
     matchingStandardActionObjectCommands,
@@ -84,7 +84,7 @@ export const CommandMenu = () => {
     <CommandMenuList
       commandGroups={commandGroups}
       selectableItemIds={selectableItemIds}
-      noResults={noResults}
+      noResult={noResult}
     >
       {isNonEmptyString(previousContextStoreCurrentObjectMetadataId) && (
         <CommandGroup heading={t`Context`} key={t`Context`}>

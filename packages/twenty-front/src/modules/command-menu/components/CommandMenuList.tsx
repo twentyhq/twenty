@@ -20,7 +20,7 @@ export type CommandMenuListProps = {
   selectableItemIds: string[];
   children?: React.ReactNode;
   loading?: boolean;
-  noResults?: boolean;
+  noResult?: boolean;
 };
 
 const StyledList = styled.div`
@@ -60,7 +60,7 @@ export const CommandMenuList = ({
   selectableItemIds,
   children,
   loading = false,
-  noResults = false,
+  noResult = false,
 }: CommandMenuListProps) => {
   const isMobile = useIsMobile();
 
@@ -107,8 +107,8 @@ export const CommandMenuList = ({
               }}
             >
               {children}
-              {noResults && !loading && (
-                <StyledEmpty>No results found</StyledEmpty>
+              {noResult && !loading && (
+                <StyledEmpty>No result found</StyledEmpty>
               )}
               {commandGroups.map(({ heading, items }) =>
                 items?.length ? (

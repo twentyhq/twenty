@@ -1,8 +1,8 @@
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { useSearchRecordsAction } from '@/command-menu/hooks/useSearchRecordsAction';
+import { useSearchRecords } from '@/command-menu/hooks/useSearchRecords';
 
 export const SearchRecordsPage = () => {
-  const { commandGroups, loading, noResultFound } = useSearchRecordsAction();
+  const { commandGroups, loading, noResult } = useSearchRecords();
 
   return (
     <CommandMenuList
@@ -11,7 +11,7 @@ export const SearchRecordsPage = () => {
         group.items.map((item) => item.id),
       )}
       loading={loading}
-      noResults={noResultFound}
+      noResult={noResult}
     />
   );
 };

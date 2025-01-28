@@ -38,7 +38,7 @@ export const useMatchingCommandMenuCommands = ({
     workflowRunGlobalCommands,
   );
 
-  const noResults =
+  const noResult =
     !matchingStandardActionRecordSelectionCommands.length &&
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
@@ -46,7 +46,7 @@ export const useMatchingCommandMenuCommands = ({
     !matchingNavigateCommands.length;
 
   return {
-    noResults,
+    noResult,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
     matchingStandardActionObjectCommands,

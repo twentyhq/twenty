@@ -19,7 +19,7 @@ import { Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-export const useSearchRecordsAction = () => {
+export const useSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
