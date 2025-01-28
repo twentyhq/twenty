@@ -56,8 +56,8 @@ export class SearchService {
       isSystem: true,
       type: FieldMetadataType.TS_VECTOR,
       name: SEARCH_VECTOR_FIELD.name,
-      label: SEARCH_VECTOR_FIELD.label,
-      description: SEARCH_VECTOR_FIELD.description,
+      label: SEARCH_VECTOR_FIELD.label.message ?? '',
+      description: SEARCH_VECTOR_FIELD.description.message ?? '',
       isNullable: true,
     });
 

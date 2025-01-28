@@ -74,8 +74,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
     type: FieldMetadataType.LINKS,
     label: msg`Domain Name`,
-    description:
-      'The company website URL. We use this url to fetch the company icon',
+    description: msg`The company website URL. We use this url to fetch the company icon`,
     icon: 'IconLink',
   })
   @WorkspaceIsUnique()
@@ -115,8 +114,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
     label: msg`ARR`,
-    description:
-      'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
+    description: msg`Annual Recurring Revenue: The actual or estimated annual revenue of the company`,
     icon: 'IconMoneybag',
   })
   @WorkspaceIsNullable()
@@ -136,8 +134,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
     type: FieldMetadataType.BOOLEAN,
     label: msg`ICP`,
-    description:
-      'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
+    description: msg`Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you`,
     icon: 'IconTarget',
     defaultValue: false,
   })
@@ -272,8 +269,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
     label: msg`Address (deprecated) `,
-    description:
-      'Address of the company - deprecated in favor of new address field',
+    description: msg`Address of the company - deprecated in favor of new address field`,
     icon: 'IconMap',
   })
   @WorkspaceIsDeprecated()

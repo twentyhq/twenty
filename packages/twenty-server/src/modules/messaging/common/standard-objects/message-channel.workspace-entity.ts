@@ -167,8 +167,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
     label: msg`Contact auto creation policy`,
-    description:
-      'Automatically create People records when receiving or sending emails',
+    description: msg`Automatically create People records when receiving or sending emails`,
     icon: 'IconUserCircle',
     options: [
       {

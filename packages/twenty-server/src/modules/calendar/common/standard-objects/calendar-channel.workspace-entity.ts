@@ -219,8 +219,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
     label: msg`Contact auto creation policy`,
-    description:
-      'Automatically create records for people you participated with in an event.',
+    description: msg`Automatically create records for people you participated with in an event.`,
     icon: 'IconUserCircle',
     options: [
       {
@@ -267,8 +266,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: msg`Sync Cursor`,
-    description:
-      'Sync Cursor. Used for syncing events from the calendar provider',
+    description: msg`Sync Cursor. Used for syncing events from the calendar provider`,
     icon: 'IconReload',
   })
   syncCursor: string;

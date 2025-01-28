@@ -65,8 +65,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Event context`,
-    description:
-      'Json object to provide context (user, device, workspace, etc.)',
+    description: msg`Json object to provide context (user, device, workspace, etc.)`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()

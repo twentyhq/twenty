@@ -16,13 +16,11 @@ export interface WorkspaceFieldOptions<
   standardId: string;
   type: T;
   label:
-    | string
     | MessageDescriptor
-    | ((objectMetadata: ObjectMetadataEntity) => string);
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   description?:
-    | string
     | MessageDescriptor
-    | ((objectMetadata: ObjectMetadataEntity) => string);
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
@@ -80,14 +78,24 @@ export function WorkspaceField<T extends FieldMetadataType>(
       standardId: options.standardId,
       name: propertyKey.toString(),
       label:
-        typeof options.label === 'object'
-          ? (options.label.message ?? '')
-          : options.label,
+        typeof options.label === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.label as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.label.message ?? ''),
       type: options.type,
       description:
-        typeof options.description === 'object'
-          ? (options.description.message ?? '')
-          : options.description,
+        typeof options.description === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.description as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.description?.message ?? ''),
       icon: options.icon,
       defaultValue,
       options: options.options,

@@ -276,7 +276,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Date format`,
-    description: "User's preferred date format",
+    description: msg`User's preferred date format`,
     icon: 'IconCalendarEvent',
     options: [
       {
@@ -312,7 +312,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Time format`,
-    description: "User's preferred time format",
+    description: msg`User's preferred time format`,
     icon: 'IconClock2',
     options: [
       {

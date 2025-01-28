@@ -67,8 +67,7 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WEBHOOK_STANDARD_FIELD_IDS.secret,
     type: FieldMetadataType.TEXT,
     label: msg`Secret`,
-    description:
-      'Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests.',
+    description: msg`Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests.`,
     icon: 'IconLock',
   })
   secret: string;

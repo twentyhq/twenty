@@ -91,7 +91,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Object Metadata Id`,
-    description: msg`inked Object Metadata Id`,
+    description: msg`Linked Object Metadata Id`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
