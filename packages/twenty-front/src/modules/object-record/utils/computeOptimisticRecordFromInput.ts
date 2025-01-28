@@ -86,10 +86,9 @@ export const computeOptimisticRecordFromInput = ({
 
       const isRecordInputFieldIdNull = isNull(recordInputFieldIdValue);
       if (isRecordInputFieldIdNull) {
-        return [
-          [relationFieldIdName, null],
-          [fieldMetadataItem.name, null],
-        ];
+        accumulator[relationFieldIdName] = null;
+        accumulator[fieldMetadataItem.name] = null;
+        continue;
       }
       const targetNameSingular =
         fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
