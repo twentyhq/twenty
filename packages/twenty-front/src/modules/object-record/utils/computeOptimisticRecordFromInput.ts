@@ -23,6 +23,18 @@ export const computeOptimisticRecordFromInput = ({
   cache,
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
+  const unknownRecordInputFields = Object.keys(recordInput).filter(
+    (fieldName) =>
+      objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
+      undefined,
+  );
+  if (unknownRecordInputFields.length > 0) {
+    // unknownRecordInputFields.forEach((field) => delete recordInput[field]);
+    throw new Error(
+      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadaItem ${objectMetadataItem.nameSingular}`,
+    );
+  }
+
   const optimisticRecord: Partial<ObjectRecord> = {};
   for (const fieldMetadataItem of objectMetadataItem.fields) {
     if (isFieldUuid(fieldMetadataItem)) {

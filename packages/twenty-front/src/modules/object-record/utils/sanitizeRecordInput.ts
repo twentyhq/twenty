@@ -1,4 +1,3 @@
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -54,5 +53,5 @@ export const sanitizeRecordInput = ({
       })
       .filter(isDefined),
   );
-  return filteredResultRecord
+  return filteredResultRecord;
 };
