@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import { IconX, isDefined } from 'twenty-ui';
 
 const StyledChip = styled.div<{ deletable: boolean }>`
-  background-color: ${({ theme }) => theme.color.blue10};
+  background-color: ${({ theme }) => theme.accent.quaternary};
+  border: 1px solid ${({ theme }) => theme.accent.tertiary};
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
