@@ -49,11 +49,11 @@ export const useDeleteOneRecord = ({
 
       const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
 
-      const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
+      const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
         objectMetadataItem,
         objectMetadataItems,
-        computeReferences: true,
+        computeReferences: false,
       });
 
       const computedOptimisticRecord = {
@@ -62,15 +62,15 @@ export const useDeleteOneRecord = ({
         ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
       };
 
-      const optimisticRecordWithConnection =
+      const optimisticRecordNode =
         getRecordNodeFromRecord<ObjectRecord>({
           record: computedOptimisticRecord,
           objectMetadataItem,
           objectMetadataItems,
-          computeReferences: true,
+          computeReferences: false,
         });
 
-      if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
+      if (!optimisticRecordNode || !cachedRecordNode) {
         return null;
       }
 
@@ -84,8 +84,8 @@ export const useDeleteOneRecord = ({
       triggerUpdateRecordOptimisticEffect({
         cache: apolloClient.cache,
         objectMetadataItem,
-        currentRecord: cachedRecordWithConnection,
-        updatedRecord: optimisticRecordWithConnection,
+        currentRecord: cachedRecordNode,
+        updatedRecord: optimisticRecordNode,
         objectMetadataItems,
       });
 
@@ -123,8 +123,8 @@ export const useDeleteOneRecord = ({
           triggerUpdateRecordOptimisticEffect({
             cache: apolloClient.cache,
             objectMetadataItem,
-            currentRecord: optimisticRecordWithConnection,
-            updatedRecord: cachedRecordWithConnection,
+            currentRecord: optimisticRecordNode,
+            updatedRecord: cachedRecordNode,
             objectMetadataItems,
           });
 
