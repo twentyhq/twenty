@@ -270,7 +270,7 @@ export type FieldActorValue = {
   workspaceMemberId?: string;
   name: string;
   context?: {
-    mailProvider?: ConnectedAccountProvider;
+    provider?: ConnectedAccountProvider;
   };
 };
 

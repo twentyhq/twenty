@@ -109,7 +109,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         },
         {
           [field.name + 'Context']: {
-            mailProvider: 'google',
+            provider: 'google',
           },
         },
       );

@@ -129,7 +129,7 @@ export class CreateCompanyAndContactService {
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
         createdByContext: {
-          mailProvider:
+          provider:
             connectedAccount.provider === ConnectedAccountProvider.MICROSOFT
               ? ConnectedAccountProvider.MICROSOFT
               : ConnectedAccountProvider.GOOGLE,

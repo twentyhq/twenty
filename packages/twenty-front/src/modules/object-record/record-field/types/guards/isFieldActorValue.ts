@@ -10,7 +10,7 @@ const actorSchema = z.object({
   name: z.string(),
   context: z.optional(
     z.object({
-      mailProvider: z.optional(z.nativeEnum(ConnectedAccountProvider)),
+      provider: z.optional(z.nativeEnum(ConnectedAccountProvider)),
     }),
   ),
 });

@@ -182,7 +182,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       source: 'source',
       name: 'name',
       workspaceMemberId: 'id',
-      context: { mailProvider: ConnectedAccountProvider.GOOGLE },
+      context: { provider: ConnectedAccountProvider.GOOGLE },
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

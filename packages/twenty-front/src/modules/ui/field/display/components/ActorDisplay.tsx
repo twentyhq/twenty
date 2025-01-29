@@ -32,7 +32,7 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconCsv;
       case 'EMAIL':
-        return context?.mailProvider === ConnectedAccountProvider.MICROSOFT
+        return context?.provider === ConnectedAccountProvider.MICROSOFT
           ? IconMicrosoftOutlook
           : IconGmail;
       case 'CALENDAR':
@@ -44,7 +44,7 @@ export const ActorDisplay = ({
       default:
         return undefined;
     }
-  }, [source, context?.mailProvider]);
+  }, [source, context?.provider]);
 
   const isIconInverted =
     source === 'API' || source === 'IMPORT' || source === 'SYSTEM';

@@ -55,6 +55,6 @@ export type ActorMetadata = {
   workspaceMemberId?: string;
   name: string;
   context?: {
-    mailProvider?: ConnectedAccountProvider;
+    provider?: ConnectedAccountProvider;
   };
 };

@@ -19,7 +19,7 @@ type ContactToCreate = {
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
   createdByContext?: {
-    mailProvider?: ConnectedAccountProvider;
+    provider?: ConnectedAccountProvider;
   };
 };
 
