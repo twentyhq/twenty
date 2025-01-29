@@ -19,6 +19,8 @@ import { Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+const MAX_SEARCH_RESULTS_PER_OBJECT = 8;
+
 export const useSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
@@ -30,7 +32,7 @@ export const useSearchRecords = () => {
   } = useMultiObjectSearch({
     excludedObjects: [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note],
     searchFilterValue: deferredCommandMenuSearch ?? undefined,
-    limit: 8,
+    limit: MAX_SEARCH_RESULTS_PER_OBJECT,
   });
 
   const { objectRecordsMap: matchesSearchFilterObjectRecords } =
@@ -47,7 +49,7 @@ export const useSearchRecords = () => {
           { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
-    limit: 8,
+    limit: MAX_SEARCH_RESULTS_PER_OBJECT,
   });
 
   const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Task>({
@@ -58,7 +60,7 @@ export const useSearchRecords = () => {
           { body: { ilike: `%${deferredCommandMenuSearch}%` } },
         ])
       : undefined,
-    limit: 8,
+    limit: MAX_SEARCH_RESULTS_PER_OBJECT,
   });
 
   const people = matchesSearchFilterObjectRecords.people?.map(
