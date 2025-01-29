@@ -1,8 +1,6 @@
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
-import { expect } from '@storybook/jest';
-
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 describe('computeOptimisticRecordFromInput', () => {
