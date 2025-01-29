@@ -31,8 +31,8 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Messages',
-    description: 'Messages from the thread.',
+    label: msg`Messages`,
+    description: msg`Messages from the thread.`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

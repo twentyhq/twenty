@@ -41,8 +41,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation date',
-    description: 'Creation date',
+    label: msg`Creation date`,
+    description: msg`Creation date`,
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
@@ -51,8 +51,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Event name',
-    description: 'Event name',
+    label: msg`Event name`,
+    description: msg`Event name`,
     icon: 'IconAbc',
   })
   name: string;
@@ -60,8 +60,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event details',
-    description: 'Json value for event details',
+    label: msg`Event details`,
+    description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -71,8 +71,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
-    label: 'Linked Record cached name',
-    description: 'Cached record name',
+    label: msg`Linked Record cached name`,
+    description: msg`Cached record name`,
     icon: 'IconAbc',
   })
   linkedRecordCachedName: string;
@@ -80,8 +80,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,
     type: FieldMetadataType.UUID,
-    label: 'Linked Record id',
-    description: 'Linked Record id',
+    label: msg`Linked Record id`,
+    description: msg`Linked Record id`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
@@ -90,8 +90,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Linked Object Metadata Id',
-    description: 'inked Object Metadata Id',
+    label: msg`Linked Object Metadata Id`,
+    description: msg`Linked Object Metadata Id`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
@@ -101,8 +101,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Event workspace member',
+    label: msg`Workspace Member`,
+    description: msg`Event workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -116,8 +116,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'Event person',
+    label: msg`Person`,
+    description: msg`Event person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -131,8 +131,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Company',
-    description: 'Event company',
+    label: msg`Company`,
+    description: msg`Event company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -146,8 +146,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Opportunity',
-    description: 'Event opportunity',
+    label: msg`Opportunity`,
+    description: msg`Event opportunity`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -161,8 +161,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.note,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Note',
-    description: 'Event note',
+    label: msg`Note`,
+    description: msg`Event note`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => NoteWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -176,8 +176,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Task',
-    description: 'Event task',
+    label: msg`Task`,
+    description: msg`Event task`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -191,8 +191,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow',
-    description: 'Event workflow',
+    label: msg`Workflow`,
+    description: msg`Event workflow`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -206,8 +206,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'WorkflowVersion',
-    description: 'Event workflow version',
+    label: msg`WorkflowVersion`,
+    description: msg`Event workflow version`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
@@ -221,8 +221,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowRun,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow Run',
-    description: 'Event workflow run',
+    label: msg`Workflow Run`,
+    description: msg`Event workflow run`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
