@@ -128,7 +128,7 @@ export class CreateCompanyAndContactService {
             : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
-        createdByMetadata: {
+        createdByContext: {
           mailProvider:
             connectedAccount.provider === ConnectedAccountProvider.MICROSOFT
               ? ConnectedAccountProvider.MICROSOFT
