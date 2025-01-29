@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -18,9 +19,9 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowEventListener,
   namePlural: 'workflowEventListeners',
-  labelSingular: 'WorkflowEventListener',
-  labelPlural: 'WorkflowEventListeners',
-  description: 'A workflow event listener',
+  labelSingular: msg`WorkflowEventListener`,
+  labelPlural: msg`WorkflowEventListeners`,
+  description: msg`A workflow event listener`,
   icon: STANDARD_OBJECT_ICONS.workflowEventListener,
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
@@ -30,8 +31,8 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The workflow event listener name',
+    label: msg`Name`,
+    description: msg`The workflow event listener name`,
   })
   eventName: string;
 
@@ -39,8 +40,8 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow',
-    description: 'WorkflowEventListener workflow',
+    label: msg`Workflow`,
+    description: msg`WorkflowEventListener workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'eventListeners',

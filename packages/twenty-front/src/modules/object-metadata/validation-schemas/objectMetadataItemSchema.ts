@@ -7,7 +7,7 @@ import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metada
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
-  __typename: z.literal('object').optional(),
+  __typename: z.literal('Object').optional(),
   createdAt: z.string().datetime(),
   dataSourceId: z.string().uuid(),
   description: z.string().trim().nullable().optional(),

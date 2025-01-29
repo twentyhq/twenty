@@ -9,6 +9,7 @@ import { DATE_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/r
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
+import { t } from '@lingui/core/macro';
 
 export const RecordTableColumnAggregateFooterDropdownContent = () => {
   const { currentContentId, fieldMetadataType } = useDropdown({
@@ -74,7 +75,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="Dates"
+          title={t`Date`}
         />
       );
     }

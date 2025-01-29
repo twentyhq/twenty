@@ -37,7 +37,7 @@ msgstr "24h ({hour24Label})"
 msgid "Abort"
 msgstr "Abbrechen"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:93
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
 msgstr "Über"
 
@@ -52,7 +52,7 @@ msgid "Account Deletion"
 msgstr "Konto-Löschung"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Accounts"
 msgstr "Konten"
 
@@ -106,7 +106,7 @@ msgid "An optional description"
 msgstr "Eine optionale Beschreibung"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:184
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -149,7 +149,7 @@ msgstr "Zurück zum Inhalt"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Billing"
 msgstr "Rechnungsstellung"
 
@@ -171,13 +171,13 @@ msgstr "Kalender"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 msgid "Calendars"
 msgstr "Kalendarien"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:198
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Choose your Trial"
 msgstr "Wählen Sie Ihre Probezeit"
 
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:201
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "Schließen Sie"
 
@@ -327,9 +327,16 @@ msgid "Danger zone"
 msgstr "Gefahrenzone"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:160
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
 msgstr "Datenmodell"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
@@ -347,7 +354,7 @@ msgstr "Deaktivieren Sie \"Objektbezeichnungen und API-Namen synchronisieren\", 
 msgid "Deactivate this field"
 msgstr "Deaktivieren Sie dieses Feld"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:94
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
 msgstr "Definieren Sie den Namen und die Beschreibung Ihres Objekts"
 
@@ -447,7 +454,7 @@ msgstr "E-Mail-Integration"
 msgid "Email or domain is already in blocklist"
 msgstr "E-Mail oder Domain ist bereits in der Blockliste"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:71
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "E-Mails"
@@ -507,7 +514,7 @@ msgstr "Beenden der Einstellungen"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:107
 msgid "Experience"
 msgstr "Erfahrung"
 
@@ -548,14 +555,14 @@ msgstr "von jährlich auf monatlich"
 msgid "Full access"
 msgstr "Vollständiger Zugang"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:192
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:186
 msgid "Functions"
 msgstr "Funktionen"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:132
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:137
 msgid "General"
 msgstr "Allgemein"
 
@@ -595,7 +602,7 @@ msgstr "Die Eingabe muss in Großbuchstaben erfolgen und darf nicht mit einer Za
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:159
 msgid "Integrations"
 msgstr "Integrationen"
 
@@ -640,7 +647,7 @@ msgstr "Laden Sie Ihr Team ein"
 msgid "Italian"
 msgstr "Italienisch"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
 msgid "Lab"
 msgstr ""
 
@@ -656,7 +663,7 @@ msgstr "Link in die Zwischenablage kopiert"
 msgid "Log out"
 msgstr "Abmelden"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:221
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:215
 msgid "Logout"
 msgstr "Abmeldung"
 
@@ -678,7 +685,7 @@ msgstr "Verwalten Sie Ihr Abonnement"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
 msgid "Members"
 msgstr "Mitglieder"
 
@@ -704,7 +711,7 @@ msgstr "Name Ihres Arbeitsbereichs"
 msgid "Navigate"
 msgstr "Navigieren"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:79
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Neu"
 
@@ -720,7 +727,7 @@ msgstr "Neuer Schlüssel"
 msgid "New Key"
 msgstr "Neuer Schlüssel"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
 msgstr "Neues Objekt"
 
@@ -746,7 +753,7 @@ msgstr "Anmerkungen"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr "Objekte"
@@ -763,7 +770,7 @@ msgstr "Möglichkeiten"
 msgid "or"
 msgstr "oder"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:200
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:194
 msgid "Other"
 msgstr "Andere"
 
@@ -811,7 +818,7 @@ msgstr "Vorschau"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:102
 msgid "Profile"
 msgstr "Profil"
 
@@ -846,7 +853,7 @@ msgstr "Schlüssel regenerieren"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:216
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Releases"
 msgstr "Veröffentlichungen"
 
@@ -881,7 +888,7 @@ msgstr "Suche nach einem Objekt..."
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:171
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
 msgid "Security"
 msgstr "Sicherheit"
 
@@ -897,7 +904,7 @@ msgstr "Wählen Sie Ihre bevorzugte Sprache"
 msgid "Send an invite email to your team"
 msgstr "Senden Sie eine Einladungs-E-Mail an Ihr Team"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:203
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:197
 msgid "Server Admin Panel"
 msgstr "Server-Verwaltungsbereich"
 
@@ -1059,7 +1066,7 @@ msgstr "Verwenden Sie nur Buchstaben, Zahlen und Bindestriche. Beginnen und ende
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:100
 msgid "User"
 msgstr "Benutzer"
 
@@ -1133,10 +1140,10 @@ msgstr "Arbeitsabläufe"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:72
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
 msgid "Workspace"
 msgstr "Arbeitsbereich"
 
