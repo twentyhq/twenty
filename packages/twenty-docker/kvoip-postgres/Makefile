@@ -11,7 +11,7 @@ DB_PASSWORD=kvoipv2_password
 DB_NAME=kvoipv2_db
 CONTAINER_NAME=kvoipv2_pg
 
-kvoipv-pg-on-docker:
+kvoip-pg-on-docker:
 	docker run -d \
 	--name $(CONTAINER_NAME) \
 	-e POSTGRES_USER=$(DB_USER) \
