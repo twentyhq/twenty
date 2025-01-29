@@ -8,17 +8,19 @@ export interface EnvironmentVariablesMetadataOptions {
   subGroup?: EnvironmentVariablesSubGroup;
   description: string;
   sensitive?: boolean;
-  isShared?: boolean;
 }
+
+export const METADATA_KEY = 'environmentVariablesMetadata';
 
 export const EnvironmentVariablesMetadata = (
   options: EnvironmentVariablesMetadataOptions,
   validationOptions?: ValidationOptions,
 ) => {
-  return (object: object, propertyName: string) => {
+  return (target: object, propertyName: string) => {
+    Reflect.defineMetadata(METADATA_KEY, options, target, propertyName);
     registerDecorator({
       name: 'environmentVariablesMetadata',
-      target: object.constructor,
+      target: target.constructor,
       propertyName,
       options: validationOptions,
       constraints: [options],

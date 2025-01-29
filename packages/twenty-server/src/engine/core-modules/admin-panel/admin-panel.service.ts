@@ -9,6 +9,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { EnvironmentVariablesMetadataOptions } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
+import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -25,6 +28,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
+    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -156,5 +160,15 @@ export class AdminPanelService {
         workspaceId: workspace.id,
       });
     }
+  }
+
+  getEnvironmentVariables(): Record<
+    string,
+    {
+      value: EnvironmentVariables[keyof EnvironmentVariables];
+      metadata: EnvironmentVariablesMetadataOptions;
+    }
+  > {
+    return this.environmentService.getAll();
   }
 }

@@ -27,6 +27,7 @@ import {
   Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useGetEnvironmentVariablesQuery } from '~/generated/graphql';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -77,6 +78,8 @@ export const SettingsAdminContent = () => {
     canImpersonate,
   } = useImpersonate();
 
+  const { data: environmentVariables } = useGetEnvironmentVariablesQuery();
+  console.log('environmentVariables', environmentVariables);
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
   );
