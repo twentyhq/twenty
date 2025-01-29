@@ -25,6 +25,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { isDefined } from 'src/utils/is-defined';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -43,6 +44,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {
     super(workspaceRepository);
   }
@@ -127,10 +129,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       if (payload.hostname && customDomainRegistered) {
         this.domainManagerService
           .deleteCustomHostnameByHostnameSilently(payload.hostname)
-          .catch(() => {
-            // send to sentry
+          .catch((err) => {
+            this.exceptionHandlerService.captureExceptions([err]);
           });
       }
+      throw error;
     }
   }
 

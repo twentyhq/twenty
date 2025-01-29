@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 
-export const useIsCurrentLocationOnAWorkspaceSubdomain = () => {
+export const useIsCurrentLocationOnAWorkspace = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -18,10 +18,10 @@ export const useIsCurrentLocationOnAWorkspaceSubdomain = () => {
     throw new Error('frontDomain and defaultSubdomain are required');
   }
 
-  const isOnAWorkspaceSubdomain =
+  const isOnAWorkspace =
     isMultiWorkspaceEnabled && window.location.hostname !== defaultDomain;
 
   return {
-    isOnAWorkspaceSubdomain,
+    isOnAWorkspace,
   };
 };

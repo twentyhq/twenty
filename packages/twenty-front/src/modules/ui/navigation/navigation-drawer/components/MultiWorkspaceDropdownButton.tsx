@@ -67,7 +67,7 @@ export const MultiWorkspaceDropdownButton = ({
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const handleChange = async (workspace: Workspaces[0]) => {
-    redirectToWorkspaceDomain(workspace.subdomain);
+    redirectToWorkspaceDomain(workspace.workspaceUrl);
   };
   const [isNavigationDrawerExpanded] = useRecoilState(
     isNavigationDrawerExpandedState,
@@ -104,7 +104,7 @@ export const MultiWorkspaceDropdownButton = ({
           {workspaces.map((workspace) => (
             <UndecoratedLink
               key={workspace.id}
-              to={buildWorkspaceUrl(workspace.subdomain)}
+              to={buildWorkspaceUrl(workspace.workspaceUrl)}
               onClick={(event) => {
                 event?.preventDefault();
                 handleChange(workspace);

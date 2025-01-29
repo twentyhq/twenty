@@ -9,6 +9,47 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
+  describe('getWorkspaceUrlByWorkspace', () => {
+    it('should return a URL containing the correct hostname if hostname is provided', () => {
+      jest
+        .spyOn(environmentService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONT_PROTOCOL: 'https',
+            FRONT_DOMAIN: 'example.com',
+          };
+
+          return env[key];
+        });
+
+      const result = domainManagerService.getWorkspaceUrlByWorkspace({
+        subdomain: 'subdomain',
+        hostname: 'custom-host.com',
+      });
+
+      expect(result).toBe('https://custom-host.com/');
+    });
+
+    it('should return a URL containing the correct subdomain if hostname is not provided but subdomain is', () => {
+      jest
+        .spyOn(environmentService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONT_PROTOCOL: 'https',
+            FRONT_DOMAIN: 'example.com',
+          };
+
+          return env[key];
+        });
+
+      const result = domainManagerService.getWorkspaceUrlByWorkspace({
+        subdomain: 'workspace',
+        hostname: undefined,
+      });
+
+      expect(result).toBe('https://workspace.example.com/');
+    });
+  });
   let domainManagerService: DomainManagerService;
   let environmentService: EnvironmentService;
 

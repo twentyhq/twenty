@@ -20,11 +20,13 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -63,7 +65,9 @@ export class AdminPanelService {
     return {
       workspace: {
         id: user.workspaces[0].workspace.id,
-        subdomain: user.workspaces[0].workspace.subdomain,
+        workspaceUrl: this.domainManagerService.getWorkspaceUrlByWorkspace(
+          user.workspaces[0].workspace,
+        ),
       },
       loginToken,
     };

@@ -347,4 +347,21 @@ export class DomainManagerService {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
     });
   }
+
+  getWorkspaceUrlByWorkspace({
+    subdomain,
+    hostname,
+  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+    const url = this.getFrontUrl();
+
+    if (hostname) {
+      url.hostname = hostname;
+
+      return url.toString();
+    }
+
+    url.hostname = `${subdomain}.${url.hostname}`;
+
+    return url.toString();
+  }
 }

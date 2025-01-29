@@ -1,10 +1,9 @@
 import { createState } from '@ui/utilities/state/utils/createState';
-
-import { Workspace } from '~/generated/graphql';
+import { WorkspaceWithWorkspaceUrl } from '~/generated/graphql';
 
 export type Workspaces = Pick<
-  Workspace,
-  'id' | 'logo' | 'displayName' | 'subdomain'
+  WorkspaceWithWorkspaceUrl,
+  'id' | 'logo' | 'displayName' | 'workspaceUrl'
 >[];
 
 export const workspacesState = createState<Workspaces>({

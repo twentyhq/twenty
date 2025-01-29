@@ -55,7 +55,7 @@ export const useImpersonate = () => {
         return;
       }
 
-      return redirectToWorkspaceDomain(workspace.subdomain, AppPath.Verify, {
+      return redirectToWorkspaceDomain(workspace.workspaceUrl, AppPath.Verify, {
         loginToken: loginToken.token,
       });
     } catch (error) {

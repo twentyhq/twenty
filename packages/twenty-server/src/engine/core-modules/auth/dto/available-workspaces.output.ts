@@ -34,11 +34,8 @@ export class AvailableWorkspaceOutput {
   @Field(() => String, { nullable: true })
   displayName?: string;
 
-  @Field(() => String)
-  subdomain: string;
-
-  @Field(() => String, { nullable: true })
-  hostname?: string;
+  @Field()
+  workspaceUrl: string;
 
   @Field(() => String, { nullable: true })
   logo?: string;

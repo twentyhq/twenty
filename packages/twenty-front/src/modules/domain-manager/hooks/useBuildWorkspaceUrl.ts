@@ -1,20 +1,12 @@
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 export const useBuildWorkspaceUrl = () => {
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
-
   const buildWorkspaceUrl = (
-    subdomain: string,
+    workspaceUrl: string,
     pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
-    const url = new URL(window.location.href);
-
-    if (subdomain.length !== 0) {
-      url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
-    }
+    const url = new URL(workspaceUrl);
 
     if (isDefined(pathname)) {
       url.pathname = pathname;

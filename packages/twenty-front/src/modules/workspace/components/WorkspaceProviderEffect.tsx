@@ -5,13 +5,12 @@ import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
-import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
+import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
+import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 export const WorkspaceProviderEffect = () => {
-  const { data: getPublicWorkspaceData } =
-    useGetPublicWorkspaceDataBySubdomain();
+  const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
@@ -20,20 +19,20 @@ export const WorkspaceProviderEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
 
-  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+  const { workspaceUrl } = useReadWorkspaceUrlFromCurrentLocation();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(getPublicWorkspaceData?.subdomain) &&
-      getPublicWorkspaceData.subdomain !== workspaceSubdomain
+      isDefined(getPublicWorkspaceData?.workspaceUrl) &&
+      new URL(getPublicWorkspaceData.workspaceUrl).hostname !== workspaceUrl
     ) {
-      redirectToWorkspaceDomain(getPublicWorkspaceData.subdomain);
+      redirectToWorkspaceDomain(getPublicWorkspaceData.workspaceUrl);
     }
   }, [
-    workspaceSubdomain,
+    workspaceUrl,
     isMultiWorkspaceEnabled,
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
@@ -44,10 +43,10 @@ export const WorkspaceProviderEffect = () => {
       isMultiWorkspaceEnabled &&
       isDefaultDomain &&
       isDefined(lastAuthenticatedWorkspaceDomain) &&
-      'subdomain' in lastAuthenticatedWorkspaceDomain &&
-      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain)
+      'workspaceUrl' in lastAuthenticatedWorkspaceDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)
     ) {
-      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.subdomain);
+      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.workspaceUrl);
     }
   }, [
     isMultiWorkspaceEnabled,

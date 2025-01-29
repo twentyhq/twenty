@@ -13,8 +13,8 @@ import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/componen
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
-import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
@@ -56,10 +56,9 @@ export const SignInUp = () => {
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const { isOnAWorkspaceSubdomain } =
-    useIsCurrentLocationOnAWorkspaceSubdomain();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
-  const { loading } = useGetPublicWorkspaceDataBySubdomain();
+  const { loading } = useGetPublicWorkspaceDataByDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const [searchParams] = useSearchParams();
@@ -73,7 +72,7 @@ export const SignInUp = () => {
 
     if (
       (!isMultiWorkspaceEnabled ||
-        (isMultiWorkspaceEnabled && isOnAWorkspaceSubdomain)) &&
+        (isMultiWorkspaceEnabled && isOnAWorkspace)) &&
       signInUpStep === SignInUpStep.SSOIdentityProviderSelection
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
@@ -81,7 +80,7 @@ export const SignInUp = () => {
 
     if (
       isDefined(workspacePublicData) &&
-      (!isMultiWorkspaceEnabled || isOnAWorkspaceSubdomain)
+      (!isMultiWorkspaceEnabled || isOnAWorkspace)
     ) {
       return (
         <>
@@ -95,7 +94,7 @@ export const SignInUp = () => {
   }, [
     isDefaultDomain,
     isMultiWorkspaceEnabled,
-    isOnAWorkspaceSubdomain,
+    isOnAWorkspace,
     loading,
     signInUpStep,
     workspacePublicData,

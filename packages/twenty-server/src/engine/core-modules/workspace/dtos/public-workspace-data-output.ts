@@ -57,8 +57,5 @@ export class PublicWorkspaceDataOutput {
   displayName: Workspace['displayName'];
 
   @Field(() => String)
-  subdomain: Workspace['subdomain'];
-
-  @Field(() => String, { nullable: true })
-  hostname: Workspace['hostname'];
+  workspaceUrl: string;
 }

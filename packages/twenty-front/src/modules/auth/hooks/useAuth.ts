@@ -53,7 +53,7 @@ import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -96,8 +96,7 @@ export const useAuth = () => {
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
-  const { isOnAWorkspaceSubdomain } =
-    useIsCurrentLocationOnAWorkspaceSubdomain();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
@@ -287,10 +286,10 @@ export const useAuth = () => {
 
     setCurrentWorkspace(workspace);
 
-    if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
+    if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
-        subdomain: workspace.subdomain,
+        workspaceUrl: workspace.workspaceUrl,
       });
     }
 
@@ -313,7 +312,7 @@ export const useAuth = () => {
     };
   }, [
     getCurrentUser,
-    isOnAWorkspaceSubdomain,
+    isOnAWorkspace,
     setCurrentUser,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
@@ -411,7 +410,7 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
-          signUpResult.data.signUp.workspace.subdomain,
+          signUpResult.data.signUp.workspace.workspaceUrl,
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {

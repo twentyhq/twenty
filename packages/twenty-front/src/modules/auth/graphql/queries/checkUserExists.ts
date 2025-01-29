@@ -9,8 +9,7 @@ export const CHECK_USER_EXISTS = gql`
         availableWorkspaces {
           id
           displayName
-          subdomain
-          hostname
+          workspaceUrl
           logo
           sso {
             type

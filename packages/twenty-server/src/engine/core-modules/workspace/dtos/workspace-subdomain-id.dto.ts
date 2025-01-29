@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class WorkspaceSubdomainAndId {
+export class WorkspaceUrlAndId {
   @Field()
-  subdomain: string;
+  workspaceUrl: string;
 
   @Field()
   id: string;

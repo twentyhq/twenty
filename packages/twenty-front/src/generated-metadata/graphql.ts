@@ -109,11 +109,10 @@ export type AuthorizeApp = {
 export type AvailableWorkspaceOutput = {
   __typename?: 'AvailableWorkspaceOutput';
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrl: Scalars['String']['output'];
 };
 
 export type Billing = {
@@ -381,7 +380,7 @@ export type CustomHostnameDetails = {
   hostname: Scalars['String']['output'];
   ownership_verification?: Maybe<OwnershipVerification>;
   ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
-  status: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 export type DeleteOneFieldInput = {
@@ -616,7 +615,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlAndId;
 };
 
 export type Index = {
@@ -1220,15 +1219,15 @@ export type OnboardingStepSuccess = {
 
 export type OwnershipVerification = {
   __typename?: 'OwnershipVerification';
-  name: Scalars['String']['output'];
-  type: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 export type OwnershipVerificationHttp = {
   __typename?: 'OwnershipVerificationHttp';
-  http_body: Scalars['String']['output'];
-  http_url: Scalars['String']['output'];
+  http_body?: Maybe<Scalars['String']['output']>;
+  http_url?: Maybe<Scalars['String']['output']>;
 };
 
 export type PageInfo = {
@@ -1268,10 +1267,9 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrl: Scalars['String']['output'];
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1301,7 +1299,7 @@ export type Query = {
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
-  getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1686,7 +1684,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlAndId;
 };
 
 export enum SubscriptionInterval {
@@ -2021,6 +2019,7 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+  workspaceUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2095,10 +2094,10 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
-export type WorkspaceSubdomainAndId = {
-  __typename?: 'WorkspaceSubdomainAndId';
+export type WorkspaceUrlAndId = {
+  __typename?: 'WorkspaceUrlAndId';
   id: Scalars['String']['output'];
-  subdomain: Scalars['String']['output'];
+  workspaceUrl: Scalars['String']['output'];
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

@@ -217,6 +217,11 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
+  @ResolveField(() => String)
+  workspaceUrl(@Parent() workspace: Workspace) {
+    return this.domainManagerService.getWorkspaceUrlByWorkspace(workspace);
+  }
+
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
   async getHostnameDetails(@AuthWorkspace() { hostname }: Workspace) {
@@ -226,7 +231,7 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+  async getPublicWorkspaceDataByDomain(@OriginHeader() origin: string) {
     try {
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -261,8 +266,8 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        subdomain: workspace.subdomain,
-        hostname: workspace.hostname,
+        workspaceUrl:
+          this.domainManagerService.getWorkspaceUrlByWorkspace(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

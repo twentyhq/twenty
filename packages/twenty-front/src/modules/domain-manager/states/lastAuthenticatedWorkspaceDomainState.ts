@@ -3,7 +3,7 @@ import { cookieStorageEffect } from '~/utils/recoil-effects';
 
 export const lastAuthenticatedWorkspaceDomainState = createState<
   | {
-      subdomain: string;
+      workspaceUrl: string;
       workspaceId: string;
       cookieAttributes?: Cookies.CookieAttributes;
     }

@@ -5,7 +5,7 @@ export const IMPERSONATE = gql`
   mutation Impersonate($userId: String!, $workspaceId: String!) {
     impersonate(userId: $userId, workspaceId: $workspaceId) {
       workspace {
-        subdomain
+        workspaceUrl
         id
       }
       loginToken {
