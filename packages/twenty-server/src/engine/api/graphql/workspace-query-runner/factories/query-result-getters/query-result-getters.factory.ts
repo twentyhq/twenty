@@ -136,7 +136,7 @@ export class QueryResultGettersFactory {
   ): Promise<ObjectRecord> {
     const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
 
-    const isNewRelationEnabled = this.featureFlagService.isFeatureEnabled(
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsNewRelationEnabled,
       workspaceId,
     );
