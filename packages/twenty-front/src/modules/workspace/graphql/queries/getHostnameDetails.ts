@@ -4,14 +4,17 @@ export const GET_HOSTNAME_DETAILS = gql`
   query GetHostnameDetails {
     getHostnameDetails {
       hostname
-      ownership_verification {
-        name
-        type
-        value
-      }
-      ownership_verification_http {
-        http_body
-        http_url
+      ownershipVerifications {
+        ... on CustomHostnameOwnershipVerificationTxt {
+          type
+          name
+          value
+        }
+        ... on CustomHostnameOwnershipVerificationHttp {
+          type
+          body
+          url
+        }
       }
       status
     }

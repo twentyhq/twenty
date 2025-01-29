@@ -316,9 +316,23 @@ export type CursorPaging = {
 export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String'];
-  ownership_verification?: Maybe<OwnershipVerification>;
-  ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
-  status: Scalars['String'];
+  id: Scalars['String'];
+  ownershipVerifications: Array<OwnershipVerification>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type CustomHostnameOwnershipVerificationHttp = {
+  __typename?: 'CustomHostnameOwnershipVerificationHttp';
+  body: Scalars['String'];
+  type: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type CustomHostnameOwnershipVerificationTxt = {
+  __typename?: 'CustomHostnameOwnershipVerificationTxt';
+  name: Scalars['String'];
+  type: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type DeleteOneFieldInput = {
@@ -1085,18 +1099,7 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean'];
 };
 
-export type OwnershipVerification = {
-  __typename?: 'OwnershipVerification';
-  name: Scalars['String'];
-  type: Scalars['String'];
-  value: Scalars['String'];
-};
-
-export type OwnershipVerificationHttp = {
-  __typename?: 'OwnershipVerificationHttp';
-  http_body: Scalars['String'];
-  http_url: Scalars['String'];
-};
+export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -2306,7 +2309,7 @@ export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorks
 export type GetHostnameDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status: string, ownership_verification?: { __typename?: 'OwnershipVerification', name: string, type: string, value: string } | null, ownership_verification_http?: { __typename?: 'OwnershipVerificationHttp', http_body: string, http_url: string } | null } | null };
+export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status?: string | null, ownershipVerifications: Array<{ __typename?: 'CustomHostnameOwnershipVerificationHttp', type: string, body: string, url: string } | { __typename?: 'CustomHostnameOwnershipVerificationTxt', type: string, name: string, value: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -4617,14 +4620,17 @@ export const GetHostnameDetailsDocument = gql`
     query GetHostnameDetails {
   getHostnameDetails {
     hostname
-    ownership_verification {
-      name
-      type
-      value
-    }
-    ownership_verification_http {
-      http_body
-      http_url
+    ownershipVerifications {
+      ... on CustomHostnameOwnershipVerificationTxt {
+        type
+        name
+        value
+      }
+      ... on CustomHostnameOwnershipVerificationHttp {
+        type
+        body
+        url
+      }
     }
     status
   }

@@ -145,11 +145,9 @@ export class WorkspaceResolver {
       workspace.id,
     );
 
-    const filteredFeatureFlags = featureFlags.filter((flag) =>
+    return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
-
-    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)
@@ -219,14 +217,18 @@ export class WorkspaceResolver {
 
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getHostnameDetails(@AuthWorkspace() { hostname }: Workspace) {
-    if (!hostname) return null;
+  async getHostnameDetails(
+    @AuthWorkspace() { hostname }: Workspace,
+  ): Promise<CustomHostnameDetails | undefined> {
+    if (!hostname) return undefined;
 
-    return this.domainManagerService.getCustomHostnameDetails(hostname);
+    return await this.domainManagerService.getCustomHostnameDetails(hostname);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+  async getPublicWorkspaceDataBySubdomain(
+    @OriginHeader() origin: string,
+  ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(

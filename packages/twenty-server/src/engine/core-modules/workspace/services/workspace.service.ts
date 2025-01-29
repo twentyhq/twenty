@@ -79,7 +79,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       isDefined(workspace.hostname)
     ) {
       await this.domainManagerService.updateCustomHostname(
-        { hostnameName: workspace.hostname },
+        workspace.hostname,
         hostname,
       );
     }
