@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
@@ -7,17 +7,11 @@ import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/l
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { signInUpStepState } from '@/auth/states/signInUpStepState';
 import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } =
     useGetPublicWorkspaceDataBySubdomain();
-
-  const { redirectToSSOLoginPage } = useSSO();
-
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
