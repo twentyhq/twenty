@@ -48,7 +48,6 @@ export const ResetContextToSelectionCommandButton = () => {
         <CommandMenuContextRecordChip
           objectMetadataItemId={objectMetadataItem.id}
           instanceId="command-menu-previous"
-          variant="small"
         />
       }
       onClick={resetPreviousCommandMenuContext}

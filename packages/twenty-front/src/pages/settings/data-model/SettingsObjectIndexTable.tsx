@@ -9,6 +9,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
@@ -39,20 +40,20 @@ export const SettingsObjectIndexTable = ({
     tableId: 'settingsObjectIndexs',
     fields: [
       {
-        fieldLabel: t`Fields`,
+        fieldLabel: msg`Fields`,
         fieldName: 'indexFields',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: '',
+        fieldLabel: msg`Unique`,
         FieldIcon: IconSquareKey,
         fieldName: 'isUnique',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: t`Type`,
+        fieldLabel: msg`Type`,
         fieldName: 'indexType',
         fieldType: 'string',
         align: 'right',
@@ -123,7 +124,7 @@ export const SettingsObjectIndexTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={item.fieldLabel}
+              label={t(item.fieldLabel)}
               Icon={item.FieldIcon}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}

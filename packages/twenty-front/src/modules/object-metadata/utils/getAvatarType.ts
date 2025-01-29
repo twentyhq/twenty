@@ -9,5 +9,12 @@ export const getAvatarType = (objectNameSingular: string) => {
     return 'squared';
   }
 
+  if (
+    objectNameSingular === CoreObjectNameSingular.Task ||
+    objectNameSingular === CoreObjectNameSingular.Note
+  ) {
+    return 'icon';
+  }
+
   return 'rounded';
 };
