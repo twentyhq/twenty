@@ -1,6 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -9,14 +8,13 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconSearch } from 'twenty-ui';
 
 export const useCommandMenuHotKeys = () => {
   const {
     closeCommandMenu,
-    openCommandMenu,
+    openRecordsSearchPage,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
   } = useCommandMenu();
@@ -32,11 +30,6 @@ export const useCommandMenuHotKeys = () => {
     'command-menu',
   );
 
-  const setCommandMenuPageState = useSetRecoilState(commandMenuPageState);
-  const setCommandMenuPageInfoState = useSetRecoilState(
-    commandMenuPageInfoState,
-  );
-
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
@@ -50,15 +43,10 @@ export const useCommandMenuHotKeys = () => {
   useScopedHotkeys(
     ['/'],
     () => {
-      setCommandMenuPageState(CommandMenuPages.SearchRecords);
-      setCommandMenuPageInfoState({
-        title: 'Search',
-        Icon: IconSearch,
-      });
-      openCommandMenu();
+      openRecordsSearchPage();
     },
     AppHotkeyScope.KeyboardShortcutMenu,
-    [openCommandMenu],
+    [openRecordsSearchPage],
     {
       ignoreModifiers: true,
     },

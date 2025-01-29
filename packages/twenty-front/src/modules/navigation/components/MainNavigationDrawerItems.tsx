@@ -3,9 +3,6 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
@@ -44,12 +41,8 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
-  const { openCommandMenu } = useCommandMenu();
+  const { openRecordsSearchPage } = useCommandMenu();
 
-  const setCommandMenuPageState = useSetRecoilState(commandMenuPageState);
-  const setCommandMenuPageInfoState = useSetRecoilState(
-    commandMenuPageInfoState,
-  );
   return (
     <>
       {!isMobile && (
@@ -57,14 +50,7 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label={t`Search`}
             Icon={IconSearch}
-            onClick={() => {
-              setCommandMenuPageState(CommandMenuPages.SearchRecords);
-              setCommandMenuPageInfoState({
-                title: 'Search',
-                Icon: IconSearch,
-              });
-              openCommandMenu();
-            }}
+            onClick={openRecordsSearchPage}
             keyboard={['/']}
           />
           <NavigationDrawerItem

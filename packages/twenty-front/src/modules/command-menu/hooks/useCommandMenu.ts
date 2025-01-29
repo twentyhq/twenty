@@ -19,6 +19,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { IconSearch } from 'twenty-ui';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -71,6 +72,7 @@ export const useCommandMenu = () => {
             Icon: undefined,
           });
           set(isCommandMenuOpenedState, false);
+          set(commandMenuSearchState, '');
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
 
@@ -105,6 +107,20 @@ export const useCommandMenu = () => {
         set(commandMenuPageState, CommandMenuPages.ViewRecord);
         set(viewableRecordNameSingularState, objectNameSingular);
         set(viewableRecordIdState, recordId);
+      };
+    },
+    [openCommandMenu],
+  );
+
+  const openRecordsSearchPage = useRecoilCallback(
+    ({ set }) => {
+      return () => {
+        set(commandMenuPageState, CommandMenuPages.SearchRecords);
+        set(commandMenuPageInfoState, {
+          title: 'Search',
+          Icon: IconSearch,
+        });
+        openCommandMenu();
       };
     },
     [openCommandMenu],
@@ -161,6 +177,7 @@ export const useCommandMenu = () => {
   return {
     openCommandMenu,
     closeCommandMenu,
+    openRecordsSearchPage,
     openRecordInCommandMenu,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
