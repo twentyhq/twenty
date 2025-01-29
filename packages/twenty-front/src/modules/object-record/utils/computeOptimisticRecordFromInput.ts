@@ -8,6 +8,7 @@ import {
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -47,7 +48,7 @@ export const computeOptimisticRecordFromInput = ({
           }
 
           const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
-          return `${sourceFieldName}Id` === fieldMetadataItem.name;
+          return getForeignKeyNameFromRelationFieldName(sourceFieldName) === fieldMetadataItem.name;
         },
       );
 
@@ -93,7 +94,7 @@ export const computeOptimisticRecordFromInput = ({
       );
     }
 
-    const relationFieldIdName = `${fieldMetadataItem.name}Id`;
+    const relationFieldIdName = getForeignKeyNameFromRelationFieldName(fieldMetadataItem.name);
     const recordInputFieldIdValue: string | null | undefined =
       recordInput[relationFieldIdName];
 
