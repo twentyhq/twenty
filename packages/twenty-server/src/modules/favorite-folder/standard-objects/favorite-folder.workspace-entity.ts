@@ -29,8 +29,8 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'Favorite folder position',
+    label: msg`Position`,
+    description: msg`Favorite folder position`,
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -40,8 +40,8 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Name of the favorite folder',
+    label: msg`Name`,
+    description: msg`Name of the favorite folder`,
     icon: 'IconText',
   })
   name: string;
@@ -49,8 +49,8 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Favorites',
-    description: 'Favorites in this folder',
+    label: msg`Favorites`,
+    description: msg`Favorites in this folder`,
     icon: 'IconHeart',
     inverseSideFieldKey: 'favoriteFolder',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
