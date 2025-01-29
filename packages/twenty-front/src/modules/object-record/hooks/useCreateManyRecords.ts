@@ -82,12 +82,15 @@ export const useCreateManyRecords = <
             id: idForCreation,
           };
 
-          const optimisticRecordInput = computeOptimisticRecordFromInput({
-            cache: apolloClient.cache,
-            objectMetadataItem,
-            objectMetadataItems,
-            recordInput: { ...recordToCreate, id: idForCreation },
-          });
+          const optimisticRecordInput = {
+            ...computeOptimisticRecordFromInput({
+              cache: apolloClient.cache,
+              objectMetadataItem,
+              objectMetadataItems,
+              recordInput: recordToCreate,
+            }),
+            id: idForCreation,
+          };
 
           return {
             sanitizedCreateManyRecordsInput: [
