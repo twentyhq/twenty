@@ -132,6 +132,12 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         workspaceId,
       );
 
+    if (!workspaceDataSource) {
+      this.logger.verbose('No workspace data source found');
+
+      return;
+    }
+
     const queryRunner = workspaceDataSource?.createQueryRunner();
 
     await queryRunner.connect();
@@ -150,7 +156,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         return;
       }
 
-      if (dryRun) {
+      if (!dryRun) {
         await queryRunner.addColumn(
           `${schemaName}.${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
           new TableColumn({
@@ -160,9 +166,9 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
             isNullable: true,
           }),
         );
-      }
 
-      await queryRunner.commitTransaction();
+        await queryRunner.commitTransaction();
+      }
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
