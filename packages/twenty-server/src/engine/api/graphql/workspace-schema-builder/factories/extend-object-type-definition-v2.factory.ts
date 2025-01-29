@@ -106,7 +106,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Ignore relation fields as they are already defined
+      // Ignore non-relation fields as they are already defined
       if (!isRelationFieldMetadata(fieldMetadata)) {
         continue;
       }
