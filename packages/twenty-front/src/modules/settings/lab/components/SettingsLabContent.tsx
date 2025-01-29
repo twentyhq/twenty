@@ -31,13 +31,6 @@ const StyledImage = styled.img<{ isFirstCard: boolean }>`
   width: 100%;
 `;
 
-const StyledFallbackDiv = styled.div<{ isFirstCard: boolean }>`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
-  width: 100%;
-`;
-
 export const SettingsLabContent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { labPublicFeatureFlags, handleLabPublicFeatureFlagUpdate } =
@@ -57,27 +50,36 @@ export const SettingsLabContent = () => {
   return (
     currentWorkspace?.id && (
       <StyledCardGrid>
-        {labPublicFeatureFlags.map((flag, index) => (
-          <Card key={flag.key} rounded>
-            {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
-              <StyledImage
-                src={flag.metadata.imagePath}
-                alt={flag.metadata.label}
-                isFirstCard={index === 0}
-                onError={() => handleImageError(flag.key)}
+        {[...labPublicFeatureFlags]
+          .sort((a, b) => {
+            // Sort flags with images first
+            if (a.metadata.imagePath !== '' && b.metadata.imagePath === '')
+              return -1;
+            if (a.metadata.imagePath === '' && b.metadata.imagePath !== '')
+              return 1;
+            return 0;
+          })
+          .map((flag, index) => (
+            <Card key={flag.key} rounded>
+              {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
+                <StyledImage
+                  src={flag.metadata.imagePath}
+                  alt={flag.metadata.label}
+                  isFirstCard={index === 0}
+                  onError={() => handleImageError(flag.key)}
+                />
+              ) : (
+                <></>
+              )}
+              <SettingsOptionCardContentToggle
+                title={flag.metadata.label}
+                description={flag.metadata.description}
+                checked={flag.value}
+                onChange={(value) => handleToggle(flag.key, value)}
+                toggleCentered={false}
               />
-            ) : (
-              <StyledFallbackDiv isFirstCard={index === 0} />
-            )}
-            <SettingsOptionCardContentToggle
-              title={flag.metadata.label}
-              description={flag.metadata.description}
-              checked={flag.value}
-              onChange={(value) => handleToggle(flag.key, value)}
-              toggleCentered={false}
-            />
-          </Card>
-        ))}
+            </Card>
+          ))}
       </StyledCardGrid>
     )
   );

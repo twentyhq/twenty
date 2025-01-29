@@ -130,12 +130,12 @@ export const useUpdateOneRecord = <
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
 
-          if (!record || !cachedRecord) return;
+          if (!record || !computedOptimisticRecord) return;
 
           triggerUpdateRecordOptimisticEffect({
             cache,
             objectMetadataItem,
-            currentRecord: cachedRecord,
+            currentRecord: computedOptimisticRecord,
             updatedRecord: record,
             objectMetadataItems,
           });

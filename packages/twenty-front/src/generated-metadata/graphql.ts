@@ -465,6 +465,7 @@ export enum FeatureFlagKey {
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
+  IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled'
@@ -1983,7 +1984,7 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   featureFlags?: Maybe<Array<FeatureFlag>>;
-  hasValidEntrepriseKey: Scalars['Boolean']['output'];
+  hasValidEnterpriseKey: Scalars['Boolean']['output'];
   hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
