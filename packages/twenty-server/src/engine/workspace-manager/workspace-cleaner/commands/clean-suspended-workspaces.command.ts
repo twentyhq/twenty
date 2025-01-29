@@ -1,35 +1,33 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { Command } from 'nest-commander';
+import { Repository } from 'typeorm';
+
+import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/clean.workspace-service';
 
-type CleanSuspendedWorkspacesCommandOptions = {
-  workspaceIds: string[];
-};
-
 @Command({
-  name: 'workspaces:clean',
-  description: 'Clean suspended workspaces',
+  name: 'workspace:clean',
+  description: 'Clean suspended workspace',
 })
-export class CleanSuspendedWorkspacesCommand extends CommandRunner {
-  constructor(private readonly cleanWorkspaceService: CleanWorkspaceService) {
-    super();
+export class CleanSuspendedWorkspacesCommand extends ActiveWorkspacesCommandRunner {
+  constructor(
+    private readonly cleanWorkspaceService: CleanWorkspaceService,
+    @InjectRepository(Workspace, 'core')
+    protected readonly workspaceRepository: Repository<Workspace>,
+  ) {
+    super(workspaceRepository);
   }
 
-  @Option({
-    flags: '-w, --workspace-ids [workspaceIds]',
-    description: 'comma separated workspace ids',
-    required: true,
-  })
-  parseWorkspaceIds(value: string): string[] {
-    return value.split(',');
-  }
-
-  async run(
+  async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    options: CleanSuspendedWorkspacesCommandOptions,
+    _options: BaseCommandOptions,
+    workspaceIds: string[],
   ): Promise<void> {
-    await this.cleanWorkspaceService.batchWarnOrCleanWorkspaces(
-      options.workspaceIds,
+    await this.cleanWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
+      workspaceIds,
     );
   }
 }

@@ -26,7 +26,7 @@ export class CleanSuspendedWorkspacesJob {
       },
     });
 
-    await this.cleanWorkspaceService.batchWarnOrCleanWorkspaces(
+    await this.cleanWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
       suspendedWorkspaceIds.map((workspace) => workspace.id),
     );
   }

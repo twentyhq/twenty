@@ -7,6 +7,7 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -238,12 +239,15 @@ export class CleanWorkspaceService {
     );
   }
 
-  async batchWarnOrCleanWorkspaces(workspaceIds: string[]): Promise<void> {
-    this.logger.log(`batchWarnOrCleanWorkspaces running...`);
+  async batchWarnOrCleanSuspendedWorkspaces(
+    workspaceIds: string[],
+  ): Promise<void> {
+    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces running...`);
 
     const workspaces = await this.workspaceRepository.find({
       where: {
         id: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
     });
 
@@ -281,6 +285,6 @@ export class CleanWorkspaceService {
       );
     }
 
-    this.logger.log(`batchWarnOrCleanWorkspaces done!`);
+    this.logger.log(`batchWarnOrCleanSuspendedWorkspaces done!`);
   }
 }
