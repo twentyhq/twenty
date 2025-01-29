@@ -16,4 +16,4 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'ExchangeAuthorizationCode',
   'GetAuthorizationUrl',
   'GetPublicWorkspaceDataBySubdomain',
-];
+] as const;

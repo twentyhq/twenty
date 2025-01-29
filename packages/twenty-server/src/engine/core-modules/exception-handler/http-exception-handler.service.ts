@@ -47,7 +47,12 @@ export class HttpExceptionHandlerService {
     if (params?.userId) user = { ...user, id: params.userId };
 
     handleException(exception, this.exceptionHandlerService, user, workspace);
+    const statusCode = errorCode || 500;
 
-    return response.status(errorCode || 500).send(exception.message);
+    return response.status(statusCode).send({
+      statusCode,
+      error: exception.name || 'Bad Request',
+      messages: [exception?.message],
+    });
   };
 }

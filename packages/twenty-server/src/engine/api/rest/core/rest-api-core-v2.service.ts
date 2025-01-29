@@ -59,14 +59,14 @@ export class RestApiCoreServiceV2 {
     );
   }
 
-  private formatResult(
+  private formatResult<T>(
     operation: 'delete' | 'create' | 'update' | 'find',
-    objecNameSingular: string,
-    data: object,
+    objectNameSingular: string,
+    data: T,
   ) {
     const result = {
       data: {
-        [operation + capitalize(objecNameSingular)]: data,
+        [operation + capitalize(objectNameSingular)]: data,
       },
     };
 

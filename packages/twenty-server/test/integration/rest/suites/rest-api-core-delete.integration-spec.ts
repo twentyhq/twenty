@@ -4,6 +4,7 @@ import {
 } from 'test/integration/constants/mock-person-ids.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
@@ -31,6 +32,27 @@ describe('Core REST API Delete One endpoint', () => {
 
     people = response.body.data.createPeople;
     expect(people.length).toBe(1);
+    expect(people[0].id).toBe(PERSON_1_ID);
+  });
+
+  afterAll(async () => {
+    // TODO: move this creation to REST API when the GET method is migrated
+    const graphqlOperation = findOneOperationFactory({
+      objectMetadataSingularName: 'person',
+      gqlFields: PERSON_GQL_FIELDS,
+      filter: {
+        id: {
+          eq: PERSON_1_ID,
+        },
+      },
+    });
+
+    await makeGraphqlAPIRequest(graphqlOperation)
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.errors).toBeTruthy();
+        expect(res.body.errors[0].message).toContain(`Record not found`);
+      });
   });
 
   it('1a. should delete one person', async () => {
