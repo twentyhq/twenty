@@ -20,7 +20,7 @@ const jestConfig: JestConfigWithTsJest = {
       {
         jsc: {
           experimental: {
-            plugins: [], // Disable Lingui plugin during tests
+            plugins: [['@lingui/swc-plugin', {}]],
           },
         },
       },

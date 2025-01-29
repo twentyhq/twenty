@@ -11,8 +11,9 @@ import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-sto
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
+import { IconX, isDefined, LightIconButton, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -71,6 +72,8 @@ export const CommandMenuTopBar = () => {
     commandMenuSearchState,
   );
 
+  const { t } = useLingui();
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
@@ -108,7 +111,7 @@ export const CommandMenuTopBar = () => {
           <StyledInput
             autoFocus
             value={commandMenuSearch}
-            placeholder="Type anything"
+            placeholder={t`Type anything`}
             onChange={handleSearchChange}
           />
         )}
