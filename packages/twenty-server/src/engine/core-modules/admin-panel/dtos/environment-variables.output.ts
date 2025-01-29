@@ -32,7 +32,7 @@ class EnvironmentVariable {
   @Field()
   key: string;
 
-  @Field(() => String) // Use string as the base type, since all env vars are strings
+  @Field(() => String) // Using string as the base type, since all env vars are strings -- this is a bit of a hack
   value: string;
 
   @Field(() => EnvironmentVariableMetadata)

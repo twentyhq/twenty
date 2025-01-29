@@ -10,7 +10,8 @@ export interface EnvironmentVariablesMetadataOptions {
   description: string;
   sensitive?: boolean;
 }
-
+// not sure if this should be here or in the typed-reflect file
+// right now its here because I dont want to change the typed-reflect file :)
 declare module 'src/utils/typed-reflect' {
   interface ReflectMetadataTypeMap {
     ['workspace:environment-variables-metadata']: EnvironmentVariablesMetadataOptions;
