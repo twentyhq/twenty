@@ -135,6 +135,14 @@ export const MultiItemFieldInput = <T,>({
       }
     }
 
+    if (inputValue === '' && isAddingNewItem) {
+      return;
+    }
+
+    if (inputValue === '' && !isAddingNewItem) {
+      handleDeleteItem(itemToEditIndex);
+      return;
+    }
     if (isClearingInput && itemToEditIndex !== -1) {
       handleDeleteItem(itemToEditIndex);
       return;
