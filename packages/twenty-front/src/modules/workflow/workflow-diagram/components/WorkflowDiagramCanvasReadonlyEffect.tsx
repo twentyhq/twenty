@@ -3,6 +3,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import {
@@ -27,7 +28,7 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
 
-      if (isClosingStep) {
+      if (isClosingStep || selectedNode.type === EMPTY_TRIGGER_STEP_ID) {
         closeRightDrawer();
         closeCommandMenu();
         return;
@@ -37,12 +38,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
-
-      if (!isDefined(selectedNodeData.name)) {
-        closeRightDrawer();
-        closeCommandMenu();
-        return;
-      }
 
       openRightDrawer(RightDrawerPages.WorkflowStepView, {
         title: selectedNodeData.name,
