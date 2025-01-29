@@ -1,6 +1,6 @@
 import {
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
@@ -25,7 +25,7 @@ export const useRunWorkflowActions = () => {
     return { runWorkflowActions: [] };
   }
 
-  const runWorkflowActions = Array.from(activeWorkflowVersions.values())
+  const runWorkflowActions = activeWorkflowVersions
     .map((activeWorkflowVersion, index) => {
       if (!isDefined(activeWorkflowVersion.workflow)) {
         return undefined;
