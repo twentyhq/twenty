@@ -7,11 +7,9 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 export const CommandMenuContextRecordChip = ({
   objectMetadataItemId,
   instanceId,
-  variant = 'default',
 }: {
   objectMetadataItemId: string;
   instanceId?: string;
-  variant?: 'default' | 'small';
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
@@ -43,8 +41,6 @@ export const CommandMenuContextRecordChip = ({
         totalCount,
       )}
       Icons={Avatars}
-      withIconBackground={true}
-      variant={variant}
     />
   );
 };
