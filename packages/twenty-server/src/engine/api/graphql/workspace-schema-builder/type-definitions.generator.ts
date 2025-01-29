@@ -263,7 +263,7 @@ export class TypeDefinitionsGenerator {
     this.typeDefinitionsStorage.addEnumTypes(enumTypeDefs);
   }
 
-  private generateExtendedObjectTypeDefs(
+  private async generateExtendedObjectTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
@@ -277,7 +277,7 @@ export class TypeDefinitionsGenerator {
       throw new Error('Workspace ID not found');
     }
 
-    const isNewRelationEnabled = this.featureFlagService.isFeatureEnabled(
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IsNewRelationEnabled,
       workspaceId,
     );
