@@ -934,6 +934,7 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 
 
 export type MutationUpdatePasswordViaResetTokenArgs = {
+  locale: Scalars['String'];
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
 };
@@ -2030,6 +2031,7 @@ export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: '
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
+  locale: Scalars['String'];
 }>;
 
 
@@ -3177,10 +3179,11 @@ export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
 export const UpdatePasswordViaResetTokenDocument = gql`
-    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
+    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!, $locale: String!) {
   updatePasswordViaResetToken(
     passwordResetToken: $token
     newPassword: $newPassword
+    locale: $locale
   ) {
     success
   }
@@ -3203,6 +3206,7 @@ export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<Upda
  *   variables: {
  *      token: // value for 'token'
  *      newPassword: // value for 'newPassword'
+ *      locale: // value for 'locale'
  *   },
  * });
  */

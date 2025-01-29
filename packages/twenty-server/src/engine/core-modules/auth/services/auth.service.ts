@@ -379,6 +379,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
+    locale: string,
   ): Promise<UpdatePassword> {
     if (!userId) {
       throw new AuthException(
@@ -415,7 +416,7 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
-      locale: 'en',
+      locale,
     });
 
     const html = await render(emailTemplate);

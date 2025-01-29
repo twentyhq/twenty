@@ -13,4 +13,9 @@ export class UpdatePasswordViaResetTokenInput {
   @IsNotEmpty()
   @IsString()
   newPassword: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  locale: string;
 }
