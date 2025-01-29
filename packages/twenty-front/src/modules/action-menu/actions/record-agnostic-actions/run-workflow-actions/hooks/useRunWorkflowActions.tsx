@@ -1,4 +1,3 @@
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -11,12 +10,10 @@ import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-export const useWorkflowRunActions = () => {
+export const useRunWorkflowActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
-
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
     triggerType: 'MANUAL',
@@ -24,42 +21,38 @@ export const useWorkflowRunActions = () => {
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const addWorkflowRunActions = () => {
-    if (!isWorkflowEnabled) {
-      return;
-    }
+  if (!isWorkflowEnabled) {
+    return { runWorkflowActions: [] };
+  }
 
-    for (const [
-      index,
-      activeWorkflowVersion,
-    ] of activeWorkflowVersions.entries()) {
+  const runWorkflowActions = activeWorkflowVersions
+    .map((activeWorkflowVersion, index) => {
       if (!isDefined(activeWorkflowVersion.workflow)) {
-        continue;
+        return undefined;
       }
 
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
-      addActionMenuEntry({
+      return {
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.Global,
         label: name,
         position: index,
         Icon: IconSettingsAutomation,
-        onClick: async () => {
-          await runWorkflowVersion({
-            workflowVersionId: activeWorkflowVersion.id,
-          });
+        useAction: () => {
+          return {
+            shouldBeRegistered: true,
+            onClick: async () => {
+              await runWorkflowVersion({
+                workflowVersionId: activeWorkflowVersion.id,
+              });
+            },
+          };
         },
-      });
-    }
-  };
+      };
+    })
+    .filter(isDefined);
 
-  const removeWorkflowRunActions = () => {
-    for (const activeWorkflowVersion of activeWorkflowVersions) {
-      removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
-    }
-  };
-
-  return { addWorkflowRunActions, removeWorkflowRunActions };
+  return { runWorkflowActions };
 };

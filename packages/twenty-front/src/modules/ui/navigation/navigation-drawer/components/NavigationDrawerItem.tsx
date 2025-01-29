@@ -14,6 +14,7 @@ import { useRecoilState } from 'recoil';
 import { capitalize } from 'twenty-shared';
 import {
   IconComponent,
+  Label,
   MOBILE_VIEWPORT,
   Pill,
   TablerIconsProps,
@@ -163,13 +164,16 @@ const StyledItemCount = styled.span`
 
 const StyledKeyBoardShortcut = styled.span`
   align-items: center;
-  border-radius: 4px;
-  color: ${({ theme }) => theme.font.color.light};
   display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
-  letter-spacing: 1px;
-  margin-left: auto;
-  visibility: hidden;
+  width: ${({ theme }) => theme.spacing(4)};
+
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  background: ${({ theme }) => theme.background.transparent.lighter};
 `;
 
 const StyledNavigationDrawerItemContainer = styled.div`
@@ -339,7 +343,7 @@ export const NavigationDrawerItem = ({
           {keyboard && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledKeyBoardShortcut className="keyboard-shortcuts">
-                {keyboard}
+                <Label>{keyboard}</Label>
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}

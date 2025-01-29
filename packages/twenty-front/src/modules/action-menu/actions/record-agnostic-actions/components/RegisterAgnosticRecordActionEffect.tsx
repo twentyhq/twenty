@@ -1,25 +1,20 @@
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useContext, useEffect } from 'react';
 
-type RegisterRecordActionEffectProps = {
+type RegisterAgnosticRecordActionEffectProps = {
   action: ActionMenuEntry & {
-    useAction: ActionHook;
+    useAction: ActionHookWithoutObjectMetadataItem;
   };
-  objectMetadataItem: ObjectMetadataItem;
 };
 
-export const RegisterRecordActionEffect = ({
+export const RegisterAgnosticRecordActionEffect = ({
   action,
-  objectMetadataItem,
-}: RegisterRecordActionEffectProps) => {
-  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction({
-    objectMetadataItem,
-  });
+}: RegisterAgnosticRecordActionEffectProps) => {
+  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction();
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);
