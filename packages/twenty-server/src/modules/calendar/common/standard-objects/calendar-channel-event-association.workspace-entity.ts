@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -19,9 +20,9 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
   namePlural: 'calendarChannelEventAssociations',
-  labelSingular: 'Calendar Channel Event Association',
-  labelPlural: 'Calendar Channel Event Associations',
-  description: 'Calendar Channel Event Associations',
+  labelSingular: msg`Calendar Channel Event Association`,
+  labelPlural: msg`Calendar Channel Event Associations`,
+  description: msg`Calendar Channel Event Associations`,
   icon: STANDARD_OBJECT_ICONS.calendarChannelEventAssociation,
 })
 @WorkspaceIsSystem()
@@ -31,8 +32,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Event external ID',
-    description: 'Event external ID',
+    label: msg`Event external ID`,
+    description: msg`Event external ID`,
     icon: 'IconCalendar',
   })
   eventExternalId: string;
@@ -41,8 +42,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Recurring Event ID',
-    description: 'Recurring Event ID',
+    label: msg`Recurring Event ID`,
+    description: msg`Recurring Event ID`,
     icon: 'IconHistory',
   })
   recurringEventExternalId: string;
@@ -51,8 +52,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Channel ID',
-    description: 'Channel ID',
+    label: msg`Channel ID`,
+    description: msg`Channel ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
@@ -66,8 +67,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Event ID',
-    description: 'Event ID',
+    label: msg`Event ID`,
+    description: msg`Event ID`,
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',

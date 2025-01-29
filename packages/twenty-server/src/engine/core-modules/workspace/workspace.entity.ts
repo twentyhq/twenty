@@ -15,7 +15,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -26,15 +26,11 @@ registerEnumType(WorkspaceActivationStatus, {
 });
 
 @Entity({ name: 'workspace', schema: 'core' })
-@ObjectType('Workspace')
+@ObjectType()
 export class Workspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  domainName?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -83,8 +79,8 @@ export class Workspace {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
-  @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
-  featureFlags: Relation<FeatureFlagEntity[]>;
+  @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
+  featureFlags: Relation<FeatureFlag[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
@@ -125,6 +121,10 @@ export class Workspace {
   @Field()
   @Column({ unique: true })
   subdomain: string;
+
+  @Field({ nullable: true })
+  @Column({ unique: true, nullable: true })
+  hostname?: string;
 
   @Field()
   @Column({ default: true })

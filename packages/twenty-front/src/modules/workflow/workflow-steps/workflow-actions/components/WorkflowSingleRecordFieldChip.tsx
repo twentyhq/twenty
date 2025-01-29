@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import {
@@ -48,7 +48,7 @@ export const WorkflowSingleRecordFieldChip = ({
     isStandaloneVariableString(draftValue.value)
   ) {
     return (
-      <VariableChip
+      <VariableChipStandalone
         rawVariableName={objectMetadataItem.labelSingular}
         onRemove={onRemove}
       />

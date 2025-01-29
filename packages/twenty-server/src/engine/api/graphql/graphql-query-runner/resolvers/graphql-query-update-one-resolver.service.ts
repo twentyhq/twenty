@@ -14,7 +14,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -81,10 +80,8 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
 
     const updatedRecord = formattedUpdatedRecords[0];
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: [updatedRecord],
@@ -95,8 +92,16 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       });
     }
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: updatedRecord,

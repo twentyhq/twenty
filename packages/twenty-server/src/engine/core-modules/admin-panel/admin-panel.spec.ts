@@ -8,7 +8,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -49,7 +49,7 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: getRepositoryToken(FeatureFlagEntity, 'core'),
+          provide: getRepositoryToken(FeatureFlag, 'core'),
           useValue: {
             update: FeatureFlagUpdateMock,
             save: FeatureFlagSaveMock,
