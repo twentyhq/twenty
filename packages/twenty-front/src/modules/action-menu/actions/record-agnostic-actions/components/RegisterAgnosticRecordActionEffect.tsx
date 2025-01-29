@@ -7,7 +7,7 @@ import { useContext, useEffect } from 'react';
 
 type RegisterAgnosticRecordActionEffectProps = {
   action: ActionMenuEntry & {
-    actionHook: ActionHookWithoutObjectMetadataItem;
+    useAction: ActionHookWithoutObjectMetadataItem;
   };
 };
 
@@ -15,7 +15,7 @@ export const RegisterAgnosticRecordActionEffect = ({
   action,
 }: RegisterAgnosticRecordActionEffectProps) => {
   const { shouldBeRegistered, onClick, ConfirmationModal } =
-    action.actionHook();
+    action.useAction();
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);

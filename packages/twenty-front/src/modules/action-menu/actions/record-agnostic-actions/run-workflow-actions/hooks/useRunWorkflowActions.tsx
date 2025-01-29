@@ -1,6 +1,6 @@
 import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
+    ActionMenuEntryScope,
+    ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
@@ -40,7 +40,7 @@ export const useRunWorkflowActions = () => {
         label: name,
         position: index,
         Icon: IconSettingsAutomation,
-        actionHook: () => {
+        useAction: () => {
           return {
             shouldBeRegistered: true,
             onClick: async () => {

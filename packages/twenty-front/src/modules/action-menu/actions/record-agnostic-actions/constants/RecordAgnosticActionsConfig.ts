@@ -3,16 +3,16 @@ import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-  ActionMenuEntry,
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
+    ActionMenuEntry,
+    ActionMenuEntryScope,
+    ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { IconSearch } from 'twenty-ui';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: ActionHookWithoutObjectMetadataItem;
+    useAction: ActionHookWithoutObjectMetadataItem;
   }
 > = {
   searchRecords: {
@@ -25,7 +25,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    actionHook: useSearchRecordsRecordAgnosticAction,
+    useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
   },
 };
