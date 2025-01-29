@@ -12,7 +12,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { isDefined, useIsMobile } from 'twenty-ui';
+import { MOBILE_VIEWPORT, isDefined } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -31,19 +31,23 @@ const StyledList = styled.div`
   transition-property: height;
 `;
 
-const StyledInnerList = styled.div<{ isMobile: boolean }>`
-  max-height: ${({ isMobile }) =>
-    isMobile
-      ? `calc(100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px - ${
-          COMMAND_MENU_SEARCH_BAR_PADDING * 2
-        }px - ${MOBILE_NAVIGATION_BAR_HEIGHT}px)`
-      : `calc(100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px - ${
-          COMMAND_MENU_SEARCH_BAR_PADDING * 2
-        }px)`};
+const StyledInnerList = styled.div`
+  max-height: calc(
+    100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
+      ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px
+  );
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    max-height: calc(
+      100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
+        ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px -
+        ${MOBILE_NAVIGATION_BAR_HEIGHT}px
+    );
+  }
 `;
 
 const StyledEmpty = styled.div`
@@ -63,8 +67,6 @@ export const CommandMenuList = ({
   loading = false,
   noResults = false,
 }: CommandMenuListProps) => {
-  const isMobile = useIsMobile();
-
   const { onItemClick } = useCommandMenuOnItemClick();
 
   const commands = commandGroups.flatMap((group) => group.items ?? []);
@@ -82,7 +84,7 @@ export const CommandMenuList = ({
           contextProviderName="commandMenu"
           componentInstanceId={`scroll-wrapper-command-menu`}
         >
-          <StyledInnerList isMobile={isMobile}>
+          <StyledInnerList>
             <SelectableList
               selectableListId="command-menu-list"
               hotkeyScope={AppHotkeyScope.CommandMenuOpen}
