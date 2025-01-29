@@ -24,7 +24,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     position: 0,
     isPinned: false,
     Icon: IconSearch,
-    availableOn: [ActionViewType.ALL],
+    availableOn: [ActionViewType.GLOBAL],
     actionHook: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
   },
