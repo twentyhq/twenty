@@ -4,7 +4,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
-export const cleanObjectMetadata = (
+export const removeFieldMapsFromObjectMetadata = (
   objectMetadata: ObjectMetadataItemWithFieldMaps,
 ): ObjectMetadataInterface =>
   omit(objectMetadata, ['fieldsById', 'fieldsByName']);

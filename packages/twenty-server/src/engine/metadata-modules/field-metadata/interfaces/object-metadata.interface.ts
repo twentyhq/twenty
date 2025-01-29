@@ -6,6 +6,7 @@ import { RelationMetadataInterface } from './relation-metadata.interface';
 export interface ObjectMetadataInterface {
   id: string;
   standardId?: string | null;
+  workspaceId: string;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;

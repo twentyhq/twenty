@@ -8,19 +8,15 @@ import {
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import {
-  RelationDirection,
-  deduceRelationDirection,
-} from 'src/engine/utils/deduce-relation-direction.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
 
 import { ArgsFactory } from './args.factory';
-import { RelationTypeFactory } from './relation-type.factory';
 
 export enum ObjectTypeDefinitionKind {
   Connection = 'Connection',
@@ -35,11 +31,13 @@ export interface ObjectTypeDefinition {
 }
 
 @Injectable()
-export class ExtendObjectTypeDefinitionFactory {
-  private readonly logger = new Logger(ExtendObjectTypeDefinitionFactory.name);
+export class ExtendObjectTypeDefinitionV2Factory {
+  private readonly logger = new Logger(
+    ExtendObjectTypeDefinitionV2Factory.name,
+  );
 
   constructor(
-    private readonly relationTypeFactory: RelationTypeFactory,
+    private readonly relationTypeV2Factory: RelationTypeV2Factory,
     private readonly argsFactory: ArgsFactory,
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
   ) {}
@@ -108,47 +106,33 @@ export class ExtendObjectTypeDefinitionFactory {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Ignore relation fields as they are already defined
-      if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+      // Ignore non-relation fields as they are already defined
+      if (!isRelationFieldMetadata(fieldMetadata)) {
         continue;
       }
 
-      const relationMetadata =
-        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
-
-      if (!relationMetadata) {
-        this.logger.error(
-          `Could not find a relation metadata for ${fieldMetadata.id}`,
-          { fieldMetadata },
-        );
-
+      if (!fieldMetadata.settings) {
         throw new Error(
-          `Could not find a relation metadata for ${fieldMetadata.id}`,
+          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no settings`,
         );
       }
 
-      const relationDirection = deduceRelationDirection(
-        fieldMetadata,
-        relationMetadata,
-      );
-      const relationType = this.relationTypeFactory.create(
-        fieldMetadata,
-        relationMetadata,
-        relationDirection,
-      );
+      if (!fieldMetadata.relationTargetObjectMetadataId) {
+        throw new Error(
+          `Field Metadata of type RELATION with id ${fieldMetadata.id} has no relation target object metadata id`,
+        );
+      }
+
+      const relationType = this.relationTypeV2Factory.create(fieldMetadata);
       let argsType: GraphQLFieldConfigArgumentMap | undefined = undefined;
 
-      // Args are only needed when relation is of kind `oneToMany` and the relation direction is `from`
-      if (
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_MANY &&
-        relationDirection === RelationDirection.FROM
-      ) {
+      if (fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY) {
         const args = getResolverArgs('findMany');
 
         argsType = this.argsFactory.create(
           {
             args,
-            objectMetadataId: relationMetadata.toObjectMetadataId,
+            objectMetadataId: fieldMetadata.relationTargetObjectMetadataId,
           },
           options,
         );
