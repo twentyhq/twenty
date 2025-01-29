@@ -13,14 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/emails/clean-inactive-workspaces.email.tsx:34
-msgid "{daysLeft, plural, one {day left} other {days left}}"
-msgstr "{daysLeft, plural, one {um dia restante} other {dias restantes}}"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:50
-msgid "{daysLeft, plural, one {No need for concern, though! Simply create or edit a record within the next {remainingDays} day to retain access.} other {No need for concern, though! Simply create or edit a record within the next {remainingDays} days to retain access.}}"
-msgstr "{daysLeft, plural, one {Não se preocupe! Basta criar ou editar um registro dentro dos próximos {remainingDays} dia para manter o acesso.} other {Não se preocupe! Basta criar ou editar um registro dentro dos próximos {remainingDays} dias para manter o acesso.}}"
-
 #: src/emails/send-invite-link.email.tsx:60
 msgid "Accept invite"
 msgstr "Aceitar convite"
@@ -30,13 +22,8 @@ msgid "Confirm your email address"
 msgstr "Confirme seu endereço de e-mail"
 
 #: src/emails/password-update-notify.email.tsx:46
-#: src/emails/clean-inactive-workspaces.email.tsx:58
 msgid "Connect to Twenty"
 msgstr "Conectar ao Twenty"
-
-#: src/emails/delete-inactive-workspaces.email.tsx:31
-msgid "Dead Workspaces 😵 that should be deleted"
-msgstr "Espaços de trabalho inativos 😵 que devem ser deletados"
 
 #: src/emails/password-update-notify.email.tsx:26
 msgid "Dear"
@@ -50,29 +37,9 @@ msgstr "Caro {userName}"
 msgid "has invited you to join a workspace called "
 msgstr "te convidou para entrar em um espaço de trabalho chamado "
 
-#: src/emails/clean-inactive-workspaces.email.tsx:28
-msgid "Hello"
-msgstr "Olá"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:28
-msgid "Hello {userName}"
-msgstr "Olá {userName}"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:32
-msgid "Inactive Workspace 😴"
-msgstr "Espaço de Trabalho Inativo 😴"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:40
-msgid "It appears that there has been a period of inactivity on your<0>{workspaceDisplayName}</0> workspace.<1/><2/>Please note that the account is due for deactivation soon, and all associated data within this workspace will be deleted.<3/><4/>"
-msgstr "Parece que houve um período de inatividade no seu espaço de trabalho <0>{workspaceDisplayName}</0>.<1/><2/>Por favor, note que a conta será desativada em breve, e todos os dados associados a este espaço de trabalho serão deletados.<3/><4/>"
-
 #: src/emails/send-invite-link.email.tsx:45
 msgid "Join your team on Twenty"
 msgstr "Junte-se à sua equipe no Twenty"
-
-#: src/emails/delete-inactive-workspaces.email.tsx:33
-msgid "List of <0>workspaceIds</0> inactive since at least <1>{minDaysSinceInactive} days</1>:"
-msgstr "Lista de <0>workspaceIds</0> inativos há pelo menos <1>{minDaysSinceInactive} dias</1>:"
 
 #: src/emails/password-update-notify.email.tsx:31
 msgid "Password updated"
@@ -93,7 +60,6 @@ msgstr "Obrigado por se registrar em uma conta no Twenty! Antes de começarmos, 
 #: src/emails/password-update-notify.email.tsx:36
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Esta é uma confirmação de que a senha da sua conta ({email}) foi alterada com sucesso em {formattedDate}.<0/><1/>Se você não iniciou essa alteração, entre em contato com o proprietário do seu espaço de trabalho imediatamente."
-
 
 #: src/emails/password-reset-link.email.tsx:28
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"

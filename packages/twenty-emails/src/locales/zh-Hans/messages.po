@@ -13,14 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/emails/clean-inactive-workspaces.email.tsx:34
-msgid "{daysLeft, plural, one {day left} other {days left}}"
-msgstr "{daysLeft}天剩余"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:50
-msgid "{daysLeft, plural, one {No need for concern, though! Simply create or edit a record within the next {remainingDays} day to retain access.} other {No need for concern, though! Simply create or edit a record within the next {remainingDays} days to retain access.}}"
-msgstr "不过不用担心！只需在接下来的{remainingDays}天内创建或编辑记录以保留访问权限。"
-
 #: src/emails/send-invite-link.email.tsx:60
 msgid "Accept invite"
 msgstr "接受邀请"
@@ -30,13 +22,8 @@ msgid "Confirm your email address"
 msgstr "确认您的电子邮件地址"
 
 #: src/emails/password-update-notify.email.tsx:46
-#: src/emails/clean-inactive-workspaces.email.tsx:58
 msgid "Connect to Twenty"
-msgstr "连接到二十"
-
-#: src/emails/delete-inactive-workspaces.email.tsx:31
-msgid "Dead Workspaces 😵 that should be deleted"
-msgstr "应该删除的死工作区 😵"
+msgstr "连接到 Twenty"
 
 #: src/emails/password-update-notify.email.tsx:26
 msgid "Dear"
@@ -50,29 +37,9 @@ msgstr "亲爱的 {userName}"
 msgid "has invited you to join a workspace called "
 msgstr "邀请您加入名为"
 
-#: src/emails/clean-inactive-workspaces.email.tsx:28
-msgid "Hello"
-msgstr "你好"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:28
-msgid "Hello {userName}"
-msgstr "你好 {userName}"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:32
-msgid "Inactive Workspace 😴"
-msgstr "不活跃的工作区 😴"
-
-#: src/emails/clean-inactive-workspaces.email.tsx:40
-msgid "It appears that there has been a period of inactivity on your<0>{workspaceDisplayName}</0> workspace.<1/><2/>Please note that the account is due for deactivation soon, and all associated data within this workspace will be deleted.<3/><4/>"
-msgstr "看起来您的<0>{workspaceDisplayName}</0>工作区已有一段时间未活动。<1/><2/>请注意，该账户将很快被停用，并且与此工作区相关的所有数据将被删除。<3/><4/>"
-
 #: src/emails/send-invite-link.email.tsx:45
 msgid "Join your team on Twenty"
 msgstr "加入您的团队，使用Twenty"
-
-#: src/emails/delete-inactive-workspaces.email.tsx:33
-msgid "List of <0>workspaceIds</0> inactive since at least <1>{minDaysSinceInactive} days</1>:"
-msgstr "以下是至少有<1>{minDaysSinceInactive}天</1>未活动的<0>workspaceIds</0>工作区列表："
 
 #: src/emails/password-update-notify.email.tsx:31
 msgid "Password updated"
@@ -88,12 +55,11 @@ msgstr "重置您的密码 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:29
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "感谢您在Twenty注册帐户！在开始之前，我们只需要确认是您本人。请点击上方进行电子邮件地址验证。"
+msgstr "感谢您在 Twenty 注册帐户！在开始之前，我们只需要确认是您本人。请点击上方验证您的电子邮件地址。"
 
 #: src/emails/password-update-notify.email.tsx:36
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "这是对您的帐户（{email}）密码已于{formattedDate}成功更改的确认。<0/><1/>如果您没有发起此更改，请立即联系您的工作区所有者。"
-
 
 #: src/emails/password-reset-link.email.tsx:28
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
