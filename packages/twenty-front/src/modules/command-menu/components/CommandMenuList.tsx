@@ -4,6 +4,7 @@ import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/Com
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -87,7 +88,7 @@ export const CommandMenuList = ({
               hotkeyScope={AppHotkeyScope.CommandMenuOpen}
               selectableItemIdArray={selectableItemIds}
               onEnter={(itemId) => {
-                if (itemId === 'reset-context-to-selection') {
+                if (itemId === RESET_CONTEXT_TO_SELECTION) {
                   resetPreviousCommandMenuContext();
                   return;
                 }

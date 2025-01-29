@@ -1,6 +1,7 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
+import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
@@ -54,7 +55,7 @@ export const CommandMenu = () => {
   const selectableItemIds = selectableItems.map((item) => item.id);
 
   if (isNonEmptyString(previousContextStoreCurrentObjectMetadataId)) {
-    selectableItemIds.unshift('reset-context-to-selection');
+    selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
   }
 
   const commandGroups: CommandGroupConfig[] = [
@@ -88,7 +89,7 @@ export const CommandMenu = () => {
     >
       {isNonEmptyString(previousContextStoreCurrentObjectMetadataId) && (
         <CommandGroup heading={t`Context`}>
-          <SelectableItem itemId="reset-context-to-selection">
+          <SelectableItem itemId={RESET_CONTEXT_TO_SELECTION}>
             <ResetContextToSelectionCommandButton />
           </SelectableItem>
         </CommandGroup>
