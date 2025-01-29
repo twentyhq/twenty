@@ -95,7 +95,7 @@ export const useDeleteManyRecords = ({
               record: cachedRecord,
               objectMetadataItem,
               objectMetadataItems,
-              computeReferences: true,
+              computeReferences: false,
             });
 
           const computedOptimisticRecord = {
@@ -109,7 +109,7 @@ export const useDeleteManyRecords = ({
               record: computedOptimisticRecord,
               objectMetadataItem,
               objectMetadataItems,
-              computeReferences: true,
+              computeReferences: false,
             });
 
           if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
