@@ -36,7 +36,6 @@ const StyledButton = styled('button')`
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
@@ -110,6 +109,7 @@ export const EditableBreadcrumbItem = ({
       onChange={setValue}
       placeholder={placeholder}
       onFocus={handleFocus}
+      disableBoxShadow
       autoFocus
     />
   ) : (
