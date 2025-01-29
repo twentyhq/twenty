@@ -158,6 +158,10 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hostname
+        workspaceEndpoints {
+          twentyEndpoint
+          customEndpoint
+        }
         hasValidEntrepriseKey
         featureFlags {
           id
@@ -183,6 +187,11 @@ export const queries = {
           logo
           displayName
           subdomain
+          hostname
+          workspaceEndpoints {
+            twentyEndpoint
+            customEndpoint
+          }
         }
       }
       userVars
@@ -309,6 +318,10 @@ export const responseData = {
         isPasswordAuthEnabled: true,
         subdomain: 'test',
         hostname: null,
+        workspaceEndpoints: {
+          customEndpoint: undefined,
+          twentyEndpoint: 'https://test.twenty.com/',
+        },
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,
