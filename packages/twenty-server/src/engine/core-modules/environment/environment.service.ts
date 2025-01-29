@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import {
+  ENV_VAR_NAMES_KEY,
   EnvironmentVariablesMetadataOptions,
   METADATA_KEY,
 } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
@@ -26,7 +27,6 @@ export class EnvironmentService {
       metadata: EnvironmentVariablesMetadataOptions;
     }
   > {
-    const envVars = new EnvironmentVariables();
     const result: Record<
       string,
       {
@@ -35,9 +35,12 @@ export class EnvironmentService {
       }
     > = {};
 
-    const properties = Object.getOwnPropertyNames(envVars);
+    const envVars = new EnvironmentVariables();
 
-    properties.forEach((key) => {
+    const allEnvVarNames =
+      Reflect.getMetadata(ENV_VAR_NAMES_KEY, EnvironmentVariables) || [];
+
+    allEnvVarNames.forEach((key: string) => {
       const metadata = Reflect.getMetadata(
         METADATA_KEY,
         EnvironmentVariables.prototype,
@@ -45,8 +48,13 @@ export class EnvironmentService {
       );
 
       if (metadata) {
+        const value =
+          this.configService.get(key) ??
+          envVars[key as keyof EnvironmentVariables] ??
+          '';
+
         result[key] = {
-          value: this.get(key as keyof EnvironmentVariables),
+          value,
           metadata,
         };
       }
