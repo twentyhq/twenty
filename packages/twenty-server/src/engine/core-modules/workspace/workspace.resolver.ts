@@ -145,11 +145,9 @@ export class WorkspaceResolver {
       workspace.id,
     );
 
-    const filteredFeatureFlags = featureFlags.filter((flag) =>
+    return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
-
-    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)
@@ -217,21 +215,20 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
-  @ResolveField(() => String)
-  workspaceUrl(@Parent() workspace: Workspace) {
-    return this.domainManagerService.getWorkspaceUrlByWorkspace(workspace);
-  }
-
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getHostnameDetails(@AuthWorkspace() { hostname }: Workspace) {
-    if (!hostname) return null;
+  async getHostnameDetails(
+    @AuthWorkspace() { hostname }: Workspace,
+  ): Promise<CustomHostnameDetails | undefined> {
+    if (!hostname) return undefined;
 
-    return this.domainManagerService.getCustomHostnameDetails(hostname);
+    return await this.domainManagerService.getCustomHostnameDetails(hostname);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataByDomain(@OriginHeader() origin: string) {
+  async getPublicWorkspaceDataByDomain(
+    @OriginHeader() origin: string,
+  ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -266,8 +263,8 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrl:
-          this.domainManagerService.getWorkspaceUrlByWorkspace(workspace),
+        subdomain: workspace.subdomain,
+        hostname: workspace.hostname,
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

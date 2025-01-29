@@ -1,41 +1,58 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { createUnionType, Field, ObjectType } from '@nestjs/graphql';
 
-import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname.type';
-
-// Type come from: https://developers.cloudflare.com/api/node/resources/custom_hostnames/methods/list/#(merged%20schema)%20%3E%20(property)%20result%20%3E%20(items)%20%3E%20(property)%20ownership_verification
 @ObjectType()
-class OwnershipVerification {
-  @Field(() => String, { nullable: true })
-  name?: string;
+class CustomHostnameOwnershipVerificationTxt {
+  @Field(() => String)
+  type: 'txt';
 
-  @Field(() => String, { nullable: true })
-  type?: 'txt';
+  @Field(() => String)
+  name: string;
 
-  @Field(() => String, { nullable: true })
-  value?: string;
+  @Field(() => String)
+  value: string;
 }
 
-// Type come from: https://developers.cloudflare.com/api/node/resources/custom_hostnames/methods/list/#(merged%20schema)%20%3E%20(property)%20result%20%3E%20(items)%20%3E%20(property)%20ownership_verification_http
 @ObjectType()
-class OwnershipVerificationHttp {
-  @Field(() => String, { nullable: true })
-  http_body?: string;
+class CustomHostnameOwnershipVerificationHttp {
+  @Field()
+  type: 'http';
 
-  @Field(() => String, { nullable: true })
-  http_url?: string;
+  @Field(() => String)
+  body: string;
+
+  @Field(() => String)
+  url: string;
 }
 
-// Type come from: https://developers.cloudflare.com/api/node/resources/custom_hostnames/methods/list/#(merged%20schema)%20%3E%20(property)%20result%20%3E%20(items)
+const CustomHostnameOwnershipVerification = createUnionType({
+  name: 'OwnershipVerification',
+  types: () =>
+    [
+      CustomHostnameOwnershipVerificationTxt,
+      CustomHostnameOwnershipVerificationHttp,
+    ] as const,
+  resolveType(value) {
+    if ('type' in value && value.type === 'txt') {
+      return CustomHostnameOwnershipVerificationTxt;
+    }
+    if ('type' in value && value.type === 'http') {
+      return CustomHostnameOwnershipVerificationHttp;
+    }
+
+    return null;
+  },
+});
+
 @ObjectType()
-export class CustomHostnameDetails implements Omit<CustomHostname, 'id'> {
+export class CustomHostnameDetails {
+  @Field(() => String)
+  id: string;
+
   @Field(() => String)
   hostname: string;
 
-  @Field(() => OwnershipVerification, { nullable: true })
-  ownership_verification?: OwnershipVerification;
-
-  @Field(() => OwnershipVerificationHttp, { nullable: true })
-  ownership_verification_http?: OwnershipVerificationHttp;
+  @Field(() => [CustomHostnameOwnershipVerification])
+  ownershipVerifications: Array<typeof CustomHostnameOwnershipVerification>;
 
   @Field(() => String, { nullable: true })
   status?:

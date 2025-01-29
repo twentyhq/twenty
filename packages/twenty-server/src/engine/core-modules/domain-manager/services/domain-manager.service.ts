@@ -8,7 +8,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isDefined } from 'src/utils/is-defined';
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
-import { CustomHostname } from 'src/engine/core-modules/domain-manager/types/custom-hostname.type';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
@@ -16,6 +15,7 @@ import {
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
+import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 
 @Injectable()
 export class DomainManagerService {
@@ -250,14 +250,6 @@ export class DomainManagerService {
     return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
   }
 
-  private async getCustomHostname(
-    params: { hostnameName: string } | { hostname: CustomHostname },
-  ) {
-    return 'hostname' in params
-      ? params.hostname
-      : await this.getCustomHostnameDetails(params.hostnameName);
-  }
-
   async registerCustomHostname(hostname: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
@@ -289,7 +281,7 @@ export class DomainManagerService {
 
   async getCustomHostnameDetails(
     hostname: string,
-  ): Promise<CustomHostname | undefined> {
+  ): Promise<CustomHostnameDetails | undefined> {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
@@ -302,23 +294,62 @@ export class DomainManagerService {
     }
 
     if (response.result.length === 1) {
-      return response.result[0];
+      return {
+        id: response.result[0].id,
+        hostname: response.result[0].hostname,
+        status: response.result[0].status,
+        ownershipVerifications: [
+          response.result[0].ownership_verification,
+          response.result[0].ownership_verification_http,
+        ].reduce(
+          (acc, ownershipVerification) => {
+            if (!ownershipVerification) return acc;
+
+            if (
+              'http_body' in ownershipVerification &&
+              'http_url' in ownershipVerification &&
+              ownershipVerification.http_body &&
+              ownershipVerification.http_url
+            ) {
+              acc.push({
+                type: 'http',
+                body: ownershipVerification.http_body,
+                url: ownershipVerification.http_url,
+              });
+            }
+
+            if (
+              'type' in ownershipVerification &&
+              ownershipVerification.type === 'txt' &&
+              ownershipVerification.value &&
+              ownershipVerification.name
+            ) {
+              acc.push({
+                type: 'txt',
+                value: ownershipVerification.value,
+                name: ownershipVerification.name,
+              });
+            }
+
+            return acc;
+          },
+          [] as CustomHostnameDetails['ownershipVerifications'],
+        ),
+      };
     }
 
     // should never append. error 5xx
     throw new Error('More than one custom hostname found in cloudflare');
   }
 
-  async updateCustomHostname(
-    fromHostname: { hostnameName: string } | { hostname: CustomHostname },
-    toHostname: string,
-  ) {
+  async updateCustomHostname(fromHostname: string, toHostname: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    const fromCustomHostname = await this.getCustomHostname(fromHostname);
+    const fromCustomHostname =
+      await this.getCustomHostnameDetails(fromHostname);
 
     if (fromCustomHostname) {
-      await this.deleteCustomHostname(fromCustomHostname);
+      await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
     return this.registerCustomHostname(toHostname);
@@ -340,10 +371,10 @@ export class DomainManagerService {
     }
   }
 
-  async deleteCustomHostname(customHostname: CustomHostname) {
+  async deleteCustomHostname(customHostnameId: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    return this.cloudflareClient.customHostnames.delete(customHostname.id, {
+    return this.cloudflareClient.customHostnames.delete(customHostnameId, {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
     });
   }
