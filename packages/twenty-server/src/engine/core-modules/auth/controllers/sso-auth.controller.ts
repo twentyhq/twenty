@@ -132,7 +132,7 @@ export class SSOAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: identityProvider.workspace.subdomain,
+          workspace: identityProvider.workspace,
         }),
       );
     } catch (err) {

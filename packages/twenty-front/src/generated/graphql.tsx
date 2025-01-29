@@ -2290,7 +2290,7 @@ export type ActivateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: any, subdomain: string } };
+export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: any } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2321,7 +2321,7 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subdomain: string } };
+export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
     fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
@@ -4505,7 +4505,6 @@ export const ActivateWorkspaceDocument = gql`
     mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
   activateWorkspace(data: $input) {
     id
-    subdomain
   }
 }
     `;
@@ -4694,7 +4693,6 @@ export const GetWorkspaceFromInviteHashDocument = gql`
     displayName
     logo
     allowImpersonation
-    subdomain
   }
 }
     `;

@@ -74,33 +74,33 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    subdomain,
+    workspace,
   }: {
     emailVerificationToken: string;
     email: string;
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
   }) {
     return this.buildWorkspaceURL({
-      subdomain,
+      workspace,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
   }
 
   buildWorkspaceURL({
-    subdomain,
+    workspace,
     pathname,
     searchParams,
   }: {
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getFrontUrl();
+    const workspaceEndpoints = this.getWorkspaceEndpoints(workspace);
 
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      url.hostname = `${subdomain}.${url.hostname}`;
-    }
+    const url = new URL(
+      workspaceEndpoints.customEndpoint ?? workspaceEndpoints.twentyEndpoint,
+    );
 
     if (pathname) {
       url.pathname = pathname;
@@ -162,9 +162,12 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl(errorMessage: string, subdomain: string) {
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+  ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain,
+      workspace,
       pathname: '/verify',
       searchParams: { errorMessage },
     });

@@ -52,13 +52,13 @@ export class GuardRedirectService {
 
   getRedirectErrorUrlAndCaptureExceptions(
     err: Error | CustomException,
-    workspace: { id?: string; subdomain: string },
+    workspace: { id?: string; subdomain: string; hostname?: string },
   ) {
     this.captureException(err, workspace.id);
 
     return this.domainManagerService.computeRedirectErrorUrl(
       err instanceof AuthException ? err.message : 'Unknown error',
-      workspace.subdomain,
+      workspace,
     );
   }
 }

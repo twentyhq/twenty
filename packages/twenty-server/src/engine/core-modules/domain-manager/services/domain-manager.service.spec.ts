@@ -9,7 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
-  describe('getWorkspaceUrlByWorkspace', () => {
+  describe('getWorkspaceEndpoints', () => {
     it('should return a URL containing the correct hostname if hostname is provided', () => {
       jest
         .spyOn(environmentService, 'get')
@@ -22,12 +22,15 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getWorkspaceUrlByWorkspace({
+      const result = domainManagerService.getWorkspaceEndpoints({
         subdomain: 'subdomain',
         hostname: 'custom-host.com',
       });
 
-      expect(result).toBe('https://custom-host.com/');
+      expect(result).toEqual({
+        customEndpoint: 'https://custom-host.com/',
+        twentyEndpoint: 'https://subdomain.example.com/',
+      });
     });
 
     it('should return a URL containing the correct subdomain if hostname is not provided but subdomain is', () => {
@@ -42,12 +45,15 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getWorkspaceUrlByWorkspace({
-        subdomain: 'workspace',
+      const result = domainManagerService.getWorkspaceEndpoints({
+        subdomain: 'subdomain',
         hostname: undefined,
       });
 
-      expect(result).toBe('https://workspace.example.com/');
+      expect(result).toEqual({
+        customEndpoint: undefined,
+        twentyEndpoint: 'https://subdomain.example.com/',
+      });
     });
   });
   let domainManagerService: DomainManagerService;
@@ -147,7 +153,10 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'test',
+        workspace: {
+          subdomain: 'test',
+          hostname: undefined,
+        },
       });
 
       expect(result.toString()).toBe('https://test.example.com/');
@@ -166,7 +175,10 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'subdomain',
+        workspace: {
+          subdomain: 'test',
+          hostname: undefined,
+        },
         pathname: '/path/to/resource',
       });
 
@@ -186,8 +198,10 @@ describe('DomainManagerService', () => {
         });
 
       const result = domainManagerService.buildWorkspaceURL({
-        subdomain: 'subdomain',
-
+        workspace: {
+          subdomain: 'test',
+          hostname: undefined,
+        },
         searchParams: {
           foo: 'bar',
           baz: 123,

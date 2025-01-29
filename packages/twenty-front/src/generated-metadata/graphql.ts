@@ -112,7 +112,7 @@ export type AvailableWorkspaceOutput = {
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  workspaceUrl: Scalars['String']['output'];
+  workspaceEndpoints: WorkspaceEndpoints;
 };
 
 export type Billing = {
@@ -378,9 +378,23 @@ export type CursorPaging = {
 export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String']['output'];
-  ownership_verification?: Maybe<OwnershipVerification>;
-  ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
+  id: Scalars['String']['output'];
+  ownershipVerifications: Array<OwnershipVerification>;
   status?: Maybe<Scalars['String']['output']>;
+};
+
+export type CustomHostnameOwnershipVerificationHttp = {
+  __typename?: 'CustomHostnameOwnershipVerificationHttp';
+  body: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type CustomHostnameOwnershipVerificationTxt = {
+  __typename?: 'CustomHostnameOwnershipVerificationTxt';
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type DeleteOneFieldInput = {
@@ -615,7 +629,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceUrlAndId;
+  workspace: WorkspaceEndpointsAndId;
 };
 
 export type Index = {
@@ -1217,18 +1231,7 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
-export type OwnershipVerification = {
-  __typename?: 'OwnershipVerification';
-  name?: Maybe<Scalars['String']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['String']['output']>;
-};
-
-export type OwnershipVerificationHttp = {
-  __typename?: 'OwnershipVerificationHttp';
-  http_body?: Maybe<Scalars['String']['output']>;
-  http_url?: Maybe<Scalars['String']['output']>;
-};
+export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -1269,7 +1272,7 @@ export type PublicWorkspaceDataOutput = {
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  workspaceUrl: Scalars['String']['output'];
+  workspaceEndpoints: WorkspaceEndpoints;
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1684,7 +1687,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceUrlAndId;
+  workspace: WorkspaceEndpointsAndId;
 };
 
 export enum SubscriptionInterval {
@@ -1887,7 +1890,7 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
-  currentWorkspace?: Maybe<Workspace>;
+  currentWorkspace: Workspace;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -2018,8 +2021,8 @@ export type Workspace = {
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  workspaceEndpoints: WorkspaceEndpoints;
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
-  workspaceUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2036,6 +2039,18 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
+};
+
+export type WorkspaceEndpoints = {
+  __typename?: 'WorkspaceEndpoints';
+  customEndpoint?: Maybe<Scalars['String']['output']>;
+  twentyEndpoint: Scalars['String']['output'];
+};
+
+export type WorkspaceEndpointsAndId = {
+  __typename?: 'WorkspaceEndpointsAndId';
+  id: Scalars['String']['output'];
+  workspaceEndpoints: WorkspaceEndpoints;
 };
 
 export type WorkspaceInfo = {
@@ -2092,12 +2107,6 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-};
-
-export type WorkspaceUrlAndId = {
-  __typename?: 'WorkspaceUrlAndId';
-  id: Scalars['String']['output'];
-  workspaceUrl: Scalars['String']['output'];
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

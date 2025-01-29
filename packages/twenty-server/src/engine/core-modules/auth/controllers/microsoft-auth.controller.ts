@@ -112,8 +112,7 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
-
+          workspace,
           billingCheckoutSessionState,
         }),
       );
