@@ -2,7 +2,6 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { Command } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -179,27 +178,22 @@ export const useSearchRecords = () => {
   }, [matchesSearchFilterObjectRecords]);
 
   const customObjectCommands = useMemo(() => {
-    const customObjectCommandsArray: Command[] = [];
-    Object.values(customObjectRecordsMap).forEach((objectRecords) => {
-      customObjectCommandsArray.push(
-        ...objectRecords.map((objectRecord) => ({
-          id: objectRecord.record.id,
-          label: objectRecord.recordIdentifier.name,
-          to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
-          shouldCloseCommandMenuOnClick: true,
-          Icon: () => (
-            <Avatar
-              type="rounded"
-              avatarUrl={objectRecord.record.avatarUrl}
-              placeholderColorSeed={objectRecord.record.id}
-              placeholder={objectRecord.recordIdentifier.name ?? ''}
-            />
-          ),
-        })),
-      );
-    });
-
-    return customObjectCommandsArray;
+    return Object.values(customObjectRecordsMap).flatMap((objectRecords) =>
+      objectRecords.map((objectRecord) => ({
+        id: objectRecord.record.id,
+        label: objectRecord.recordIdentifier.name,
+        to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
+        shouldCloseCommandMenuOnClick: true,
+        Icon: () => (
+          <Avatar
+            type="rounded"
+            avatarUrl={objectRecord.record.avatarUrl}
+            placeholderColorSeed={objectRecord.record.id}
+            placeholder={objectRecord.recordIdentifier.name ?? ''}
+          />
+        ),
+      })),
+    );
   }, [customObjectRecordsMap]);
 
   const commands = [
