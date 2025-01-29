@@ -9,7 +9,6 @@ import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreate
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
@@ -19,6 +18,10 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
+
+type PartialObjectRecordWithId = Partial<ObjectRecord> & {
+  id: string;
+};
 
 type useCreateManyRecordsProps = {
   objectNameSingular: string;
@@ -63,65 +66,38 @@ export const useCreateManyRecords = <
     recordsToCreate: Partial<CreatedObjectRecord>[],
     upsert?: boolean,
   ) => {
-    const { sanitizedCreateManyRecordsInput, recordOptimisticRecordsInput } =
-      recordsToCreate.reduce<
-        Record<
-          'sanitizedCreateManyRecordsInput' | 'recordOptimisticRecordsInput',
-          Partial<ObjectRecord>[]
-        >
-      >(
-        (acc, recordToCreate) => {
-          const idForCreation =
-            recordToCreate?.id ?? (upsert ? undefined : v4());
+    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithId[] = [];
+    const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
+    recordsToCreate.forEach((recordToCreate) => {
+      const idForCreation = recordToCreate?.id ?? v4();
+      const sanitizedRecord = {
+        ...sanitizeRecordInput({
+          objectMetadataItem,
+          recordInput: recordToCreate,
+        }),
+        id: idForCreation,
+      };
+      const optimisticRecordInput = {
+        ...computeOptimisticRecordFromInput({
+          cache: apolloClient.cache,
+          objectMetadataItem,
+          objectMetadataItems,
+          recordInput: recordToCreate,
+        }),
+        id: idForCreation,
+      };
 
-          const sanitizedRecord = {
-            ...sanitizeRecordInput({
-              objectMetadataItem,
-              recordInput: recordToCreate,
-            }),
-            id: idForCreation,
-          };
-
-          const optimisticRecordInput = {
-            ...computeOptimisticRecordFromInput({
-              cache: apolloClient.cache,
-              objectMetadataItem,
-              objectMetadataItems,
-              recordInput: recordToCreate,
-            }),
-            id: idForCreation,
-          };
-
-          return {
-            sanitizedCreateManyRecordsInput: [
-              ...acc.sanitizedCreateManyRecordsInput,
-              sanitizedRecord,
-            ],
-            recordOptimisticRecordsInput: [
-              ...acc.recordOptimisticRecordsInput,
-              optimisticRecordInput,
-            ],
-          };
-        },
-        {
-          recordOptimisticRecordsInput: [],
-          sanitizedCreateManyRecordsInput: [],
-        },
-      );
+      sanitizedCreateManyRecordsInput.push(sanitizedRecord);
+      recordOptimisticRecordsInput.push(optimisticRecordInput);
+    });
 
     const recordsCreatedInCache = recordOptimisticRecordsInput
-      .map<ObjectRecord | undefined>((recordToCreate) => {
-        if (recordToCreate.id === null) {
-          return undefined;
-        }
-
-        const recordCreatedInCache = createOneRecordInCache({
-          ...(recordToCreate as { id: string }),
+      .map((recordToCreate) =>
+        createOneRecordInCache({
+          ...recordToCreate,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        });
-
-        return recordCreatedInCache;
-      })
+        }),
+      )
       .filter(isDefined);
 
     if (recordsCreatedInCache.length > 0) {
@@ -134,7 +110,7 @@ export const useCreateManyRecords = <
             computeReferences: false,
           }),
         )
-        .filter((el): el is RecordGqlNode => el !== null);
+        .filter(isDefined);
 
       triggerCreateRecordsOptimisticEffect({
         cache: apolloClient.cache,

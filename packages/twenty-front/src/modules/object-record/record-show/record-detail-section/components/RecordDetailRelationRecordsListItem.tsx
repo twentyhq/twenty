@@ -163,7 +163,9 @@ export const RecordDetailRelationRecordsListItem = ({
     updateOneRelationRecord({
       idToUpdate: relationRecord.id,
       updateOneRecordInput: {
-        [getForeignKeyNameFromRelationFieldName(relationFieldMetadataItem.name)]: null,
+        [getForeignKeyNameFromRelationFieldName(
+          relationFieldMetadataItem.name,
+        )]: null,
       },
     });
   };

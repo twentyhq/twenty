@@ -48,7 +48,10 @@ export const computeOptimisticRecordFromInput = ({
           }
 
           const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
-          return getForeignKeyNameFromRelationFieldName(sourceFieldName) === fieldMetadataItem.name;
+          return (
+            getForeignKeyNameFromRelationFieldName(sourceFieldName) ===
+            fieldMetadataItem.name
+          );
         },
       );
 
@@ -94,7 +97,9 @@ export const computeOptimisticRecordFromInput = ({
       );
     }
 
-    const relationFieldIdName = getForeignKeyNameFromRelationFieldName(fieldMetadataItem.name);
+    const relationFieldIdName = getForeignKeyNameFromRelationFieldName(
+      fieldMetadataItem.name,
+    );
     const recordInputFieldIdValue: string | null | undefined =
       recordInput[relationFieldIdName];
 
