@@ -26,8 +26,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'ApiKey name',
+    label: msg`Name`,
+    description: msg`ApiKey name`,
     icon: 'IconLink',
   })
   name: string;
@@ -35,8 +35,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.expiresAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Expiration date',
-    description: 'ApiKey expiration date',
+    label: msg`Expiration date`,
+    description: msg`ApiKey expiration date`,
     icon: 'IconCalendar',
   })
   expiresAt: Date;
@@ -44,8 +44,8 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: API_KEY_STANDARD_FIELD_IDS.revokedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Revocation date',
-    description: 'ApiKey revocation date',
+    label: msg`Revocation date`,
+    description: msg`ApiKey revocation date`,
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()

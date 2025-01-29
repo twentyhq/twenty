@@ -9,6 +9,7 @@ import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
+import { t } from '@lingui/core/macro';
 
 export const AggregateDropdownContent = () => {
   const { currentContentId, objectMetadataItem } = useDropdown({
@@ -54,7 +55,7 @@ export const AggregateDropdownContent = () => {
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={datesAvailableAggregations}
-          title="Dates"
+          title={t`Date`}
         />
       );
     }

@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -32,7 +33,7 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async labelPlural(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context,
+    @Context() context: I18nContext,
   ): Promise<string> {
     return this.objectMetadataService.resolveTranslatableString(
       objectMetadata,
@@ -44,7 +45,7 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async labelSingular(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context,
+    @Context() context: I18nContext,
   ): Promise<string> {
     return this.objectMetadataService.resolveTranslatableString(
       objectMetadata,
@@ -56,7 +57,7 @@ export class ObjectMetadataResolver {
   @ResolveField(() => String, { nullable: true })
   async description(
     @Parent() objectMetadata: ObjectMetadataDTO,
-    @Context() context,
+    @Context() context: I18nContext,
   ): Promise<string> {
     return this.objectMetadataService.resolveTranslatableString(
       objectMetadata,

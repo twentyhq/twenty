@@ -30,8 +30,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Event name',
-    description: 'Event name/type',
+    label: msg`Event name`,
+    description: msg`Event name/type`,
     icon: 'IconAbc',
   })
   name: string;
@@ -39,8 +39,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event details',
-    description: 'Json value for event details',
+    label: msg`Event details`,
+    description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -49,9 +49,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event context',
-    description:
-      'Json object to provide context (user, device, workspace, etc.)',
+    label: msg`Event context`,
+    description: msg`Json object to provide context (user, device, workspace, etc.)`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -60,8 +59,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
-    label: 'Object name',
-    description: 'Object name',
+    label: msg`Object name`,
+    description: msg`Object name`,
     icon: 'IconAbc',
   })
   objectName: string;
@@ -69,8 +68,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.TEXT,
-    label: 'Object metadata id',
-    description: 'Object metadata id',
+    label: msg`Object metadata id`,
+    description: msg`Object metadata id`,
     icon: 'IconAbc',
   })
   objectMetadataId: string;
@@ -78,8 +77,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
-    label: 'Record id',
-    description: 'Record id',
+    label: msg`Record id`,
+    description: msg`Record id`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
@@ -88,8 +87,8 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Event workspace member',
+    label: msg`Workspace Member`,
+    description: msg`Event workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'auditLogs',

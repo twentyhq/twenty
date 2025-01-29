@@ -46,6 +46,11 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKey.IsCustomDomainEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IsBillingPlansEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -74,6 +79,11 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IsLocalizationEnabled,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IsRichTextV2Enabled,
+        workspaceId: workspaceId,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsNewRelationEnabled,
