@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Fragment } from 'react/jsx-runtime';
 
 const StyledChip = styled.div`
   align-items: center;
@@ -29,7 +30,11 @@ export const CommandMenuContextChip = ({
 }) => {
   return (
     <StyledChip>
-      <StyledIconsContainer>{Icons.map((Icon) => Icon)}</StyledIconsContainer>
+      <StyledIconsContainer>
+        {Icons.map((Icon, index) => (
+          <Fragment key={index}>{Icon}</Fragment>
+        ))}
+      </StyledIconsContainer>
       <span>{text}</span>
     </StyledChip>
   );
