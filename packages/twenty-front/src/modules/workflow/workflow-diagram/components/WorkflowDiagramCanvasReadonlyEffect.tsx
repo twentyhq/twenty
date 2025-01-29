@@ -37,6 +37,13 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
+
+      if (!isDefined(selectedNodeData.name)) {
+        closeRightDrawer();
+        closeCommandMenu();
+        return;
+      }
+
       openRightDrawer(RightDrawerPages.WorkflowStepView, {
         title: selectedNodeData.name,
         Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
