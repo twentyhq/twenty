@@ -80,7 +80,11 @@ export const useOpenCreateActivityDrawer = ({
     setViewableRecordNameSingular(activityObjectNameSingular);
 
     const activity = await createOneActivity({
-      assigneeId: customAssignee?.id,
+      ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+        ? {
+            assigneeId: customAssignee?.id,
+          }
+        : {}),
       position: 'last',
     });
 
