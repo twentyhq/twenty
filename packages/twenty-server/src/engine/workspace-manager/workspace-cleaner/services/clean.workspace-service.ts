@@ -7,7 +7,6 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -239,23 +238,22 @@ export class CleanWorkspaceService {
     );
   }
 
-  async batchWarnOrCleanWorkspaces(workspaceIds?: string[]): Promise<void> {
+  async batchWarnOrCleanWorkspaces(workspaceIds: string[]): Promise<void> {
     this.logger.log(`batchWarnOrCleanWorkspaces running...`);
 
-    const suspendedWorkspaces = await this.workspaceRepository.find({
+    const workspaces = await this.workspaceRepository.find({
       where: {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
-        ...(workspaceIds ? { id: In(workspaceIds) } : {}),
+        id: In(workspaceIds),
       },
     });
 
-    const suspendedWorkspacesChunks = chunk(suspendedWorkspaces, 5);
+    const workspacesChunks = chunk(workspaces, 5);
 
     let deletedWorkspacesCount = 0;
 
-    for (const suspendedWorkspacesChunk of suspendedWorkspacesChunks) {
+    for (const workspacesChunk of workspacesChunks) {
       await Promise.all(
-        suspendedWorkspacesChunk.map(async (workspace) => {
+        workspacesChunk.map(async (workspace) => {
           const workspaceInactivity =
             await this.computeWorkspaceBillingInactivity(workspace);
 

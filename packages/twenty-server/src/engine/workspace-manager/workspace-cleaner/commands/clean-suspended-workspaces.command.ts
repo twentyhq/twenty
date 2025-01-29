@@ -16,7 +16,7 @@ export class CleanSuspendedWorkspacesCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspaceIds [workspaceIds]',
+    flags: '-w, --workspace-ids [workspaceIds]',
     description: 'comma separated workspace ids',
     required: true,
   })
