@@ -51,7 +51,12 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
     }
 
-    if (workspaceAuthProviders.sso.length === 1) {
+    const hasOnlySSOProvidersEnabled =
+      !workspaceAuthProviders.google &&
+      !workspaceAuthProviders.microsoft &&
+      !workspaceAuthProviders.password;
+
+    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length === 1) {
       redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
     }
   }, [redirectToSSOLoginPage, setSignInUpStep, workspaceAuthProviders]);

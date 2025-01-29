@@ -1,25 +1,24 @@
 /* @license Enterprise */
 
+import { GET_AUTHORIZATION_URL } from '@/auth/graphql/mutations/getAuthorizationUrl';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  GetAuthorizationUrlMutationVariables,
-  useGetAuthorizationUrlMutation,
-} from '~/generated/graphql';
+import { useApolloClient } from '@apollo/client';
+import { GetAuthorizationUrlMutationVariables } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSSO = () => {
+  const apolloClient = useApolloClient();
   const { enqueueSnackBar } = useSnackBar();
-
-  const [getAuthorizationUrlMutation] = useGetAuthorizationUrlMutation();
 
   const { redirect } = useRedirect();
 
   const getAuthorizationUrlForSSO = async ({
     identityProviderId,
   }: GetAuthorizationUrlMutationVariables['input']) => {
-    return await getAuthorizationUrlMutation({
+    return await apolloClient.mutate({
+      mutation: GET_AUTHORIZATION_URL,
       variables: {
         input: { identityProviderId },
       },
