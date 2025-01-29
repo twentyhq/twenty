@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -33,6 +33,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -333,11 +334,10 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard)
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLink> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
@@ -347,21 +347,25 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
-      workspaceId,
+      context.req.headers['x-locale'] || 'en',
     );
   }
 
   @Mutation(() => InvalidatePassword)
   async updatePasswordViaResetToken(
     @Args()
-    { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
+    {
+      passwordResetToken,
+      newPassword,
+      locale,
+    }: UpdatePasswordViaResetTokenInput,
   ): Promise<InvalidatePassword> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(id, newPassword);
+    await this.authService.updatePassword(id, newPassword, locale);
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }
