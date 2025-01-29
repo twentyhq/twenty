@@ -15,7 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { getTargetObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -201,7 +201,7 @@ export class ProcessNestedRelationsV2Helper {
   }) {
     const targetFieldMetadata =
       parentObjectMetadataItem.fieldsByName[sourceFieldName];
-    const targetObjectMetadata = getTargetObjectMetadata(
+    const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
       objectMetadataMaps,
     );

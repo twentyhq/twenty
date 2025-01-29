@@ -6,7 +6,7 @@ import {
   GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
-import { getTargetObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
@@ -38,7 +38,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       this.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
     const targetObjectMetadata = isNewRelationEnabled
-      ? getTargetObjectMetadata(fieldMetadata, this.objectMetadataMaps)
+      ? getTargetObjectMetadataOrThrow(fieldMetadata, this.objectMetadataMaps)
       : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
 
     const targetFields = targetObjectMetadata.fieldsByName;

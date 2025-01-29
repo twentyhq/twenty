@@ -6,7 +6,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-export const getTargetObjectMetadata = (
+export const getTargetObjectMetadataOrThrow = (
   fieldMetadata: FieldMetadataInterface,
   objectMetadataMaps: ObjectMetadataMaps,
 ) => {

@@ -15,7 +15,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
-import { getTargetObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -182,7 +182,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         if (Array.isArray(value)) {
           const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadata(fieldMetadata, this.objectMetadataMaps)
+            ? getTargetObjectMetadataOrThrow(
+                fieldMetadata,
+                this.objectMetadataMaps,
+              )
             : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
 
           processedObjectRecord[key] = this.createConnection({
@@ -204,7 +207,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           });
         } else if (isPlainObject(value)) {
           const targetObjectMetadata = isNewRelationEnabled
-            ? getTargetObjectMetadata(fieldMetadata, this.objectMetadataMaps)
+            ? getTargetObjectMetadataOrThrow(
+                fieldMetadata,
+                this.objectMetadataMaps,
+              )
             : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
 
           processedObjectRecord[key] = this.processRecord({
