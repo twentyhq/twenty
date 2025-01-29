@@ -36,7 +36,11 @@ export const ActorDisplay = ({
           ? IconMicrosoftOutlook
           : IconGmail;
       case 'CALENDAR':
-        return IconCalendar;
+        return context?.provider === ConnectedAccountProvider.MICROSOFT
+          ? IconMicrosoftOutlook
+          : context?.provider === ConnectedAccountProvider.GOOGLE
+            ? IconGmail
+            : IconCalendar;
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':
