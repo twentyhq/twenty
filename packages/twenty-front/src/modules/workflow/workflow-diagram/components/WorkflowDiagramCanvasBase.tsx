@@ -227,6 +227,10 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
+        onBeforeDelete={async () => {
+          // Abort all non-programmatic deletions
+          return false;
+        }}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
