@@ -1,8 +1,7 @@
-import { isNotEmpty } from 'class-validator';
-
 import { SSOIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isDefined } from 'src/utils/is-defined';
 
 export const getAuthProvidersByWorkspace = ({
   workspace,
@@ -27,17 +26,15 @@ export const getAuthProvidersByWorkspace = ({
     sso: workspace.workspaceSSOIdentityProviders
       .map((identityProvider) =>
         identityProvider.status === SSOIdentityProviderStatus.Active
-          ? [
-              {
-                id: identityProvider.id,
-                name: identityProvider.name,
-                type: identityProvider.type,
-                status: identityProvider.status,
-                issuer: identityProvider.issuer,
-              },
-            ]
-          : [],
+          ? {
+              id: identityProvider.id,
+              name: identityProvider.name,
+              type: identityProvider.type,
+              status: identityProvider.status,
+              issuer: identityProvider.issuer,
+            }
+          : undefined,
       )
-      .filter(isNotEmpty),
+      .filter(isDefined),
   };
 };
