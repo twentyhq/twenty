@@ -19,6 +19,7 @@ import {
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -130,6 +131,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
+    I18nFrontDecorator,
   ],
   args: {
     hotkeyScope: {

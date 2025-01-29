@@ -12,6 +12,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
@@ -26,19 +27,19 @@ const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD = (
   tableId: 'settingsObjectDetail',
   fields: [
     {
-      fieldLabel: t`Name`,
+      fieldLabel: msg`Name`,
       fieldName: 'label',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t`Field type`,
+      fieldLabel: msg`Field type`,
       fieldName: 'fieldType',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t`Data type`,
+      fieldLabel: msg`Data type`,
       fieldName: 'dataType',
       fieldType: 'string',
       align: 'left',
@@ -56,19 +57,19 @@ const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM = (
   tableId: 'settingsObjectDetail',
   fields: [
     {
-      fieldLabel: t`Name`,
+      fieldLabel: msg`Name`,
       fieldName: 'label',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t`Identifier`,
+      fieldLabel: msg`Identifier`,
       fieldName: 'identifierType',
       fieldType: 'string',
       align: 'left',
     },
     {
-      fieldLabel: t`Data type`,
+      fieldLabel: msg`Data type`,
       fieldName: 'dataType',
       fieldType: 'string',
       align: 'left',
@@ -190,7 +191,7 @@ export const SettingsObjectFieldTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={item.fieldLabel}
+              label={t(item.fieldLabel)}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}
             />

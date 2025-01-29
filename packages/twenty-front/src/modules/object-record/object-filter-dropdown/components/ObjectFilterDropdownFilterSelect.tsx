@@ -26,7 +26,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { useLingui } from '@lingui/react';
+import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
   background: transparent;

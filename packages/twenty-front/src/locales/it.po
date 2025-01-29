@@ -1,11 +1,16 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-29 14:48+0100\n"
+"POT-Creation-Date: 2025-01-29 15:52+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: it\n"
+
+#. js-lingui-explicit-id
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+msgid "/+Z5u4"
+msgstr "/+Z5u4"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -68,8 +73,8 @@ msgstr "Conti"
 msgid "Activate"
 msgstr "Attivare"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:193
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:201
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:202
 msgid "Active"
 msgstr "Attivo"
 
@@ -85,7 +90,7 @@ msgstr "Aggiungi campo"
 msgid "Add SSO Identity Provider"
 msgstr "Aggiungere il provider di identità SSO"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:149
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
 msgstr "Aggiungi oggetto"
 
@@ -93,9 +98,17 @@ msgstr "Aggiungi oggetto"
 msgid "Add to blocklist"
 msgstr "Aggiungi alla lista di blocco"
 
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "Aggiunto {beautifiedCreatedAt}"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "Tutti"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "Tutti ({relationRecordsCount})"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
@@ -342,10 +355,15 @@ msgstr "Personalizzate la sicurezza del vostro spazio di lavoro"
 msgid "Danger zone"
 msgstr "Zona di pericolo"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:144
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
 msgstr "Modello di dati"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:42
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:72
+msgid "Data type"
+msgstr "Tipo di dati"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
@@ -492,7 +510,9 @@ msgstr "Email"
 msgid "Employees"
 msgstr "I dipendenti"
 
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
 msgid "Empty"
 msgstr "Vuoto"
 
@@ -533,7 +553,7 @@ msgstr "Stabilire endpoint Webhook per le notifiche di eventi asincroni."
 msgid "Exclude the following people and domains from my email sync"
 msgstr "Escludere le seguenti persone e domini dalla mia sincronizzazione e-mail"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:167
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
 msgstr "Oggetti esistenti"
 
@@ -563,11 +583,22 @@ msgstr "Scade in"
 msgid "Favorites"
 msgstr "Preferiti"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:36
+msgid "Field type"
+msgstr "Tipo di campo"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:95
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "Campi"
 
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "Conteggio dei campi"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
 #: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:81
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
@@ -612,23 +643,39 @@ msgstr "Abbonamento"
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Concedete al supporto Twenty l'accesso temporaneo al vostro spazio di lavoro, in modo che possiamo risolvere i problemi o recuperare i contenuti per vostro conto. È possibile revocare l'accesso in qualsiasi momento."
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "Nascondere"
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
 msgid "Icon and Name"
 msgstr "Icona e nome"
 
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:66
+msgid "Identifier"
+msgstr "Identificatore"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Se avete perso questa chiave, potete rigenerarla, ma sappiate che qualsiasi script che utilizza questa chiave dovrà essere aggiornato. Digitare\"{confirmationValue}\" per confermare."
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:218
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:216
 msgid "Inactive"
 msgstr "Inattivo"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:107
+msgid "Indexes"
+msgstr "Indici"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "L'input deve essere in lettere maiuscole e non può iniziare con un numero"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "Istanze"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
@@ -737,11 +784,23 @@ msgstr "Membri"
 msgid "Min"
 msgstr "Min"
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "Spostarsi a sinistra"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "Muoversi a destra"
+
+#: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:30
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:60
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "Nome"
@@ -799,7 +858,7 @@ msgstr "Non vuoto"
 msgid "Notes"
 msgstr "Note"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:160
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
@@ -938,19 +997,20 @@ msgstr "SSO"
 msgid "Search"
 msgstr "Ricerca"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:184
 msgid "Search a field..."
 msgstr "Ricerca in un campo..."
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:116
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
 msgstr "Ricerca in un indice..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:173
 msgid "Search fields"
 msgstr "Campi di ricerca"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:171
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
 msgstr "Ricerca di un oggetto..."
 
@@ -984,6 +1044,7 @@ msgstr "Impostate la visibilità delle e-mail, gestite la vostra blocklist e alt
 msgid "Set the name of your subdomain"
 msgstr "Impostare il nome del sottodominio"
 
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:101
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
@@ -1002,6 +1063,7 @@ msgstr "La modifica dell'etichetta di un campo deve cambiare anche il nome dell'
 msgid "Skip"
 msgstr "Salto"
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
 msgid "Sort"
 msgstr "Ordinamento"
@@ -1106,9 +1168,14 @@ msgstr "Questa azione non può essere annullata. L'intera area di lavoro verrà 
 msgid "Time format"
 msgstr "Formato dell'ora"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "Tipo"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:114
+msgid "Type anything"
+msgstr "Tipo qualsiasi cosa"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
@@ -1207,7 +1274,7 @@ msgstr "Flussi di lavoro"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
-#: src/pages/settings/data-model/SettingsObjects.tsx:157
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201

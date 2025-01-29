@@ -1,11 +1,16 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-29 14:48+0100\n"
+"POT-Creation-Date: 2025-01-29 15:52+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-Hans\n"
+
+#. js-lingui-explicit-id
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+msgid "/+Z5u4"
+msgstr "/+Z5u4"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -68,8 +73,8 @@ msgstr "账户"
 msgid "Activate"
 msgstr "激活"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:193
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:201
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:202
 msgid "Active"
 msgstr "活跃"
 
@@ -85,7 +90,7 @@ msgstr "添加字段"
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份供应商"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:149
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
 msgstr "添加对象"
 
@@ -93,9 +98,17 @@ msgstr "添加对象"
 msgid "Add to blocklist"
 msgstr "添加到拦截列表"
 
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "已添加 {beautifiedCreatedAt}"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
 msgstr "全部"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "全部（[{relationRecordsCount}）"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
@@ -342,10 +355,15 @@ msgstr "自定义工作空间安全"
 msgid "Danger zone"
 msgstr "危险区"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:144
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
 msgstr "数据模型"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:42
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:72
+msgid "Data type"
+msgstr "数据类型"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
@@ -492,7 +510,9 @@ msgstr "电子邮件"
 msgid "Employees"
 msgstr "员工"
 
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
 msgid "Empty"
 msgstr "空"
 
@@ -533,7 +553,7 @@ msgstr "建立 Webhook 端点，用于通知异步事件。"
 msgid "Exclude the following people and domains from my email sync"
 msgstr "从我的电子邮件同步中排除以下人员和域"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:167
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
 msgstr "现有对象"
 
@@ -563,11 +583,22 @@ msgstr "到期时间"
 msgid "Favorites"
 msgstr "收藏夹"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:36
+msgid "Field type"
+msgstr "字段类型"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:95
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "字段"
 
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "字段计数"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
 #: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:81
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
@@ -612,23 +643,39 @@ msgstr "获取订阅"
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "授予 Twenty 支持临时访问您工作区的权限，以便我们代表您排除故障或恢复内容。您可以随时撤销访问权限。"
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "隐藏"
+
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
 msgid "Icon and Name"
 msgstr "图标和名称"
 
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:66
+msgid "Identifier"
+msgstr "标识符"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何使用此密钥的脚本都需要更新。请键入\"{confirmationValue}\"确认。"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:218
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:216
 msgid "Inactive"
 msgstr "不活动"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:107
+msgid "Indexes"
+msgstr "索引"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "输入内容必须使用驼峰字体，且不能以数字开头"
+
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "实例"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
@@ -737,11 +784,23 @@ msgstr "成员"
 msgid "Min"
 msgstr "最小"
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "向左移动"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "向右移动"
+
+#: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:30
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:60
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "名称"
@@ -799,7 +858,7 @@ msgstr "非空"
 msgid "Notes"
 msgstr "说明"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:160
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
@@ -938,19 +997,20 @@ msgstr "SSO"
 msgid "Search"
 msgstr "搜索"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:184
 msgid "Search a field..."
 msgstr "搜索字段..."
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:116
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
 msgstr "搜索索引..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:173
 msgid "Search fields"
 msgstr "搜索字段"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:171
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
 msgstr "搜索对象..."
 
@@ -984,6 +1044,7 @@ msgstr "设置电子邮件可见性、管理屏蔽列表等。"
 msgid "Set the name of your subdomain"
 msgstr "设置子域名称"
 
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:101
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
@@ -1002,6 +1063,7 @@ msgstr "更改字段标签是否也要更改 API 名称？"
 msgid "Skip"
 msgstr "跳过"
 
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
 msgid "Sort"
 msgstr "分类"
@@ -1106,9 +1168,14 @@ msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 
 msgid "Time format"
 msgstr "时间格式"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "类型"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:114
+msgid "Type anything"
+msgstr "任何类型"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
@@ -1207,7 +1274,7 @@ msgstr "工作流程"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
-#: src/pages/settings/data-model/SettingsObjects.tsx:157
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201

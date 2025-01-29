@@ -1,43 +1,38 @@
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { msg } from '@lingui/core/macro';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
-type GET_SETTINGS_OBJECT_TABLE_METADATAProps = {
-  (descriptor: { id: string }): string;
-  (literals: TemplateStringsArray, ...placeholders: any[]): string;
-};
-
-export const GET_SETTINGS_OBJECT_TABLE_METADATA = (
-  t: GET_SETTINGS_OBJECT_TABLE_METADATAProps,
-): TableMetadata<SettingsObjectTableItem> => ({
-  tableId: 'settingsObject',
-  fields: [
-    {
-      fieldLabel: t({ id: 'Name' }),
+export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableItem> =
+  {
+    tableId: 'settingsObject',
+    fields: [
+      {
+        fieldLabel: msg`Name`,
+        fieldName: 'labelPlural',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Type`,
+        fieldName: 'objectTypeLabel',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Fields`,
+        fieldName: 'fieldsCount',
+        fieldType: 'number',
+        align: 'right',
+      },
+      {
+        fieldLabel: msg`Instances`,
+        fieldName: 'totalObjectCount',
+        fieldType: 'number',
+        align: 'right',
+      },
+    ],
+    initialSort: {
       fieldName: 'labelPlural',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: t({ id: 'Type' }),
-      fieldName: 'objectTypeLabel',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: t({ id: 'Fields' }),
-      fieldName: 'fieldsCount',
-      fieldType: 'number',
-      align: 'right',
-    },
-    {
-      fieldLabel: t({ id: 'Instances' }),
-      fieldName: 'totalObjectCount',
-      fieldType: 'number',
-      align: 'right',
-    },
-  ],
-  initialSort: {
-    fieldName: 'labelPlural',
-    orderBy: 'AscNullsLast',
-  },
-});
+  };
