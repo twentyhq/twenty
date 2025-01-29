@@ -30,6 +30,7 @@ import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldA
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -153,8 +154,8 @@ export const usePersistField = () => {
               variables: {
                 where: { id: recordId },
                 updateOneRecordInput: {
-                  [fieldName]: value,
-                  [`${fieldName}Id`]: value?.id ?? null,
+                  [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                    value?.id ?? null,
                 },
               },
             });

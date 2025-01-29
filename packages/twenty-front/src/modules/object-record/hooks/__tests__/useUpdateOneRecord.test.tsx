@@ -11,7 +11,7 @@ import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
-const update = {
+const updateInput = {
   name: {
     firstName: 'John',
     lastName: 'Doe',
@@ -20,7 +20,7 @@ const update = {
 const updatePerson = {
   ...person,
   ...responseData,
-  ...update,
+  ...updateInput,
 };
 
 const mocks = [
@@ -64,11 +64,11 @@ describe('useUpdateOneRecord', () => {
     await act(async () => {
       const res = await result.current.updateOneRecord({
         idToUpdate,
-        updateOneRecordInput: updatePerson,
+        updateOneRecordInput: updateInput,
       });
       expect(res).toBeDefined();
       expect(res).toHaveProperty('id', person.id);
-      expect(res).toHaveProperty('name', update.name);
+      expect(res).toHaveProperty('name', updateInput.name);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
