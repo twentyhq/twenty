@@ -289,7 +289,9 @@ export const useAuth = () => {
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
-        workspaceUrl: workspace.workspaceUrl,
+        workspaceUrl:
+          workspace.workspaceEndpoints.customEndpoint ??
+          workspace.workspaceEndpoints.twentyEndpoint,
       });
     }
 
@@ -410,7 +412,10 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
-          signUpResult.data.signUp.workspace.workspaceUrl,
+          signUpResult.data.signUp.workspace.workspaceEndpoints
+            .customEndpoint ??
+            signUpResult.data.signUp.workspace.workspaceEndpoints
+              .twentyEndpoint,
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {

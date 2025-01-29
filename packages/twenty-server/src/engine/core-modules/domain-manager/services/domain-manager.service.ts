@@ -379,20 +379,31 @@ export class DomainManagerService {
     });
   }
 
-  getWorkspaceUrlByWorkspace({
-    subdomain,
-    hostname,
-  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+  private getCustomWorkspaceEndpoint(hostname: string) {
     const url = this.getFrontUrl();
 
-    if (hostname) {
-      url.hostname = hostname;
+    url.hostname = hostname;
 
-      return url.toString();
-    }
+    return url.toString();
+  }
+
+  private getTwentyWorkspaceEndpoint(subdomain: string) {
+    const url = this.getFrontUrl();
 
     url.hostname = `${subdomain}.${url.hostname}`;
 
     return url.toString();
+  }
+
+  getWorkspaceEndpoints({
+    subdomain,
+    hostname,
+  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+    return {
+      customEndpoint: hostname
+        ? this.getCustomWorkspaceEndpoint(hostname)
+        : undefined,
+      twentyEndpoint: this.getTwentyWorkspaceEndpoint(subdomain),
+    };
   }
 }

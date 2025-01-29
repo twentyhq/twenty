@@ -132,9 +132,7 @@ export const SettingsDomain = () => {
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           {isCustomDomainEnabled && <SettingsHostname />}
-          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
-            <SettingsSubdomain />
-          )}
+          <SettingsSubdomain />
         </FormProvider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

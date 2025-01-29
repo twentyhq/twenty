@@ -45,6 +45,7 @@ import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
+import { WorkspaceEndpoints } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -215,6 +216,11 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
+  @ResolveField(() => WorkspaceEndpoints)
+  workspaceEndpoints(@Parent() workspace: Workspace) {
+    return this.domainManagerService.getWorkspaceEndpoints(workspace);
+  }
+
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
   async getHostnameDetails(
@@ -263,8 +269,8 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        subdomain: workspace.subdomain,
-        hostname: workspace.hostname,
+        workspaceEndpoints:
+          this.domainManagerService.getWorkspaceEndpoints(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

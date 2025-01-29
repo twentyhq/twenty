@@ -5,7 +5,10 @@ export const IMPERSONATE = gql`
   mutation Impersonate($userId: String!, $workspaceId: String!) {
     impersonate(userId: $userId, workspaceId: $workspaceId) {
       workspace {
-        workspaceUrl
+        workspaceEndpoints {
+          twentyEndpoint
+          customEndpoint
+        }
         id
       }
       loginToken {

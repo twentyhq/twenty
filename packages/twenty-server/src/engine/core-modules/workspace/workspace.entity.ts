@@ -137,7 +137,4 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   isMicrosoftAuthEnabled: boolean;
-
-  @Field({ nullable: true })
-  workspaceUrl: string;
 }

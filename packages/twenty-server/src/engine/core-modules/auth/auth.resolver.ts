@@ -232,8 +232,8 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrl:
-          this.domainManagerService.getWorkspaceUrlByWorkspace(workspace),
+        workspaceEndpoints:
+          this.domainManagerService.getWorkspaceEndpoints(workspace),
       },
     };
   }

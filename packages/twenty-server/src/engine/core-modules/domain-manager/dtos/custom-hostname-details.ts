@@ -15,7 +15,7 @@ class CustomHostnameOwnershipVerificationTxt {
 @ObjectType()
 class CustomHostnameOwnershipVerificationHttp {
   @Field()
-  type: 'http';
+  type: 'http' as const;
 
   @Field(() => String)
   body: string;

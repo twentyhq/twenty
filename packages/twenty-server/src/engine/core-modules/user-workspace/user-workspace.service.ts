@@ -177,7 +177,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
-      workspaceUrl: this.domainManagerService.getWorkspaceUrlByWorkspace(
+      workspaceEndpoints: this.domainManagerService.getWorkspaceEndpoints(
         userWorkspace.workspace,
       ),
       logo: userWorkspace.workspace.logo,

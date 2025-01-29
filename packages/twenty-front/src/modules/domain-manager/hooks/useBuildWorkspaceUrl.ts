@@ -2,11 +2,11 @@ import { isDefined } from '~/utils/isDefined';
 
 export const useBuildWorkspaceUrl = () => {
   const buildWorkspaceUrl = (
-    workspaceUrl: string,
+    endpoint: string,
     pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
-    const url = new URL(workspaceUrl);
+    const url = new URL(endpoint);
 
     if (isDefined(pathname)) {
       url.pathname = pathname;

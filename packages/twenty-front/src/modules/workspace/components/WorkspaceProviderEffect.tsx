@@ -19,23 +19,37 @@ export const WorkspaceProviderEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
 
-  const { workspaceUrl } = useReadWorkspaceUrlFromCurrentLocation();
+  const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
+    const customEndpointHostname = getPublicWorkspaceData?.workspaceEndpoints
+      .customEndpoint
+      ? new URL(getPublicWorkspaceData?.workspaceEndpoints.customEndpoint)
+          .hostname
+      : undefined;
+    const twentyEndpointHostname = getPublicWorkspaceData?.workspaceEndpoints
+      .twentyEndpoint
+      ? new URL(getPublicWorkspaceData?.workspaceEndpoints.twentyEndpoint)
+          .hostname
+      : undefined;
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(getPublicWorkspaceData?.workspaceUrl) &&
-      new URL(getPublicWorkspaceData.workspaceUrl).hostname !== workspaceUrl
+      isDefined(getPublicWorkspaceData) &&
+      currentLocationHostname !== customEndpointHostname &&
+      currentLocationHostname !== twentyEndpointHostname
     ) {
-      redirectToWorkspaceDomain(getPublicWorkspaceData.workspaceUrl);
+      redirectToWorkspaceDomain(
+        getPublicWorkspaceData?.workspaceEndpoints.customEndpoint ??
+          getPublicWorkspaceData?.workspaceEndpoints.twentyEndpoint,
+      );
     }
   }, [
-    workspaceUrl,
     isMultiWorkspaceEnabled,
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
+    currentLocationHostname,
   ]);
 
   useEffect(() => {

@@ -67,18 +67,8 @@ export const SettingsHostname = () => {
   useEffect(() => {
     let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
     if (isDefined(currentWorkspace?.hostname)) {
-      pollIntervalFn = setInterval(async () => {
-        try {
-          const { data } = await getHostnameDetailsQuery({
-            fetchPolicy: 'no-cache',
-          });
-          if (isDefined(data)) {
-            // console.log('Hostname details updated:', data);
-            // Optionally, handle the data or stop polling based on conditions.
-          }
-        } catch (error) {
-          // console.error('Error polling hostname details:', error);
-        }
+      pollIntervalFn = setInterval(() => {
+        getHostnameDetailsQuery({ fetchPolicy: 'no-cache' });
       }, 3000);
     }
 
@@ -133,8 +123,6 @@ export const SettingsHostname = () => {
         ...currentWorkspace,
         hostname: values.hostname,
       });
-
-      // redirectToWorkspaceDomain(values.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
@@ -169,9 +157,32 @@ export const SettingsHostname = () => {
           app.twenty-main.com
         </pre>
       )}
-      {getHostnameDetailsData && (
-        <pre>{JSON.stringify(getHostnameDetailsData, null, 4)}</pre>
-      )}
+      {getHostnameDetailsData?.getHostnameDetails &&
+        getHostnameDetailsData.getHostnameDetails.ownershipVerifications.map(
+          (ownershipVerification) => {
+            if (
+              ownershipVerification.__typename ===
+              'CustomHostnameOwnershipVerificationTxt'
+            ) {
+              return (
+                <pre>
+                  {ownershipVerification.name} TXT {ownershipVerification.value}
+                </pre>
+              );
+            }
+
+            if (
+              ownershipVerification.__typename ===
+              'CustomHostnameOwnershipVerificationHttp'
+            ) {
+              return (
+                <pre>
+                  {ownershipVerification.url} HTTP {ownershipVerification.body}
+                </pre>
+              );
+            }
+          },
+        )}
     </Section>
   );
 };

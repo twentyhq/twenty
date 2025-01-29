@@ -65,7 +65,7 @@ export class AdminPanelService {
     return {
       workspace: {
         id: user.workspaces[0].workspace.id,
-        workspaceUrl: this.domainManagerService.getWorkspaceUrlByWorkspace(
+        workspaceEndpoints: this.domainManagerService.getWorkspaceEndpoints(
           user.workspaces[0].workspace,
         ),
       },

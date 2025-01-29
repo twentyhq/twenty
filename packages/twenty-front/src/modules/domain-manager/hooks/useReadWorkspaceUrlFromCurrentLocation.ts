@@ -4,6 +4,8 @@ export const useReadWorkspaceUrlFromCurrentLocation = () => {
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   return {
-    workspaceUrl: isOnAWorkspace ? window.location.hostname : undefined,
+    currentLocationHostname: isOnAWorkspace
+      ? window.location.hostname
+      : undefined,
   };
 };

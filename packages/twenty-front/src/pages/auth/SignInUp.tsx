@@ -22,7 +22,7 @@ import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 import { useSearchParams } from 'react-router-dom';
-import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 
 const StandardContent = ({
   workspacePublicData,

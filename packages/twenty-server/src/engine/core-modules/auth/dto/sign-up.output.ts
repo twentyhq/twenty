@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { WorkspaceUrlAndId } from 'src/engine/core-modules/workspace/dtos/workspace-subdomain-id.dto';
+import { WorkspaceEndpointsAndId } from 'src/engine/core-modules/workspace/dtos/workspace-subdomain-id.dto';
 
 import { AuthToken } from './token.entity';
 
@@ -9,6 +9,6 @@ export class SignUpOutput {
   @Field(() => AuthToken)
   loginToken: AuthToken;
 
-  @Field(() => WorkspaceUrlAndId)
-  workspace: WorkspaceUrlAndId;
+  @Field(() => WorkspaceEndpointsAndId)
+  workspace: WorkspaceEndpointsAndId;
 }

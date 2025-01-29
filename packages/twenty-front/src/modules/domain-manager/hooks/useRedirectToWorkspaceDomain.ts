@@ -9,12 +9,12 @@ export const useRedirectToWorkspaceDomain = () => {
   const { redirect } = useRedirect();
 
   const redirectToWorkspaceDomain = (
-    workspaceUrl: string,
+    endpoint: string,
     pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
     if (!isMultiWorkspaceEnabled) return;
-    redirect(buildWorkspaceUrl(workspaceUrl, pathname, searchParams));
+    redirect(buildWorkspaceUrl(endpoint, pathname, searchParams));
   };
 
   return {

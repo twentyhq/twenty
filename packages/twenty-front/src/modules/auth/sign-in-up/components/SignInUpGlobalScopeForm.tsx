@@ -92,9 +92,14 @@ export const SignInUpGlobalScopeForm = () => {
         if (response.__typename === 'UserExists') {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
-            return redirectToWorkspaceDomain(workspace.workspaceUrl, pathname, {
-              email: form.getValues('email'),
-            });
+            return redirectToWorkspaceDomain(
+              workspace.workspaceEndpoints.customEndpoint ??
+                workspace.workspaceEndpoints.twentyEndpoint,
+              pathname,
+              {
+                email: form.getValues('email'),
+              },
+            );
           }
         }
         if (response.__typename === 'UserNotExists') {
