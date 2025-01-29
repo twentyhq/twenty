@@ -78,6 +78,7 @@ export const StyledHandle = styled(Handle)`
 `;
 
 const StyledSourceHandle = styled(StyledHandle)`
+  background-color: ${({ theme }) => theme.border.color.strong};
   left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
 `;
 

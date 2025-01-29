@@ -12,6 +12,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import styled from '@emotion/styled';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect, useMemo, useState } from 'react';
@@ -20,65 +21,63 @@ import { IconSearch } from 'twenty-ui';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
-const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD = (
-  t: (literals: TemplateStringsArray) => string,
-): TableMetadata<SettingsObjectDetailTableItem> => ({
-  tableId: 'settingsObjectDetail',
-  fields: [
-    {
-      fieldLabel: t`Name`,
+const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectDetailTableItem> =
+  {
+    tableId: 'settingsObjectDetail',
+    fields: [
+      {
+        fieldLabel: msg`Name`,
+        fieldName: 'label',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Field type`,
+        fieldName: 'fieldType',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Data type`,
+        fieldName: 'dataType',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
       fieldName: 'label',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: t`Field type`,
-      fieldName: 'fieldType',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: t`Data type`,
-      fieldName: 'dataType',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'label',
-    orderBy: 'AscNullsLast',
-  },
-});
+  };
 
-const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM = (
-  t: (literals: TemplateStringsArray) => string,
-): TableMetadata<SettingsObjectDetailTableItem> => ({
-  tableId: 'settingsObjectDetail',
-  fields: [
-    {
-      fieldLabel: t`Name`,
+const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObjectDetailTableItem> =
+  {
+    tableId: 'settingsObjectDetail',
+    fields: [
+      {
+        fieldLabel: msg`Name`,
+        fieldName: 'label',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Identifier`,
+        fieldName: 'identifierType',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`Data type`,
+        fieldName: 'dataType',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
       fieldName: 'label',
-      fieldType: 'string',
-      align: 'left',
+      orderBy: 'AscNullsLast',
     },
-    {
-      fieldLabel: t`Identifier`,
-      fieldName: 'identifierType',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: t`Data type`,
-      fieldName: 'dataType',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'label',
-    orderBy: 'AscNullsLast',
-  },
-});
+  };
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -98,8 +97,8 @@ export const SettingsObjectFieldTable = ({
   const [searchTerm, setSearchTerm] = useState('');
 
   const tableMetadata = objectMetadataItem.isCustom
-    ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM(t)
-    : GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD(t);
+    ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM
+    : GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD;
 
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
@@ -190,7 +189,7 @@ export const SettingsObjectFieldTable = ({
             <SortableTableHeader
               key={item.fieldName}
               fieldName={item.fieldName}
-              label={item.fieldLabel}
+              label={t(item.fieldLabel)}
               tableId={tableMetadata.tableId}
               initialSort={tableMetadata.initialSort}
             />

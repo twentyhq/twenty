@@ -25,6 +25,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export const StyledInput = styled.input`
@@ -172,6 +173,8 @@ export const ObjectSortDropdownButton = ({
 
   const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
+  const { t } = useLingui();
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
@@ -182,7 +185,7 @@ export const ObjectSortDropdownButton = ({
           onClick={handleButtonClick}
           isUnfolded={isDropdownOpen}
         >
-          Sort
+          <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
       dropdownComponents={
@@ -194,7 +197,9 @@ export const ObjectSortDropdownButton = ({
                   <MenuItem
                     key={index}
                     onClick={() => handleSortDirectionClick(sortDirection)}
-                    text={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                    text={
+                      sortDirection === 'asc' ? t`Ascending` : t`Descending`
+                    }
                   />
                 ))}
               </DropdownMenuItemsContainer>
@@ -206,12 +211,12 @@ export const ObjectSortDropdownButton = ({
               setIsSortDirectionMenuUnfolded(!isSortDirectionMenuUnfolded)
             }
           >
-            {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            {selectedSortDirection === 'asc' ? t`Ascending` : t`Descending`}
           </DropdownMenuHeader>
           <StyledInput
             autoFocus
             value={objectSortDropdownSearchInput}
-            placeholder="Search fields"
+            placeholder={t`Search fields`}
             onChange={(event) =>
               setObjectSortDropdownSearchInput(event.target.value)
             }

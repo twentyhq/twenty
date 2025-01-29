@@ -1,5 +1,6 @@
 import { capitalize } from 'twenty-shared';
 
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
@@ -20,9 +21,15 @@ export class GraphqlQuerySelectedFieldsParser {
   private graphqlQuerySelectedFieldsRelationParser: GraphqlQuerySelectedFieldsRelationParser;
   private aggregateParser: GraphqlQuerySelectedFieldsAggregateParser;
 
-  constructor(objectMetadataMaps: ObjectMetadataMaps) {
+  constructor(
+    objectMetadataMaps: ObjectMetadataMaps,
+    featureFlagsMap: FeatureFlagMap,
+  ) {
     this.graphqlQuerySelectedFieldsRelationParser =
-      new GraphqlQuerySelectedFieldsRelationParser(objectMetadataMaps);
+      new GraphqlQuerySelectedFieldsRelationParser(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
     this.aggregateParser = new GraphqlQuerySelectedFieldsAggregateParser();
   }
 

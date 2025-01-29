@@ -24,7 +24,7 @@ import {
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: ActionHook;
+    useAction: ActionHook;
   }
 > = {
   addToFavoritesSingleRecord: {
@@ -40,7 +40,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useAddToFavoritesSingleRecordAction,
+    useAction: useAddToFavoritesSingleRecordAction,
   },
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -55,7 +55,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useRemoveFromFavoritesSingleRecordAction,
+    useAction: useRemoveFromFavoritesSingleRecordAction,
   },
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
@@ -67,7 +67,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToPreviousRecordSingleRecordAction,
+    useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
@@ -79,7 +79,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToNextRecordSingleRecordAction,
+    useAction: useNavigateToNextRecordSingleRecordAction,
   },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -92,7 +92,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
@@ -105,6 +105,6 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
 };

@@ -12,8 +12,7 @@ export type CommandMenuItemProps = {
   id: string;
   onClick?: () => void;
   Icon?: IconComponent;
-  firstHotKey?: string;
-  secondHotKey?: string;
+  hotKeys?: string[];
   shouldCloseCommandMenuOnClick?: boolean;
   RightComponent?: ReactNode;
 };
@@ -24,8 +23,7 @@ export const CommandMenuItem = ({
   id,
   onClick,
   Icon,
-  firstHotKey,
-  secondHotKey,
+  hotKeys,
   shouldCloseCommandMenuOnClick,
   RightComponent,
 }: CommandMenuItemProps) => {
@@ -42,8 +40,7 @@ export const CommandMenuItem = ({
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
-      firstHotKey={firstHotKey}
-      secondHotKey={secondHotKey}
+      hotKeys={hotKeys}
       onClick={() =>
         onItemClick({
           shouldCloseCommandMenuOnClick,

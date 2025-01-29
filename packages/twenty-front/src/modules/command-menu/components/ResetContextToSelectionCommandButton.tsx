@@ -1,5 +1,6 @@
 import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -40,14 +41,13 @@ export const ResetContextToSelectionCommandButton = () => {
 
   return (
     <CommandMenuItem
-      id="reset-context-to-selection"
+      id={RESET_CONTEXT_TO_SELECTION}
       Icon={IconArrowBackUp}
       label={t`Reset to`}
       RightComponent={
         <CommandMenuContextRecordChip
           objectMetadataItemId={objectMetadataItem.id}
           instanceId="command-menu-previous"
-          variant="small"
         />
       }
       onClick={resetPreviousCommandMenuContext}

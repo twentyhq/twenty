@@ -8019,7 +8019,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     type: 'UUID',
                     name: 'linkedObjectMetadataId',
                     label: 'Linked Object Metadata Id',
-                    description: 'inked Object Metadata Id',
+                    description: 'Linked Object Metadata Id',
                     icon: 'IconAbc',
                     isCustom: false,
                     isActive: true,

@@ -44,7 +44,7 @@ import {
 export const WORKFLOW_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
-    actionHook: ActionHook;
+    useAction: ActionHook;
   }
 > = {
   createNewRecord: {
@@ -57,7 +57,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: true,
     Icon: IconPlus,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useCreateNewTableRecordNoSelectionRecordAction,
+    useAction: useCreateNewTableRecordNoSelectionRecordAction,
   },
   activateWorkflowSingleRecord: {
     key: WorkflowSingleRecordActionKeys.ACTIVATE,
@@ -72,7 +72,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useActivateWorkflowSingleRecordAction,
+    useAction: useActivateWorkflowSingleRecordAction,
   },
   deactivateWorkflowSingleRecord: {
     key: WorkflowSingleRecordActionKeys.DEACTIVATE,
@@ -87,7 +87,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useDeactivateWorkflowSingleRecordAction,
+    useAction: useDeactivateWorkflowSingleRecordAction,
   },
   discardWorkflowDraftSingleRecord: {
     key: WorkflowSingleRecordActionKeys.DISCARD_DRAFT,
@@ -102,7 +102,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useDiscardDraftWorkflowSingleRecordAction,
+    useAction: useDiscardDraftWorkflowSingleRecordAction,
   },
   seeWorkflowActiveVersionSingleRecord: {
     key: WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION,
@@ -117,7 +117,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useSeeActiveVersionWorkflowSingleRecordAction,
+    useAction: useSeeActiveVersionWorkflowSingleRecordAction,
   },
   seeWorkflowRunsSingleRecord: {
     key: WorkflowSingleRecordActionKeys.SEE_RUNS,
@@ -132,7 +132,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useSeeRunsWorkflowSingleRecordAction,
+    useAction: useSeeRunsWorkflowSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
     key: WorkflowSingleRecordActionKeys.SEE_VERSIONS,
@@ -147,7 +147,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useSeeVersionsWorkflowSingleRecordAction,
+    useAction: useSeeVersionsWorkflowSingleRecordAction,
   },
   testWorkflowSingleRecord: {
     key: WorkflowSingleRecordActionKeys.TEST,
@@ -162,7 +162,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useTestWorkflowSingleRecordAction,
+    useAction: useTestWorkflowSingleRecordAction,
   },
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
@@ -173,7 +173,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     position: 8,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToPreviousRecordSingleRecordAction,
+    useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
@@ -184,7 +184,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     position: 9,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToNextRecordSingleRecordAction,
+    useAction: useNavigateToNextRecordSingleRecordAction,
   },
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -199,7 +199,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useAddToFavoritesSingleRecordAction,
+    useAction: useAddToFavoritesSingleRecordAction,
   },
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -214,7 +214,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useRemoveFromFavoritesSingleRecordAction,
+    useAction: useRemoveFromFavoritesSingleRecordAction,
   },
   deleteSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -230,7 +230,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useDeleteSingleRecordAction,
+    useAction: useDeleteSingleRecordAction,
   },
   deleteMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -243,7 +243,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useDeleteMultipleRecordsAction,
+    useAction: useDeleteMultipleRecordsAction,
   },
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -259,7 +259,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useDestroySingleRecordAction,
+    useAction: useDestroySingleRecordAction,
   },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -272,7 +272,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
@@ -285,6 +285,6 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
 };

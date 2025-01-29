@@ -47,6 +47,11 @@ const AVAILABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.LINKS,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.ADDRESS,
+  FieldMetadataType.PHONES,
+  FieldMetadataType.CURRENCY,
+  FieldMetadataType.DATE_TIME,
+  FieldMetadataType.RAW_JSON,
+  FieldMetadataType.UUID,
 ];
 
 export const WorkflowEditActionFormUpdateRecord = ({
