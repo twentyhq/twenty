@@ -3,9 +3,9 @@ import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { IconSearch } from 'twenty-ui';
 

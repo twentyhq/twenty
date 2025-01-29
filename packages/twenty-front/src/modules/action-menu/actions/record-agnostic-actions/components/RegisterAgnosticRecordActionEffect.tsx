@@ -14,8 +14,7 @@ type RegisterAgnosticRecordActionEffectProps = {
 export const RegisterAgnosticRecordActionEffect = ({
   action,
 }: RegisterAgnosticRecordActionEffectProps) => {
-  const { shouldBeRegistered, onClick, ConfirmationModal } =
-    action.useAction();
+  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction();
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);

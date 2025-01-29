@@ -21,24 +21,24 @@ import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-act
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-    IconChevronDown,
-    IconChevronUp,
-    IconDatabaseExport,
-    IconHeart,
-    IconHeartOff,
-    IconHistory,
-    IconHistoryToggle,
-    IconPlayerPause,
-    IconPlayerPlay,
-    IconPlus,
-    IconPower,
-    IconTrash,
-    IconTrashX,
+  IconChevronDown,
+  IconChevronUp,
+  IconDatabaseExport,
+  IconHeart,
+  IconHeartOff,
+  IconHistory,
+  IconHistoryToggle,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconPlus,
+  IconPower,
+  IconTrash,
+  IconTrashX,
 } from 'twenty-ui';
 
 export const WORKFLOW_ACTIONS_CONFIG: Record<

@@ -13,19 +13,19 @@ import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/rec
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-    IconChevronDown,
-    IconChevronUp,
-    IconDatabaseExport,
-    IconHeart,
-    IconHeartOff,
-    IconHistory,
-    IconHistoryToggle,
-    IconPencil,
+  IconChevronDown,
+  IconChevronUp,
+  IconDatabaseExport,
+  IconHeart,
+  IconHeartOff,
+  IconHistory,
+  IconHistoryToggle,
+  IconPencil,
 } from 'twenty-ui';
 
 export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<

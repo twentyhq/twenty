@@ -9,15 +9,15 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-    IconDatabaseExport,
-    IconHeart,
-    IconHeartOff,
-    IconTrash,
+  IconDatabaseExport,
+  IconHeart,
+  IconHeartOff,
+  IconTrash,
 } from 'twenty-ui';
 
 export const DEFAULT_ACTIONS_CONFIG_V1: Record<

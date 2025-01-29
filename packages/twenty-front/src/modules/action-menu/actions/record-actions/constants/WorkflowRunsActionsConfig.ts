@@ -9,16 +9,16 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-    IconChevronDown,
-    IconChevronUp,
-    IconDatabaseExport,
-    IconHeart,
-    IconHeartOff,
+  IconChevronDown,
+  IconChevronUp,
+  IconDatabaseExport,
+  IconHeart,
+  IconHeartOff,
 } from 'twenty-ui';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<

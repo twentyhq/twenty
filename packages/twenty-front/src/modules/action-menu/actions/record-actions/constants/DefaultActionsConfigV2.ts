@@ -14,20 +14,20 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import {
-    ActionMenuEntry,
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import {
-    IconChevronDown,
-    IconChevronUp,
-    IconDatabaseExport,
-    IconFileExport,
-    IconHeart,
-    IconHeartOff,
-    IconPlus,
-    IconTrash,
-    IconTrashX,
+  IconChevronDown,
+  IconChevronUp,
+  IconDatabaseExport,
+  IconFileExport,
+  IconHeart,
+  IconHeartOff,
+  IconPlus,
+  IconTrash,
+  IconTrashX,
 } from 'twenty-ui';
 
 export const DEFAULT_ACTIONS_CONFIG_V2: Record<
