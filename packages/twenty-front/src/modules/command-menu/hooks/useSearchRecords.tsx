@@ -209,7 +209,7 @@ export const useSearchRecords = () => {
     ...(customObjectCommands ?? []),
   ];
 
-  const noResult =
+  const noResults =
     !peopleCommands?.length &&
     !companyCommands?.length &&
     !opportunityCommands?.length &&
@@ -219,7 +219,7 @@ export const useSearchRecords = () => {
 
   return {
     loading: loading || isNotesLoading || isTasksLoading,
-    noResult,
+    noResults,
     commandGroups: [
       {
         heading: t`Results`,

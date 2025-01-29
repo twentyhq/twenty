@@ -2,7 +2,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useSearchRecords } from '@/command-menu/hooks/useSearchRecords';
 
 export const CommandMenuSearchRecordsPage = () => {
-  const { commandGroups, loading, noResult } = useSearchRecords();
+  const { commandGroups, loading, noResults } = useSearchRecords();
 
   return (
     <CommandMenuList
@@ -11,7 +11,7 @@ export const CommandMenuSearchRecordsPage = () => {
         group.items.map((item) => item.id),
       )}
       loading={loading}
-      noResult={noResult}
+      noResults={noResults}
     />
   );
 };
