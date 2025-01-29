@@ -42,7 +42,6 @@ import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverl
 import { assert } from 'src/utils/assert';
 
 export class EnvironmentVariables {
-  //** Authentication */
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
     description: 'Is password authentication enabled',
@@ -87,7 +86,6 @@ export class EnvironmentVariables {
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
-  // Google Auth
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
     subGroup: EnvironmentVariablesSubGroup.GoogleAuth,
@@ -151,7 +149,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
-  // Microsoft Auth
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
     subGroup: EnvironmentVariablesSubGroup.MicrosoftAuth,
@@ -202,7 +199,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
-  // Token
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
     subGroup: EnvironmentVariablesSubGroup.Tokens,
@@ -273,8 +269,6 @@ export class EnvironmentVariables {
   })
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
-  //** Email */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
     subGroup: EnvironmentVariablesSubGroup.EmailSettings,
@@ -303,7 +297,6 @@ export class EnvironmentVariables {
   })
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
-  // SMTP
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
     subGroup: EnvironmentVariablesSubGroup.SmtpConfig,
@@ -334,8 +327,6 @@ export class EnvironmentVariables {
   })
   EMAIL_SMTP_PASSWORD: string;
 
-  //** Storage */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Storage,
     description: 'Storage type',
@@ -352,7 +343,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH = '.local-storage';
 
-  // S3
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Storage,
     subGroup: EnvironmentVariablesSubGroup.S3Config,
@@ -403,8 +393,6 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
-  //** Serverless */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Serverless,
     description: 'Serverless type',
@@ -428,7 +416,6 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 
-  // Lambda
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Serverless,
     subGroup: EnvironmentVariablesSubGroup.LambdaConfig,
@@ -470,8 +457,6 @@ export class EnvironmentVariables {
   @IsOptional()
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
-  //** Analytics */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Analytics,
     description: 'Is analytics enabled',
@@ -490,7 +475,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ENABLED = true;
 
-  // Tinybird
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Analytics,
     subGroup: EnvironmentVariablesSubGroup.TinybirdConfig,
@@ -520,8 +504,6 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
   TINYBIRD_GENERATE_JWT_TOKEN: string;
-
-  //** Billing */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Billing,
@@ -560,7 +542,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
-  // Stripe
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Billing,
     subGroup: EnvironmentVariablesSubGroup.StripeConfig,
@@ -590,8 +571,6 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: string;
-
-  //** Frontend */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Frontend,
@@ -631,9 +610,8 @@ export class EnvironmentVariables {
     description: 'Chrome extension ID',
   })
   @IsString()
+  @IsOptional()
   CHROME_EXTENSION_ID: string;
-
-  //** Logging */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
@@ -669,7 +647,6 @@ export class EnvironmentVariables {
   @IsOptional()
   LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
 
-  // Sentry
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
     subGroup: EnvironmentVariablesSubGroup.SentryConfig,
@@ -716,8 +693,6 @@ export class EnvironmentVariables {
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
 
-  //** Support */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Support,
     description: 'Support driver',
@@ -726,7 +701,6 @@ export class EnvironmentVariables {
   @IsOptional()
   SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
 
-  // Front Support
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Support,
     subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
@@ -746,8 +720,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
   SUPPORT_FRONT_HMAC_KEY: string;
-
-  //** Database */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Database,
@@ -772,8 +744,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
-
-  //** Cache */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Cache,
@@ -805,7 +775,6 @@ export class EnvironmentVariables {
   })
   REDIS_URL: string;
 
-  //** Server Config */
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Is debug mode enabled',
@@ -877,7 +846,6 @@ export class EnvironmentVariables {
   @IsNumber()
   MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
-  // Rate Limiting
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
     subGroup: EnvironmentVariablesSubGroup.RateLimiting,
@@ -894,7 +862,6 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  // SSL
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
     subGroup: EnvironmentVariablesSubGroup.SSL,
@@ -912,8 +879,6 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   SSL_CERT_PATH: string;
-
-  //** LLM */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.LLM,
@@ -946,8 +911,6 @@ export class EnvironmentVariables {
     description: 'LLM tracing driver',
   })
   LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
-
-  //** Workspace */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Workspace,
@@ -998,8 +961,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
-  //** Queue */
-
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.QueueConfig,
     description: 'Queue driver type',
@@ -1020,8 +981,6 @@ export class EnvironmentVariables {
   // milliseconds
   @CastToPositiveNumber()
   WORKFLOW_EXEC_THROTTLE_TTL = 1000;
-
-  //** Captcha */
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Security,
