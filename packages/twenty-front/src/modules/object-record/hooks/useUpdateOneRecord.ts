@@ -131,7 +131,8 @@ export const useUpdateOneRecord = <
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
 
-          if (!isDefined(record) || !isDefined(computedOptimisticRecord)) return;
+          if (!isDefined(record) || !isDefined(computedOptimisticRecord))
+            return;
 
           triggerUpdateRecordOptimisticEffect({
             cache,

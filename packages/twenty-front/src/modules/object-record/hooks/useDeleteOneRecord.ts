@@ -63,13 +63,12 @@ export const useDeleteOneRecord = ({
         ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
       };
 
-      const optimisticRecordNode =
-        getRecordNodeFromRecord<ObjectRecord>({
-          record: computedOptimisticRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          computeReferences: false,
-        });
+      const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
+        record: computedOptimisticRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        computeReferences: false,
+      });
 
       if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
         return null;
@@ -99,7 +98,8 @@ export const useDeleteOneRecord = ({
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
 
-            if (!isDefined(record) || !isDefined(computedOptimisticRecord)) return;
+            if (!isDefined(record) || !isDefined(computedOptimisticRecord))
+              return;
 
             triggerUpdateRecordOptimisticEffect({
               cache,

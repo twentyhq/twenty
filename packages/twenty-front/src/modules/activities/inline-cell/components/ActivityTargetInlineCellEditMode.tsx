@@ -60,11 +60,9 @@ export const ActivityTargetInlineCellEditMode = ({
     objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
   });
 
-  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord(
-    {
-      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
-    },
-  );
+  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
+    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
+  });
 
   const { closeInlineCell: closeEditableField } = useInlineCell();
 

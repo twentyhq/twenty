@@ -67,7 +67,9 @@ export const useDeleteManyRecords = ({
     delayInMsBetweenRequests,
     skipOptimisticEffect = false,
   }: DeleteManyRecordsProps) => {
-    const numberOfBatches = Math.ceil(recordIdsToDelete.length / mutationPageSize);
+    const numberOfBatches = Math.ceil(
+      recordIdsToDelete.length / mutationPageSize,
+    );
     const deletedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
@@ -111,7 +113,10 @@ export const useDeleteManyRecords = ({
             computeReferences: false,
           });
 
-          if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
+          if (
+            !isDefined(optimisticRecordNode) ||
+            !isDefined(cachedRecordNode)
+          ) {
             return;
           }
 
