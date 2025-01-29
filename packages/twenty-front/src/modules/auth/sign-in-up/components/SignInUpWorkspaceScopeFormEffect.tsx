@@ -1,11 +1,15 @@
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -31,9 +35,26 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   );
 
   const { form } = useSignInUpForm();
+  const { redirectToSSOLoginPage } = useSSO();
 
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
+
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+
+  useEffect(() => {
+    if (!workspaceAuthProviders) {
+      return;
+    }
+
+    if (workspaceAuthProviders.sso.length > 1) {
+      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
+    }
+
+    if (workspaceAuthProviders.sso.length === 1) {
+      redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
+    }
+  }, [redirectToSSOLoginPage, setSignInUpStep, workspaceAuthProviders]);
 
   useEffect(() => {
     if (loadingStatus === LoadingStatus.Done) {
