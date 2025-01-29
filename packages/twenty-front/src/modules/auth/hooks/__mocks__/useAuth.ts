@@ -63,7 +63,6 @@ export const results = {
         id: 'id',
         displayName: 'displayName',
         logo: 'logo',
-        domainName: 'domainName',
         inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',

@@ -35,8 +35,8 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View',
+    label: msg`View`,
+    description: msg`View`,
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFilterGroups',
   })
@@ -48,8 +48,8 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.parentViewFilterGroupId,
     type: FieldMetadataType.UUID,
-    label: 'Parent View Filter Group Id',
-    description: 'Parent View Filter Group',
+    label: msg`Parent View Filter Group Id`,
+    description: msg`Parent View Filter Group`,
   })
   @WorkspaceIsNullable()
   parentViewFilterGroupId: string | null;
@@ -57,8 +57,8 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.logicalOperator,
     type: FieldMetadataType.SELECT,
-    label: 'Logical Operator',
-    description: 'Logical operator for the filter group',
+    label: msg`Logical Operator`,
+    description: msg`Logical operator for the filter group`,
     options: [
       {
         value: ViewFilterGroupLogicalOperator.AND,
@@ -86,8 +86,8 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.positionInViewFilterGroup,
     type: FieldMetadataType.POSITION,
-    label: 'Position in view filter group',
-    description: 'Position in the parent view filter group',
+    label: msg`Position in view filter group`,
+    description: msg`Position in the parent view filter group`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()

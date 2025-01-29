@@ -42,8 +42,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Message External Id',
-    description: 'Message id from the messaging provider',
+    label: msg`Message External Id`,
+    description: msg`Message id from the messaging provider`,
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
@@ -53,8 +53,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
-    label: 'Thread External Id',
-    description: 'Thread id from the messaging provider',
+    label: msg`Thread External Id`,
+    description: msg`Thread id from the messaging provider`,
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
@@ -63,8 +63,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
-    label: 'Direction',
-    description: 'Message Direction',
+    label: msg`Direction`,
+    description: msg`Message Direction`,
     icon: 'IconDirection',
     options: [
       {
@@ -88,8 +88,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     standardId:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageChannel,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Channel Id',
-    description: 'Message Channel Id',
+    label: msg`Message Channel Id`,
+    description: msg`Message Channel Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageChannelWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',
@@ -103,8 +103,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message Id',
-    description: 'Message Id',
+    label: msg`Message Id`,
+    description: msg`Message Id`,
     icon: 'IconHash',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageChannelMessageAssociations',

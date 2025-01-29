@@ -29,8 +29,8 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Group target field',
+    label: msg`Field Metadata Id`,
+    description: msg`View Group target field`,
     icon: 'IconTag',
   })
   fieldMetadataId: string;
@@ -38,8 +38,8 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
-    label: 'Visible',
-    description: 'View Group visibility',
+    label: msg`Visible`,
+    description: msg`View Group visibility`,
     icon: 'IconEye',
     defaultValue: true,
   })
@@ -48,16 +48,16 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.fieldValue,
     type: FieldMetadataType.TEXT,
-    label: 'Field Value',
-    description: 'Group by this field value',
+    label: msg`Field Value`,
+    description: msg`Group by this field value`,
   })
   fieldValue: string;
 
   @WorkspaceField({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'View Field position',
+    label: msg`Position`,
+    description: msg`View Field position`,
     icon: 'IconList',
     defaultValue: 0,
   })
@@ -67,8 +67,8 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: VIEW_GROUP_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Group related view',
+    label: msg`View`,
+    description: msg`View Group related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewGroups',

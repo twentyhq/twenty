@@ -15831,6 +15831,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-history@npm:^2.10.4":
+  version: 2.11.3
+  resolution: "@tiptap/extension-history@npm:2.11.3"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+    "@tiptap/pm": ^2.7.0
+  checksum: 10c0/6542366ee742b42003d31693d471d43d06c2625729f6fd22997a992c53450514fa81b7d19c227a3c7e9b7255a98e9b7606b64cc48c9f681035d97574c7f6360c
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-history@npm:^2.7.1":
   version: 2.10.4
   resolution: "@tiptap/extension-history@npm:2.10.4"
@@ -45767,6 +45777,7 @@ __metadata:
     "@tiptap/core": "npm:^2.10.4"
     "@tiptap/extension-document": "npm:^2.10.4"
     "@tiptap/extension-hard-break": "npm:^2.10.4"
+    "@tiptap/extension-history": "npm:^2.10.4"
     "@tiptap/extension-paragraph": "npm:^2.10.4"
     "@tiptap/extension-placeholder": "npm:^2.10.4"
     "@tiptap/extension-text": "npm:^2.10.4"
