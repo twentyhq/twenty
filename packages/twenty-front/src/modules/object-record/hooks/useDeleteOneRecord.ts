@@ -99,12 +99,12 @@ export const useDeleteOneRecord = ({
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
 
-            if (!record || !cachedRecord) return;
+            if (!isDefined(record) || !isDefined(computedOptimisticRecord)) return;
 
             triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
-              currentRecord: cachedRecord,
+              currentRecord: computedOptimisticRecord,
               updatedRecord: record,
               objectMetadataItems,
             });

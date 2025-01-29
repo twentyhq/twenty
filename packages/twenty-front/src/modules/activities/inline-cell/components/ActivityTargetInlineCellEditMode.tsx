@@ -16,7 +16,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import {
@@ -60,7 +60,7 @@ export const ActivityTargetInlineCellEditMode = ({
     objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
   });
 
-  const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
+  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord(
     {
       objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     },
@@ -252,7 +252,7 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            await deleteManyActivityTargets([activityTargetToDeleteId]);
+            await deleteOneActivityTarget(activityTargetToDeleteId);
           }
 
           set(activityTargetObjectRecordFamilyState(recordId), {
@@ -265,7 +265,7 @@ export const ActivityTargetInlineCellEditMode = ({
       activityTargetWithTargetRecords,
       createManyActivityTargets,
       createManyActivityTargetsInCache,
-      deleteManyActivityTargets,
+      deleteOneActivityTarget,
       isActivityInCreateMode,
       objectMetadataItemActivityTarget,
       recordPickerInstanceId,

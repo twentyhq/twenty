@@ -24,7 +24,8 @@ type useDeleteManyRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-type DeleteManyRecordsOptions = {
+type DeleteManyRecordsProps = {
+  recordIdsToDelete: string[];
   skipOptimisticEffect?: boolean;
   delayInMsBetweenRequests?: number;
 };
@@ -61,16 +62,16 @@ export const useDeleteManyRecords = ({
     objectMetadataItem.namePlural,
   );
 
-  const deleteManyRecords = async (
-    idsToDelete: string[],
-    options?: DeleteManyRecordsOptions,
-  ) => {
-    const numberOfBatches = Math.ceil(idsToDelete.length / mutationPageSize);
-
+  const deleteManyRecords = async ({
+    recordIdsToDelete,
+    delayInMsBetweenRequests,
+    skipOptimisticEffect = false,
+  }: DeleteManyRecordsProps) => {
+    const numberOfBatches = Math.ceil(recordIdsToDelete.length / mutationPageSize);
     const deletedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchedIdsToDelete = idsToDelete.slice(
+      const batchedIdsToDelete = recordIdsToDelete.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
@@ -81,22 +82,21 @@ export const useDeleteManyRecords = ({
         .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
         .filter(isDefined);
 
-      const cachedRecordsWithConnection: RecordGqlNode[] = [];
-      const optimisticRecordsWithConnection: RecordGqlNode[] = [];
+      if (!skipOptimisticEffect) {
+        const cachedRecordsNode: RecordGqlNode[] = [];
+        const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
-      if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
           if (!isDefined(cachedRecord) || !isDefined(cachedRecord.id)) {
             return;
           }
 
-          const cachedRecordWithConnection =
-            getRecordNodeFromRecord<ObjectRecord>({
-              record: cachedRecord,
-              objectMetadataItem,
-              objectMetadataItems,
-              computeReferences: false,
-            });
+          const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
+            record: cachedRecord,
+            objectMetadataItem,
+            objectMetadataItems,
+            computeReferences: false,
+          });
 
           const computedOptimisticRecord = {
             ...cachedRecord,
@@ -104,20 +104,16 @@ export const useDeleteManyRecords = ({
             ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
           };
 
-          const optimisticRecordWithConnection =
-            getRecordNodeFromRecord<ObjectRecord>({
-              record: computedOptimisticRecord,
-              objectMetadataItem,
-              objectMetadataItems,
-              computeReferences: false,
-            });
+          const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
+            record: computedOptimisticRecord,
+            objectMetadataItem,
+            objectMetadataItems,
+            computeReferences: false,
+          });
 
-          if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
-            return null;
+          if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
+            return;
           }
-
-          cachedRecordsWithConnection.push(cachedRecordWithConnection);
-          optimisticRecordsWithConnection.push(optimisticRecordWithConnection);
 
           updateRecordFromCache({
             objectMetadataItems,
@@ -125,13 +121,16 @@ export const useDeleteManyRecords = ({
             cache: apolloClient.cache,
             record: computedOptimisticRecord,
           });
+
+          computedOptimisticRecordsNode.push(optimisticRecordNode);
+          cachedRecordsNode.push(cachedRecordNode);
         });
 
         triggerUpdateRecordOptimisticEffectByBatch({
           cache: apolloClient.cache,
           objectMetadataItem,
-          currentRecords: cachedRecordsWithConnection,
-          updatedRecords: optimisticRecordsWithConnection,
+          currentRecords: cachedRecordsNode,
+          updatedRecords: computedOptimisticRecordsNode,
           objectMetadataItems,
         });
       }
@@ -144,8 +143,8 @@ export const useDeleteManyRecords = ({
           },
         })
         .catch((error: Error) => {
-          const cachedRecordsWithConnection: RecordGqlNode[] = [];
-          const optimisticRecordsWithConnection: RecordGqlNode[] = [];
+          const cachedRecordsNode: RecordGqlNode[] = [];
+          const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
           cachedRecords.forEach((cachedRecord) => {
             if (isUndefinedOrNull(cachedRecord?.id)) {
@@ -182,23 +181,21 @@ export const useDeleteManyRecords = ({
               });
 
             if (
-              !optimisticRecordWithConnection ||
-              !cachedRecordWithConnection
+              !isDefined(optimisticRecordWithConnection) ||
+              !isDefined(cachedRecordWithConnection)
             ) {
               return;
             }
 
-            cachedRecordsWithConnection.push(cachedRecordWithConnection);
-            optimisticRecordsWithConnection.push(
-              optimisticRecordWithConnection,
-            );
+            cachedRecordsNode.push(cachedRecordWithConnection);
+            computedOptimisticRecordsNode.push(optimisticRecordWithConnection);
           });
 
           triggerUpdateRecordOptimisticEffectByBatch({
             cache: apolloClient.cache,
             objectMetadataItem,
-            currentRecords: optimisticRecordsWithConnection,
-            updatedRecords: cachedRecordsWithConnection,
+            currentRecords: computedOptimisticRecordsNode,
+            updatedRecords: cachedRecordsNode,
             objectMetadataItems,
           });
 
@@ -210,8 +207,8 @@ export const useDeleteManyRecords = ({
 
       deletedRecords.push(...deletedRecordsForThisBatch);
 
-      if (isDefined(options?.delayInMsBetweenRequests)) {
-        await sleep(options.delayInMsBetweenRequests);
+      if (isDefined(delayInMsBetweenRequests)) {
+        await sleep(delayInMsBetweenRequests);
       }
     }
     await refetchAggregateQueries();
