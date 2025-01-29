@@ -7,12 +7,12 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CleanWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/clean.workspace-service';
+import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanSuspendedWorkspacesJob {
   constructor(
-    private readonly cleanWorkspaceService: CleanWorkspaceService,
+    private readonly cleanerWorkspaceService: CleanerWorkspaceService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
@@ -26,7 +26,7 @@ export class CleanSuspendedWorkspacesJob {
       },
     });
 
-    await this.cleanWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
+    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
       suspendedWorkspaceIds.map((workspace) => workspace.id),
     );
   }

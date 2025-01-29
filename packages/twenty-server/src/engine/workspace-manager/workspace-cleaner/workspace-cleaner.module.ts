@@ -12,7 +12,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { CleanSuspendedWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
 import { DeleteWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/delete-workspaces.command';
-import { CleanWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/clean.workspace-service';
+import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 @Module({
   imports: [
@@ -28,8 +28,8 @@ import { CleanWorkspaceService } from 'src/engine/workspace-manager/workspace-cl
     DeleteWorkspacesCommand,
     CleanSuspendedWorkspacesCommand,
     CleanSuspendedWorkspacesCronCommand,
-    CleanWorkspaceService,
+    CleanerWorkspaceService,
   ],
-  exports: [CleanWorkspaceService],
+  exports: [CleanerWorkspaceService],
 })
 export class WorkspaceCleanerModule {}

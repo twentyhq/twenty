@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/components';
-import chunk from 'lodash.chunk';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
@@ -18,13 +17,17 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
+import {
+  WorkspaceCleanerException,
+  WorkspaceCleanerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
 @Injectable()
-export class CleanWorkspaceService {
-  private readonly logger = new Logger(CleanWorkspaceService.name);
+export class CleanerWorkspaceService {
+  private readonly logger = new Logger(CleanerWorkspaceService.name);
   private readonly inactiveDaysBeforeDelete: number;
   private readonly inactiveDaysBeforeWarn: number;
   private readonly maxNumberOfWorkspacesDeletedPerExecution: number;
@@ -53,7 +56,7 @@ export class CleanWorkspaceService {
 
   async computeWorkspaceBillingInactivity(
     workspace: Workspace,
-  ): Promise<number | null> {
+  ): Promise<number> {
     try {
       const lastSubscription =
         await this.billingSubscriptionRepository.findOneOrFail({
@@ -68,25 +71,23 @@ export class CleanWorkspaceService {
 
       return daysSinceBillingInactivity;
     } catch {
-      this.logger.error(
+      throw new WorkspaceCleanerException(
         `No billing subscription found for workspace ${workspace.id} ${workspace.displayName}`,
+        WorkspaceCleanerExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
-
-      return null;
     }
   }
 
-  async checkIfWorkspaceMembersWarned(
+  async checkIfAtLeastOneWorkspaceMemberWarned(
     workspaceMembers: WorkspaceMemberWorkspaceEntity[],
     workspaceId: string,
   ) {
     for (const workspaceMember of workspaceMembers) {
-      const workspaceMemberWarned =
-        (await this.userVarsService.get({
-          userId: workspaceMember.userId,
-          workspaceId: workspaceId,
-          key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-        })) === true;
+      const workspaceMemberWarned = await this.userVarsService.get({
+        userId: workspaceMember.userId,
+        workspaceId: workspaceId,
+        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+      });
 
       if (workspaceMemberWarned) {
         return true;
@@ -108,12 +109,8 @@ export class CleanWorkspaceService {
       workspaceDisplayName: `${workspaceDisplayName}`,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -131,10 +128,11 @@ export class CleanWorkspaceService {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 
-    const workspaceMembersWarned = await this.checkIfWorkspaceMembersWarned(
-      workspaceMembers,
-      workspace.id,
-    );
+    const workspaceMembersWarned =
+      await this.checkIfAtLeastOneWorkspaceMemberWarned(
+        workspaceMembers,
+        workspace.id,
+      );
 
     if (workspaceMembersWarned) {
       this.logger.log(
@@ -142,48 +140,40 @@ export class CleanWorkspaceService {
       );
 
       return;
-    } else {
-      this.logger.log(
-        `Sending ${workspace.id} ${
-          workspace.displayName
-        } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
-          .map((workspaceUser) => workspaceUser.userEmail)
-          .join(', ')}']`,
+    }
+
+    this.logger.log(
+      `Sending ${workspace.id} ${
+        workspace.displayName
+      } suspended since ${daysSinceInactive} days emails to users ['${workspaceMembers
+        .map((workspaceUser) => workspaceUser.id)
+        .join(', ')}']`,
+    );
+
+    for (const workspaceMember of workspaceMembers) {
+      await this.userVarsService.set({
+        userId: workspaceMember.userId,
+        workspaceId: workspace.id,
+        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+        value: true,
+      });
+
+      await this.sendWarningEmail(
+        workspaceMember,
+        workspace.displayName,
+        daysSinceInactive,
       );
-
-      const workspaceMembersChunks = chunk(workspaceMembers, 5);
-
-      for (const workspaceMembersChunk of workspaceMembersChunks) {
-        await Promise.all(
-          workspaceMembersChunk.map(async (workspaceMember) => {
-            await this.userVarsService.set({
-              userId: workspaceMember.userId,
-              workspaceId: workspace.id,
-              key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-              value: true,
-            });
-
-            await this.sendWarningEmail(
-              workspaceMember,
-              workspace.displayName,
-              daysSinceInactive,
-            );
-          }),
-        );
-      }
-
-      return;
     }
   }
 
   async sendCleaningEmail(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
-    workspaceDisplayName: string | undefined,
+    workspaceDisplayName: string,
   ) {
     const emailData = {
       inactiveDaysBeforeDelete: this.inactiveDaysBeforeDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
-      workspaceDisplayName: `${workspaceDisplayName}`,
+      workspaceDisplayName,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
     const html = render(emailTemplate, {
@@ -213,23 +203,20 @@ export class CleanWorkspaceService {
       `Sending workspace ${workspace.id} ${
         workspace.displayName
       } deletion emails to users ['${workspaceMembers
-        .map((workspaceUser) => workspaceUser.userEmail)
+        .map((workspaceUser) => workspaceUser.id)
         .join(', ')}']`,
     );
 
-    const workspaceMembersChunks = chunk(workspaceMembers, 5);
+    for (const workspaceMember of workspaceMembers) {
+      await this.userVarsService.delete({
+        userId: workspaceMember.userId,
+        workspaceId: workspace.id,
+        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+      });
 
-    for (const workspaceMembersChunk of workspaceMembersChunks) {
-      await Promise.all(
-        workspaceMembersChunk.map(async (workspaceMember) => {
-          await this.userVarsService.delete({
-            userId: workspaceMember.userId,
-            workspaceId: workspace.id,
-            key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-          });
-
-          await this.sendCleaningEmail(workspaceMember, workspace.displayName);
-        }),
+      await this.sendCleaningEmail(
+        workspaceMember,
+        workspace.displayName || '',
       );
     }
 
@@ -251,40 +238,30 @@ export class CleanWorkspaceService {
       },
     });
 
-    const workspacesChunks = chunk(workspaces, 5);
-
     let deletedWorkspacesCount = 0;
 
-    for (const workspacesChunk of workspacesChunks) {
-      await Promise.all(
-        workspacesChunk.map(async (workspace) => {
-          const workspaceInactivity =
-            await this.computeWorkspaceBillingInactivity(workspace);
+    for (const workspace of workspaces) {
+      const workspaceInactivity =
+        await this.computeWorkspaceBillingInactivity(workspace);
 
-          if (
-            workspaceInactivity &&
-            workspaceInactivity > this.inactiveDaysBeforeDelete &&
-            deletedWorkspacesCount <=
-              this.maxNumberOfWorkspacesDeletedPerExecution
-          ) {
-            await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
-            deletedWorkspacesCount++;
+      if (
+        workspaceInactivity &&
+        workspaceInactivity > this.inactiveDaysBeforeDelete &&
+        deletedWorkspacesCount <= this.maxNumberOfWorkspacesDeletedPerExecution
+      ) {
+        await this.informWorkspaceMembersAndDeleteWorkspace(workspace);
+        deletedWorkspacesCount++;
 
-            return;
-          }
-          if (
-            workspaceInactivity &&
-            workspaceInactivity > this.inactiveDaysBeforeWarn &&
-            workspaceInactivity <= this.inactiveDaysBeforeDelete
-          ) {
-            await this.warnWorkspaceMembers(workspace, workspaceInactivity);
-
-            return;
-          }
-        }),
-      );
+        continue;
+      }
+      if (
+        workspaceInactivity &&
+        workspaceInactivity > this.inactiveDaysBeforeWarn &&
+        workspaceInactivity <= this.inactiveDaysBeforeDelete
+      ) {
+        await this.warnWorkspaceMembers(workspace, workspaceInactivity);
+      }
     }
-
     this.logger.log(`batchWarnOrCleanSuspendedWorkspaces done!`);
   }
 }
