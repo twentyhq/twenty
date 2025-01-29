@@ -1,9 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -17,6 +13,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -34,9 +31,8 @@ export class WorkflowRunnerWorkspaceService {
       await this.billingUsageService.canExecuteBilledFunction(workspaceId);
 
     if (!canExecuteBilledFunction) {
-      throw new BillingException(
+      this.logger.log(
         'Cannot execute billed function, there is no subscription for this workspace',
-        BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND,
       );
     }
     const workflowRunId =
