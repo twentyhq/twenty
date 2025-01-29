@@ -44,11 +44,11 @@ export const useDeactivateWorkflowVersion = () => {
         const cacheSnapshot = apolloClient.cache.extract();
         const workflowVersion: WorkflowVersion | undefined = Object.values(
           cacheSnapshot,
-        ).filter(
+        ).find(
           (item) =>
             item.__typename === 'WorkflowVersion' &&
             item.id === workflowVersionId,
-        )?.[0];
+        );
 
         if (!isDefined(workflowVersion)) {
           return;
