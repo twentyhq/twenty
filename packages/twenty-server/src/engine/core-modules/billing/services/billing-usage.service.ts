@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { NonNegative } from 'type-fest';
 import { Repository } from 'typeorm';
 
 import {
@@ -9,53 +8,58 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
-export class BillingMeterEventService {
-  protected readonly logger = new Logger(BillingMeterEventService.name);
+export class BillingUsageService {
+  protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly environmentService: EnvironmentService,
+    private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
   ) {}
 
-  async hasActiveBillingSubscription(workspaceId: string): Promise<boolean> {
-    const activeWorkspaceSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    return !!activeWorkspaceSubscription;
-  }
-
-  async sendBillingMeterEvent({
-    workspaceId,
-    eventName,
-    value,
-  }: {
-    workspaceId: string;
-    eventName: BillingMeterEventName;
-    value: NonNegative<number>;
-  }) {
+  async canExecuteBilledFunction(workspaceId: string): Promise<boolean> {
+    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
     const isBillingPlansEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IsBillingPlansEnabled,
         workspaceId,
       );
 
-    if (!isBillingPlansEnabled) {
-      return;
+    if (!isBillingPlansEnabled || !isBillingEnabled) {
+      return true;
     }
 
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    if (!billingSubscription) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async billUsage({
+    workspaceId,
+    billingEvents,
+  }: {
+    workspaceId: string;
+    billingEvents: BillingUsageEvent[];
+  }) {
     const workspaceStripeCustomer =
       await this.billingCustomerRepository.findOne({
         where: {
@@ -69,25 +73,16 @@ export class BillingMeterEventService {
         BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
       );
     }
-    const hasActiveBillingSubscription =
-      await this.hasActiveBillingSubscription(workspaceId);
-
-    if (!hasActiveBillingSubscription) {
-      throw new BillingException(
-        'No active billing subscription found',
-        BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
 
     try {
       await this.stripeBillingMeterEventService.sendBillingMeterEvent({
-        eventName,
-        value,
+        eventName: billingEvents[0].eventName,
+        value: billingEvents[0].value,
         stripeCustomerId: workspaceStripeCustomer.stripeCustomerId,
       });
     } catch (error) {
       throw new BillingException(
-        'Failed to send billing meter event to Stripe API',
+        'Failed to send billing meter events to Cache Service',
         BillingExceptionCode.BILLING_METER_EVENT_FAILED,
       );
     }

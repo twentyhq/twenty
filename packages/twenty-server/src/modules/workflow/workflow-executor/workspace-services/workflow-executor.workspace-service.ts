@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_EXECUTE_BILLED_FUNCTION } from 'src/engine/core-modules/billing/constants/billing-execute-billed-function.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
-import { BillingMeterEventService } from 'src/engine/core-modules/billing/services/billing-meter-event.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowRunOutput,
   WorkflowRunStatus,
@@ -23,12 +24,10 @@ export type WorkflowExecutorOutput = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
-  private readonly workflowNodeRunBillingMeterEventName =
-    BillingMeterEventName.WORKFLOW_NODE_RUN;
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
-    private readonly billingMeterEventService: BillingMeterEventService,
-    private readonly billingService: BillingService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async execute({
@@ -47,8 +46,6 @@ export class WorkflowExecutorWorkspaceService {
     if (currentStepIndex >= steps.length) {
       return { ...output, status: WorkflowRunStatus.COMPLETED };
     }
-
-    const isBillingEnabled = await this.billingService.isBillingEnabled();
 
     const step = steps[currentStepIndex];
 
@@ -76,23 +73,8 @@ export class WorkflowExecutorWorkspaceService {
       result.error?.errorMessage ??
       (result.result ? undefined : 'Execution result error, no data or error');
 
-    if (!error && isBillingEnabled) {
-      try {
-        await this.billingMeterEventService.sendBillingMeterEvent({
-          eventName: this.workflowNodeRunBillingMeterEventName,
-          value: 1,
-          workspaceId: String(context.workspaceId),
-        });
-      } catch (error) {
-        if (error instanceof BillingException) {
-          this.logger.error(
-            `Workspace has no subscription to run workflow node ${context.workspaceId}: ${error.message}`,
-            error,
-          );
-
-          return { ...output, status: WorkflowRunStatus.FAILED };
-        }
-      }
+    if (!error) {
+      this.sendUsageEvent();
     }
 
     const updatedStepOutput = {
@@ -152,5 +134,21 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
+  }
+
+  async sendUsageEvent() {
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
+      BILLING_EXECUTE_BILLED_FUNCTION,
+      [
+        {
+          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
+          value: 1,
+        },
+      ],
+      workspaceId,
+    );
   }
 }
