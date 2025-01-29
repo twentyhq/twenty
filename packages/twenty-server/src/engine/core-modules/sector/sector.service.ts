@@ -47,7 +47,7 @@ export class SectorService {
   async findById(sectorId: string): Promise<Sector | null> {
     return await this.sectorRepository.findOne({
       where: { id: sectorId },
-      relations: ['workspace' /*, 'agents'*/],
+      relations: ['workspace', 'agents'],
     });
   }
 

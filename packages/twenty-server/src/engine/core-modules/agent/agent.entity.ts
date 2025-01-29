@@ -5,37 +5,36 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SectorTopic } from 'src/engine/core-modules/sector/types/SectorTopic';
-import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 
-@Entity({ name: 'sector', schema: 'core' })
-@ObjectType('Sector')
-export class Sector {
+@Entity({ name: 'agent', schema: 'core' })
+@ObjectType('Agent')
+export class Agent {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field({ defaultValue: '' })
-  @Column({ default: '' })
-  icon: string;
-
   @Field({ nullable: false })
   @Column({ nullable: false })
-  name: string;
+  memberId: string;
 
-  @Field(() => [GraphQLJSON], { nullable: true })
-  @Column('jsonb', { nullable: true })
-  topics: SectorTopic[];
+  @Field()
+  @Column({ default: false })
+  isAdmin: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isActive: boolean;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
@@ -46,10 +45,13 @@ export class Sector {
   updatedAt: Date;
 
   @Field(() => Workspace)
-  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Workspace)
   workspace: Relation<Workspace>;
 
-  @Field(() => [Agent])
-  @ManyToMany(() => Agent, (agent) => agent.sectors)
-  agents: Agent[];
+  @Field(() => [Sector])
+  @ManyToMany(() => Sector, (sector) => sector.agents)
+  @JoinTable({
+    name: 'agentSectors',
+  })
+  sectors: Sector[];
 }
