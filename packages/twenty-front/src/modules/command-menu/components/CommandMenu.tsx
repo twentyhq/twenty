@@ -87,7 +87,7 @@ export const CommandMenu = () => {
       noResults={noResults}
     >
       {isNonEmptyString(previousContextStoreCurrentObjectMetadataId) && (
-        <CommandGroup heading={t`Context`} key={t`Context`}>
+        <CommandGroup heading={t`Context`}>
           <SelectableItem itemId="reset-context-to-selection">
             <ResetContextToSelectionCommandButton />
           </SelectableItem>
