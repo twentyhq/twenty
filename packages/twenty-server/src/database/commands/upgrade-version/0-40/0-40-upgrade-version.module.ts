@@ -6,7 +6,7 @@ import { UpdateInactiveWorkspaceStatusCommand } from 'src/database/commands/upgr
 import { UpgradeTo0_40Command } from 'src/database/commands/upgrade-version/0-40/0-40-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -25,7 +25,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       [
         Workspace,
         BillingSubscription,
-        FeatureFlagEntity,
+        FeatureFlag,
         KeyValuePair,
         User,
         UserWorkspace,

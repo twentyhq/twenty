@@ -29,8 +29,8 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     addressLngLabel: 'Longitude',
   } satisfies CompositeFieldLabels<FieldAddressValue>,
   [FieldMetadataType.LINKS]: {
+    // primaryLinkLabelLabel excluded from composite field import labels since it's not used in Links input
     primaryLinkUrlLabel: 'Link URL',
-    primaryLinkLabelLabel: 'Link Label',
   } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
   [FieldMetadataType.EMAILS]: {
     primaryEmailLabel: 'Email',

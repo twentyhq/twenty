@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -21,9 +22,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageParticipant,
   namePlural: 'messageParticipants',
-  labelSingular: 'Message Participant',
-  labelPlural: 'Message Participants',
-  description: 'Message Participants',
+  labelSingular: msg`Message Participant`,
+  labelPlural: msg`Message Participants`,
+  description: msg`Message Participants`,
   icon: STANDARD_OBJECT_ICONS.messageParticipant,
   labelIdentifierStandardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
 })
@@ -33,8 +34,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
-    label: 'Role',
-    description: 'Role',
+    label: msg`Role`,
+    description: msg`Role`,
     icon: 'IconAt',
     options: [
       { value: 'from', label: 'From', position: 0, color: 'green' },
@@ -49,8 +50,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
-    label: 'Handle',
-    description: 'Handle',
+    label: msg`Handle`,
+    description: msg`Handle`,
     icon: 'IconAt',
   })
   handle: string;
@@ -58,8 +59,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
-    label: 'Display Name',
-    description: 'Display Name',
+    label: msg`Display Name`,
+    description: msg`Display Name`,
     icon: 'IconUser',
   })
   displayName: string;
@@ -67,8 +68,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Message',
-    description: 'Message',
+    label: msg`Message`,
+    description: msg`Message`,
     icon: 'IconMessage',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -81,8 +82,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Person',
-    description: 'Person',
+    label: msg`Person`,
+    description: msg`Person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
@@ -96,8 +97,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workspace Member',
-    description: 'Workspace member',
+    label: msg`Workspace Member`,
+    description: msg`Workspace member`,
     icon: 'IconCircleUser',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',

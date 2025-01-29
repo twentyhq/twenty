@@ -16,6 +16,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
   CodeChallenge = 'CODE_CHALLENGE',
@@ -27,7 +28,7 @@ export enum AppTokenType {
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
-@ObjectType('AppToken')
+@ObjectType()
 @BeforeCreateOne(BeforeCreateOneAppToken)
 export class AppToken {
   @IDField(() => UUIDScalarType)

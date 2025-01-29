@@ -27,7 +27,7 @@ registerEnumType(OnboardingStatus, {
 });
 
 @Entity({ name: 'user', schema: 'core' })
-@ObjectType('User')
+@ObjectType()
 @Index('UQ_USER_EMAIL', ['email'], {
   unique: true,
   where: '"deletedAt" IS NULL',

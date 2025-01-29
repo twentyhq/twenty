@@ -4,7 +4,6 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsCopilotEnabled = 'IS_COPILOT_ENABLED',
-  IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -12,7 +11,9 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
+  IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsLocalizationEnabled = 'IS_LOCALIZATION_ENABLED',
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
+  IsRichTextV2Enabled = 'IS_RICH_TEXT_V2_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
 }

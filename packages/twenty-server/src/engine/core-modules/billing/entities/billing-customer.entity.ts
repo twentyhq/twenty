@@ -16,7 +16,7 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
-@ObjectType('billingCustomer')
+@ObjectType()
 export class BillingCustomer {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

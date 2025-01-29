@@ -6,6 +6,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-Hant\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "{apiKeyName} 应用程序接口密钥"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -23,29 +33,11 @@ msgstr "2.配置字段"
 msgid "24h ({hour24Label})"
 msgstr "24小时（[{hour24Label}）"
 
-#: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:179
-msgid "API & Webhooks"
-msgstr "应用程序接口和网络钩子"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:182
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:190
-msgid "API Key"
-msgstr "API 密钥"
-
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
-msgid "API Name"
-msgstr "应用程序接口名称"
-
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
-msgid "API keys"
-msgstr "API 密钥"
-
 #: src/modules/ui/input/components/ImageInput.tsx:157
 msgid "Abort"
 msgstr "中止"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:93
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
 msgstr "关于"
 
@@ -60,7 +52,7 @@ msgid "Account Deletion"
 msgstr "账户删除"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:114
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Accounts"
 msgstr "账户"
 
@@ -81,13 +73,13 @@ msgstr "由您或您的团队创建的活动 API 密钥。"
 msgid "Add Field"
 msgstr "添加字段"
 
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:59
-msgid "Add SSO Identity Provider"
-msgstr "添加 SSO 身份供应商"
-
 #: src/pages/settings/data-model/SettingsObjects.tsx:149
 msgid "Add object"
 msgstr "添加对象"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "添加 SSO 身份供应商"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
@@ -113,11 +105,29 @@ msgstr "允许用户使用电子邮件和密码登录。"
 msgid "An optional description"
 msgstr "可选描述"
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
+msgid "API & Webhooks"
+msgstr "应用程序接口和网络钩子"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "API 密钥"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "API 密钥"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "应用程序接口名称"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
 msgstr "外观"
 
-#: src/pages/settings/SettingsBilling.tsx:190
+#: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "您确定要更改计费间隔吗？"
 
@@ -137,9 +147,9 @@ msgstr "授权"
 msgid "Back to content"
 msgstr "返回内容"
 
-#: src/pages/settings/SettingsBilling.tsx:129
-#: src/pages/settings/SettingsBilling.tsx:135
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:149
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Billing"
 msgstr "账单"
 
@@ -161,38 +171,38 @@ msgstr "日历"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:78
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 msgid "Calendars"
 msgstr "日历"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:198
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
 msgstr "取消"
-
-#: src/pages/settings/SettingsBilling.tsx:175
-msgid "Cancel Plan"
-msgstr "取消计划"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
 msgstr "随时取消"
 
-#: src/pages/settings/SettingsBilling.tsx:170
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "取消计划"
+
+#: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
 msgstr "取消订阅"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "更改 {to}"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
 #: src/modules/settings/profile/components/ChangePassword.tsx:58
 msgid "Change Password"
 msgstr "更改密码"
-
-#: src/pages/settings/SettingsBilling.tsx:194
-msgid "Change {to}"
-msgstr "更改 {to}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
 msgid "Chinese — Simplified"
@@ -206,15 +216,19 @@ msgstr "繁体中文"
 msgid "Choose an object"
 msgstr "选择对象"
 
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
 msgstr "选择试用"
 
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:201
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "关闭"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:133
+#: src/modules/command-menu/components/CommandMenu.tsx:151
 msgid "Companies"
 msgstr "公司"
 
@@ -235,18 +249,18 @@ msgid "Configure your emails and calendar settings."
 msgstr "配置电子邮件和日历设置。"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
-msgid "Connect a Google account"
-msgstr "连接 Google 账户"
+#~ msgid "Connect a Google account"
+#~ msgstr "连接 Google 账户"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
 msgstr "将新账户连接到工作区"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:51
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
 msgid "Connect with Google"
 msgstr "与谷歌连接"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:59
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
 msgid "Connect with Microsoft"
 msgstr "与微软联系"
 
@@ -254,12 +268,17 @@ msgstr "与微软联系"
 msgid "Connected accounts"
 msgstr "连接账户"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:213
+#: src/modules/command-menu/components/CommandMenu.tsx:213
+msgid "Context"
+msgstr ""
+
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 msgid "Continue"
 msgstr "继续"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:105
+#: src/modules/command-menu/components/CommandMenu.tsx:123
 msgid "Copilot"
 msgstr "副驾驶"
 
@@ -267,7 +286,7 @@ msgstr "副驾驶"
 msgid "Copy invitation link"
 msgstr "复制邀请链接"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:183
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
 msgstr "复制此密钥，因为它将不再可见"
 
@@ -279,12 +298,12 @@ msgstr "创建应用程序接口密钥"
 msgid "Create Webhook"
 msgstr "创建 Webhook"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:149
-msgid "Custom Objects"
-msgstr "自定义对象"
-
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
+msgstr "自定义对象"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:167
+msgid "Custom Objects"
 msgstr "自定义对象"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
@@ -300,7 +319,7 @@ msgid "Customize your workspace security"
 msgstr "自定义工作区安全"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:237
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
@@ -308,9 +327,16 @@ msgid "Danger zone"
 msgstr "危险区"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:155
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
 msgstr "数据模型"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
@@ -328,18 +354,14 @@ msgstr "停用 \"同步对象标签和 API 名称 \"以设置自定义 API 名�
 msgid "Deactivate this field"
 msgstr "停用该字段"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:94
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
 msgstr "定义对象的名称和描述"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:243
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 msgid "Delete"
 msgstr "删除"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
-msgid "Delete API key"
-msgstr "删除 API 密钥"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
@@ -351,8 +373,12 @@ msgstr "删除帐户"
 msgid "Delete account and all the associated data"
 msgstr "删除账户和所有相关数据"
 
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "删除 API 密钥"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:238
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr "删除此集成"
 
@@ -381,7 +407,7 @@ msgstr "说明"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:171
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
 msgstr "开发人员"
 
@@ -397,15 +423,15 @@ msgid "Domain"
 msgstr "域名"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:225
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
 msgstr "例如后台整合"
 
-#: src/pages/settings/SettingsBilling.tsx:157
+#: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
 msgstr "编辑计费间隔"
 
-#: src/pages/settings/SettingsBilling.tsx:145
+#: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
 msgstr "编辑付款方式、查看发票等"
 
@@ -428,10 +454,14 @@ msgstr "电子邮件集成"
 msgid "Email or domain is already in blocklist"
 msgstr "电子邮件或域名已在拦截列表中"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:72
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:71
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "电子邮件"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "员工"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
@@ -454,15 +484,15 @@ msgstr "享受 {withCreditCardTrialPeriodDuration} 天的免费试用期"
 msgid "Enterprise"
 msgstr "企业"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:98
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
 msgstr "删除 api 密钥时出错： {err}"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:150
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
 msgstr "重新生成 api 密钥时出错： {err}"
 
-#: src/pages/settings/SettingsBilling.tsx:121
+#: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
 msgstr "切换订阅 {to} 时出错。"
 
@@ -484,11 +514,11 @@ msgstr "退出设置"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:107
 msgid "Experience"
 msgstr "经验"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:221
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
 msgid "Expiration"
 msgstr "到期"
 
@@ -513,18 +543,26 @@ msgstr "过滤器"
 msgid "French"
 msgstr "法语"
 
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "从每月到每年"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "从每年到每月"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
 msgstr "完全访问"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:186
 msgid "Functions"
 msgstr "功能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:132
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:137
 msgid "General"
 msgstr "一般情况"
 
@@ -549,7 +587,7 @@ msgstr "授予 Twenty 支持临时访问您工作区的权限，以便我们为�
 msgid "Icon and Name"
 msgstr "图标和名称"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:275
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何使用此密钥的脚本都需要更新。请键入\"{confirmationValue}\"确认。"
 
@@ -564,7 +602,7 @@ msgstr "输入内容必须使用驼峰字体，且不能以数字开头"
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:160
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:159
 msgid "Integrations"
 msgstr "集成"
 
@@ -585,16 +623,16 @@ msgstr "无效电子邮件或域名"
 msgid "Invalid form values"
 msgstr "无效表格值"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
-msgid "Invite by Link"
-msgstr "通过链接邀请"
-
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
 msgstr "电子邮件邀请"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
+msgstr "通过链接邀请"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
 msgstr "通过链接邀请"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
@@ -609,6 +647,10 @@ msgstr "邀请您的团队"
 msgid "Italian"
 msgstr "意大利语"
 
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
+msgid "Lab"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
 msgstr "语言"
@@ -621,7 +663,7 @@ msgstr "链接复制到剪贴板"
 msgid "Log out"
 msgstr "退出登录"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:209
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:215
 msgid "Logout"
 msgstr "注销"
 
@@ -637,13 +679,13 @@ msgstr "在此管理空间成员"
 msgid "Manage your internet accounts."
 msgstr "管理互联网账户"
 
-#: src/pages/settings/SettingsBilling.tsx:144
+#: src/pages/settings/SettingsBilling.tsx:145
 msgid "Manage your subscription"
 msgstr "管理您的订阅"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
 msgid "Members"
 msgstr "成员"
 
@@ -651,13 +693,13 @@ msgstr "成员"
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "名称"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
 msgstr "API 密钥名称"
 
@@ -665,19 +707,27 @@ msgstr "API 密钥名称"
 msgid "Name of your workspace"
 msgstr "工作区名称"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:125
+#: src/modules/command-menu/components/CommandMenu.tsx:143
 msgid "Navigate"
 msgstr "导航"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:79
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "新"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "新账户"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "新钥匙"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
 msgstr "新钥匙"
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
 msgstr "新对象"
 
@@ -689,25 +739,21 @@ msgstr "新密码"
 msgid "New Webhook"
 msgstr "新 Webhook"
 
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
-msgid "New account"
-msgstr "新账户"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
-msgid "New key"
-msgstr "新钥匙"
-
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
 msgid "No connected account"
 msgstr "无连接账户"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:141
+#: src/pages/settings/workspace/SettingsDomain.tsx:108
+#~ msgid "not allowed"
+#~ msgstr "不允许"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:159
 msgid "Notes"
 msgstr "说明"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr "对象"
@@ -716,11 +762,15 @@ msgstr "对象"
 msgid "Off the beaten path"
 msgstr "偏离常规路线"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:137
+#: src/modules/command-menu/components/CommandMenu.tsx:155
 msgid "Opportunities"
 msgstr "机会"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:195
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "或"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:194
 msgid "Other"
 msgstr "其他"
 
@@ -736,7 +786,7 @@ msgstr "密码"
 msgid "Password reset link has been sent to the email"
 msgstr "密码重置链接已发送至邮箱"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:129
+#: src/modules/command-menu/components/CommandMenu.tsx:147
 msgid "People"
 msgstr "人"
 
@@ -749,7 +799,7 @@ msgstr "图片"
 msgid "Please enter a valid URL"
 msgstr "请输入有效的 URL"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:258
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "请键入\"{confirmationValue}\"确认要删除此 API 密钥。请注意，任何使用此密钥的脚本都将停止工作。"
 
@@ -761,14 +811,14 @@ msgstr "请键入 {confirmationText} 确认要删除此网络钩子。"
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:62
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
 msgid "Preview"
 msgstr "预览"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:103
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:102
 msgid "Profile"
 msgstr "简介"
 
@@ -784,26 +834,26 @@ msgstr "阅读文件"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:109
+#: src/modules/command-menu/components/CommandMenu.tsx:127
 msgid "Record Selection"
 msgstr "记录选择"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:195
-msgid "Regenerate Key"
-msgstr "再生密钥"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:191
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
 msgstr "重新生成 API 密钥"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:282
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
 msgstr "再生钥匙"
 
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "再生密钥"
+
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Releases"
 msgstr "发布"
 
@@ -815,9 +865,9 @@ msgstr "移除"
 msgid "Reset Password"
 msgstr "重置密码"
 
-#: src/pages/settings/security/SettingsSecurity.tsx:47
-msgid "SSO"
-msgstr "SSO"
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:45
+msgid "Reset to"
+msgstr ""
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
@@ -838,7 +888,7 @@ msgstr "搜索对象..."
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:166
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
 msgid "Security"
 msgstr "安全"
 
@@ -854,7 +904,7 @@ msgstr "选择您喜欢的语言"
 msgid "Send an invite email to your team"
 msgstr "向团队发送邀请电子邮件"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:198
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:197
 msgid "Server Admin Panel"
 msgstr "服务器管理面板"
 
@@ -888,19 +938,23 @@ msgstr "跳过"
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:107
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "SSO"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:105
 msgid "Subdomain already taken"
 msgstr "子域已被占用"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:49
+#: src/pages/settings/workspace/SettingsDomain.tsx:50
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "子域名长度不得超过 30 个字符"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:48
+#: src/pages/settings/workspace/SettingsDomain.tsx:49
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "子域名不能少于 3 个字符"
 
-#: src/pages/settings/SettingsBilling.tsx:117
+#: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
 msgstr "订阅已切换 {to}"
 
@@ -908,31 +962,31 @@ msgstr "订阅已切换 {to}"
 msgid "Support"
 msgstr "支持"
 
-#: src/pages/settings/SettingsBilling.tsx:188
-msgid "Switch billing {to}"
-msgstr "开关计费 {to}"
-
-#: src/pages/settings/SettingsBilling.tsx:158
+#: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
 msgstr "开关 {from}"
 
-#: src/pages/settings/SettingsBilling.tsx:162
+#: src/pages/settings/SettingsBilling.tsx:163
 msgid "Switch {to}"
 msgstr "开关 {to}"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "开关计费 {to}"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "同步字段标签和 API 名称"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
-msgid "System Settings - {systemTimeFormatLabel}"
-msgstr "系统设置 - [{systemTimeFormatLabel}］"
-
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "系统设置 - {systemDateFormatLabel}"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:145
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "系统设置 - [{systemTimeFormatLabel}］"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:163
 msgid "Tasks"
 msgstr "任务"
 
@@ -979,14 +1033,17 @@ msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 
 msgid "Time format"
 msgstr "时间格式"
 
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "至每月"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "每年"
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
 msgid "Type"
 msgstr "类型"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
-msgid "URL"
-msgstr "网址"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -996,7 +1053,12 @@ msgstr "无限联系人"
 msgid "Upload"
 msgstr "上传"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:51
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "网址"
+
+#: src/pages/settings/workspace/SettingsDomain.tsx:52
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "只能使用字母、数字和破折号。以字母或数字开头和结尾"
 
@@ -1004,7 +1066,7 @@ msgstr "只能使用字母、数字和破折号。以字母或数字开头和结
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:101
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:100
 msgid "User"
 msgstr "用户"
 
@@ -1019,11 +1081,11 @@ msgstr "用户未登录"
 msgid "Values"
 msgstr "价值观"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:117
+#: src/modules/command-menu/components/CommandMenu.tsx:135
 msgid "View"
 msgstr "查看"
 
-#: src/pages/settings/SettingsBilling.tsx:149
+#: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
 msgstr "查看账单详情"
 
@@ -1052,21 +1114,21 @@ msgstr "网络钩子"
 msgid "When the API key will expire."
 msgstr "API 密钥的过期时间。"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:222
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
 msgid "When the key will be disabled"
 msgstr "何时禁用按键"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:113
+#: src/modules/command-menu/components/CommandMenu.tsx:131
 msgid "Workflow Record Selection"
 msgstr "工作流程记录选择"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:121
+#: src/modules/command-menu/components/CommandMenu.tsx:139
 msgid "Workflows"
 msgstr "工作流程"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
-#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:128
 #: src/pages/settings/security/SettingsSecurity.tsx:37
@@ -1075,13 +1137,13 @@ msgstr "工作流程"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:167
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:72
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
 msgid "Workspace"
 msgstr "工作空间"
 
@@ -1093,11 +1155,16 @@ msgstr "删除工作区"
 msgid "Write a description"
 msgstr "编写说明"
 
-#: src/pages/settings/SettingsBilling.tsx:46
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "是"
+
+#: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr "您将立即被收取全年的费用。"
 
-#: src/pages/settings/SettingsBilling.tsx:53
+#: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "您的信用余额将用于支付每月账单。"
 
@@ -1105,43 +1172,6 @@ msgstr "您的信用余额将用于支付每月账单。"
 msgid "Your name as it will be displayed"
 msgstr "显示您的姓名"
 
-#: src/pages/settings/SettingsBilling.tsx:171
+#: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作区将被禁用"
-
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
-msgid "employees"
-msgstr "员工"
-
-#: src/pages/settings/SettingsBilling.tsx:45
-msgid "from monthly to yearly"
-msgstr "从每月到每年"
-
-#: src/pages/settings/SettingsBilling.tsx:52
-msgid "from yearly to monthly"
-msgstr "从每年到每月"
-
-#: src/pages/settings/workspace/SettingsDomain.tsx:108
-msgid "not allowed"
-msgstr "不允许"
-
-#: src/pages/onboarding/InviteTeam.tsx:213
-msgid "or"
-msgstr "或"
-
-#: src/pages/settings/SettingsBilling.tsx:51
-msgid "to monthly"
-msgstr "至每月"
-
-#: src/pages/settings/SettingsBilling.tsx:44
-msgid "to yearly"
-msgstr "每年"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:158
-msgid "yes"
-msgstr "是"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:174
-msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} 应用程序接口密钥"

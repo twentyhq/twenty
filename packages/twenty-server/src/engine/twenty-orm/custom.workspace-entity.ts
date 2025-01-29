@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
@@ -39,8 +40,8 @@ export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    label: 'Name',
-    description: 'Name',
+    label: msg`Name`,
+    description: msg`Name`,
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
   })
@@ -48,8 +49,8 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
-    label: 'Position',
-    description: 'Position',
+    label: msg`Position`,
+    description: msg`Position`,
     type: FieldMetadataType.POSITION,
     icon: 'IconHierarchy2',
     defaultValue: 0,
@@ -60,9 +61,9 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: msg`The creator of the record`,
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
@@ -72,10 +73,13 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
-    label: 'Notes',
+    label: msg`Notes`,
     type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Notes tied to the ${objectMetadata.labelSingular}`,
+    description: (objectMetadata) => {
+      const label = objectMetadata.labelSingular;
+
+      return msg`Notes tied to the ${label}`;
+    },
     icon: 'IconNotes',
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -85,10 +89,13 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
-    label: 'Tasks',
+    label: msg`Tasks`,
     type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Tasks tied to the ${objectMetadata.labelSingular}`,
+    description: (objectMetadata) => {
+      const label = objectMetadata.labelSingular;
+
+      return msg`Tasks tied to the ${label}`;
+    },
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -98,10 +105,13 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
-    label: 'Favorites',
+    label: msg`Favorites`,
     type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Favorites tied to the ${objectMetadata.labelSingular}`,
+    description: (objectMetadata) => {
+      const label = objectMetadata.labelSingular;
+
+      return msg`Favorites tied to the ${label}`;
+    },
     icon: 'IconHeart',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -112,10 +122,13 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
-    label: 'Attachments',
+    label: msg`Attachments`,
     type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Attachments tied to the ${objectMetadata.labelSingular}`,
+    description: (objectMetadata) => {
+      const label = objectMetadata.labelSingular;
+
+      return msg`Attachments tied to the ${label}`;
+    },
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -125,10 +138,13 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
-    label: 'Timeline Activities',
+    label: msg`Timeline Activities`,
     type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
+    description: (objectMetadata) => {
+      const label = objectMetadata.labelSingular;
+
+      return msg`Timeline Activities tied to the ${label}`;
+    },
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -150,5 +166,5 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  [SEARCH_VECTOR_FIELD.name]: any;
+  searchVector: any;
 }

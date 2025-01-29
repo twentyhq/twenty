@@ -17,7 +17,7 @@ msgstr ""
 #~ msgid "{0}"
 #~ msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:174
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:93
+#: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
 msgstr ""
 
@@ -56,7 +56,7 @@ msgid "Account Deletion"
 msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:114
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Accounts"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Add object"
 msgstr ""
 
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:59
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
 msgid "Add SSO Identity Provider"
 msgstr ""
 
@@ -114,12 +114,12 @@ msgid "An optional description"
 msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:179
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "API & Webhooks"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:182
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:190
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
 msgid "API Key"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 msgid "Appearance"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:190
+#: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr ""
 
@@ -163,9 +163,9 @@ msgstr ""
 msgid "Back to content"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:129
-#: src/pages/settings/SettingsBilling.tsx:135
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:149
+#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Billing"
 msgstr ""
 
@@ -187,13 +187,13 @@ msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:78
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 msgid "Calendars"
 msgstr ""
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:198
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
 msgstr ""
@@ -202,11 +202,11 @@ msgstr ""
 msgid "Cancel anytime"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:175
+#: src/pages/settings/SettingsBilling.tsx:176
 msgid "Cancel Plan"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:170
+#: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgstr ""
 #~ msgid "Change {6}"
 #~ msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:194
+#: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
 msgstr ""
 
@@ -240,15 +240,19 @@ msgstr ""
 msgid "Choose an object"
 msgstr ""
 
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
 msgstr ""
 
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:201
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:133
+#: src/modules/command-menu/components/CommandMenu.tsx:151
 msgid "Companies"
 msgstr ""
 
@@ -269,18 +273,18 @@ msgid "Configure your emails and calendar settings."
 msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
-msgid "Connect a Google account"
-msgstr ""
+#~ msgid "Connect a Google account"
+#~ msgstr ""
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:51
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
 msgid "Connect with Google"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:59
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
 msgid "Connect with Microsoft"
 msgstr ""
 
@@ -288,12 +292,17 @@ msgstr ""
 msgid "Connected accounts"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:213
+#: src/modules/command-menu/components/CommandMenu.tsx:213
+msgid "Context"
+msgstr ""
+
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 msgid "Continue"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:105
+#: src/modules/command-menu/components/CommandMenu.tsx:123
 msgid "Copilot"
 msgstr ""
 
@@ -301,7 +310,7 @@ msgstr ""
 msgid "Copy invitation link"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:183
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
 msgstr ""
 
@@ -321,7 +330,7 @@ msgstr ""
 msgid "Custom objects"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:149
+#: src/modules/command-menu/components/CommandMenu.tsx:167
 msgid "Custom Objects"
 msgstr ""
 
@@ -338,7 +347,7 @@ msgid "Customize your workspace security"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:237
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:250
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
@@ -346,8 +355,15 @@ msgid "Danger zone"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:155
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Data model"
+msgstr ""
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
+msgid "Date"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
@@ -366,12 +382,12 @@ msgstr ""
 msgid "Deactivate this field"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:94
+#: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:243
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
 msgid "Delete"
 msgstr ""
 
@@ -385,12 +401,12 @@ msgstr ""
 msgid "Delete account and all the associated data"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
 msgid "Delete API key"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:238
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
 msgstr ""
 
@@ -419,7 +435,7 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:171
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
 msgstr ""
 
@@ -435,15 +451,15 @@ msgid "Domain"
 msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:225
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:157
+#: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:145
+#: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
 msgstr ""
 
@@ -466,7 +482,7 @@ msgstr ""
 msgid "Email or domain is already in blocklist"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:72
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:71
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr ""
@@ -496,11 +512,11 @@ msgstr ""
 msgid "Enterprise"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:98
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:150
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
 msgstr ""
 
@@ -508,7 +524,7 @@ msgstr ""
 #~ msgid "Error while switching subscription {1}."
 #~ msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:121
+#: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
 msgstr ""
 
@@ -534,11 +550,11 @@ msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:107
 msgid "Experience"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:221
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:219
 msgid "Expiration"
 msgstr ""
 
@@ -567,11 +583,11 @@ msgstr ""
 msgid "French"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:45
+#: src/pages/settings/SettingsBilling.tsx:47
 msgid "from monthly to yearly"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:52
+#: src/pages/settings/SettingsBilling.tsx:54
 msgid "from yearly to monthly"
 msgstr ""
 
@@ -579,14 +595,14 @@ msgstr ""
 msgid "Full access"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:187
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:186
 msgid "Functions"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
 #: src/pages/settings/workspace/SettingsDomain.tsx:132
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:138
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:137
 msgid "General"
 msgstr ""
 
@@ -611,7 +627,7 @@ msgstr ""
 msgid "Icon and Name"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:275
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr ""
 
@@ -626,7 +642,7 @@ msgstr ""
 
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:160
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:159
 msgid "Integrations"
 msgstr ""
 
@@ -675,6 +691,10 @@ msgstr ""
 msgid "Italian"
 msgstr ""
 
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
+msgid "Lab"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
 msgstr ""
@@ -687,7 +707,7 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:209
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:215
 msgid "Logout"
 msgstr ""
 
@@ -703,13 +723,13 @@ msgstr ""
 msgid "Manage your internet accounts."
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:144
+#: src/pages/settings/SettingsBilling.tsx:145
 msgid "Manage your subscription"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
 msgid "Members"
 msgstr ""
 
@@ -722,13 +742,13 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:211
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 msgid "Name of your API key"
 msgstr ""
 
@@ -736,11 +756,11 @@ msgstr ""
 msgid "Name of your workspace"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:125
+#: src/modules/command-menu/components/CommandMenu.tsx:143
 msgid "Navigate"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:79
+#: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr ""
 
@@ -756,7 +776,7 @@ msgstr ""
 msgid "New Key"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsNewObject.tsx:69
+#: src/pages/settings/data-model/SettingsNewObject.tsx:66
 msgid "New Object"
 msgstr ""
 
@@ -768,15 +788,15 @@ msgstr ""
 msgid "New Webhook"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
 msgid "No connected account"
 msgstr ""
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:108
-msgid "not allowed"
-msgstr ""
+#~ msgid "not allowed"
+#~ msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:141
+#: src/modules/command-menu/components/CommandMenu.tsx:159
 msgid "Notes"
 msgstr ""
 
@@ -786,7 +806,7 @@ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:160
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
-#: src/pages/settings/data-model/SettingsNewObject.tsx:76
+#: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
 msgid "Objects"
 msgstr ""
@@ -795,7 +815,7 @@ msgstr ""
 msgid "Off the beaten path"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:137
+#: src/modules/command-menu/components/CommandMenu.tsx:155
 msgid "Opportunities"
 msgstr ""
 
@@ -803,7 +823,7 @@ msgstr ""
 msgid "or"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:195
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:194
 msgid "Other"
 msgstr ""
 
@@ -823,7 +843,7 @@ msgstr ""
 msgid "Password reset link has been sent to the email"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:129
+#: src/modules/command-menu/components/CommandMenu.tsx:147
 msgid "People"
 msgstr ""
 
@@ -836,7 +856,7 @@ msgstr ""
 msgid "Please enter a valid URL"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:258
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr ""
 
@@ -848,14 +868,14 @@ msgstr ""
 msgid "Portuguese"
 msgstr ""
 
-#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:62
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
 msgid "Preview"
 msgstr ""
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:103
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:102
 msgid "Profile"
 msgstr ""
 
@@ -871,26 +891,26 @@ msgstr ""
 msgid "Receive an email containing password update link"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:109
+#: src/modules/command-menu/components/CommandMenu.tsx:127
 msgid "Record Selection"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:191
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:282
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:195
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
 msgid "Regenerate Key"
 msgstr ""
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Releases"
 msgstr ""
 
@@ -900,6 +920,10 @@ msgstr ""
 
 #: src/pages/auth/PasswordReset.tsx:177
 msgid "Reset Password"
+msgstr ""
+
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:45
+msgid "Reset to"
 msgstr ""
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
@@ -925,7 +949,7 @@ msgstr ""
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:166
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
 msgid "Security"
 msgstr ""
 
@@ -941,7 +965,7 @@ msgstr ""
 msgid "Send an invite email to your team"
 msgstr ""
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:198
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:197
 msgid "Server Admin Panel"
 msgstr ""
 
@@ -979,15 +1003,15 @@ msgstr ""
 msgid "SSO"
 msgstr ""
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:107
+#: src/pages/settings/workspace/SettingsDomain.tsx:105
 msgid "Subdomain already taken"
 msgstr ""
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:49
+#: src/pages/settings/workspace/SettingsDomain.tsx:50
 msgid "Subdomain can not be longer than 30 characters"
 msgstr ""
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:48
+#: src/pages/settings/workspace/SettingsDomain.tsx:49
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr ""
 
@@ -995,7 +1019,7 @@ msgstr ""
 #~ msgid "Subscription has been switched {0}"
 #~ msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:117
+#: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
 msgstr ""
 
@@ -1011,11 +1035,11 @@ msgstr ""
 #~ msgid "Switch {3}"
 #~ msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:158
+#: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:162
+#: src/pages/settings/SettingsBilling.tsx:163
 msgid "Switch {to}"
 msgstr ""
 
@@ -1023,7 +1047,7 @@ msgstr ""
 #~ msgid "Switch billing {4}"
 #~ msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:188
+#: src/pages/settings/SettingsBilling.tsx:187
 msgid "Switch billing {to}"
 msgstr ""
 
@@ -1039,7 +1063,7 @@ msgstr ""
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:145
+#: src/modules/command-menu/components/CommandMenu.tsx:163
 msgid "Tasks"
 msgstr ""
 
@@ -1090,11 +1114,11 @@ msgstr ""
 msgid "Time format"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:51
+#: src/pages/settings/SettingsBilling.tsx:53
 msgid "to monthly"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:44
+#: src/pages/settings/SettingsBilling.tsx:46
 msgid "to yearly"
 msgstr ""
 
@@ -1115,7 +1139,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:51
+#: src/pages/settings/workspace/SettingsDomain.tsx:52
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr ""
 
@@ -1123,7 +1147,7 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:101
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:100
 msgid "User"
 msgstr ""
 
@@ -1138,11 +1162,11 @@ msgstr ""
 msgid "Values"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:117
+#: src/modules/command-menu/components/CommandMenu.tsx:135
 msgid "View"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:149
+#: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
 msgstr ""
 
@@ -1171,21 +1195,21 @@ msgstr ""
 msgid "When the API key will expire."
 msgstr ""
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:222
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
 msgid "When the key will be disabled"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:113
+#: src/modules/command-menu/components/CommandMenu.tsx:131
 msgid "Workflow Record Selection"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:121
+#: src/modules/command-menu/components/CommandMenu.tsx:139
 msgid "Workflows"
 msgstr ""
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
-#: src/pages/settings/SettingsBilling.tsx:132
+#: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
 #: src/pages/settings/workspace/SettingsDomain.tsx:128
 #: src/pages/settings/security/SettingsSecurity.tsx:37
@@ -1194,13 +1218,13 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:167
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
 #: src/pages/settings/data-model/SettingsObjects.tsx:157
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
-#: src/pages/settings/data-model/SettingsNewObject.tsx:72
+#: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:136
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
 msgid "Workspace"
 msgstr ""
 
@@ -1213,15 +1237,15 @@ msgid "Write a description"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:158
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:46
+#: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:53
+#: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr ""
 
@@ -1229,6 +1253,6 @@ msgstr ""
 msgid "Your name as it will be displayed"
 msgstr ""
 
-#: src/pages/settings/SettingsBilling.tsx:171
+#: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr ""

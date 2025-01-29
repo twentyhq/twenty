@@ -13,58 +13,6 @@ const nameFullNameField = {
 const jobTitleTextField = { name: 'jobTitle', type: FieldMetadataType.TEXT };
 const emailsEmailsField = { name: 'emails', type: FieldMetadataType.EMAILS };
 
-jest.mock(
-  'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util',
-  () => ({
-    computeColumnName: jest.fn((name) => {
-      if (name === 'name') {
-        return 'name';
-      }
-      if (name === 'jobTitle') {
-        return 'jobTitle';
-      }
-      if (name === 'emailsPrimaryEmail') {
-        return 'emailsPrimaryEmail';
-      }
-      if (name === 'emailsAdditionalEmails') {
-        return 'emailsAdditionalEmails';
-      }
-      if (name === 'nameFirstName') {
-        return 'nameFirstName';
-      }
-      if (name === 'nameLastName') {
-        return 'nameLastName';
-      }
-    }),
-    computeCompositeColumnName: jest.fn((field, property) => {
-      if (
-        field.name === emailsEmailsField.name &&
-        property.name === 'primaryEmail'
-      ) {
-        return 'emailsPrimaryEmail';
-      }
-      if (
-        field.name === emailsEmailsField.name &&
-        property.name === 'additionalEmails'
-      ) {
-        return 'emailsAdditionalEmails';
-      }
-      if (
-        field.name === nameFullNameField.name &&
-        property.name === 'firstName'
-      ) {
-        return 'nameFirstName';
-      }
-      if (
-        field.name === nameFullNameField.name &&
-        property.name === 'lastName'
-      ) {
-        return 'nameLastName';
-      }
-    }),
-  }),
-);
-
 describe('getTsVectorColumnExpressionFromFields', () => {
   it('should generate correct expression for simple text field', () => {
     const fields = [nameTextField] as FieldTypeAndNameMetadata[];
@@ -94,5 +42,25 @@ describe('getTsVectorColumnExpressionFromFields', () => {
   `.trim();
 
     expect(result.trim()).toBe(expected);
+  });
+
+  it('should handle rich text fields', () => {
+    const fields = [
+      { name: 'body', type: FieldMetadataType.RICH_TEXT },
+    ] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toBe("to_tsvector('simple', COALESCE(\"body\", ''))");
+  });
+
+  it('should handle rich text v2 fields', () => {
+    const fields = [
+      { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT_V2 },
+    ] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toBe(
+      "to_tsvector('simple', COALESCE(\"bodyV2Markdown\", ''))",
+    );
   });
 });

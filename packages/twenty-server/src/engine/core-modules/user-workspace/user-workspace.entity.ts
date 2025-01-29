@@ -20,7 +20,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
-@ObjectType('UserWorkspace')
+@ObjectType()
 @Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
 export class UserWorkspace {
   @IDField(() => UUIDScalarType)
