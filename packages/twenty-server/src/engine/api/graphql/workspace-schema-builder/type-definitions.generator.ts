@@ -293,7 +293,7 @@ export class TypeDefinitionsGenerator {
 
       this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
     } else {
-      console.log(
+      this.logger.log(
         chalk.green('Extend object type definition with new relation fields'),
       );
       const objectTypeDefsV2 = objectMetadataCollectionWithCompositeFields.map(
