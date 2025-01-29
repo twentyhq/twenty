@@ -33,14 +33,14 @@ export class RelationTypeV2Factory {
       );
     }
 
-    const relationQqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
+    const relationGqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
       fieldMetadata.relationTargetObjectMetadataId,
       fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY
         ? ObjectTypeDefinitionKind.Connection
         : ObjectTypeDefinitionKind.Plain,
     );
 
-    if (!relationQqlType) {
+    if (!relationGqlType) {
       this.logger.error(
         `Could not find a relation type for ${fieldMetadata.id}`,
         {
@@ -51,6 +51,6 @@ export class RelationTypeV2Factory {
       throw new Error(`Could not find a relation type for ${fieldMetadata.id}`);
     }
 
-    return relationQqlType;
+    return relationGqlType;
   }
 }
