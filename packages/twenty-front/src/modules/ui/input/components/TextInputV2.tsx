@@ -16,7 +16,6 @@ import {
   IconComponent,
   IconEye,
   IconEyeOff,
-  RGBA,
 } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -40,7 +39,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
-    'LeftIcon' | 'error' | 'sizeVariant' | 'width' | 'disableBoxShadow'
+    'LeftIcon' | 'error' | 'sizeVariant' | 'width'
   >
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -76,13 +75,10 @@ const StyledInput = styled.input<
   }
 
   &:focus {
-    ${({ theme, disableBoxShadow }) => {
-      return `box-shadow: ${
-        disableBoxShadow
-          ? 'none'
-          : `0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)}`
-      };
-      border-color: ${theme.color.blue};`;
+    ${({ theme }) => {
+      return `
+      border-color: ${theme.color.blue};
+      `;
     }};
   }
 `;
@@ -153,7 +149,6 @@ export type TextInputV2ComponentProps = Omit<
   onBlur?: FocusEventHandler<HTMLInputElement>;
   dataTestId?: string;
   sizeVariant?: TextInputV2Size;
-  disableBoxShadow?: boolean;
 };
 
 type TextInputV2WithAutoGrowWrapperProps = TextInputV2ComponentProps;
@@ -182,7 +177,6 @@ const TextInputV2Component = (
     autoComplete,
     maxLength,
     sizeVariant = 'lg',
-    disableBoxShadow = false,
     dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
@@ -254,7 +248,6 @@ const TextInputV2Component = (
             maxLength,
             error,
             sizeVariant,
-            disableBoxShadow,
           }}
         />
 

@@ -109,7 +109,6 @@ export const EditableBreadcrumbItem = ({
       onChange={setValue}
       placeholder={placeholder}
       onFocus={handleFocus}
-      disableBoxShadow
       autoFocus
     />
   ) : (
