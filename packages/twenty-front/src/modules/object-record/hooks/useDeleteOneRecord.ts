@@ -12,6 +12,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from 'twenty-shared';
+import { isDefined } from 'twenty-ui';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
@@ -70,7 +71,7 @@ export const useDeleteOneRecord = ({
           computeReferences: false,
         });
 
-      if (!optimisticRecordNode || !cachedRecordNode) {
+      if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
         return null;
       }
 

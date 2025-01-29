@@ -135,7 +135,7 @@ export const useCreateManyRecords = <
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];
 
-          if (!records?.length || skipPostOptmisticEffect) return;
+          if (!isDefined(records?.length) || skipPostOptmisticEffect) return;
 
           triggerCreateRecordsOptimisticEffect({
             cache,
