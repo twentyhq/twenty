@@ -34,18 +34,18 @@ const StyledList = styled.div`
 const StyledInnerList = styled.div`
   max-height: calc(
     100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
-      ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px
+      ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px -
+      ${MOBILE_NAVIGATION_BAR_HEIGHT}px
   );
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
+  @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(
       100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
-        ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px -
-        ${MOBILE_NAVIGATION_BAR_HEIGHT}px
+        ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px
     );
   }
 `;
