@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings, getOsControlSymbol } from 'twenty-ui';
+import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -28,7 +28,6 @@ const StyledInnerContainer = styled.div`
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
-  const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -42,6 +41,8 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
+  const { openRecordsSearchPage } = useCommandMenu();
+
   return (
     <>
       {!isMobile && (
@@ -49,8 +50,8 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label={t`Search`}
             Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={[getOsControlSymbol(), 'K']}
+            onClick={openRecordsSearchPage}
+            keyboard={['/']}
           />
           <NavigationDrawerItem
             label={t`Settings`}

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
@@ -24,6 +25,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
     StripeCustomerService,
     StripePriceService,
     StripeProductService,
+    StripeBillingMeterEventService,
   ],
   exports: [
     StripeWebhookService,
@@ -35,6 +37,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
     StripeSubscriptionItemService,
     StripeSubscriptionService,
     StripeProductService,
+    StripeBillingMeterEventService,
   ],
 })
 export class StripeModule {}

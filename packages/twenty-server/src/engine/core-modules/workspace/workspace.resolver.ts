@@ -148,11 +148,9 @@ export class WorkspaceResolver {
       workspace.id,
     );
 
-    const filteredFeatureFlags = featureFlags.filter((flag) =>
+    return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
-
-    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)
@@ -216,7 +214,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  hasValidEntrepriseKey(): boolean {
+  hasValidEnterpriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 

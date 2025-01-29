@@ -23,7 +23,7 @@ import {
 export const DEFAULT_ACTIONS_CONFIG_V1: Record<
   string,
   ActionMenuEntry & {
-    actionHook: ActionHook;
+    useAction: ActionHook;
   }
 > = {
   addToFavoritesSingleRecord: {
@@ -37,7 +37,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useAddToFavoritesSingleRecordAction,
+    useAction: useAddToFavoritesSingleRecordAction,
   },
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -50,7 +50,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useRemoveFromFavoritesSingleRecordAction,
+    useAction: useRemoveFromFavoritesSingleRecordAction,
   },
   deleteSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -65,7 +65,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    actionHook: useDeleteSingleRecordAction,
+    useAction: useDeleteSingleRecordAction,
   },
   deleteMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -78,7 +78,7 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useDeleteMultipleRecordsAction,
+    useAction: useDeleteMultipleRecordsAction,
   },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -91,11 +91,11 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: 'Export view',
     shortLabel: 'Export',
@@ -104,6 +104,6 @@ export const DEFAULT_ACTIONS_CONFIG_V1: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
 };

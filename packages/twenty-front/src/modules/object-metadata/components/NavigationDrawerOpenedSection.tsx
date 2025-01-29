@@ -5,8 +5,11 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { useLingui } from '@lingui/react/macro';
 
 export const NavigationDrawerOpenedSection = () => {
+  const { t } = useLingui();
+
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
     (item) => !item.isRemote,
@@ -47,7 +50,7 @@ export const NavigationDrawerOpenedSection = () => {
   return (
     shouldDisplayObjectInOpenedSection && (
       <NavigationDrawerSectionForObjectMetadataItems
-        sectionTitle={'Opened'}
+        sectionTitle={t`Opened`}
         objectMetadataItems={[objectMetadataItem]}
         isRemote={false}
       />

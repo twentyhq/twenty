@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
@@ -8,7 +9,12 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 @Module({
-  imports: [WorkflowCommonModule, WorkflowExecutorModule, ThrottlerModule],
+  imports: [
+    WorkflowCommonModule,
+    WorkflowExecutorModule,
+    ThrottlerModule,
+    BillingModule,
+  ],
   providers: [
     WorkflowRunnerWorkspaceService,
     WorkflowRunWorkspaceService,

@@ -66,8 +66,7 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
 export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
-  firstHotKey?: string;
-  secondHotKey?: string;
+  hotKeys?: string[];
   className?: string;
   isSelected?: boolean;
   onClick?: () => void;
@@ -77,8 +76,7 @@ export type MenuItemCommandProps = {
 export const MenuItemCommand = ({
   LeftIcon,
   text,
-  firstHotKey,
-  secondHotKey,
+  hotKeys,
   className,
   isSelected,
   onClick,
@@ -102,12 +100,7 @@ export const MenuItemCommand = ({
         <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
         {RightComponent}
       </StyledMenuItemLeftContent>
-      {!isMobile && (
-        <MenuItemCommandHotKeys
-          firstHotKey={firstHotKey}
-          secondHotKey={secondHotKey}
-        />
-      )}
+      {!isMobile && <MenuItemCommandHotKeys hotKeys={hotKeys} />}
     </StyledMenuItemCommandContainer>
   );
 };
