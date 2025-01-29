@@ -93,6 +93,10 @@ msgstr "Add SSO Identity Provider"
 msgid "Add to blocklist"
 msgstr "Add to blocklist"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "All"
+
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
 msgstr "Allow logins through Google's single sign-on functionality."
@@ -147,6 +151,11 @@ msgstr "Are you sure that you want to change your billing interval?"
 #~ msgid "Are you sure that you want to change your billing interval? {impact}"
 #~ msgstr "Are you sure that you want to change your billing interval? {impact}"
 
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "Ascending"
+
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
 msgstr "At least one authentication method must be enabled"
@@ -158,6 +167,11 @@ msgstr "Authentication"
 #: src/pages/auth/Authorize.tsx:127
 msgid "Authorize"
 msgstr "Authorize"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "Average"
 
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
@@ -318,6 +332,22 @@ msgstr "Copy this key as it will not be visible again"
 #~ msgid "Copy this key as it will only be visible this one time"
 #~ msgstr "Copy this key as it will only be visible this one time"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "Count all"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "Count empty"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "Count not empty"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "Count unique values"
+
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
 msgstr "Create API key"
@@ -424,6 +454,11 @@ msgstr "Delete workspace"
 msgid "Delete your whole workspace"
 msgstr "Delete your whole workspace"
 
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "Descending"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
@@ -454,6 +489,14 @@ msgstr "Domain"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
 msgstr "E.g. backoffice integration"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "Earliest"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "Earliest date"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
@@ -494,6 +537,10 @@ msgstr "employees"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
 msgstr "Employees"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+msgid "Empty"
+msgstr "Empty"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
@@ -570,10 +617,19 @@ msgstr "Expires in"
 #~ msgid "Failed to create object"
 #~ msgstr "Failed to create object"
 
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:58
+msgid "Favorites"
+msgstr "Favorites"
+
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "Fields"
+
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:81
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "Filter"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
@@ -699,6 +755,14 @@ msgstr "Lab"
 msgid "Language"
 msgstr "Language"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "Latest"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "Latest date"
+
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
 msgstr "Link copied to clipboard"
@@ -727,6 +791,11 @@ msgstr "Manage your internet accounts."
 msgid "Manage your subscription"
 msgstr "Manage your subscription"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "Max"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
@@ -737,6 +806,11 @@ msgstr "Members"
 #: src/pages/settings/crm-migration/SettingsCRMMigration.tsx:28
 #~ msgid "Migrate"
 #~ msgstr "Migrate"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "Min"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
@@ -796,6 +870,10 @@ msgstr "No connected account"
 #~ msgid "not allowed"
 #~ msgstr "not allowed"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "Not empty"
+
 #: src/modules/command-menu/components/CommandMenu.tsx:159
 msgid "Notes"
 msgstr "Notes"
@@ -815,9 +893,17 @@ msgstr "Objects"
 msgid "Off the beaten path"
 msgstr "Off the beaten path"
 
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "Opened"
+
 #: src/modules/command-menu/components/CommandMenu.tsx:155
 msgid "Opportunities"
 msgstr "Opportunities"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "Options"
 
 #: src/pages/onboarding/InviteTeam.tsx:213
 msgid "or"
@@ -846,6 +932,14 @@ msgstr "Password reset link has been sent to the email"
 #: src/modules/command-menu/components/CommandMenu.tsx:147
 msgid "People"
 msgstr "People"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "Percent empty"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "Percent not empty"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -943,6 +1037,10 @@ msgstr "Search an index..."
 #~ msgid "Search an object..."
 #~ msgstr "Search an object..."
 
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+msgid "Search fields"
+msgstr "Search fields"
+
 #: src/pages/settings/data-model/SettingsObjects.tsx:171
 msgid "Search for an object..."
 msgstr "Search for an object..."
@@ -995,6 +1093,10 @@ msgstr "Should changing a field's label also change the API name?"
 msgid "Skip"
 msgstr "Skip"
 
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "Sort"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
 msgid "Spanish"
 msgstr "Spanish"
@@ -1022,6 +1124,11 @@ msgstr "Subdomain can not be shorter than 3 characters"
 #: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
 msgstr "Subscription has been switched {to}"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "Sum"
 
 #: src/pages/settings/SettingsWorkspace.tsx:63
 msgid "Support"
@@ -1126,6 +1233,10 @@ msgstr "to yearly"
 msgid "Type"
 msgstr "Type"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "Unique"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
@@ -1225,6 +1336,7 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "Workspace"
 

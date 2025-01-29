@@ -3,6 +3,7 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { t } from '@lingui/core/macro';
 import { ReactNode, useContext } from 'react';
 import { IconCheck, isDefined, MenuItem } from 'twenty-ui';
 
@@ -31,7 +32,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
             updateViewFieldAggregateOperation(operation);
             closeDropdown();
           }}
-          text={getAggregateOperationLabel(operation)}
+          text={t(getAggregateOperationLabel(operation))}
           RightIcon={
             currentViewFieldAggregateOperation === operation
               ? IconCheck

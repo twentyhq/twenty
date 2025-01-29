@@ -8,6 +8,7 @@ import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/Agg
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -47,8 +48,8 @@ export const computeAggregateValueAndLabel = ({
         data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
           AGGREGATE_OPERATIONS.count
         ],
-      label: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
-      labelWithFieldName: `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`,
+      label: `${t(getAggregateOperationLabel(AGGREGATE_OPERATIONS.count))}`,
+      labelWithFieldName: `${t(getAggregateOperationLabel(AGGREGATE_OPERATIONS.count))}`,
     };
   }
 
@@ -121,12 +122,12 @@ export const computeAggregateValueAndLabel = ({
   const label = getAggregateOperationShortLabel(aggregateOperation);
   const labelWithFieldName =
     aggregateOperation === AGGREGATE_OPERATIONS.count
-      ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`
-      : `${getAggregateOperationLabel(aggregateOperation)} of ${field.label}`;
+      ? `${t(getAggregateOperationLabel(AGGREGATE_OPERATIONS.count))}`
+      : `${t(getAggregateOperationLabel(aggregateOperation))} of ${field.label}`;
 
   return {
     value,
-    label,
+    label: t(label),
     labelWithFieldName,
   };
 };

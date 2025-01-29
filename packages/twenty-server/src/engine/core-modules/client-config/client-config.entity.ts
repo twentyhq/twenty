@@ -65,8 +65,8 @@ class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
-  @Field(() => String, { nullable: false, defaultValue: '' })
-  imagePath: string;
+  @Field(() => String, { nullable: true, defaultValue: '' })
+  imagePath: string | null;
 }
 
 @ObjectType()

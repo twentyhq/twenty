@@ -26,6 +26,8 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { useLingui } from '@lingui/react';
+
 export const StyledInput = styled.input`
   background: transparent;
   border: none;
@@ -161,12 +163,14 @@ export const ObjectFilterDropdownFilterSelect = ({
     isAdvancedFilterButtonVisible &&
     isAdvancedFiltersEnabled;
 
+  const { t } = useLingui();
+
   return (
     <>
       <StyledInput
         value={objectFilterDropdownSearchInput}
         autoFocus
-        placeholder="Search fields"
+        placeholder={t`Search fields`}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setObjectFilterDropdownSearchInput(event.target.value)
         }

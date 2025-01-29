@@ -8,6 +8,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import {
   Icon123,
@@ -56,7 +57,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
             : resetContent()
         }
       >
-        {getAggregateOperationLabel(aggregateOperation)}
+        {t(getAggregateOperationLabel(aggregateOperation))}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {availableFieldsIdsForAggregateOperation.map((fieldId) => {
