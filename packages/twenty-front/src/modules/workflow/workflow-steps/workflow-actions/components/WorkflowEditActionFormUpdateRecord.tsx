@@ -51,7 +51,7 @@ const AVAILABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.CURRENCY,
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.RAW_JSON,
-  FieldMetadataType.UUID
+  FieldMetadataType.UUID,
 ];
 
 export const WorkflowEditActionFormUpdateRecord = ({
