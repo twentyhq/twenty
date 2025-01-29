@@ -16,7 +16,6 @@ import {
   IconComponent,
   IconEye,
   IconEyeOff,
-  RGBA,
 } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -54,12 +53,13 @@ const StyledInput = styled.input<
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ sizeVariant }) => (sizeVariant === 'sm' ? '20px' : '32px')};
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant }) =>
     sizeVariant === 'sm' ? `${theme.spacing(2)} 0` : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon }) =>
-    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
+    LeftIcon ? `calc(${theme.spacing(3)} + 16px)` : theme.spacing(2)};
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(5)})` : '100%'};
 
@@ -76,8 +76,9 @@ const StyledInput = styled.input<
 
   &:focus {
     ${({ theme }) => {
-      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
-      border-color: ${theme.color.blue};`;
+      return `
+      border-color: ${theme.color.blue};
+      `;
     }};
   }
 `;
@@ -88,11 +89,16 @@ const StyledErrorHelper = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledLeftIconContainer = styled.div`
+const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
   align-items: center;
   display: flex;
   justify-content: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, sizeVariant }) =>
+    sizeVariant === 'sm'
+      ? theme.spacing(0.5)
+      : sizeVariant === 'md'
+        ? theme.spacing(1)
+        : theme.spacing(2)};
   position: absolute;
   top: 0;
   bottom: 0;
@@ -113,9 +119,10 @@ const StyledTrailingIconContainer = styled.div<
   margin: auto 0;
 `;
 
-const StyledTrailingIcon = styled.div`
+const StyledTrailingIcon = styled.div<{ isFocused?: boolean }>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme, isFocused }) =>
+    isFocused ? theme.font.color.secondary : theme.font.color.light};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
   justify-content: center;
@@ -123,7 +130,7 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputV2Size = 'sm' | 'md';
+export type TextInputV2Size = 'sm' | 'md' | 'lg';
 
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -169,7 +176,7 @@ const TextInputV2Component = (
     LeftIcon,
     autoComplete,
     maxLength,
-    sizeVariant = 'md',
+    sizeVariant = 'lg',
     dataTestId,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
@@ -181,9 +188,20 @@ const TextInputV2Component = (
   const combinedRef = useCombinedRefs(ref, inputRef);
 
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const handleFocus: FocusEventHandler<HTMLInputElement> = (event) => {
+    setIsFocused(true);
+    onFocus?.(event);
+  };
+
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    setIsFocused(false);
+    onBlur?.(event);
   };
 
   const inputId = useId();
@@ -197,8 +215,8 @@ const TextInputV2Component = (
       )}
       <StyledInputContainer>
         {!!LeftIcon && (
-          <StyledLeftIconContainer>
-            <StyledTrailingIcon>
+          <StyledLeftIconContainer sizeVariant={sizeVariant}>
+            <StyledTrailingIcon isFocused={isFocused}>
               <LeftIcon size={theme.icon.size.md} />
             </StyledTrailingIcon>
           </StyledLeftIconContainer>
@@ -211,8 +229,8 @@ const TextInputV2Component = (
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(

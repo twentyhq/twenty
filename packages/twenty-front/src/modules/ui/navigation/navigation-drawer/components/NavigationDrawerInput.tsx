@@ -78,6 +78,7 @@ export const NavigationDrawerInput = ({
       onChange={onChange}
       placeholder={placeholder}
       onFocus={handleFocus}
+      sizeVariant="md"
       fullWidth
       autoFocus
     />
