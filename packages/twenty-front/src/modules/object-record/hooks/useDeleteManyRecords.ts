@@ -24,7 +24,7 @@ type useDeleteManyRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-type DeleteManyRecordsProps = {
+export type DeleteManyRecordsProps = {
   recordIdsToDelete: string[];
   skipOptimisticEffect?: boolean;
   delayInMsBetweenRequests?: number;
