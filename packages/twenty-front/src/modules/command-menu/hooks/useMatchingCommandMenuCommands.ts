@@ -43,6 +43,7 @@ export const useMatchingCommandMenuCommands = ({
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
     !matchingWorkflowRunGlobalCommands.length &&
+    !matchingStandardActionObjectCommands.length &&
     !matchingNavigateCommands.length;
 
   return {
