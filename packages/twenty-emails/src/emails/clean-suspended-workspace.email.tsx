@@ -17,7 +17,7 @@ export const CleanSuspendedWorkspaceEmail = ({
   const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
 
   return (
-    <BaseEmail width={333}>
+    <BaseEmail width={333} locale="en">
       <Title value="Deleted Workspace 🥺" />
       <MainText>
         {helloString},

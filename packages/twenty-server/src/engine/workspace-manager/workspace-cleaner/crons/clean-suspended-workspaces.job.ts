@@ -111,10 +111,10 @@ export class CleanSuspendedWorkspacesJob {
       workspaceDisplayName: `${workspaceDisplayName}`,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
+    const html = await render(emailTemplate, {
       pretty: true,
     });
-    const text = render(emailTemplate, {
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 
@@ -189,10 +189,10 @@ export class CleanSuspendedWorkspacesJob {
       workspaceDisplayName: `${workspaceDisplayName}`,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
+    const html = await render(emailTemplate, {
       pretty: true,
     });
-    const text = render(emailTemplate, {
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 
