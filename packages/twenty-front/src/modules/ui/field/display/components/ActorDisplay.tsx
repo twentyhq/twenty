@@ -9,6 +9,8 @@ import {
   IconCalendar,
   IconCsv,
   IconGmail,
+  IconGoogleCalendar,
+  IconMicrosoftCalendar,
   IconMicrosoftOutlook,
   IconRobot,
   IconSettingsAutomation,
@@ -37,9 +39,9 @@ export const ActorDisplay = ({
           : IconGmail;
       case 'CALENDAR':
         return context?.provider === ConnectedAccountProvider.MICROSOFT
-          ? IconMicrosoftOutlook
+          ? IconMicrosoftCalendar
           : context?.provider === ConnectedAccountProvider.GOOGLE
-            ? IconGmail
+            ? IconGoogleCalendar
             : IconCalendar;
       case 'SYSTEM':
         return IconRobot;

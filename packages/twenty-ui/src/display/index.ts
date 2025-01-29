@@ -16,6 +16,7 @@ export * from './icon/components/IconGoogle';
 export * from './icon/components/IconGoogleCalendar';
 export * from './icon/components/IconLock';
 export * from './icon/components/IconMicrosoft';
+export * from './icon/components/IconMicrosoftCalendar';
 export * from './icon/components/IconMicrosoftOutlook';
 export * from './icon/components/IconRelationManyToOne';
 export * from './icon/components/IconTwentyStar';
