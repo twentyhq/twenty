@@ -17,7 +17,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -94,10 +93,8 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                     closeDropdown();
                   }
                 }}
-                text={t(
-                  getAggregateOperationLabel(
-                    availableAggregationOperation as ExtendedAggregateOperations,
-                  ),
+                text={getAggregateOperationLabel(
+                  availableAggregationOperation as ExtendedAggregateOperations,
                 )}
                 hasSubMenu={
                   availableAggregationOperation === AGGREGATE_OPERATIONS.count

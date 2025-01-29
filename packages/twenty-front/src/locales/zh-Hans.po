@@ -1,16 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-29 15:52+0100\n"
+"POT-Creation-Date: 2025-01-29 16:25+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-Hans\n"
-
-#. js-lingui-explicit-id
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
-msgid "/+Z5u4"
-msgstr "/+Z5u4"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -74,7 +69,7 @@ msgid "Activate"
 msgstr "激活"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:202
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
 msgstr "活跃"
 
@@ -303,6 +298,11 @@ msgstr "复制邀请链接"
 msgid "Copy this key as it will not be visible again"
 msgstr "复制此密钥，因为它将不再可见"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "计数"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
 msgstr "计算所有"
@@ -360,14 +360,14 @@ msgstr "危险区"
 msgid "Data model"
 msgstr "数据模型"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:42
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:72
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
 msgstr "数据类型"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
-#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
 msgstr "日期"
@@ -583,7 +583,7 @@ msgstr "到期时间"
 msgid "Favorites"
 msgstr "收藏夹"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:36
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
 msgstr "字段类型"
 
@@ -652,7 +652,7 @@ msgstr "隐藏"
 msgid "Icon and Name"
 msgstr "图标和名称"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:66
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
 msgid "Identifier"
 msgstr "标识符"
 
@@ -661,7 +661,7 @@ msgid "If you’ve lost this key, you can regenerate it, but be aware that any s
 msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何使用此密钥的脚本都需要更新。请键入\"{confirmationValue}\"确认。"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:216
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
 msgstr "不活动"
 
@@ -784,6 +784,11 @@ msgstr "成员"
 msgid "Min"
 msgstr "最小"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "更多选择"
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
 msgid "Move left"
 msgstr "向左移动"
@@ -798,8 +803,8 @@ msgstr "向右移动"
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:30
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:60
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
@@ -901,6 +906,11 @@ msgstr "密码重置链接已发送至邮箱"
 msgid "People"
 msgstr "人"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "百分比"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
 msgstr "空车百分比"
@@ -997,7 +1007,7 @@ msgstr "SSO"
 msgid "Search"
 msgstr "搜索"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:184
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "搜索字段..."
 
@@ -1182,6 +1192,7 @@ msgstr "任何类型"
 msgid "URL"
 msgstr "网址"
 
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
 msgstr "独特性"
@@ -1336,6 +1347,10 @@ msgstr "每年"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "是"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel}的{fieldLabel}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"

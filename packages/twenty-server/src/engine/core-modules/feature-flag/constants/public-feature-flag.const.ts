@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  imagePath: string | null;
+  imagePath: string;
 };
 
 export type PublicFeatureFlag = {
@@ -18,7 +18,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Localization',
       description:
         "Our community is working on translating the app. Enable this flag and go to Settings > Experience to change your account's language.",
-      imagePath: null,
+      imagePath: '',
     },
   },
 ];

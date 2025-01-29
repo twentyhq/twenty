@@ -53,9 +53,9 @@ export const SettingsLabContent = () => {
         {[...labPublicFeatureFlags]
           .sort((a, b) => {
             // Sort flags with images first
-            if (a.metadata.imagePath !== null && b.metadata.imagePath === null)
+            if (a.metadata.imagePath !== '' && b.metadata.imagePath === '')
               return -1;
-            if (a.metadata.imagePath === null && b.metadata.imagePath !== null)
+            if (a.metadata.imagePath === '' && b.metadata.imagePath !== '')
               return 1;
             return 0;
           })

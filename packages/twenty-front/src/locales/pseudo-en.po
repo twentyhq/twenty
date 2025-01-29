@@ -15,12 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
-msgid "/+Z5u4"
-msgstr ""
+#~ msgid "/+Z5u4"
+#~ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:126
 #~ msgid "{0}"
 #~ msgstr ""
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
@@ -70,7 +74,7 @@ msgid "Activate"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:202
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
 msgstr ""
 
@@ -345,6 +349,11 @@ msgstr ""
 #~ msgid "Copy this key as it will only be visible this one time"
 #~ msgstr ""
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr ""
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
 msgstr ""
@@ -402,14 +411,14 @@ msgstr ""
 msgid "Data model"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:42
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:72
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
 msgstr ""
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
-#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
 msgstr ""
@@ -641,7 +650,7 @@ msgstr ""
 msgid "Favorites"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:36
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
 msgstr ""
 
@@ -718,7 +727,7 @@ msgstr ""
 msgid "Icon and Name"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:66
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
 msgid "Identifier"
 msgstr ""
 
@@ -727,7 +736,7 @@ msgid "If you’ve lost this key, you can regenerate it, but be aware that any s
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:216
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
 msgstr ""
 
@@ -859,6 +868,11 @@ msgstr ""
 msgid "Min"
 msgstr ""
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
 msgid "Move left"
 msgstr ""
@@ -873,8 +887,8 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:30
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:60
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
@@ -992,6 +1006,11 @@ msgstr ""
 msgid "People"
 msgstr ""
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr ""
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
 msgstr ""
@@ -1084,7 +1103,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:184
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr ""
 
@@ -1300,6 +1319,7 @@ msgstr ""
 msgid "Type anything"
 msgstr ""
 
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
 msgstr ""

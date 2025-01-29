@@ -1,16 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-29 15:52+0100\n"
+"POT-Creation-Date: 2025-01-29 16:25+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: de\n"
-
-#. js-lingui-explicit-id
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
-msgid "/+Z5u4"
-msgstr "/+Z5u4"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -74,7 +69,7 @@ msgid "Activate"
 msgstr "Aktivieren Sie"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:202
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
 msgstr "Aktiv"
 
@@ -303,6 +298,11 @@ msgstr "Link zur Einladung kopieren"
 msgid "Copy this key as it will not be visible again"
 msgstr "Kopieren Sie diesen Schlüssel, da er nicht mehr sichtbar sein wird"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "Zählen Sie"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
 msgstr "Alle zählen"
@@ -360,14 +360,14 @@ msgstr "Gefahrenzone"
 msgid "Data model"
 msgstr "Datenmodell"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:42
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:72
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
 msgstr "Datentyp"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
-#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
 msgstr "Datum"
@@ -583,7 +583,7 @@ msgstr "Läuft ab in"
 msgid "Favorites"
 msgstr "Favoriten"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:36
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
 msgstr "Feldtyp"
 
@@ -652,7 +652,7 @@ msgstr "Ausblenden"
 msgid "Icon and Name"
 msgstr "Icon und Name"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:66
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
 msgid "Identifier"
 msgstr "Kennung"
 
@@ -661,7 +661,7 @@ msgid "If you’ve lost this key, you can regenerate it, but be aware that any s
 msgstr "Wenn Sie diesen Schlüssel verloren haben, können Sie ihn neu generieren, aber beachten Sie, dass jedes Skript, das diesen Schlüssel verwendet, aktualisiert werden muss. Bitte geben Sie zur Bestätigung \"{confirmationValue}\" ein."
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:216
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
 msgstr "Inaktiv"
 
@@ -784,6 +784,11 @@ msgstr "Mitglieder"
 msgid "Min"
 msgstr "Min"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "Mehr Optionen"
+
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
 msgid "Move left"
 msgstr "Nach links bewegen"
@@ -798,8 +803,8 @@ msgstr "Nach rechts bewegen"
 #: src/pages/settings/SettingsProfile.tsx:35
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:30
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:60
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
@@ -901,6 +906,11 @@ msgstr "Der Link zum Zurücksetzen des Passworts wurde an die E-Mail gesendet"
 msgid "People"
 msgstr "Menschen"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "Prozentsatz"
+
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
 msgstr "Prozentsatz leer"
@@ -997,7 +1007,7 @@ msgstr "SSO"
 msgid "Search"
 msgstr "Suche"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:184
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "Ein Feld suchen..."
 
@@ -1182,6 +1192,7 @@ msgstr "Typ irgendetwas"
 msgid "URL"
 msgstr "URL"
 
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
 msgstr "Einzigartig"
@@ -1336,6 +1347,10 @@ msgstr "bis jährlich"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
 msgstr "ja"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel} von {fieldLabel}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"

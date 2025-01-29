@@ -46,7 +46,7 @@ export const SettingsObjectIndexTable = ({
         align: 'left',
       },
       {
-        fieldLabel: msg``,
+        fieldLabel: msg`Unique`,
         FieldIcon: IconSquareKey,
         fieldName: 'isUnique',
         fieldType: 'string',
