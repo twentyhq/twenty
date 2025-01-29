@@ -12,7 +12,6 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-// We're not strict checking that any key within recordInput exists in the objectMetadaItem //TODO IN THE TRAIN
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
