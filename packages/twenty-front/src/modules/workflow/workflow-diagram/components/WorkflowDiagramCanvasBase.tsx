@@ -1,13 +1,12 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
-import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
+import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import {
-  WorkflowDiagram,
   WorkflowDiagramEdge,
   WorkflowDiagramNode,
   WorkflowDiagramNodeType,
@@ -16,21 +15,21 @@ import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrgani
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  applyEdgeChanges,
-  applyNodeChanges,
   Background,
   EdgeChange,
   FitViewOptions,
-  getNodesBounds,
   NodeChange,
   NodeProps,
   ReactFlow,
+  applyEdgeChanges,
+  applyNodeChanges,
+  getNodesBounds,
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined, THEME_COMMON } from 'twenty-ui';
+import { THEME_COMMON, isDefined } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -47,6 +46,22 @@ const StyledResetReactflowStyles = styled.div`
     text-align: start;
     white-space: nowrap;
   }
+
+  .react-flow__handle {
+    min-height: 0;
+    min-width: 0;
+  }
+  .react-flow__handle-top {
+    transform: translate(-50%, -50%);
+  }
+  .react-flow__handle-bottom {
+    transform: translate(-50%, 100%);
+  }
+  .react-flow__handle.connectionindicator {
+    cursor: pointer;
+  }
+
+  --xy-edge-stroke: ${({ theme }) => theme.border.color.strong};
 
   --xy-node-border-radius: none;
   --xy-node-border: none;
@@ -68,12 +83,10 @@ const defaultFitViewOptions = {
 } satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
-  diagram,
   status,
   nodeTypes,
   children,
 }: {
-  diagram: WorkflowDiagram;
   status: WorkflowVersionStatus;
   nodeTypes: Partial<
     Record<
@@ -95,22 +108,17 @@ export const WorkflowDiagramCanvasBase = ({
     workflowReactFlowRefState,
   );
 
+  const workflowDiagram = useRecoilValue(workflowDiagramState);
+
   const { nodes, edges } = useMemo(
-    () => getOrganizedDiagram(diagram),
-    [diagram],
+    () =>
+      isDefined(workflowDiagram)
+        ? getOrganizedDiagram(workflowDiagram)
+        : { nodes: [], edges: [] },
+    [workflowDiagram],
   );
 
-  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
-  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
-  const isMobile = useIsMobile();
-
-  const rightDrawerState = !isRightDrawerOpen
-    ? 'closed'
-    : isRightDrawerMinimized
-      ? 'minimized'
-      : isMobile
-        ? 'fullScreen'
-        : 'normal';
+  const { rightDrawerState } = useRightDrawerState();
 
   const rightDrawerWidth = Number(
     THEME_COMMON.rightDrawerWidth.replace('px', ''),
@@ -187,8 +195,12 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
+  const { closeCommandMenu } = useCommandMenu();
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
+      <WorkflowDiagramCustomMarkers />
+
       <ReactFlow
         ref={(node) => {
           if (isDefined(node)) {
@@ -215,11 +227,17 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
+        onBeforeDelete={async () => {
+          // Abort all non-programmatic deletions
+          return false;
+        }}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
+        onPaneClick={closeCommandMenu}
+        nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
         <Background color={theme.border.color.medium} size={2} />
@@ -227,7 +245,7 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer>
+      <StyledStatusTagContainer data-testid="workflow-visualizer-status">
         <WorkflowVersionStatusTag versionStatus={status} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>

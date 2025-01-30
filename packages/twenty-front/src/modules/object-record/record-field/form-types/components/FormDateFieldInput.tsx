@@ -6,6 +6,7 @@ type FormDateFieldInputProps = {
   defaultValue: string | undefined;
   onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
+  readonly?: boolean;
 };
 
 export const FormDateFieldInput = ({
@@ -13,6 +14,7 @@ export const FormDateFieldInput = ({
   defaultValue,
   onPersist,
   VariablePicker,
+  readonly,
 }: FormDateFieldInputProps) => {
   return (
     <FormDateTimeFieldInput
@@ -21,6 +23,7 @@ export const FormDateFieldInput = ({
       defaultValue={defaultValue}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
+      readonly={readonly}
     />
   );
 };

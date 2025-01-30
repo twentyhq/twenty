@@ -1,11 +1,14 @@
-import { FormCountryCodeSelectInput } from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
+import {
+  FormCountryCodeSelectInput,
+  FormCountryCodeSelectInputUpdatedValue,
+} from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
+import { getCountryCallingCode } from 'libphonenumber-js';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -22,20 +25,27 @@ export const FormPhoneFieldInput = ({
   readonly,
   VariablePicker,
 }: FormPhoneFieldInputProps) => {
-  const handleCountryChange = (newCountry: string) => {
-    const newCallingCode = getCountryCallingCode(newCountry as CountryCode);
+  const handleCountryChange = (
+    newCountry: FormCountryCodeSelectInputUpdatedValue,
+  ) => {
+    let newCallingCode;
+    if (newCountry === '') {
+      newCallingCode = '';
+    } else {
+      newCallingCode = getCountryCallingCode(newCountry);
+    }
 
     onPersist({
       primaryPhoneCountryCode: newCountry,
       primaryPhoneCallingCode: newCallingCode,
-      primaryPhoneNumber: defaultValue?.primaryPhoneNumber || '',
+      primaryPhoneNumber: defaultValue?.primaryPhoneNumber ?? '',
     });
   };
 
   const handleNumberChange = (number: string | number | null) => {
     onPersist({
-      primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode || '',
-      primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode || '',
+      primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
+      primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
       primaryPhoneNumber: number ? `${number}` : '',
     });
   };
@@ -48,7 +58,6 @@ export const FormPhoneFieldInput = ({
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode || ''}
           onPersist={handleCountryChange}
           readonly={readonly}
-          VariablePicker={VariablePicker}
         />
         <FormNumberFieldInput
           label="Phone Number"
@@ -57,6 +66,7 @@ export const FormPhoneFieldInput = ({
           VariablePicker={VariablePicker}
           placeholder="Enter phone number"
           hint="Without calling code"
+          readonly={readonly}
         />
       </FormNestedFieldInputContainer>
     </FormFieldInputContainer>

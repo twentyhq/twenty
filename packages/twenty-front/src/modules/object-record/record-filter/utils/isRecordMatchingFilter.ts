@@ -50,6 +50,9 @@ const isAndFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is AndObjectRecordFilter => 'and' in filter && !!filter.and;
 
+const isImplicitAndFilter = (filter: RecordGqlOperationFilter) =>
+  Object.keys(filter).length > 1;
+
 const isOrFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is OrObjectRecordFilter => 'or' in filter && !!filter.or;
@@ -69,6 +72,16 @@ export const isRecordMatchingFilter = ({
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
+  }
+
+  if (isImplicitAndFilter(filter)) {
+    return Object.entries(filter).every(([filterKey, value]) =>
+      isRecordMatchingFilter({
+        record,
+        filter: { [filterKey]: value },
+        objectMetadataItem,
+      }),
+    );
   }
 
   if (isAndFilter(filter)) {
@@ -166,18 +179,18 @@ export const isRecordMatchingFilter = ({
     }
 
     switch (objectMetadataField.type) {
-      case FieldMetadataType.Rating:
+      case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.Text: {
+      case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RichText: {
+      case FieldMetadataType.RICH_TEXT: {
         // TODO: Implement a better rich text filter once it becomes a composite field
         // See this issue for more context: https://github.com/twentyhq/twenty/issues/7613#issuecomment-2408944585
         // This should be tackled in Q4'24
@@ -186,29 +199,29 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Select:
+      case FieldMetadataType.SELECT:
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.MultiSelect:
+      case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
           multiSelectFilter: filterValue as MultiSelectFilter,
           value: record[filterKey],
         });
-      case FieldMetadataType.Array: {
+      case FieldMetadataType.ARRAY: {
         return isMatchingArrayFilter({
           arrayFilter: filterValue as ArrayFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.RawJson: {
+      case FieldMetadataType.RAW_JSON: {
         return isMatchingRawJsonFilter({
           rawJsonFilter: filterValue as RawJsonFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.FullName: {
+      case FieldMetadataType.FULL_NAME: {
         const fullNameFilter = filterValue as FullNameFilter;
 
         return (
@@ -224,7 +237,7 @@ export const isRecordMatchingFilter = ({
             }))
         );
       }
-      case FieldMetadataType.Address: {
+      case FieldMetadataType.ADDRESS: {
         const addressFilter = filterValue as AddressFilter;
 
         const keys = [
@@ -248,7 +261,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.Links: {
+      case FieldMetadataType.LINKS: {
         const linksFilter = filterValue as LinksFilter;
 
         const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
@@ -265,39 +278,39 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.Date:
-      case FieldMetadataType.DateTime: {
+      case FieldMetadataType.DATE:
+      case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Number:
-      case FieldMetadataType.Numeric: {
+      case FieldMetadataType.NUMBER:
+      case FieldMetadataType.NUMERIC: {
         return isMatchingFloatFilter({
           floatFilter: filterValue as FloatFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Uuid: {
+      case FieldMetadataType.UUID: {
         return isMatchingUUIDFilter({
           uuidFilter: filterValue as UUIDFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Boolean: {
+      case FieldMetadataType.BOOLEAN: {
         return isMatchingBooleanFilter({
           booleanFilter: filterValue as BooleanFilter,
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.Currency: {
+      case FieldMetadataType.CURRENCY: {
         return isMatchingCurrencyFilter({
           currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey].amountMicros,
         });
       }
-      case FieldMetadataType.Actor: {
+      case FieldMetadataType.ACTOR: {
         const actorFilter = filterValue as ActorFilter;
 
         return (
@@ -308,7 +321,7 @@ export const isRecordMatchingFilter = ({
           })
         );
       }
-      case FieldMetadataType.Emails: {
+      case FieldMetadataType.EMAILS: {
         const emailsFilter = filterValue as EmailsFilter;
 
         if (emailsFilter.primaryEmail === undefined) {
@@ -320,13 +333,10 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey].primaryEmail,
         });
       }
-      case FieldMetadataType.Phones: {
+      case FieldMetadataType.PHONES: {
         const phonesFilter = filterValue as PhonesFilter;
 
-        const keys: (keyof PhonesFilter)[] = [
-          'primaryPhoneNumber',
-          'primaryPhoneCountryCode',
-        ];
+        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
 
         return keys.some((key) => {
           const value = phonesFilter[key];
@@ -340,7 +350,7 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.Relation: {
+      case FieldMetadataType.RELATION: {
         throw new Error(
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );

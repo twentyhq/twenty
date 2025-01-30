@@ -8,17 +8,26 @@ import { IconComponent } from 'twenty-ui';
 
 const StyledRecordTableDraggableTr = styled(RecordTableDraggableTr)`
   cursor: pointer;
+  transition: background-color ${({ theme }) => theme.animation.duration.fast}
+    ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.transparent.light};
+  }
 `;
 
 const StyledIconContainer = styled(RecordTableTd)`
+  align-items: center;
+  background-color: transparent;
   border-right: none;
   color: ${({ theme }) => theme.font.color.secondary};
-  text-align: center;
-  vertical-align: middle;
-  padding-top: 3px;
+  display: flex;
+  height: 32px;
+  justify-content: center;
 `;
 
 const StyledRecordTableTdTextContainer = styled(RecordTableTd)`
+  background-color: transparent;
   border-right: none;
   height: 32px;
 `;
@@ -63,9 +72,13 @@ export const RecordTableActionRow = ({
     >
       <td aria-hidden />
       <StyledIconContainer>
-        <LeftIcon size={theme.icon.size.sm} color={theme.font.color.tertiary} />
+        <LeftIcon
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.sm}
+          color={theme.font.color.tertiary}
+        />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer>
+      <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
       <StyledEmptyTd colSpan={visibleTableColumns.length - 1} />

@@ -2,16 +2,11 @@ import { useTheme } from '@emotion/react';
 import { ReactNode } from 'react';
 
 import {
-  StyledIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-<<<<<<< Updated upstream
 import { IconCheck, OverflowingTextWithTooltip } from '@ui/display';
-=======
-import { OverflowingTextWithTooltip } from '@ui/display';
->>>>>>> Stashed changes
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -45,14 +40,17 @@ export const MenuItemSelectAvatar = ({
       disabled={disabled}
       hovered={hovered}
       data-testid={testId}
+      role="option"
+      aria-selected={selected}
+      aria-disabled={disabled}
     >
       <StyledMenuItemLeftContent>
         {avatar}
-        <StyledMenuItemLabel hasLeftIcon={!!avatar}>
+        <StyledMenuItemLabel>
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <StyledIconCheck size={theme.icon.size.md} />}
+      {selected && <IconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

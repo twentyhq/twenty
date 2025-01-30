@@ -5,7 +5,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import {
   BaseOutputSchema,
   LinkOutputSchema,
-  OutputSchema,
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
@@ -15,6 +14,8 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -48,22 +49,8 @@ export const WorkflowVariablesDropdownFieldItems = ({
     workflowDiagramTriggerNodeSelectionState,
   );
 
-  const getCurrentSubStep = (): OutputSchema => {
-    let currentSubStep = step.outputSchema;
-
-    for (const key of currentPath) {
-      if (isRecordOutputSchema(currentSubStep)) {
-        currentSubStep = currentSubStep.fields[key]?.value;
-      } else if (isBaseOutputSchema(currentSubStep)) {
-        currentSubStep = currentSubStep[key]?.value;
-      }
-    }
-
-    return currentSubStep;
-  };
-
   const getDisplayedSubStepFields = () => {
-    const currentSubStep = getCurrentSubStep();
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     if (isLinkOutputSchema(currentSubStep)) {
       return { link: currentSubStep.link };
@@ -75,7 +62,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
   };
 
   const handleSelectField = (key: string) => {
-    const currentSubStep = getCurrentSubStep();
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     const handleSelectBaseOutputSchema = (
       baseOutputSchema: BaseOutputSchema,
@@ -115,7 +102,6 @@ export const WorkflowVariablesDropdownFieldItems = ({
     }
   };
 
-  const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
   const displayedObject = getDisplayedSubStepFields();
   const options = displayedObject ? Object.entries(displayedObject) : [];
 
@@ -132,11 +118,11 @@ export const WorkflowVariablesDropdownFieldItems = ({
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
         onClick={goBack}
-        style={{
-          position: 'fixed',
-        }}
+        style={{ position: 'fixed' }}
       >
-        <OverflowingTextWithTooltip text={headerLabel} />
+        <OverflowingTextWithTooltip
+          text={getStepHeaderLabel(step, currentPath)}
+        />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
@@ -145,15 +131,18 @@ export const WorkflowVariablesDropdownFieldItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {filteredOptions.map(([key, value]) => (
+        {filteredOptions.map(([key, subStep]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             hovered={false}
             onClick={() => handleSelectField(key)}
-            text={value.label || key}
-            hasSubMenu={!value.isLeaf}
-            LeftIcon={value.icon ? getIcon(value.icon) : undefined}
+            text={subStep.label || key}
+            hasSubMenu={!subStep.isLeaf}
+            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            contextualText={
+              subStep.isLeaf ? subStep?.value?.toString() : undefined
+            }
           />
         ))}
       </DropdownMenuItemsContainer>

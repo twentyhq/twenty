@@ -48,18 +48,12 @@ export const WorkflowStepDetail = ({
     stepId,
     workflowVersion,
   });
-  if (!isDefined(stepDefinition)) {
+  if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
 
   switch (stepDefinition.type) {
     case 'trigger': {
-      if (!isDefined(stepDefinition.definition)) {
-        throw new Error(
-          'Expected the trigger to be defined at this point. Ensure the trigger has been set with a default value before trying to edit it.',
-        );
-      }
-
       switch (stepDefinition.definition.type) {
         case 'DATABASE_EVENT': {
           return (
@@ -90,6 +84,7 @@ export const WorkflowStepDetail = ({
           return (
             <Suspense fallback={<RightDrawerSkeletonLoader />}>
               <WorkflowEditActionFormServerlessFunction
+                key={stepId}
                 action={stepDefinition.definition}
                 actionOptions={props}
               />
@@ -99,6 +94,7 @@ export const WorkflowStepDetail = ({
         case 'SEND_EMAIL': {
           return (
             <WorkflowEditActionFormSendEmail
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -107,6 +103,7 @@ export const WorkflowStepDetail = ({
         case 'CREATE_RECORD': {
           return (
             <WorkflowEditActionFormCreateRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -116,6 +113,7 @@ export const WorkflowStepDetail = ({
         case 'UPDATE_RECORD': {
           return (
             <WorkflowEditActionFormUpdateRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />
@@ -125,6 +123,7 @@ export const WorkflowStepDetail = ({
         case 'DELETE_RECORD': {
           return (
             <WorkflowEditActionFormDeleteRecord
+              key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
             />

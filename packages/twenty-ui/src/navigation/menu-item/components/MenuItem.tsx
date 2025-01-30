@@ -30,6 +30,7 @@ export type MenuItemProps = {
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
+  disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
@@ -49,6 +50,7 @@ export const MenuItem = ({
   text,
   contextualText,
   hasSubMenu = false,
+  disabled = false,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -64,7 +66,8 @@ export const MenuItem = ({
   return (
     <StyledHoverableMenuItemBase
       data-testid={testId ?? undefined}
-      onClick={handleMenuItemClick}
+      onClick={disabled ? undefined : handleMenuItemClick}
+      disabled={disabled}
       className={className}
       accent={accent}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
@@ -76,6 +79,7 @@ export const MenuItem = ({
           LeftIcon={LeftIcon ?? undefined}
           text={text}
           contextualText={contextualText}
+          disabled={disabled}
         />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
@@ -86,7 +90,7 @@ export const MenuItem = ({
       {RightIcon && (
         <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
-      {hasSubMenu && (
+      {hasSubMenu && !disabled && (
         <IconChevronRight
           size={theme.icon.size.sm}
           color={theme.font.color.tertiary}

@@ -1,12 +1,15 @@
 import { useParams } from 'react-router-dom';
 
-import { useFilteredObjectMetadataItemsForWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { useLingui } from '@lingui/react/macro';
 
 export const NavigationDrawerOpenedSection = () => {
+  const { t } = useLingui();
+
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
     (item) => !item.isRemote,
@@ -14,8 +17,7 @@ export const NavigationDrawerOpenedSection = () => {
 
   const loading = useIsPrefetchLoading();
 
-  const { activeObjectMetadataItems: workspaceFavoritesObjectMetadataItems } =
-    useFilteredObjectMetadataItemsForWorkspaceFavorites();
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
 
   const {
     objectNamePlural: currentObjectNamePlural,
@@ -48,7 +50,7 @@ export const NavigationDrawerOpenedSection = () => {
   return (
     shouldDisplayObjectInOpenedSection && (
       <NavigationDrawerSectionForObjectMetadataItems
-        sectionTitle={'Opened'}
+        sectionTitle={t`Opened`}
         objectMetadataItems={[objectMetadataItem]}
         isRemote={false}
       />

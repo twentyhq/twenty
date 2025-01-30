@@ -1,8 +1,11 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import {
   ObjectRecord,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
@@ -12,9 +15,10 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -25,9 +29,14 @@ import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMaps: ObjectMetadataMaps;
+  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(objectMetadataMaps: ObjectMetadataMaps) {
+  constructor(
+    objectMetadataMaps: ObjectMetadataMaps,
+    featureFlagsMap: FeatureFlagMap,
+  ) {
     this.objectMetadataMaps = objectMetadataMaps;
+    this.featureFlagsMap = featureFlagsMap;
   }
 
   public createConnection<T extends ObjectRecord = ObjectRecord>({
@@ -145,6 +154,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
+    const isNewRelationEnabled =
+      this.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
+
     const objectMetadata = getObjectMetadataMapItemByNameSingular(
       this.objectMetadataMaps,
       objectName,
@@ -169,6 +181,13 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         if (Array.isArray(value)) {
+          const targetObjectMetadata = isNewRelationEnabled
+            ? getTargetObjectMetadataOrThrow(
+                fieldMetadata,
+                this.objectMetadataMaps,
+              )
+            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+
           processedObjectRecord[key] = this.createConnection({
             objectRecords: value,
             parentObjectRecord: objectRecord,
@@ -176,10 +195,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
               objectRecordsAggregatedValues[fieldMetadata.name],
             selectedAggregatedFields:
               selectedAggregatedFields[fieldMetadata.name],
-            objectName: getRelationObjectMetadata(
-              fieldMetadata,
-              this.objectMetadataMaps,
-            ).nameSingular,
+            objectName: targetObjectMetadata.nameSingular,
             take,
             totalCount:
               objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
@@ -190,16 +206,20 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             depth: depth + 1,
           });
         } else if (isPlainObject(value)) {
+          const targetObjectMetadata = isNewRelationEnabled
+            ? getTargetObjectMetadataOrThrow(
+                fieldMetadata,
+                this.objectMetadataMaps,
+              )
+            : getRelationObjectMetadata(fieldMetadata, this.objectMetadataMaps);
+
           processedObjectRecord[key] = this.processRecord({
             objectRecord: value,
             objectRecordsAggregatedValues:
               objectRecordsAggregatedValues[fieldMetadata.name],
             selectedAggregatedFields:
               selectedAggregatedFields[fieldMetadata.name],
-            objectName: getRelationObjectMetadata(
-              fieldMetadata,
-              this.objectMetadataMaps,
-            ).nameSingular,
+            objectName: targetObjectMetadata.nameSingular,
             take,
             totalCount,
             order,

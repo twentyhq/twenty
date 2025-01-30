@@ -1,10 +1,13 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-<<<<<<< Updated upstream
-=======
-import { IconCheck } from '@tabler/icons-react';
->>>>>>> Stashed changes
+
+
+
+import { isUndefined } from '@sniptt/guards';
+
+import { IconCheck } from '@ui/display';
+
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -13,6 +16,7 @@ export type MenuItemBaseProps = {
   isKeySelected?: boolean;
   isHoverBackgroundDisabled?: boolean;
   hovered?: boolean;
+  disabled?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -39,10 +43,16 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   ${({ theme, isKeySelected }) =>
     isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
 
-  ${({ isHoverBackgroundDisabled }) =>
-    isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
+  ${({ isHoverBackgroundDisabled, disabled }) =>
+    (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
 
-  ${({ theme, accent }) => {
+  ${({ theme, accent, disabled }) => {
+    if (!isUndefined(disabled) && disabled !== false) {
+      return css`
+        color: ${theme.font.color.tertiary};
+      `;
+    }
+
     switch (accent) {
       case 'danger': {
         return css`
@@ -72,15 +82,13 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
+export const StyledMenuItemLabel = styled.div`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
   overflow: hidden;
-  padding-left: ${({ theme, hasLeftIcon }) =>
-    hasLeftIcon ? '' : theme.spacing(1)};
 
   white-space: nowrap;
 `;
@@ -118,6 +126,7 @@ export const StyledDraggableItem = styled.div`
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
+  disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default' | 'not-allowed';
 }>`
@@ -142,7 +151,11 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
-  cursor: ${({ cursor }) => {
+  cursor: ${({ cursor, disabled }) => {
+    if (!isUndefined(disabled) && disabled !== false) {
+      return 'not-allowed';
+    }
+
     switch (cursor) {
       case 'drag':
         return 'grab';
@@ -154,6 +167,9 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   }};
 `;
 
-export const StyledIconCheck = styled(IconCheck)`
-  padding-right: ${({ theme }) => theme.spacing(2)};
+
+export const StyledMenuItemIconCheck = styled(IconCheck)`
+  flex-shrink: 0;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
+

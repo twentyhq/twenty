@@ -51,7 +51,7 @@ export const MenuItemDraggable = ({
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
-        isDisabled={isDragDisabled}
+        disabled={isDragDisabled}
         showGrip={showGrip}
       />
       {showIconButtons && (

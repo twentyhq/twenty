@@ -5,10 +5,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { FieldMetadataType } from '~/generated/graphql';
 
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
-const MOCK_KANBAN_FIELD_NAME = 'stage';
 
 describe('computeAggregateValueAndLabel', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
@@ -18,7 +18,7 @@ describe('computeAggregateValueAndLabel', () => {
         id: MOCK_FIELD_ID,
         name: 'amount',
         label: 'amount',
-        type: FieldMetadataType.Currency,
+        type: FieldMetadataType.CURRENCY,
       } as FieldMetadataItem,
     ],
   } as ObjectMetadataItem;
@@ -35,7 +35,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -54,7 +53,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadata,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -73,7 +71,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'percentage',
           label: 'percentage',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           settings: {
             type: 'percentage',
           },
@@ -92,7 +90,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithPercentageField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.avg,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -111,7 +108,7 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'decimals',
           label: 'decimals',
-          type: FieldMetadataType.Number,
+          type: FieldMetadataType.NUMBER,
           settings: {
             decimals: 2,
           },
@@ -130,7 +127,6 @@ describe('computeAggregateValueAndLabel', () => {
       objectMetadataItem: mockObjectMetadataWithDecimalsField,
       fieldMetadataId: MOCK_FIELD_ID,
       aggregateOperation: AGGREGATE_OPERATIONS.sum,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 
@@ -149,29 +145,28 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'createdAt',
           label: 'Created At',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         } as FieldMetadataItem,
       ],
     } as ObjectMetadataItem;
 
-    const mockData = {
+    const mockFormattedData = {
       createdAt: {
-        [AGGREGATE_OPERATIONS.min]: '2023-01-01T12:00:00Z',
+        [DATE_AGGREGATE_OPERATIONS.earliest]: '2023-01-01T12:00:00Z',
       },
     } as AggregateRecordsData;
 
     const result = computeAggregateValueAndLabel({
-      data: mockData,
+      data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.min,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+      aggregateOperation: DATE_AGGREGATE_OPERATIONS.earliest,
       ...defaultParams,
     });
 
     expect(result).toEqual({
-      label: 'Earliest date',
-      labelWithFieldName: 'Earliest date of Created At',
+      label: 'Earliest',
+      labelWithFieldName: 'Earliest of Created At',
       value: '1 Jan, 2023 12:00',
     });
   });
@@ -184,36 +179,35 @@ describe('computeAggregateValueAndLabel', () => {
           id: MOCK_FIELD_ID,
           name: 'updatedAt',
           label: 'Updated At',
-          type: FieldMetadataType.DateTime,
+          type: FieldMetadataType.DATE_TIME,
         } as FieldMetadataItem,
       ],
     } as ObjectMetadataItem;
 
-    const mockData = {
+    const mockFormattedData = {
       updatedAt: {
-        [AGGREGATE_OPERATIONS.max]: '2023-12-31T23:59:59Z',
+        [DATE_AGGREGATE_OPERATIONS.latest]: '2023-12-31T23:59:59Z',
       },
     } as AggregateRecordsData;
 
     const result = computeAggregateValueAndLabel({
-      data: mockData,
+      data: mockFormattedData,
       objectMetadataItem: mockObjectMetadataWithDatetimeField,
       fieldMetadataId: MOCK_FIELD_ID,
-      aggregateOperation: AGGREGATE_OPERATIONS.max,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+      aggregateOperation: DATE_AGGREGATE_OPERATIONS.latest,
       ...defaultParams,
     });
 
     expect(result).toEqual({
       value: '31 Dec, 2023 23:59',
-      label: 'Latest date',
-      labelWithFieldName: 'Latest date of Updated At',
+      label: 'Latest',
+      labelWithFieldName: 'Latest of Updated At',
     });
   });
 
   it('should default to count when field not found', () => {
     const mockData = {
-      [MOCK_KANBAN_FIELD_NAME]: {
+      id: {
         [AGGREGATE_OPERATIONS.count]: 42,
       },
     } as AggregateRecordsData;
@@ -221,7 +215,6 @@ describe('computeAggregateValueAndLabel', () => {
     const result = computeAggregateValueAndLabel({
       data: mockData,
       objectMetadataItem: mockObjectMetadata,
-      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
       ...defaultParams,
     });
 

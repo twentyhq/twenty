@@ -1,12 +1,12 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -19,23 +19,20 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowEventListener,
   namePlural: 'workflowEventListeners',
-  labelSingular: 'WorkflowEventListener',
-  labelPlural: 'WorkflowEventListeners',
-  description: 'A workflow event listener',
+  labelSingular: msg`WorkflowEventListener`,
+  labelPlural: msg`WorkflowEventListeners`,
+  description: msg`A workflow event listener`,
   icon: STANDARD_OBJECT_ICONS.workflowEventListener,
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
-})
-@WorkspaceGate({
-  featureFlag: FeatureFlagKey.IsWorkflowEnabled,
 })
 @WorkspaceIsSystem()
 export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The workflow event listener name',
+    label: msg`Name`,
+    description: msg`The workflow event listener name`,
   })
   eventName: string;
 
@@ -43,8 +40,8 @@ export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Workflow',
-    description: 'WorkflowEventListener workflow',
+    label: msg`Workflow`,
+    description: msg`WorkflowEventListener workflow`,
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'eventListeners',

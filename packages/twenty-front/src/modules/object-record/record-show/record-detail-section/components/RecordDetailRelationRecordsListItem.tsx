@@ -35,6 +35,7 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -106,7 +107,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === RelationDefinitionType.ManyToOne;
+  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
@@ -162,7 +163,9 @@ export const RecordDetailRelationRecordsListItem = ({
     updateOneRelationRecord({
       idToUpdate: relationRecord.id,
       updateOneRecordInput: {
-        [relationFieldMetadataItem.name]: null,
+        [getForeignKeyNameFromRelationFieldName(
+          relationFieldMetadataItem.name,
+        )]: null,
       },
     });
   };

@@ -1,27 +1,24 @@
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useApolloClient, useMutation } from '@apollo/client';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
 import {
-  ActivateWorkflowVersionMutation,
-  ActivateWorkflowVersionMutationVariables,
+  DeactivateWorkflowVersionMutation,
+  DeactivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
-  const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
   const [mutate] = useMutation<
-    ActivateWorkflowVersionMutation,
-    ActivateWorkflowVersionMutationVariables
+    DeactivateWorkflowVersionMutation,
+    DeactivateWorkflowVersionMutationVariables
   >(DEACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient,
+    client: apolloClient,
   });
 
-  const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
-    useObjectMetadataItem({
+  const { findManyRecordsQuery: findManyWorkflowVersionsQuery } =
+    useFindManyRecordsQuery({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
@@ -30,16 +27,14 @@ export const useDeactivateWorkflowVersion = () => {
       variables: {
         workflowVersionId,
       },
-      update: () => {
-        modifyRecordFromCache({
-          cache: apolloClient.cache,
-          recordId: workflowVersionId,
-          objectMetadataItem: objectMetadataItemWorkflowVersion,
-          fieldModifiers: {
-            status: () => 'DEACTIVATED',
+      refetchQueries: [
+        {
+          query: findManyWorkflowVersionsQuery,
+          variables: {
+            id: workflowVersionId,
           },
-        });
-      },
+        },
+      ],
     });
   };
 

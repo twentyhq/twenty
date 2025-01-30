@@ -24,7 +24,6 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
@@ -74,7 +73,13 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS = 7;
+  BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
+
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -88,6 +93,11 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  PERMISSIONS_ENABLED = false;
 
   @CastToBoolean()
   @IsOptional()
@@ -201,10 +211,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
-  AUTH_MICROSOFT_TENANT_ID: string;
-
-  @IsString()
-  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -232,11 +238,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  AUTH_SSO_ENABLED = false;
-
   @IsString()
   @IsOptional()
   ENTERPRISE_KEY: string;
@@ -245,6 +246,14 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_MULTIWORKSPACE_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
+  CLOUDFLARE_API_KEY: string;
+
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
+  CLOUDFLARE_ZONE_ID: string;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -375,12 +384,17 @@ export class EnvironmentVariables {
       '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 30;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
 
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 14;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
+  MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
   @IsEnum(CaptchaDriverType)
   @IsOptional()
@@ -418,6 +432,15 @@ export class EnvironmentVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_EMAIL_VERIFICATION_REQUIRED = false;
+
+  @IsDuration()
+  @IsOptional()
+  EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
   EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
 
@@ -459,16 +482,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  @AssertOrWarn(
-    (env, value) =>
-      !env.AUTH_SSO_ENABLED ||
-      (env.AUTH_SSO_ENABLED &&
-        value !== 'replace_me_with_a_random_string_session'),
-    {
-      message:
-        'SESSION_STORE_SECRET should be changed to a secure, random string.',
-    },
-  )
   SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()

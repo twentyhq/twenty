@@ -46,10 +46,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.CREATED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.after': {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after, label: 'After' } },
-        label: 'Properties',
+        value: after,
+        label: 'Record Fields',
       },
     };
   }
@@ -62,10 +62,10 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-          after: { isLeaf: false, value: after, label: 'After' },
+          before: { isLeaf: false, value: before, label: 'Before Update' },
+          after: { isLeaf: false, value: after, label: 'After Update' },
         },
-        label: 'Properties',
+        label: 'Record Fields',
       },
     };
   }
@@ -73,12 +73,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DELETED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-        },
-        label: 'Properties',
+        value: before,
+        label: 'Record Fields',
       },
     };
   }
@@ -86,12 +84,10 @@ export const generateFakeObjectRecordEvent = (
   if (action === DatabaseEventAction.DESTROYED) {
     return {
       ...baseResult,
-      properties: {
+      'properties.before': {
         isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before, label: 'Before' },
-        },
-        label: 'Properties',
+        value: before,
+        label: 'Record Fields',
       },
     };
   }

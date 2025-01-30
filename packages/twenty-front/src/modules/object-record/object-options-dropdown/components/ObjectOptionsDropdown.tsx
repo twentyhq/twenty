@@ -9,7 +9,9 @@ import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewType } from '@/views/types/ViewType';
+import { Trans } from '@lingui/react/macro';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -25,6 +27,8 @@ export const ObjectOptionsDropdown = ({
   const { currentContentId, handleContentChange, handleResetContent } =
     useCurrentContentId<ObjectOptionsContentId>();
 
+  const { isDropdownOpen } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
+
   return (
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
@@ -32,7 +36,9 @@ export const ObjectOptionsDropdown = ({
       dropdownMenuWidth={DROPDOWN_WIDTH}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
-        <StyledHeaderDropdownButton>Options</StyledHeaderDropdownButton>
+        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+          <Trans>Options</Trans>
+        </StyledHeaderDropdownButton>
       }
       onClose={handleResetContent}
       dropdownComponents={

@@ -16,8 +16,11 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
@@ -27,24 +30,29 @@ const openTimeout = 50;
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
-    <ContextStoreComponentInstanceContext.Provider
+    <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <ActionMenuComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
-          <Story />
-        </JestContextStoreSetter>
-      </ActionMenuComponentInstanceContext.Provider>
-    </ContextStoreComponentInstanceContext.Provider>
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'command-menu' }}
+        >
+          <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+            <Story />
+          </JestContextStoreSetter>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordFiltersComponentInstanceContext.Provider>
   );
 };
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
-  component: CommandMenu,
+  component: CommandMenuRouter,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentWorkspaceMember = useSetRecoilState(
@@ -64,6 +72,7 @@ const meta: Meta<typeof CommandMenu> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentWithRouterDecorator,
+    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
@@ -77,42 +86,43 @@ export const DefaultWithoutSearch: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    expect(await canvas.findByText('Go to People')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Opportunities')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Settings')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Tasks')).toBeInTheDocument();
+    expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(await canvas.findByText('Go to Companies')).toBeVisible();
+    expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
+    expect(await canvas.findByText('Go to Settings')).toBeVisible();
+    expect(await canvas.findByText('Go to Tasks')).toBeVisible();
   },
 };
 
-export const MatchingPersonCompanyActivityCreateNavigate: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Type anything');
-    await sleep(openTimeout);
-    await userEvent.type(searchInput, 'n');
-    expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
-    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
-  },
-};
-
-export const OnlyMatchingCreateAndNavigate: Story = {
+export const MatchingNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
-    expect(await canvas.findByText('Go to Tasks')).toBeInTheDocument();
+    expect(await canvas.findByText('Go to Tasks')).toBeVisible();
   },
 };
 
-export const AtleastMatchingOnePerson: Story = {
+export const MatchingNavigateShortcuts: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
-    await userEvent.type(searchInput, 'alex');
-    expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();
+    await userEvent.type(searchInput, 'gp');
+    expect(await canvas.findByText('Go to People')).toBeVisible();
+  },
+};
+
+export const SearchRecordsAction: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const searchRecordsButton = await canvas.findByText('Search records');
+    await userEvent.click(searchRecordsButton);
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
+    await sleep(openTimeout);
+    await userEvent.type(searchInput, 'n');
+    expect(await canvas.findByText('Linkedin')).toBeVisible();
+    expect(await canvas.findByText(companiesMock[0].name)).toBeVisible();
   },
 };

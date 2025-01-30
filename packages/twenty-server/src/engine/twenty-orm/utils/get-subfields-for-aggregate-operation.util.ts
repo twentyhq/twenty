@@ -1,4 +1,5 @@
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const getSubfieldsForAggregateOperation = (
@@ -26,7 +27,7 @@ export const getSubfieldsForAggregateOperation = (
       case FieldMetadataType.LINKS:
         return ['primaryLinkUrl'];
       case FieldMetadataType.ACTOR:
-        return ['workspaceMemberId'];
+        return ['workspaceMemberId', 'source'];
       case FieldMetadataType.EMAILS:
         return ['primaryEmail'];
       case FieldMetadataType.PHONES:
@@ -35,6 +36,8 @@ export const getSubfieldsForAggregateOperation = (
           'primaryPhoneCountryCode',
           'primaryPhoneCallingCode',
         ];
+      case FieldMetadataType.RICH_TEXT_V2:
+        return ['blocknote', 'markdown'];
       default:
         throw new Error(`Unsupported composite field type: ${fieldType}`);
     }

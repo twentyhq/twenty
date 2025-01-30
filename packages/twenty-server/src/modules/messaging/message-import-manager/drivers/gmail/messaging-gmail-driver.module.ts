@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -27,7 +27,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     EnvironmentModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag], 'core'),
     OAuth2ClientManagerModule,
     EmailAliasManagerModule,
     FeatureFlagModule,

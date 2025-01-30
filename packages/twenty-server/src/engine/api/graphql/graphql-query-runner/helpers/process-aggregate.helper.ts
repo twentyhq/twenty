@@ -1,11 +1,13 @@
+import { Injectable } from '@nestjs/common';
+
 import { SelectQueryBuilder } from 'typeorm';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { FIELD_METADATA_TYPES_TO_TEXT_COLUMN_TYPE } from 'src/engine/metadata-modules/workspace-migration/constants/fieldMetadataTypesToTextColumnType';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 import { isDefined } from 'src/utils/is-defined';
 
+@Injectable()
 export class ProcessAggregateHelper {
   public addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
     selectedAggregatedFields,
@@ -50,14 +52,9 @@ export class ProcessAggregateHelper {
 
       const concatenatedColumns = columnNames
         .map((col) => `"${col}"`)
-        .join(", ' ', ");
+        .join(',');
 
-      const columnExpression =
-        FIELD_METADATA_TYPES_TO_TEXT_COLUMN_TYPE.includes(
-          aggregatedField.fromFieldType,
-        )
-          ? `NULLIF(CONCAT(${concatenatedColumns}), '')`
-          : `CONCAT(${concatenatedColumns})`;
+      const columnExpression = `NULLIF(CONCAT(${concatenatedColumns}), '')`;
 
       switch (aggregatedField.aggregateOperation) {
         case AGGREGATE_OPERATIONS.countEmpty:

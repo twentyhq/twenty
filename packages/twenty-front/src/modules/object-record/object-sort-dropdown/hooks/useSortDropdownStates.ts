@@ -1,23 +1,20 @@
 import { isSortSelectedComponentState } from '@/object-record/object-sort-dropdown/states/isSortSelectedScopedState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useSortDropdownStates = (scopeId: string) => {
-  const isSortSelectedState = extractComponentState(
-    isSortSelectedComponentState,
-    scopeId,
-  );
+  const isSortSelectedState = isSortSelectedComponentState.atomFamily({
+    instanceId: scopeId,
+  });
 
-  const onSortSelectState = extractComponentState(
-    onSortSelectComponentState,
-    scopeId,
-  );
+  const onSortSelectState = onSortSelectComponentState.atomFamily({
+    instanceId: scopeId,
+  });
 
-  const objectSortDropdownSearchInputState = extractComponentState(
-    objectSortDropdownSearchInputComponentState,
-    scopeId,
-  );
+  const objectSortDropdownSearchInputState =
+    objectSortDropdownSearchInputComponentState.atomFamily({
+      instanceId: scopeId,
+    });
 
   return {
     isSortSelectedState,

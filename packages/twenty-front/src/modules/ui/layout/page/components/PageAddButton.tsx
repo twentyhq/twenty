@@ -1,4 +1,5 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
 import { Button, IconButton, IconPlus, useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -7,23 +8,25 @@ type PageAddButtonProps = {
 };
 
 export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPageHeaderV2Enabled,
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
   const isMobile = useIsMobile();
 
+  const { t } = useLingui();
+
   return (
     <>
-      {isPageHeaderV2Enabled ? (
+      {isCommandMenuV2Enabled ? (
         <Button
           Icon={IconPlus}
           dataTestId="add-button"
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          title={isMobile ? '' : 'New record'}
+          title={isMobile ? '' : t`New record`}
           onClick={onClick}
-          ariaLabel="New record"
+          ariaLabel={t`New record`}
         />
       ) : (
         <IconButton
@@ -32,7 +35,7 @@ export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
           size="medium"
           variant="secondary"
           accent="default"
-          ariaLabel="Add"
+          ariaLabel={t`Add`}
           onClick={onClick}
         />
       )}

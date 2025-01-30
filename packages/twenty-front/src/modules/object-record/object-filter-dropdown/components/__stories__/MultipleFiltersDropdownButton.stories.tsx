@@ -3,13 +3,14 @@ import { Meta, StoryObj } from '@storybook/react';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -18,7 +19,7 @@ import {
   ComponentDecorator,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui';
-import { FieldMetadataType } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -44,59 +45,26 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         instanceId,
       );
 
-      setTableColumns([
-        {
-          fieldMetadataId: '1',
-          iconName: 'IconUser',
-          label: 'Text',
-          type: FieldMetadataType.Text,
-          isVisible: true,
-          metadata: {
-            fieldName: 'text',
-          },
-        } as ColumnDefinition<any>,
-        {
-          fieldMetadataId: '3',
-          iconName: 'IconNumber',
-          label: 'Number',
-          type: FieldMetadataType.Number,
-          isVisible: true,
-          metadata: {
-            fieldName: 'number',
-          },
-        } as ColumnDefinition<any>,
-        {
-          fieldMetadataId: '4',
-          iconName: 'IconCalendar',
-          label: 'Date',
-          type: FieldMetadataType.DateTime,
-          isVisible: true,
-          metadata: {
-            fieldName: 'date',
-          },
-        } as ColumnDefinition<any>,
-      ]);
+      const columns = companyObjectMetadataItem.fields.map(
+        (fieldMetadataItem, index) =>
+          formatFieldMetadataItemAsColumnDefinition({
+            field: fieldMetadataItem,
+            objectMetadataItem: companyObjectMetadataItem,
+            position: index,
+          }),
+      );
 
-      setAvailableFilterDefinitions([
-        {
-          fieldMetadataId: '1',
-          iconName: 'IconUser',
-          label: 'Text',
-          type: FieldMetadataType.Text,
-        },
-        {
-          fieldMetadataId: '3',
-          iconName: 'IconNumber',
-          label: 'Number',
-          type: FieldMetadataType.Number,
-        },
-        {
-          fieldMetadataId: '3',
-          iconName: 'IconCalendar',
-          label: 'Date',
-          type: FieldMetadataType.DateTime,
-        },
-      ]);
+      const filterDefinitions = companyObjectMetadataItem.fields.map(
+        (fieldMetadataItem) =>
+          formatFieldMetadataItemAsFilterDefinition({
+            field: fieldMetadataItem,
+          }),
+      );
+
+      setTableColumns(columns);
+
+      setAvailableFilterDefinitions(filterDefinitions);
+
       return (
         <RecordIndexContextProvider
           value={{
@@ -108,19 +76,21 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
             recordIndexId: instanceId,
           }}
         >
-          <ObjectFilterDropdownComponentInstanceContext.Provider
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <RecordTableComponentInstanceContext.Provider
-              value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId }}
             >
-              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-                <ObjectFilterDropdownScope filterScopeId={instanceId}>
+              <RecordTableComponentInstanceContext.Provider
+                value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+              >
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
                   <Story />
-                </ObjectFilterDropdownScope>
-              </ViewComponentInstanceContext.Provider>
-            </RecordTableComponentInstanceContext.Provider>
-          </ObjectFilterDropdownComponentInstanceContext.Provider>
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
         </RecordIndexContextProvider>
       );
     },
@@ -128,6 +98,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
+    I18nFrontDecorator,
   ],
   args: {
     hotkeyScope: {
@@ -147,7 +118,7 @@ export const Default: Story = {
 
     filterButton.click();
 
-    const textFilter = await canvas.findByText('Text');
+    const textFilter = await canvas.findByText('Tagline');
 
     textFilter.click();
 
@@ -169,7 +140,7 @@ export const Date: Story = {
 
     filterButton.click();
 
-    const dateFilter = await canvas.findByText('Date');
+    const dateFilter = await canvas.findByText('Last update');
 
     dateFilter.click();
   },
@@ -183,7 +154,7 @@ export const Number: Story = {
 
     filterButton.click();
 
-    const dateFilter = await canvas.findByText('Number');
+    const dateFilter = await canvas.findByText('Employees');
 
     dateFilter.click();
   },

@@ -11,14 +11,16 @@ export type CurrentWorkspace = Pick<
   | 'allowImpersonation'
   | 'featureFlags'
   | 'activationStatus'
+  | 'billingSubscriptions'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
   | 'isGoogleAuthEnabled'
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
-  | 'hasValidEntrepriseKey'
+  | 'hasValidEnterpriseKey'
   | 'subdomain'
+  | 'hostname'
   | 'metadataVersion'
 >;
 

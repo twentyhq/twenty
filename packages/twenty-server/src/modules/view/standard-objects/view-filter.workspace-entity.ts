@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -18,9 +20,9 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,
   namePlural: 'viewFilters',
-  labelSingular: 'View Filter',
-  labelPlural: 'View Filters',
-  description: '(System) View Filters',
+  labelSingular: msg`View Filter`,
+  labelPlural: msg`View Filters`,
+  description: msg`(System) View Filters`,
   icon: STANDARD_OBJECT_ICONS.viewFilter,
 })
 @WorkspaceIsNotAuditLogged()
@@ -29,16 +31,16 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
-    label: 'Field Metadata Id',
-    description: 'View Filter target field',
+    label: msg`Field Metadata Id`,
+    description: msg`View Filter target field`,
   })
   fieldMetadataId: string;
 
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.operand,
     type: FieldMetadataType.TEXT,
-    label: 'Operand',
-    description: 'View Filter operand',
+    label: msg`Operand`,
+    description: msg`View Filter operand`,
     defaultValue: "'Contains'",
   })
   operand: string;
@@ -46,24 +48,24 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.value,
     type: FieldMetadataType.TEXT,
-    label: 'Value',
-    description: 'View Filter value',
+    label: msg`Value`,
+    description: msg`View Filter value`,
   })
   value: string;
 
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.displayValue,
     type: FieldMetadataType.TEXT,
-    label: 'Display Value',
-    description: 'View Filter Display Value',
+    label: msg`Display Value`,
+    description: msg`View Filter Display Value`,
   })
   displayValue: string;
 
   @WorkspaceRelation({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.view,
     type: RelationMetadataType.MANY_TO_ONE,
-    label: 'View',
-    description: 'View Filter related view',
+    label: msg`View`,
+    description: msg`View Filter related view`,
     icon: 'IconLayoutCollage',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFilters',
@@ -77,8 +79,8 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.viewFilterGroupId,
     type: FieldMetadataType.UUID,
-    label: 'View Filter Group Id',
-    description: 'View Filter Group',
+    label: msg`View Filter Group Id`,
+    description: msg`View Filter Group`,
   })
   @WorkspaceIsNullable()
   viewFilterGroupId: string | null;
@@ -86,8 +88,8 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.positionInViewFilterGroup,
     type: FieldMetadataType.POSITION,
-    label: 'Position in view filter group',
-    description: 'Position in the view filter group',
+    label: msg`Position in view filter group`,
+    description: msg`Position in the view filter group`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()

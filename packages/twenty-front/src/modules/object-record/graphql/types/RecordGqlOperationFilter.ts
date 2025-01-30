@@ -103,7 +103,6 @@ export type EmailsFilter = {
 
 export type PhonesFilter = {
   primaryPhoneNumber?: StringFilter;
-  primaryPhoneCountryCode?: StringFilter;
 };
 
 export type SelectFilter = {

@@ -17,6 +17,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = ({
@@ -60,6 +63,10 @@ export const useOpenCreateActivityDrawer = ({
     isUpsertingActivityInDBState,
   );
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   const openCreateActivityDrawer = async ({
     targetableObjects,
     customAssignee,
@@ -73,7 +80,11 @@ export const useOpenCreateActivityDrawer = ({
     setViewableRecordNameSingular(activityObjectNameSingular);
 
     const activity = await createOneActivity({
-      assigneeId: customAssignee?.id,
+      ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+        ? {
+            assigneeId: customAssignee?.id,
+          }
+        : {}),
       position: 'last',
     });
 
@@ -81,34 +92,37 @@ export const useOpenCreateActivityDrawer = ({
       const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
 
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
         [targetableObjectRelationIdName]: targetableObjects[0].id,
       });
 
       setActivityTargetableEntityArray(targetableObjects);
     } else {
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
       });
 
       setActivityTargetableEntityArray([]);
     }
 
-    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    if (isCommandMenuV2Enabled) {
+      setHotkeyScope(AppHotkeyScope.CommandMenuOpen, { goto: false });
+    } else {
+      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    }
+
     setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);

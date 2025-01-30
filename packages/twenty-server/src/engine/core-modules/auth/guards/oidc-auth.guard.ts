@@ -11,10 +11,18 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OIDCAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @Injectable()
 export class OIDCAuthGuard extends AuthGuard('openidconnect') {
-  constructor(private readonly ssoService: SSOService) {
+  constructor(
+    private readonly sSOService: SSOService,
+    private readonly guardRedirectService: GuardRedirectService,
+    private readonly environmentService: EnvironmentService,
+  ) {
     super();
   }
 
@@ -38,13 +46,17 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    try {
-      const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
 
+    let identityProvider:
+      | (SSOConfiguration & WorkspaceSSOIdentityProvider)
+      | null = null;
+
+    try {
       const identityProviderId = this.getIdentityProviderId(request);
 
-      const identityProvider =
-        await this.ssoService.findSSOIdentityProviderById(identityProviderId);
+      identityProvider =
+        await this.sSOService.findSSOIdentityProviderById(identityProviderId);
 
       if (!identityProvider) {
         throw new AuthException(
@@ -56,17 +68,20 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       const issuer = await Issuer.discover(identityProvider.issuer);
 
       new OIDCAuthStrategy(
-        this.ssoService.getOIDCClient(identityProvider, issuer),
+        this.sSOService.getOIDCClient(identityProvider, issuer),
         identityProvider.id,
       );
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      if (err instanceof AuthException) {
-        return false;
-      }
+      this.guardRedirectService.dispatchErrorFromGuard(
+        context,
+        err,
+        identityProvider?.workspace ?? {
+          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        },
+      );
 
-      // TODO AMOREAUX: trigger sentry error
       return false;
     }
   }

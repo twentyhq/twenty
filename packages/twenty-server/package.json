@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.40.0-canary",
+  "version": "0.41.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -30,6 +30,7 @@
     "cache-manager": "^5.4.0",
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
+    "cloudflare": "^3.5.0",
     "connect-redis": "^7.1.1",
     "express-session": "^1.18.1",
     "graphql-middleware": "^6.1.35",
@@ -46,6 +47,7 @@
     "monaco-editor": "^0.51.0",
     "monaco-editor-auto-typings": "^0.4.5",
     "openid-client": "^5.7.0",
+    "otplib": "^12.0.1",
     "passport": "^0.7.0",
     "psl": "^1.9.0",
     "redis": "^4.7.0",
@@ -74,6 +76,8 @@
     "@types/react": "^18.2.39",
     "@types/unzipper": "^0",
     "rimraf": "^5.0.5",
+    "twenty-emails": "workspace:*",
+    "twenty-shared": "workspace:*",
     "typescript": "5.3.3"
   },
   "engines": {

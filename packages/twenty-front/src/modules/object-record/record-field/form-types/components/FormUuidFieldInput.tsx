@@ -1,7 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -28,6 +28,7 @@ export const FormUuidFieldInput = ({
   defaultValue,
   placeholder,
   onPersist,
+  readonly,
   VariablePicker,
 }: FormUuidFieldInputProps) => {
   const inputId = useId();
@@ -94,7 +95,7 @@ export const FormUuidFieldInput = ({
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
-          hasRightElement={isDefined(VariablePicker)}
+          hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
@@ -103,17 +104,18 @@ export const FormUuidFieldInput = ({
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
+              disabled={readonly}
               onChange={handleChange}
             />
           ) : (
-            <VariableChip
+            <VariableChipStandalone
               rawVariableName={draftValue.value}
-              onRemove={handleUnlinkVariable}
+              onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
         </FormFieldInputInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && !readonly ? (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}

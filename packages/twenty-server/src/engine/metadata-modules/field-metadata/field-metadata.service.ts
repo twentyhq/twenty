@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
+import { FieldMetadataType } from 'twenty-shared';
 import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -56,14 +59,12 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from './field-metadata.entity';
+import { FieldMetadataEntity } from './field-metadata.entity';
 
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
@@ -87,6 +88,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
     private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
+    private readonly viewService: ViewService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -94,7 +96,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    console.time('createOne');
     const queryRunner = this.metadataDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -106,7 +107,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      console.time('createOne query');
       const [objectMetadata] = await this.objectMetadataRepository.find({
         where: {
           id: fieldMetadataInput.objectMetadataId,
@@ -115,8 +115,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         relations: ['fields'],
         order: {},
       });
-
-      console.timeEnd('createOne query');
 
       if (!objectMetadata) {
         throw new FieldMetadataException(
@@ -183,15 +181,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      console.time('createOne save');
       const createdFieldMetadata = await fieldMetadataRepository.save(
         fieldMetadataForCreate,
       );
 
-      console.timeEnd('createOne save');
-
       if (!fieldMetadataInput.isRemoteCreation) {
-        console.time('createOne migration create');
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`create-${createdFieldMetadata.name}`),
           fieldMetadataInput.workspaceId,
@@ -207,16 +201,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           ],
         );
 
-        console.timeEnd('createOne migration create');
-
-        console.time('createOne migration run');
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
           fieldMetadataInput.workspaceId,
         );
-        console.timeEnd('createOne migration run');
       }
 
-      console.time('createOne workspace viewField');
       // TODO: Move viewField creation to a cdc scheduler
       const dataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -276,11 +265,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             );
           }
         }
-        console.timeEnd('createOne workspace viewField');
-
-        console.time('createOne internal commit');
         await workspaceQueryRunner.commitTransaction();
-        console.timeEnd('createOne internal commit');
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();
         throw error;
@@ -288,9 +273,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await workspaceQueryRunner.release();
       }
 
-      console.time('createOne commit');
       await queryRunner.commitTransaction();
-      console.timeEnd('createOne commit');
 
       return createdFieldMetadata;
     } catch (error) {
@@ -298,12 +281,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
-      console.time('createOne increment');
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         fieldMetadataInput.workspaceId,
       );
-      console.timeEnd('createOne increment');
-      console.timeEnd('createOne');
     }
   }
 
@@ -540,6 +520,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         );
       }
+
+      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
+        workspaceId,
+        fieldMetadataId: fieldMetadata.id,
+      });
 
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
@@ -789,5 +774,30 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return fieldMetadataInput;
+  }
+
+  async resolveTranslatableString(
+    fieldMetadata: FieldMetadataDTO,
+    labelKey: 'label' | 'description',
+    locale: string | undefined,
+  ): Promise<string> {
+    if (fieldMetadata.isCustom) {
+      return fieldMetadata[labelKey] ?? '';
+    }
+
+    if (!locale) {
+      return fieldMetadata[labelKey] ?? '';
+    }
+
+    i18n.activate(locale);
+
+    const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
+    const translatedMessage = i18n._(messageId);
+
+    if (translatedMessage === messageId) {
+      return fieldMetadata[labelKey] ?? '';
+    }
+
+    return translatedMessage;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.40.0-canary",
+  "version": "0.41.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
@@ -39,6 +39,7 @@
     "@tiptap/core": "^2.10.4",
     "@tiptap/extension-document": "^2.10.4",
     "@tiptap/extension-hard-break": "^2.10.4",
+    "@tiptap/extension-history": "^2.10.4",
     "@tiptap/extension-paragraph": "^2.10.4",
     "@tiptap/extension-placeholder": "^2.10.4",
     "@tiptap/extension-text": "^2.10.4",
@@ -49,7 +50,8 @@
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "recoil-sync": "^0.2.0",
-    "transliteration": "^2.3.5"
+    "transliteration": "^2.3.5",
+    "twenty-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/file-saver": "^2"

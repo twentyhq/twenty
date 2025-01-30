@@ -1,9 +1,9 @@
+import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
+
 import {
   CompositeProperty,
   CompositeType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export enum FieldActorSource {
   EMAIL = 'EMAIL',
@@ -41,6 +41,12 @@ export const actorCompositeType: CompositeType = {
       hidden: 'input',
       isRequired: true,
     },
+    {
+      name: 'context',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
@@ -48,4 +54,7 @@ export type ActorMetadata = {
   source: FieldActorSource;
   workspaceMemberId?: string;
   name: string;
+  context?: {
+    provider?: ConnectedAccountProvider;
+  };
 };

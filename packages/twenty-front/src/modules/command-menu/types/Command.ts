@@ -9,6 +9,7 @@ export enum CommandType {
 export enum CommandScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
+  Object = 'Object',
 }
 
 export type Command = {
@@ -18,8 +19,7 @@ export type Command = {
   type?: CommandType;
   scope?: CommandScope;
   Icon?: IconComponent;
-  firstHotKey?: string;
-  secondHotKey?: string;
+  hotKeys?: string[];
   onCommandClick?: () => void;
   shouldCloseCommandMenuOnClick?: boolean;
 };

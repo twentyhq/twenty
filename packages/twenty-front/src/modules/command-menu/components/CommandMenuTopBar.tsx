@@ -1,11 +1,19 @@
+import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IconX, isDefined, LightIconButton, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -15,6 +23,7 @@ const StyledInputContainer = styled.div`
   border-radius: 0;
 
   display: flex;
+  justify-content: space-between;
   font-size: ${({ theme }) => theme.font.size.lg};
   height: ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px;
   margin: 0;
@@ -23,6 +32,7 @@ const StyledInputContainer = styled.div`
 
   padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
   gap: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 0;
 `;
 
 const StyledInput = styled.input`
@@ -43,6 +53,13 @@ const StyledInput = styled.input`
   }
 `;
 
+const StyledContentContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledCloseButtonContainer = styled.div`
   align-items: center;
   display: flex;
@@ -50,15 +67,13 @@ const StyledCloseButtonContainer = styled.div`
   justify-content: center;
 `;
 
-type CommandMenuTopBarProps = {
-  commandMenuSearch: string;
-  setCommandMenuSearch: (search: string) => void;
-};
+export const CommandMenuTopBar = () => {
+  const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
+    commandMenuSearchState,
+  );
 
-export const CommandMenuTopBar = ({
-  commandMenuSearch,
-  setCommandMenuSearch,
-}: CommandMenuTopBarProps) => {
+  const { t } = useLingui();
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
@@ -71,19 +86,38 @@ export const CommandMenuTopBar = ({
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
+  const { title, Icon } = useRecoilValue(commandMenuPageInfoState);
+
+  const theme = useTheme();
+
   return (
     <StyledInputContainer>
-      {isDefined(contextStoreCurrentObjectMetadataId) && (
-        <CommandMenuContextRecordChip
-          objectMetadataItemId={contextStoreCurrentObjectMetadataId}
-        />
-      )}
-      <StyledInput
-        autoFocus
-        value={commandMenuSearch}
-        placeholder="Type anything"
-        onChange={handleSearchChange}
-      />
+      <StyledContentContainer>
+        {commandMenuPage !== CommandMenuPages.SearchRecords &&
+          isDefined(contextStoreCurrentObjectMetadataId) && (
+            <CommandMenuContextRecordChip
+              objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+            />
+          )}
+        {isDefined(Icon) && (
+          <CommandMenuContextChip
+            Icons={[<Icon size={theme.icon.size.sm} />]}
+            text={title}
+          />
+        )}
+
+        {(commandMenuPage === CommandMenuPages.Root ||
+          commandMenuPage === CommandMenuPages.SearchRecords) && (
+          <StyledInput
+            autoFocus
+            value={commandMenuSearch}
+            placeholder={t`Type anything`}
+            onChange={handleSearchChange}
+          />
+        )}
+      </StyledContentContainer>
       {!isMobile && (
         <StyledCloseButtonContainer>
           <LightIconButton

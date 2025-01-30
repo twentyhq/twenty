@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import console from 'console';
-
+import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
@@ -10,10 +9,12 @@ import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
@@ -103,7 +104,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    this.validatesNoOtherObjectWithSameNameExistsOrThrows({
+    await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
       objectMetadataNamePlural: objectMetadataInput.namePlural,
       objectMetadataNameSingular: objectMetadataInput.nameSingular,
       workspaceId: objectMetadataInput.workspaceId,
@@ -533,4 +534,27 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
   };
+
+  async resolveTranslatableString(
+    objectMetadata: ObjectMetadataDTO,
+    labelKey: 'labelPlural' | 'labelSingular' | 'description',
+    locale: string | undefined,
+  ): Promise<string> {
+    if (objectMetadata.isCustom) {
+      return objectMetadata[labelKey];
+    }
+
+    if (!locale) {
+      return objectMetadata[labelKey];
+    }
+
+    const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
+    const translatedMessage = i18n._(messageId);
+
+    if (translatedMessage === messageId) {
+      return objectMetadata[labelKey] ?? '';
+    }
+
+    return translatedMessage;
+  }
 }

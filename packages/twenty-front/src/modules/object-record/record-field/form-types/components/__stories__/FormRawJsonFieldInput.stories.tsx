@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { getUserDevice } from 'twenty-ui';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
@@ -32,8 +33,21 @@ export const Readonly: Story = {
     placeholder: 'Enter valid json',
     readonly: true,
     onPersist: fn(),
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
   },
   play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
     const editor = canvasElement.querySelector('.ProseMirror > p');
     expect(editor).toBeVisible();
 
@@ -46,6 +60,9 @@ export const Readonly: Story = {
     });
 
     expect(args.onPersist).not.toHaveBeenCalled();
+
+    const addVariableButton = canvas.queryByText('Add variable');
+    expect(addVariableButton).not.toBeInTheDocument();
   },
 };
 
@@ -87,20 +104,15 @@ export const DisplayDefaultValueWithVariablesProperly: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": { "b" :  {{var.test}} } }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText(/{ "a": { "b" : /);
 
-    await waitFor(() => {
-      const variableTag = canvasElement.querySelector(
-        '[data-type="variableTag"]',
-      );
-
-      expect(variableTag).toBeVisible();
-      expect(variableTag).toHaveTextContent('test');
-    });
+    const variableTag = await canvas.findByText('test');
+    await expect(variableTag).toBeVisible();
 
     await canvas.findByText(/ } }/);
   },
@@ -120,6 +132,7 @@ export const InsertVariableInTheMiddleOnTextInput: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -161,6 +174,7 @@ export const CanUseVariableAsObjectProperty: Story = {
         </button>
       );
     },
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -188,6 +202,7 @@ export const ClearField: Story = {
   args: {
     placeholder: 'Enter valid json',
     defaultValue: '{ "a": 2 }',
+    onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const defaultValueStringLength = args.defaultValue!.length;
@@ -240,5 +255,56 @@ export const AcceptsJsonEncodedNewline: Story = {
     await userEvent.click(canvasElement);
 
     expect(args.onPersist).toHaveBeenCalledWith('"a\\nb"');
+  },
+};
+
+export const HasHistory: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const controlKey = getUserDevice() === 'mac' ? 'Meta' : 'Control';
+
+    const canvas = within(canvasElement);
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.type(editor, '{{ "a": ');
+
+    await userEvent.click(addVariableButton);
+
+    await userEvent.type(editor, ' }');
+
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+
+    await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
+
+    expect(editor).toHaveTextContent('');
+    expect(args.onPersist).toHaveBeenLastCalledWith(null);
+
+    await userEvent.type(
+      editor,
+      `{Shift>}{${controlKey}>}z{/${controlKey}}{/Shift}`,
+    );
+
+    expect(editor).toHaveTextContent('{ "a": test }');
+    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
   },
 };

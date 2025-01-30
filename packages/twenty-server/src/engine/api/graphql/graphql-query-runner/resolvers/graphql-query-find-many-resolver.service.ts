@@ -21,14 +21,11 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -37,7 +34,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
   FindManyResolverArgs,
   IConnection<ObjectRecord>
 > {
-  constructor(private readonly featureFlagService: FeatureFlagService) {
+  constructor(private readonly processAggregateHelper: ProcessAggregateHelper) {
     super();
   }
 
@@ -109,26 +106,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       appliedFilters,
     );
 
-    const isAggregationsEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsAggregateQueryEnabled,
-        authContext.workspace.id,
-      );
-
-    if (!isAggregationsEnabled) {
-      executionArgs.graphqlQuerySelectedFieldsResult.aggregate = {
-        totalCount:
-          executionArgs.graphqlQuerySelectedFieldsResult.aggregate.totalCount,
-      };
-    }
-
-    const processAggregateHelper = new ProcessAggregateHelper();
-
-    processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields:
-        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-      queryBuilder: aggregateQueryBuilder,
-    });
+    this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
+      {
+        selectedAggregatedFields:
+          executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+        queryBuilder: aggregateQueryBuilder,
+      },
+    );
 
     const limit =
       executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
@@ -156,10 +140,8 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     const parentObjectRecordsAggregatedValues =
       await aggregateQueryBuilder.getRawOne();
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
@@ -172,8 +154,16 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       });
     }
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     return typeORMObjectRecordsParser.createConnection({
       objectRecords,

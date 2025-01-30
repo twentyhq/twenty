@@ -1,5 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   computeColumnName,
   computeCompositeColumnName,
@@ -13,6 +14,7 @@ import {
   isSearchableFieldType,
   SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
+import { isSearchableSubfield } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-subfield.util';
 
 export type FieldTypeAndNameMetadata = {
   name: string;
@@ -54,7 +56,9 @@ const getColumnExpressionsFromField = (
     }
 
     return compositeType.properties
-      .filter((property) => property.type === FieldMetadataType.TEXT)
+      .filter((property) =>
+        isSearchableSubfield(compositeType.type, property.type, property.name),
+      )
       .map((property) => {
         const columnName = computeCompositeColumnName(
           fieldMetadataTypeAndName,

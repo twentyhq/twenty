@@ -2,13 +2,7 @@ import { createState } from '@ui/utilities/state/utils/createState';
 
 import { AuthProviders } from '~/generated/graphql';
 
-export const workspaceAuthProvidersState = createState<AuthProviders>({
+export const workspaceAuthProvidersState = createState<AuthProviders | null>({
   key: 'workspaceAuthProvidersState',
-  defaultValue: {
-    google: true,
-    magicLink: false,
-    password: true,
-    microsoft: false,
-    sso: [],
-  },
+  defaultValue: null,
 });

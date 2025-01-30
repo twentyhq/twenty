@@ -1,5 +1,7 @@
+import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -13,9 +15,9 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.behavioralEvent,
   namePlural: 'behavioralEvents',
-  labelSingular: 'Behavioral Event',
-  labelPlural: 'Behavioral Events',
-  description: 'An event related to user behavior',
+  labelSingular: msg`Behavioral Event`,
+  labelPlural: msg`Behavioral Events`,
+  description: msg`An event related to user behavior`,
   icon: STANDARD_OBJECT_ICONS.behavioralEvent,
 })
 @WorkspaceIsSystem()
@@ -33,8 +35,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: behavioralEventStandardFieldIds.type,
     type: FieldMetadataType.TEXT,
-    label: 'Event type',
-    description: 'Event type',
+    label: msg`Event type`,
+    description: msg`Event type`,
     icon: 'IconAbc',
   })
   type: string;
@@ -43,8 +45,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: 'Event name',
-    description: 'Event name',
+    label: msg`Event name`,
+    description: msg`Event name`,
     icon: 'IconAbc',
   })
   name: string;
@@ -52,8 +54,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event details',
-    description: 'Json value for event details',
+    label: msg`Event details`,
+    description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -62,9 +64,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
-    label: 'Event context',
-    description:
-      'Json object to provide context (user, device, workspace, etc.)',
+    label: msg`Event context`,
+    description: msg`Json object to provide context (user, device, workspace, etc.)`,
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
@@ -73,8 +74,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
-    label: 'Object name',
-    description: 'If the event is related to a particular object',
+    label: msg`Object name`,
+    description: msg`If the event is related to a particular object`,
     icon: 'IconAbc',
   })
   objectName: string;
@@ -82,8 +83,8 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
-    label: 'Object id',
-    description: 'Event name/type',
+    label: msg`Object id`,
+    description: msg`Event name/type`,
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()

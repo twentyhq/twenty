@@ -40,13 +40,12 @@ export const mockCurrentWorkspace: Workspace = {
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
   displayName: 'Twenty',
-  domainName: 'twenty.com',
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
-  activationStatus: WorkspaceActivationStatus.Active,
-  hasValidEntrepriseKey: false,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
+  hasValidEnterpriseKey: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,
@@ -59,7 +58,7 @@ export const mockCurrentWorkspace: Workspace = {
     },
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c5',
-      key: FeatureFlagKey.IsPostgreSqlIntegrationEnabled,
+      key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
       value: true,
       workspaceId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
     },
@@ -73,6 +72,13 @@ export const mockCurrentWorkspace: Workspace = {
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
   },
+  billingSubscriptions: [
+    {
+      __typename: 'BillingSubscription',
+      id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
+      status: SubscriptionStatus.Active,
+    },
+  ],
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
@@ -92,8 +98,8 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
   userEmail: 'charles@test.com',
-  dateFormat: WorkspaceMemberDateFormatEnum.DayFirst,
-  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
+  dateFormat: WorkspaceMemberDateFormatEnum.DAY_FIRST,
+  timeFormat: WorkspaceMemberTimeFormatEnum.HOUR_24,
   timeZone: 'America/New_York',
 };
 
@@ -111,7 +117,7 @@ export const mockedUserData: MockedUser = {
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
-  onboardingStatus: OnboardingStatus.Completed,
+  onboardingStatus: OnboardingStatus.COMPLETED,
   userVars: {},
   analyticsTinybirdJwts: null,
 };

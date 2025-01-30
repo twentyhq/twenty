@@ -201,7 +201,10 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
+  const { createNewTableRecord } = useCreateNewTableRecord({
+    objectMetadataItem,
+    recordTableId,
+  });
 
   const handlePlusButtonClick = () => {
     createNewTableRecord();

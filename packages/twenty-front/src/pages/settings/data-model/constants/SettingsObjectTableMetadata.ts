@@ -1,30 +1,31 @@
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { msg } from '@lingui/core/macro';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
-export const SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableItem> =
+export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableItem> =
   {
     tableId: 'settingsObject',
     fields: [
       {
-        fieldLabel: 'Name',
+        fieldLabel: msg`Name`,
         fieldName: 'labelPlural',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Type',
+        fieldLabel: msg`Type`,
         fieldName: 'objectTypeLabel',
         fieldType: 'string',
         align: 'left',
       },
       {
-        fieldLabel: 'Fields',
+        fieldLabel: msg`Fields`,
         fieldName: 'fieldsCount',
         fieldType: 'number',
         align: 'right',
       },
       {
-        fieldLabel: 'Instances',
+        fieldLabel: msg`Instances`,
         fieldName: 'totalObjectCount',
         fieldType: 'number',
         align: 'right',
