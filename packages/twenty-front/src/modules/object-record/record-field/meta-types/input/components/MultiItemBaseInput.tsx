@@ -13,12 +13,12 @@ const StyledInput = styled.input<{
 }>`
   ${TEXT_INPUT_STYLE}
 
-  ${({ hasItem, theme }) =>
+  ${({ hasError, hasItem, theme }) =>
     hasItem &&
     css`
       background-color: ${theme.background.transparent.lighter};
       border-radius: 4px;
-      border: 1px solid ${theme.border.color.medium};
+      border: 1px solid ${hasError ? theme.border.color.danger : theme.border.color.medium};
     `}
 
   box-sizing: border-box;
