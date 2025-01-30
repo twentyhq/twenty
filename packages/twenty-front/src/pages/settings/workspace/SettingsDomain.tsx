@@ -1,42 +1,27 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { Controller, useForm } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { H2Title, Section } from 'twenty-ui';
-import { z } from 'zod';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  useUpdateWorkspaceMutation,
+} from '~/generated/graphql';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
+import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-type Form = {
-  subdomain: string;
-};
-
-const StyledDomainFromWrapper = styled.div`
-  align-items: center;
-  display: flex;
-`;
-
-const StyledDomain = styled.h2`
-  align-self: flex-start;
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin: ${({ theme }) => theme.spacing(2)};
-`;
+import { ApolloError } from '@apollo/client';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { z } from 'zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsHostnameEffect } from '~/pages/settings/workspace/SettingsHostnameEffect';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -54,22 +39,21 @@ export const SettingsDomain = () => {
     })
     .required();
 
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
-
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+
+  const isCustomDomainEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCustomDomainEnabled,
+  );
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
 
-  const {
-    control,
-    watch,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
+  const form = useForm<{
+    subdomain: string;
+  }>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {
@@ -78,12 +62,12 @@ export const SettingsDomain = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const subdomainValue = watch('subdomain');
+  const subdomainValue = form.watch('subdomain');
 
   const handleSave = async () => {
-    const values = getValues();
+    const values = form.getValues();
 
-    if (!values || !isValid || !currentWorkspace) {
+    if (!values || !form.formState.isValid || !currentWorkspace) {
       return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
@@ -100,7 +84,7 @@ export const SettingsDomain = () => {
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
         ) {
-          return control.setError('subdomain', {
+          return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
           });
@@ -137,7 +121,8 @@ export const SettingsDomain = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
-            !isValid || subdomainValue === currentWorkspace?.subdomain
+            !form.formState.isValid ||
+            subdomainValue === currentWorkspace?.subdomain
           }
           onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
@@ -145,39 +130,18 @@ export const SettingsDomain = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`Domain`}
-            description={t`Set the name of your subdomain`}
-          />
-          {currentWorkspace?.subdomain && (
-            <StyledDomainFromWrapper>
-              <Controller
-                name="subdomain"
-                control={control}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <>
-                    <TextInputV2
-                      value={value}
-                      type="text"
-                      onChange={onChange}
-                      error={error?.message}
-                      fullWidth
-                    />
-                    {isDefined(domainConfiguration.frontDomain) && (
-                      <StyledDomain>
-                        .{domainConfiguration.frontDomain}
-                      </StyledDomain>
-                    )}
-                  </>
-                )}
-              />
-            </StyledDomainFromWrapper>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>
+          {isCustomDomainEnabled && (
+            <>
+              <SettingsHostnameEffect />
+              <SettingsHostname />
+            </>
           )}
-        </Section>
+          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
+            <SettingsSubdomain />
+          )}
+        </FormProvider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
