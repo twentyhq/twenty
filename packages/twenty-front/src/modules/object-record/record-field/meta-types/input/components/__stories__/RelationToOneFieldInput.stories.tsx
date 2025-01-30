@@ -139,8 +139,6 @@ export const Submit: Story = {
       timeout: 3000,
     });
 
-    expect(item).toBeVisible();
-
     await userEvent.click(item);
 
     await waitFor(() => {

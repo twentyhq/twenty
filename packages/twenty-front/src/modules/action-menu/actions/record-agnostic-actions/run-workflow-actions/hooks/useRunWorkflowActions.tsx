@@ -5,6 +5,7 @@ import {
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { msg } from '@lingui/core/macro';
 
 import { capitalize } from 'twenty-shared';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
@@ -37,7 +38,7 @@ export const useRunWorkflowActions = () => {
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.Global,
-        label: name,
+        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
         position: index,
         Icon: IconSettingsAutomation,
         useAction: () => {
