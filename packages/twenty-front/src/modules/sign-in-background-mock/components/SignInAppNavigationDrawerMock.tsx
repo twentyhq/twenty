@@ -9,7 +9,12 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconSearch, IconSettings, getOsControlSymbol, useIsMobile } from 'twenty-ui';
+import {
+  IconSearch,
+  IconSettings,
+  getOsControlSymbol,
+  useIsMobile,
+} from 'twenty-ui';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
