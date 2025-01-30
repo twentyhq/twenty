@@ -14,7 +14,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const StyledRoleTableRow = styled.div`
   align-items: center;
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr;
 `;
 
 const GET_SETTINGS_ROLE_TABLE_METADATA = {
