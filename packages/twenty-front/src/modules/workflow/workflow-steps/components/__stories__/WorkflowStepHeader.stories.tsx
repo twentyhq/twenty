@@ -6,7 +6,9 @@ import { WorkflowStepHeader } from '../WorkflowStepHeader';
 const meta: Meta<typeof WorkflowStepHeader> = {
   title: 'Modules/Workflow/WorkflowStepHeader',
   component: WorkflowStepHeader,
-  args: {},
+  args: {
+    onTitleChange: fn(),
+  },
   argTypes: {},
   decorators: [ComponentDecorator],
 };
