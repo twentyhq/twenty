@@ -27,10 +27,6 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
-  BuildServerlessFunctionBatchEvent,
-  BuildServerlessFunctionJob,
-} from 'src/engine/metadata-modules/serverless-function/jobs/build-serverless-function.job';
-import {
   ServerlessFunctionEntity,
   ServerlessFunctionSyncStatus,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -145,7 +141,7 @@ export class ServerlessFunctionService {
       version === 'draft' &&
       functionToExecute.syncStatus !== ServerlessFunctionSyncStatus.READY
     ) {
-      await this.buildServerlessFunctionSync({
+      await this.buildServerlessFunction({
         serverlessFunction: functionToExecute,
         serverlessFunctionVersion: 'draft',
       });
@@ -407,7 +403,7 @@ export class ServerlessFunctionService {
     }
   }
 
-  private async buildServerlessFunctionSync({
+  private async buildServerlessFunction({
     serverlessFunction,
     serverlessFunctionVersion,
   }: {
@@ -421,26 +417,5 @@ export class ServerlessFunctionService {
     await this.serverlessFunctionRepository.update(serverlessFunction.id, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
-  }
-
-  private async buildServerlessFunctionAsync({
-    serverlessFunctionId,
-    serverlessFunctionVersion,
-    workspaceId,
-  }: {
-    serverlessFunctionId: string;
-    serverlessFunctionVersion: string;
-    workspaceId: string;
-  }) {
-    await this.messageQueueService.add<BuildServerlessFunctionBatchEvent>(
-      BuildServerlessFunctionJob.name,
-      {
-        serverlessFunctions: [
-          { serverlessFunctionId, serverlessFunctionVersion },
-        ],
-        workspaceId,
-      },
-      { id: `${serverlessFunctionId}-${serverlessFunctionVersion}` },
-    );
   }
 }
