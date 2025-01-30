@@ -33,12 +33,12 @@ import {
 export const DEFAULT_ACTIONS_CONFIG_V2: Record<
   string,
   ActionMenuEntry & {
-    actionHook: ActionHook;
+    useAction: ActionHook;
   }
 > = {
   createNewRecord: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     label: 'Create new record',
     shortLabel: 'New record',
@@ -46,7 +46,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     isPinned: true,
     Icon: IconPlus,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useCreateNewTableRecordNoSelectionRecordAction,
+    useAction: useCreateNewTableRecordNoSelectionRecordAction,
   },
   exportNoteToPdf: {
     type: ActionMenuEntryType.Standard,
@@ -58,7 +58,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     isPinned: false,
     Icon: IconFileExport,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useExportNoteAction,
+    useAction: useExportNoteAction,
   },
   addToFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -73,7 +73,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useAddToFavoritesSingleRecordAction,
+    useAction: useAddToFavoritesSingleRecordAction,
   },
   removeFromFavoritesSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -88,7 +88,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useRemoveFromFavoritesSingleRecordAction,
+    useAction: useRemoveFromFavoritesSingleRecordAction,
   },
   deleteSingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -104,7 +104,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useDeleteSingleRecordAction,
+    useAction: useDeleteSingleRecordAction,
   },
   deleteMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -117,7 +117,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     accent: 'danger',
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useDeleteMultipleRecordsAction,
+    useAction: useDeleteMultipleRecordsAction,
   },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
@@ -130,11 +130,11 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: 'Export view',
     shortLabel: 'Export',
@@ -143,7 +143,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    actionHook: useExportMultipleRecordsAction,
+    useAction: useExportMultipleRecordsAction,
   },
   destroySingleRecord: {
     type: ActionMenuEntryType.Standard,
@@ -159,7 +159,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    actionHook: useDestroySingleRecordAction,
+    useAction: useDestroySingleRecordAction,
   },
   navigateToPreviousRecord: {
     type: ActionMenuEntryType.Standard,
@@ -171,7 +171,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToPreviousRecordSingleRecordAction,
+    useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
     type: ActionMenuEntryType.Standard,
@@ -183,6 +183,6 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
-    actionHook: useNavigateToNextRecordSingleRecordAction,
+    useAction: useNavigateToNextRecordSingleRecordAction,
   },
 };

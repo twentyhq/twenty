@@ -30,22 +30,6 @@ export const MultipleIcons: Story = {
   },
 };
 
-export const WithIconBackground: Story = {
-  args: {
-    Icons: [<IconUser size={16} />],
-    text: 'Person',
-    withIconBackground: true,
-  },
-};
-
-export const MultipleIconsWithIconBackground: Story = {
-  args: {
-    Icons: [<IconUser size={16} />, <IconBuildingSkyscraper size={16} />],
-    text: 'Person & Company',
-    withIconBackground: true,
-  },
-};
-
 export const IconsOnly: Story = {
   args: {
     Icons: [<IconUser size={16} />, <IconBuildingSkyscraper size={16} />],

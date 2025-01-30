@@ -1,4 +1,4 @@
-import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 
 export const mapRightDrawerPageToCommandMenuPage = (

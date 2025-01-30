@@ -8,10 +8,9 @@ import { useRecoilState } from 'recoil';
 import styled from '@emotion/styled';
 import {
   useUpdateWorkspaceMutation,
-  useGetHostnameDetailsLazyQuery,
+  useGetHostnameDetailsQuery,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useEffect } from 'react';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useLingui } from '@lingui/react/macro';
 
@@ -40,8 +39,8 @@ const StyledDomainFromWrapper = styled.div`
 
 export const SettingsHostname = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const [getHostnameDetailsQuery, { data: getHostnameDetailsData }] =
-    useGetHostnameDetailsLazyQuery();
+  const { data: getHostnameDetailsData } = useGetHostnameDetailsQuery();
+
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { t } = useLingui();
 
@@ -56,28 +55,12 @@ export const SettingsHostname = () => {
     handleSubmit,
     formState: { isValid },
   } = useForm<Form>({
-    mode: 'onChange',
-    delayError: 500,
+    mode: 'onSubmit',
     defaultValues: {
       hostname: currentWorkspace?.hostname ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
-
-  useEffect(() => {
-    let pollIntervalFn: null | ReturnType<typeof setInterval> = null;
-    if (isDefined(currentWorkspace?.hostname)) {
-      pollIntervalFn = setInterval(() => {
-        getHostnameDetailsQuery({ fetchPolicy: 'no-cache' });
-      }, 3000);
-    }
-
-    return () => {
-      if (isDefined(pollIntervalFn)) {
-        clearInterval(pollIntervalFn);
-      }
-    };
-  }, [currentWorkspace?.hostname, getHostnameDetailsQuery]);
 
   const handleDelete = async () => {
     try {

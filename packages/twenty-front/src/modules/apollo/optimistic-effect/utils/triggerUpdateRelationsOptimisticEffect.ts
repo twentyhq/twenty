@@ -7,7 +7,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -17,8 +16,8 @@ import { isDefined } from '~/utils/isDefined';
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
   sourceObjectMetadataItem: ObjectMetadataItem;
-  currentSourceRecord: ObjectRecord | null;
-  updatedSourceRecord: ObjectRecord | null;
+  currentSourceRecord: RecordGqlNode | null;
+  updatedSourceRecord: RecordGqlNode | null;
   objectMetadataItems: ObjectMetadataItem[];
 };
 export const triggerUpdateRelationsOptimisticEffect = ({
@@ -28,6 +27,10 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
+  const isDeletion =
+    isDefined(updatedSourceRecord) &&
+    isDefined(updatedSourceRecord['deletedAt']);
+
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
@@ -73,15 +76,15 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         | RecordGqlNode
         | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
-      if (
-        isDeeplyEqual(
-          currentFieldValueOnSourceRecord,
-          updatedFieldValueOnSourceRecord,
-          { strict: true },
-        )
-      ) {
+      const noDiff = isDeeplyEqual(
+        currentFieldValueOnSourceRecord,
+        updatedFieldValueOnSourceRecord,
+        { strict: true },
+      );
+      if (noDiff && !isDeletion) {
         return;
       }
+
       const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
       ): RecordGqlNode[] => {
@@ -97,11 +100,12 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
         return [value];
       };
+
+      const recordToExtractDetachFrom = isDeletion
+        ? updatedFieldValueOnSourceRecord
+        : currentFieldValueOnSourceRecord;
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
-        currentFieldValueOnSourceRecord,
-      );
-      const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
-        updatedFieldValueOnSourceRecord,
+        recordToExtractDetachFrom,
       );
 
       // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
@@ -130,7 +134,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         });
       }
 
-      if (isDefined(updatedSourceRecord)) {
+      if (!isDeletion && isDefined(updatedSourceRecord)) {
+        const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
+          updatedFieldValueOnSourceRecord,
+        );
+
         targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
             cache,

@@ -18,7 +18,7 @@ export type CurrentWorkspace = Pick<
   | 'isGoogleAuthEnabled'
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
-  | 'hasValidEntrepriseKey'
+  | 'hasValidEnterpriseKey'
   | 'subdomain'
   | 'hostname'
   | 'workspaceEndpoints'

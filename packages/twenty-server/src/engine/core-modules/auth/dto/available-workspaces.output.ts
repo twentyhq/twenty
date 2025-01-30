@@ -39,6 +39,9 @@ export class AvailableWorkspaceOutput {
   workspaceEndpoints: WorkspaceEndpoints;
 
   @Field(() => String, { nullable: true })
+  hostname?: string;
+
+  @Field(() => String, { nullable: true })
   logo?: string;
 
   @Field(() => [SSOConnection])

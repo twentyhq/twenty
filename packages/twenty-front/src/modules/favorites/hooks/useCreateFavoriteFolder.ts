@@ -22,7 +22,6 @@ export const useCreateFavoriteFolder = () => {
     );
 
     await createFavoriteFolder({
-      workspaceMemberId: currentWorkspaceMemberId,
       name,
       position: maxPosition + 1,
     });
