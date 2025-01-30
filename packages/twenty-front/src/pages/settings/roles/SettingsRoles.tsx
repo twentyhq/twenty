@@ -1,29 +1,20 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { Button, H2Title, IconPlus, IconSearch, Section } from 'twenty-ui';
+import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const StyledSearchInput = styled(TextInput)`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
 
 const StyledRoleTableRow = styled.div`
   align-items: center;
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 const GET_SETTINGS_ROLE_TABLE_METADATA = {
@@ -40,15 +31,10 @@ const GET_SETTINGS_ROLE_TABLE_METADATA = {
       align: 'left' as const,
     },
   ],
-  initialSort: {
-    fieldName: 'name',
-    orderBy: 'AscNullsLast' as const,
-  } satisfies TableSortValue,
 };
 
 export const SettingsRoles = () => {
   const { t } = useLingui();
-  const [searchTerm, setSearchTerm] = useState('');
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
@@ -63,7 +49,7 @@ export const SettingsRoles = () => {
       actionButton={
         <Button
           Icon={IconPlus}
-          title={t`Add role`}
+          title={t`New Role`}
           accent="blue"
           size="small"
         />
@@ -78,27 +64,21 @@ export const SettingsRoles = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title={t`All roles`} />
-
-          <StyledSearchInput
-            LeftIcon={IconSearch}
-            placeholder={t`Search a role...`}
-            value={searchTerm}
-            onChange={setSearchTerm}
+          <H2Title
+            title={t`All roles`}
+            description={t`Assign roles to specify each member's access permissions`}
           />
 
           <Table>
             <StyledRoleTableRow>
               {GET_SETTINGS_ROLE_TABLE_METADATA.fields.map(
                 (settingsRoleTableMetadataField) => (
-                  <SortableTableHeader
+                  <TableHeader
                     key={settingsRoleTableMetadataField.fieldName}
-                    fieldName={settingsRoleTableMetadataField.fieldName}
-                    label={settingsRoleTableMetadataField.fieldLabel}
-                    tableId={GET_SETTINGS_ROLE_TABLE_METADATA.tableId}
                     align={settingsRoleTableMetadataField.align}
-                    initialSort={GET_SETTINGS_ROLE_TABLE_METADATA.initialSort}
-                  />
+                  >
+                    {settingsRoleTableMetadataField.fieldLabel}
+                  </TableHeader>
                 ),
               )}
             </StyledRoleTableRow>
