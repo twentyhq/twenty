@@ -1,6 +1,7 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
@@ -61,6 +62,10 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     filterDefinitionUsedInDropdownComponentState,
   );
 
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+  );
+
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
   );
@@ -110,6 +115,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       }
 
       setFilterDefinitionUsedInDropdown(definition);
+      setFieldMetadataItemIdUsedInDropdown(definition.fieldMetadataId);
 
       setSelectedOperandInDropdown(
         getRecordFilterOperandsForRecordFilterDefinition(definition)[0],
@@ -122,6 +128,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   };
 
   const handleSubMenuBack = () => {
+    setFieldMetadataItemIdUsedInDropdown(null);
     setFilterDefinitionUsedInDropdown(null);
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownFirstLevelFilterDefinition(null);

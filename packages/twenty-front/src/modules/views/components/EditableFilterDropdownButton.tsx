@@ -8,6 +8,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -32,6 +33,10 @@ export const EditableFilterDropdownButton = ({
   const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
     filterDefinitionUsedInDropdownComponentState,
     viewFilterDropdownId,
+  );
+
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
@@ -62,12 +67,14 @@ export const EditableFilterDropdownButton = ({
 
     if (isDefined(filterDefinition)) {
       setFilterDefinitionUsedInDropdown(filterDefinition);
+      setFieldMetadataItemIdUsedInDropdown(filterDefinition.fieldMetadataId);
       setSelectedOperandInDropdown(viewFilter.operand);
       setSelectedFilter(viewFilter);
     }
   }, [
     availableFilterDefinitions,
     setFilterDefinitionUsedInDropdown,
+    setFieldMetadataItemIdUsedInDropdown,
     viewFilter,
     setSelectedOperandInDropdown,
     setSelectedFilter,

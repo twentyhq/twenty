@@ -1,5 +1,6 @@
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -24,6 +25,10 @@ export const AdvancedFilterViewFilterValueInput = ({
 
   const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
     filterDefinitionUsedInDropdownComponentState,
+  );
+
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
@@ -58,6 +63,7 @@ export const AdvancedFilterViewFilterValueInput = ({
         />
       }
       onOpen={() => {
+        setFieldMetadataItemIdUsedInDropdown(filter.fieldMetadataId);
         setFilterDefinitionUsedInDropdown(filter.definition);
         setSelectedOperandInDropdown(filter.operand);
         setSelectedFilter(filter);
