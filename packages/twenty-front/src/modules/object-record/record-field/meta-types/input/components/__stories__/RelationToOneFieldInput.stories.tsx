@@ -140,10 +140,7 @@ export const Submit: Story = {
     });
 
     await userEvent.click(item);
-
-    await waitFor(() => {
-      expect(submitJestFn).toHaveBeenCalledTimes(1);
-    });
+    await waitFor(() => expect(submitJestFn).toHaveBeenCalledTimes(1));
   },
 };
 
