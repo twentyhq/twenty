@@ -10,6 +10,7 @@ import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/u
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
+import { WorkspaceUrls } from '~/generated/graphql';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
@@ -26,19 +27,24 @@ export const WorkspaceProviderEffect = () => {
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
+  const getHostnamesFromWorkspaceUrls = (workspaceUrls: WorkspaceUrls) => {
+    return {
+      customUrlHostname: workspaceUrls.customUrl
+        ? new URL(workspaceUrls.customUrl).hostname
+        : undefined,
+      subdomainUrlHostname: new URL(workspaceUrls.subdomainUrl).hostname,
+    };
+  };
+
   useEffect(() => {
-    const customUrlHostname = getPublicWorkspaceData?.workspaceUrls.customUrl
-      ? new URL(getPublicWorkspaceData?.workspaceUrls.customUrl).hostname
-      : undefined;
-    const subdomainUrlHostname = getPublicWorkspaceData?.workspaceUrls
-      .subdomainUrl
-      ? new URL(getPublicWorkspaceData?.workspaceUrls.subdomainUrl).hostname
-      : undefined;
+    const hostnames = getPublicWorkspaceData
+      ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
+      : null;
     if (
       isMultiWorkspaceEnabled &&
       isDefined(getPublicWorkspaceData) &&
-      currentLocationHostname !== customUrlHostname &&
-      currentLocationHostname !== subdomainUrlHostname
+      currentLocationHostname !== hostnames?.customUrlHostname &&
+      currentLocationHostname !== hostnames?.subdomainUrlHostname
     ) {
       redirectToWorkspaceDomain(
         getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
