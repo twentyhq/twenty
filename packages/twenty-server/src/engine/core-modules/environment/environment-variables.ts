@@ -97,7 +97,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  PERMISSIONS_V1_ENABLED = true;
+  PERMISSIONS_V1_ENABLED = false;
 
   @CastToBoolean()
   @IsOptional()
