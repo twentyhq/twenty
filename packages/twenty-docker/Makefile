@@ -1,6 +1,9 @@
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty . && cd -
 
+kvoip-prod-build:
+	@cd ../.. && docker build -t kvoipcrm/v2:latest -f ./packages/twenty-docker/twenty/Dockerfile .
+
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty
 
