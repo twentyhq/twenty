@@ -98,6 +98,12 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
       );
 
       if (!dryRun) {
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+      }
+
+      if (!dryRun) {
         const rowsToUpdate = await fieldRepository.update(
           {
             [field.name + 'Source']: In([
@@ -173,9 +179,6 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         );
 
         await queryRunner.commitTransaction();
-        await this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        );
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
