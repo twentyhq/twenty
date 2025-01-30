@@ -410,6 +410,17 @@ export class ServerlessFunctionService {
     serverlessFunction: ServerlessFunctionEntity;
     serverlessFunctionVersion: string;
   }) {
+    if (
+      serverlessFunction.syncStatus !== ServerlessFunctionSyncStatus.NOT_READY
+    ) {
+      throw new ServerlessFunctionException(
+        'This function is already built or building. Please try later',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING,
+      );
+    }
+    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+      syncStatus: ServerlessFunctionSyncStatus.BUILDING,
+    });
     await this.serverlessService.build(
       serverlessFunction,
       serverlessFunctionVersion,

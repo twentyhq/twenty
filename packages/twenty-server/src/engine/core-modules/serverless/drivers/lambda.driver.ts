@@ -133,7 +133,7 @@ export class LambdaDriver implements ServerlessDriver {
     await lambdaBuildDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn si undefined');
+      throw new Error('new layer version arn if undefined');
     }
 
     return result.LayerVersionArn;
