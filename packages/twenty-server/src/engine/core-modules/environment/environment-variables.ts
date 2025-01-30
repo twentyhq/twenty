@@ -727,7 +727,6 @@ export class EnvironmentVariables {
     description: 'Database URL',
   })
   @IsDefined()
-  @IsDefined()
   @IsUrl({
     protocols: ['postgres'],
     require_tld: false,
