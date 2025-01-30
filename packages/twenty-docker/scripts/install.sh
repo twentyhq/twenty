@@ -72,7 +72,15 @@ done
 echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
+<<<<<<< Updated upstream
 # Copy twenty/packages/twenty-docker/docker-compose.yml in it
+=======
+<<<<<<< HEAD:install.sh
+# Fetch docker-compose.yml from the branch corresponding to the version or main
+=======
+# Copy twenty/packages/twenty-docker/docker-compose.yml in it
+>>>>>>> ee679dc698e338347e4dc38a2c3159876904db2c:packages/twenty-docker/scripts/install.sh
+>>>>>>> Stashed changes
 echo -e "\t• Copying docker-compose.yml"
 curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 

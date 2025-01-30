@@ -42,7 +42,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Name',
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
-    defaultValue: "'Untitled'",
   })
   name: string;
 
