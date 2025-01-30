@@ -1,16 +1,17 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { t } from '@lingui/core/macro';
 
 export const getEmptyStateTitle = (
   objectNameSingular: string,
   objectLabel: string,
 ) => {
   if (objectNameSingular === CoreObjectNameSingular.WorkflowVersion) {
-    return 'No workflow versions yet';
+    return t`No workflow versions yet`;
   }
 
   if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
-    return 'No workflow runs yet';
+    return t`No workflow runs yet`;
   }
 
-  return `Add your first ${objectLabel}`;
+  return t`Add your first ${objectLabel}`;
 };

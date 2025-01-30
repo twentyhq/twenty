@@ -52,6 +52,7 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenuRouter,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentWorkspaceMember = useSetRecoilState(

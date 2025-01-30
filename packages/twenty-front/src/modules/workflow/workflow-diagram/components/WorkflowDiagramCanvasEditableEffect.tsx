@@ -12,13 +12,16 @@ import {
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIcon } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIcon';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { IconBolt, isDefined } from 'twenty-ui';
+import { IconBolt, isDefined, useIcons } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
+  const { t } = useLingui();
+  const { getIcon } = useIcons();
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
@@ -42,7 +45,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
         openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType, {
-          title: 'Trigger Type',
+          title: t`Trigger Type`,
           Icon: IconBolt,
         });
 
@@ -52,7 +55,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       const isCreateStepNode = selectedNode.type === CREATE_STEP_STEP_ID;
       if (isCreateStepNode) {
         if (selectedNode.data.nodeType !== 'create-step') {
-          throw new Error('Expected selected node to be a create step node.');
+          throw new Error(t`Expected selected node to be a create step node.`);
         }
 
         startNodeCreation(selectedNode.data.parentNodeId);
@@ -66,7 +69,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
         title: selectedNodeData.name,
-        Icon: getWorkflowNodeIcon(selectedNodeData),
+        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
       });
     },
     [
@@ -76,6 +79,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       closeRightDrawer,
       closeCommandMenu,
       startNodeCreation,
+      getIcon,
+      t,
     ],
   );
 

@@ -8,7 +8,6 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconPlayerPlay,
@@ -16,6 +15,7 @@ import {
   IconPower,
   IconSettingsAutomation,
   IconTrash,
+  isDefined,
 } from 'twenty-ui';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
@@ -122,9 +122,9 @@ export const RecordShowPageWorkflowHeader = ({
               workflowWithCurrentVersion,
             );
 
-            return deactivateWorkflowVersion({
-              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-            });
+            return deactivateWorkflowVersion(
+              workflowWithCurrentVersion.currentVersion.id,
+            );
           }}
         />
       ) : null}

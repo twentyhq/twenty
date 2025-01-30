@@ -1,5 +1,4 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
-import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
@@ -35,7 +34,6 @@ import {
   IconHeartOff,
   IconHistory,
   IconHistoryToggle,
-  IconNoteOff,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlus,
@@ -98,7 +96,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`Discard Draft`,
     isPinned: true,
     position: 3,
-    Icon: IconNoteOff,
+    Icon: IconTrash,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
@@ -194,7 +192,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 10,
-    isPinned: true,
+    isPinned: false,
     Icon: IconHeart,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -208,7 +206,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
-    isPinned: true,
+    isPinned: false,
     position: 11,
     Icon: IconHeartOff,
     availableOn: [
@@ -221,12 +219,12 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
-    label: msg`Delete workflow`,
+    label: msg`Delete record`,
     shortLabel: msg`Delete`,
     position: 12,
     Icon: IconTrash,
     accent: 'danger',
-    isPinned: true,
+    isPinned: false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -237,7 +235,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.DELETE,
-    label: msg`Delete workflows`,
+    label: msg`Delete records`,
     shortLabel: msg`Delete`,
     position: 13,
     Icon: IconTrash,
@@ -255,7 +253,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     position: 14,
     Icon: IconTrashX,
     accent: 'danger',
-    isPinned: true,
+    isPinned: false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -266,7 +264,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
-    label: msg`Export Workflows`,
+    label: msg`Export records`,
     shortLabel: msg`Export`,
     position: 15,
     Icon: IconDatabaseExport,
@@ -287,18 +285,5 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
-  },
-  destroyMultipleRecords: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: MultipleRecordsActionKeys.DESTROY,
-    label: msg`Permanently destroy workflows`,
-    shortLabel: msg`Destroy`,
-    position: 17,
-    Icon: IconTrashX,
-    accent: 'danger',
-    isPinned: true,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useDestroyMultipleRecordsAction,
   },
 };
