@@ -12,11 +12,13 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
+import { msg } from '@lingui/core/macro';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { RecoilRoot } from 'recoil';
 import { IconTrash, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 
@@ -25,6 +27,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
   component: RecordIndexActionMenuBar,
   decorators: [
     RouterDecorator,
+    I18nFrontDecorator,
     (Story) => (
       <RecordFiltersComponentInstanceContext.Provider
         value={{ instanceId: 'story-action-menu' }}
@@ -55,7 +58,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 scope: ActionMenuEntryScope.RecordSelection,
                 type: ActionMenuEntryType.Standard,
                 key: 'delete',
-                label: 'Delete',
+                label: msg`Delete`,
                 position: 0,
                 Icon: IconTrash,
                 onClick: deleteMock,

@@ -139,10 +139,8 @@ export const Submit: Story = {
       timeout: 3000,
     });
 
-    await waitFor(() => {
-      userEvent.click(item);
-      expect(submitJestFn).toHaveBeenCalledTimes(1);
-    });
+    await userEvent.click(item);
+    await waitFor(() => expect(submitJestFn).toHaveBeenCalledTimes(1));
   },
 };
 

@@ -7,6 +7,7 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { msg } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
@@ -19,8 +20,8 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
     key: RecordAgnosticActionsKey.SEARCH_RECORDS,
-    label: 'Search records',
-    shortLabel: 'Search',
+    label: msg`Search records`,
+    shortLabel: msg`Search`,
     position: 0,
     isPinned: false,
     Icon: IconSearch,
