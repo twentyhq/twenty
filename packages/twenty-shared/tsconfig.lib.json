@@ -7,7 +7,8 @@
     "types": [
       "node",
       "vite/client"
-    ]
+    ],
+    "baseUrl": "."
   },
   "exclude": [
     "**/*.spec.ts",
