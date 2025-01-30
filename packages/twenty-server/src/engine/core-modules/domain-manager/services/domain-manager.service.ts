@@ -352,7 +352,7 @@ export class DomainManagerService {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return this.registerCustomHostname(toHostname);
+    return await this.registerCustomHostname(toHostname);
   }
 
   async deleteCustomHostnameByHostnameSilently(hostname: string) {

@@ -21,6 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsHostnameEffect } from '~/pages/settings/workspace/SettingsHostnameEffect';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -131,7 +132,12 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          {isCustomDomainEnabled && <SettingsHostname />}
+          {isCustomDomainEnabled && (
+            <>
+              <SettingsHostnameEffect />
+              <SettingsHostname />
+            </>
+          )}
           {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
             <SettingsSubdomain />
           )}

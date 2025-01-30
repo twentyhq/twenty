@@ -37,6 +37,7 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthEnabled
       subdomain
       hasValidEnterpriseKey
+      hostname
       featureFlags {
         id
         key

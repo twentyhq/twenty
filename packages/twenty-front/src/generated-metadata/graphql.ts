@@ -379,9 +379,23 @@ export type CursorPaging = {
 export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String']['output'];
-  ownership_verification?: Maybe<OwnershipVerification>;
-  ownership_verification_http?: Maybe<OwnershipVerificationHttp>;
-  status: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  ownershipVerifications: Array<OwnershipVerification>;
+  status?: Maybe<Scalars['String']['output']>;
+};
+
+export type CustomHostnameOwnershipVerificationHttp = {
+  __typename?: 'CustomHostnameOwnershipVerificationHttp';
+  body: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type CustomHostnameOwnershipVerificationTxt = {
+  __typename?: 'CustomHostnameOwnershipVerificationTxt';
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  value: Scalars['String']['output'];
 };
 
 export type DeleteOneFieldInput = {
@@ -1218,18 +1232,7 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
-export type OwnershipVerification = {
-  __typename?: 'OwnershipVerification';
-  name: Scalars['String']['output'];
-  type: Scalars['String']['output'];
-  value: Scalars['String']['output'];
-};
-
-export type OwnershipVerificationHttp = {
-  __typename?: 'OwnershipVerificationHttp';
-  http_body: Scalars['String']['output'];
-  http_url: Scalars['String']['output'];
-};
+export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';
