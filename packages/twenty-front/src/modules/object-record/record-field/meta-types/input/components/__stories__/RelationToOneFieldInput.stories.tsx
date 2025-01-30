@@ -20,6 +20,7 @@ import {
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
+import { sleep } from '~/utils/sleep';
 import {
   RelationToOneFieldInput,
   RelationToOneFieldInputProps,
@@ -139,10 +140,13 @@ export const Submit: Story = {
       timeout: 3000,
     });
 
-    await waitFor(() => {
-      userEvent.click(item);
-      expect(submitJestFn).toHaveBeenCalledTimes(1);
-    });
+    expect(item).toBeInTheDocument();
+
+    userEvent.click(item);
+
+    await sleep(1000);
+
+    expect(submitJestFn).toHaveBeenCalledTimes(1);
   },
 };
 
