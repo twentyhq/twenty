@@ -22,7 +22,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder-message-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
@@ -377,6 +377,11 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsNullable()
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationWorkspaceEntity[]
+  >;
+
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolders,
     type: RelationMetadataType.ONE_TO_MANY,
@@ -387,7 +392,5 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationWorkspaceEntity[]
-  >;
+  messageFolders: Relation<MessageFolderWorkspaceEntity[]>;
 }
