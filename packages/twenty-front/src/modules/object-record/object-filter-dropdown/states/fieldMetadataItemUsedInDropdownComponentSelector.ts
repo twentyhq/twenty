@@ -5,7 +5,7 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 export const fieldMetadataItemUsedInDropdownComponentSelector =
-  createComponentSelectorV2<FieldMetadataItem | null>({
+  createComponentSelectorV2<FieldMetadataItem | null | undefined>({
     key: 'fieldMetadataItemUsedInDropdownComponentSelector',
     get:
       ({ instanceId }) =>
@@ -18,26 +18,14 @@ export const fieldMetadataItemUsedInDropdownComponentSelector =
 
         const objectMetadataItems = get(objectMetadataItemsState);
 
-        const correspondingObjectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.fields.some(
-              (fieldMetadataItemToFind) =>
-                fieldMetadataItemToFind.id ===
-                fieldMetadataItemIdUsedInDropdown,
-            ),
-        );
-
-        if (!correspondingObjectMetadataItem) {
-          return null;
-        }
-
-        const foundFieldMetadataItem =
-          correspondingObjectMetadataItem.fields.find(
-            (fieldMetadataItemToFind) =>
-              fieldMetadataItemToFind.id === fieldMetadataItemIdUsedInDropdown,
+        const correspondingFieldMetadataItem = objectMetadataItems
+          .flatMap((objectMetadataItem) => objectMetadataItem.fields)
+          .find(
+            (fieldMetadataItem) =>
+              fieldMetadataItem.id === fieldMetadataItemIdUsedInDropdown,
           );
 
-        return foundFieldMetadataItem ?? null;
+        return correspondingFieldMetadataItem;
       },
     componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
   });

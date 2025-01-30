@@ -13,6 +13,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
+import { useLingui } from '@lingui/react/macro';
 import { RecordForSelect } from '../types/RecordForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
@@ -47,6 +48,7 @@ export const SingleRecordSelectMenuItems = ({
   isFiltered,
   shouldSelectEmptyOption,
 }: SingleRecordSelectMenuItemsProps) => {
+  const { t } = useLingui();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectNone = emptyLabel
@@ -61,7 +63,7 @@ export const SingleRecordSelectMenuItems = ({
     ? {
         __typename: '',
         id: 'select-all',
-        name: 'Select All',
+        name: t`Select All`,
       }
     : null;
 
@@ -144,7 +146,7 @@ export const SingleRecordSelectMenuItems = ({
                       <MenuItemSelect
                         key={record.id}
                         onClick={() => onAllRecordsSelected()}
-                        text="Select All"
+                        text={t`Select All`}
                         selected={!!isAllRecordsSelected}
                         hovered={isSelectedSelectAllButton}
                       />

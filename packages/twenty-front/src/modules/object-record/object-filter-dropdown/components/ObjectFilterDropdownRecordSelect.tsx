@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
-import { useFieldMetadataItemUsedInFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFieldMetadataItemUsedInFilterDropdown';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
@@ -43,8 +43,9 @@ export const ObjectFilterDropdownRecordSelect = ({
     filterDefinitionUsedInDropdownComponentState,
   );
 
-  const { fieldMetadataItemUsedInFilterDropdown } =
-    useFieldMetadataItemUsedInFilterDropdown();
+  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
 
   const selectedOperandInDropdown = useRecoilComponentValueV2(
     selectedOperandInDropdownComponentState,
