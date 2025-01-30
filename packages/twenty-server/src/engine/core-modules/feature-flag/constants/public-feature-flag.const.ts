@@ -18,7 +18,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Localization',
       description:
         "Enable this and go to Settings > Experience to change your account's language. You can also help us improve the translations on Github.",
-      imagePath: 'https://twenty.com/images/relases/labs/translation.png',
+      imagePath: 'https://twenty.com/images/releases/labs/translation.png',
     },
   },
 ];
