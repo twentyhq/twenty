@@ -27,10 +27,10 @@ export class WorkflowRunnerWorkspaceService {
     payload: object,
     source: ActorMetadata,
   ) {
-    const canExecuteBilledFunction =
-      await this.billingUsageService.canExecuteBilledFunction(workspaceId);
+    const canFeatureBeUsed =
+      await this.billingUsageService.canFeatureBeUsed(workspaceId);
 
-    if (!canExecuteBilledFunction) {
+    if (!canFeatureBeUsed) {
       this.logger.log(
         'Cannot execute billed function, there is no subscription for this workspace',
       );

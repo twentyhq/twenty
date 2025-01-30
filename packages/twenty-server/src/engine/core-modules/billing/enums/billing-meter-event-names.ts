@@ -1,5 +1,3 @@
 export enum BillingMeterEventName {
-  WORKFLOW_NODE_RUN = 'creditexecutiontest1',
+  WORKFLOW_NODE_RUN = 'WORKFLOW_NODE_RUN',
 }
-//this is a test event name (no conventions) would you want camel case?, snake case, or all caps?
-//Something like workflowNodeRunBillingMeterEvent ?
