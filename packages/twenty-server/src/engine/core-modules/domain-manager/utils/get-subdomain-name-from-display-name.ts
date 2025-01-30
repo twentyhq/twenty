@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'src/utils/is-defined';
 
 export const getSubdomainNameFromDisplayName = (displayName?: string) => {
   if (!isDefined(displayName)) return;

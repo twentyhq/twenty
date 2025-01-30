@@ -24,9 +24,6 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
-    currentUserWorkspace {
-      settingsPermissions
-    }
     currentWorkspace {
       id
       displayName
@@ -39,12 +36,9 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
       subdomain
+      creatorEmail
       hasValidEnterpriseKey
-      customDomain
-      workspaceUrls {
-        subdomainUrl
-        customUrl
-      }
+      hostname
       featureFlags {
         id
         key
@@ -69,11 +63,6 @@ export const USER_QUERY_FRAGMENT = gql`
         logo
         displayName
         subdomain
-        customDomain
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
       }
     }
     userVars

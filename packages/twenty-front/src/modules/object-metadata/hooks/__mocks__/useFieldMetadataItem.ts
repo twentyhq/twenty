@@ -145,9 +145,6 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
-      currentUserWorkspace {
-        settingsPermissions
-      }
       currentWorkspace {
         id
         displayName
@@ -161,11 +158,7 @@ export const queries = {
         isPasswordAuthEnabled
         subdomain
         hasValidEnterpriseKey
-        customDomain
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
+        hostname
         featureFlags {
           id
           key
@@ -190,11 +183,6 @@ export const queries = {
           logo
           displayName
           subdomain
-          customDomain
-          workspaceUrls {
-            subdomainUrl
-            customUrl
-          }
         }
       }
       userVars
@@ -209,7 +197,6 @@ export const queries = {
       colorScheme
       avatarUrl
       locale
-      userEmail
       timeZone
       dateFormat
       timeFormat
@@ -308,9 +295,6 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
-      currentUserWorkspace: {
-        settingsPermissions: ['DATA_MODEL'],
-      },
       currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
@@ -324,11 +308,7 @@ export const responseData = {
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
-        customDomain: null,
-        workspaceUrls: {
-          customUrl: undefined,
-          subdomainUrl: 'https://test.twenty.com/',
-        },
+        hostname: null,
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

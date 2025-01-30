@@ -1,8 +1,4 @@
-import { ApolloError } from '@apollo/client';
-import {
-  CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -12,11 +8,12 @@ import {
   useUpdateWorkspaceMutation,
 } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
+import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -24,8 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
-import { isDefined } from 'twenty-shared';
+import { SettingsHostnameEffect } from '~/pages/settings/workspace/SettingsHostnameEffect';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -40,17 +36,6 @@ export const SettingsDomain = () => {
         .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
           message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
         }),
-      customDomain: z
-        .string()
-        .regex(
-          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
-          {
-            message: t`Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
-          },
-        )
-        .max(256)
-        .optional()
-        .or(z.literal('')),
     })
     .required();
 
@@ -68,97 +53,16 @@ export const SettingsDomain = () => {
 
   const form = useForm<{
     subdomain: string;
-    customDomain: string | null;
   }>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
-      customDomain: currentWorkspace?.customDomain ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
 
   const subdomainValue = form.watch('subdomain');
-  const customDomainValue = form.watch('customDomain');
-
-  const updateCustomDomain = (
-    customDomain: string | null,
-    currentWorkspace: CurrentWorkspace,
-  ) => {
-    updateWorkspace({
-      variables: {
-        input: {
-          customDomain:
-            isDefined(customDomain) && customDomain.length > 0
-              ? customDomain
-              : null,
-        },
-      },
-      onCompleted: () => {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          customDomain:
-            customDomain && customDomain.length > 0 ? customDomain : null,
-        });
-      },
-      onError: (error) => {
-        if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
-        ) {
-          return form.control.setError('subdomain', {
-            type: 'manual',
-            message: t`Subdomain already taken`,
-          });
-        }
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-    });
-  };
-
-  const updateSubdomain = (
-    subdomain: string,
-    currentWorkspace: CurrentWorkspace,
-  ) => {
-    updateWorkspace({
-      variables: {
-        input: {
-          subdomain,
-        },
-      },
-      onError: (error) => {
-        if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
-        ) {
-          return form.control.setError('subdomain', {
-            type: 'manual',
-            message: t`Subdomain already taken`,
-          });
-        }
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-      onCompleted: () => {
-        const currentUrl = new URL(window.location.href);
-
-        currentUrl.hostname = new URL(
-          currentWorkspace.workspaceUrls.subdomainUrl,
-        ).hostname.replace(currentWorkspace.subdomain, subdomain);
-
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          subdomain,
-        });
-
-        redirectToWorkspaceDomain(currentUrl.toString());
-      },
-    });
-  };
 
   const handleSave = async () => {
     const values = form.getValues();
@@ -169,16 +73,35 @@ export const SettingsDomain = () => {
       });
     }
 
-    if (
-      isDefined(values.subdomain) &&
-      values.subdomain !== currentWorkspace.subdomain
-    ) {
-      return updateSubdomain(values.subdomain, currentWorkspace);
-    }
+    await updateWorkspace({
+      variables: {
+        input: {
+          subdomain: values.subdomain,
+        },
+      },
+      onError: (error) => {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+        ) {
+          return form.control.setError('subdomain', {
+            type: 'manual',
+            message: t`Subdomain already taken`,
+          });
+        }
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          subdomain: values.subdomain,
+        });
 
-    if (values.customDomain !== currentWorkspace.customDomain) {
-      return updateCustomDomain(values.customDomain, currentWorkspace);
-    }
+        redirectToWorkspaceDomain(values.subdomain);
+      },
+    });
   };
 
   return (
@@ -199,8 +122,7 @@ export const SettingsDomain = () => {
         <SaveAndCancelButtons
           isSaveDisabled={
             !form.formState.isValid ||
-            (subdomainValue === currentWorkspace?.subdomain &&
-              customDomainValue === currentWorkspace?.customDomain)
+            subdomainValue === currentWorkspace?.subdomain
           }
           onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
@@ -210,12 +132,14 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          <SettingsSubdomain />
           {isCustomDomainEnabled && (
             <>
-              <SettingsCustomDomainEffect />
-              <SettingsCustomDomain />
+              <SettingsHostnameEffect />
+              <SettingsHostname />
             </>
+          )}
+          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
+            <SettingsSubdomain />
           )}
         </FormProvider>
       </SettingsPageContainer>
