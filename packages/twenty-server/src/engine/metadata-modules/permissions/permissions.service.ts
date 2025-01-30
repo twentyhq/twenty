@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { ADMIN_ROLE_NAME } from 'src/engine/metadata-modules/permissions/constants/admin-role-name.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -30,9 +29,8 @@ export class PermissionsService {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<void> {
-    await this.roleRepository.save({
-      name: ADMIN_ROLE_NAME,
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
       label: 'Admin',
       description: 'Admin role',
       canUpdateAllSettings: true,
@@ -41,24 +39,15 @@ export class PermissionsService {
     });
   }
 
-  public async assignAdminRoleToUserWorkspace(
-    workspaceId: string,
-    userWorkspaceId: string,
-  ): Promise<void> {
-    const adminRole = await this.roleRepository.findOne({
-      where: {
-        name: ADMIN_ROLE_NAME,
-        workspaceId,
-      },
-    });
-
-    if (!adminRole) {
-      throw new PermissionsException(
-        'Admin role not found',
-        PermissionsExceptionCode.ADMIN_ROLE_NOT_FOUND,
-      );
-    }
-
+  public async assignRoleToUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+    roleId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    roleId: string;
+  }): Promise<void> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         id: userWorkspaceId,
@@ -71,16 +60,8 @@ export class PermissionsService {
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
-
-    if (adminRole.workspaceId !== workspaceId) {
-      throw new PermissionsException(
-        'Admin role workspace does not match userWorkspace workspace',
-        PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH,
-      );
-    }
-
     await this.userWorkspaceRoleRepository.save({
-      roleId: adminRole.id,
+      roleId,
       userWorkspaceId: userWorkspace.id,
       workspaceId,
     });

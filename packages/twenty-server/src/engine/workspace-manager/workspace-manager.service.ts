@@ -188,7 +188,7 @@ export class WorkspaceManagerService {
   }
 
   private async initPermissions(workspaceId: string) {
-    await this.permissionsService.createAdminRole({
+    const adminRole = await this.permissionsService.createAdminRole({
       workspaceId,
     });
 
@@ -212,9 +212,10 @@ export class WorkspaceManagerService {
       );
     }
 
-    await this.permissionsService.assignAdminRoleToUserWorkspace(
+    await this.permissionsService.assignRoleToUserWorkspace({
       workspaceId,
-      userWorkspace[0].id,
-    );
+      userWorkspaceId: userWorkspace[0].id,
+      roleId: adminRole.id,
+    });
   }
 }

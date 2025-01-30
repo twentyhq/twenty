@@ -5,20 +5,15 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
 
 @Entity('role')
-@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
 export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false })
-  name: string;
 
   @Column({ nullable: false })
   label: string;
