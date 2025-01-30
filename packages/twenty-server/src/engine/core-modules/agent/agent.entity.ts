@@ -16,6 +16,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 
 @Entity({ name: 'agent', schema: 'core' })
 @ObjectType('Agent')
@@ -54,4 +55,11 @@ export class Agent {
     name: 'agentSectors',
   })
   sectors: Sector[];
+
+  @Field(() => [Inbox])
+  @ManyToMany(() => Inbox, (inbox) => inbox.agents)
+  @JoinTable({
+    name: 'agentInboxes',
+  })
+  inboxes: Inbox[];
 }

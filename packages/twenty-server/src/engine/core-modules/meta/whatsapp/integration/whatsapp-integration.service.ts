@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { IntegrationType } from 'src/engine/core-modules/inbox/inbox.entity';
+import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { CreateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/create-whatsapp-integration.input';
 import { UpdateWhatsappIntegrationInput } from 'src/engine/core-modules/meta/whatsapp/integration/dtos/update-whatsapp-integration.input';
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
@@ -18,6 +20,7 @@ export class WhatsappIntegrationService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly environmentService: EnvironmentService,
+    private readonly inboxService: InboxService,
   ) {}
 
   async create(
@@ -42,6 +45,10 @@ export class WhatsappIntegrationService {
 
     await this.whatsappIntegrationRepository.save(createdIntegration);
     await this.subscribeWebhook(createdIntegration);
+    await this.inboxService.create(
+      createdIntegration,
+      IntegrationType.WHATSAPP,
+    );
 
     return createdIntegration;
   }

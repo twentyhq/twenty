@@ -49,6 +49,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -124,6 +125,7 @@ import { FileModule } from './file/file.module';
     MetaModule,
     SectorModule,
     AgentModule,
+    InboxModule,
   ],
   exports: [
     AnalyticsModule,
