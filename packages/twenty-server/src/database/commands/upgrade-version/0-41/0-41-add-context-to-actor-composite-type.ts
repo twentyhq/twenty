@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
-import { In, IsNull, Repository, TableColumn } from 'typeorm';
+import { In, Repository, TableColumn } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -110,7 +110,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
               FieldActorSource.EMAIL,
               FieldActorSource.CALENDAR,
             ]),
-            [field.name + 'Context']: IsNull(),
+            [field.name + 'Context']: {},
           },
           {
             [field.name + 'Context']: {
@@ -173,7 +173,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
           new TableColumn({
             name: newColumnName,
             type: 'jsonb',
-            default: "'{}'",
+            default: `'{}'::"jsonb"`,
             isNullable: true,
           }),
         );
