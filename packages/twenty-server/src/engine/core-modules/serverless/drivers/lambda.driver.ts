@@ -177,15 +177,13 @@ export class LambdaDriver implements ServerlessDriver {
     return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
   };
 
-  async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
+  async build(serverlessFunction: ServerlessFunctionEntity, version: 'draft') {
+    if (version !== 'draft') {
+      throw new Error("We can only build 'draft' version with lambda driver");
+    }
 
     const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(
-        serverlessFunction,
-        computedVersion,
-      );
+      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
 
     const folderPath = getServerlessFolder({
       serverlessFunction,
