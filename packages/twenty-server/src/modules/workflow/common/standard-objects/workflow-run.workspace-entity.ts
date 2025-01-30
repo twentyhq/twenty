@@ -3,10 +3,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import {
-  ActorMetadata,
-  FieldActorSource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -130,10 +127,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Executed by`,
     icon: 'IconCreativeCommonsSa',
     description: msg`The executor of the workflow`,
-    defaultValue: {
-      source: `'${FieldActorSource.MANUAL}'`,
-      name: "''",
-    },
   })
   createdBy: ActorMetadata;
 

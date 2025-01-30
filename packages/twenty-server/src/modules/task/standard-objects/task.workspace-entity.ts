@@ -5,10 +5,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import {
-  ActorMetadata,
-  FieldActorSource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RichTextV2Metadata } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -139,10 +136,6 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
-    defaultValue: {
-      source: `'${FieldActorSource.MANUAL}'`,
-      name: "''",
-    },
   })
   createdBy: ActorMetadata;
 
