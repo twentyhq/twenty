@@ -14,6 +14,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { capitalize } from 'twenty-shared';
+import { isDefined } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type useUpdateOneRecordProps = {
@@ -130,7 +131,8 @@ export const useUpdateOneRecord = <
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
 
-          if (!record || !computedOptimisticRecord) return;
+          if (!isDefined(record) || !isDefined(computedOptimisticRecord))
+            return;
 
           triggerUpdateRecordOptimisticEffect({
             cache,
