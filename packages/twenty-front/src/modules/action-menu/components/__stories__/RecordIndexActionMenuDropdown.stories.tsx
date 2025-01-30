@@ -14,12 +14,14 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { msg } from '@lingui/core/macro';
 import {
   IconCheckbox,
   IconHeart,
   IconTrash,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();
@@ -29,6 +31,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
   component: RecordIndexActionMenuDropdown,
   decorators: [
+    I18nFrontDecorator,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
@@ -53,7 +56,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'delete',
-            label: 'Delete',
+            label: msg`Delete`,
             position: 0,
             Icon: IconTrash,
             onClick: deleteMock,
@@ -63,7 +66,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'markAsDone',
-            label: 'Mark as done',
+            label: msg`Mark as done`,
             position: 1,
             Icon: IconCheckbox,
             onClick: markAsDoneMock,
@@ -73,7 +76,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'addToFavorites',
-            label: 'Add to favorites',
+            label: msg`Add to favorites`,
             position: 2,
             Icon: IconHeart,
             onClick: addToFavoritesMock,

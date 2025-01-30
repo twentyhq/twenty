@@ -12,6 +12,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
+import { msg } from '@lingui/core/macro';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/test';
@@ -55,7 +56,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 scope: ActionMenuEntryScope.RecordSelection,
                 type: ActionMenuEntryType.Standard,
                 key: 'delete',
-                label: 'Delete',
+                label: msg`Delete`,
                 position: 0,
                 Icon: IconTrash,
                 onClick: deleteMock,
