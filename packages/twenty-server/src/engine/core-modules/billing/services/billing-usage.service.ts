@@ -27,7 +27,7 @@ export class BillingUsageService {
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
   ) {}
 
-  async canExecuteBilledFunction(workspaceId: string): Promise<boolean> {
+  async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
     const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
     const isBillingPlansEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -82,7 +82,7 @@ export class BillingUsageService {
       });
     } catch (error) {
       throw new BillingException(
-        'Failed to send billing meter events to Cache Service',
+        `Failed to send billing meter events to Stripe: ${error}`,
         BillingExceptionCode.BILLING_METER_EVENT_FAILED,
       );
     }

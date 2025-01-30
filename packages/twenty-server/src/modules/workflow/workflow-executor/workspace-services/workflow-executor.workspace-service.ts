@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { BILLING_EXECUTE_BILLED_FUNCTION } from 'src/engine/core-modules/billing/constants/billing-execute-billed-function.constant';
+import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -74,7 +74,7 @@ export class WorkflowExecutorWorkspaceService {
       (result.result ? undefined : 'Execution result error, no data or error');
 
     if (!error) {
-      this.sendUsageEvent();
+      this.sendWorkflowNodeRunEvent();
     }
 
     const updatedStepOutput = {
@@ -136,12 +136,12 @@ export class WorkflowExecutorWorkspaceService {
     return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
   }
 
-  async sendUsageEvent() {
+  private sendWorkflowNodeRunEvent() {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
 
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
-      BILLING_EXECUTE_BILLED_FUNCTION,
+      BILLING_FEATURE_USED,
       [
         {
           eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
