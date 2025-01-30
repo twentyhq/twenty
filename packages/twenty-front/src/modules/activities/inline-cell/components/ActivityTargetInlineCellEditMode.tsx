@@ -166,7 +166,6 @@ export const ActivityTargetInlineCellEditMode = ({
           );
 
           const newActivityTargetId = v4();
-          const fieldName = record.objectMetadataItem.nameSingular;
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
@@ -179,21 +178,13 @@ export const ActivityTargetInlineCellEditMode = ({
                 activityObjectNameSingular === CoreObjectNameSingular.Task
                   ? activity.id
                   : null,
-              task:
-                activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity
-                  : null,
               noteId:
                 activityObjectNameSingular === CoreObjectNameSingular.Note
                   ? activity.id
                   : null,
-              note:
-                activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity
-                  : null,
+
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              [fieldName]: record.record,
               [fieldNameWithIdSuffix]: recordId,
             },
           });
