@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { graphql, http, HttpResponse } from 'msw';
+import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
 
 import { TRACK } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
@@ -643,6 +643,16 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query<GraphQLQuery, { objectRecordId: string }>(
+      'FindOnePerson',
+      ({ variables: { objectRecordId } }) => {
+        return HttpResponse.json({
+          data: {
+            person: peopleMock.find((person) => person.id === objectRecordId),
+          },
+        });
+      },
+    ),
     graphql.query('FindManyWorkflows', () => {
       return HttpResponse.json({
         data: workflowQueryResult,
