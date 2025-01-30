@@ -11,6 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { SyncWorkspaceLoggerService } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.service';
@@ -29,6 +30,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceSyncMetadataModule,
     WorkspaceHealthModule,
     WorkspaceDataSourceModule,
+    WorkspaceMetadataVersionModule,
   ],
   providers: [
     SyncWorkspaceLoggerService,

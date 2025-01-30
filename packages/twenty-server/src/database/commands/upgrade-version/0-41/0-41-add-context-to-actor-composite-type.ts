@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
-import { In, Repository, TableColumn } from 'typeorm';
+import { In, IsNull, Repository, TableColumn } from 'typeorm';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -13,6 +13,7 @@ import { CommandLogger } from 'src/database/commands/logger';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -31,6 +32,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository);
     this.logger = new CommandLogger({
@@ -102,6 +104,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
               FieldActorSource.EMAIL,
               FieldActorSource.CALENDAR,
             ]),
+            [field.name + 'Context']: IsNull(),
           },
           {
             [field.name + 'Context']: {
@@ -170,6 +173,9 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         );
 
         await queryRunner.commitTransaction();
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
