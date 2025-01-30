@@ -18,6 +18,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { RecoilRoot } from 'recoil';
 import { IconTrash, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 
@@ -26,6 +27,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
   component: RecordIndexActionMenuBar,
   decorators: [
     RouterDecorator,
+    I18nFrontDecorator,
     (Story) => (
       <RecordFiltersComponentInstanceContext.Provider
         value={{ instanceId: 'story-action-menu' }}

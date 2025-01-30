@@ -22,6 +22,7 @@ import {
   IconTrash,
   MenuItemAccent,
 } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
@@ -31,6 +32,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RightDrawerActionMenuDropdown',
   component: RightDrawerActionMenuDropdown,
   decorators: [
+    I18nFrontDecorator,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
