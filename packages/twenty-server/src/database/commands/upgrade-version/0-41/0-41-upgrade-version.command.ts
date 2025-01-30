@@ -42,6 +42,12 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
 
+    await this.addContextToActorCompositeType.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
     await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
       passedParam,
       {
@@ -58,12 +64,6 @@ export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.migrateRelationsToFieldMetadata.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
-      workspaceIds,
-    );
-
-    await this.addContextToActorCompositeType.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
