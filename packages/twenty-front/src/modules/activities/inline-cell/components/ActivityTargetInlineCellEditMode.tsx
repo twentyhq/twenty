@@ -15,7 +15,7 @@ import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameS
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
@@ -54,7 +54,7 @@ export const ActivityTargetInlineCellEditMode = ({
     }),
   );
 
-  const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
+  const { createOneRecord: createOneActivityTarget } = useCreateOneRecord<
     NoteTarget | TaskTarget
   >({
     objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
@@ -204,7 +204,7 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            await createManyActivityTargets([newActivityTarget]);
+            await createOneActivityTarget(newActivityTarget);
           }
 
           set(activityTargetObjectRecordFamilyState(recordId), {
@@ -252,7 +252,7 @@ export const ActivityTargetInlineCellEditMode = ({
     [
       activity,
       activityTargetWithTargetRecords,
-      createManyActivityTargets,
+      createOneActivityTarget,
       createManyActivityTargetsInCache,
       deleteOneActivityTarget,
       isActivityInCreateMode,
