@@ -17,27 +17,27 @@ const StyledRoleTableRow = styled.div`
   grid-template-columns: 1fr 1fr;
 `;
 
-const GET_SETTINGS_ROLE_TABLE_METADATA = {
-  tableId: 'settingsRole',
-  fields: [
-    {
-      fieldName: 'name',
-      fieldLabel: 'Name',
-      align: 'left' as const,
-    },
-    {
-      fieldName: 'assignedTo',
-      fieldLabel: 'Assigned to',
-      align: 'left' as const,
-    },
-  ],
-};
-
 export const SettingsRoles = () => {
   const { t } = useLingui();
   const isPermissionsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsEnabled,
   );
+
+  const GET_SETTINGS_ROLE_TABLE_METADATA = {
+    tableId: 'settingsRole',
+    fields: [
+      {
+        fieldName: 'name',
+        fieldLabel: t`Name`,
+        align: 'left' as const,
+      },
+      {
+        fieldName: 'assignedTo',
+        fieldLabel: t`Assigned to`,
+        align: 'left' as const,
+      },
+    ],
+  };
 
   if (!isPermissionsEnabled) {
     return null;
