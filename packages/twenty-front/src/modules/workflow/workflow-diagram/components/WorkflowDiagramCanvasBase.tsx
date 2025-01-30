@@ -61,6 +61,8 @@ const StyledResetReactflowStyles = styled.div`
     cursor: pointer;
   }
 
+  --xy-edge-stroke: ${({ theme }) => theme.border.color.strong};
+
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;
@@ -225,6 +227,10 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
+        onBeforeDelete={async () => {
+          // Abort all non-programmatic deletions
+          return false;
+        }}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}

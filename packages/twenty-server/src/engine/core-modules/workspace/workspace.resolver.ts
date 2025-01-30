@@ -211,7 +211,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  hasValidEntrepriseKey(): boolean {
+  hasValidEnterpriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 

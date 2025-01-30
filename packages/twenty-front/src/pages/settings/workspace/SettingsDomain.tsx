@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -14,6 +13,7 @@ import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain'
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
 import { FormProvider, useForm } from 'react-hook-form';

@@ -48,20 +48,22 @@ export class TypeDefinitionsGenerator {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  generate(
+  async generate(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate composite type objects first because they can be used in dynamic objects
-    this.generateCompositeTypeDefs(options);
+    await this.generateCompositeTypeDefs(options);
     // Generate metadata objects
-    this.generateMetadataTypeDefs(objectMetadataCollection, options);
+    await this.generateMetadataTypeDefs(objectMetadataCollection, options);
   }
 
   /**
    * GENERATE COMPOSITE TYPE OBJECTS
    */
-  private generateCompositeTypeDefs(options: WorkspaceBuildSchemaOptions) {
+  private async generateCompositeTypeDefs(
+    options: WorkspaceBuildSchemaOptions,
+  ) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.logger.log(
@@ -150,7 +152,7 @@ export class TypeDefinitionsGenerator {
    * GENERATE METADATA OBJECTS
    */
 
-  private generateMetadataTypeDefs(
+  private async generateMetadataTypeDefs(
     dynamicObjectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
@@ -165,7 +167,7 @@ export class TypeDefinitionsGenerator {
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateExtendedObjectTypeDefs(
+    await this.generateExtendedObjectTypeDefs(
       dynamicObjectMetadataCollection,
       options,
     );

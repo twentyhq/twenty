@@ -11,6 +11,7 @@ export enum ActionMenuEntryType {
 export enum ActionMenuEntryScope {
   Global = 'Global',
   RecordSelection = 'RecordSelection',
+  Object = 'Object',
 }
 
 export type ActionMenuEntry = {
@@ -26,4 +27,5 @@ export type ActionMenuEntry = {
   availableOn?: ActionViewType[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactElement<ConfirmationModalProps>;
+  hotKeys?: string[];
 };

@@ -27,7 +27,10 @@ export class WorkspaceGraphQLSchemaFactory {
     options: WorkspaceBuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
     // Generate type definitions
-    this.typeDefinitionsGenerator.generate(objectMetadataCollection, options);
+    await this.typeDefinitionsGenerator.generate(
+      objectMetadataCollection,
+      options,
+    );
 
     // Generate schema
     const schema = new GraphQLSchema({
