@@ -24,8 +24,6 @@ export type SingleRecordSelectMenuItemsProps = {
   onCancel?: () => void;
   onRecordSelected: (entity?: RecordForSelect) => void;
   selectedRecord?: RecordForSelect;
-  SelectAllIcon?: IconComponent;
-  selectAllLabel?: string;
   isAllRecordsSelected?: boolean;
   isAllRecordsSelectShown?: boolean;
   onAllRecordsSelected?: () => void;
@@ -42,8 +40,6 @@ export const SingleRecordSelectMenuItems = ({
   onCancel,
   onRecordSelected,
   selectedRecord,
-  SelectAllIcon,
-  selectAllLabel,
   isAllRecordsSelected,
   isAllRecordsSelectShown,
   onAllRecordsSelected,
@@ -65,7 +61,7 @@ export const SingleRecordSelectMenuItems = ({
     ? {
         __typename: '',
         id: 'select-all',
-        name: selectAllLabel,
+        name: 'Select All',
       }
     : null;
 
@@ -144,13 +140,11 @@ export const SingleRecordSelectMenuItems = ({
                 case 'select-all': {
                   return (
                     isAllRecordsSelectShown &&
-                    selectAllLabel &&
                     onAllRecordsSelected && (
                       <MenuItemSelect
                         key={record.id}
                         onClick={() => onAllRecordsSelected()}
-                        LeftIcon={SelectAllIcon}
-                        text={selectAllLabel}
+                        text="Select All"
                         selected={!!isAllRecordsSelected}
                         hovered={isSelectedSelectAllButton}
                       />

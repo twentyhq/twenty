@@ -60,12 +60,24 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
   fieldMetadataId: field.id,
   label: field.label,
   iconName: field.icon ?? 'Icon123',
-  relationObjectMetadataNamePlural:
-    field.relationDefinition?.targetObjectMetadata.namePlural,
-  relationObjectMetadataNameSingular:
-    field.relationDefinition?.targetObjectMetadata.nameSingular,
   type: getFilterTypeFromFieldType(field.type),
 });
+
+export const getRelationObjectMetadataNameSingular = ({
+  field,
+}: {
+  field: ObjectMetadataItem['fields'][0];
+}): string | undefined => {
+  return field.relationDefinition?.targetObjectMetadata.nameSingular;
+};
+
+export const getRelationObjectMetadataNamePlural = ({
+  field,
+}: {
+  field: ObjectMetadataItem['fields'][0];
+}): string | undefined => {
+  return field.relationDefinition?.targetObjectMetadata.namePlural;
+};
 
 export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
   switch (fieldType) {
