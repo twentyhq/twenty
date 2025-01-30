@@ -81,7 +81,7 @@ jobs:
       run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
 
     - name: Build server
-      run: NODE_ENV=production npx nx build twenty-server
+      run: npx nx build twenty-server
 
     - name: Create and setup database
       run: |
