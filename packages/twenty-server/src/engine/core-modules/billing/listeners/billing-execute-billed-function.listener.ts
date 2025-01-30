@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
-import { BILLING_EXECUTE_BILLED_FUNCTION } from 'src/engine/core-modules/billing/constants/billing-execute-billed-function.constant';
+import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -14,20 +14,19 @@ export class BillingExecuteBilledFunctionListener {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @OnCustomBatchEvent(BILLING_EXECUTE_BILLED_FUNCTION)
-  async handleExecuteBilledFunctionEvent(
+  @OnCustomBatchEvent(BILLING_FEATURE_USED)
+  async handleBillingFeatureUsedEvent(
     payload: WorkspaceEventBatch<BillingUsageEvent>,
   ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
-    const canExecuteBilledFunction =
-      await this.billingUsageService.canExecuteBilledFunction(
-        payload.workspaceId,
-      );
+    const canFeatureBeUsed = await this.billingUsageService.canFeatureBeUsed(
+      payload.workspaceId,
+    );
 
-    if (!canExecuteBilledFunction) {
+    if (!canFeatureBeUsed) {
       return;
     }
 
