@@ -1,57 +1,71 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class PermissionsService {
   constructor(
+    @InjectRepository(RoleEntity, 'metadata')
+    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly environmentService: EnvironmentService,
-    private readonly userRoleService: UserRoleService,
   ) {}
 
-  public async getUserWorkspaceSettingsPermissions({
-    userWorkspaceId,
+  public async createAdminRole({
+    workspaceId,
   }: {
-    userWorkspaceId: string;
-  }): Promise<Record<SettingsFeatures, boolean>> {
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspaceId])
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-    let hasPermissionOnSettingFeature = false;
-
-    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
-      hasPermissionOnSettingFeature = true;
-    }
-
-    return Object.keys(SettingsFeatures).reduce(
-      (acc, feature) => ({
-        ...acc,
-        [feature]: hasPermissionOnSettingFeature,
-      }),
-      {} as Record<SettingsFeatures, boolean>,
-    );
+    workspaceId: string;
+  }): Promise<RoleEntity> {
+    return this.roleRepository.save({
+      label: ADMIN_ROLE_LABEL,
+      description: 'Admin role',
+      canUpdateAllSettings: true,
+      isEditable: false,
+      workspaceId,
+    });
   }
 
-  public async userHasWorkspaceSettingPermission({
+  public async assignRoleToUserWorkspace({
+    workspaceId,
     userWorkspaceId,
-    _setting,
+    roleId,
   }: {
+    workspaceId: string;
     userWorkspaceId: string;
-    _setting: SettingsFeatures;
-  }): Promise<boolean> {
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspaceId])
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+    roleId: string;
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        id: userWorkspaceId,
+      },
+    });
 
-    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
-      return true;
+    if (!isDefined(userWorkspace)) {
+      throw new PermissionsException(
+        'User workspace not found',
+        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
     }
-
-    return false;
+    await this.userWorkspaceRoleRepository.save({
+      roleId,
+      userWorkspaceId: userWorkspace.id,
+      workspaceId,
+    });
   }
 
   public async isPermissionsEnabled(): Promise<boolean> {
