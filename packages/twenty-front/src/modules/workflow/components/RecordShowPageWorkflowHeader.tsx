@@ -47,7 +47,7 @@ export const RecordShowPageWorkflowHeader = ({
   return (
     <>
       <Button
-        title="Test"
+        title={t`Test`}
         variant="secondary"
         Icon={IconPlayerPlay}
         disabled={isWaitingForWorkflowWithCurrentVersion}
@@ -55,7 +55,7 @@ export const RecordShowPageWorkflowHeader = ({
           assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
           if (!canWorkflowBeTested) {
-            enqueueSnackBar('Workflow cannot be tested', {
+            enqueueSnackBar(t`Workflow cannot be tested`, {
               variant: SnackBarVariant.Error,
               detailedMessage: t`Trigger type should be Manual - when no record(s) are selected`,
               icon: (
