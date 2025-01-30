@@ -66,6 +66,7 @@ const mocks = [
                           source
                           workspaceMemberId
                           name
+                          context
                         }
                         deletedAt
                         emails {
@@ -226,6 +227,7 @@ const mocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   emails {
