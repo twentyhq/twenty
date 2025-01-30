@@ -17,8 +17,8 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'Localization',
       description:
-        "Our community is working on translating the app. Enable this flag and go to Settings > Experience to change your account's language.",
-      imagePath: '',
+        "Enable this and go to Settings > Experience to change your account's language. You can also help us improve the translations on Github.",
+      imagePath: 'https://twenty.com/images/releases/labs/translation.png',
     },
   },
 ];

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -21,10 +22,7 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import {
-  ConnectedAccountProvider,
-  ConnectedAccountWorkspaceEntity,
-} from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,

@@ -25,6 +25,7 @@ export const STANDARD_OBJECT_IDS = {
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',
   messageChannelMessageAssociation: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
   messageChannel: '20202020-fe8c-40bc-a681-b80b771449b7',
+  messageFolder: '20202020-4955-4fd9-8e59-2dbd373f2a46',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
   messageThreadSubscriber: '20202020-4b3b-4b3b-8b3b-3b3b3b3b3b3a',

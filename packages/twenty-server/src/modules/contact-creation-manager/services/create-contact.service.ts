@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { DeepPartial, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -17,6 +18,9 @@ type ContactToCreate = {
   companyId?: string;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
+  createdByContext?: {
+    provider?: ConnectedAccountProvider;
+  };
 };
 
 @Injectable()
@@ -38,6 +42,7 @@ export class CreateContactService {
         companyId,
         createdBySource,
         createdByWorkspaceMember,
+        createdByContext,
       } = contact;
 
       const { firstName, lastName } =
@@ -56,6 +61,7 @@ export class CreateContactService {
           source: createdBySource,
           workspaceMemberId: contact.createdByWorkspaceMember?.id,
           name: createdByName,
+          context: createdByContext,
         },
         position: ++lastPersonPosition,
       };

@@ -87,6 +87,7 @@ const mocks: MockedResponse[] = [
               source
               workspaceMemberId
               name
+              context
             }
             deletedAt
             domainName {
@@ -163,6 +164,7 @@ const mocks: MockedResponse[] = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   id
@@ -186,6 +188,7 @@ const mocks: MockedResponse[] = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   emails {
