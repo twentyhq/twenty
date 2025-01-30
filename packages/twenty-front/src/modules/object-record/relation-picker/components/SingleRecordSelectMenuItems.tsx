@@ -13,7 +13,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
-import { useLingui } from '@lingui/react/macro';
 import { RecordForSelect } from '../types/RecordForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
@@ -25,9 +24,6 @@ export type SingleRecordSelectMenuItemsProps = {
   onCancel?: () => void;
   onRecordSelected: (entity?: RecordForSelect) => void;
   selectedRecord?: RecordForSelect;
-  isAllRecordsSelected?: boolean;
-  isAllRecordsSelectShown?: boolean;
-  onAllRecordsSelected?: () => void;
   hotkeyScope?: string;
   isFiltered: boolean;
   shouldSelectEmptyOption?: boolean;
@@ -41,14 +37,10 @@ export const SingleRecordSelectMenuItems = ({
   onCancel,
   onRecordSelected,
   selectedRecord,
-  isAllRecordsSelected,
-  isAllRecordsSelectShown,
-  onAllRecordsSelected,
   hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
   isFiltered,
   shouldSelectEmptyOption,
 }: SingleRecordSelectMenuItemsProps) => {
-  const { t } = useLingui();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectNone = emptyLabel
@@ -59,16 +51,7 @@ export const SingleRecordSelectMenuItems = ({
       }
     : null;
 
-  const selectAll = isAllRecordsSelectShown
-    ? {
-        __typename: '',
-        id: 'select-all',
-        name: t`Select All`,
-      }
-    : null;
-
   const recordsInDropdown = [
-    selectAll,
     selectNone,
     selectedRecord,
     ...recordsToSelect,
@@ -83,10 +66,6 @@ export const SingleRecordSelectMenuItems = ({
 
   const isSelectedSelectNoneButton = useRecoilValue(
     isSelectedItemIdSelector('select-none'),
-  );
-
-  const isSelectedSelectAllButton = useRecoilValue(
-    isSelectedItemIdSelector('select-all'),
   );
 
   useScopedHotkeys(
@@ -118,9 +97,7 @@ export const SingleRecordSelectMenuItems = ({
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (
             <DropdownMenuSkeletonItem />
-          ) : recordsInDropdown.length === 0 &&
-            !isAllRecordsSelectShown &&
-            !loading ? (
+          ) : recordsInDropdown.length === 0 && !loading ? (
             <></>
           ) : (
             recordsInDropdown?.map((record) => {
@@ -135,20 +112,6 @@ export const SingleRecordSelectMenuItems = ({
                         text={emptyLabel}
                         selected={shouldSelectEmptyOption === true}
                         hovered={isSelectedSelectNoneButton}
-                      />
-                    )
-                  );
-                }
-                case 'select-all': {
-                  return (
-                    isAllRecordsSelectShown &&
-                    onAllRecordsSelected && (
-                      <MenuItemSelect
-                        key={record.id}
-                        onClick={() => onAllRecordsSelected()}
-                        text={t`Select All`}
-                        selected={!!isAllRecordsSelected}
-                        hovered={isSelectedSelectAllButton}
                       />
                     )
                   );
