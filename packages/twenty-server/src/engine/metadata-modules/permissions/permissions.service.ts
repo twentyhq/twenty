@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -31,7 +32,7 @@ export class PermissionsService {
     workspaceId: string;
   }): Promise<RoleEntity> {
     return this.roleRepository.save({
-      label: 'Admin',
+      label: ADMIN_ROLE_LABEL,
       description: 'Admin role',
       canUpdateAllSettings: true,
       isEditable: false,
