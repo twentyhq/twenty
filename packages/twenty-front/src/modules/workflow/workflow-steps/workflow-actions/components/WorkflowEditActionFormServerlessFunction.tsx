@@ -86,11 +86,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const [shouldBuildServerlessFunction, setShouldBuildServerlessFunction] =
+    useState(false);
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const serverlessFunctionVersion =
     action.settings.input.serverlessFunctionVersion;
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
-  const { activeTabId, setActiveTabId } = useTabList(tabListId);
+  const { activeTabId } = useTabList(tabListId);
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
@@ -126,13 +128,14 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const { testServerlessFunction } = useTestServerlessFunction({
-    serverlessFunctionId,
-    serverlessFunctionVersion,
-    callback: updateOutputSchemaFromTestResult,
-  });
+  const { testServerlessFunction, isTesting, isBuilding } =
+    useTestServerlessFunction({
+      serverlessFunctionId,
+      callback: updateOutputSchemaFromTestResult,
+    });
 
   const handleSave = useDebouncedCallback(async () => {
+    setShouldBuildServerlessFunction(true);
     await updateOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
@@ -231,8 +234,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
   };
 
   const handleRunFunction = async () => {
-    await testServerlessFunction();
-    setActiveTabId('test');
+    if (!isTesting) {
+      await testServerlessFunction(shouldBuildServerlessFunction);
+      setShouldBuildServerlessFunction(false);
+    }
   };
 
   const handleEditorDidMount = async (
@@ -338,6 +343,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <InputLabel>Result</InputLabel>
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
+                  isBuilding={isBuilding}
+                  isTesting={isTesting}
                 />
               </StyledCodeEditorContainer>
             </>

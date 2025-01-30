@@ -137,16 +137,6 @@ export class ServerlessFunctionService {
       workspaceId,
     });
 
-    if (
-      version === 'draft' &&
-      functionToExecute.syncStatus !== ServerlessFunctionSyncStatus.READY
-    ) {
-      await this.buildServerlessFunction({
-        serverlessFunction: functionToExecute,
-        serverlessFunctionVersion: 'draft',
-      });
-    }
-
     const resultServerlessFunction = await this.serverlessService.execute(
       functionToExecute,
       payload,
@@ -403,30 +393,31 @@ export class ServerlessFunctionService {
     }
   }
 
-  private async buildServerlessFunction({
-    serverlessFunction,
-    serverlessFunctionVersion,
-  }: {
-    serverlessFunction: ServerlessFunctionEntity;
-    serverlessFunctionVersion: string;
-  }) {
-    if (
-      serverlessFunction.syncStatus !== ServerlessFunctionSyncStatus.NOT_READY
-    ) {
+  async buildDraftServerlessFunction(id: string, workspaceId: string) {
+    const functionToBuild = await this.findOneOrFail({
+      id,
+      workspaceId,
+    });
+
+    if (functionToBuild.syncStatus === ServerlessFunctionSyncStatus.READY) {
+      return functionToBuild;
+    }
+
+    if (functionToBuild.syncStatus === ServerlessFunctionSyncStatus.BUILDING) {
       throw new ServerlessFunctionException(
         'This function is already built or building. Please try later',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING,
       );
     }
-    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+
+    await this.serverlessFunctionRepository.update(functionToBuild.id, {
       syncStatus: ServerlessFunctionSyncStatus.BUILDING,
     });
-    await this.serverlessService.build(
-      serverlessFunction,
-      serverlessFunctionVersion,
-    );
-    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+    await this.serverlessService.build(functionToBuild, 'draft');
+    await this.serverlessFunctionRepository.update(functionToBuild.id, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
+
+    return functionToBuild;
   }
 }

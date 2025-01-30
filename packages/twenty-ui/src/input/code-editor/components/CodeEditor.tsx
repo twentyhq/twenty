@@ -10,6 +10,7 @@ type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   onChange?: (value: string) => void;
   setMarkers?: (value: string) => editor.IMarkerData[];
   withHeader?: boolean;
+  isLoading?: boolean;
 };
 
 const StyledEditor = styled(Editor)<{ withHeader: boolean }>`
@@ -42,6 +43,7 @@ export const CodeEditor = ({
   onValidate,
   height = 450,
   withHeader = false,
+  isLoading = false,
   options,
 }: CodeEditorProps) => {
   const theme = useTheme();
@@ -68,7 +70,7 @@ export const CodeEditor = ({
     <StyledEditor
       height={height}
       withHeader={withHeader}
-      value={value}
+      value={isLoading ? '' : value}
       language={language}
       onMount={(editor, monaco) => {
         setMonaco(monaco);
