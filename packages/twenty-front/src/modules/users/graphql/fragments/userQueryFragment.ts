@@ -38,11 +38,10 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       hasValidEnterpriseKey
       hostname
-      workspaceEndpoints {
-        twentyEndpoint
-        customEndpoint
+      workspaceUrls {
+        subdomainUrl
+        customUrl
       }
-      hasValidEntrepriseKey
       featureFlags {
         id
         key
@@ -68,9 +67,9 @@ export const USER_QUERY_FRAGMENT = gql`
         displayName
         subdomain
         hostname
-        workspaceEndpoints {
-          twentyEndpoint
-          customEndpoint
+        workspaceUrls {
+          subdomainUrl
+          customUrl
         }
       }
     }

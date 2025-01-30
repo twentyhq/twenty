@@ -52,9 +52,9 @@ export const graphqlMocks = {
               id: 'id',
               logo: 'logo',
               displayName: 'displayName',
-              workspaceEndpoints: {
-                customEndpoint: undefined,
-                twentyEndpoint: 'https://twenty.com',
+              workspaceUrls: {
+                customUrl: undefined,
+                subdomainUrl: 'https://twenty.com',
               },
               authProviders: {
                 google: true,

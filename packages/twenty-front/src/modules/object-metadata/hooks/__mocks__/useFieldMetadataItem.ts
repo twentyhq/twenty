@@ -159,11 +159,10 @@ export const queries = {
         subdomain
         hasValidEnterpriseKey
         hostname
-        workspaceEndpoints {
-          twentyEndpoint
-          customEndpoint
+        workspaceUrls {
+          subdomainUrl
+          customUrl
         }
-        hasValidEntrepriseKey
         featureFlags {
           id
           key
@@ -189,9 +188,9 @@ export const queries = {
           displayName
           subdomain
           hostname
-          workspaceEndpoints {
-            twentyEndpoint
-            customEndpoint
+          workspaceUrls {
+            subdomainUrl
+            customUrl
           }
         }
       }
@@ -319,9 +318,9 @@ export const responseData = {
         isPasswordAuthEnabled: true,
         subdomain: 'test',
         hostname: null,
-        workspaceEndpoints: {
-          customEndpoint: undefined,
-          twentyEndpoint: 'https://test.twenty.com/',
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://test.twenty.com/',
         },
         featureFlags: [],
         metadataVersion: 1,

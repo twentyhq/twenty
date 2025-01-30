@@ -11,7 +11,6 @@ import {
   useGetHostnameDetailsQuery,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useLingui } from '@lingui/react/macro';
 
 const validationSchema = z
@@ -41,7 +40,6 @@ export const SettingsHostname = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { data: getHostnameDetailsData } = useGetHostnameDetailsQuery();
 
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { t } = useLingui();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -75,8 +73,6 @@ export const SettingsHostname = () => {
           },
         },
       });
-
-      redirectToWorkspaceDomain(currentWorkspace.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
@@ -137,7 +133,7 @@ export const SettingsHostname = () => {
       {isDefined(getHostnameDetailsData?.getHostnameDetails?.hostname) && (
         <pre>
           {getHostnameDetailsData.getHostnameDetails.hostname} CNAME
-          app.twenty-main.com
+          twenty-main.com
         </pre>
       )}
       {getHostnameDetailsData?.getHostnameDetails &&
@@ -164,6 +160,7 @@ export const SettingsHostname = () => {
                 </pre>
               );
             }
+            return <></>;
           },
         )}
     </Section>

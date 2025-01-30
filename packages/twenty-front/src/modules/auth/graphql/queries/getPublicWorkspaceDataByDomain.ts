@@ -6,9 +6,9 @@ export const GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN = gql`
       id
       logo
       displayName
-      workspaceEndpoints {
-        twentyEndpoint
-        customEndpoint
+      workspaceUrls {
+        subdomainUrl
+        customUrl
       }
       authProviders {
         sso {

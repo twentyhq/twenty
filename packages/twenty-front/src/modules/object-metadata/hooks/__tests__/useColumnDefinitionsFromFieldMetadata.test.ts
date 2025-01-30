@@ -27,9 +27,9 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
-      workspaceEndpoints: {
-        twentyEndpoint: 'https://twenty.twenty.com',
-        customEndpoint: 'https://my-custom-domain.com',
+      workspaceUrls: {
+        subdomainUrl: 'https://twenty.twenty.com',
+        customUrl: 'https://my-custom-domain.com',
       },
       currentBillingSubscription: {
         id: '1',

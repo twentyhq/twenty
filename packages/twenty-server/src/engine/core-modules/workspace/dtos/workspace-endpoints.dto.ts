@@ -1,10 +1,10 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class WorkspaceEndpoints {
+export class workspaceUrls {
   @Field(() => String, { nullable: true })
-  customEndpoint?: string;
+  customUrl?: string;
 
   @Field(() => String)
-  twentyEndpoint: string;
+  subdomainUrl: string;
 }

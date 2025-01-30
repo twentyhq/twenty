@@ -65,9 +65,9 @@ describe('AdminPanelService', () => {
         {
           provide: DomainManagerService,
           useValue: {
-            getWorkspaceEndpoints: jest.fn().mockReturnValue({
-              customEndpoint: undefined,
-              twentyEndpoint: 'https://twenty.twenty.com',
+            getworkspaceUrls: jest.fn().mockReturnValue({
+              customUrl: undefined,
+              subdomainUrl: 'https://twenty.twenty.com',
             }),
           },
         },
@@ -200,9 +200,9 @@ describe('AdminPanelService', () => {
       expect.objectContaining({
         workspace: {
           id: 'workspace-id',
-          workspaceEndpoints: {
-            customEndpoint: undefined,
-            twentyEndpoint: 'https://twenty.twenty.com',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
           },
         },
         loginToken: expect.objectContaining({

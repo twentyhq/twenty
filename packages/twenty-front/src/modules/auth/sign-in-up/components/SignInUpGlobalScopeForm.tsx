@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { HorizontalSeparator, Loader, MainButton } from 'twenty-ui';
 
@@ -27,6 +27,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
+import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -46,7 +47,9 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const [searchParams] = useSearchParams();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
@@ -93,11 +96,13 @@ export const SignInUpGlobalScopeForm = () => {
           if (response.availableWorkspaces.length >= 1) {
             const workspace = response.availableWorkspaces[0];
             return redirectToWorkspaceDomain(
-              workspace.workspaceEndpoints.customEndpoint ??
-                workspace.workspaceEndpoints.twentyEndpoint,
+              getWorkspaceUrl(workspace.workspaceUrls),
               pathname,
               {
                 email: form.getValues('email'),
+                ...(searchParams.get('force-subdomain-url')
+                  ? { 'force-subdomain-url': true }
+                  : {}),
               },
             );
           }

@@ -9,9 +9,9 @@ export const CHECK_USER_EXISTS = gql`
         availableWorkspaces {
           id
           displayName
-          workspaceEndpoints {
-            twentyEndpoint
-            customEndpoint
+          workspaceUrls {
+            subdomainUrl
+            customUrl
           }
           logo
           sso {

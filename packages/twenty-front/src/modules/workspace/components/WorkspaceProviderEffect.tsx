@@ -9,12 +9,15 @@ import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/u
 
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
   );
+
+  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -24,25 +27,21 @@ export const WorkspaceProviderEffect = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
-    const customEndpointHostname = getPublicWorkspaceData?.workspaceEndpoints
-      .customEndpoint
-      ? new URL(getPublicWorkspaceData?.workspaceEndpoints.customEndpoint)
-          .hostname
+    const customUrlHostname = getPublicWorkspaceData?.workspaceUrls.customUrl
+      ? new URL(getPublicWorkspaceData?.workspaceUrls.customUrl).hostname
       : undefined;
-    const twentyEndpointHostname = getPublicWorkspaceData?.workspaceEndpoints
-      .twentyEndpoint
-      ? new URL(getPublicWorkspaceData?.workspaceEndpoints.twentyEndpoint)
-          .hostname
+    const subdomainUrlHostname = getPublicWorkspaceData?.workspaceUrls
+      .subdomainUrl
+      ? new URL(getPublicWorkspaceData?.workspaceUrls.subdomainUrl).hostname
       : undefined;
     if (
       isMultiWorkspaceEnabled &&
       isDefined(getPublicWorkspaceData) &&
-      currentLocationHostname !== customEndpointHostname &&
-      currentLocationHostname !== twentyEndpointHostname
+      currentLocationHostname !== customUrlHostname &&
+      currentLocationHostname !== subdomainUrlHostname
     ) {
       redirectToWorkspaceDomain(
-        getPublicWorkspaceData?.workspaceEndpoints.customEndpoint ??
-          getPublicWorkspaceData?.workspaceEndpoints.twentyEndpoint,
+        getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
       );
     }
   }, [
@@ -50,6 +49,7 @@ export const WorkspaceProviderEffect = () => {
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
     currentLocationHostname,
+    getWorkspaceUrl,
   ]);
 
   useEffect(() => {

@@ -22,9 +22,9 @@ export const SIGN_UP = gql`
       }
       workspace {
         id
-        workspaceEndpoints {
-          twentyEndpoint
-          customEndpoint
+        workspaceUrls {
+          subdomainUrl
+          customUrl
         }
       }
     }

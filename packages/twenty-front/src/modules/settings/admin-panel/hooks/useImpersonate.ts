@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 
 export const useImpersonate = () => {
   const [currentUser] = useRecoilState(currentUserState);
@@ -20,6 +21,7 @@ export const useImpersonate = () => {
 
   const [impersonate] = useImpersonateMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,8 +58,7 @@ export const useImpersonate = () => {
       }
 
       return redirectToWorkspaceDomain(
-        workspace.workspaceEndpoints.customEndpoint ??
-          workspace.workspaceEndpoints.twentyEndpoint,
+        getWorkspaceUrl(workspace.workspaceUrls),
         AppPath.Verify,
         {
           loginToken: loginToken.token,

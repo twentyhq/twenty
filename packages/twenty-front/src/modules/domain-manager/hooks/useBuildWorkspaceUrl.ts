@@ -4,7 +4,7 @@ export const useBuildWorkspaceUrl = () => {
   const buildWorkspaceUrl = (
     endpoint: string,
     pathname?: string,
-    searchParams?: Record<string, string>,
+    searchParams?: Record<string, string | boolean>,
   ) => {
     const url = new URL(endpoint);
 
@@ -14,7 +14,7 @@ export const useBuildWorkspaceUrl = () => {
 
     if (isDefined(searchParams)) {
       Object.entries(searchParams).forEach(([key, value]) =>
-        url.searchParams.set(key, value),
+        url.searchParams.set(key, value.toString()),
       );
     }
     return url.toString();

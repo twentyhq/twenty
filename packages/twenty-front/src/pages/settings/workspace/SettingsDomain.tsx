@@ -94,12 +94,18 @@ export const SettingsDomain = () => {
         });
       },
       onCompleted: () => {
+        const currentUrl = new URL(window.location.href);
+
+        currentUrl.hostname = new URL(
+          currentWorkspace.workspaceUrls.subdomainUrl,
+        ).hostname.replace(currentWorkspace.subdomain, values.subdomain);
+
         setCurrentWorkspace({
           ...currentWorkspace,
           subdomain: values.subdomain,
         });
 
-        redirectToWorkspaceDomain(values.subdomain);
+        redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
   };

@@ -62,6 +62,7 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useSearchParams } from 'react-router-dom';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -86,6 +87,7 @@ export const useAuth = () => {
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
@@ -290,8 +292,8 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
         workspaceUrl:
-          workspace.workspaceEndpoints.customEndpoint ??
-          workspace.workspaceEndpoints.twentyEndpoint,
+          workspace.workspaceUrls.customUrl ??
+          workspace.workspaceUrls.subdomainUrl,
       });
     }
 
@@ -412,10 +414,8 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
-          signUpResult.data.signUp.workspace.workspaceEndpoints
-            .customEndpoint ??
-            signUpResult.data.signUp.workspace.workspaceEndpoints
-              .twentyEndpoint,
+          getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
+
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {
@@ -440,6 +440,7 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
+      getWorkspaceUrl,
     ],
   );
 

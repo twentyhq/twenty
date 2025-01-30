@@ -113,7 +113,7 @@ export type AvailableWorkspaceOutput = {
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  workspaceEndpoints: WorkspaceEndpoints;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type Billing = {
@@ -630,7 +630,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceEndpointsAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export type Index = {
@@ -1271,10 +1271,9 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  workspaceEndpoints: WorkspaceEndpoints;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1689,7 +1688,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceEndpointsAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export enum SubscriptionInterval {
@@ -2023,8 +2022,8 @@ export type Workspace = {
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  workspaceEndpoints: WorkspaceEndpoints;
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2041,18 +2040,6 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
-};
-
-export type WorkspaceEndpoints = {
-  __typename?: 'WorkspaceEndpoints';
-  customEndpoint?: Maybe<Scalars['String']['output']>;
-  twentyEndpoint: Scalars['String']['output'];
-};
-
-export type WorkspaceEndpointsAndId = {
-  __typename?: 'WorkspaceEndpointsAndId';
-  id: Scalars['String']['output'];
-  workspaceEndpoints: WorkspaceEndpoints;
 };
 
 export type WorkspaceInfo = {
@@ -2109,6 +2096,18 @@ export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+};
+
+export type WorkspaceUrls = {
+  __typename?: 'workspaceUrls';
+  customUrl?: Maybe<Scalars['String']['output']>;
+  subdomainUrl: Scalars['String']['output'];
+};
+
+export type WorkspaceUrlsAndId = {
+  __typename?: 'workspaceUrlsAndId';
+  id: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

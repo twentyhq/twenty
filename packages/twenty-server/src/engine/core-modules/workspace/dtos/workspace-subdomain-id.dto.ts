@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { WorkspaceEndpoints } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
 
 @ObjectType()
-export class WorkspaceEndpointsAndId {
-  @Field(() => WorkspaceEndpoints)
-  workspaceEndpoints: WorkspaceEndpoints;
+export class workspaceUrlsAndId {
+  @Field(() => workspaceUrls)
+  workspaceUrls: workspaceUrls;
 
   @Field()
   id: string;

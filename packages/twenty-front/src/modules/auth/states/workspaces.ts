@@ -3,7 +3,7 @@ import { Workspace } from '~/generated/graphql';
 
 export type Workspaces = Pick<
   Workspace,
-  'id' | 'logo' | 'displayName' | 'workspaceEndpoints'
+  'id' | 'logo' | 'displayName' | 'workspaceUrls'
 >[];
 
 export const workspacesState = createState<Workspaces>({

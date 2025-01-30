@@ -9,7 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
-  describe('getWorkspaceEndpoints', () => {
+  describe('getworkspaceUrls', () => {
     it('should return a URL containing the correct hostname if hostname is provided', () => {
       jest
         .spyOn(environmentService, 'get')
@@ -22,14 +22,14 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getWorkspaceEndpoints({
+      const result = domainManagerService.getworkspaceUrls({
         subdomain: 'subdomain',
         hostname: 'custom-host.com',
       });
 
       expect(result).toEqual({
-        customEndpoint: 'https://custom-host.com/',
-        twentyEndpoint: 'https://subdomain.example.com/',
+        customUrl: 'https://custom-host.com/',
+        subdomainUrl: 'https://subdomain.example.com/',
       });
     });
 
@@ -45,14 +45,14 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getWorkspaceEndpoints({
+      const result = domainManagerService.getworkspaceUrls({
         subdomain: 'subdomain',
         hostname: undefined,
       });
 
       expect(result).toEqual({
-        customEndpoint: undefined,
-        twentyEndpoint: 'https://subdomain.example.com/',
+        customUrl: undefined,
+        subdomainUrl: 'https://subdomain.example.com/',
       });
     });
   });

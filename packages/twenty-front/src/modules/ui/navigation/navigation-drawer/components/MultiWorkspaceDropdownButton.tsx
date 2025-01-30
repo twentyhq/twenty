@@ -18,6 +18,7 @@ import {
   UndecoratedLink,
 } from 'twenty-ui';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
@@ -65,12 +66,10 @@ export const MultiWorkspaceDropdownButton = ({
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const handleChange = async (workspace: Workspaces[0]) => {
-    redirectToWorkspaceDomain(
-      workspace.workspaceEndpoints.customEndpoint ??
-        workspace.workspaceEndpoints.twentyEndpoint,
-    );
+    redirectToWorkspaceDomain(getWorkspaceUrl(workspace.workspaceUrls));
   };
   const [isNavigationDrawerExpanded] = useRecoilState(
     isNavigationDrawerExpandedState,
@@ -107,10 +106,7 @@ export const MultiWorkspaceDropdownButton = ({
           {workspaces.map((workspace) => (
             <UndecoratedLink
               key={workspace.id}
-              to={buildWorkspaceUrl(
-                workspace.workspaceEndpoints.customEndpoint ??
-                  workspace.workspaceEndpoints.twentyEndpoint,
-              )}
+              to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
               onClick={(event) => {
                 event?.preventDefault();
                 handleChange(workspace);

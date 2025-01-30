@@ -96,11 +96,9 @@ export class DomainManagerService {
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const workspaceEndpoints = this.getWorkspaceEndpoints(workspace);
+    const workspaceUrls = this.getworkspaceUrls(workspace);
 
-    const url = new URL(
-      workspaceEndpoints.customEndpoint ?? workspaceEndpoints.twentyEndpoint,
-    );
+    const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
     if (pathname) {
       url.pathname = pathname;
@@ -398,15 +396,15 @@ export class DomainManagerService {
     return url.toString();
   }
 
-  getWorkspaceEndpoints({
+  getworkspaceUrls({
     subdomain,
     hostname,
   }: Pick<Workspace, 'subdomain' | 'hostname'>) {
     return {
-      customEndpoint: hostname
+      customUrl: hostname
         ? this.getCustomWorkspaceEndpoint(hostname)
         : undefined,
-      twentyEndpoint: this.getTwentyWorkspaceEndpoint(subdomain),
+      subdomainUrl: this.getTwentyWorkspaceEndpoint(subdomain),
     };
   }
 }
