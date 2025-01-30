@@ -60,10 +60,10 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
-    const permissionsV1Enabled =
+    const permissionsEnabled =
       await this.permissionsService.isPermissionsEnabled();
 
-    if (permissionsV1Enabled === true) {
+    if (permissionsEnabled === true) {
       await this.initPermissions(workspaceId);
     }
 
