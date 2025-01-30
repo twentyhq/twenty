@@ -548,8 +548,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return objectMetadata[labelKey];
     }
 
-    i18n.activate(locale);
+    const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
+    const translatedMessage = i18n._(messageId);
 
-    return i18n._(generateMessageId(objectMetadata[labelKey]));
+    if (translatedMessage === messageId) {
+      return objectMetadata[labelKey] ?? '';
+    }
+
+    return translatedMessage;
   }
 }

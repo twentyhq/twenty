@@ -34,8 +34,10 @@ export const sanitizeRecordInput = ({
             (field) => field.name === relationIdFieldName,
           );
 
+          const relationIdFieldValue = recordInput[relationIdFieldName];
+
           return relationIdFieldMetadataItem
-            ? [relationIdFieldName, fieldValue?.id ?? null]
+            ? [relationIdFieldName, relationIdFieldValue ?? null]
             : undefined;
         }
 
