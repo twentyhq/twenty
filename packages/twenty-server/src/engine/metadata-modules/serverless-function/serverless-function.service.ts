@@ -137,6 +137,16 @@ export class ServerlessFunctionService {
       workspaceId,
     });
 
+    if (
+      version === 'draft' &&
+      functionToExecute.syncStatus !== ServerlessFunctionSyncStatus.READY
+    ) {
+      await this.buildDraftServerlessFunction(
+        functionToExecute.id,
+        workspaceId,
+      );
+    }
+
     const resultServerlessFunction = await this.serverlessService.execute(
       functionToExecute,
       payload,
