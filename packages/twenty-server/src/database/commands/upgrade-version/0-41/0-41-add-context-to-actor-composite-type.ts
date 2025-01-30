@@ -157,7 +157,10 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
 
       if (!dryRun) {
         await queryRunner.addColumn(
-          `${schemaName}.${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+          `${schemaName}.${computeTableName(
+            field.object.nameSingular,
+            field?.object?.isCustom,
+          )}`,
           new TableColumn({
             name: newColumnName,
             type: 'jsonb',
