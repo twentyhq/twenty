@@ -84,18 +84,18 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         continue;
       }
 
-      const fieldRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          field.object.nameSingular,
-        );
-
       await this.addContextColumn(
         field,
         `${field.name}Context`,
         workspaceId,
         dryRun,
       );
+
+      const fieldRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          field.object.nameSingular,
+        );
 
       if (!dryRun) {
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
