@@ -368,17 +368,9 @@ export type EmailPasswordResetLink = {
 
 export type EnvironmentVariable = {
   __typename?: 'EnvironmentVariable';
-  key: Scalars['String'];
-  metadata: EnvironmentVariableMetadata;
-  value: Scalars['String'];
-};
-
-export type EnvironmentVariableMetadata = {
-  __typename?: 'EnvironmentVariableMetadata';
   description: Scalars['String'];
-  group: EnvironmentVariablesGroup;
-  sensitive?: Maybe<Scalars['Boolean']>;
-  subGroup?: Maybe<EnvironmentVariablesSubGroup>;
+  name: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export enum EnvironmentVariablesGroup {
@@ -400,9 +392,16 @@ export enum EnvironmentVariablesGroup {
   Workspace = 'Workspace'
 }
 
+export type EnvironmentVariablesGroupData = {
+  __typename?: 'EnvironmentVariablesGroupData';
+  groupName: EnvironmentVariablesGroup;
+  standalone: Array<EnvironmentVariable>;
+  subgroups: Array<EnvironmentVariablesSubgroupData>;
+};
+
 export type EnvironmentVariablesOutput = {
   __typename?: 'EnvironmentVariablesOutput';
-  variables: Array<EnvironmentVariable>;
+  groups: Array<EnvironmentVariablesGroupData>;
 };
 
 export enum EnvironmentVariablesSubGroup {
@@ -421,6 +420,12 @@ export enum EnvironmentVariablesSubGroup {
   TinybirdConfig = 'TinybirdConfig',
   Tokens = 'Tokens'
 }
+
+export type EnvironmentVariablesSubgroupData = {
+  __typename?: 'EnvironmentVariablesSubgroupData';
+  subgroupName: EnvironmentVariablesSubGroup;
+  variables: Array<EnvironmentVariable>;
+};
 
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
@@ -2170,7 +2175,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetEnvironmentVariablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEnvironmentVariablesQuery = { __typename?: 'Query', getEnvironmentVariables: { __typename?: 'EnvironmentVariablesOutput', variables: Array<{ __typename?: 'EnvironmentVariable', key: string, value: string, metadata: { __typename?: 'EnvironmentVariableMetadata', group: EnvironmentVariablesGroup, subGroup?: EnvironmentVariablesSubGroup | null, description: string, sensitive?: boolean | null } }> } };
+export type GetEnvironmentVariablesQuery = { __typename?: 'Query', getEnvironmentVariables: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, standalone: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string }> }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3778,14 +3783,20 @@ export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<Use
 export const GetEnvironmentVariablesDocument = gql`
     query GetEnvironmentVariables {
   getEnvironmentVariables {
-    variables {
-      key
-      value
-      metadata {
-        group
-        subGroup
+    groups {
+      groupName
+      standalone {
+        name
         description
-        sensitive
+        value
+      }
+      subgroups {
+        subgroupName
+        variables {
+          name
+          description
+          value
+        }
       }
     }
   }

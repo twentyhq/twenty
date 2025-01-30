@@ -3,14 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import {
+  EnvironmentVariable,
+  EnvironmentVariablesGroupData,
+  EnvironmentVariablesOutput,
+} from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentVariablesMetadataOptions } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
-import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
+import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -162,13 +167,61 @@ export class AdminPanelService {
     }
   }
 
-  getEnvironmentVariables(): Record<
-    string,
-    {
-      value: EnvironmentVariables[keyof EnvironmentVariables];
-      metadata: EnvironmentVariablesMetadataOptions;
+  getEnvironmentVariables(): EnvironmentVariablesOutput {
+    const rawEnvVars = this.environmentService.getAll();
+    const groupedData = new Map<
+      EnvironmentVariablesGroup,
+      {
+        standalone: EnvironmentVariable[];
+        subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
+      }
+    >();
+
+    for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
+      const { group, subGroup, description } = metadata;
+
+      const envVar: EnvironmentVariable = {
+        name: varName,
+        description,
+        value: String(value),
+      };
+
+      let currentGroup = groupedData.get(group);
+
+      if (!currentGroup) {
+        currentGroup = {
+          standalone: [],
+          subgroups: new Map(),
+        };
+        groupedData.set(group, currentGroup);
+      }
+
+      if (subGroup) {
+        let subgroupVars = currentGroup.subgroups.get(subGroup);
+
+        if (!subgroupVars) {
+          subgroupVars = [];
+          currentGroup.subgroups.set(subGroup, subgroupVars);
+        }
+        subgroupVars.push(envVar);
+      } else {
+        currentGroup.standalone.push(envVar);
+      }
     }
-  > {
-    return this.environmentService.getAll();
+
+    const groups: EnvironmentVariablesGroupData[] = Array.from(
+      groupedData.entries(),
+    ).map(([groupName, data]) => ({
+      groupName,
+      standalone: data.standalone,
+      subgroups: Array.from(data.subgroups.entries()).map(
+        ([subgroupName, variables]) => ({
+          subgroupName,
+          variables,
+        }),
+      ),
+    }));
+
+    return { groups };
   }
 }

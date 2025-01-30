@@ -3,7 +3,6 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 
-// Register the enums for GraphQL
 registerEnumType(EnvironmentVariablesGroup, {
   name: 'EnvironmentVariablesGroup',
 });
@@ -13,34 +12,40 @@ registerEnumType(EnvironmentVariablesSubGroup, {
 });
 
 @ObjectType()
-class EnvironmentVariableMetadata {
-  @Field(() => EnvironmentVariablesGroup)
-  group: EnvironmentVariablesGroup;
-
-  @Field(() => EnvironmentVariablesSubGroup, { nullable: true })
-  subGroup?: EnvironmentVariablesSubGroup;
+export class EnvironmentVariable {
+  @Field()
+  name: string;
 
   @Field()
   description: string;
 
-  @Field({ nullable: true })
-  sensitive?: boolean;
+  @Field()
+  value: string;
 }
 
 @ObjectType()
-class EnvironmentVariable {
-  @Field()
-  key: string;
+export class EnvironmentVariablesSubgroupData {
+  @Field(() => [EnvironmentVariable])
+  variables: EnvironmentVariable[];
 
-  @Field(() => String) // Using string as the base type, since all env vars are strings -- this is a bit of a hack
-  value: string;
+  @Field(() => EnvironmentVariablesSubGroup)
+  subgroupName: EnvironmentVariablesSubGroup;
+}
 
-  @Field(() => EnvironmentVariableMetadata)
-  metadata: EnvironmentVariableMetadata;
+@ObjectType()
+export class EnvironmentVariablesGroupData {
+  @Field(() => [EnvironmentVariable])
+  standalone: EnvironmentVariable[];
+
+  @Field(() => [EnvironmentVariablesSubgroupData])
+  subgroups: EnvironmentVariablesSubgroupData[];
+
+  @Field(() => EnvironmentVariablesGroup)
+  groupName: EnvironmentVariablesGroup;
 }
 
 @ObjectType()
 export class EnvironmentVariablesOutput {
-  @Field(() => [EnvironmentVariable])
-  variables: EnvironmentVariable[];
+  @Field(() => [EnvironmentVariablesGroupData])
+  groups: EnvironmentVariablesGroupData[];
 }

@@ -51,14 +51,6 @@ export class AdminPanelResolver {
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Query(() => EnvironmentVariablesOutput)
   async getEnvironmentVariables(): Promise<EnvironmentVariablesOutput> {
-    const envVars = await this.adminService.getEnvironmentVariables();
-
-    return {
-      variables: Object.entries(envVars).map(([key, data]) => ({
-        key,
-        value: String(data.value),
-        metadata: data.metadata,
-      })),
-    };
+    return this.adminService.getEnvironmentVariables();
   }
 }
