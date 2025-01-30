@@ -8,7 +8,7 @@ import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
-
+import tsconfigPaths from "vite-tsconfig-paths";
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
@@ -97,6 +97,7 @@ export default defineConfig(({ command, mode }) => {
         jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
       }),
+      tsconfigPaths(),
       svgr(),
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
