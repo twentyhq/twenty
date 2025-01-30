@@ -22,7 +22,9 @@ export class BillingProductService {
     billingProductsByPlan: BillingProduct[];
   }): BillingPrice[] {
     const billingPrices = billingProductsByPlan.flatMap((product) =>
-      product.billingPrices.filter((price) => price.interval === interval),
+      product.billingPrices.filter(
+        (price) => price.interval === interval && price.active,
+      ),
     );
 
     return billingPrices;

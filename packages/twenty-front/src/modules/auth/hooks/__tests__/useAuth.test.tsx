@@ -124,13 +124,7 @@ describe('useAuth', () => {
     const { state } = result.current;
 
     expect(state.icons).toEqual({});
-    expect(state.workspaceAuthProviders).toEqual({
-      google: true,
-      microsoft: false,
-      magicLink: false,
-      password: true,
-      sso: [],
-    });
+    expect(state.workspaceAuthProviders).toEqual(null);
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({

@@ -8,7 +8,7 @@ import { useContext, useEffect } from 'react';
 
 type RegisterRecordActionEffectProps = {
   action: ActionMenuEntry & {
-    actionHook: ActionHook;
+    useAction: ActionHook;
   };
   objectMetadataItem: ObjectMetadataItem;
 };
@@ -17,7 +17,7 @@ export const RegisterRecordActionEffect = ({
   action,
   objectMetadataItem,
 }: RegisterRecordActionEffectProps) => {
-  const { shouldBeRegistered, onClick, ConfirmationModal } = action.actionHook({
+  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction({
     objectMetadataItem,
   });
 
