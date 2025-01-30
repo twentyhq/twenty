@@ -257,7 +257,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
 export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   name: '20202020-7cf8-40bc-a681-b80b771449b7',
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
-  syncCursor: '20202020-7cf8-40bc-a681-b80b771449b7',
+  syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
