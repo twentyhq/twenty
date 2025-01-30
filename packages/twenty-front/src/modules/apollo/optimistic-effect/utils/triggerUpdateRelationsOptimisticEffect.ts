@@ -27,6 +27,10 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   updatedSourceRecord,
   objectMetadataItems,
 }: triggerUpdateRelationsOptimisticEffectArgs) => {
+  const isDeletion =
+    isDefined(updatedSourceRecord) &&
+    isDefined(updatedSourceRecord['deletedAt']);
+
   return sourceObjectMetadataItem.fields.forEach(
     (fieldMetadataItemOnSourceRecord) => {
       const notARelationField =
@@ -72,15 +76,15 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         | RecordGqlNode
         | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
-      if (
-        isDeeplyEqual(
-          currentFieldValueOnSourceRecord,
-          updatedFieldValueOnSourceRecord,
-          { strict: true },
-        )
-      ) {
+      const noDiff = isDeeplyEqual(
+        currentFieldValueOnSourceRecord,
+        updatedFieldValueOnSourceRecord,
+        { strict: true },
+      );
+      if (noDiff && !isDeletion) {
         return;
       }
+
       const extractTargetRecordsFromRelation = (
         value: RecordGqlConnection | RecordGqlNode | null,
       ): RecordGqlNode[] => {
@@ -96,11 +100,12 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 
         return [value];
       };
+
+      const recordToExtractDetachFrom = isDeletion
+        ? updatedFieldValueOnSourceRecord
+        : currentFieldValueOnSourceRecord;
       const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
-        currentFieldValueOnSourceRecord,
-      );
-      const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
-        updatedFieldValueOnSourceRecord,
+        recordToExtractDetachFrom,
       );
 
       // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
@@ -129,7 +134,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         });
       }
 
-      if (isDefined(updatedSourceRecord)) {
+      if (!isDeletion && isDefined(updatedSourceRecord)) {
+        const targetRecordsToAttachTo = extractTargetRecordsFromRelation(
+          updatedFieldValueOnSourceRecord,
+        );
+
         targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
           triggerAttachRelationOptimisticEffect({
             cache,

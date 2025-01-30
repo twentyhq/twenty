@@ -92,28 +92,26 @@ export const useOpenCreateActivityDrawer = ({
       const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
 
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
         [targetableObjectRelationIdName]: targetableObjects[0].id,
       });
 
       setActivityTargetableEntityArray(targetableObjects);
     } else {
       await createOneActivityTarget({
-        taskId:
-          activityObjectNameSingular === CoreObjectNameSingular.Task
-            ? activity.id
-            : undefined,
-        noteId:
-          activityObjectNameSingular === CoreObjectNameSingular.Note
-            ? activity.id
-            : undefined,
+        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? {
+              taskId: activity.id,
+            }
+          : {
+              noteId: activity.id,
+            }),
       });
 
       setActivityTargetableEntityArray([]);

@@ -91,7 +91,7 @@ export const computeOptimisticRecordFromInput = ({
       continue;
     }
 
-    if (isDefined(recordInputFieldValue)) {
+    if (!isUndefined(recordInputFieldValue)) {
       throw new Error(
         'Should never provide relation mutation through anything else than the fieldId e.g companyId',
       );
