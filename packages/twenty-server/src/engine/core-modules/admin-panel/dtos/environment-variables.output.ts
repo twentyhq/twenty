@@ -21,6 +21,9 @@ export class EnvironmentVariable {
 
   @Field()
   value: string;
+
+  @Field()
+  sensitive: boolean;
 }
 
 @ObjectType()

@@ -1,5 +1,5 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
+import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -78,7 +78,7 @@ export const SettingsAdminGeneral = () => {
   } = useImpersonate();
 
   const { activeTabId, setActiveTabId } = useTabList(
-    SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
+    SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
 
   const {
@@ -255,7 +255,7 @@ export const SettingsAdminGeneral = () => {
           <StyledTabListContainer>
             <TabList
               tabs={tabs}
-              tabListInstanceId={SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID}
+              tabListInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
               behaveAsLinks={false}
             />
           </StyledTabListContainer>

@@ -167,8 +167,10 @@ export class AdminPanelService {
     }
   }
 
-  getEnvironmentVariables(): EnvironmentVariablesOutput {
-    const rawEnvVars = this.environmentService.getAll();
+  getEnvironmentVariables(
+    includeSensitive: boolean,
+  ): EnvironmentVariablesOutput {
+    const rawEnvVars = this.environmentService.getAll(includeSensitive);
     const groupedData = new Map<
       EnvironmentVariablesGroup,
       {
@@ -184,6 +186,7 @@ export class AdminPanelService {
         name: varName,
         description,
         value: String(value),
+        sensitive: metadata.sensitive ?? false,
       };
 
       let currentGroup = groupedData.get(group);

@@ -370,6 +370,7 @@ export type EnvironmentVariable = {
   __typename?: 'EnvironmentVariable';
   description: Scalars['String'];
   name: Scalars['String'];
+  sensitive: Scalars['Boolean'];
   value: Scalars['String'];
 };
 
@@ -1252,6 +1253,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetEnvironmentVariablesArgs = {
+  includeSensitive?: Scalars['Boolean'];
 };
 
 
@@ -2172,10 +2178,12 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
-export type GetEnvironmentVariablesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetEnvironmentVariablesQueryVariables = Exact<{
+  includeSensitive?: Scalars['Boolean'];
+}>;
 
 
-export type GetEnvironmentVariablesQuery = { __typename?: 'Query', getEnvironmentVariables: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, standalone: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string }> }> }> } };
+export type GetEnvironmentVariablesQuery = { __typename?: 'Query', getEnvironmentVariables: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, standalone: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3781,14 +3789,15 @@ export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLo
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
 export const GetEnvironmentVariablesDocument = gql`
-    query GetEnvironmentVariables {
-  getEnvironmentVariables {
+    query GetEnvironmentVariables($includeSensitive: Boolean! = false) {
+  getEnvironmentVariables(includeSensitive: $includeSensitive) {
     groups {
       groupName
       standalone {
         name
         description
         value
+        sensitive
       }
       subgroups {
         subgroupName
@@ -3796,6 +3805,7 @@ export const GetEnvironmentVariablesDocument = gql`
           name
           description
           value
+          sensitive
         }
       }
     }
@@ -3815,6 +3825,7 @@ export const GetEnvironmentVariablesDocument = gql`
  * @example
  * const { data, loading, error } = useGetEnvironmentVariablesQuery({
  *   variables: {
+ *      includeSensitive: // value for 'includeSensitive'
  *   },
  * });
  */
