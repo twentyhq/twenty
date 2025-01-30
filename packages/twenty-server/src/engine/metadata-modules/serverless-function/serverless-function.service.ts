@@ -141,6 +141,16 @@ export class ServerlessFunctionService {
       workspaceId,
     });
 
+    if (
+      version === 'draft' &&
+      functionToExecute.syncStatus !== ServerlessFunctionSyncStatus.READY
+    ) {
+      await this.buildServerlessFunctionSync({
+        serverlessFunction: functionToExecute,
+        serverlessFunctionVersion: 'draft',
+      });
+    }
+
     const resultServerlessFunction = await this.serverlessService.execute(
       functionToExecute,
       payload,
@@ -276,11 +286,12 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.buildServerlessFunction({
-      serverlessFunctionId: existingServerlessFunction.id,
-      serverlessFunctionVersion: 'draft',
-      workspaceId,
-    });
+    await this.serverlessFunctionRepository.update(
+      existingServerlessFunction.id,
+      {
+        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+      },
+    );
 
     return this.serverlessFunctionRepository.findOneBy({
       id: existingServerlessFunction.id,
@@ -322,6 +333,7 @@ export class ServerlessFunctionService {
         ...serverlessFunctionInput,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
+        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
       });
 
     const createdServerlessFunction =
@@ -340,12 +352,6 @@ export class ServerlessFunctionService {
         folder: join(draftFileFolder, file.path),
       });
     }
-
-    await this.buildServerlessFunction({
-      serverlessFunctionId: createdServerlessFunction.id,
-      serverlessFunctionVersion: 'draft',
-      workspaceId,
-    });
 
     return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
@@ -381,10 +387,8 @@ export class ServerlessFunctionService {
       },
     });
 
-    await this.buildServerlessFunction({
-      serverlessFunctionId: id,
-      serverlessFunctionVersion: 'draft',
-      workspaceId,
+    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+      syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
     });
   }
 
@@ -403,7 +407,23 @@ export class ServerlessFunctionService {
     }
   }
 
-  private async buildServerlessFunction({
+  private async buildServerlessFunctionSync({
+    serverlessFunction,
+    serverlessFunctionVersion,
+  }: {
+    serverlessFunction: ServerlessFunctionEntity;
+    serverlessFunctionVersion: string;
+  }) {
+    await this.serverlessService.build(
+      serverlessFunction,
+      serverlessFunctionVersion,
+    );
+    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+      syncStatus: ServerlessFunctionSyncStatus.READY,
+    });
+  }
+
+  private async buildServerlessFunctionAsync({
     serverlessFunctionId,
     serverlessFunctionVersion,
     workspaceId,

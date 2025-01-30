@@ -91,7 +91,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     action.settings.input.serverlessFunctionVersion;
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
-  const { updateOneServerlessFunction, isReady } =
+  const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
@@ -313,7 +313,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
-                <InputLabel>Code {!isReady && <span>•</span>}</InputLabel>
                 <CodeEditor
                   height={343}
                   value={formValues.code?.[INDEX_FILE_PATH]}
