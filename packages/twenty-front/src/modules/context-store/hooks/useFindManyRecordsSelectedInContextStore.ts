@@ -53,7 +53,6 @@ export const useFindManyRecordsSelectedInContextStore = ({
       contextStoreTargetedRecordsRule.mode === 'selection' &&
       contextStoreTargetedRecordsRule.selectedRecordIds.length === 0,
     limit,
-    fetchPolicy: 'cache-and-network',
   });
 
   return {

@@ -1,9 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { ConnectedAccountProvider } from 'twenty-shared';
+
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { ConnectedAccountProvider } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   microsoftGraphBatchWithHtmlMessagesResponse,
   microsoftGraphBatchWithTwoMessagesResponse,

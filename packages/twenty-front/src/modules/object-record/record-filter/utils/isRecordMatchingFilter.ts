@@ -50,6 +50,9 @@ const isAndFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is AndObjectRecordFilter => 'and' in filter && !!filter.and;
 
+const isImplicitAndFilter = (filter: RecordGqlOperationFilter) =>
+  Object.keys(filter).length > 1;
+
 const isOrFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is OrObjectRecordFilter => 'or' in filter && !!filter.or;
@@ -69,6 +72,16 @@ export const isRecordMatchingFilter = ({
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
+  }
+
+  if (isImplicitAndFilter(filter)) {
+    return Object.entries(filter).every(([filterKey, value]) =>
+      isRecordMatchingFilter({
+        record,
+        filter: { [filterKey]: value },
+        objectMetadataItem,
+      }),
+    );
   }
 
   if (isAndFilter(filter)) {

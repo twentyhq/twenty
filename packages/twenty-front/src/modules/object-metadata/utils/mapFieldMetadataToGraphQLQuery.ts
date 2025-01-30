@@ -141,6 +141,7 @@ ${mapObjectMetadataToGraphQLQuery({
     source
     workspaceMemberId
     name
+    context
 }`;
   }
 

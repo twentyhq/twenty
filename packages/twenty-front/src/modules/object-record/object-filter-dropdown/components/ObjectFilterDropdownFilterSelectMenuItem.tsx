@@ -1,15 +1,16 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+
 import { useSelectFilterDefinitionUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterDefinitionUsedInDropdown';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
-
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -30,6 +31,10 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
   const { selectFilterDefinitionUsedInDropdown } =
     useSelectFilterDefinitionUsedInDropdown();
+
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+  );
 
   const [, setObjectFilterDropdownFirstLevelFilterDefinition] =
     useRecoilComponentStateV2(
@@ -81,6 +86,10 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     selectFilterDefinitionUsedInDropdown({
       filterDefinition: availableFilterDefinition,
     });
+
+    setFieldMetadataItemIdUsedInDropdown(
+      availableFilterDefinition.fieldMetadataId,
+    );
 
     if (
       availableFilterDefinition.type === 'RELATION' ||
