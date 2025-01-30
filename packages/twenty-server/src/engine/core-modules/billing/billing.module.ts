@@ -13,7 +13,7 @@ import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingExecuteBilledFunctionListener } from 'src/engine/core-modules/billing/listeners/billing-execute-billed-function.listener';
+import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
@@ -65,7 +65,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
-    BillingExecuteBilledFunctionListener,
+    BillingFeatureUsedListener,
     BillingService,
     BillingWebhookProductService,
     BillingWebhookPriceService,

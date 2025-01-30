@@ -10,6 +10,7 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   IllustrationIconCurrency,
   IllustrationIconLink,
@@ -175,7 +176,13 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       source: 'Source',
       name: 'Name',
       workspaceMemberId: 'Workspace Member ID',
+      context: 'Context',
     },
-    exampleValue: { source: 'source', name: 'name', workspaceMemberId: 'id' },
+    exampleValue: {
+      source: 'source',
+      name: 'name',
+      workspaceMemberId: 'id',
+      context: { provider: ConnectedAccountProvider.GOOGLE },
+    },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;
