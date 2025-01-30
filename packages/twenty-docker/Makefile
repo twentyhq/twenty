@@ -20,5 +20,5 @@ prod-seed-kvoipv2-db:
 	docker exec -it kvoipv2-server sh -c "yarn && yes | npx nx command-no-deps -- workspace:seed:dev"
 
 prod-force-migrate-db:
-	docker exec -it kvoipv2-server sh -c "rm -f /app/docker-data/db_status" && docker compose up -d
+	docker exec -it kvoipv2-server sh -c "rm -f /app/docker-data/db_status" && docker compose down && docker compose up -d
 	
