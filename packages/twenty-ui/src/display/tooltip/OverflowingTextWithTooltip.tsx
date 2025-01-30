@@ -89,6 +89,7 @@ export const OverflowingTextWithTooltip = ({
   const textRef = useRef<HTMLDivElement>(null);
 
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
+  const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
   const handleMouseEnter = () => {
     const isOverflowing =
@@ -98,10 +99,12 @@ export const OverflowingTextWithTooltip = ({
         : false;
 
     setIsTitleOverflowing(isOverflowing);
+    setShouldRenderTooltip(true);
   };
 
   const handleMouseLeave = () => {
     setIsTitleOverflowing(false);
+    setShouldRenderTooltip(false);
   };
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -137,26 +140,29 @@ export const OverflowingTextWithTooltip = ({
           {text}
         </StyledOverflowingText>
       )}
-      {createPortal(
-        <div onClick={handleTooltipClick}>
-          <AppTooltip
-            anchorSelect={`#${textElementId}`}
-            offset={5}
-            hidden={!isTitleOverflowing || hideTooltip}
-            noArrow
-            place="bottom"
-            positionStrategy="absolute"
-            delay={TooltipDelay.mediumDelay}
-          >
-            {isTooltipMultiline ? (
-              <Styledpre>{text}</Styledpre>
-            ) : (
-              `${text || ''}`
-            )}
-          </AppTooltip>
-        </div>,
-        document.body,
-      )}
+      {shouldRenderTooltip &&
+        isTitleOverflowing &&
+        createPortal(
+          <div onClick={handleTooltipClick}>
+            <AppTooltip
+              anchorSelect={`#${textElementId}`}
+              offset={5}
+              hidden={!isTitleOverflowing || hideTooltip}
+              noArrow
+              place="bottom"
+              positionStrategy="absolute"
+              delay={TooltipDelay.mediumDelay}
+              isOpen={true}
+            >
+              {isTooltipMultiline ? (
+                <Styledpre>{text}</Styledpre>
+              ) : (
+                `${text || ''}`
+              )}
+            </AppTooltip>
+          </div>,
+          document.body,
+        )}
     </>
   );
 };
