@@ -82,7 +82,7 @@ export class BillingUsageService {
       });
     } catch (error) {
       throw new BillingException(
-        'Failed to send billing meter events to Stripe',
+        `Failed to send billing meter events to Stripe: ${error}`,
         BillingExceptionCode.BILLING_METER_EVENT_FAILED,
       );
     }

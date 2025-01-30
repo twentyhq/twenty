@@ -136,7 +136,7 @@ export class WorkflowExecutorWorkspaceService {
     return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
   }
 
-  private async sendWorkflowNodeRunEvent() {
+  private sendWorkflowNodeRunEvent() {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
 

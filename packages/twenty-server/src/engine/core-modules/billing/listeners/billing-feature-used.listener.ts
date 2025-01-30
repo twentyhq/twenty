@@ -8,7 +8,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 
 @Injectable()
-export class BillingExecuteBilledFunctionListener {
+export class BillingFeatureUsedListener {
   constructor(
     private readonly billingUsageService: BillingUsageService,
     private readonly environmentService: EnvironmentService,

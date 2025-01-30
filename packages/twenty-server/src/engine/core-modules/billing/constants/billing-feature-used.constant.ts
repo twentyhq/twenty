@@ -1,1 +1,1 @@
-export const BILLING_FEATURE_USED = 'billing_feature_used';
+export const BILLING_FEATURE_USED = 'BILLING_FEATURE_USED';
