@@ -1,13 +1,13 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Relation,
-    Unique,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { RoleInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/role.interface';
@@ -20,9 +20,6 @@ import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions
 export class RoleEntity implements RoleInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  dataSourceId: string;
 
   @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
     onDelete: 'CASCADE',

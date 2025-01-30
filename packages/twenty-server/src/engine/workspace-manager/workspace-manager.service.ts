@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import isEmpty from 'lodash.isempty';
+import { Repository } from 'typeorm';
+
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
@@ -24,7 +29,9 @@ export class WorkspaceManagerService {
     private readonly seederService: SeederService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly permissionsService: PermissionsService,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
   /**
@@ -48,6 +55,13 @@ export class WorkspaceManagerService {
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
     });
+
+    const permissionsV1Enabled =
+      await this.permissionsService.isPermissionsV1Enabled();
+
+    if (permissionsV1Enabled === true) {
+      await this.initPermissions(workspaceId);
+    }
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
@@ -167,5 +181,32 @@ export class WorkspaceManagerService {
     await this.dataSourceService.delete(workspaceId);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+  }
+
+  private async initPermissions(workspaceId: string) {
+    await this.permissionsService.createAdminRole({
+      workspaceId,
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    if (isEmpty(userWorkspace)) {
+      throw new Error('User workspace not found');
+    }
+
+    if (userWorkspace.length > 1) {
+      throw new Error(
+        'Multiple user workspaces found, cannot tell which one should be admin',
+      );
+    }
+
+    await this.permissionsService.assignAdminRoleToUserWorkspace(
+      workspaceId,
+      userWorkspace[0].id,
+    );
   }
 }
