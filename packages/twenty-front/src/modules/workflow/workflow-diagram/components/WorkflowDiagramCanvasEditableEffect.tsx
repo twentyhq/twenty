@@ -80,6 +80,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       closeCommandMenu,
       startNodeCreation,
       getIcon,
+      t,
     ],
   );
 
