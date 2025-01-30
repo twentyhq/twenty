@@ -179,4 +179,28 @@ describe('computeOptimisticRecordFromInput', () => {
       `"Should never provide relation mutation through anything else than the fieldId e.g companyId"`,
     );
   });
+
+  it('should throw an error if recordInput contains both the relationFieldId and relationField even if null', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+      (item) => item.nameSingular === 'person',
+    );
+    if (!personObjectMetadataItem) {
+      throw new Error('Person object metadata item not found');
+    }
+
+    expect(() =>
+      computeOptimisticRecordFromInput({
+        objectMetadataItems: generatedMockObjectMetadataItems,
+        objectMetadataItem: personObjectMetadataItem,
+        recordInput: {
+          companyId: '123',
+          company: null,
+        },
+        cache,
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"Should never provide relation mutation through anything else than the fieldId e.g companyId"`,
+    );
+  });
 });
