@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -26,7 +25,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     WorkspaceHealthModule,
     FeatureFlagModule,
     PermissionsModule,
-    NestjsQueryTypeOrmModule.forFeature([UserWorkspace], 'core'),
+    TypeOrmModule.forFeature([UserWorkspace], 'core'),
   ],
   exports: [WorkspaceManagerService],
   providers: [WorkspaceManagerService],

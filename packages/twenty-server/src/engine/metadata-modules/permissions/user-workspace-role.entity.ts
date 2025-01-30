@@ -9,13 +9,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UserWorkspaceRoleInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/user-workspace-role.interface';
-
 import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
 
 @Entity('userWorkspaceRole')
 @Unique('IndexOnUserWorkspaceRoleUnique', ['userWorkspaceId', 'roleId'])
-export class UserWorkspaceRoleEntity implements UserWorkspaceRoleInterface {
+export class UserWorkspaceRoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -10,21 +9,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RoleInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/role.interface';
-
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
 
 @Entity('role')
 @Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
-export class RoleEntity implements RoleInterface {
+export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
-    onDelete: 'CASCADE',
-  })
-  dataSource: Relation<DataSourceEntity>;
 
   @Column({ nullable: false })
   name: string;

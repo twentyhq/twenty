@@ -5,7 +5,11 @@ import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { ADMIN_ROLE_NAME } from 'src/engine/metadata-modules/permissions/constants/adminRoleName.constants';
+import { ADMIN_ROLE_NAME } from 'src/engine/metadata-modules/permissions/constants/admin-role-name.constants';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
 import { isDefined } from 'src/utils/is-defined';
@@ -49,7 +53,10 @@ export class PermissionsService {
     });
 
     if (!adminRole) {
-      throw new Error('Admin role not found');
+      throw new PermissionsException(
+        'Admin role not found',
+        PermissionsExceptionCode.ADMIN_ROLE_NOT_FOUND,
+      );
     }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
@@ -59,11 +66,17 @@ export class PermissionsService {
     });
 
     if (!isDefined(userWorkspace)) {
-      throw new Error('User workspace not found');
+      throw new PermissionsException(
+        'User workspace not found',
+        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
     }
 
     if (adminRole.workspaceId !== workspaceId) {
-      throw new Error('Admin role workspace does not match user workspace');
+      throw new PermissionsException(
+        'Admin role workspace does not match userWorkspace workspace',
+        PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH,
+      );
     }
 
     await this.userWorkspaceRoleRepository.save({
@@ -73,7 +86,7 @@ export class PermissionsService {
     });
   }
 
-  public async isPermissionsV1Enabled(): Promise<boolean> {
-    return this.environmentService.get('PERMISSIONS_V1_ENABLED') === true;
+  public async isPermissionsEnabled(): Promise<boolean> {
+    return this.environmentService.get('PERMISSIONS_ENABLED') === true;
   }
 }
