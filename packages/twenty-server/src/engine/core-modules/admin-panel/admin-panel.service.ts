@@ -3,12 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import {
+  EnvironmentVariable,
+  EnvironmentVariablesGroupData,
+  EnvironmentVariablesOutput,
+} from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -25,6 +33,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
+    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -156,5 +165,66 @@ export class AdminPanelService {
         workspaceId: workspace.id,
       });
     }
+  }
+
+  getEnvironmentVariablesGrouped(
+    includeSensitive: boolean,
+  ): EnvironmentVariablesOutput {
+    const rawEnvVars = this.environmentService.getAll(includeSensitive);
+    const groupedData = new Map<
+      EnvironmentVariablesGroup,
+      {
+        standalone: EnvironmentVariable[];
+        subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
+      }
+    >();
+
+    for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
+      const { group, subGroup, description } = metadata;
+
+      const envVar: EnvironmentVariable = {
+        name: varName,
+        description,
+        value: String(value),
+        sensitive: metadata.sensitive ?? false,
+      };
+
+      let currentGroup = groupedData.get(group);
+
+      if (!currentGroup) {
+        currentGroup = {
+          standalone: [],
+          subgroups: new Map(),
+        };
+        groupedData.set(group, currentGroup);
+      }
+
+      if (subGroup) {
+        let subgroupVars = currentGroup.subgroups.get(subGroup);
+
+        if (!subgroupVars) {
+          subgroupVars = [];
+          currentGroup.subgroups.set(subGroup, subgroupVars);
+        }
+        subgroupVars.push(envVar);
+      } else {
+        currentGroup.standalone.push(envVar);
+      }
+    }
+
+    const groups: EnvironmentVariablesGroupData[] = Array.from(
+      groupedData.entries(),
+    ).map(([groupName, data]) => ({
+      groupName,
+      standalone: data.standalone,
+      subgroups: Array.from(data.subgroups.entries()).map(
+        ([subgroupName, variables]) => ({
+          subgroupName,
+          variables,
+        }),
+      ),
+    }));
+
+    return { groups };
   }
 }
