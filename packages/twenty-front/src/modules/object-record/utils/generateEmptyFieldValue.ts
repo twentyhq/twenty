@@ -1,18 +1,12 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
-export type GenerateEmptyFieldValueArgs = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
-};
-// TODO strictly type each fieldValue following their FieldMetadataType
-export const generateEmptyFieldValue = ({
-  fieldMetadataItem,
-}: GenerateEmptyFieldValueArgs) => {
+export const generateEmptyFieldValue = (
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>,
+) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT: {
       return '';
@@ -90,19 +84,13 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.RICH_TEXT: {
       return null;
     }
-    case FieldMetadataType.RICH_TEXT_V2: {
-      return {
-        blocknote: null,
-        markdown: null,
-      };
-    }
     case FieldMetadataType.ACTOR: {
       return {
         source: 'MANUAL',
-        context: {},
-        name: '',
         workspaceMemberId: null,
-      } satisfies FieldActorValue;
+        name: '',
+        context: {},
+      };
     }
     case FieldMetadataType.PHONES: {
       return {
@@ -112,14 +100,8 @@ export const generateEmptyFieldValue = ({
         additionalPhones: null,
       };
     }
-    case FieldMetadataType.TS_VECTOR: {
-      throw new Error('TS_VECTOR not implemented yet');
-    }
     default: {
-      return assertUnreachable(
-        fieldMetadataItem.type,
-        'Unhandled FieldMetadataType',
-      );
+      throw new Error('Unhandled FieldMetadataType');
     }
   }
 };
