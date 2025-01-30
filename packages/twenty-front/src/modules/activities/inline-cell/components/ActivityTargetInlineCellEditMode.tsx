@@ -170,23 +170,17 @@ export const ActivityTargetInlineCellEditMode = ({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
 
+          const newActivityTargetInput = {
+            id: newActivityTargetId,
+            ...(activityObjectNameSingular === CoreObjectNameSingular.Task
+              ? { taskId: activity.id }
+              : { noteId: activity.id }),
+            [fieldNameWithIdSuffix]: recordId,
+          };
+
           const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
-            input: {
-              id: newActivityTargetId,
-              taskId:
-                activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity.id
-                  : null,
-              noteId:
-                activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity.id
-                  : null,
-
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              [fieldNameWithIdSuffix]: recordId,
-            },
+            input: newActivityTargetInput,
           });
 
           activityTargetsAfterUpdate.push(newActivityTarget);
@@ -204,7 +198,7 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            await createOneActivityTarget(newActivityTarget);
+            await createOneActivityTarget(newActivityTargetInput);
           }
 
           set(activityTargetObjectRecordFamilyState(recordId), {
