@@ -54,7 +54,7 @@ import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/ut
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 
-const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 30;
+const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
