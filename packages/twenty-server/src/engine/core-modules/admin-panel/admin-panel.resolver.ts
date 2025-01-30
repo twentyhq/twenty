@@ -51,9 +51,9 @@ export class AdminPanelResolver {
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
   @Query(() => EnvironmentVariablesOutput)
-  getEnvironmentVariablesGrouped(
+  async getEnvironmentVariablesGrouped(
     @Args() args: GetEnvironmentVariablesInput,
-  ): EnvironmentVariablesOutput {
+  ): Promise<EnvironmentVariablesOutput> {
     return this.adminService.getEnvironmentVariablesGrouped(
       args.includeSensitive,
     );
