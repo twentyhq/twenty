@@ -10,13 +10,11 @@ import {
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { CommandLogger } from 'src/database/commands/logger';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Command({
@@ -30,9 +28,6 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    private readonly objectMetadataService: ObjectMetadataService,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -90,7 +85,7 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
       const fieldRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
-          `${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+          field.object.nameSingular,
         );
 
       await this.addContextColumn(
@@ -100,23 +95,25 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
         dryRun,
       );
 
-      const rowsToUpdate = await fieldRepository.update(
-        {
-          [field.name + 'Source']: In([
-            FieldActorSource.EMAIL,
-            FieldActorSource.CALENDAR,
-          ]),
-        },
-        {
-          [field.name + 'Context']: {
-            provider: 'google',
+      if (!dryRun) {
+        const rowsToUpdate = await fieldRepository.update(
+          {
+            [field.name + 'Source']: In([
+              FieldActorSource.EMAIL,
+              FieldActorSource.CALENDAR,
+            ]),
           },
-        },
-      );
+          {
+            [field.name + 'Context']: {
+              provider: 'google',
+            },
+          },
+        );
 
-      this.logger.verbose(
-        `updated ${rowsToUpdate ? rowsToUpdate.affected : 0} rows`,
-      );
+        this.logger.verbose(
+          `updated ${rowsToUpdate ? rowsToUpdate.affected : 0} rows`,
+        );
+      }
     }
   }
 
@@ -126,7 +123,6 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
     workspaceId: string,
     dryRun = false,
   ): Promise<void> {
-    // todo mutualiser les datasource pour etre plus efficient
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
@@ -148,7 +144,10 @@ export class AddContextToActorCompositeTypeCommand extends ActiveWorkspacesComma
 
     try {
       const hasColumn = await queryRunner.hasColumn(
-        `${schemaName}.${field?.object?.isCustom ? '_' : ''}${field.object.nameSingular}`,
+        `${schemaName}.${computeTableName(
+          field.object.nameSingular,
+          field?.object?.isCustom,
+        )}`,
         newColumnName,
       );
 

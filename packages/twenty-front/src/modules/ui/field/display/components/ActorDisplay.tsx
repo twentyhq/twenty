@@ -10,6 +10,7 @@ import {
   IconCsv,
   IconGmail,
   IconGoogleCalendar,
+  IconMail,
   IconMicrosoftCalendar,
   IconMicrosoftOutlook,
   IconRobot,
@@ -18,6 +19,19 @@ import {
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
+};
+
+const PROVIDORS_ICON_MAPPING = {
+  EMAIL: {
+    [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
+    [ConnectedAccountProvider.GOOGLE]: IconGmail,
+    default: IconMail,
+  },
+  CALENDAR: {
+    [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftCalendar,
+    [ConnectedAccountProvider.GOOGLE]: IconGoogleCalendar,
+    default: IconCalendar,
+  },
 };
 
 export const ActorDisplay = ({
@@ -34,15 +48,9 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconCsv;
       case 'EMAIL':
-        return context?.provider === ConnectedAccountProvider.MICROSOFT
-          ? IconMicrosoftOutlook
-          : IconGmail;
+        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
-        return context?.provider === ConnectedAccountProvider.MICROSOFT
-          ? IconMicrosoftCalendar
-          : context?.provider === ConnectedAccountProvider.GOOGLE
-            ? IconGoogleCalendar
-            : IconCalendar;
+        return PROVIDORS_ICON_MAPPING.CALENDAR[context?.provider ?? 'default'];
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':
