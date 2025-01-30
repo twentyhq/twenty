@@ -1,3 +1,4 @@
+import { Loader } from '@ui/feedback/loader/components/Loader';
 import { useTheme, css } from '@emotion/react';
 import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { codeEditorTheme } from '@ui/input';
@@ -12,6 +13,27 @@ type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   withHeader?: boolean;
   isLoading?: boolean;
 };
+
+const StyledEditorLoader = styled.div<{
+  height: string | number;
+  withHeader?: boolean;
+}>`
+  align-items: center;
+  display: flex;
+  height: ${({ height }) => height}px;
+  justify-content: center;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  ${({ withHeader, theme }) =>
+    withHeader
+      ? css`
+          border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
+          border-top: none;
+        `
+      : css`
+          border-radius: ${theme.border.radius.sm};
+        `}
+`;
 
 const StyledEditor = styled(Editor)<{ withHeader: boolean }>`
   .monaco-editor {
@@ -66,12 +88,17 @@ export const CodeEditor = ({
     }
   };
 
-  return (
+  return isLoading ? (
+    <StyledEditorLoader height={height} withHeader={withHeader}>
+      <Loader />
+    </StyledEditorLoader>
+  ) : (
     <StyledEditor
       height={height}
       withHeader={withHeader}
       value={isLoading ? '' : value}
       language={language}
+      loading=""
       onMount={(editor, monaco) => {
         setMonaco(monaco);
         setEditor(editor);

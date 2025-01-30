@@ -10,7 +10,8 @@ import {
   IconSquareRoundedX,
   AnimatedEllipsis,
   IconLoader,
-  IconTool,
+  IconSettings,
+  AnimatedCircleLoading,
 } from 'twenty-ui';
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
@@ -72,11 +73,13 @@ export const ServerlessFunctionExecutionResult = ({
 
   const PendingLeftNode = (isTesting || isBuilding) && (
     <StyledOutput>
-      {isTesting ? (
-        <IconLoader size={theme.icon.size.md} />
-      ) : (
-        <IconTool size={theme.icon.size.md} />
-      )}
+      <AnimatedCircleLoading>
+        {isTesting ? (
+          <IconLoader size={theme.icon.size.md} />
+        ) : (
+          <IconSettings size={theme.icon.size.md} />
+        )}
+      </AnimatedCircleLoading>
       <StyledInfoContainer>
         {isTesting ? 'Running function' : 'Building function'}
         <AnimatedEllipsis />

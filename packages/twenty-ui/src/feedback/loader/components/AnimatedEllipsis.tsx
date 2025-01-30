@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
 const StyledEllipsis = styled.div`
   display: flex;
-  position: relative;
 `;
 
 export const AnimatedEllipsis = () => {
+  const theme = useTheme();
   return (
     <StyledEllipsis>
       {[0, 1, 2].map((i) => (
@@ -18,7 +19,7 @@ export const AnimatedEllipsis = () => {
           }}
           transition={{
             repeat: Infinity,
-            duration: 1.5,
+            duration: theme.animation.duration.slow,
             ease: 'easeInOut',
             delay: i * 0.2,
           }}

@@ -4,6 +4,7 @@ export * from './animation/components/AnimatedEaseInOut';
 export * from './animation/components/AnimatedFadeOut';
 export * from './animation/components/AnimatedTextWord';
 export * from './animation/components/AnimatedTranslation';
+export * from './animation/components/AnimatedCircleLoading';
 export * from './color/utils/stringToHslColor';
 export * from './device/getOsControlSymbol';
 export * from './device/getOsShortcutSeparator';
