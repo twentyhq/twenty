@@ -759,6 +759,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Cache,
+    sensitive: true,
     description: 'Cache storage URL',
   })
   @IsOptional()
