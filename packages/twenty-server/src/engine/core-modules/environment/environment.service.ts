@@ -74,7 +74,7 @@ export class EnvironmentService {
           value = environmentVariableMaskSensitiveData(
             value,
             varMaskingConfig.strategy,
-            options,
+            { ...options, variableName: key },
           );
         }
 

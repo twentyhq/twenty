@@ -3,7 +3,7 @@ import { EnvironmentVariablesMaskingStrategies } from 'src/engine/core-modules/e
 export const environmentVariableMaskSensitiveData = (
   value: string,
   strategy: EnvironmentVariablesMaskingStrategies,
-  options?: { chars?: number },
+  options?: { chars?: number; variableName?: string },
 ): string => {
   if (!value || typeof value !== 'string') return value;
   switch (strategy) {
@@ -26,7 +26,9 @@ export const environmentVariableMaskSensitiveData = (
 
         return url.toString();
       } catch {
-        return value;
+        throw new Error(
+          `Invalid URL format for ${options?.variableName || 'environment variable'} in HIDE_PASSWORD masking strategy`,
+        );
       }
     }
 
