@@ -14,6 +14,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { ENVIRONMENT_VARIABLES_GROUP_POSITION } from 'src/engine/core-modules/environment/constants/environment-variables-group-position';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -212,16 +213,25 @@ export class AdminPanelService {
 
     const groups: EnvironmentVariablesGroupData[] = Array.from(
       groupedData.entries(),
-    ).map(([groupName, data]) => ({
-      groupName,
-      standalone: data.standalone,
-      subgroups: Array.from(data.subgroups.entries()).map(
-        ([subgroupName, variables]) => ({
-          subgroupName,
-          variables,
-        }),
-      ),
-    }));
+    )
+      .sort((a, b) => {
+        const positionA = ENVIRONMENT_VARIABLES_GROUP_POSITION[a[0]];
+        const positionB = ENVIRONMENT_VARIABLES_GROUP_POSITION[b[0]];
+
+        return positionA - positionB;
+      })
+      .map(([groupName, data]) => ({
+        groupName,
+        standalone: data.standalone.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+        subgroups: Array.from(data.subgroups.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([subgroupName, variables]) => ({
+            subgroupName,
+            variables,
+          })),
+      }));
 
     return { groups };
   }

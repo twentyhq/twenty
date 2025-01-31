@@ -27,6 +27,7 @@ import {
   Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -70,6 +71,9 @@ export const SettingsAdminContent = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const [userId, setUserId] = useState('');
 
+  const { data: environmentVariables } =
+    useGetEnvironmentVariablesGroupedQuery();
+  console.log(environmentVariables);
   const {
     handleImpersonate,
     isLoading: isImpersonateLoading,
