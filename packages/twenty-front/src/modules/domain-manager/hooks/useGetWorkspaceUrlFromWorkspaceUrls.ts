@@ -1,11 +1,11 @@
-import { useSearchParams } from 'react-router-dom';
 import { WorkspaceUrls } from '~/generated/graphql';
+import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
 
 export const useGetWorkspaceUrlFromWorkspaceUrls = () => {
-  const [searchParams] = useSearchParams();
+  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
 
   const getWorkspaceUrl = (workspaceUrls: WorkspaceUrls) => {
-    return searchParams.get('force-subdomain-url')
+    return isForceSubdomainUrlEnable
       ? workspaceUrls.subdomainUrl
       : (workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
   };

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { HorizontalSeparator, Loader, MainButton } from 'twenty-ui';
 
@@ -48,7 +48,6 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
-  const [searchParams] = useSearchParams();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
   const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();

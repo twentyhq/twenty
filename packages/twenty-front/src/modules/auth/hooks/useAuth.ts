@@ -293,9 +293,7 @@ export const useAuth = () => {
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
-        workspaceUrl:
-          workspace.workspaceUrls.customUrl ??
-          workspace.workspaceUrls.subdomainUrl,
+        workspaceUrl: getWorkspaceUrl(workspace.workspaceUrls),
       });
     }
 

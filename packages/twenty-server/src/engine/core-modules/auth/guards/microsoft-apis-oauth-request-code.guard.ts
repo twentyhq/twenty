@@ -59,7 +59,6 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          // TODO: use a variable like microsoft-oauth
           false,
           workspace,
         ),
