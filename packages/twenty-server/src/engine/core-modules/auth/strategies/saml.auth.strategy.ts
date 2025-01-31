@@ -15,6 +15,21 @@ import { isEmail } from 'class-validator';
 import { Request } from 'express';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+
+export type SAMLRequest = Omit<
+  Request,
+  'user' | 'workspace' | 'workspaceMetadataVersion'
+> & {
+  user: {
+    identityProviderId: string;
+    forceSubdomainUrl: boolean;
+    email: string;
+  };
+};
 
 @Injectable()
 export class SamlAuthStrategy extends PassportStrategy(
@@ -64,9 +79,30 @@ export class SamlAuthStrategy extends PassportStrategy(
       additionalParams: {
         RelayState: JSON.stringify({
           identityProviderId: req.params.identityProviderId,
+          ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
         }),
       },
     });
+  }
+
+  private extractState(req: Request): {
+    identityProviderId: string;
+    forceSubdomainUrl: boolean;
+  } {
+    try {
+      if ('RelayState' in req.body && typeof req.body.RelayState === 'string') {
+        const RelayState = JSON.parse(req.body.RelayState);
+
+        return {
+          identityProviderId: RelayState.identityProviderId,
+          forceSubdomainUrl: !!RelayState.forceSubdomainUrl,
+        };
+      }
+
+      throw new Error();
+    } catch (err) {
+      throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
+    }
   }
 
   validate: VerifyWithRequest = async (request, profile, done) => {
@@ -80,20 +116,11 @@ export class SamlAuthStrategy extends PassportStrategy(
       if (!isEmail(email)) {
         return done(new Error('Invalid email'));
       }
+      const state = this.extractState(request);
 
-      const result: {
-        user: Record<string, string>;
-        identityProviderId?: string;
-      } = { user: { email } };
-
-      if (
-        'RelayState' in request.body &&
-        typeof request.body.RelayState === 'string'
-      ) {
-        const RelayState = JSON.parse(request.body.RelayState);
-
-        result.identityProviderId = RelayState.identityProviderId;
-      }
+      const result: Pick<SAMLRequest, 'user'> = {
+        user: { ...state, email },
+      };
 
       done(null, result);
     } catch (err) {

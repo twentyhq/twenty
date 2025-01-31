@@ -48,9 +48,13 @@ export class SSOResolver {
 
   @Mutation(() => GetAuthorizationUrlOutput)
   async getAuthorizationUrl(
-    @Args('input') { identityProviderId }: GetAuthorizationUrlInput,
+    @Args('input')
+    { identityProviderId, forceSubdomainUrl }: GetAuthorizationUrlInput,
   ) {
-    return this.sSOService.getAuthorizationUrl(identityProviderId);
+    return this.sSOService.getAuthorizationUrl(
+      identityProviderId,
+      forceSubdomainUrl,
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

@@ -5,20 +5,23 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useApolloClient } from '@apollo/client';
+import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
 
 export const useSSO = () => {
   const apolloClient = useApolloClient();
   const { enqueueSnackBar } = useSnackBar();
-
+  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
   const { redirect } = useRedirect();
-
   const redirectToSSOLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSSOResult;
     try {
       authorizationUrlForSSOResult = await apolloClient.mutate({
         mutation: GET_AUTHORIZATION_URL,
         variables: {
-          input: { identityProviderId },
+          input: {
+            identityProviderId,
+            forceSubdomainUrl: isForceSubdomainUrlEnable,
+          },
         },
       });
     } catch (error: any) {

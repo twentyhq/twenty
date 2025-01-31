@@ -487,6 +487,7 @@ export enum FeatureFlagKey {
   IsLocalizationEnabled = 'IsLocalizationEnabled',
   IsMicrosoftSyncEnabled = 'IsMicrosoftSyncEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
+  IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
@@ -605,6 +606,7 @@ export type FullName = {
 };
 
 export type GetAuthorizationUrlInput = {
+  forceSubdomainUrl: Scalars['Boolean']['input'];
   identityProviderId: Scalars['String']['input'];
 };
 

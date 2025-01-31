@@ -58,9 +58,11 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        workspace ?? {
-          subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-        },
+        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+          // TODO: use a variable like microsoft-oauth
+          false,
+          workspace,
+        ),
       );
 
       return false;

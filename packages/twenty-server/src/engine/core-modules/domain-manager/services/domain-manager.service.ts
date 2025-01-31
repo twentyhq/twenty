@@ -115,21 +115,6 @@ export class DomainManagerService {
     return url;
   }
 
-  // @Deprecated
-  getWorkspaceSubdomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    if (!originHostname.endsWith(this.getFrontUrl().hostname)) {
-      return null;
-    }
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-    return this.isDefaultSubdomain(subdomain) ? null : subdomain;
-  };
-
   getSubdomainAndHostnameFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 

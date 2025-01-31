@@ -23,6 +23,7 @@ export type MicrosoftRequest = Omit<
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
+    forceSubdomainUrl: boolean;
   };
 };
 
@@ -38,24 +39,15 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     });
   }
 
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: any) {
     options = {
       ...options,
       state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
+        workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        ...(req.params.billingCheckoutSessionState
-          ? {
-              billingCheckoutSessionState:
-                req.params.billingCheckoutSessionState,
-            }
-          : {}),
-        ...(req.params.workspacePersonalInviteToken
-          ? {
-              workspacePersonalInviteToken:
-                req.params.workspacePersonalInviteToken,
-            }
-          : {}),
+        forceSubdomainUrl: req.query.forceSubdomainUrl,
+        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
 
@@ -94,6 +86,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
+      forceSubdomainUrl: !!state.forceSubdomainUrl,
     };
 
     done(null, user);
