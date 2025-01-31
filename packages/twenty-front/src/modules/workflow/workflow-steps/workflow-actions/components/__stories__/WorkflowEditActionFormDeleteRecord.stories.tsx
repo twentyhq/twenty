@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock } from '~/testing/mock-data/people';
@@ -42,11 +43,7 @@ const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
     action: DEFAULT_ACTION,
   },
   decorators: [
-    (Story) => (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Story />
-      </div>
-    ),
+    WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
