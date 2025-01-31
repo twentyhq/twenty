@@ -177,6 +177,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
+        disabled={isFormDisabled}
       />
 
       <WorkflowStepBody>
@@ -205,15 +206,18 @@ export const WorkflowEditActionFormUpdateRecord = ({
         <HorizontalSeparator noMargin />
 
         <WorkflowSingleRecordPicker
+          testId="workflow-edit-action-record-update-object-record-id"
           label="Record"
           onChange={(objectRecordId) =>
             handleFieldChange('objectRecordId', objectRecordId)
           }
           objectNameSingular={formData.objectName}
           defaultValue={formData.objectRecordId}
+          disabled={isFormDisabled}
         />
 
         <FormMultiSelectFieldInput
+          testId="workflow-edit-action-record-update-fields-to-update"
           label="Fields to update"
           defaultValue={formData.fieldsToUpdate}
           options={inlineFieldDefinitions.map((field) => ({
@@ -226,6 +230,7 @@ export const WorkflowEditActionFormUpdateRecord = ({
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
           placeholder="Select fields to update"
+          readonly={isFormDisabled}
         />
 
         <HorizontalSeparator noMargin />
