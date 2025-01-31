@@ -2,11 +2,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import {
-  ENV_VAR_NAMES_KEY,
-  EnvironmentVariablesMetadataOptions,
-  METADATA_KEY,
-} from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
+import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-key';
+import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-names-key';
+import { EnvironmentVariablesMetadataOptions } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
 
 @Injectable()
@@ -38,11 +36,14 @@ export class EnvironmentService {
     const envVars = new EnvironmentVariables();
 
     const allEnvVarNames =
-      Reflect.getMetadata(ENV_VAR_NAMES_KEY, EnvironmentVariables) || [];
+      Reflect.getMetadata(
+        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
+        EnvironmentVariables,
+      ) || [];
 
     allEnvVarNames.forEach((key: string) => {
       const metadata = Reflect.getMetadata(
-        METADATA_KEY,
+        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY,
         EnvironmentVariables.prototype,
         key,
       );

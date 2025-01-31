@@ -2,6 +2,8 @@ import 'reflect-metadata';
 
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
+import { EnvironmentVariablesMetadataOptions } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
+
 export interface ReflectMetadataTypeMap {
   ['workspace:is-nullable-metadata-args']: true;
   ['workspace:gate-metadata-args']: Gate;
@@ -10,6 +12,8 @@ export interface ReflectMetadataTypeMap {
   ['workspace:is-primary-field-metadata-args']: true;
   ['workspace:is-deprecated-field-metadata-args']: true;
   ['workspace:is-unique-metadata-args']: true;
+  ['environment-variables-metadata']: EnvironmentVariablesMetadataOptions;
+  ['environment-variable-names']: string[];
 }
 
 export class TypedReflect {
