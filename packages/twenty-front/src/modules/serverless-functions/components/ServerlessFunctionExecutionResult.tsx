@@ -8,7 +8,6 @@ import {
   CoreEditorHeader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-  AnimatedEllipsis,
   IconLoader,
   IconSettings,
   AnimatedCircleLoading,
@@ -82,7 +81,6 @@ export const ServerlessFunctionExecutionResult = ({
       </AnimatedCircleLoading>
       <StyledInfoContainer>
         {isTesting ? 'Running function' : 'Building function'}
-        <AnimatedEllipsis />
       </StyledInfoContainer>
     </StyledOutput>
   );
