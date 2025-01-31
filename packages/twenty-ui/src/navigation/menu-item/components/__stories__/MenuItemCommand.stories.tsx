@@ -35,6 +35,15 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
+export const WithDescription: Story = {
+  args: {
+    text: 'Menu item',
+    hotKeys: ['⌘', '1'],
+    description: 'Description',
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
   args: {
     text: 'Menu item',
@@ -55,15 +64,6 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
-        },
-        {
-          name: 'withDescription',
-          values: [true, false],
-          props: (withDescription: boolean) => ({
-            description: withDescription ? 'Description' : undefined,
-          }),
-          labels: (withDescription: boolean) =>
-            withDescription ? 'With description' : 'Without description',
         },
         {
           name: 'states',
