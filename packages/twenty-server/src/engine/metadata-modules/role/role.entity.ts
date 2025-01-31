@@ -1,3 +1,5 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -8,19 +10,24 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 
+@ObjectType()
 @Entity('role')
 export class RoleEntity {
+  @Field({ nullable: false })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field({ nullable: false })
   @Column({ nullable: false })
   label: string;
 
   @Column({ nullable: false, default: false })
   canUpdateAllSettings: boolean;
 
+  @Field({ nullable: false })
   @Column({ nullable: true, type: 'text' })
   description: string;
 
@@ -33,6 +40,7 @@ export class RoleEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @Field({ nullable: false })
   @Column({ nullable: false, default: true })
   isEditable: boolean;
 
@@ -41,4 +49,7 @@ export class RoleEntity {
     (userWorkspaceRole: UserWorkspaceRoleEntity) => userWorkspaceRole.role,
   )
   userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
+
+  @Field(() => [WorkspaceMember], { nullable: true })
+  workspaceMembers?: WorkspaceMember[];
 }

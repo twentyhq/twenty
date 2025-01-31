@@ -1,4 +1,5 @@
 export * from './constants/FieldForTotalCountAggregateOperation';
+export * from './constants/SettingsFeatures';
 export * from './constants/TwentyCompaniesBaseUrl';
 export * from './constants/TwentyIconsBaseUrl';
 export * from './types/FieldMetadataType';
