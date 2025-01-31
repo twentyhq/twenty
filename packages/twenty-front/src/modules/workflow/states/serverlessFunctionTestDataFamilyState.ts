@@ -13,7 +13,10 @@ export type ServerlessFunctionTestData = {
   height: number;
 };
 
-export const DEFAULT_OUTPUT_VALUE = 'Enter an input above then press "Test"';
+export const DEFAULT_OUTPUT_VALUE = {
+  data: 'Enter an input above then press "Test"',
+  status: ServerlessFunctionExecutionStatus.IDLE,
+};
 
 export const serverlessFunctionTestDataFamilyState = createFamilyState<
   ServerlessFunctionTestData,
@@ -24,6 +27,6 @@ export const serverlessFunctionTestDataFamilyState = createFamilyState<
     language: 'plaintext',
     height: 64,
     input: {},
-    output: { data: DEFAULT_OUTPUT_VALUE },
+    output: DEFAULT_OUTPUT_VALUE,
   },
 });
