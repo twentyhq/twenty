@@ -109,13 +109,8 @@ export default defineConfig(({ command, mode }) => {
         include: [
           '**/CurrencyDisplay.tsx',
           '**/EllipsisDisplay.tsx',
-          '**/ContactLink.tsx',
           '**/BooleanDisplay.tsx',
           '**/LinksDisplay.tsx',
-          '**/RoundedLink.tsx',
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
-          '**/Tag.tsx',
           '**/MultiSelectFieldDisplay.tsx',
           '**/RatingInput.tsx',
           '**/RecordTableCellContainer.tsx',
@@ -127,7 +122,6 @@ export default defineConfig(({ command, mode }) => {
           '**/RecordTableTd.tsx',
           '**/RecordTableHeaderDragDropColumn.tsx',
           '**/ActorDisplay.tsx',
-          '**/AvatarChip.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -136,7 +130,7 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      exclude: ['../../node_modules/.vite/*', '../../node_modules/.cache/*'],
     },
 
     build: {

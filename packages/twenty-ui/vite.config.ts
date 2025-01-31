@@ -43,11 +43,13 @@ export default defineConfig(({ command }) => {
       checker(checkersConfig),
       wyw({
         include: [
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
-          '**/Tag.tsx',
           '**/Avatar.tsx',
           '**/AvatarChip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/ContactLink.tsx',
+          '**/RoundedLink.tsx'
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -58,6 +60,7 @@ export default defineConfig(({ command }) => {
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
+      minify: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {
@@ -74,6 +77,7 @@ export default defineConfig(({ command }) => {
       },
       rollupOptions: {
         // External packages that should not be bundled into your library.
+        // Way to many dependencies here
         external: Object.keys(packageJson.dependencies || {}),
       },
     },
