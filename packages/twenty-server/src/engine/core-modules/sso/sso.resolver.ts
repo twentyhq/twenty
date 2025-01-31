@@ -50,14 +50,10 @@ export class SSOResolver {
 
   @Mutation(() => GetAuthorizationUrlOutput)
   async getAuthorizationUrl(@Args('input') params: GetAuthorizationUrlInput) {
-    try {
-      return await this.sSOService.getAuthorizationUrl(
-        params.identityProviderId,
-        omit(params, ['identityProviderId']),
-      );
-    } catch (err) {
-      console.log('>>>>>>>>>>>>>>', err);
-    }
+    return await this.sSOService.getAuthorizationUrl(
+      params.identityProviderId,
+      omit(params, ['identityProviderId']),
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
