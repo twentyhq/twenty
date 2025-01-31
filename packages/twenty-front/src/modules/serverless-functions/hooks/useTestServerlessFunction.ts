@@ -30,7 +30,7 @@ export const useTestServerlessFunction = ({
         setIsBuilding(false);
       }
       setIsTesting(true);
-      await sleep(500); // Delay artificially to avoid flashing the UI
+      await sleep(200); // Delay artificially to avoid flashing the UI
       const result = await executeOneServerlessFunction({
         id: serverlessFunctionId,
         payload: serverlessFunctionTestData.input,
