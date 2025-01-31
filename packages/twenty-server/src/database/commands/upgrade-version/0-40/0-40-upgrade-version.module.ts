@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AddContextToActorCompositeTypeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-add-context-to-actor-composite-type';
 
 import { MigrateAggregateOperationOptionsCommand } from 'src/database/commands/upgrade-version/0-40/0-40-migrate-aggregate-operations-options.command';
 import { UpdateInactiveWorkspaceStatusCommand } from 'src/database/commands/upgrade-version/0-40/0-40-update-inactive-workspace-status.command';
@@ -17,6 +18,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
@@ -44,12 +46,14 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,
     WorkspaceMetadataVersionModule,
+    WorkspaceDataSourceModule,
     TypeORMModule,
   ],
   providers: [
     UpgradeTo0_40Command,
     MigrateAggregateOperationOptionsCommand,
     UpdateInactiveWorkspaceStatusCommand,
+    AddContextToActorCompositeTypeCommand,
   ],
 })
 export class UpgradeTo0_40CommandModule {}

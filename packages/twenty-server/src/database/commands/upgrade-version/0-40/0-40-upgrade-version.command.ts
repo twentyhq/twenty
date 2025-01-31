@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { AddContextToActorCompositeTypeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-add-context-to-actor-composite-type';
 import { MigrateAggregateOperationOptionsCommand } from 'src/database/commands/upgrade-version/0-40/0-40-migrate-aggregate-operations-options.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -17,6 +18,7 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly migrateAggregateOperationOptionsCommand: MigrateAggregateOperationOptionsCommand,
+    private readonly addContextToActorCompositeTypeCommand: AddContextToActorCompositeTypeCommand,
   ) {
     super(workspaceRepository);
   }
@@ -29,6 +31,12 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     this.logger.log('Running command to upgrade to 0.40');
 
     await this.migrateAggregateOperationOptionsCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.addContextToActorCompositeTypeCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
