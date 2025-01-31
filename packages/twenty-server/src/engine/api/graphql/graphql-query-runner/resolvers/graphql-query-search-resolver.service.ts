@@ -78,34 +78,41 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
 
     const countQueryBuilder = queryBuilder.clone();
 
-    const resultsWithTsVector = (await queryBuilder
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            searchTerms === ''
-              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
-            searchTerms === '' ? {} : { searchTerms },
-          ).orWhere(
-            searchTermsOr === ''
-              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
-            searchTermsOr === '' ? {} : { searchTermsOr },
-          );
-        }),
-      )
-      .orderBy(
-        `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-        'DESC',
-      )
-      .addOrderBy(
-        `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
-        'DESC',
-      )
-      .setParameter('searchTerms', searchTerms)
-      .setParameter('searchTermsOr', searchTermsOr)
-      .take(limit)
-      .getMany()) as ObjectRecord[];
+    const resultsQueryBuilder =
+      searchTerms !== ''
+        ? queryBuilder
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(
+                  `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
+                  { searchTerms },
+                ).orWhere(
+                  `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
+                  { searchTermsOr },
+                );
+              }),
+            )
+            .orderBy(
+              `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
+              'DESC',
+            )
+            .addOrderBy(
+              `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
+              'DESC',
+            )
+            .setParameter('searchTerms', searchTerms)
+            .setParameter('searchTermsOr', searchTermsOr)
+            .take(limit)
+        : queryBuilder
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
+              }),
+            )
+            .take(limit);
+
+    const resultsWithTsVector =
+      (await resultsQueryBuilder.getMany()) as ObjectRecord[];
 
     const objectRecords = formatResult<ObjectRecord[]>(
       resultsWithTsVector,
