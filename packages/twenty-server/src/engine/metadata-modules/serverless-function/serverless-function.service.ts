@@ -282,13 +282,6 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.serverlessFunctionRepository.update(
-      existingServerlessFunction.id,
-      {
-        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
-      },
-    );
-
     return this.serverlessFunctionRepository.findOneBy({
       id: existingServerlessFunction.id,
     });
