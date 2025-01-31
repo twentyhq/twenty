@@ -72,7 +72,7 @@ export const shouldFilterException = (exception: Error): boolean => {
   return false;
 };
 
-const handleException = (
+export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,

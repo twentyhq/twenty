@@ -5,20 +5,14 @@ import { NextFunction, Request, Response } from 'express';
 import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 
 @Injectable()
-export class GraphQLHydrateRequestFromTokenMiddleware
-  implements NestMiddleware
-{
+export class RestCoreMiddleware implements NestMiddleware {
   constructor(private readonly middlewareService: MiddlewareService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (this.middlewareService.checkUnauthenticatedAccess(req)) {
-      return next();
-    }
-
     try {
-      await this.middlewareService.authenticateGraphqlRequest(req);
+      await this.middlewareService.authenticateRestRequest(req);
     } catch (error) {
-      this.middlewareService.writeGraphqlResponseOnExceptionCaught(res, error);
+      this.middlewareService.writeRestResponseOnExceptionCaught(res, error);
 
       return;
     }
