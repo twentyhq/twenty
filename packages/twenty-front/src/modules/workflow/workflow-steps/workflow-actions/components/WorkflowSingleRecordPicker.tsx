@@ -140,6 +140,7 @@ export const WorkflowSingleRecordPicker = ({
             selectedRecord={selectedRecord}
             objectNameSingular={objectNameSingular}
             onRemove={handleUnlinkVariable}
+            disabled={disabled}
           />
           {!disabled && (
             <DropdownScope dropdownScopeId={dropdownId}>

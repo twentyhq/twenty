@@ -52,7 +52,7 @@ export const WorkflowSingleRecordFieldChip = ({
     return (
       <VariableChipStandalone
         rawVariableName={objectMetadataItem.labelSingular}
-        onRemove={disabled ? onRemove : undefined}
+        onRemove={disabled ? undefined : onRemove}
       />
     );
   }
