@@ -107,6 +107,10 @@ export const LocalePicker = () => {
       label: t`Chinese — Traditional`,
       value: APP_LOCALES['zh-Hant'],
     },
+    {
+      label: t`Japanese`,
+      value: 'ja',
+    },
   ];
   if (isDebugMode) {
     localeOptions.push({
