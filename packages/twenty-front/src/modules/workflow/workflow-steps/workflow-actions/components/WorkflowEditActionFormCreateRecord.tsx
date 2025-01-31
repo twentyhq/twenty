@@ -177,6 +177,7 @@ export const WorkflowEditActionFormCreateRecord = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
+        disabled={isFormDisabled}
       />
       <WorkflowStepBody>
         <Select
