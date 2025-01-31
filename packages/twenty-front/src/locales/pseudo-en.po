@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: pseudo-en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -269,11 +275,11 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:98
 msgid "Chinese — Simplified"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:102
 msgid "Chinese — Traditional"
 msgstr ""
 
@@ -617,7 +623,7 @@ msgstr ""
 msgid "Endpoint URL"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
 msgid "English"
 msgstr ""
 
@@ -743,7 +749,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
 msgid "French"
 msgstr ""
 
@@ -770,7 +776,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
 msgid "German"
 msgstr ""
 
@@ -867,8 +873,12 @@ msgstr ""
 msgid "Invite your team"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
 msgid "Italian"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+msgid "Korean"
 msgstr ""
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
@@ -1131,8 +1141,16 @@ msgstr ""
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
-msgid "Portuguese"
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+msgid "Portuguese (Portugal)"
 msgstr ""
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
@@ -1146,7 +1164,7 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:108
 msgid "Pseudo-English"
 msgstr ""
 
@@ -1326,7 +1344,7 @@ msgstr ""
 msgid "Sort"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
 msgid "Spanish"
 msgstr ""
 
