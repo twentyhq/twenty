@@ -247,7 +247,6 @@ export {
   IconTextSize,
   IconTextWrap,
   IconTimelineEvent,
-  IconTool,
   IconTrash,
   IconTrashX,
   IconUnlink,
