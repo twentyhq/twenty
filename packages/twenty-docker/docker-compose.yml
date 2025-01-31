@@ -17,6 +17,8 @@ services:
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
+      - ${SSL_KEY_PATH}:${SSL_KEY_PATH}
+      - ${SSL_CERT_PATH}:${SSL_CERT_PATH}
     ports:
       - "3000:3000"
     environment:
