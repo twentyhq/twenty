@@ -18,7 +18,7 @@ export class EnvironmentService {
     );
   }
 
-  getAll(includeSensitive = false): Record<
+  getAll(): Record<
     string,
     {
       value: EnvironmentVariables[keyof EnvironmentVariables];
@@ -49,13 +49,10 @@ export class EnvironmentService {
       );
 
       if (metadata) {
-        const rawValue =
+        const value =
           this.configService.get(key) ??
           envVars[key as keyof EnvironmentVariables] ??
           '';
-
-        const value =
-          metadata.sensitive && !includeSensitive ? '••••••••' : rawValue;
 
         result[key] = {
           value,

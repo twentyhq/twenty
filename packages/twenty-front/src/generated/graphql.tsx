@@ -1285,11 +1285,6 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
-export type QueryGetEnvironmentVariablesGroupedArgs = {
-  includeSensitive?: Scalars['Boolean'];
-};
-
-
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
@@ -2207,9 +2202,7 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
 
-export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{
-  includeSensitive?: Scalars['Boolean'];
-}>;
+export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, standalone: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
@@ -3826,8 +3819,8 @@ export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLo
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
 export const GetEnvironmentVariablesGroupedDocument = gql`
-    query GetEnvironmentVariablesGrouped($includeSensitive: Boolean! = false) {
-  getEnvironmentVariablesGrouped(includeSensitive: $includeSensitive) {
+    query GetEnvironmentVariablesGrouped {
+  getEnvironmentVariablesGrouped {
     groups {
       groupName
       standalone {
@@ -3862,7 +3855,6 @@ export const GetEnvironmentVariablesGroupedDocument = gql`
  * @example
  * const { data, loading, error } = useGetEnvironmentVariablesGroupedQuery({
  *   variables: {
- *      includeSensitive: // value for 'includeSensitive'
  *   },
  * });
  */
