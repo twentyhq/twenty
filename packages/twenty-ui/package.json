@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "0.40.7",
+  "version": "0.40.8",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
