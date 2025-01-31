@@ -57,6 +57,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withDescription',
+          values: [true, false],
+          props: (withDescription: boolean) => ({
+            description: withDescription ? 'Description' : undefined,
+          }),
+          labels: (withDescription: boolean) =>
+            withDescription ? 'With description' : 'Without description',
+        },
+        {
           name: 'states',
           values: ['default', 'hover'],
           props: (state: string) => {
