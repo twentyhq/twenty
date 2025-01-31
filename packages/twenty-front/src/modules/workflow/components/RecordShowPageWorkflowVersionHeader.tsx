@@ -130,7 +130,10 @@ export const RecordShowPageWorkflowVersionHeader = ({
           Icon={IconPlayerStop}
           disabled={isWaitingForWorkflowVersion}
           onClick={() => {
-            return deactivateWorkflowVersion(workflowVersion.id);
+            return deactivateWorkflowVersion({
+              workflowVersionId: workflowVersion.id,
+              workflowId: workflowVersion.workflowId,
+            });
           }}
         />
       ) : null}

@@ -19,7 +19,7 @@ test('Login test', async ({ loginPage, page }) => {
     async () => {
       await page.waitForLoadState('networkidle');
       if (
-        page.url().includes('demo.twenty.com') ||
+        page.url().includes('app.twenty-next.com') ||
         !page.url().includes('app.localhost:3001')
       ) {
         await loginPage.clickLoginWithEmail();

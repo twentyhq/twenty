@@ -25,6 +25,7 @@ import { isDefined } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useLingui } from '@lingui/react/macro';
 
@@ -126,11 +127,15 @@ export const ObjectFilterDropdownFilterSelect = ({
   const { selectFilterDefinitionUsedInDropdown } =
     useSelectFilterDefinitionUsedInDropdown();
 
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+  );
+
   const { resetSelectedItem } = useSelectableList(OBJECT_FILTER_DROPDOWN_ID);
 
-  const handleEnter = (itemId: string) => {
+  const handleEnter = (fieldMetadataItemId: string) => {
     const selectedFilterDefinition = availableFilterDefinitions.find(
-      (item) => item.fieldMetadataId === itemId,
+      (item) => item.fieldMetadataId === fieldMetadataItemId,
     );
 
     if (!isDefined(selectedFilterDefinition)) {
@@ -142,6 +147,10 @@ export const ObjectFilterDropdownFilterSelect = ({
     selectFilterDefinitionUsedInDropdown({
       filterDefinition: selectedFilterDefinition,
     });
+
+    setFieldMetadataItemIdUsedInDropdown(
+      selectedFilterDefinition.fieldMetadataId,
+    );
 
     closeAdvancedFilterDropdown();
   };
