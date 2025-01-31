@@ -22,7 +22,13 @@ export const useDeactivateWorkflowVersion = () => {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const deactivateWorkflowVersion = async (workflowVersionId: string) => {
+  const deactivateWorkflowVersion = async ({
+    workflowVersionId,
+    workflowId,
+  }: {
+    workflowVersionId: string;
+    workflowId: string;
+  }) => {
     await mutate({
       variables: {
         workflowVersionId,
@@ -31,7 +37,7 @@ export const useDeactivateWorkflowVersion = () => {
         {
           query: findManyWorkflowVersionsQuery,
           variables: {
-            id: workflowVersionId,
+            workflowId,
           },
         },
       ],

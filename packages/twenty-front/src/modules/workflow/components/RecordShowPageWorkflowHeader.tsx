@@ -122,9 +122,10 @@ export const RecordShowPageWorkflowHeader = ({
               workflowWithCurrentVersion,
             );
 
-            return deactivateWorkflowVersion(
-              workflowWithCurrentVersion.currentVersion.id,
-            );
+            return deactivateWorkflowVersion({
+              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+              workflowId: workflowWithCurrentVersion.id,
+            });
           }}
         />
       ) : null}
