@@ -1,4 +1,5 @@
 export * from './constants/FieldForTotalCountAggregateOperation';
+export * from './constants/Locales';
 export * from './constants/TwentyCompaniesBaseUrl';
 export * from './constants/TwentyIconsBaseUrl';
 export * from './types/ConnectedAccountProvider';
