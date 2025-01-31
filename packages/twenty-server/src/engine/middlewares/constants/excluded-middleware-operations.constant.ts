@@ -15,5 +15,5 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'IntrospectionQuery',
   'ExchangeAuthorizationCode',
   'GetAuthorizationUrl',
-  'GetPublicWorkspaceDataBySubdomain',
+  'GetPublicWorkspaceDataByDomain',
 ] as const;
