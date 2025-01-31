@@ -353,7 +353,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
         {activeTabId === 'test' && (
           <RightDrawerFooter
             actions={[
-              <CmdEnterActionButton title="Test" onClick={handleRunFunction} />,
+              <CmdEnterActionButton
+                title="Test"
+                onClick={handleRunFunction}
+                disabled={isTesting || isBuilding}
+              />,
             ]}
           />
         )}
