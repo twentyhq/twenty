@@ -4,6 +4,7 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverl
 import { isDefined } from 'twenty-ui';
 import { useState } from 'react';
 import { useBuildDraftServerlessFunction } from '@/settings/serverless-functions/hooks/useBuildDraftServerlessFunction';
+import { sleep } from '~/utils/sleep';
 
 export const useTestServerlessFunction = ({
   serverlessFunctionId,
@@ -29,6 +30,7 @@ export const useTestServerlessFunction = ({
         setIsBuilding(false);
       }
       setIsTesting(true);
+      await sleep(500); // Delay artificially to avoid flashing the UI
       const result = await executeOneServerlessFunction({
         id: serverlessFunctionId,
         payload: serverlessFunctionTestData.input,
