@@ -109,7 +109,7 @@ export const LocalePicker = () => {
     },
     {
       label: t`Japanese`,
-      value: 'ja',
+      value: APP_LOCALES.ja,
     },
   ];
   if (isDebugMode) {

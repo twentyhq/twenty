@@ -10,5 +10,5 @@ export const APP_LOCALES = {
   'zh-Hans': 'zh-Hans',
   'zh-Hant': 'zh-Hant',
   'pseudo-en': 'pseudo-en',
-  
+  ja: 'ja',
 } as const;
