@@ -53,7 +53,7 @@ export const EditableTitle: Story = {
       expect(args.onTitleChange).toHaveBeenCalledWith('');
     });
 
-    await userEvent.type(titleInput, `{selectall}{space}${NEW_TITLE}`);
+    await userEvent.type(titleInput, NEW_TITLE);
 
     await waitFor(() => {
       expect(args.onTitleChange).toHaveBeenCalledWith(NEW_TITLE);
