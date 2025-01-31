@@ -12,15 +12,19 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([User, AppToken, Workspace], 'core'),
+    TypeOrmModule.forFeature(
+      [User, AppToken, Workspace, UserWorkspace],
+      'core',
+    ),
     TypeORMModule,
     DataSourceModule,
     EmailModule,
