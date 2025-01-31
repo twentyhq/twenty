@@ -64,7 +64,7 @@ export const ServerlessFunctionExecutionResult = ({
   const ErrorLeftNode = (
     <StyledOutput accent="error">
       <IconSquareRoundedX size={theme.icon.size.md} />
-      400 Error - {serverlessFunctionTestData.output.duration}ms
+      500 Error - {serverlessFunctionTestData.output.duration}ms
     </StyledOutput>
   );
 

@@ -356,6 +356,10 @@ export class ServerlessFunctionService {
     version: string;
     workspaceId: string;
   }) {
+    if (version === 'draft') {
+      return;
+    }
+
     const serverlessFunction = await this.findOneOrFail({
       id,
       workspaceId,
@@ -408,7 +412,7 @@ export class ServerlessFunctionService {
 
     if (functionToBuild.syncStatus === ServerlessFunctionSyncStatus.BUILDING) {
       throw new ServerlessFunctionException(
-        'This function is already built or building. Please try later',
+        'This function is currently building. Please try later',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_BUILDING,
       );
     }
