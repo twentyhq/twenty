@@ -58,8 +58,8 @@ export const peopleQueryResult = {
           email: 'asd.com',
           name: {
             __typename: 'FullName',
-            firstName: 'Test ',
-            lastName: 'tTest',
+            firstName: 'Test',
+            lastName: 'Test',
           },
           noteTargets: {
             __typename: 'NoteTargetConnection',

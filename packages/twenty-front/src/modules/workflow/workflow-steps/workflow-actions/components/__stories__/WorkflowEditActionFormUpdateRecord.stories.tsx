@@ -166,7 +166,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     }
 
     const selectedRecord = await canvas.findByText(
-      peopleMock.name.firstName + peopleMock.name.lastName,
+      `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
     );
     expect(selectedRecord).toBeVisible();
 

@@ -146,7 +146,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const selectedRecordToDelete = await canvas.findByText(
-      peopleMock.name.firstName + peopleMock.name.lastName,
+      `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
     );
 
     expect(selectedRecordToDelete).toBeVisible();
