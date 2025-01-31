@@ -316,6 +316,7 @@ export const useAuth = () => {
     };
   }, [
     getCurrentUser,
+    getWorkspaceUrl,
     isOnAWorkspace,
     setCurrentUser,
     setCurrentWorkspace,
