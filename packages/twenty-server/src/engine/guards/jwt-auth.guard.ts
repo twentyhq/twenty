@@ -27,6 +27,7 @@ export class JwtAuthGuard implements CanActivate {
       request.workspaceId = data.workspace.id;
       request.workspaceMetadataVersion = metadataVersion;
       request.workspaceMemberId = data.workspaceMemberId;
+      request.userWorkspaceId = data.userWorkspaceId;
 
       return true;
     } catch (error) {
