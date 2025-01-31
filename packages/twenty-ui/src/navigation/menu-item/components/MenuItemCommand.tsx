@@ -115,9 +115,7 @@ export const MenuItemCommand = ({
         )}
         <StyledTextContainer>
           <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
-          {description && (
-            <StyledDescription>{`${description}`}</StyledDescription>
-          )}
+          {description && <StyledDescription>{description}</StyledDescription>}
         </StyledTextContainer>
         {RightComponent}
       </StyledMenuItemLeftContent>
