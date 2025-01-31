@@ -12,7 +12,6 @@ export class RestCoreMiddleware implements NestMiddleware {
     try {
       await this.middlewareService.authenticateRestRequest(req);
     } catch (error) {
-      // console.error(typeof error);
       this.middlewareService.writeRestResponseOnExceptionCaught(res, error);
 
       return;

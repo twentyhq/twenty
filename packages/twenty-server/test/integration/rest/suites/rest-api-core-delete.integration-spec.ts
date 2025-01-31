@@ -50,8 +50,7 @@ describe('Core REST API Delete One endpoint', () => {
     await makeGraphqlAPIRequest(graphqlOperation)
       .expect(400)
       .expect((res) => {
-        expect(res.body.errors).toBeTruthy();
-        expect(res.body.errors[0].message).toContain(`Record not found`);
+        expect(res.body.error.message).toContain(`Record not found`);
       });
   });
 
@@ -68,10 +67,10 @@ describe('Core REST API Delete One endpoint', () => {
     await makeRestAPIRequest('delete', `/people/${FAKE_PERSON_ID}`)
       .expect(400)
       .expect((res) => {
-        expect(res.body.errors).toBeTruthy();
-        expect(res.body.errors[0].message).toContain(
+        expect(res.body.messages[0]).toContain(
           `Could not find any entity of type "person"`,
         );
+        expect(res.body.error).toBe('Bad Request');
       });
   });
 
@@ -79,10 +78,9 @@ describe('Core REST API Delete One endpoint', () => {
     await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
       authorization: '',
     })
-      .expect(500)
+      .expect(401)
       .expect((res) => {
-        expect(res.body.errors).toBeTruthy();
-        expect(res.body.errors[0].code).toBe('UNAUTHENTICATED');
+        expect(res.body.error).toBe('UNAUTHENTICATED');
       });
   });
 
@@ -90,10 +88,20 @@ describe('Core REST API Delete One endpoint', () => {
     await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
       authorization: 'Bearer invalid-token',
     })
-      .expect(500)
+      .expect(401)
       .expect((res) => {
-        expect(res.body.errors).toBeTruthy();
-        expect(res.body.errors[0].code).toBe('UNAUTHENTICATED');
+        expect(res.body.error).toBe('UNAUTHENTICATED');
+      });
+  });
+
+  it('1.e. should return an UnauthorizedException when an expired token is provided', async () => {
+    await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
+      authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}`,
+    })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body.error).toBe('UNAUTHENTICATED');
+        expect(res.body.messages[0]).toBe('Token has expired.'); // Adjust this based on your API's error response
       });
   });
 });

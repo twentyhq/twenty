@@ -3,16 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import { EXCLUDED_MIDDLEWARE_OPERATIONS } from 'src/engine/middlewares/constants/excluded-middleware-operations.constant';
 import { GraphqlTokenValidationProxy } from 'src/engine/middlewares/utils/graphql-token-validation-utils';
-import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
+import {
+  handleException,
+  handleExceptionAndConvertToGraphQLError,
+} from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { CustomException } from 'src/utils/custom-exception';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -45,28 +51,24 @@ export class MiddlewareService {
   }
 
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
-    const errors = [handleException(error, this.exceptionHandlerService)];
-    const getStatus = () => {
-      if (this.hasErrorStatus(error)) {
-        return error.status;
-      }
+    // capture and handle custom exceptions
+    handleException(error as CustomException, this.exceptionHandlerService);
 
-      return 500;
-    };
-
-    const statusCode = getStatus();
+    const statusCode = this.getStatus(error);
 
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
     res.write(
       JSON.stringify({
-        errors,
+        statusCode,
+        messages: [error?.message || INTERNAL_SERVER_ERROR],
+        error: error?.code || ErrorCode.INTERNAL_SERVER_ERROR,
       }),
     );
 
     res.end();
   }
 
-  public writeGraphqlResponseOnExceptionCaught(res: Response, error: unknown) {
+  public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
     const errors = [
       handleExceptionAndConvertToGraphQLError(
         error as Error,
@@ -74,7 +76,12 @@ export class MiddlewareService {
       ),
     ];
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    const statusCode = 200;
+
+    res.writeHead(statusCode, {
+      'Content-Type': 'application/json',
+    });
+
     res.write(
       JSON.stringify({
         errors,
@@ -139,5 +146,22 @@ export class MiddlewareService {
     request.workspaceId = data.workspace.id;
     request.workspaceMetadataVersion = metadataVersion;
     request.workspaceMemberId = data.workspaceMemberId;
+  }
+
+  private getStatus(error: any): number {
+    if (this.hasErrorStatus(error)) {
+      return error.status;
+    }
+
+    if (error instanceof CustomException) {
+      switch (error.code) {
+        case AuthExceptionCode.UNAUTHENTICATED:
+          return 401;
+        default:
+          return 400;
+      }
+    }
+
+    return 500;
   }
 }

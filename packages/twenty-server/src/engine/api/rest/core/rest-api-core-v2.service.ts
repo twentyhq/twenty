@@ -52,11 +52,9 @@ export class RestApiCoreServiceV2 {
 
     await repository.delete(recordId);
 
-    return this.formatResult(
-      'delete',
-      objectMetadataNameSingular,
-      recordToDelete,
-    );
+    return this.formatResult('delete', objectMetadataNameSingular, {
+      id: recordToDelete.id,
+    });
   }
 
   private formatResult<T>(
