@@ -4,6 +4,7 @@ import { IsObject, IsOptional } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
 export enum ServerlessFunctionExecutionStatus {
+  IDLE = 'IDLE',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
 }
