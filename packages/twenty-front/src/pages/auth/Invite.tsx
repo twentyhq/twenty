@@ -1,11 +1,7 @@
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
-import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { useMemo } from 'react';
-import { AnimatedEaseIn } from 'twenty-ui';
 
-import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
+import { SignInUp } from '~/pages/auth/SignInUp';
 
 export const Invite = () => {
   const { workspace: workspaceFromInviteHash } = useWorkspaceFromInviteHash();
@@ -16,12 +12,7 @@ export const Invite = () => {
 
   return (
     <>
-      <AnimatedEaseIn>
-        <Logo secondaryLogo={workspaceFromInviteHash?.logo} />
-      </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      <SignInUpWorkspaceScopeFormEffect />
-      <SignInUpWorkspaceScopeForm />
+      <SignInUp />
     </>
   );
 };

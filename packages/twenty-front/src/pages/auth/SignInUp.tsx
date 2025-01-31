@@ -21,31 +21,27 @@ import { useMemo } from 'react';
 import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
-import { useSearchParams } from 'react-router-dom';
+import { useMatch, useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { AppPath } from '@/types/AppPath';
 
 const StandardContent = ({
   workspacePublicData,
   signInUpForm,
   signInUpStep,
+  title,
 }: {
   workspacePublicData: PublicWorkspaceDataOutput | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
+  title: string;
 }) => {
   return (
     <>
       <AnimatedEaseIn>
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
-      <Title animate>
-        Welcome to{' '}
-        {!isDefined(workspacePublicData?.displayName)
-          ? DEFAULT_WORKSPACE_NAME
-          : workspacePublicData?.displayName === ''
-            ? 'Your Workspace'
-            : workspacePublicData?.displayName}
-      </Title>
+      <Title animate>{title}</Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
     </>
@@ -63,6 +59,22 @@ export const SignInUp = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const [searchParams] = useSearchParams();
+
+  const currentPage = useMatch(AppPath.Invite);
+
+  const title = useMemo(() => {
+    if (isDefined(currentPage) && currentPage.pattern.path === AppPath.Invite) {
+      return `Join ${workspacePublicData?.displayName ?? ''} team`;
+    }
+
+    return `Welcome to ${
+      !isDefined(workspacePublicData?.displayName)
+        ? DEFAULT_WORKSPACE_NAME
+        : workspacePublicData?.displayName === ''
+          ? 'Your Workspace'
+          : workspacePublicData?.displayName
+    }`;
+  }, [workspacePublicData?.displayName, currentPage]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;
@@ -110,6 +122,7 @@ export const SignInUp = () => {
       workspacePublicData={workspacePublicData}
       signInUpForm={signInUpForm}
       signInUpStep={signInUpStep}
+      title={title}
     />
   );
 };

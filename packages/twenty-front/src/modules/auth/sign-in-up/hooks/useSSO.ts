@@ -5,11 +5,13 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useApolloClient } from '@apollo/client';
+import { useParams } from 'react-router-dom';
 
 export const useSSO = () => {
   const apolloClient = useApolloClient();
-  const { enqueueSnackBar } = useSnackBar();
+  const workspaceInviteHash = useParams().workspaceInviteHash;
 
+  const { enqueueSnackBar } = useSnackBar();
   const { redirect } = useRedirect();
 
   const redirectToSSOLoginPage = async (identityProviderId: string) => {
@@ -18,7 +20,7 @@ export const useSSO = () => {
       authorizationUrlForSSOResult = await apolloClient.mutate({
         mutation: GET_AUTHORIZATION_URL,
         variables: {
-          input: { identityProviderId },
+          input: { identityProviderId, workspaceInviteHash },
         },
       });
     } catch (error: any) {

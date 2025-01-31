@@ -21,6 +21,7 @@ export type OIDCRequest = Omit<
     email: string;
     firstName?: string | null;
     lastName?: string | null;
+    workspaceInviteHash?: string;
   };
 };
 
@@ -50,12 +51,17 @@ export class OIDCAuthStrategy extends PassportStrategy(
       ...options,
       state: JSON.stringify({
         identityProviderId: req.params.identityProviderId,
+        ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
+        ...(req.query.workspaceInviteHash
+          ? { workspaceInviteHash: req.query.workspaceInviteHash }
+          : {}),
       }),
     });
   }
 
   private extractState(req: Request): {
     identityProviderId: string;
+    workspaceInviteHash: string;
   } {
     try {
       const state = JSON.parse(
@@ -70,6 +76,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
       return {
         identityProviderId: state.identityProviderId,
+        workspaceInviteHash: state.workspaceInviteHash,
       };
     } catch (err) {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
@@ -92,6 +99,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
       done(null, {
         email: userinfo.email,
+        workspaceInviteHash: state.workspaceInviteHash,
         identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),

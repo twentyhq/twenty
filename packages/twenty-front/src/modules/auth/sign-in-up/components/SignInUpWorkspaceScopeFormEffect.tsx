@@ -47,14 +47,14 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return;
     }
 
-    if (workspaceAuthProviders.sso.length > 1) {
-      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
-    }
-
     const hasOnlySSOProvidersEnabled =
       !workspaceAuthProviders.google &&
       !workspaceAuthProviders.microsoft &&
       !workspaceAuthProviders.password;
+
+    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length > 1) {
+      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
+    }
 
     if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length === 1) {
       redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
