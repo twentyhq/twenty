@@ -1,3 +1,4 @@
+export * from './animation/components/AnimatedCircleLoading';
 export * from './animation/components/AnimatedContainer';
 export * from './animation/components/AnimatedEaseIn';
 export * from './animation/components/AnimatedEaseInOut';

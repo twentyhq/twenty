@@ -51,7 +51,6 @@ export class GoogleAuthController {
       email,
       picture,
       workspaceInviteHash,
-      workspacePersonalInviteToken,
       workspaceId,
       billingCheckoutSessionState,
     } = req.user;
@@ -65,7 +64,7 @@ export class GoogleAuthController {
 
     try {
       const invitation =
-        currentWorkspace && workspacePersonalInviteToken && email
+        currentWorkspace && email
           ? await this.authService.findInvitationForSignInUp({
               currentWorkspace,
               email,

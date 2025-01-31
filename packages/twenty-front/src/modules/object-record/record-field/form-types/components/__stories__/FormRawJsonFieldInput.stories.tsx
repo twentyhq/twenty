@@ -83,6 +83,45 @@ export const SaveValidJson: Story = {
   },
 };
 
+export const SaveValidMultilineJson: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    await userEvent.type(
+      editor,
+      '{{{Enter}  "a": {{{Enter}    "b" : "d"{Enter}  }{Enter}}',
+    );
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith(
+        '{\n  "a": {\n    "b" : "d"\n  }\n}',
+      );
+    });
+  },
+};
+
+export const MultilineWithDefaultValue: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    defaultValue: '{\n  "a": {\n    "b" : "d"\n  }\n}',
+  },
+  play: async ({ canvasElement }) => {
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    await waitFor(() => {
+      expect((editor as HTMLElement).innerText).toBe(
+        '{\n  "a": {\n    "b" : "d"\n  }\n}',
+      );
+    });
+  },
+};
+
 export const DoesNotIgnoreInvalidJson: Story = {
   args: {
     placeholder: 'Enter valid json',

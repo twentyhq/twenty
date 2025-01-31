@@ -20,6 +20,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,6 +39,8 @@ export class AccessTokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
   async generateAccessToken(
@@ -87,11 +90,18 @@ export class AccessTokenService {
 
       tokenWorkspaceMemberId = workspaceMember.id;
     }
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId: user.id,
+        workspaceId,
+      },
+    });
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
+      userWorkspaceId: userWorkspace?.id,
     };
 
     return {
@@ -108,10 +118,10 @@ export class AccessTokenService {
 
     const decoded = await this.jwtWrapperService.decode(token);
 
-    const { user, apiKey, workspace, workspaceMemberId } =
+    const { user, apiKey, workspace, workspaceMemberId, userWorkspaceId } =
       await this.jwtStrategy.validate(decoded as JwtPayload);
 
-    return { user, apiKey, workspace, workspaceMemberId };
+    return { user, apiKey, workspace, workspaceMemberId, userWorkspaceId };
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {

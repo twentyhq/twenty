@@ -29,11 +29,13 @@ import { EmailVerificationModule } from 'src/engine/core-modules/email-verificat
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -45,7 +47,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -70,6 +71,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         FeatureFlag,
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
+        UserWorkspace,
       ],
       'core',
     ),

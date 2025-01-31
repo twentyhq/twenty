@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -269,11 +275,11 @@ msgstr "Change {to}"
 msgid "Change Password"
 msgstr "Change Password"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
 msgid "Chinese — Simplified"
 msgstr "Chinese — Simplified"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
 msgid "Chinese — Traditional"
 msgstr "Chinese — Traditional"
 
@@ -617,7 +623,7 @@ msgstr "Empty"
 msgid "Endpoint URL"
 msgstr "Endpoint URL"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:71
 msgid "English"
 msgstr "English"
 
@@ -743,7 +749,7 @@ msgstr "Filter"
 msgid "Filters"
 msgstr "Filters"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:75
 msgid "French"
 msgstr "French"
 
@@ -770,7 +776,7 @@ msgstr "Functions"
 msgid "General"
 msgstr "General"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:83
 msgid "German"
 msgstr "German"
 
@@ -867,9 +873,13 @@ msgstr "Invite link sent to email addresses"
 msgid "Invite your team"
 msgstr "Invite your team"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:87
 msgid "Italian"
 msgstr "Italian"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
+msgid "Korean"
+msgstr "Korean"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
 msgid "Lab"
@@ -1131,9 +1141,25 @@ msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this A
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Please type {confirmationText} to confirm you want to delete this webhook."
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
-msgid "Portuguese"
-msgstr "Portuguese"
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+msgid "Portuguese — Brazil"
+msgstr "Portuguese — Brazil"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+msgid "Portuguese — Portugal"
+msgstr "Portuguese — Portugal"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
@@ -1146,7 +1172,7 @@ msgstr "Preview"
 msgid "Profile"
 msgstr "Profile"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "Pseudo-English"
 msgstr "Pseudo-English"
 
@@ -1326,7 +1352,7 @@ msgstr "Skip"
 msgid "Sort"
 msgstr "Sort"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:79
 msgid "Spanish"
 msgstr "Spanish"
 

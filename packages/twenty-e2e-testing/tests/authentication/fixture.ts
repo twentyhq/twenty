@@ -1,10 +1,10 @@
 import { test as base } from '../../lib/fixtures/screenshot';
-import { LoginPage } from '../../lib/pom/loginPage';
+import { ConfirmationModal } from '../../lib/pom/helper/confirmationModal';
 import { LeftMenu } from '../../lib/pom/leftMenu';
-import { SettingsPage } from '../../lib/pom/settingsPage';
+import { LoginPage } from '../../lib/pom/loginPage';
 import { MembersSection } from '../../lib/pom/settings/membersSection';
 import { ProfileSection } from '../../lib/pom/settings/profileSection';
-import { ConfirmationModal } from '../../lib/pom/helper/confirmationModal';
+import { SettingsPage } from '../../lib/pom/settingsPage';
 
 type Fixtures = {
   confirmationModal: ConfirmationModal;
