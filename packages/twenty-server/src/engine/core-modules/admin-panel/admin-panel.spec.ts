@@ -7,6 +7,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -17,6 +19,7 @@ const WorkspaceFindOneMock = jest.fn();
 const FeatureFlagUpdateMock = jest.fn();
 const FeatureFlagSaveMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
+const EnvironmentServiceGetAllMock = jest.fn();
 
 jest.mock(
   'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum',
@@ -59,6 +62,12 @@ describe('AdminPanelService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
+          },
+        },
+        {
+          provide: EnvironmentService,
+          useValue: {
+            getAll: EnvironmentServiceGetAllMock,
           },
         },
       ],
@@ -213,5 +222,116 @@ describe('AdminPanelService', () => {
     );
 
     expect(UserFindOneMock).toHaveBeenCalled();
+  });
+
+  describe('getEnvironmentVariablesGrouped', () => {
+    it('should correctly group environment variables', () => {
+      EnvironmentServiceGetAllMock.mockReturnValue({
+        VAR_1: {
+          value: 'value1',
+          metadata: {
+            group: 'GROUP_1',
+            description: 'Description 1',
+          },
+        },
+        VAR_2: {
+          value: 'value2',
+          metadata: {
+            group: 'GROUP_1',
+            subGroup: 'SUBGROUP_1',
+            description: 'Description 2',
+            sensitive: true,
+          },
+        },
+        VAR_3: {
+          value: 'value3',
+          metadata: {
+            group: 'GROUP_2',
+            description: 'Description 3',
+          },
+        },
+      });
+
+      const result = service.getEnvironmentVariablesGrouped();
+
+      expect(result).toEqual({
+        groups: expect.arrayContaining([
+          expect.objectContaining({
+            groupName: 'GROUP_1',
+            standalone: [
+              {
+                name: 'VAR_1',
+                value: 'value1',
+                description: 'Description 1',
+                sensitive: false,
+              },
+            ],
+            subgroups: [
+              {
+                subgroupName: 'SUBGROUP_1',
+                variables: [
+                  {
+                    name: 'VAR_2',
+                    value: 'value2',
+                    description: 'Description 2',
+                    sensitive: true,
+                  },
+                ],
+              },
+            ],
+          }),
+          expect.objectContaining({
+            groupName: 'GROUP_2',
+            standalone: [
+              {
+                name: 'VAR_3',
+                value: 'value3',
+                description: 'Description 3',
+                sensitive: false,
+              },
+            ],
+            subgroups: [],
+          }),
+        ]),
+      });
+    });
+
+    it('should sort groups by position and variables alphabetically', () => {
+      EnvironmentServiceGetAllMock.mockReturnValue({
+        Z_VAR: {
+          value: 'valueZ',
+          metadata: {
+            group: 'GROUP_1',
+            description: 'Description Z',
+          },
+        },
+        A_VAR: {
+          value: 'valueA',
+          metadata: {
+            group: 'GROUP_1',
+            description: 'Description A',
+          },
+        },
+      });
+
+      const result = service.getEnvironmentVariablesGrouped();
+
+      const group = result.groups.find(
+        (g) => g.groupName === ('GROUP_1' as EnvironmentVariablesGroup),
+      );
+
+      expect(group?.standalone[0].name).toBe('A_VAR');
+      expect(group?.standalone[1].name).toBe('Z_VAR');
+    });
+
+    it('should handle empty environment variables', () => {
+      EnvironmentServiceGetAllMock.mockReturnValue({});
+
+      const result = service.getEnvironmentVariablesGrouped();
+
+      expect(result).toEqual({
+        groups: [],
+      });
+    });
   });
 });
