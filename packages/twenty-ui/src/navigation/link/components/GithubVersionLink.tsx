@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { IconBrandGithub } from '@ui/display';
+import { IconBrandGithub } from '@tabler/icons-react';
 import { ActionLink } from '@ui/navigation/link/components/ActionLink';
 import { GITHUB_LINK } from '../constants/GithubLink';
 

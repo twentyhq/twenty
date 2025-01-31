@@ -6,7 +6,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { ColorSample, ColorSampleVariant } from '@ui/display';
+import { ColorSample, ColorSampleVariant } from '@ui/display/color/components/ColorSample';
 import { ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 

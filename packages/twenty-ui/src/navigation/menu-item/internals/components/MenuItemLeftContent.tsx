@@ -3,11 +3,10 @@ import { isString } from '@sniptt/guards';
 import { ReactNode } from 'react';
 
 import styled from '@emotion/styled';
-import {
-  IconComponent,
-  IconGripVertical,
-  OverflowingTextWithTooltip,
-} from '@ui/display';
+
+import { IconGripVertical } from '@tabler/icons-react';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import {
   StyledDraggableItem,
   StyledMenuItemLabel,

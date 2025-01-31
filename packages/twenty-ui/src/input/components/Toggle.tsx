@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { VisibilityHiddenInput } from '@ui/accessibility';
+import { VisibilityHiddenInput } from '@ui/accessibility/components/VisibilityHiddenInput';
 import { motion } from 'framer-motion';
 
 export type ToggleSize = 'small' | 'medium';

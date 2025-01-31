@@ -9,9 +9,9 @@ import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, stringToHslColor } from '@ui/utilities';
-import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
+import { stringToHslColor } from '@ui/utilities/color/utils/stringToHslColor';
 import { getImageAbsoluteURI } from 'twenty-shared';
+import { Nullable } from 'vitest';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -63,6 +63,7 @@ export type AvatarProps = {
   color?: string;
   backgroundColor?: string;
   onClick?: () => void;
+  baseUrl: string;
 };
 
 // TODO: Remove recoil because we don't want it into twenty-ui and find a solution for invalid avatar urls
@@ -77,6 +78,7 @@ export const Avatar = ({
   type = 'squared',
   color,
   backgroundColor,
+  baseUrl
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
@@ -86,7 +88,8 @@ export const Avatar = ({
   const avatarImageURI = isNonEmptyString(avatarUrl)
     ? getImageAbsoluteURI({
         imageUrl: avatarUrl,
-        baseUrl: REACT_APP_SERVER_BASE_URL,
+        // TODO outsource the URL computation, should not be done within twenty-ui
+        baseUrl,
       })
     : null;
 

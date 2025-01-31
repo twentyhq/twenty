@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { MouseEvent } from 'react';
 
 import {
-  FloatingIconButton,
-  FloatingIconButtonPosition,
-  FloatingIconButtonProps,
+    FloatingIconButton,
+    FloatingIconButtonPosition,
+    FloatingIconButtonProps,
 } from './FloatingIconButton';
 
 const StyledFloatingIconButtonGroupContainer = styled.div`

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconPoint } from '@ui/display';
-import { Toggle } from '@ui/input';
+import { IconPoint } from '@tabler/icons-react';
+import { Toggle } from '@ui/input/components/Toggle';
 import { MAIN_COLORS } from '@ui/theme';
 import { useId } from 'react';
 

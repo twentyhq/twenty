@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
 import { FunctionComponent, MouseEvent, ReactElement } from 'react';
 
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 
 const StyledLightIconButtonGroupContainer = styled.div`

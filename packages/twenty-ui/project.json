@@ -6,16 +6,7 @@
   "tags": ["scope:frontend"],
   "targets": {
     "build": {
-      "dependsOn": ["^build", "generateBarrels"]
-    },
-    "generateBarrels": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.js"],
-      "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
-      "options": {
-        "command": "node {projectRoot}/scripts/generateBarrels.js"
-      }
+      "dependsOn": ["^build"]
     },
     "lint": {
       "options": {

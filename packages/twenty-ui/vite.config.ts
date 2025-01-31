@@ -1,6 +1,8 @@
 /// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
+import { glob } from 'glob';
+import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -49,7 +51,7 @@ export default defineConfig(({ command }) => {
           '**/Tag.tsx',
           '**/OverflowingTextWithTooltip.tsx',
           '**/ContactLink.tsx',
-          '**/RoundedLink.tsx'
+          '**/RoundedLink.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -60,6 +62,7 @@ export default defineConfig(({ command }) => {
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
+      copyPublicDir: false,
       minify: false,
       outDir: './dist',
       reportCompressedSize: true,
@@ -76,9 +79,29 @@ export default defineConfig(({ command }) => {
         formats: ['es', 'cjs'],
       },
       rollupOptions: {
-        // External packages that should not be bundled into your library.
-        // Way to many dependencies here
         external: Object.keys(packageJson.dependencies || {}),
+        input: Object.fromEntries(
+          glob
+            .sync('src/**/*.{ts,tsx}', {
+              ignore: ['src/**/*.d.ts'],
+            })
+            .map((file) => [
+              // The name of the entry point
+              // lib/nested/foo.ts becomes nested/foo
+              path.relative(
+                'src',
+                file.slice(0, file.length - path.extname(file).length),
+              ),
+              // The absolute path to the entry file
+              // lib/nested/foo.ts becomes /project/lib/nested/foo.ts
+              // @ts-expect-error TODO LEAVE LIKE THAT FOR THE MOMENT FIND ESNEXT EQUIVALENT
+              fileURLToPath(new URL(file, import.meta.url)),
+            ]),
+        ),
+        output: {
+          assetFileNames: 'assets/[name][extname]',
+          entryFileNames: '[name].js',
+        }
       },
     },
   };

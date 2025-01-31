@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { isUndefined } from '@sniptt/guards';
 
-import { IconCheck } from '@ui/display';
+import { IconCheck } from '@tabler/icons-react';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 

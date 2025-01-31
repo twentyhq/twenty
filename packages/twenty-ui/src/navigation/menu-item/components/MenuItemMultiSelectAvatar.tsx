@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
-import { OverflowingTextWithTooltip } from '@ui/display';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox } from '@ui/input/components/Checkbox';
 import {
   StyledMenuItemBase,

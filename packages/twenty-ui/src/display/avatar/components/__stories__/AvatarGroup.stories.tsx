@@ -3,12 +3,9 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Avatar, AvatarProps } from '@ui/display/avatar/components/Avatar';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
-import {
-  AVATAR_URL_MOCK,
-  CatalogDecorator,
-  ComponentDecorator,
-} from '@ui/testing';
 
+import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 import { AvatarGroup, AvatarGroupProps } from '../AvatarGroup';
 
 const makeAvatar = (userName: string, props: Partial<AvatarProps> = {}) => (

@@ -6,7 +6,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconComponent } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 import { ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';

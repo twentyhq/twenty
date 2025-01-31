@@ -28938,7 +28938,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^11.0.0":
+"glob@npm:^11.0.0, glob@npm:^11.0.1":
   version: 11.0.1
   resolution: "glob@npm:11.0.1"
   dependencies:
@@ -45954,6 +45954,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
   dependencies:
+    glob: "npm:^11.0.1"
     twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft

@@ -5,7 +5,8 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconComponent, Tag } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { Tag } from '@ui/display/tag/components/Tag';
 import { ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 

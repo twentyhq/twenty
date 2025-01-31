@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
-import { IconChevronRight, IconComponent } from '@ui/display';
+import { IconChevronRight } from '@tabler/icons-react';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
-
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,

@@ -25,6 +25,7 @@ export type AvatarChipProps = {
   onClick?: (event: MouseEvent) => void;
   to?: string;
   maxWidth?: number;
+  baseUrl: string;
 };
 
 export enum AvatarChipVariant {
@@ -62,6 +63,7 @@ export const AvatarChip = ({
   to,
   size = ChipSize.Small,
   maxWidth,
+  baseUrl
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -102,6 +104,7 @@ export const AvatarChip = ({
             placeholder={name}
             size="sm"
             type={avatarType}
+            baseUrl={baseUrl}
           />
         )
       }

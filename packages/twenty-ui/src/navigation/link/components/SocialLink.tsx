@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { getDisplayValueByUrlType } from '@ui/utilities';
+import { getDisplayValueByUrlType } from '@ui/utilities/utils/getDisplayValueByUrlType';
 import { RoundedLink } from './RoundedLink';
 
 export enum LinkType {

@@ -1,6 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import React from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';

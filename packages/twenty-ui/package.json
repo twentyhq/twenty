@@ -4,10 +4,11 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+    "./*": {
+      "import": {
+        "types": "./dist/*.d.ts",
+        "default": "./dist/*.js"
+      }
     }
   },
   "dependencies": {
@@ -15,5 +16,8 @@
   },
   "scripts": {
     "build": "npx vite build"
+  },
+  "devDependencies": {
+    "glob": "^11.0.1"
   }
 }

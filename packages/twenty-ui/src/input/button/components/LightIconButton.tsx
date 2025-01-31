@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ComponentProps, MouseEvent } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';

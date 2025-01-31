@@ -2,8 +2,8 @@ import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
-import { IconComponent } from '@ui/display';
-import { LightIconButtonGroup } from '@ui/input';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
 import { ReactNode } from 'react';
 import { MenuItemIconButton } from './MenuItem';
 

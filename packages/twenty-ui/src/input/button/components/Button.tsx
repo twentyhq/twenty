@@ -3,8 +3,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Pill } from '@ui/components/Pill/Pill';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
-import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
+import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

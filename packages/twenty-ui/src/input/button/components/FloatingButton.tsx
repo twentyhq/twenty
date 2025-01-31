@@ -1,7 +1,7 @@
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { Link } from 'react-router-dom';
 
 export type FloatingButtonSize = 'small' | 'medium';
