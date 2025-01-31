@@ -2,10 +2,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { ENVIRONMENT_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/environment/constants/environment-variables-masking-config';
 import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-key';
 import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-names-key';
 import { EnvironmentVariablesMetadataOptions } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
+import { EnvironmentVariablesMaskingStrategies } from 'src/engine/core-modules/environment/enums/environment-variables-masking-strategies.enum';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
+import { environmentVariableMaskSensitiveData } from 'src/engine/core-modules/environment/utils/environment-variable-mask-sensitive-data.util';
 
 @Injectable()
 export class EnvironmentService {
@@ -49,10 +52,31 @@ export class EnvironmentService {
       );
 
       if (metadata) {
-        const value =
+        let value =
           this.configService.get(key) ??
           envVars[key as keyof EnvironmentVariables] ??
           '';
+
+        if (
+          typeof value === 'string' &&
+          key in ENVIRONMENT_VARIABLES_MASKING_CONFIG
+        ) {
+          const varMaskingConfig =
+            ENVIRONMENT_VARIABLES_MASKING_CONFIG[
+              key as keyof typeof ENVIRONMENT_VARIABLES_MASKING_CONFIG
+            ];
+          const options =
+            varMaskingConfig.strategy ===
+            EnvironmentVariablesMaskingStrategies.LAST_N_CHARS
+              ? { chars: varMaskingConfig.chars }
+              : undefined;
+
+          value = environmentVariableMaskSensitiveData(
+            value,
+            varMaskingConfig.strategy,
+            options,
+          );
+        }
 
         result[key] = {
           value,
