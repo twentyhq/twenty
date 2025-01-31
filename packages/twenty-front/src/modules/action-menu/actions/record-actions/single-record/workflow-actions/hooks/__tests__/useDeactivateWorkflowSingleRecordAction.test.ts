@@ -142,8 +142,9 @@ describe('useDeactivateWorkflowSingleRecordAction', () => {
       result.current.onClick();
     });
 
-    expect(deactivateWorkflowVersionMock).toHaveBeenCalledWith(
-      activeWorkflowMock.currentVersion.id,
-    );
+    expect(deactivateWorkflowVersionMock).toHaveBeenCalledWith({
+      workflowVersionId: activeWorkflowMock.currentVersion.id,
+      workflowId: activeWorkflowMock.id,
+    });
   });
 });

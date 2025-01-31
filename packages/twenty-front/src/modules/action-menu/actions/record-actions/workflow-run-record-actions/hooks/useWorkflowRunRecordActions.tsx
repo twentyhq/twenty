@@ -9,6 +9,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared';
@@ -61,7 +62,7 @@ export const useWorkflowRunRecordActions = ({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: name,
+        label: msg`${name}`, // eslint-disable-line lingui/no-single-variables-to-translate
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {

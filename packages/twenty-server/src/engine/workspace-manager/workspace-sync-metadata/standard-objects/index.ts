@@ -11,6 +11,7 @@ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/stand
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -68,6 +69,7 @@ export const standardObjectMetadataDefinitions = [
   MessageWorkspaceEntity,
   MessageChannelWorkspaceEntity,
   MessageParticipantWorkspaceEntity,
+  MessageFolderWorkspaceEntity,
   MessageChannelMessageAssociationWorkspaceEntity,
   NoteWorkspaceEntity,
   NoteTargetWorkspaceEntity,
