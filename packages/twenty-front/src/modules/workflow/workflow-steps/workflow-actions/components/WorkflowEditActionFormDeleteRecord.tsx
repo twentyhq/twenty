@@ -125,6 +125,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
+        disabled={isFormDisabled}
       />
       <WorkflowStepBody>
         <Select
@@ -157,6 +158,8 @@ export const WorkflowEditActionFormDeleteRecord = ({
           }
           objectNameSingular={formData.objectName}
           defaultValue={formData.objectRecordId}
+          testId="workflow-edit-action-record-delete-object-record-id"
+          disabled={isFormDisabled}
         />
       </WorkflowStepBody>
     </>
