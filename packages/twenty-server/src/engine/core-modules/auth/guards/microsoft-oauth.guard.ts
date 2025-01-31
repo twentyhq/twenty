@@ -36,29 +36,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
         });
       }
 
-      const workspaceInviteHash = request.query.inviteHash;
-      const workspacePersonalInviteToken = request.query.inviteToken;
-
-      if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-        request.params.workspaceInviteHash = workspaceInviteHash;
-      }
-
-      if (
-        workspacePersonalInviteToken &&
-        typeof workspacePersonalInviteToken === 'string'
-      ) {
-        request.params.workspacePersonalInviteToken =
-          workspacePersonalInviteToken;
-      }
-
-      if (
-        request.query.billingCheckoutSessionState &&
-        typeof request.query.billingCheckoutSessionState === 'string'
-      ) {
-        request.params.billingCheckoutSessionState =
-          request.query.billingCheckoutSessionState;
-      }
-
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       this.guardRedirectService.dispatchErrorFromGuard(
