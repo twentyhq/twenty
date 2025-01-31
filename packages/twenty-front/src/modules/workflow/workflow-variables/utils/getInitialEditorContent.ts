@@ -12,10 +12,6 @@ export const getInitialEditorContent = (rawContent: string): JSONContent => {
     const parts = line.split(CAPTURE_VARIABLE_TAG_REGEX);
 
     parts.forEach((part) => {
-      if (part.length === 0) {
-        return;
-      }
-
       if (isStandaloneVariableString(part)) {
         paragraphContent.push({
           type: 'variableTag',
