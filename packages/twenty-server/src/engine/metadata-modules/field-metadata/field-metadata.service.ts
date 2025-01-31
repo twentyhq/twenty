@@ -5,7 +5,7 @@ import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
 import { FieldMetadataType } from 'twenty-shared';
-import { DataSource, FindOneOptions, Repository } from 'typeorm';
+import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -96,195 +96,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const fieldMetadataRepository =
-        queryRunner.manager.getRepository<FieldMetadataEntity>(
-          FieldMetadataEntity,
-        );
-
-      const [objectMetadata] = await this.objectMetadataRepository.find({
-        where: {
-          id: fieldMetadataInput.objectMetadataId,
-          workspaceId: fieldMetadataInput.workspaceId,
-        },
-        relations: ['fields'],
-        order: {},
-      });
-
-      if (!objectMetadata) {
-        throw new FieldMetadataException(
-          'Object metadata does not exist',
-          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
-
-      if (!fieldMetadataInput.isRemoteCreation) {
-        assertMutationNotOnRemoteObject(objectMetadata);
-      }
-
-      // Double check in case the service is directly called
-      if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
-        if (
-          !fieldMetadataInput.options &&
-          fieldMetadataInput.type !== FieldMetadataType.RATING
-        ) {
-          throw new FieldMetadataException(
-            'Options are required for enum fields',
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        }
-      }
-
-      // Generate options for rating fields
-      if (fieldMetadataInput.type === FieldMetadataType.RATING) {
-        fieldMetadataInput.options = generateRatingOptions();
-      }
-
-      const fieldMetadataForCreate = {
-        id: v4(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...fieldMetadataInput,
-        isNullable: generateNullable(
-          fieldMetadataInput.type,
-          fieldMetadataInput.isNullable,
-          fieldMetadataInput.isRemoteCreation,
-        ),
-        defaultValue:
-          fieldMetadataInput.defaultValue ??
-          generateDefaultValue(fieldMetadataInput.type),
-        options: fieldMetadataInput.options
-          ? fieldMetadataInput.options.map((option) => ({
-              ...option,
-              id: uuidV4(),
-            }))
-          : undefined,
-        isActive: true,
-        isCustom: true,
-      };
-
-      this.validateFieldMetadata<CreateFieldInput>(
-        fieldMetadataForCreate.type,
-        fieldMetadataForCreate,
-        objectMetadata,
-      );
-
-      if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
-        validateNameAndLabelAreSyncOrThrow(
-          fieldMetadataForCreate.label,
-          fieldMetadataForCreate.name,
-        );
-      }
-
-      const createdFieldMetadata = await fieldMetadataRepository.save(
-        fieldMetadataForCreate,
-      );
-
-      if (!fieldMetadataInput.isRemoteCreation) {
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(`create-${createdFieldMetadata.name}`),
-          fieldMetadataInput.workspaceId,
-          [
-            {
-              name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: this.workspaceMigrationFactory.createColumnActions(
-                WorkspaceMigrationColumnActionType.CREATE,
-                createdFieldMetadata,
-              ),
-            } satisfies WorkspaceMigrationTableAction,
-          ],
-        );
-
-        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-          fieldMetadataInput.workspaceId,
-        );
-      }
-
-      // TODO: Move viewField creation to a cdc scheduler
-      const dataSourceMetadata =
-        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          fieldMetadataInput.workspaceId,
-        );
-
-      const workspaceDataSource =
-        await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-      const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
-
-      if (!workspaceQueryRunner) {
-        throw new FieldMetadataException(
-          'Could not create workspace query runner',
-          FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-        );
-      }
-
-      await workspaceQueryRunner.connect();
-      await workspaceQueryRunner.startTransaction();
-
-      try {
-        // TODO: use typeorm repository
-        const view = await workspaceQueryRunner?.query(
-          `SELECT id FROM ${dataSourceMetadata.schema}."view"
-      WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
-        );
-
-        if (!isEmpty(view)) {
-          const existingViewFields = (await workspaceQueryRunner?.query(
-            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
-      WHERE "viewId" = '${view[0].id}'`,
-          )) as ViewFieldWorkspaceEntity[];
-
-          const createdFieldIsAlreadyInView = existingViewFields.some(
-            (existingViewField) =>
-              existingViewField.fieldMetadataId === createdFieldMetadata.id,
-          );
-
-          if (!createdFieldIsAlreadyInView) {
-            const lastPosition = existingViewFields
-              .map((viewField) => viewField.position)
-              .reduce((acc, position) => {
-                if (position > acc) {
-                  return position;
-                }
-
-                return acc;
-              }, -1);
-
-            await workspaceQueryRunner?.query(
-              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
-    ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-    VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
-      view[0].id
-    }')`,
-            );
-          }
-        }
-        await workspaceQueryRunner.commitTransaction();
-      } catch (error) {
-        await workspaceQueryRunner.rollbackTransaction();
-        throw error;
-      } finally {
-        await workspaceQueryRunner.release();
-      }
-
-      await queryRunner.commitTransaction();
-
-      return createdFieldMetadata;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        fieldMetadataInput.workspaceId,
+    if (!createdFieldMetadata) {
+      throw new FieldMetadataException(
+        'Failed to create field metadata',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
+
+    return createdFieldMetadata;
   }
 
   override async updateOne(
@@ -799,5 +620,236 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return translatedMessage;
+  }
+
+  async createMany(
+    fieldMetadataInputs: CreateFieldInput[],
+  ): Promise<FieldMetadataEntity[]> {
+    if (!fieldMetadataInputs.length) {
+      return [];
+    }
+
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity>(
+          FieldMetadataEntity,
+        );
+
+      const inputsByObjectId = fieldMetadataInputs.reduce(
+        (acc, input) => {
+          if (!acc[input.objectMetadataId]) {
+            acc[input.objectMetadataId] = [];
+          }
+          acc[input.objectMetadataId].push(input);
+
+          return acc;
+        },
+        {} as Record<string, CreateFieldInput[]>,
+      );
+
+      const objectMetadataIds = Object.keys(inputsByObjectId);
+      const objectMetadatas = await this.objectMetadataRepository.find({
+        where: {
+          id: In(objectMetadataIds),
+          workspaceId: fieldMetadataInputs[0].workspaceId,
+        },
+        relations: ['fields'],
+      });
+
+      const objectMetadataMap = objectMetadatas.reduce(
+        (acc, obj) => {
+          acc[obj.id] = obj;
+
+          return acc;
+        },
+        {} as Record<string, ObjectMetadataEntity>,
+      );
+
+      const createdFieldMetadatas: FieldMetadataEntity[] = [];
+      const migrationActions: WorkspaceMigrationTableAction[] = [];
+
+      for (const objectMetadataId of objectMetadataIds) {
+        const objectMetadata = objectMetadataMap[objectMetadataId];
+        const inputs = inputsByObjectId[objectMetadataId];
+
+        if (!objectMetadata) {
+          throw new FieldMetadataException(
+            'Object metadata does not exist',
+            FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          );
+        }
+
+        for (const fieldMetadataInput of inputs) {
+          if (!fieldMetadataInput.isRemoteCreation) {
+            assertMutationNotOnRemoteObject(objectMetadata);
+          }
+
+          if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
+            if (
+              !fieldMetadataInput.options &&
+              fieldMetadataInput.type !== FieldMetadataType.RATING
+            ) {
+              throw new FieldMetadataException(
+                'Options are required for enum fields',
+                FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+              );
+            }
+          }
+
+          if (fieldMetadataInput.type === FieldMetadataType.RATING) {
+            fieldMetadataInput.options = generateRatingOptions();
+          }
+
+          const fieldMetadataForCreate = {
+            id: v4(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            ...fieldMetadataInput,
+            isNullable: generateNullable(
+              fieldMetadataInput.type,
+              fieldMetadataInput.isNullable,
+              fieldMetadataInput.isRemoteCreation,
+            ),
+            defaultValue:
+              fieldMetadataInput.defaultValue ??
+              generateDefaultValue(fieldMetadataInput.type),
+            options: fieldMetadataInput.options
+              ? fieldMetadataInput.options.map((option) => ({
+                  ...option,
+                  id: uuidV4(),
+                }))
+              : undefined,
+            isActive: true,
+            isCustom: true,
+          };
+
+          this.validateFieldMetadata<CreateFieldInput>(
+            fieldMetadataForCreate.type,
+            fieldMetadataForCreate,
+            objectMetadata,
+          );
+
+          if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
+            validateNameAndLabelAreSyncOrThrow(
+              fieldMetadataForCreate.label,
+              fieldMetadataForCreate.name,
+            );
+          }
+
+          const createdFieldMetadata = await fieldMetadataRepository.save(
+            fieldMetadataForCreate,
+          );
+
+          createdFieldMetadatas.push(createdFieldMetadata);
+
+          if (!fieldMetadataInput.isRemoteCreation) {
+            migrationActions.push({
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.CREATE,
+                createdFieldMetadata,
+              ),
+            });
+          }
+        }
+      }
+
+      if (migrationActions.length > 0) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`create-multiple-fields`),
+          fieldMetadataInputs[0].workspaceId,
+          migrationActions,
+        );
+
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          fieldMetadataInputs[0].workspaceId,
+        );
+      }
+
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          fieldMetadataInputs[0].workspaceId,
+        );
+
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+      const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
+
+      if (!workspaceQueryRunner) {
+        throw new FieldMetadataException(
+          'Could not create workspace query runner',
+          FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      await workspaceQueryRunner.connect();
+      await workspaceQueryRunner.startTransaction();
+
+      try {
+        for (const createdFieldMetadata of createdFieldMetadatas) {
+          const view = await workspaceQueryRunner?.query(
+            `SELECT id FROM ${dataSourceMetadata.schema}."view"
+            WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+          );
+
+          if (!isEmpty(view)) {
+            const existingViewFields = (await workspaceQueryRunner?.query(
+              `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+              WHERE "viewId" = '${view[0].id}'`,
+            )) as ViewFieldWorkspaceEntity[];
+
+            const createdFieldIsAlreadyInView = existingViewFields.some(
+              (existingViewField) =>
+                existingViewField.fieldMetadataId === createdFieldMetadata.id,
+            );
+
+            if (!createdFieldIsAlreadyInView) {
+              const lastPosition = existingViewFields
+                .map((viewField) => viewField.position)
+                .reduce((acc, position) => {
+                  if (position > acc) {
+                    return position;
+                  }
+
+                  return acc;
+                }, -1);
+
+              await workspaceQueryRunner?.query(
+                `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+                ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+                VALUES ('${createdFieldMetadata.id}', '${
+                  lastPosition + 1
+                }', true, 180, '${view[0].id}')`,
+              );
+            }
+          }
+        }
+        await workspaceQueryRunner.commitTransaction();
+      } catch (error) {
+        await workspaceQueryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await workspaceQueryRunner.release();
+      }
+
+      await queryRunner.commitTransaction();
+
+      return createdFieldMetadatas;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        fieldMetadataInputs[0].workspaceId,
+      );
+    }
   }
 }

@@ -265,13 +265,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       workspaceId,
     );
 
-    for (const customField of DEV_SEED_COMPANY_CUSTOM_FIELDS) {
-      // TODO: Use createMany once implemented for better performances
-      await this.fieldMetadataService.createOne({
+    await this.fieldMetadataService.createMany(
+      DEV_SEED_COMPANY_CUSTOM_FIELDS.map((customField) => ({
         ...customField,
         isCustom: true,
-      });
-    }
+      })),
+    );
   }
 
   async seedPeopleCustomFields(
@@ -289,11 +288,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       workspaceId,
     );
 
-    for (const customField of DEV_SEED_PERSON_CUSTOM_FIELDS) {
-      await this.fieldMetadataService.createOne({
+    await this.fieldMetadataService.createMany(
+      DEV_SEED_PERSON_CUSTOM_FIELDS.map((customField) => ({
         ...customField,
         isCustom: true,
-      });
-    }
+      })),
+    );
   }
 }
