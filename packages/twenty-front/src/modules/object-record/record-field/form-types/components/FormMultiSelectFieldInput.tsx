@@ -27,6 +27,7 @@ type FormMultiSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
+  testId?: string;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -68,6 +69,7 @@ export const FormMultiSelectFieldInput = ({
   VariablePicker,
   readonly,
   placeholder,
+  testId,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
   const theme = useTheme();
@@ -176,7 +178,7 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
