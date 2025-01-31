@@ -1,5 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import {
+  expect,
+  fn,
+  userEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from '@storybook/test';
 import { getUserDevice } from 'twenty-ui';
 import { FormTextFieldInput } from '../FormTextFieldInput';
 
@@ -45,18 +52,92 @@ export const Multiline: Story = {
   },
 };
 
-export const WithVariablePicker: Story = {
+export const MultilineWithDefaultValue: Story = {
   args: {
     label: 'Text',
+    defaultValue: 'Line 1\nLine 2\n\nLine 4',
     placeholder: 'Text field...',
-    VariablePicker: () => <div>VariablePicker</div>,
+    multiline: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variablePicker = await canvas.findByText('VariablePicker');
+    await canvas.findByText(/^Text$/);
 
-    expect(variablePicker).toBeVisible();
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+
+    expect((editor as HTMLElement).innerText).toBe('Line 1\nLine 2\n\nLine 4');
+  },
+};
+
+export const WithVariable: Story = {
+  args: {
+    label: 'Text',
+    placeholder: 'Text field...',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const addVariableButton = await canvas.findByRole('button', {
+      name: 'Add variable',
+    });
+
+    await userEvent.click(addVariableButton);
+
+    const variable = await canvas.findByText('test');
+    expect(variable).toBeVisible();
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith('{{test}}');
+    });
+    expect(args.onPersist).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const WithDeletableVariable: Story = {
+  args: {
+    label: 'Text',
+    placeholder: 'Text field...',
+    defaultValue: 'test {{a.b.variable}} test',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    const variable = await canvas.findByText('variable');
+    expect(variable).toBeVisible();
+
+    const deleteVariableButton = await canvas.findByRole('button', {
+      name: 'Remove variable',
+    });
+
+    await Promise.all([
+      waitForElementToBeRemoved(variable),
+
+      deleteVariableButton.click(),
+    ]);
+
+    expect(editor).toHaveTextContent('test test');
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith('test  test');
+    });
+    expect(args.onPersist).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -86,6 +167,28 @@ export const Disabled: Story = {
     expect(args.onPersist).not.toHaveBeenCalled();
     expect(canvas.queryByText('Hello')).not.toBeInTheDocument();
     expect(defaultValue).toBeVisible();
+  },
+};
+
+export const DisabledWithVariable: Story = {
+  args: {
+    label: 'Text',
+    defaultValue: 'test {{a.b.variable}} test',
+    readonly: true,
+  },
+  play: async ({ canvasElement }) => {
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+
+    expect(editor).toBeVisible();
+
+    await waitFor(() => {
+      expect(editor).toHaveTextContent('test variable test');
+    });
+
+    const deleteVariableButton = within(editor as HTMLElement).queryByRole(
+      'button',
+    );
+    expect(deleteVariableButton).not.toBeInTheDocument();
   },
 };
 
