@@ -7,6 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -44,6 +45,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     InboxService,
     WhatsappService,
     WhatsappResolver,
+    GoogleStorageService,
   ],
 })
 export class MetaModule {}
