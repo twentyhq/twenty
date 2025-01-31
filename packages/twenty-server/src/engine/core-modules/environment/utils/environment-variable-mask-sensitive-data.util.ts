@@ -5,11 +5,10 @@ export const environmentVariableMaskSensitiveData = (
   strategy: EnvironmentVariablesMaskingStrategies,
   options?: { chars?: number },
 ): string => {
-  if (!value) return value;
-
+  if (!value || typeof value !== 'string') return value;
   switch (strategy) {
     case EnvironmentVariablesMaskingStrategies.LAST_N_CHARS: {
-      const n = options?.chars ?? 5;
+      const n = Math.max(1, options?.chars ?? 5);
 
       return value.length > n ? `********${value.slice(-n)}` : '********';
     }
