@@ -92,11 +92,11 @@ export const LocalePicker = () => {
       value: APP_LOCALES.ko,
     },
     {
-      label: t`Portuguese (Portugal)`,
+      label: t`Portuguese — Portugal`,
       value: APP_LOCALES['pt-PT'],
     },
     {
-      label: t`Portuguese (Brazil)`,
+      label: t`Portuguese — Brazil`,
       value: APP_LOCALES['pt-BR'],
     },
     {

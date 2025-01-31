@@ -275,11 +275,11 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:98
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
 msgid "Chinese — Simplified"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:102
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
 msgid "Chinese — Traditional"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Endpoint URL"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:71
 msgid "English"
 msgstr ""
 
@@ -749,7 +749,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:75
 msgid "French"
 msgstr ""
 
@@ -776,7 +776,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:83
 msgid "German"
 msgstr ""
 
@@ -873,11 +873,11 @@ msgstr ""
 msgid "Invite your team"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:87
 msgid "Italian"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
 msgid "Korean"
 msgstr ""
 
@@ -1145,13 +1145,21 @@ msgstr ""
 #~ msgid "Portuguese"
 #~ msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
-msgid "Portuguese (Brazil)"
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+msgid "Portuguese — Brazil"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
-msgid "Portuguese (Portugal)"
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+msgid "Portuguese — Portugal"
 msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr ""
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr ""
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
@@ -1164,7 +1172,7 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:108
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "Pseudo-English"
 msgstr ""
 
@@ -1344,7 +1352,7 @@ msgstr ""
 msgid "Sort"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:79
 msgid "Spanish"
 msgstr ""
 
