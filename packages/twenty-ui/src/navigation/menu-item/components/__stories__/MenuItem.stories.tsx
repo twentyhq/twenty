@@ -1,12 +1,8 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '@ui/display';
-import {
-  CatalogDecorator,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { IconBell } from '@tabler/icons-react';
+import { CatalogDecorator, CatalogStory, ComponentDecorator } from '@ui/testing';
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';
 

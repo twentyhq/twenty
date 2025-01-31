@@ -1,10 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/display';
-import {
-  CatalogDecorator,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { IconCheckbox, IconNotes, IconTimelineEvent } from '@tabler/icons-react';
+import { CatalogDecorator, CatalogStory, ComponentDecorator } from '@ui/testing';
 import {
   IconButtonAccent,
   IconButtonSize,

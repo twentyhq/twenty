@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from '@ui/display';
+import { IconSearch } from '@tabler/icons-react';
 import {
   CatalogDecorator,
   CatalogStory,

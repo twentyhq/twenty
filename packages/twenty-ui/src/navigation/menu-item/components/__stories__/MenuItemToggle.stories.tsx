@@ -1,13 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '@ui/display';
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { IconBell } from '@tabler/icons-react';
+import { CatalogDecorator, CatalogDimension, CatalogOptions, CatalogStory, ComponentDecorator } from '@ui/testing';
 import { MenuItemToggle } from '../MenuItemToggle';
 
 const meta: Meta<typeof MenuItemToggle> = {

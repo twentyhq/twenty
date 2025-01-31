@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { Avatar } from '@ui/display';
+import { Avatar } from '@ui/display/avatar/components/Avatar';
 import {
   AVATAR_URL_MOCK,
   CatalogDecorator,
@@ -8,6 +7,7 @@ import {
   CatalogOptions,
   CatalogStory,
   ComponentDecorator,
+  SERVER_URL_MOCK,
 } from '@ui/testing';
 import { MenuItemMultiSelectAvatar } from '../MenuItemMultiSelectAvatar';
 
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof MenuItemMultiSelectAvatar>;
 export const Default: Story = {
   args: {
     text: 'First option',
-    avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
+    avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" baseUrl={SERVER_URL_MOCK}/>,
   },
   decorators: [ComponentDecorator],
 };
@@ -42,9 +42,9 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
           values: [true, false],
           props: (withAvatar: boolean) => ({
             avatar: withAvatar ? (
-              <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />
+              <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" baseUrl={SERVER_URL_MOCK}/>
             ) : (
-              <Avatar avatarUrl={''} placeholder="L" />
+              <Avatar avatarUrl={''} placeholder="L" baseUrl={SERVER_URL_MOCK}/>
             ),
           }),
           labels: (withAvatar: boolean) =>

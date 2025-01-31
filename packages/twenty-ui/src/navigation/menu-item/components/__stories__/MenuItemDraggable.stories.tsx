@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell, IconMinus } from '@ui/display';
+import { IconBell, IconMinus } from '@tabler/icons-react';
 import {
   CatalogDecorator,
   CatalogDimension,

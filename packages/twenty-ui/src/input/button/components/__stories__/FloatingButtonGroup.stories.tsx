@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconCheckbox, IconNotes, IconTimelineEvent } from '@ui/display';
+import { IconCheckbox, IconNotes, IconTimelineEvent } from '@tabler/icons-react';
 import {
   CatalogDecorator,
   CatalogStory,

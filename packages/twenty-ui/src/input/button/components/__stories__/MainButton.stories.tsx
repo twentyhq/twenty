@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { IconBrandGoogle } from '@ui/display';
+import { IconBrandGoogle } from '@tabler/icons-react';
 import { ComponentDecorator } from '@ui/testing';
 import { MainButton } from '../MainButton';
 

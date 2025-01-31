@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { IconArrowRight } from '@ui/display';
+import { IconArrowRight } from '@tabler/icons-react';
 import { ComponentDecorator } from '@ui/testing';
 import { RoundedIconButton } from '../RoundedIconButton';
 

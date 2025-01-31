@@ -94,7 +94,6 @@ export default defineConfig(({ command }) => {
               ),
               // The absolute path to the entry file
               // lib/nested/foo.ts becomes /project/lib/nested/foo.ts
-              // @ts-expect-error TODO LEAVE LIKE THAT FOR THE MOMENT FIND ESNEXT EQUIVALENT
               fileURLToPath(new URL(file, import.meta.url)),
             ]),
         ),

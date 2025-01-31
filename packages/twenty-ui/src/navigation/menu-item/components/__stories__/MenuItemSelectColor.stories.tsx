@@ -1,13 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ColorSampleVariant } from '@ui/display';
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { ColorSampleVariant } from '@ui/display/color/components/ColorSample';
+import { CatalogDecorator, CatalogDimension, CatalogOptions, CatalogStory, ComponentDecorator } from '@ui/testing';
 import { MAIN_COLOR_NAMES, ThemeColor } from '@ui/theme';
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 

@@ -1,10 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from '@ui/display';
-import {
-  CatalogDecorator,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { IconSearch } from '@tabler/icons-react';
+import { CatalogDecorator, CatalogStory, ComponentDecorator } from '@ui/testing';
 import {
   LightIconButton,
   LightIconButtonAccent,

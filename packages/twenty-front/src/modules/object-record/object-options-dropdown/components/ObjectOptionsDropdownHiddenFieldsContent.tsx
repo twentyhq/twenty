@@ -5,7 +5,7 @@ import {
   IconSettings,
   MenuItem,
   UndecoratedLink,
-} from 'twenty-ui';
+} from 'twenty-ui/index';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 

@@ -1,0 +1,1 @@
+export const SERVER_URL_MOCK = 'http://localhost:3000'

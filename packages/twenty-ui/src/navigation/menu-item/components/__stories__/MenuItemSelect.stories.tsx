@@ -1,15 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+
+import { IconBell } from '@tabler/icons-react';
+import { CatalogDecorator, CatalogDimension, CatalogOptions, CatalogStory, ComponentDecorator } from '@ui/testing';
 import { MenuItemSelect } from '../MenuItemSelect';
 
-import { IconBell } from '@ui/display';
+
 const meta: Meta<typeof MenuItemSelect> = {
   title: 'UI/Navigation/MenuItem/MenuItemSelect',
   component: MenuItemSelect,

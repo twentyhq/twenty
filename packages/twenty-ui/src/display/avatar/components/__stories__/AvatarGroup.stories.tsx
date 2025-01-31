@@ -4,13 +4,19 @@ import { Avatar, AvatarProps } from '@ui/display/avatar/components/Avatar';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 
+import { AVATAR_URL_MOCK, SERVER_URL_MOCK } from '@ui/testing';
 import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 import { AvatarGroup, AvatarGroupProps } from '../AvatarGroup';
 
 const makeAvatar = (userName: string, props: Partial<AvatarProps> = {}) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
-  <Avatar placeholder={userName} placeholderColorSeed={userName} {...props} />
+  <Avatar
+    placeholder={userName}
+    placeholderColorSeed={userName}
+    baseUrl={SERVER_URL_MOCK}
+    {...props}
+  />
 );
 
 const getAvatars = (commonProps: Partial<AvatarProps> = {}) => [
