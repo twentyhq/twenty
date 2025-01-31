@@ -1,8 +1,8 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
-import { usePathname, useRouter } from 'next/navigation';
 
 // @ts-expect-error Migration loader as text not passing warnings
 import tokenForm from '!css-loader!./token-form.css';
@@ -71,8 +71,8 @@ const TokenForm = ({
     let url: string;
     if (locationSetting === 'production') {
       url = 'https://api.twenty.com';
-    } else if (locationSetting === 'demo') {
-      url = 'https://api-demo.twenty.com';
+    } else if (locationSetting === 'next') {
+      url = 'https://api.twenty-next.com';
     } else if (locationSetting === 'localhost') {
       url = 'http://localhost:3000';
     } else {
