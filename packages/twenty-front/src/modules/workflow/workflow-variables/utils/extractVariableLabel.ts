@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 const CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX = /{{([^{}]+)}}/g;
 

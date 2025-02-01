@@ -9,7 +9,7 @@ import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filt
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const getQueryVariablesFromView = ({
   view,

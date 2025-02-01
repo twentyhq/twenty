@@ -24,7 +24,8 @@ import { Placement } from '@floating-ui/react';
 import { useCallback, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconPlus, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconPlus } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const StyledSelectableItem = styled(SelectableItem)`

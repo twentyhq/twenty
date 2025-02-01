@@ -1,9 +1,9 @@
+import { isDefined } from 'twenty-shared';
 import { createDefaultButton } from '~/contentScript/createButton';
 import changeSidePanelUrl from '~/contentScript/utils/changeSidepanelUrl';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
 import { createPerson, fetchPerson } from '~/db/person.db';
 import { PersonInput } from '~/db/types/person.types';
-import { isDefined } from '~/utils/isDefined';
 
 export const checkIfPersonExists = async () => {
   const { tab: activeTab } = await chrome.runtime.sendMessage({

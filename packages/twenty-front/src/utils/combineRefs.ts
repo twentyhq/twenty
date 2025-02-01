@@ -1,6 +1,6 @@
 import { isFunction } from '@sniptt/guards';
 import { MutableRefObject, Ref } from 'react';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const combineRefs = <T>(...refs: (Ref<T> | undefined)[]) => {
   return (node: T) => {

@@ -8,7 +8,7 @@ import { unsavedToDeleteViewFilterGroupIdsComponentFamilyState } from '@/views/s
 import { unsavedToUpsertViewFilterGroupsComponentFamilyState } from '@/views/states/unsavedToUpsertViewFilterGroupsComponentFamilyState';
 import { View } from '@/views/types/View';
 import { getCombinedViewFilterGroups } from '@/views/utils/getCombinedViewFilterGroups';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useGetViewFilterGroupsCombined = (viewBarComponentId?: string) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);

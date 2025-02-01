@@ -3,7 +3,7 @@ import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-fold
 import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const favoriteFoldersComponentSelector = createComponentSelectorV2<
   FavoriteFolder[]

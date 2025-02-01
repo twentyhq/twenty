@@ -9,9 +9,9 @@ import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConn
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;

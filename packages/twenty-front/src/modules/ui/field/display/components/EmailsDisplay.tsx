@@ -4,7 +4,7 @@ import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import styled from '@emotion/styled';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;

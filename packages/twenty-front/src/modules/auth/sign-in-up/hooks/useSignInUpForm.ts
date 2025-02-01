@@ -11,7 +11,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z

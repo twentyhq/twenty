@@ -6,5 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "npx vite build"
+  },
+  "dependencies": {
+    "twenty-shared": "workspace:*"
   }
 }

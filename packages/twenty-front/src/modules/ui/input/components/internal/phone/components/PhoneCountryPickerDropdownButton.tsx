@@ -5,8 +5,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconChevronDown, IconWorld } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
