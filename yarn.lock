@@ -39833,6 +39833,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-organize-imports@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "prettier-plugin-organize-imports@npm:4.1.0"
+  peerDependencies:
+    prettier: ">=2.0"
+    typescript: ">=2.9"
+    vue-tsc: ^2.1.0
+  peerDependenciesMeta:
+    vue-tsc:
+      optional: true
+  checksum: 10c0/fb2d6d415bac96b65a77ea7de9f708e8613436aeb9d82bbe63edeb312fd1362c0d3c57319bd4cc4adfc8b9964fb6c205cbbf8efd9546931b0f9874c0ae624a6a
+  languageName: node
+  linkType: hard
+
 "prettier@npm:2.8.8, prettier@npm:^2.0.0, prettier@npm:^2.8.0":
   version: 2.8.8
   resolution: "prettier@npm:2.8.8"
@@ -45827,6 +45841,8 @@ __metadata:
 "twenty-chrome-extension@workspace:packages/twenty-chrome-extension":
   version: 0.0.0-use.local
   resolution: "twenty-chrome-extension@workspace:packages/twenty-chrome-extension"
+  dependencies:
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -46269,6 +46285,7 @@ __metadata:
     playwright: "npm:^1.46.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
     prism-react-renderer: "npm:^2.1.0"
     qs: "npm:^6.11.2"
     raw-loader: "npm:^4.0.2"
