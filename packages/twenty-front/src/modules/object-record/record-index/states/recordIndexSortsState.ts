@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 

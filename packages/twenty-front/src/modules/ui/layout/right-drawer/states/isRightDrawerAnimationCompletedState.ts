@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 export const isRightDrawerAnimationCompletedState = createState<boolean>({
   key: 'isRightDrawerAnimationCompletedState',

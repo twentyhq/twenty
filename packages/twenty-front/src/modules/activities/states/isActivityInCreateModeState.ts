@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 export const isActivityInCreateModeState = createState<boolean>({
   key: 'isActivityInCreateModeState',

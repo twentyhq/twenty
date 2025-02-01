@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 import { AuthTokenPair } from '~/generated/graphql';
 import { cookieStorageEffect } from '~/utils/recoil-effects';

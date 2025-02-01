@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 export const isDebugModeState = createState<boolean>({
   key: 'isDebugModeState',

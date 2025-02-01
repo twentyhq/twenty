@@ -1,5 +1,5 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 type AggregateOperation = {
   operation: AGGREGATE_OPERATIONS | null;

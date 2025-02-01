@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 export const isEmailVerificationRequiredState = createState<boolean>({
   key: 'isEmailVerificationRequired',

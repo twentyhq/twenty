@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 import { RightDrawerTopBarDropdownButtons } from '@/ui/layout/right-drawer/types/RightDrawerTopBarDropdownButtons';
 

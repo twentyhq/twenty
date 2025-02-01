@@ -8,7 +8,7 @@ const jestConfig: JestConfigWithTsJest = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['../../node_modules/', "./dist/"],
+  transformIgnorePatterns: ['../../node_modules/', "dist"],
   transform: {
     '^.+\\.[tj]sx?$': [
       '@swc/jest',

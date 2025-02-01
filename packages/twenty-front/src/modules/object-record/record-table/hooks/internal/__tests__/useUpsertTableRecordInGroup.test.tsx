@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { ReactNode, act } from 'react';
 import { RecoilRoot } from 'recoil';
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';

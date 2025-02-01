@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui';
+import { createState } from "twenty-shared";
 
 import { ViewType } from '@/views/types/ViewType';
 
