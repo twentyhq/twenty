@@ -3,8 +3,8 @@ import { ReactNode, useEffect } from 'react';
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
+import { isDefined } from 'twenty-shared';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
-import { isDefined } from '~/utils/isDefined';
 
 type SelectableListProps = {
   children: ReactNode;

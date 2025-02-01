@@ -21,8 +21,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   width: 100%;

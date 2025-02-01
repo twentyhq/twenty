@@ -1,5 +1,5 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const shouldReplaceFilter = (
   oldFilter: Pick<RecordFilter, 'id' | 'fieldMetadataId' | 'viewFilterGroupId'>,

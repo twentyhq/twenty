@@ -8,7 +8,7 @@ import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useMultiObjectSearch = ({
   searchFilterValue,

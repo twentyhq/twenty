@@ -1,7 +1,8 @@
 import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconX, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconX } from 'twenty-ui';
 
 const StyledChip = styled.div<{ deletable: boolean }>`
   background-color: ${({ theme }) => theme.accent.quaternary};

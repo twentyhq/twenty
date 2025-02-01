@@ -15,7 +15,7 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 

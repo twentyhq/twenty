@@ -2,7 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {

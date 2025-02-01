@@ -5,7 +5,7 @@ import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { User, WorkspaceMember } from '~/generated-metadata/graphql';
 
 const insertScript = ({

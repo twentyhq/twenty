@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared';
 import {
   CreatePersonResponse,
   FindPersonResponse,
@@ -6,7 +7,6 @@ import {
 import { Person, PersonFilterInput } from '~/generated/graphql';
 import { CREATE_PERSON } from '~/graphql/person/mutations';
 import { FIND_PERSON } from '~/graphql/person/queries';
-import { isDefined } from '~/utils/isDefined';
 
 import { callMutation, callQuery } from '../utils/requestDb';
 

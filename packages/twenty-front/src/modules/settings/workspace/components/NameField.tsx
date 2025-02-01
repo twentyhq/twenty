@@ -7,8 +7,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
+import { isDefined } from 'twenty-shared';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { logError } from '~/utils/logError';
 

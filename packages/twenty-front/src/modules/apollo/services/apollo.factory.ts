@@ -13,8 +13,8 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { isDefined } from 'twenty-shared';
 import { AuthTokenPair } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { logDebug } from '~/utils/logDebug';
 
 import { GraphQLFormattedError } from 'graphql';

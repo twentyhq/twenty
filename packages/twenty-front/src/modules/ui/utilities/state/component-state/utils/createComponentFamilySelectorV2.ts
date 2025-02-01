@@ -9,7 +9,7 @@ import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-st
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export function createComponentFamilySelectorV2<
   ValueType,

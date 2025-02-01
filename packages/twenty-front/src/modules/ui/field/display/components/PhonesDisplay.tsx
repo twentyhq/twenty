@@ -7,7 +7,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { DEFAULT_PHONE_CALLING_CODE } from '@/object-record/record-field/meta-types/input/components/PhonesFieldInput';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {

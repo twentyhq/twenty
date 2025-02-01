@@ -11,7 +11,6 @@ import {
   IconPlus,
   IconRefresh,
   IconTrash,
-  isDefined,
   Section,
   useIcons,
 } from 'twenty-ui';
@@ -37,6 +36,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';

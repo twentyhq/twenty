@@ -5,7 +5,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useAddToFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {

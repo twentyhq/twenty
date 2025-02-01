@@ -9,6 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
   Icon123,
   IconCheck,
@@ -16,7 +17,6 @@ import {
   MenuItem,
   useIcons,
 } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   const {

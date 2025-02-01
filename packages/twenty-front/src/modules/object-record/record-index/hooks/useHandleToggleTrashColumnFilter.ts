@@ -11,7 +11,7 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;

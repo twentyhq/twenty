@@ -9,7 +9,7 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,

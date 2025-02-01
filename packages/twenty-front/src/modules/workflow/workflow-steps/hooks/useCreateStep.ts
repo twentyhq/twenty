@@ -11,7 +11,8 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { useIcons } from 'twenty-ui';
 
 export const useCreateStep = ({
   workflow,

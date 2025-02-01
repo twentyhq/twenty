@@ -1,20 +1,14 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
-import {
-  AnimatedEaseIn,
-  IconCheck,
-  isDefined,
-  MainButton,
-  RGBA,
-} from 'twenty-ui';
-
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import { AnimatedEaseIn, IconCheck, MainButton, RGBA } from 'twenty-ui';
 import {
   OnboardingStatus,
   useGetCurrentUserLazyQuery,

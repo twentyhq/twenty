@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { isDefined } from 'twenty-shared';
 import { PROFILING_REPORTER_DIV_ID } from '~/testing/profiling/constants/ProfilingReporterDivId';
 import { ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
 import { parseProfilingReportString } from '~/testing/profiling/utils/parseProfilingReportString';
-import { isDefined } from '~/utils/isDefined';
 
 export const getProfilingReportFromDocument = (
   documentElement: Element,
