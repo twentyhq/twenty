@@ -13,3 +13,6 @@ Run `npx nx start twenty-ui` to start the storybook development server on `local
 ## Running unit tests
 
 Run `npx nx test twenty-ui` to execute the unit tests via [Jest](https://jestjs.io).
+
+## Barrel and exports
+TODO add docs about common barrels and other default absolute exports

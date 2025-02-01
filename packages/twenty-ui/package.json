@@ -4,6 +4,18 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
+    "./themeType": {
+      "import": {
+        "types": "./dist/theme/index.d.ts",
+        "default": "./dist/theme/index.js"
+      }
+    },
+    "./testing": {
+      "import": {
+        "types": "./dist/testing/index.d.ts",
+        "default": "./dist/testing/index.js"
+      }
+    },
     "./*": {
       "import": {
         "types": "./dist/*.d.ts",
