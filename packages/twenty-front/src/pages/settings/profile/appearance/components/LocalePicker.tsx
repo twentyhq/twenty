@@ -92,6 +92,10 @@ export const LocalePicker = () => {
       value: APP_LOCALES.ko,
     },
     {
+      label: t`Japanese`,
+      value: APP_LOCALES.ja,
+    },
+    {
       label: t`Portuguese — Portugal`,
       value: APP_LOCALES['pt-PT'],
     },
@@ -106,10 +110,6 @@ export const LocalePicker = () => {
     {
       label: t`Chinese — Traditional`,
       value: APP_LOCALES['zh-Hant'],
-    },
-    {
-      label: t`Japanese`,
-      value: APP_LOCALES.ja,
     },
   ];
   if (isDebugMode) {
