@@ -124,6 +124,7 @@ export const CommandMenuList = ({
                             id={item.id}
                             Icon={item.Icon}
                             label={item.label}
+                            description={item.description}
                             to={item.to}
                             onClick={item.onCommandClick}
                             hotKeys={item.hotKeys}
