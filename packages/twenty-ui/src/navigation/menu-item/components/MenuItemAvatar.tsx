@@ -31,6 +31,7 @@ export type MenuItemAvatarProps = {
   testId?: string;
   text: string;
   hasSubMenu?: boolean;
+  baseUrl: string
 };
 
 // TODO: merge with MenuItem
@@ -46,6 +47,7 @@ export const MenuItemAvatar = ({
   avatar,
   hasSubMenu = false,
   text,
+  baseUrl
 }: MenuItemAvatarProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -76,6 +78,7 @@ export const MenuItemAvatar = ({
             placeholderColorSeed={avatar.placeholderColorSeed}
             size={avatar.size}
             type={avatar.type}
+            baseUrl={baseUrl}
           />
         )}
         <OverflowingTextWithTooltip text={text ?? ''} />
