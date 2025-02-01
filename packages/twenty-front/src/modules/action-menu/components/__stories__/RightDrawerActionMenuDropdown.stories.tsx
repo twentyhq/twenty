@@ -12,6 +12,7 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
@@ -21,6 +22,7 @@ import {
   IconTrash,
   MenuItemAccent,
 } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
@@ -30,6 +32,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RightDrawerActionMenuDropdown',
   component: RightDrawerActionMenuDropdown,
   decorators: [
+    I18nFrontDecorator,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {
@@ -62,7 +65,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'addToFavorites',
-            label: 'Add to favorites',
+            label: msg`Add to favorites`,
             position: 0,
             Icon: IconHeart,
             onClick: addToFavoritesMock,
@@ -72,7 +75,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'export',
-            label: 'Export',
+            label: msg`Export`,
             position: 1,
             Icon: IconFileExport,
             onClick: exportMock,
@@ -82,7 +85,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
             type: ActionMenuEntryType.Standard,
             scope: ActionMenuEntryScope.RecordSelection,
             key: 'delete',
-            label: 'Delete',
+            label: msg`Delete`,
             position: 2,
             Icon: IconTrash,
             onClick: deleteMock,

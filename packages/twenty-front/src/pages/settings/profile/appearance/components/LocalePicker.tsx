@@ -7,8 +7,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
+import { APP_LOCALES } from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -30,6 +32,9 @@ export const LocalePicker = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
+  const { refreshObjectMetadataItems } =
+    useRefreshObjectMetadataItems('network-only');
+
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
       throw new Error('User is not logged in');
@@ -47,51 +52,62 @@ export const LocalePicker = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
-  const handleLocaleChange = (value: string) => {
+  const handleLocaleChange = async (value: string) => {
     setCurrentWorkspaceMember({
       ...currentWorkspaceMember,
       ...{ locale: value },
     });
-    updateWorkspaceMember({ locale: value });
+    await updateWorkspaceMember({ locale: value });
 
-    dynamicActivate(value);
+    await dynamicActivate(value);
+    await refreshObjectMetadataItems();
   };
 
-  const localeOptions = [
+  const localeOptions: Array<{
+    label: string;
+    value: (typeof APP_LOCALES)[keyof typeof APP_LOCALES];
+  }> = [
     {
-      label: t`Portuguese`,
-      value: 'pt',
+      label: t`English`,
+      value: APP_LOCALES.en,
     },
     {
       label: t`French`,
-      value: 'fr',
-    },
-    {
-      label: t`German`,
-      value: 'de',
-    },
-    {
-      label: t`Italian`,
-      value: 'it',
+      value: APP_LOCALES.fr,
     },
     {
       label: t`Spanish`,
-      value: 'es',
+      value: APP_LOCALES.es,
     },
     {
-      label: t`English`,
-      value: 'en',
+      label: t`German`,
+      value: APP_LOCALES.de,
+    },
+    {
+      label: t`Italian`,
+      value: APP_LOCALES.it,
+    },
+    {
+      label: t`Korean`,
+      value: APP_LOCALES.ko,
+    },
+    {
+      label: t`Portuguese — Portugal`,
+      value: APP_LOCALES['pt-PT'],
+    },
+    {
+      label: t`Portuguese — Brazil`,
+      value: APP_LOCALES['pt-BR'],
     },
     {
       label: t`Chinese — Simplified`,
-      value: 'zh-Hans',
+      value: APP_LOCALES['zh-Hans'],
     },
     {
       label: t`Chinese — Traditional`,
-      value: 'zh-Hant',
+      value: APP_LOCALES['zh-Hant'],
     },
   ];
-
   if (isDebugMode) {
     localeOptions.push({
       label: t`Pseudo-English`,

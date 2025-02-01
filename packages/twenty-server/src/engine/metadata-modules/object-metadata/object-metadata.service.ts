@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import console from 'console';
-
 import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
+import { APP_LOCALES } from 'twenty-shared';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
@@ -540,7 +539,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   async resolveTranslatableString(
     objectMetadata: ObjectMetadataDTO,
     labelKey: 'labelPlural' | 'labelSingular' | 'description',
-    locale: string | undefined,
+    locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (objectMetadata.isCustom) {
       return objectMetadata[labelKey];
@@ -552,6 +551,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     i18n.activate(locale);
 
-    return i18n._(generateMessageId(objectMetadata[labelKey]));
+    const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
+    const translatedMessage = i18n._(messageId);
+
+    if (translatedMessage === messageId) {
+      return objectMetadata[labelKey] ?? '';
+    }
+
+    return translatedMessage;
   }
 }

@@ -8,24 +8,24 @@ import { ReactNode } from 'react';
 
 export type CommandMenuItemProps = {
   label: string;
+  description?: string;
   to?: string;
   id: string;
   onClick?: () => void;
   Icon?: IconComponent;
-  firstHotKey?: string;
-  secondHotKey?: string;
+  hotKeys?: string[];
   shouldCloseCommandMenuOnClick?: boolean;
   RightComponent?: ReactNode;
 };
 
 export const CommandMenuItem = ({
   label,
+  description,
   to,
   id,
   onClick,
   Icon,
-  firstHotKey,
-  secondHotKey,
+  hotKeys,
   shouldCloseCommandMenuOnClick,
   RightComponent,
 }: CommandMenuItemProps) => {
@@ -42,8 +42,8 @@ export const CommandMenuItem = ({
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
-      firstHotKey={firstHotKey}
-      secondHotKey={secondHotKey}
+      description={description}
+      hotKeys={hotKeys}
       onClick={() =>
         onItemClick({
           shouldCloseCommandMenuOnClick,

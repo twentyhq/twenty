@@ -20,15 +20,13 @@ type Story = StoryObj<typeof MenuItemCommand>;
 export const Default: Story = {
   args: {
     text: 'First option',
-    firstHotKey: '⌘',
-    secondHotKey: '1',
+    hotKeys: ['⌘', '1'],
   },
   render: (props) => (
     <MenuItemCommand
       LeftIcon={props.LeftIcon}
       text={props.text}
-      firstHotKey={props.firstHotKey}
-      secondHotKey={props.secondHotKey}
+      hotKeys={props.hotKeys}
       className={props.className}
       onClick={props.onClick}
       isSelected={false}
@@ -37,11 +35,19 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
+export const WithDescription: Story = {
+  args: {
+    text: 'Menu item',
+    hotKeys: ['⌘', '1'],
+    description: 'Description',
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
   args: {
     text: 'Menu item',
-    firstHotKey: '⌘',
-    secondHotKey: '1',
+    hotKeys: ['⌘', '1'],
   },
   argTypes: {
     className: { control: false },
@@ -85,8 +91,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
     <MenuItemCommand
       LeftIcon={props.LeftIcon}
       text={props.text}
-      firstHotKey={props.firstHotKey}
-      secondHotKey={props.secondHotKey}
+      hotKeys={props.hotKeys}
       className={props.className}
       onClick={props.onClick}
       isSelected={false}

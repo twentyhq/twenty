@@ -3,7 +3,23 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui';
+
+const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
+  background: ${({ theme, withIconBackground }) =>
+    withIconBackground ? theme.background.primary : 'unset'};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid
+    ${({ theme, withIconBackground }) =>
+      withIconBackground ? theme.border.color.medium : 'transparent'};
+  &:not(:first-of-type) {
+    margin-left: -${({ theme }) => theme.spacing(1)};
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const CommandMenuContextRecordChipAvatars = ({
   objectMetadataItem,
@@ -24,7 +40,9 @@ export const CommandMenuContextRecordChipAvatars = ({
   const theme = useTheme();
 
   return (
-    <>
+    <StyledIconWrapper
+      withIconBackground={recordChipData.avatarType !== 'rounded'}
+    >
       {Icon ? (
         <Icon color={IconColor} size={theme.icon.size.sm} />
       ) : (
@@ -36,6 +54,6 @@ export const CommandMenuContextRecordChipAvatars = ({
           size="sm"
         />
       )}
-    </>
+    </StyledIconWrapper>
   );
 };

@@ -97,6 +97,11 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
+  PERMISSIONS_ENABLED = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
   ANALYTICS_ENABLED = false;
 
   @IsString()
@@ -241,6 +246,14 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_MULTIWORKSPACE_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
+  CLOUDFLARE_API_KEY: string;
+
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
+  CLOUDFLARE_ZONE_ID: string;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)

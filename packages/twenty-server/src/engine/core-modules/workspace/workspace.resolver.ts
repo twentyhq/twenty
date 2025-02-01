@@ -33,10 +33,6 @@ import {
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -48,6 +44,7 @@ import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 
 import { Workspace } from './workspace.entity';
 
@@ -148,11 +145,9 @@ export class WorkspaceResolver {
       workspace.id,
     );
 
-    const filteredFeatureFlags = featureFlags.filter((flag) =>
+    return featureFlags.filter((flag) =>
       Object.values(FeatureFlagKey).includes(flag.key),
     );
-
-    return filteredFeatureFlags;
   }
 
   @Mutation(() => Workspace)
@@ -216,25 +211,31 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  hasValidEntrepriseKey(): boolean {
+  hasValidEnterpriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
+  @Query(() => CustomHostnameDetails, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async getHostnameDetails(
+    @AuthWorkspace() { hostname }: Workspace,
+  ): Promise<CustomHostnameDetails | undefined> {
+    if (!hostname) return undefined;
+
+    return await this.domainManagerService.getCustomHostnameDetails(hostname);
+  }
+
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+  async getPublicWorkspaceDataBySubdomain(
+    @OriginHeader() origin: string,
+  ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
         );
 
-      workspaceValidator.assertIsDefinedOrThrow(
-        workspace,
-        new WorkspaceException(
-          'Workspace not found',
-          WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-        ),
-      );
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       let workspaceLogoWithToken = '';
 
@@ -263,6 +264,7 @@ export class WorkspaceResolver {
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
         subdomain: workspace.subdomain,
+        hostname: workspace.hostname,
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

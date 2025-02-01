@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
+import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowRunOutput,
   WorkflowRunStatus,
@@ -19,7 +24,11 @@ export type WorkflowExecutorOutput = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
-  constructor(private readonly workflowActionFactory: WorkflowActionFactory) {}
+  constructor(
+    private readonly workflowActionFactory: WorkflowActionFactory,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   async execute({
     currentStepIndex,
@@ -63,6 +72,10 @@ export class WorkflowExecutorWorkspaceService {
     const error =
       result.error?.errorMessage ??
       (result.result ? undefined : 'Execution result error, no data or error');
+
+    if (!error) {
+      this.sendWorkflowNodeRunEvent();
+    }
 
     const updatedStepOutput = {
       id: step.id,
@@ -121,5 +134,21 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     return { ...updatedOutput, status: WorkflowRunStatus.FAILED };
+  }
+
+  private sendWorkflowNodeRunEvent() {
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
+      BILLING_FEATURE_USED,
+      [
+        {
+          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
+          value: 1,
+        },
+      ],
+      workspaceId,
+    );
   }
 }

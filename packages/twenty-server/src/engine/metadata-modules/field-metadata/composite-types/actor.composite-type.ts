@@ -1,9 +1,9 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
+import { v4 } from 'uuid';
 
-import {
-  CompositeProperty,
-  CompositeType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+
+import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum FieldActorSource {
   EMAIL = 'EMAIL',
@@ -23,12 +23,16 @@ export const actorCompositeType: CompositeType = {
       type: FieldMetadataType.SELECT,
       hidden: false,
       isRequired: true,
-      options: Object.keys(FieldActorSource).map((key, index) => ({
-        label: `${FieldActorSource[key].toLowerCase()}`,
-        value: key,
-        position: index,
-      })),
-    } as CompositeProperty<FieldMetadataType.SELECT>,
+      options: Object.keys(FieldActorSource).map(
+        (key, index) =>
+          ({
+            id: v4(),
+            label: `${FieldActorSource[key].toLowerCase()}`,
+            value: key,
+            position: index,
+          }) satisfies Required<FieldMetadataDefaultOption>,
+      ),
+    },
     {
       name: 'workspaceMemberId',
       type: FieldMetadataType.UUID,
@@ -41,6 +45,12 @@ export const actorCompositeType: CompositeType = {
       hidden: 'input',
       isRequired: true,
     },
+    {
+      name: 'context',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
@@ -48,4 +58,7 @@ export type ActorMetadata = {
   source: FieldActorSource;
   workspaceMemberId?: string;
   name: string;
+  context?: {
+    provider?: ConnectedAccountProvider;
+  };
 };

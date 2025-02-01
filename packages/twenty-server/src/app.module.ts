@@ -21,13 +21,20 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
+import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
+import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
+
+// TODO: Remove this middleware when all the rest endpoints are migrated to TwentyORM
+const MIGRATED_REST_METHODS = [RequestMethod.DELETE];
 
 @Module({
   imports: [
@@ -52,6 +59,9 @@ import { I18nModule } from './engine/core-modules/i18n/i18n.module';
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     RestApiModule,
+    DataSourceModule,
+    MiddlewareModule,
+    WorkspaceMetadataCacheModule,
     // I18n module for translations
     I18nModule,
     // Conditional modules
@@ -89,5 +99,9 @@ export class AppModule {
     consumer
       .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
+
+    for (const method of MIGRATED_REST_METHODS) {
+      consumer.apply(RestCoreMiddleware).forRoutes({ path: 'rest/*', method });
+    }
   }
 }

@@ -244,6 +244,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   excludeNonProfessionalEmails: '20202020-1df5-445d-b4f3-2413ad178431',
   excludeGroupEmails: '20202020-45a0-4be4-9164-5820a6a109fb',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
@@ -251,6 +252,12 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
   syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
   throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
+};
+
+export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
+  name: '20202020-7cf8-40bc-a681-b80b771449b7',
+  messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
+  syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {

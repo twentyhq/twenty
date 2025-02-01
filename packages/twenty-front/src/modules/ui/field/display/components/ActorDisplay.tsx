@@ -1,4 +1,6 @@
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { ConnectedAccountProvider } from 'twenty-shared';
+
 import { useMemo } from 'react';
 import {
   AvatarChip,
@@ -7,6 +9,10 @@ import {
   IconCalendar,
   IconCsv,
   IconGmail,
+  IconGoogleCalendar,
+  IconMail,
+  IconMicrosoftCalendar,
+  IconMicrosoftOutlook,
   IconRobot,
   IconSettingsAutomation,
 } from 'twenty-ui';
@@ -15,11 +21,25 @@ type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
 };
 
+const PROVIDORS_ICON_MAPPING = {
+  EMAIL: {
+    [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
+    [ConnectedAccountProvider.GOOGLE]: IconGmail,
+    default: IconMail,
+  },
+  CALENDAR: {
+    [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftCalendar,
+    [ConnectedAccountProvider.GOOGLE]: IconGoogleCalendar,
+    default: IconCalendar,
+  },
+};
+
 export const ActorDisplay = ({
   name,
   source,
   workspaceMemberId,
   avatarUrl,
+  context,
 }: ActorDisplayProps) => {
   const LeftIcon = useMemo(() => {
     switch (source) {
@@ -28,9 +48,9 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconCsv;
       case 'EMAIL':
-        return IconGmail;
+        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
-        return IconCalendar;
+        return PROVIDORS_ICON_MAPPING.CALENDAR[context?.provider ?? 'default'];
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':
@@ -38,7 +58,7 @@ export const ActorDisplay = ({
       default:
         return undefined;
     }
-  }, [source]);
+  }, [source, context?.provider]);
 
   const isIconInverted =
     source === 'API' || source === 'IMPORT' || source === 'SYSTEM';

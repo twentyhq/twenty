@@ -9,19 +9,20 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+export type GetRecordFromCacheArgs = {
+  cache: ApolloCache<object>;
+  recordId: string;
+  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: ObjectMetadataItem;
+  recordGqlFields?: RecordGqlFields;
+};
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,
   objectMetadataItems,
   cache,
   recordId,
   recordGqlFields,
-}: {
-  cache: ApolloCache<object>;
-  recordId: string;
-  objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: ObjectMetadataItem;
-  recordGqlFields?: RecordGqlFields;
-}) => {
+}: GetRecordFromCacheArgs) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }

@@ -157,7 +157,8 @@ export const queries = {
         isMicrosoftAuthEnabled
         isPasswordAuthEnabled
         subdomain
-        hasValidEntrepriseKey
+        hasValidEnterpriseKey
+        hostname
         featureFlags {
           id
           key
@@ -302,11 +303,12 @@ export const responseData = {
         allowImpersonation: false,
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
-        hasValidEntrepriseKey: false,
+        hasValidEnterpriseKey: false,
         isGoogleAuthEnabled: true,
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,
         subdomain: 'test',
+        hostname: null,
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

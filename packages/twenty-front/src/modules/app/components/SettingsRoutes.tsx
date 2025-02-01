@@ -259,6 +259,12 @@ const SettingsLab = lazy(() =>
   })),
 );
 
+const SettingsRoles = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
+    default: module.SettingsRoles,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isFunctionSettingsEnabled?: boolean;
@@ -304,6 +310,7 @@ export const SettingsRoutes = ({
         element={<SettingsObjectDetailPage />}
       />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+      <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.DevelopersNewApiKey}

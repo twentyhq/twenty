@@ -73,7 +73,9 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
       resetTableRowSelection();
 
-      await deleteManyRecords(recordIdsToDelete);
+      await deleteManyRecords({
+        recordIdsToDelete,
+      });
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
     const isRemoteObject = objectMetadataItem.isRemote;

@@ -1,5 +1,6 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { i18n } from '@lingui/core';
 import { Button } from 'twenty-ui';
 
 export const RecordIndexActionMenuButtons = () => {
@@ -18,9 +19,9 @@ export const RecordIndexActionMenuButtons = () => {
           size="small"
           variant="secondary"
           accent="default"
-          title={entry.shortLabel}
+          title={entry.shortLabel ? i18n._(entry.shortLabel) : ''}
           onClick={entry.onClick}
-          ariaLabel={entry.label}
+          ariaLabel={i18n._(entry.label)}
         />
       ))}
     </>

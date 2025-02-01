@@ -14,7 +14,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -57,10 +56,8 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps,
     );
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: deletedRecords,
@@ -71,8 +68,16 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       });
     }
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: deletedRecords[0],

@@ -1,3 +1,4 @@
+import { ConnectedAccountProvider } from 'twenty-shared';
 import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
@@ -269,6 +270,9 @@ export type FieldActorValue = {
   source: string;
   workspaceMemberId?: string;
   name: string;
+  context?: {
+    provider?: ConnectedAccountProvider;
+  };
 };
 
 export type FieldArrayValue = string[];

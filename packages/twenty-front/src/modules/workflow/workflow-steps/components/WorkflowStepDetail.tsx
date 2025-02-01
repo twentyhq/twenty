@@ -48,18 +48,12 @@ export const WorkflowStepDetail = ({
     stepId,
     workflowVersion,
   });
-  if (!isDefined(stepDefinition)) {
+  if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
 
   switch (stepDefinition.type) {
     case 'trigger': {
-      if (!isDefined(stepDefinition.definition)) {
-        throw new Error(
-          'Expected the trigger to be defined at this point. Ensure the trigger has been set with a default value before trying to edit it.',
-        );
-      }
-
       switch (stepDefinition.definition.type) {
         case 'DATABASE_EVENT': {
           return (

@@ -1,21 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-01-21 13:07+0100\n"
+"POT-Creation-Date: 2025-01-31 15:08+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-Hans\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
-msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} 应用程序接口密钥"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -32,6 +22,24 @@ msgstr "2.配置字段"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
 msgid "24h ({hour24Label})"
 msgstr "24小时（[{hour24Label}）"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "应用程序接口和网络钩子"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "API 密钥"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "应用程序接口名称"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "API 密钥"
 
 #: src/modules/ui/input/components/ImageInput.tsx:157
 msgid "Abort"
@@ -52,16 +60,22 @@ msgid "Account Deletion"
 msgstr "账户删除"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
 msgstr "账户"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:66
 msgid "Activate"
 msgstr "激活"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:193
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:201
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:65
+msgid "Activate Workflow"
+msgstr "激活工作流程"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:190
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
 msgstr "活跃"
 
@@ -69,21 +83,59 @@ msgstr "活跃"
 msgid "Active API keys created by you or your team."
 msgstr "由您或您的团队创建的活动 API 密钥。"
 
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:38
+msgid "Add"
+msgstr "添加"
+
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
 msgid "Add Field"
 msgstr "添加字段"
-
-#: src/pages/settings/data-model/SettingsObjects.tsx:149
-msgid "Add object"
-msgstr "添加对象"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份供应商"
 
+#: src/pages/settings/data-model/SettingsObjects.tsx:144
+msgid "Add object"
+msgstr "添加对象"
+
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
 msgstr "添加到拦截列表"
+
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:105
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:192
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:193
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:68
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
+msgid "Add to favorites"
+msgstr "添加到收藏夹"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
+msgid "Add your first {objectLabel}"
+msgstr "添加您的第一个 {objectLabel}"
+
+#: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
+msgid "Added {beautifiedCreatedAt}"
+msgstr "已添加 {beautifiedCreatedAt}"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
+msgid "All"
+msgstr "全部"
+
+#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
+msgid "All ({relationRecordsCount})"
+msgstr "全部（[{relationRecordsCount}）"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:68
+msgid "All roles"
+msgstr "所有角色"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
@@ -105,24 +157,6 @@ msgstr "允许用户使用电子邮件和密码登录。"
 msgid "An optional description"
 msgstr "可选描述"
 
-#: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
-msgid "API & Webhooks"
-msgstr "应用程序接口和网络钩子"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
-msgid "API Key"
-msgstr "API 密钥"
-
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
-msgid "API keys"
-msgstr "API 密钥"
-
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
-msgid "API Name"
-msgstr "应用程序接口名称"
-
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
 msgstr "外观"
@@ -130,6 +164,19 @@ msgstr "外观"
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "您确定要更改计费间隔吗？"
+
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Ascending"
+msgstr "上升"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:69
+msgid "Assign roles to specify each member's access permissions"
+msgstr "分配角色以指定每个成员的访问权限"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:36
+msgid "Assigned to"
+msgstr "分配给"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -143,13 +190,18 @@ msgstr "认证"
 msgid "Authorize"
 msgstr "授权"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
+msgid "Average"
+msgstr "平均"
+
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
 msgstr "返回内容"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Billing"
 msgstr "账单"
 
@@ -171,7 +223,7 @@ msgstr "日历"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
 msgid "Calendars"
 msgstr "日历"
 
@@ -182,21 +234,17 @@ msgstr "日历"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/pages/onboarding/ChooseYourPlan.tsx:152
-msgid "Cancel anytime"
-msgstr "随时取消"
-
 #: src/pages/settings/SettingsBilling.tsx:176
 msgid "Cancel Plan"
 msgstr "取消计划"
 
+#: src/pages/onboarding/ChooseYourPlan.tsx:152
+msgid "Cancel anytime"
+msgstr "随时取消"
+
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
 msgstr "取消订阅"
-
-#: src/pages/settings/SettingsBilling.tsx:193
-msgid "Change {to}"
-msgstr "更改 {to}"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
@@ -204,11 +252,15 @@ msgstr "更改 {to}"
 msgid "Change Password"
 msgstr "更改密码"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:86
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "更改 {to}"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
 msgid "Chinese — Simplified"
 msgstr "简体中文"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
 msgid "Chinese — Traditional"
 msgstr "繁体中文"
 
@@ -216,21 +268,17 @@ msgstr "繁体中文"
 msgid "Choose an object"
 msgstr "选择对象"
 
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
-msgid "Choose your provider"
-msgstr ""
-
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
 msgstr "选择试用"
 
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
+msgid "Choose your provider"
+msgstr "选择服务提供商"
+
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
 msgstr "关闭"
-
-#: src/modules/command-menu/components/CommandMenu.tsx:151
-msgid "Companies"
-msgstr "公司"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
@@ -248,10 +296,6 @@ msgstr "配置整个应用程序的日期显示方式"
 msgid "Configure your emails and calendar settings."
 msgstr "配置电子邮件和日历设置。"
 
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
-#~ msgid "Connect a Google account"
-#~ msgstr "连接 Google 账户"
-
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
 msgstr "将新账户连接到工作区"
@@ -268,17 +312,16 @@ msgstr "与微软联系"
 msgid "Connected accounts"
 msgstr "连接账户"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:213
-#: src/modules/command-menu/components/CommandMenu.tsx:213
+#: src/modules/command-menu/components/CommandMenu.tsx:91
 msgid "Context"
-msgstr ""
+msgstr "背景"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 msgid "Continue"
 msgstr "继续"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:123
+#: src/modules/command-menu/components/CommandMenu.tsx:63
 msgid "Copilot"
 msgstr "副驾驶"
 
@@ -290,6 +333,27 @@ msgstr "复制邀请链接"
 msgid "Copy this key as it will not be visible again"
 msgstr "复制此密钥，因为它将不再可见"
 
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
+msgid "Count"
+msgstr "计数"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
+msgid "Count all"
+msgstr "计算所有"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
+msgid "Count empty"
+msgstr "数空"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
+msgid "Count not empty"
+msgstr "计数不为空"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
+msgid "Count unique values"
+msgstr "计算唯一值"
+
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
 msgstr "创建应用程序接口密钥"
@@ -298,12 +362,17 @@ msgstr "创建应用程序接口密钥"
 msgid "Create Webhook"
 msgstr "创建 Webhook"
 
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "创建工作流程并返回此处查看其版本"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:44
+msgid "Create new record"
+msgstr "创建新记录"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
-msgstr "自定义对象"
-
-#: src/modules/command-menu/components/CommandMenu.tsx:167
-msgid "Custom Objects"
 msgstr "自定义对象"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
@@ -326,29 +395,40 @@ msgstr "自定义工作空间安全"
 msgid "Danger zone"
 msgstr "危险区"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:144
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
+#: src/pages/settings/data-model/SettingsObjects.tsx:139
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
 msgid "Data model"
 msgstr "数据模型"
 
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
+msgid "Data type"
+msgstr "数据类型"
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:78
-#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:50
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
 msgstr "日期和时间"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:81
 msgid "Deactivate"
 msgstr "停用"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "停用 \"同步对象标签和 API 名称 \"以设置自定义 API 名称"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:80
+msgid "Deactivate Workflow"
+msgstr "停用工作流程"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
@@ -360,8 +440,23 @@ msgstr "定义对象的名称和描述"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:88
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:59
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:223
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:239
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
 msgid "Delete"
 msgstr "删除"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "删除 API 密钥"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
@@ -373,9 +468,16 @@ msgstr "删除帐户"
 msgid "Delete account and all the associated data"
 msgstr "删除账户和所有相关数据"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
-msgid "Delete API key"
-msgstr "删除 API 密钥"
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:222
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:98
+msgid "Delete record"
+msgstr "删除记录"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:238
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:114
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
+msgid "Delete records"
+msgstr "删除记录"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
@@ -396,11 +498,21 @@ msgstr "删除工作区"
 msgid "Delete your whole workspace"
 msgstr "删除整个工作区"
 
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
+msgid "Descending"
+msgstr "下降"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
 msgstr "说明"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:252
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+msgid "Destroy"
+msgstr "销毁"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
@@ -411,14 +523,20 @@ msgstr "说明"
 msgid "Developers"
 msgstr "开发人员"
 
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:95
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:96
+msgid "Discard Draft"
+msgstr "弃权草案"
+
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
 msgid "Display as relative date"
 msgstr "显示为相对日期"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsDomain.tsx:125
-#: src/pages/settings/workspace/SettingsDomain.tsx:135
-#: src/pages/settings/workspace/SettingsDomain.tsx:150
+#: src/pages/settings/workspace/SettingsHostname.tsx:121
+#: src/pages/settings/workspace/SettingsDomain.tsx:109
+#: src/pages/settings/workspace/SettingsDomain.tsx:119
 msgid "Domain"
 msgstr "域名"
 
@@ -426,6 +544,14 @@ msgstr "域名"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
 msgstr "例如后台整合"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
+msgid "Earliest"
+msgstr "最早"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
+msgid "Earliest date"
+msgstr "最早日期"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
@@ -454,25 +580,27 @@ msgstr "电子邮件集成"
 msgid "Email or domain is already in blocklist"
 msgstr "电子邮件或域名已在拦截列表中"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:71
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
 msgstr "电子邮件"
 
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
-msgid "employees"
-msgstr "员工"
-
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
 msgstr "员工"
+
+#: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
+msgid "Empty"
+msgstr "空"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
 msgstr "端点 URL"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:82
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:71
 msgid "English"
 msgstr "英语"
 
@@ -504,7 +632,7 @@ msgstr "建立 Webhook 端点，用于通知异步事件。"
 msgid "Exclude the following people and domains from my email sync"
 msgstr "从我的电子邮件同步中排除以下人员和域"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:167
+#: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
 msgstr "现有对象"
 
@@ -512,9 +640,13 @@ msgstr "现有对象"
 msgid "Exit Settings"
 msgstr "退出设置"
 
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:58
+msgid "Expected selected node to be a create step node."
+msgstr "预期所选节点为创建步骤节点。"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:107
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:113
 msgid "Experience"
 msgstr "经验"
 
@@ -530,43 +662,90 @@ msgstr "有效期"
 msgid "Expires in"
 msgstr "到期时间"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:42
+#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:268
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:281
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
+msgid "Export"
+msgstr "出口"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:267
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
+msgid "Export records"
+msgstr "导出记录"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:56
+msgid "Export to PDF"
+msgstr "导出为 PDF"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:280
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:140
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
+msgid "Export view"
+msgstr "导出视图"
+
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:58
+msgid "Favorites"
+msgstr "收藏夹"
+
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
+msgid "Field type"
+msgstr "字段类型"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:95
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
 msgstr "字段"
+
+#: src/testing/mock-data/tableData.ts:22
+msgid "Fields Count"
+msgstr "字段计数"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
+msgid "Filter"
+msgstr "过滤器"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "过滤器"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:75
 msgid "French"
 msgstr "法语"
-
-#: src/pages/settings/SettingsBilling.tsx:47
-msgid "from monthly to yearly"
-msgstr "从每月到每年"
-
-#: src/pages/settings/SettingsBilling.tsx:54
-msgid "from yearly to monthly"
-msgstr "从每年到每月"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
 msgstr "完全访问"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:186
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
 msgid "Functions"
 msgstr "功能"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:132
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:137
+#: src/pages/settings/workspace/SettingsDomain.tsx:116
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "一般情况"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:70
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:83
 msgid "German"
 msgstr "德国"
 
@@ -578,31 +757,51 @@ msgstr "邀请您的团队，充分利用您的工作空间。"
 msgid "Get your subscription"
 msgstr "获取订阅"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:77
+msgid "Global"
+msgstr "全球"
+
 #: src/pages/settings/SettingsWorkspace.tsx:65
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "授予 Twenty 支持临时访问您工作区的权限，以便我们代表您排除故障或恢复内容。您可以随时撤销访问权限。"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
+msgid "Hide"
+msgstr "隐藏"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
 msgid "Icon and Name"
 msgstr "图标和名称"
 
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:64
+msgid "Identifier"
+msgstr "标识符"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "如果您丢失了此密钥，可以重新生成，但请注意，任何使用此密钥的脚本都需要更新。请键入\"{confirmationValue}\"确认。"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:218
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:215
+#: src/pages/settings/data-model/SettingsObjects.tsx:215
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
 msgid "Inactive"
 msgstr "不活动"
+
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:107
+msgid "Indexes"
+msgstr "索引"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "输入内容必须使用驼峰字体，且不能以数字开头"
 
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
+msgid "Instances"
+msgstr "实例"
+
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:15
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:21
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:159
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:172
 msgid "Integrations"
 msgstr "集成"
 
@@ -619,9 +818,13 @@ msgstr "无效电子邮件"
 msgid "Invalid email or domain"
 msgstr "无效电子邮件或域名"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:87
+#: src/pages/settings/workspace/SettingsDomain.tsx:71
 msgid "Invalid form values"
 msgstr "无效表格值"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
+msgstr "通过链接邀请"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -629,10 +832,6 @@ msgstr "电子邮件邀请"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
-msgstr "通过链接邀请"
-
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
-msgid "Invite by Link"
 msgstr "通过链接邀请"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
@@ -643,17 +842,29 @@ msgstr "向电子邮件地址发送邀请链接"
 msgid "Invite your team"
 msgstr "邀请您的团队"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:74
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:87
 msgid "Italian"
 msgstr "意大利语"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:204
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
+msgid "Korean"
+msgstr "韩语"
+
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
 msgid "Lab"
-msgstr ""
+msgstr "实验室"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
 msgstr "语言"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
+msgid "Latest"
+msgstr "最新"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
+msgid "Latest date"
+msgstr "最新日期"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
@@ -663,7 +874,7 @@ msgstr "链接复制到剪贴板"
 msgid "Log out"
 msgstr "退出登录"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:215
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:228
 msgid "Logout"
 msgstr "注销"
 
@@ -683,17 +894,50 @@ msgstr "管理互联网账户"
 msgid "Manage your subscription"
 msgstr "管理您的订阅"
 
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:69
+#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:60
+msgid "Mark as done"
+msgstr "标记为已完成"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:13
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:13
+msgid "Max"
+msgstr "最大"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:143
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:149
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:142
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:148
 msgid "Members"
 msgstr "成员"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
+msgid "Min"
+msgstr "最小"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
+msgid "More options"
+msgstr "更多选择"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:117
+msgid "Move left"
+msgstr "向左移动"
+
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:124
+msgid "Move right"
+msgstr "向右移动"
+
+#: src/testing/mock-data/tableData.ts:16
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
+#: src/pages/settings/roles/SettingsRoles.tsx:31
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "名称"
@@ -707,21 +951,35 @@ msgstr "API 密钥名称"
 msgid "Name of your workspace"
 msgstr "工作区名称"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:143
-msgid "Navigate"
-msgstr "导航"
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:180
+msgid "Navigate to next record"
+msgstr "导航至下一条记录"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:95
+msgid "Navigate to next version"
+msgstr "导航至下一版本"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:182
+msgid "Navigate to next workflow"
+msgstr "导航至下一个工作流程"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:169
+msgid "Navigate to previous record"
+msgstr "导航到上一条记录"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:85
+msgid "Navigate to previous version"
+msgstr "导航到以前的版本"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:172
+msgid "Navigate to previous workflow"
+msgstr "导航到上一个工作流程"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "新"
-
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
-msgid "New account"
-msgstr "新账户"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
-msgid "New key"
-msgstr "新钥匙"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
@@ -735,23 +993,50 @@ msgstr "新对象"
 msgid "New Password"
 msgstr "新密码"
 
+#: src/pages/settings/roles/SettingsRoles.tsx:52
+msgid "New Role"
+msgstr "新角色"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:81
 msgid "New Webhook"
 msgstr "新 Webhook"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "新账户"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "新钥匙"
+
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "New record"
+msgstr "新纪录"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
 msgid "No connected account"
 msgstr "无连接账户"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:108
-#~ msgid "not allowed"
-#~ msgstr "不允许"
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
+msgid "No workflow runs yet"
+msgstr "尚未运行工作流程"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:159
-msgid "Notes"
-msgstr "说明"
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
+msgid "No workflow versions yet"
+msgstr "暂无工作流程版本"
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:160
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
+msgid "Not empty"
+msgstr "非空"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:73
+msgid "Object"
+msgstr "对象"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:155
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:179
 #: src/pages/settings/data-model/SettingsNewObject.tsx:73
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:205
@@ -762,15 +1047,15 @@ msgstr "对象"
 msgid "Off the beaten path"
 msgstr "偏离常规路线"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:155
-msgid "Opportunities"
-msgstr "机会"
+#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
+msgid "Opened"
+msgstr "已开启"
 
-#: src/pages/onboarding/InviteTeam.tsx:213
-msgid "or"
-msgstr "或"
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx:40
+msgid "Options"
+msgstr "选项"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:194
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "其他"
 
@@ -786,9 +1071,23 @@ msgstr "密码"
 msgid "Password reset link has been sent to the email"
 msgstr "密码重置链接已发送至邮箱"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:147
-msgid "People"
-msgstr "人"
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:66
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:45
+msgid "Percent"
+msgstr "百分比"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
+msgid "Percent empty"
+msgstr "空车百分比"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
+msgid "Percent not empty"
+msgstr "非空百分比"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:251
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:153
+msgid "Permanently destroy record"
+msgstr "永久销毁记录"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -807,9 +1106,13 @@ msgstr "请键入\"{confirmationValue}\"确认要删除此 API 密钥。请注�
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "请键入 {confirmationText} 确认要删除此网络钩子。"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:62
-msgid "Portuguese"
-msgstr "葡萄牙语"
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+msgid "Portuguese — Brazil"
+msgstr "葡萄牙语 - 巴西"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+msgid "Portuguese — Portugal"
+msgstr "葡萄牙语 - 葡萄牙"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
@@ -818,11 +1121,11 @@ msgstr "预览"
 
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:102
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
 msgid "Profile"
 msgstr "简介"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
 msgid "Pseudo-English"
 msgstr "伪英语"
 
@@ -834,9 +1137,13 @@ msgstr "阅读文件"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:127
+#: src/modules/command-menu/components/CommandMenu.tsx:67
 msgid "Record Selection"
 msgstr "记录选择"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
+msgstr "再生密钥"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
@@ -847,13 +1154,9 @@ msgstr "重新生成 API 密钥"
 msgid "Regenerate key"
 msgstr "再生钥匙"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
-msgid "Regenerate Key"
-msgstr "再生密钥"
-
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:223
 msgid "Releases"
 msgstr "发布"
 
@@ -861,36 +1164,98 @@ msgstr "发布"
 msgid "Remove"
 msgstr "移除"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:120
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:207
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:208
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:83
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
+msgid "Remove from favorites"
+msgstr "从收藏中删除"
+
 #: src/pages/auth/PasswordReset.tsx:177
 msgid "Reset Password"
 msgstr "重置密码"
 
-#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:45
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:46
 msgid "Reset to"
-msgstr ""
+msgstr "重置为"
+
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:221
+msgid "Results"
+msgstr "成果"
+
+#: src/pages/settings/roles/SettingsRoles.tsx:48
+#: src/pages/settings/roles/SettingsRoles.tsx:62
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
+msgid "Roles"
+msgstr "角色"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
+msgid "Run a workflow and return here to view its executions"
+msgstr "运行工作流程并返回此处查看其执行情况"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "SSO"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:50
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:24
 msgid "Search"
 msgstr "搜索"
 
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:183
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "搜索字段..."
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:116
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:117
 msgid "Search an index..."
 msgstr "搜索索引..."
 
-#: src/pages/settings/data-model/SettingsObjects.tsx:171
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+msgid "Search fields"
+msgstr "搜索字段"
+
+#: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
 msgstr "搜索对象..."
 
+#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
+msgid "Search records"
+msgstr "搜索记录"
+
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:165
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:178
 msgid "Security"
 msgstr "安全"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:110
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:111
+msgid "See active version"
+msgstr "参见活动版本"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:125
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:126
+msgid "See runs"
+msgstr "查看运行情况"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:141
+msgid "See versions"
+msgstr "查看版本"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:140
+msgid "See versions history"
+msgstr "查看版本历史"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
 msgid "Select the events you wish to send to this endpoint"
@@ -904,7 +1269,7 @@ msgstr "选择您喜欢的语言"
 msgid "Send an invite email to your team"
 msgstr "向团队发送邀请电子邮件"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:197
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:210
 msgid "Server Admin Panel"
 msgstr "服务器管理面板"
 
@@ -912,13 +1277,18 @@ msgstr "服务器管理面板"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "设置电子邮件可见性、管理屏蔽列表等。"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:151
+#: src/pages/settings/workspace/SettingsHostname.tsx:121
+msgid "Set the name of your domain"
+msgstr "设置域名"
+
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:37
 msgid "Set the name of your subdomain"
 msgstr "设置子域名称"
 
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:101
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
-#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:56
+#: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
 msgid "Settings"
 msgstr "设置"
 
@@ -934,23 +1304,28 @@ msgstr "更改字段标签是否也要更改 API 名称？"
 msgid "Skip"
 msgstr "跳过"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:78
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:109
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:188
+msgid "Sort"
+msgstr "分类"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:79
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: src/pages/settings/security/SettingsSecurity.tsx:47
-msgid "SSO"
-msgstr "SSO"
+#: src/pages/settings/workspace/SettingsSubdomain.tsx:36
+msgid "Subdomain"
+msgstr "子域"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:105
+#: src/pages/settings/workspace/SettingsDomain.tsx:89
 msgid "Subdomain already taken"
 msgstr "子域已被占用"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:50
+#: src/pages/settings/workspace/SettingsDomain.tsx:35
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "子域名长度不得超过 30 个字符"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:49
+#: src/pages/settings/workspace/SettingsDomain.tsx:34
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "子域名不能少于 3 个字符"
 
@@ -958,9 +1333,18 @@ msgstr "子域名不能少于 3 个字符"
 msgid "Subscription has been switched {to}"
 msgstr "订阅已切换 {to}"
 
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
+msgid "Sum"
+msgstr "总和"
+
 #: src/pages/settings/SettingsWorkspace.tsx:63
 msgid "Support"
 msgstr "支持"
+
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "开关计费 {to}"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
@@ -970,25 +1354,26 @@ msgstr "开关 {from}"
 msgid "Switch {to}"
 msgstr "开关 {to}"
 
-#: src/pages/settings/SettingsBilling.tsx:187
-msgid "Switch billing {to}"
-msgstr "开关计费 {to}"
-
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "同步字段标签和 API 名称"
-
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
-msgid "System settings - {systemDateFormatLabel}"
-msgstr "系统设置 - {systemDateFormatLabel}"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "系统设置 - [{systemTimeFormatLabel}］"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:163
-msgid "Tasks"
-msgstr "任务"
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
+msgid "System settings - {systemDateFormatLabel}"
+msgstr "系统设置 - {systemDateFormatLabel}"
+
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:156
+msgid "Test"
+msgstr "测试"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:155
+msgid "Test Workflow"
+msgstr "测试工作流程"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
@@ -1033,17 +1418,32 @@ msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 
 msgid "Time format"
 msgstr "时间格式"
 
-#: src/pages/settings/SettingsBilling.tsx:53
-msgid "to monthly"
-msgstr "至每月"
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:48
+msgid "Trigger Type"
+msgstr "触发器类型"
 
-#: src/pages/settings/SettingsBilling.tsx:46
-msgid "to yearly"
-msgstr "每年"
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
+msgid "Trigger type should be Manual - when no record(s) are selected"
+msgstr "触发类型应为手动 - 当没有选择记录时"
 
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:55
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
+#: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
 msgid "Type"
 msgstr "类型"
+
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:116
+msgid "Type anything"
+msgstr "任何类型"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "网址"
+
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
+msgid "Unique"
+msgstr "独特性"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -1053,20 +1453,24 @@ msgstr "无限联系人"
 msgid "Upload"
 msgstr "上传"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
-msgid "URL"
-msgstr "网址"
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
+msgid "Use as draft"
+msgstr "用作草稿"
 
-#: src/pages/settings/workspace/SettingsDomain.tsx:52
+#: src/pages/settings/workspace/SettingsDomain.tsx:37
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "只能使用字母、数字和破折号。以字母或数字开头和结尾"
+
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
+msgid "Use our API or add your first {objectLabel} manually"
+msgstr "使用我们的 API 或手动添加您的第一个 [{objectLabel}］"
 
 #: src/pages/settings/SettingsProfile.tsx:22
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:29
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:17
 #: src/pages/settings/accounts/SettingsAccounts.tsx:43
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:100
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:106
 msgid "User"
 msgstr "用户"
 
@@ -1080,10 +1484,6 @@ msgstr "用户未登录"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:251
 msgid "Values"
 msgstr "价值观"
-
-#: src/modules/command-menu/components/CommandMenu.tsx:135
-msgid "View"
-msgstr "查看"
 
 #: src/pages/settings/SettingsBilling.tsx:150
 msgid "View billing details"
@@ -1118,32 +1518,30 @@ msgstr "API 密钥的过期时间。"
 msgid "When the key will be disabled"
 msgstr "何时禁用按键"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:131
-msgid "Workflow Record Selection"
-msgstr "工作流程记录选择"
-
-#: src/modules/command-menu/components/CommandMenu.tsx:139
-msgid "Workflows"
-msgstr "工作流程"
+#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
+msgid "Workflow cannot be tested"
+msgstr "无法测试工作流程"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:128
+#: src/pages/settings/workspace/SettingsDomain.tsx:112
 #: src/pages/settings/security/SettingsSecurity.tsx:37
+#: src/pages/settings/roles/SettingsRoles.tsx:59
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
-#: src/pages/settings/data-model/SettingsObjects.tsx:157
+#: src/pages/settings/data-model/SettingsObjects.tsx:152
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:175
 #: src/pages/settings/data-model/SettingsNewObject.tsx:69
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:201
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:58
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:135
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
+#: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
 msgstr "工作空间"
 
@@ -1154,11 +1552,6 @@ msgstr "删除工作区"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
 msgstr "撰写说明"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
-msgid "yes"
-msgstr "是"
 
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
@@ -1175,3 +1568,45 @@ msgstr "显示您的姓名"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "您的工作区将被禁用"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "员工"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "从每月到每年"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "从每年到每月"
+
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "或"
+
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "至每月"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "每年"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "是"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel}的{fieldLabel}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "{apiKeyName} 应用程序接口密钥"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "{name}"

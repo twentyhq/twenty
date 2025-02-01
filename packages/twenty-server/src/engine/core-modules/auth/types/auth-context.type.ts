@@ -8,6 +8,7 @@ export type AuthContext = {
   apiKey?: ApiKeyWorkspaceEntity | null | undefined;
   workspaceMemberId?: string;
   workspace: Workspace;
+  userWorkspaceId?: string;
 };
 
 export type JwtPayload = {
@@ -16,4 +17,5 @@ export type JwtPayload = {
   workspaceMemberId?: string;
   jti?: string;
   type?: WorkspaceTokenType;
+  userWorkspaceId?: string;
 };

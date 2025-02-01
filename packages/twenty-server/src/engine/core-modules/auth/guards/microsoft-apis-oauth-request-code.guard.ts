@@ -4,18 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { MicrosoftAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
@@ -48,19 +43,6 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
-
-      const isMicrosoftSyncEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IsMicrosoftSyncEnabled,
-          workspaceId,
-        );
-
-      if (!isMicrosoftSyncEnabled) {
-        throw new AuthException(
-          'Microsoft sync is not enabled',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
 
       new MicrosoftAPIsOauthRequestCodeStrategy(this.environmentService);
       setRequestExtraParams(request, {

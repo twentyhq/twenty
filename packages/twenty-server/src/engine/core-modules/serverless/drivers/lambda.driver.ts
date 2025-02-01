@@ -54,7 +54,7 @@ import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/ut
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 
-const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 30;
+const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -133,7 +133,7 @@ export class LambdaDriver implements ServerlessDriver {
     await lambdaBuildDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn si undefined');
+      throw new Error('new layer version arn if undefined');
     }
 
     return result.LayerVersionArn;
@@ -177,15 +177,13 @@ export class LambdaDriver implements ServerlessDriver {
     return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
   };
 
-  async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
+  async build(serverlessFunction: ServerlessFunctionEntity, version: 'draft') {
+    if (version !== 'draft') {
+      throw new Error("We can only build 'draft' version with lambda driver");
+    }
 
     const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(
-        serverlessFunction,
-        computedVersion,
-      );
+      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
 
     const folderPath = getServerlessFolder({
       serverlessFunction,

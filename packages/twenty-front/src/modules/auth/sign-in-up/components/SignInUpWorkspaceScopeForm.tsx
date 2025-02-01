@@ -26,6 +26,10 @@ export const SignInUpWorkspaceScopeForm = () => {
 
   const { signInUpStep } = useSignInUp(form);
 
+  if (!workspaceAuthProviders) {
+    return null;
+  }
+
   return (
     <>
       <StyledContentContainer>
