@@ -1604,7 +1604,6 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
