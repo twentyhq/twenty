@@ -25,8 +25,8 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
+import { isDefined } from 'twenty-shared';
 import { Button, IconTrash, Toggle } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 

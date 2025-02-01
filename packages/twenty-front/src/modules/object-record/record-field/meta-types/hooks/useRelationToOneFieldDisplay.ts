@@ -6,8 +6,8 @@ import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateD
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';

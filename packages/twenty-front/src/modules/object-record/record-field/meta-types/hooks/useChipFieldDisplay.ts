@@ -6,7 +6,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { FieldContext } from '../../contexts/FieldContext';

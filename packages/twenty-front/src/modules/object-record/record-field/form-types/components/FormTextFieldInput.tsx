@@ -7,7 +7,7 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type FormTextFieldInputProps = {
   label?: string;

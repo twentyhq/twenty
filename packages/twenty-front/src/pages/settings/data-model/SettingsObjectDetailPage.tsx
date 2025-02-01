@@ -18,6 +18,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   H3Title,
@@ -28,7 +30,6 @@ import {
   IconSettings,
   MAIN_COLORS,
   UndecoratedLink,
-  isDefined,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

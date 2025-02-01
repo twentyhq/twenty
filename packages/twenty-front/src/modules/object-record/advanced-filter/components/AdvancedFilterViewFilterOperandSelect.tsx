@@ -10,7 +10,8 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined, MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MenuItem } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   flex: 1;

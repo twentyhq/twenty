@@ -1,14 +1,14 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  FieldAddressValue,
-  FieldEmailsValue,
-  FieldLinksValue,
-  FieldPhonesValue,
+    FieldAddressValue,
+    FieldEmailsValue,
+    FieldLinksValue,
+    FieldPhonesValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';

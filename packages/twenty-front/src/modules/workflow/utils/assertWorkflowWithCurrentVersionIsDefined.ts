@@ -1,9 +1,9 @@
 import {
-  Workflow,
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+    Workflow,
+    WorkflowVersion,
+    WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 export function assertWorkflowWithCurrentVersionIsDefined(

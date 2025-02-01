@@ -11,8 +11,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
 import { MenuItem } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { getOperandLabel } from '../utils/getOperandLabel';
 

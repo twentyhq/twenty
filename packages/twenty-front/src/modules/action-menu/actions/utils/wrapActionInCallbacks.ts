@@ -1,5 +1,5 @@
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const wrapActionInCallbacks = ({
   action,

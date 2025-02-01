@@ -12,7 +12,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';

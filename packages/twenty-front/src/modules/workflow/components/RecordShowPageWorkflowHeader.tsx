@@ -8,15 +8,9 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
-import {
-  Button,
-  IconPlayerPlay,
-  IconPlayerStop,
-  IconPower,
-  IconSettingsAutomation,
-  IconTrash,
-  isDefined,
-} from 'twenty-ui';
+
+import { isDefined } from 'twenty-shared';
+import { Button, IconPlayerPlay, IconPlayerStop, IconPower, IconSettingsAutomation, IconTrash } from 'twenty-ui';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
 export const RecordShowPageWorkflowHeader = ({

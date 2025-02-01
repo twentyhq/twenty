@@ -15,10 +15,10 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isDefined } from '~/utils/isDefined';
 
 export const useCreateNewTableRecord = ({
   objectMetadataItem,

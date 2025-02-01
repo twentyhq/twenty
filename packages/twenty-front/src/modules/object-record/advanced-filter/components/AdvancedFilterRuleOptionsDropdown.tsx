@@ -6,7 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
-import { isDefined, MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MenuItem } from 'twenty-ui';
 
 type AdvancedFilterRuleOptionsDropdownProps =
   | {

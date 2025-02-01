@@ -12,7 +12,7 @@ import {
   RowHook,
   TableHook,
 } from '@/spreadsheet-import/types';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = <T extends string>(

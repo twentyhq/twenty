@@ -6,7 +6,7 @@ import {
   MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field, Fields } from '@/spreadsheet-import/types';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';

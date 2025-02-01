@@ -3,15 +3,15 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
-  WorkflowDiagram,
-  WorkflowDiagramEdge,
-  WorkflowDiagramNode,
+    WorkflowDiagram,
+    WorkflowDiagramEdge,
+    WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({

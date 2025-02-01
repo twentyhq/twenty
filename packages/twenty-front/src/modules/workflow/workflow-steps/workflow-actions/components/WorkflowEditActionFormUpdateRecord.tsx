@@ -3,7 +3,6 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { HorizontalSeparator, isDefined, useIcons } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
@@ -13,6 +12,8 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { isDefined } from 'twenty-shared';
+import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

@@ -13,7 +13,7 @@ import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOne
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const usePersistViewFilterGroupRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({

@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { View } from '@/views/types/View';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type ReturnType = {
   labelPlural: string;

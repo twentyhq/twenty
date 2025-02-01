@@ -9,18 +9,18 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
-  Placement,
-  autoUpdate,
-  flip,
-  offset,
-  size,
-  useFloating,
+    Placement,
+    autoUpdate,
+    flip,
+    offset,
+    size,
+    useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
 

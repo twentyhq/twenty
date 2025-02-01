@@ -1,9 +1,9 @@
 import { SelectOption, SelectSizeVariant } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
 import {
   IconChevronDown,
-  isDefined,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 

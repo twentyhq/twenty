@@ -1,6 +1,6 @@
 import { InputSchema } from '@/workflow/types/InputSchema';
 import { FunctionInput } from '@/workflow/workflow-steps/workflow-actions/types/FunctionInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const getDefaultFunctionInputFromInputSchema = (
   inputSchema: InputSchema,

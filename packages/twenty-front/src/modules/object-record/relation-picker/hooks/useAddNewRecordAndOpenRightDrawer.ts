@@ -10,11 +10,11 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { isDefined } from 'twenty-shared';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;

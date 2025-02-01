@@ -1,8 +1,8 @@
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
+    WorkflowVersion,
+    WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 
@@ -11,7 +11,7 @@ import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/get
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,

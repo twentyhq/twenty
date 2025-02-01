@@ -1,21 +1,21 @@
-import {
-  ArrayTypeNode,
-  ArrowFunction,
-  createSourceFile,
-  FunctionDeclaration,
-  FunctionLikeDeclaration,
-  LiteralTypeNode,
-  PropertySignature,
-  ScriptTarget,
-  StringLiteral,
-  SyntaxKind,
-  TypeNode,
-  Node,
-  UnionTypeNode,
-  VariableStatement,
-} from 'typescript';
 import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import {
+    ArrayTypeNode,
+    ArrowFunction,
+    createSourceFile,
+    FunctionDeclaration,
+    FunctionLikeDeclaration,
+    LiteralTypeNode,
+    Node,
+    PropertySignature,
+    ScriptTarget,
+    StringLiteral,
+    SyntaxKind,
+    TypeNode,
+    UnionTypeNode,
+    VariableStatement,
+} from 'typescript';
 
 const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
   switch (typeNode.kind) {

@@ -2,8 +2,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { isDefined } from 'twenty-shared';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

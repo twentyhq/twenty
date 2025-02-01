@@ -1,11 +1,10 @@
 import {
-  WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
+    WorkflowDatabaseEventTrigger,
+    WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {
