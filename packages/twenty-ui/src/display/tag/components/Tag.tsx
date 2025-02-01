@@ -3,13 +3,13 @@ import { useContext } from 'react';
 
 import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import {
-  BORDER_COMMON,
-  THEME_COMMON,
-  ThemeColor,
-  ThemeContext,
-  ThemeType,
+    BORDER_COMMON,
+    THEME_COMMON,
+    ThemeColor,
+    ThemeContext,
+    ThemeType,
 } from '@ui/theme';
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 const spacing5 = THEME_COMMON.spacing(5);
 const spacing2 = THEME_COMMON.spacing(2);

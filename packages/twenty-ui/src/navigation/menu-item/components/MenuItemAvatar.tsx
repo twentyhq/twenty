@@ -1,17 +1,17 @@
 import { useTheme } from '@emotion/react';
 import {
-  Avatar,
-  AvatarProps,
-  IconChevronRight,
-  OverflowingTextWithTooltip,
+    Avatar,
+    AvatarProps,
+    IconChevronRight,
+    OverflowingTextWithTooltip,
 } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
 import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
-import { isDefined } from '@ui/utilities';
 import { MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared';
 import {
-  StyledHoverableMenuItemBase,
-  StyledMenuItemLeftContent,
+    StyledHoverableMenuItemBase,
+    StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
