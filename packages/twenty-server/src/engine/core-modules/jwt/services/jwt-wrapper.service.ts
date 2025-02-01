@@ -6,11 +6,11 @@ import { createHash } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
 import {
-  AuthException,
-  AuthExceptionCode,
+    AuthException,
+    AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 export type WorkspaceTokenType =
   | 'ACCESS'

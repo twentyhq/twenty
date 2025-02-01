@@ -21,7 +21,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations

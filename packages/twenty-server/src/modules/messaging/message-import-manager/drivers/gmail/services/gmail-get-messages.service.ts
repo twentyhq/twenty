@@ -8,7 +8,7 @@ import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-m
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class GmailGetMessagesService {

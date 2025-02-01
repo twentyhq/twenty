@@ -7,12 +7,12 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
+    PermissionsException,
+    PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class PermissionsService {

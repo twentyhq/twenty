@@ -12,7 +12,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class SeederService {

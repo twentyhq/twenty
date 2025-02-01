@@ -12,14 +12,14 @@ import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
 import {
-  WorkflowAction,
-  WorkflowActionType,
+    WorkflowAction,
+    WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WorkflowTrigger,
-  WorkflowTriggerType,
+    WorkflowTrigger,
+    WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {

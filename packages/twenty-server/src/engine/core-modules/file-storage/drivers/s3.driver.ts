@@ -1,31 +1,31 @@
-import { Readable } from 'stream';
 import fs from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
+import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import {
-  CopyObjectCommand,
-  CreateBucketCommandInput,
-  DeleteObjectCommand,
-  DeleteObjectsCommand,
-  GetObjectCommand,
-  HeadBucketCommandInput,
-  HeadObjectCommand,
-  ListObjectsV2Command,
-  NotFound,
-  PutObjectCommand,
-  S3,
-  S3ClientConfig,
+    CopyObjectCommand,
+    CreateBucketCommandInput,
+    DeleteObjectCommand,
+    DeleteObjectsCommand,
+    GetObjectCommand,
+    HeadBucketCommandInput,
+    HeadObjectCommand,
+    ListObjectsV2Command,
+    NotFound,
+    PutObjectCommand,
+    S3,
+    S3ClientConfig,
 } from '@aws-sdk/client-s3';
 
-import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import {
+    FileStorageException,
+    FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { isDefined } from 'src/utils/is-defined';
+import { isDefined } from 'twenty-shared';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;

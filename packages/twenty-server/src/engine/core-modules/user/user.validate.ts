@@ -1,10 +1,10 @@
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { CustomException } from 'src/utils/custom-exception';
-import { isDefined } from 'src/utils/is-defined';
 import {
-  UserException,
-  UserExceptionCode,
+    UserException,
+    UserExceptionCode,
 } from 'src/engine/core-modules/user/user.exception';
+import { CustomException } from 'src/utils/custom-exception';
+import { isDefined } from 'twenty-shared';
 
 const assertIsDefinedOrThrow = (
   user: User | undefined | null,
