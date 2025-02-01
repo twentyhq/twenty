@@ -16,6 +16,12 @@
         "default": "./dist/testing/index.js"
       }
     },
+    "./tablerIcons": {
+      "import": {
+        "types": "./dist/display/icon/components/TablerIcons.d.ts",
+        "default": "./dist/display/icon/components/TablerIcons.js"
+      }
+    },
     "./*": {
       "import": {
         "types": "./dist/*.d.ts",
