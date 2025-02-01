@@ -1,10 +1,10 @@
+import { isDefined } from 'twenty-shared';
 import { createDefaultButton } from '~/contentScript/createButton';
 import changeSidePanelUrl from '~/contentScript/utils/changeSidepanelUrl';
 import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
 import extractDomain from '~/contentScript/utils/extractDomain';
 import { createCompany, fetchCompany } from '~/db/company.db';
 import { CompanyInput } from '~/db/types/company.types';
-import { isDefined } from '~/utils/isDefined';
 
 export const checkIfCompanyExists = async () => {
   const { tab: activeTab } = await chrome.runtime.sendMessage({
