@@ -6,11 +6,12 @@ import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
+import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
 import dts, { PluginOptions } from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
-
-import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
+import tsconfigBuild from "./tsconfig.build.json";
+import tsconfigDev from "./tsconfig.dev.json";
 
 // eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
 import packageJson from '../../package.json';
@@ -18,6 +19,7 @@ import packageJson from '../../package.json';
 export default defineConfig(({ command }) => {
   const isBuildCommand = command === 'build';
 
+  // TODO CHECK IF REMOVEABLE
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.build.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
@@ -83,11 +85,13 @@ export default defineConfig(({ command }) => {
         input: Object.fromEntries(
           glob
             .sync('src/**/*.{ts,tsx}', {
-              ignore: ['src/**/*.d.ts'],
+              // Empty exclude for dev ?
+              ignore: isBuildCommand ? tsconfigBuild.exclude : tsconfigDev.exclude,
             })
             .map((file) => [
               // The name of the entry point
               // lib/nested/foo.ts becomes nested/foo
+              // Is it necessary with tsconfig paths to debug ?
               path.relative(
                 'src',
                 file.slice(0, file.length - path.extname(file).length),
