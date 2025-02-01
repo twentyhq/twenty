@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { z } from 'zod';
+import { isDefined } from 'twenty-shared';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -11,16 +12,15 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import {
-    WorkflowStepExecutorException,
-    WorkflowStepExecutorExceptionCode,
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import {
-    SendEmailActionException,
-    SendEmailActionExceptionCode,
+  SendEmailActionException,
+  SendEmailActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
 import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
-import { isDefined } from 'twenty-shared';
 
 export type WorkflowSendEmailStepOutputSchema = {
   success: boolean;

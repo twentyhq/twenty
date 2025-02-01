@@ -1,6 +1,4 @@
-import { capitalize } from 'twenty-shared';
-
-import { isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 
 export const formatColumnNamesFromCompositeFieldAndSubfields = (
   fieldName: string,

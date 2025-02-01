@@ -1,20 +1,20 @@
 import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
 import { isDefined } from 'twenty-shared';
 import {
-    ArrayTypeNode,
-    ArrowFunction,
-    createSourceFile,
-    FunctionDeclaration,
-    FunctionLikeDeclaration,
-    LiteralTypeNode,
-    Node,
-    PropertySignature,
-    ScriptTarget,
-    StringLiteral,
-    SyntaxKind,
-    TypeNode,
-    UnionTypeNode,
-    VariableStatement,
+  ArrayTypeNode,
+  ArrowFunction,
+  createSourceFile,
+  FunctionDeclaration,
+  FunctionLikeDeclaration,
+  LiteralTypeNode,
+  Node,
+  PropertySignature,
+  ScriptTarget,
+  StringLiteral,
+  SyntaxKind,
+  TypeNode,
+  UnionTypeNode,
+  VariableStatement,
 } from 'typescript';
 
 const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {

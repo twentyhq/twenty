@@ -1,23 +1,23 @@
 import { QueryFailedError } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import {
-    GraphqlQueryRunnerException,
-    GraphqlQueryRunnerExceptionCode,
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
-    WorkspaceQueryRunnerException,
-    WorkspaceQueryRunnerExceptionCode,
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import {
-    ForbiddenError,
-    InternalServerError,
-    NotFoundError,
-    TimeoutError,
-    UserInputError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  TimeoutError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { isDefined } from 'twenty-shared';
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
+import { isDefined } from 'twenty-shared';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    MessageImportDriverException,
-    MessageImportDriverExceptionCode,
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
@@ -15,11 +16,10 @@ import { GmailHandleErrorService } from 'src/modules/messaging/message-import-ma
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 import {
-    GetFullMessageListResponse,
-    GetPartialMessageListResponse,
+  GetFullMessageListResponse,
+  GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { assertNotNull } from 'src/utils/assert';
-import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class GmailGetMessageListService {

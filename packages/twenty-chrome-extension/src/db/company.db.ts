@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared';
 import {
-    CompanyInput,
-    CreateCompanyResponse,
-    FindCompanyResponse,
+  CompanyInput,
+  CreateCompanyResponse,
+  FindCompanyResponse,
 } from '~/db/types/company.types';
 import { Company, CompanyFilterInput } from '~/generated/graphql';
 import { CREATE_COMPANY } from '~/graphql/company/mutations';

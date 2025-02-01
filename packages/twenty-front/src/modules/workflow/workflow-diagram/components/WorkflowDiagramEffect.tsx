@@ -1,8 +1,8 @@
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
-    WorkflowVersion,
-    WorkflowWithCurrentVersion,
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 

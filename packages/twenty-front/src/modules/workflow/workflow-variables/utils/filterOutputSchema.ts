@@ -1,7 +1,7 @@
 import {
-    BaseOutputSchema,
-    OutputSchema,
-    RecordOutputSchema,
+  BaseOutputSchema,
+  OutputSchema,
+  RecordOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';

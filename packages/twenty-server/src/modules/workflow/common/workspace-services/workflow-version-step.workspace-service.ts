@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
@@ -12,12 +13,12 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
-    WorkflowVersionStepException,
-    WorkflowVersionStepExceptionCode,
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import {
-    WorkflowVersionStatus,
-    WorkflowVersionWorkspaceEntity,
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
@@ -25,10 +26,9 @@ import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/comm
 import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-    WorkflowAction,
-    WorkflowActionType,
+  WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { isDefined } from 'twenty-shared';
 
 const TRIGGER_STEP_ID = 'trigger';
 

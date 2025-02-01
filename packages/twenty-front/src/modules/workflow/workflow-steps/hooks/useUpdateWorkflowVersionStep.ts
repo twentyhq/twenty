@@ -8,10 +8,10 @@ import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared';
 import {
-    UpdateWorkflowVersionStepInput,
-    UpdateWorkflowVersionStepMutation,
-    UpdateWorkflowVersionStepMutationVariables,
-    WorkflowAction,
+  UpdateWorkflowVersionStepInput,
+  UpdateWorkflowVersionStepMutation,
+  UpdateWorkflowVersionStepMutationVariables,
+  WorkflowAction,
 } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionStep = () => {

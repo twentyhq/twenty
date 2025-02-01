@@ -3,24 +3,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-    IndexMetadataEntity,
-    IndexType,
+  IndexMetadataEntity,
+  IndexType,
 } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-    WorkspaceMigrationIndexAction,
-    WorkspaceMigrationIndexActionType,
-    WorkspaceMigrationTableAction,
-    WorkspaceMigrationTableActionType,
+  WorkspaceMigrationIndexAction,
+  WorkspaceMigrationIndexActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class IndexMetadataService {

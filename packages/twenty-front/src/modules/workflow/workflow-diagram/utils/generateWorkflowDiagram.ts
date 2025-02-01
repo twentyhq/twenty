@@ -3,9 +3,9 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
-    WorkflowDiagram,
-    WorkflowDiagramEdge,
-    WorkflowDiagramNode,
+  WorkflowDiagram,
+  WorkflowDiagramEdge,
+  WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 

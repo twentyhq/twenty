@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { isDefined } from 'twenty-shared';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-
 export const localStorageEffect =
   <T>(key?: string): AtomEffect<T> =>
   ({ setSelf, onSet, node }) => {

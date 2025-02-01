@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import camelCase from 'lodash.camelcase';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -16,8 +16,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
 import {
-    RelationMetadataException,
-    RelationMetadataExceptionCode,
+  RelationMetadataException,
+  RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
@@ -25,21 +25,20 @@ import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-    WorkspaceMigrationColumnActionType,
-    WorkspaceMigrationColumnDrop,
-    WorkspaceMigrationTableActionType,
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { isDefined } from 'twenty-shared';
 
 import {
-    RelationMetadataEntity,
-    RelationMetadataType,
-    RelationOnDeleteAction,
+  RelationMetadataEntity,
+  RelationMetadataType,
+  RelationOnDeleteAction,
 } from './relation-metadata.entity';
 
 @Injectable()

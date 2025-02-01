@@ -4,9 +4,9 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
-    Workflow,
-    WorkflowTriggerType,
-    WorkflowVersion,
+  Workflow,
+  WorkflowTriggerType,
+  WorkflowVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared';
 

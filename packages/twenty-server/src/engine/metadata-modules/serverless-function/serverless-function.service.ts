@@ -5,6 +5,7 @@ import { basename, dirname, join } from 'path';
 
 import deepEqual from 'deep-equal';
 import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -27,14 +28,13 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
-    ServerlessFunctionEntity,
-    ServerlessFunctionSyncStatus,
+  ServerlessFunctionEntity,
+  ServerlessFunctionSyncStatus,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-    ServerlessFunctionException,
-    ServerlessFunctionExceptionCode,
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class ServerlessFunctionService {

@@ -9,4 +9,3 @@ export * from './utils/image/getImageAbsoluteURI';
 export * from './utils/isDefined';
 export * from './utils/strings';
 export * from './workspace';
-

@@ -3,12 +3,12 @@ import { ComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/typ
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import {
-    AtomEffect,
-    atomFamily,
-    Loadable,
-    RecoilValue,
-    SerializableParam,
-    WrappedValue,
+  AtomEffect,
+  atomFamily,
+  Loadable,
+  RecoilValue,
+  SerializableParam,
+  WrappedValue,
 } from 'recoil';
 
 import { isDefined } from 'twenty-shared';

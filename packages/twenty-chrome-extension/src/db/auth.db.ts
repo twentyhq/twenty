@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared';
 import {
-    ExchangeAuthCodeInput,
-    ExchangeAuthCodeResponse,
-    Tokens,
+  ExchangeAuthCodeInput,
+  ExchangeAuthCodeResponse,
+  Tokens,
 } from '~/db/types/auth.types';
 import { EXCHANGE_AUTHORIZATION_CODE } from '~/graphql/auth/mutations';
 import { callMutation } from '~/utils/requestDb';

@@ -8,10 +8,10 @@ import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared';
 import {
-    DeleteWorkflowVersionStepInput,
-    DeleteWorkflowVersionStepMutation,
-    DeleteWorkflowVersionStepMutationVariables,
-    WorkflowAction,
+  DeleteWorkflowVersionStepInput,
+  DeleteWorkflowVersionStepMutation,
+  DeleteWorkflowVersionStepMutationVariables,
+  WorkflowAction,
 } from '~/generated/graphql';
 
 export const useDeleteWorkflowVersionStep = () => {

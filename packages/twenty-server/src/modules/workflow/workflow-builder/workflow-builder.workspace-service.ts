@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
@@ -12,14 +13,13 @@ import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
 import {
-    WorkflowAction,
-    WorkflowActionType,
+  WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-    WorkflowTrigger,
-    WorkflowTriggerType,
+  WorkflowTrigger,
+  WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {

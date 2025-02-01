@@ -10,9 +10,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
-    resolveDateViewFilterValue,
-    VariableDateViewFilterValueDirection,
-    VariableDateViewFilterValueUnit,
+  resolveDateViewFilterValue,
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';

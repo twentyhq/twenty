@@ -2,9 +2,9 @@ import { UserLookup } from '@/settings/admin-panel/types/UserLookup';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import {
-    FeatureFlagKey,
-    useUpdateWorkspaceFeatureFlagMutation,
-    useUserLookupAdminPanelMutation,
+  FeatureFlagKey,
+  useUpdateWorkspaceFeatureFlagMutation,
+  useUserLookupAdminPanelMutation,
 } from '~/generated/graphql';
 
 export const useFeatureFlagsManagement = () => {

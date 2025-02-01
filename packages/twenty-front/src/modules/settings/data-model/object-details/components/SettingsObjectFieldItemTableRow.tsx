@@ -22,7 +22,13 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { IconMinus, IconPlus, LightIconButton, UndecoratedLink, useIcons } from 'twenty-ui';
+import {
+  IconMinus,
+  IconPlus,
+  LightIconButton,
+  UndecoratedLink,
+  useIcons,
+} from 'twenty-ui';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';

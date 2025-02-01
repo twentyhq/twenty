@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
-    FeatureFlagKey,
-    useUpdateLabPublicFeatureFlagMutation,
+  FeatureFlagKey,
+  useUpdateLabPublicFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useLabPublicFeatureFlags = () => {

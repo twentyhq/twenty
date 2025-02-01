@@ -3,11 +3,11 @@ import { useContext } from 'react';
 
 import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import {
-    BORDER_COMMON,
-    THEME_COMMON,
-    ThemeColor,
-    ThemeContext,
-    ThemeType,
+  BORDER_COMMON,
+  THEME_COMMON,
+  ThemeColor,
+  ThemeContext,
+  ThemeType,
 } from '@ui/theme';
 import { isDefined } from 'twenty-shared';
 

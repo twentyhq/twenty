@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import {
-    Workflow,
-    WorkflowWithCurrentVersion,
+  Workflow,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared';

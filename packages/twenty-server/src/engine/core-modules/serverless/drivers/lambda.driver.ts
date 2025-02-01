@@ -2,32 +2,33 @@ import * as fs from 'fs/promises';
 import { join } from 'path';
 
 import {
-    CreateFunctionCommand,
-    DeleteFunctionCommand,
-    GetFunctionCommand,
-    InvokeCommand,
-    InvokeCommandInput,
-    Lambda,
-    LambdaClientConfig,
-    ListLayerVersionsCommand,
-    ListLayerVersionsCommandInput,
-    PublishLayerVersionCommand,
-    PublishLayerVersionCommandInput,
-    PublishVersionCommand,
-    PublishVersionCommandInput,
-    ResourceNotFoundException,
-    UpdateFunctionCodeCommand,
-    UpdateFunctionConfigurationCommand,
-    UpdateFunctionConfigurationCommandInput,
-    waitUntilFunctionUpdatedV2,
+  CreateFunctionCommand,
+  DeleteFunctionCommand,
+  GetFunctionCommand,
+  InvokeCommand,
+  InvokeCommandInput,
+  Lambda,
+  LambdaClientConfig,
+  ListLayerVersionsCommand,
+  ListLayerVersionsCommandInput,
+  PublishLayerVersionCommand,
+  PublishLayerVersionCommandInput,
+  PublishVersionCommand,
+  PublishVersionCommandInput,
+  ResourceNotFoundException,
+  UpdateFunctionCodeCommand,
+  UpdateFunctionConfigurationCommand,
+  UpdateFunctionConfigurationCommandInput,
+  waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
 import dotenv from 'dotenv';
+import { isDefined } from 'twenty-shared';
 
 import {
-    ServerlessDriver,
-    ServerlessExecuteResult,
+  ServerlessDriver,
+  ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -39,20 +40,19 @@ import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/ut
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
 import {
-    LambdaBuildDirectoryManager,
-    NODE_LAYER_SUBFOLDER,
+  LambdaBuildDirectoryManager,
+  NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
-    ServerlessFunctionEntity,
-    ServerlessFunctionRuntime,
+  ServerlessFunctionEntity,
+  ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-    ServerlessFunctionException,
-    ServerlessFunctionExceptionCode,
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { isDefined } from 'twenty-shared';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 

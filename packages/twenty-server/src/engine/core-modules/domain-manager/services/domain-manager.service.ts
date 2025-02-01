@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import Cloudflare from 'cloudflare';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import {
-    DomainManagerException,
-    DomainManagerExceptionCode,
+  DomainManagerException,
+  DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
 import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
@@ -15,7 +16,6 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isDefined } from 'twenty-shared';
 
 @Injectable()
 export class DomainManagerService {

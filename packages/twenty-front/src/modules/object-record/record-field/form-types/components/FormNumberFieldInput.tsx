@@ -11,8 +11,8 @@ import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import {
-    canBeCastAsNumberOrNull,
-    castAsNumberOrNull,
+  canBeCastAsNumberOrNull,
+  castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
 const StyledInput = styled(TextInput)`

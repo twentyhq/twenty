@@ -1,7 +1,7 @@
 import {
-    Workflow,
-    WorkflowVersion,
-    WorkflowWithCurrentVersion,
+  Workflow,
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared';
 

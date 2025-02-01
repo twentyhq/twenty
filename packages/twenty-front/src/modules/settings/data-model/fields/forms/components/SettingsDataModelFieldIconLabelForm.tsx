@@ -13,7 +13,13 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
-import { AppTooltip, Card, IconInfoCircle, IconRefresh, TooltipDelay } from 'twenty-ui';
+import {
+  AppTooltip,
+  Card,
+  IconInfoCircle,
+  IconRefresh,
+  TooltipDelay,
+} from 'twenty-ui';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (

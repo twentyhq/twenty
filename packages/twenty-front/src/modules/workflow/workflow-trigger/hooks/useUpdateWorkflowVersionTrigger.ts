@@ -3,9 +3,9 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
-    WorkflowTrigger,
-    WorkflowVersion,
-    WorkflowWithCurrentVersion,
+  WorkflowTrigger,
+  WorkflowVersion,
+  WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared';
 

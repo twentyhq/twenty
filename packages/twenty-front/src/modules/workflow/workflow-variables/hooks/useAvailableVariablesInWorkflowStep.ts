@@ -6,8 +6,8 @@ import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/wo
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
-    OutputSchema,
-    StepOutputSchema,
+  OutputSchema,
+  StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTriggerStepName';

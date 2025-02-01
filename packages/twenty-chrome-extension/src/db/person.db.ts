@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared';
 import {
-    CreatePersonResponse,
-    FindPersonResponse,
-    PersonInput,
+  CreatePersonResponse,
+  FindPersonResponse,
+  PersonInput,
 } from '~/db/types/person.types';
 import { Person, PersonFilterInput } from '~/generated/graphql';
 import { CREATE_PERSON } from '~/graphql/person/mutations';
