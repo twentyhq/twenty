@@ -25,6 +25,19 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
 
+export type Agent = {
+  __typename?: 'Agent';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  inboxes: Array<Inbox>;
+  isActive: Scalars['Boolean'];
+  isAdmin: Scalars['Boolean'];
+  memberId: Scalars['String'];
+  sectors: Array<Sector>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -261,9 +274,23 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type Component = {
+  __typename?: 'Component';
+  format?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+};
+
+export type CreateAgentInput = {
+  isAdmin: Scalars['Boolean'];
+  memberId: Scalars['ID'];
+  sectorIds: Array<Scalars['String']>;
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -297,10 +324,27 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateSectorInput = {
+  icon: Scalars['String'];
+  name: Scalars['String'];
+  topics?: InputMaybe<Array<Scalars['JSON']>>;
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type CreateWhatsappIntegrationInput = {
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  label: Scalars['String'];
+  phoneId: Scalars['String'];
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateWorkflowVersionStepInput = {
@@ -628,6 +672,15 @@ export type IndexObjectMetadataArgs = {
   paging?: CursorPaging;
 };
 
+export type Inbox = {
+  __typename?: 'Inbox';
+  agents: Array<Agent>;
+  id: Scalars['UUID'];
+  integrationType: IntegrationType;
+  whatsappIntegration?: Maybe<WhatsappIntegration>;
+  workspace: Workspace;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
@@ -697,6 +750,12 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+/** Available integration types */
+export enum IntegrationType {
+  MESSENGER = 'MESSENGER',
+  WHATSAPP = 'WHATSAPP'
+}
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -721,11 +780,21 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
+export type MessageAgent = {
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
 }
+
+export type MessageSector = {
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -736,6 +805,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
+  createAgent: Agent;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -743,13 +813,17 @@ export type Mutation = {
   createOneObject: Object;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createSector: Sector;
+  createWhatsappIntegration: WhatsappIntegration;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
+  deleteAgent: Agent;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteSector: Scalars['Boolean'];
   deleteUser: User;
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String'];
@@ -770,9 +844,14 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  sendEventMessage: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
+  sendMessage: Scalars['Boolean'];
+  sendTemplate: Scalars['Boolean'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  toggleAgentStatus: Scalars['Boolean'];
+  toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
   updateLabPublicFeatureFlag: FeatureFlag;
@@ -780,11 +859,15 @@ export type Mutation = {
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateSector: Sector;
+  updateWhatsappIntegration: WhatsappIntegration;
+  updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: Scalars['String'];
+  uploadFileToBucket: Scalars['String'];
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
@@ -827,6 +910,11 @@ export type MutationComputeStepOutputSchemaArgs = {
 };
 
 
+export type MutationCreateAgentArgs = {
+  createInput: CreateAgentInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -852,6 +940,16 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
+export type MutationCreateSectorArgs = {
+  createInput: CreateSectorInput;
+};
+
+
+export type MutationCreateWhatsappIntegrationArgs = {
+  createInput: CreateWhatsappIntegrationInput;
+};
+
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
@@ -859,6 +957,11 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String'];
+};
+
+
+export type MutationDeleteAgentArgs = {
+  agentId: Scalars['String'];
 };
 
 
@@ -879,6 +982,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteSectorArgs = {
+  sectorId: Scalars['String'];
 };
 
 
@@ -967,8 +1075,23 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
+export type MutationSendEventMessageArgs = {
+  sendEventMessageInput: SendEventMessageInput;
+};
+
+
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
+};
+
+
+export type MutationSendMessageArgs = {
+  sendMessageInput: SendMessageInput;
+};
+
+
+export type MutationSendTemplateArgs = {
+  sendTemplateInput: SendTemplateInput;
 };
 
 
@@ -983,9 +1106,24 @@ export type MutationSignUpArgs = {
 };
 
 
+export type MutationToggleAgentStatusArgs = {
+  agentId: Scalars['String'];
+};
+
+
+export type MutationToggleWhatsappIntegrationStatusArgs = {
+  integrationId: Scalars['String'];
+};
+
+
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
+};
+
+
+export type MutationUpdateAgentArgs = {
+  updateInput: UpdateAgentInput;
 };
 
 
@@ -1015,6 +1153,22 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdateSectorArgs = {
+  updateInput: UpdateSectorInput;
+};
+
+
+export type MutationUpdateWhatsappIntegrationArgs = {
+  updateInput: UpdateWhatsappIntegrationInput;
+};
+
+
+export type MutationUpdateWhatsappIntegrationServiceLevelArgs = {
+  integrationId: Scalars['String'];
+  sla: Scalars['Int'];
+};
+
+
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
 };
@@ -1041,6 +1195,14 @@ export type MutationUpdateWorkspaceMemberRoleArgs = {
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadFileToBucketArgs = {
+  file: Scalars['Upload'];
+  isInternal?: InputMaybe<Scalars['Boolean']>;
+  type: Scalars['String'];
+  workspaceId: Scalars['String'];
 };
 
 
@@ -1233,6 +1395,8 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  getWhatsappTemplates: WhatsappTemplatesResponse;
+  inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
   listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
@@ -1240,6 +1404,18 @@ export type Query = {
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   validatePasswordResetToken: ValidatePasswordResetToken;
+  whatsappIntegrationById: WhatsappIntegration;
+  whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
+};
+
+
+export type QueryAgentByIdArgs = {
+  agentId: Scalars['String'];
+};
+
+
+export type QueryAgentsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -1314,6 +1490,26 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
+};
+
+
+export type QueryGetWhatsappTemplatesArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type QueryInboxesByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
+export type QuerySectorByIdArgs = {
+  sectorId: Scalars['String'];
+};
+
+
+export type QuerySectorsByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -1467,12 +1663,53 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
+export type Sector = {
+  __typename?: 'Sector';
+  agents: Array<Agent>;
+  createdAt: Scalars['DateTime'];
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  topics?: Maybe<Array<Scalars['JSON']>>;
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
+export type SendEventMessageInput = {
+  agent?: InputMaybe<MessageAgent>;
+  eventStatus: Scalars['String'];
+  from: Scalars['String'];
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  sector?: InputMaybe<MessageSector>;
+  status: Scalars['String'];
+  to: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type SendMessageInput = {
+  fileId?: InputMaybe<Scalars['String']>;
+  integrationId: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+  to: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type SendTemplateInput = {
+  agent?: InputMaybe<MessageAgent>;
+  integrationId: Scalars['String'];
+  language: Scalars['String'];
+  message: Scalars['String'];
+  templateName: Scalars['String'];
+  to: Scalars['String'];
 };
 
 export type Sentry = {
@@ -1591,6 +1828,17 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
+};
+
+export type Template = {
+  __typename?: 'Template';
+  category: Scalars['String'];
+  components: Array<Component>;
+  id: Scalars['String'];
+  language: Scalars['String'];
+  name: Scalars['String'];
+  parameter_format: Scalars['String'];
+  status: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -1726,6 +1974,13 @@ export type UpdateOneObjectInput = {
   update: UpdateObjectPayload;
 };
 
+export type UpdateSectorInput = {
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Array<Scalars['JSON']>>;
+};
+
 export type UpdateServerlessFunctionInput = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
@@ -1733,6 +1988,16 @@ export type UpdateServerlessFunctionInput = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateWhatsappIntegrationInput = {
+  accessToken?: InputMaybe<Scalars['String']>;
+  appId?: InputMaybe<Scalars['String']>;
+  appKey?: InputMaybe<Scalars['String']>;
+  businessAccountId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  label?: InputMaybe<Scalars['String']>;
+  phoneId?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWorkflowVersionStepInput = {
@@ -1841,6 +2106,26 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
+export type WhatsappIntegration = {
+  __typename?: 'WhatsappIntegration';
+  accessToken: Scalars['String'];
+  appId: Scalars['String'];
+  appKey: Scalars['String'];
+  businessAccountId: Scalars['String'];
+  disabled: Scalars['Boolean'];
+  id: Scalars['UUID'];
+  label: Scalars['String'];
+  phoneId: Scalars['String'];
+  sla: Scalars['Float'];
+  verifyToken: Scalars['String'];
+  workspace: Workspace;
+};
+
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
+};
+
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID'];
@@ -1885,6 +2170,7 @@ export type Workspace = {
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  whatsappIntegrations: Array<WhatsappIntegration>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -4241,6 +4527,154 @@ export function useListSsoIdentityProvidersByWorkspaceIdLazyQuery(baseOptions?: 
 export type ListSsoIdentityProvidersByWorkspaceIdQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useListSsoIdentityProvidersByWorkspaceIdLazyQuery>;
 export type ListSsoIdentityProvidersByWorkspaceIdQueryResult = Apollo.QueryResult<ListSsoIdentityProvidersByWorkspaceIdQuery, ListSsoIdentityProvidersByWorkspaceIdQueryVariables>;
+export const CreateSectorDocument = gql`
+    mutation CreateSector($createInput: CreateSectorInput!) {
+  createSector(createInput: $createInput) {
+    id
+  }
+}
+    `;
+export type CreateSectorMutationFn = Apollo.MutationFunction<CreateSectorMutation, CreateSectorMutationVariables>;
+
+/**
+ * __useCreateSectorMutation__
+ *
+ * To run a mutation, you first call `useCreateSectorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSectorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSectorMutation, { data, loading, error }] = useCreateSectorMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateSectorMutation(baseOptions?: Apollo.MutationHookOptions<CreateSectorMutation, CreateSectorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSectorMutation, CreateSectorMutationVariables>(CreateSectorDocument, options);
+      }
+export type CreateSectorMutationHookResult = ReturnType<typeof useCreateSectorMutation>;
+export type CreateSectorMutationResult = Apollo.MutationResult<CreateSectorMutation>;
+export type CreateSectorMutationOptions = Apollo.BaseMutationOptions<CreateSectorMutation, CreateSectorMutationVariables>;
+export const DeleteSectorDocument = gql`
+    mutation DeleteSector($sectorId: String!) {
+  deleteSector(sectorId: $sectorId)
+}
+    `;
+export type DeleteSectorMutationFn = Apollo.MutationFunction<DeleteSectorMutation, DeleteSectorMutationVariables>;
+
+/**
+ * __useDeleteSectorMutation__
+ *
+ * To run a mutation, you first call `useDeleteSectorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSectorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSectorMutation, { data, loading, error }] = useDeleteSectorMutation({
+ *   variables: {
+ *      sectorId: // value for 'sectorId'
+ *   },
+ * });
+ */
+export function useDeleteSectorMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSectorMutation, DeleteSectorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSectorMutation, DeleteSectorMutationVariables>(DeleteSectorDocument, options);
+      }
+export type DeleteSectorMutationHookResult = ReturnType<typeof useDeleteSectorMutation>;
+export type DeleteSectorMutationResult = Apollo.MutationResult<DeleteSectorMutation>;
+export type DeleteSectorMutationOptions = Apollo.BaseMutationOptions<DeleteSectorMutation, DeleteSectorMutationVariables>;
+export const UpdateSectorDocument = gql`
+    mutation UpdateSector($updateInput: UpdateSectorInput!) {
+  updateSector(updateInput: $updateInput) {
+    id
+    name
+    topics
+    icon
+    workspace {
+      id
+      displayName
+    }
+  }
+}
+    `;
+export type UpdateSectorMutationFn = Apollo.MutationFunction<UpdateSectorMutation, UpdateSectorMutationVariables>;
+
+/**
+ * __useUpdateSectorMutation__
+ *
+ * To run a mutation, you first call `useUpdateSectorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSectorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSectorMutation, { data, loading, error }] = useUpdateSectorMutation({
+ *   variables: {
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateSectorMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSectorMutation, UpdateSectorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSectorMutation, UpdateSectorMutationVariables>(UpdateSectorDocument, options);
+      }
+export type UpdateSectorMutationHookResult = ReturnType<typeof useUpdateSectorMutation>;
+export type UpdateSectorMutationResult = Apollo.MutationResult<UpdateSectorMutation>;
+export type UpdateSectorMutationOptions = Apollo.BaseMutationOptions<UpdateSectorMutation, UpdateSectorMutationVariables>;
+export const SectorsByWorkspaceDocument = gql`
+    query SectorsByWorkspace($workspaceId: String!) {
+  sectorsByWorkspace(workspaceId: $workspaceId) {
+    id
+    name
+    icon
+    topics
+    workspace {
+      id
+      displayName
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useSectorsByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useSectorsByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSectorsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSectorsByWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useSectorsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>(SectorsByWorkspaceDocument, options);
+      }
+export function useSectorsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>(SectorsByWorkspaceDocument, options);
+        }
+export type SectorsByWorkspaceQueryHookResult = ReturnType<typeof useSectorsByWorkspaceQuery>;
+export type SectorsByWorkspaceLazyQueryHookResult = ReturnType<typeof useSectorsByWorkspaceLazyQuery>;
+export type SectorsByWorkspaceQueryResult = Apollo.QueryResult<SectorsByWorkspaceQuery, SectorsByWorkspaceQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {
