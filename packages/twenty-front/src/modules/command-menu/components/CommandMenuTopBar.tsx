@@ -13,7 +13,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconX, isDefined, LightIconButton, useIsMobile } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconX, LightIconButton, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;

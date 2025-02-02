@@ -4,7 +4,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useApplyRecordFilter = (componentInstanceId?: string) => {
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();

@@ -1,7 +1,7 @@
-import { isDefined } from '~/utils/isDefined';
-import { useEffect } from 'react';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { useGetHostnameDetailsQuery } from '~/generated/graphql';
 
 export const SettingsHostnameEffect = () => {

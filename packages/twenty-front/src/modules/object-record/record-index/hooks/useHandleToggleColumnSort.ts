@@ -4,7 +4,7 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type UseHandleToggleColumnSortProps = {
   objectNameSingular: string;

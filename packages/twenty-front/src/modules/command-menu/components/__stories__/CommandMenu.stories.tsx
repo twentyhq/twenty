@@ -123,6 +123,8 @@ export const SearchRecordsAction: Story = {
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
     expect(await canvas.findByText('Linkedin')).toBeVisible();
+    const companyTexts = await canvas.findAllByText('Company');
+    expect(companyTexts[0]).toBeVisible();
     expect(await canvas.findByText(companiesMock[0].name)).toBeVisible();
   },
 };

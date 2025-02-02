@@ -4,7 +4,7 @@ import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuP
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;

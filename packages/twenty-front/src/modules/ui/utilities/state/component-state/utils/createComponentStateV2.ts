@@ -4,7 +4,7 @@ import { ComponentStateV2 } from '@/ui/utilities/state/component-state/types/Com
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { AtomEffect, atomFamily } from 'recoil';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type CreateComponentInstanceStateArgs<ValueType> = {
   key: string;

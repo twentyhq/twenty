@@ -1,18 +1,18 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, H2Title, Section } from 'twenty-ui';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState } from 'recoil';
-import styled from '@emotion/styled';
-import {
-  useUpdateWorkspaceMutation,
-  useGetHostnameDetailsQuery,
-} from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
+import { Controller, useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import { Button, H2Title, Section } from 'twenty-ui';
+import { z } from 'zod';
+import {
+  useGetHostnameDetailsQuery,
+  useUpdateWorkspaceMutation,
+} from '~/generated/graphql';
 
 const validationSchema = z
   .object({

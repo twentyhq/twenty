@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const getImageIdentifierFieldValue = (
   record: ObjectRecord,

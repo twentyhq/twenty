@@ -8,7 +8,7 @@ import {
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export type TextInputProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;

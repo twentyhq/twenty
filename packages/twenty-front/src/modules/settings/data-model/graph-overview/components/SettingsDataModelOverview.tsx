@@ -20,6 +20,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconButtonGroup,
@@ -30,7 +31,6 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,

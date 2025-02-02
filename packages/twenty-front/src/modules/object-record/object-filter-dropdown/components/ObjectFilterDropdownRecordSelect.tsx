@@ -22,8 +22,8 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
+import { isDefined } from 'twenty-shared';
 import { IconUserCircle } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,

@@ -11,7 +11,8 @@ import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconEyeOff, IconSettings } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {

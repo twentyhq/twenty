@@ -6,8 +6,8 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { AppPath } from '@/types/AppPath';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { useImpersonateMutation } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useImpersonate = () => {
   const [currentUser] = useRecoilState(currentUserState);

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -12,7 +13,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/permissions/user-workspace-role.entity';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class PermissionsService {

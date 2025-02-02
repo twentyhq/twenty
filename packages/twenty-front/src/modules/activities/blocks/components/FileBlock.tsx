@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
 
+import { isDefined } from 'twenty-shared';
 import { Button } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { AttachmentIcon } from '../../files/components/AttachmentIcon';

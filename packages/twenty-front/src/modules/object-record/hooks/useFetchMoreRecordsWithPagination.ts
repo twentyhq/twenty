@@ -23,8 +23,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from '~/utils/isDefined';
+import { capitalize, isDefined } from 'twenty-shared';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';

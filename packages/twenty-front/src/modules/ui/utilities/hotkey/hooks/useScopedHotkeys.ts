@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;

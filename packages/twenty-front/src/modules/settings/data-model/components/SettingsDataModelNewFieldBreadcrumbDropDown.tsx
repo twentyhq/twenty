@@ -7,7 +7,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { Button, IconChevronDown, isDefined, MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { Button, IconChevronDown, MenuItem } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`

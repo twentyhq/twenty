@@ -4,7 +4,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { settingsPreviewRecordIdState } from '@/settings/data-model/fields/preview/states/settingsPreviewRecordIdState';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type SettingsDataModelSetFieldValueEffectProps = {
   recordId: string;
