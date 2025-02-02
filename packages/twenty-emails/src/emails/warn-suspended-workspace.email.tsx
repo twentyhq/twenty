@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -49,7 +50,7 @@ export const WarnSuspendedWorkspaceEmail = ({
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"
-        value="Update your subscription"
+        value={t`Update your subscription`}
       />
     </BaseEmail>
   );

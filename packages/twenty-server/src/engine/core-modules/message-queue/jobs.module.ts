@@ -12,7 +12,6 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
-import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -59,7 +58,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkflowModule,
     FavoriteModule,
     WorkspaceCleanerModule,
-    I18nModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,

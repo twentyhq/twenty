@@ -21,7 +21,7 @@ export const PasswordUpdateNotifyEmail = ({
   link,
   locale,
 }: PasswordUpdateNotifyEmailProps) => {
-  const helloString = userName?.length > 1 ? t`Dear ${userName}` : t`Dear`;
+  const helloString = userName?.length > 1 ? t`Dear ${userName}` : t`Hello`;
   const formattedDate = i18n.date(new Date());
 
   return (

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 13:19+0100\n"
+"POT-Creation-Date: 2025-02-02 20:44+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,18 +24,18 @@ msgid "Connect to Twenty"
 msgstr "Connectez-vous à Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
-msgid "Dear"
-msgstr "Cher(e)"
-
-#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
 msgstr "Cher(e) {userName}"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "Bonjour"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Si vous n'êtes pas à l'origine de ce changement, veuillez contacter immédiatement le propriétaire de votre espace de travail."
 
-#: src/emails/warn-suspended-workspace.email.tsx:45
+#: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
 msgstr "Si vous souhaitez continuer à utiliser Twenty, veuillez mettre à jour votre abonnement dans les {remainingDays} {dayOrDays} à venir."
 
@@ -43,7 +43,7 @@ msgstr "Si vous souhaitez continuer à utiliser Twenty, veuillez mettre à jour 
 msgid "If you wish to use Twenty again, you can create a new workspace."
 msgstr "Si vous souhaitez réutiliser Twenty, vous pouvez créer un nouvel espace de travail."
 
-#: src/emails/warn-suspended-workspace.email.tsx:33
+#: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
 msgstr "Il apparaît que votre espace de travail <0>{workspaceDisplayName}</0> a été suspendu pendant {daysSinceInactive} jours."
 
@@ -55,17 +55,33 @@ msgstr "Rejoignez votre équipe sur Twenty"
 msgid "Password updated"
 msgstr "Mot de passe mis à jour"
 
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "Réinitialiser votre mot de passe 🗝"
+
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Merci de vous être inscrit sur Twenty! Avant de commencer, nous devons simplement confirmer qu'il s'agit bien de vous. Cliquez ci-dessus pour vérifier votre adresse e-mail."
 
-#: src/emails/warn-suspended-workspace.email.tsx:39
+#: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 msgstr "L'espace de travail sera désactivé dans {remainingDays} {dayOrDays} et toutes ses données seront supprimées."
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ce lien n'est valable que pour le prochain {duration}. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de la connexion :"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "Mise à jour de votre abonnement"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
