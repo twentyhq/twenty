@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
+    "declaration": true,
     "outDir": "../../.cache/tsc",
     "types": [
       "node",
