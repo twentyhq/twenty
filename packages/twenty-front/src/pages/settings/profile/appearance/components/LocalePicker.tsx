@@ -51,7 +51,7 @@ export const LocalePicker = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
-  const handleLocaleChange = async (value: string) => {
+  const handleLocaleChange = async (value: keyof typeof APP_LOCALES) => {
     setCurrentWorkspaceMember({
       ...currentWorkspaceMember,
       ...{ locale: value },
@@ -126,7 +126,9 @@ export const LocalePicker = () => {
         fullWidth
         value={i18n.locale}
         options={localeOptions}
-        onChange={(value) => handleLocaleChange(value)}
+        onChange={(value) =>
+          handleLocaleChange(value as keyof typeof APP_LOCALES)
+        }
       />
     </StyledContainer>
   );
