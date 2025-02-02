@@ -66,12 +66,12 @@ msgid "Password updated"
 msgstr ""
 
 #: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr ""
+#~ msgid "Reset"
+#~ msgstr ""
 
 #: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr ""
+#~ msgid "Reset your password 🗝"
+#~ msgstr ""
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -90,8 +90,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr ""
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+#~ msgstr ""
 
 #: src/emails/password-reset-link.email.tsx:28
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"

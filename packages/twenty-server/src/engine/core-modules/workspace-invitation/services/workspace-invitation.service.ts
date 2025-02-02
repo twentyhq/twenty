@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -296,7 +297,7 @@ export class WorkspaceInvitationService {
             lastName: sender.lastName,
           },
           serverUrl: this.environmentService.get('SERVER_URL'),
-          locale: 'en',
+          locale: 'en' as keyof typeof APP_LOCALES,
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);

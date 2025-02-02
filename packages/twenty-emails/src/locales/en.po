@@ -66,12 +66,12 @@ msgid "Password updated"
 msgstr "Password updated"
 
 #: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "Reset"
+#~ msgid "Reset"
+#~ msgstr "Reset"
 
 #: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "Reset your password 🗝"
+#~ msgid "Reset your password 🗝"
+#~ msgstr "Reset your password 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
@@ -90,8 +90,8 @@ msgstr "This is a confirmation that password for your account ({email}) was succ
 #~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 
 #: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+#~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+#~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 
 #: src/emails/password-reset-link.email.tsx:28
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"

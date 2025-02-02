@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 12:37+0100\n"
+"POT-Creation-Date: 2025-02-02 13:19+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,14 +55,6 @@ msgstr "Twenty에서 팀에 합류하세요"
 msgid "Password updated"
 msgstr "비밀번호 업데이트"
 
-#: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "초기화"
-
-#: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "비밀번호 재설정 🗝"
-
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Twenty에 계정을 등록해 주셔서 감사합니다! 시작하기 전에 본인인지 확인해야 합니다. 위를 클릭하여 이메일 주소를 인증하세요."
@@ -74,10 +66,6 @@ msgstr "워크스페이스는 {remainingDays} {dayOrDays}에서 비활성화되�
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "계정 비밀번호({email})가 {formattedDate}에서 성공적으로 변경되었음을 확인합니다."
-
-#: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "이 링크는 다음 {duration}에만 유효합니다. 링크가 작동하지 않는 경우 로그인 인증 링크를 직접 사용할 수 있습니다:"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 12:37+0100\n"
+"POT-Creation-Date: 2025-02-02 13:19+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,14 +55,6 @@ msgstr "Rejoignez votre équipe sur Twenty"
 msgid "Password updated"
 msgstr "Mot de passe mis à jour"
 
-#: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "Réinitialiser"
-
-#: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "Réinitialiser votre mot de passe 🗝"
-
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Merci de vous être inscrit sur Twenty! Avant de commencer, nous devons simplement confirmer qu'il s'agit bien de vous. Cliquez ci-dessus pour vérifier votre adresse e-mail."
@@ -74,10 +66,6 @@ msgstr "L'espace de travail sera désactivé dans {remainingDays} {dayOrDays} et
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}."
-
-#: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ce lien n'est valable que pour le prochain {duration}. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de la connexion :"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"

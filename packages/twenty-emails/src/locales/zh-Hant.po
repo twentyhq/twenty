@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 12:37+0100\n"
+"POT-Creation-Date: 2025-02-02 13:19+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,14 +55,6 @@ msgstr "加入您的團隊，來 Twenty"
 msgid "Password updated"
 msgstr "密碼已更新"
 
-#: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "重設"
-
-#: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "重設您的密碼 🗝"
-
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "感謝您在 Twenty 註冊帳戶！在開始之前，我們需要確認這是您。請點擊以上鏈接以驗證您的電子郵件地址。"
@@ -74,10 +66,6 @@ msgstr "工作区将在 {remainingDays} {dayOrDays} 中停用，其所有数据�
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "确认您的账户（{email}）密码已在 {formattedDate} 上成功更改。"
-
-#: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "此链接仅对下 {duration} 次有效。如果链接无效，您可以直接使用登录验证链接："
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"

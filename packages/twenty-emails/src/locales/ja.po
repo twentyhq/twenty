@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 12:37+0100\n"
+"POT-Creation-Date: 2025-02-02 13:19+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,14 +55,6 @@ msgstr "Twentyでチームに参加しよう"
 msgid "Password updated"
 msgstr "パスワード更新"
 
-#: src/emails/password-reset-link.email.tsx:24
-msgid "Reset"
-msgstr "リセット"
-
-#: src/emails/password-reset-link.email.tsx:23
-msgid "Reset your password 🗝"
-msgstr "パスワードをリセットする"
-
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Twentyのアカウント登録ありがとうございます！アカウント登録の前に、ご本人であることを確認させていただきます。上記をクリックしてメールアドレスを確認してください。"
@@ -74,10 +66,6 @@ msgstr "ワークスペースは{remainingDays} {dayOrDays}で非アクティブ
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "これは、あなたのアカウント（{email}）のパスワードが{formattedDate}で正常に変更されたことの確認です。"
-
-#: src/emails/password-reset-link.email.tsx:26
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "このリンクは次の{duration}にのみ有効です。リンクが機能しない場合は、ログイン認証リンクを直接ご利用ください："
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
