@@ -12,7 +12,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -23,7 +23,7 @@ type SendInviteLinkEmailProps = {
     lastName: string;
   };
   serverUrl: string;
-  locale: string;
+  locale: keyof typeof APP_LOCALES;
 };
 
 export const SendInviteLinkEmail = ({

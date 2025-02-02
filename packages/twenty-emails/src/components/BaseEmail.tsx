@@ -5,10 +5,11 @@ import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Logo } from 'src/components/Logo';
+import { APP_LOCALES } from 'twenty-shared';
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;
-  locale: string;
+  locale: keyof typeof APP_LOCALES;
 }>;
 
 export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {

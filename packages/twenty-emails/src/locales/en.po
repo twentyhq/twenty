@@ -21,19 +21,19 @@ msgstr "Accept invite"
 msgid "All data in this workspace has been permanently deleted."
 msgstr "All data in this workspace has been permanently deleted."
 
-#: src/emails/send-email-verification-link.email.tsx:21
+#: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
 msgstr "Confirm your email address"
 
-#: src/emails/password-update-notify.email.tsx:45
+#: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
 msgstr "Connect to Twenty"
 
-#: src/emails/password-update-notify.email.tsx:23
+#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear"
 msgstr "Dear"
 
-#: src/emails/password-update-notify.email.tsx:23
+#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
 msgstr "Dear {userName}"
 
@@ -41,7 +41,7 @@ msgstr "Dear {userName}"
 msgid "has invited you to join a workspace called "
 msgstr "has invited you to join a workspace called "
 
-#: src/emails/password-update-notify.email.tsx:39
+#: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "If you did not initiate this change, please contact your workspace owner immediately."
 
@@ -61,19 +61,19 @@ msgstr "It appears that your workspace <0>{workspaceDisplayName}</0> has been su
 msgid "Join your team on Twenty"
 msgstr "Join your team on Twenty"
 
-#: src/emails/password-update-notify.email.tsx:28
+#: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
 msgstr "Password updated"
 
-#: src/emails/password-reset-link.email.tsx:23
+#: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
 msgstr "Reset"
 
-#: src/emails/password-reset-link.email.tsx:22
+#: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
 msgstr "Reset your password 🗝"
 
-#: src/emails/send-email-verification-link.email.tsx:26
+#: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 
@@ -81,7 +81,7 @@ msgstr "Thanks for registering for an account on Twenty! Before we get started, 
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 msgstr "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 
-#: src/emails/password-update-notify.email.tsx:33
+#: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 
@@ -89,7 +89,7 @@ msgstr "This is a confirmation that password for your account ({email}) was succ
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 #~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 
-#: src/emails/password-reset-link.email.tsx:25
+#: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 
@@ -97,7 +97,7 @@ msgstr "This link is only valid for the next {duration}. If the link does not wo
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 #~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 
-#: src/emails/send-email-verification-link.email.tsx:22
+#: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
 msgstr "Verify Email"
 

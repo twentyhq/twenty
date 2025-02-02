@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-02 12:09+0100\n"
+"POT-Creation-Date: 2025-02-02 12:37+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,23 +15,23 @@ msgstr "Einladung annehmen"
 msgid "All data in this workspace has been permanently deleted."
 msgstr "Alle Daten in diesem Arbeitsbereich wurden endgültig gelöscht."
 
-#: src/emails/send-email-verification-link.email.tsx:21
+#: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
 msgstr "Bestätigen Sie Ihre E-Mail Adresse"
 
-#: src/emails/password-update-notify.email.tsx:45
+#: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
 msgstr "Verbindung zu Twenty"
 
-#: src/emails/password-update-notify.email.tsx:23
+#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear"
 msgstr "Liebe"
 
-#: src/emails/password-update-notify.email.tsx:23
+#: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
 msgstr "Sehr geehrter {userName}"
 
-#: src/emails/password-update-notify.email.tsx:39
+#: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Wenn Sie diese Änderung nicht veranlasst haben, wenden Sie sich bitte umgehend an den Eigentümer Ihres Arbeitsbereichs."
 
@@ -51,19 +51,19 @@ msgstr "Es scheint, dass Ihr Arbeitsbereich <0>{workspaceDisplayName}</0> für {
 msgid "Join your team on Twenty"
 msgstr "Verbinden Sie Ihr Team auf Twenty"
 
-#: src/emails/password-update-notify.email.tsx:28
+#: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
 msgstr "Passwort aktualisiert"
 
-#: src/emails/password-reset-link.email.tsx:23
+#: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: src/emails/password-reset-link.email.tsx:22
+#: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
 msgstr "Ihr Passwort zurücksetzen 🗝"
 
-#: src/emails/send-email-verification-link.email.tsx:26
+#: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Vielen Dank, dass Sie sich für ein Konto bei Twenty registriert haben! Bevor wir loslegen, müssen wir nur bestätigen, dass Sie es sind. Klicken Sie oben, um Ihre E-Mail-Adresse zu bestätigen."
 
@@ -71,15 +71,15 @@ msgstr "Vielen Dank, dass Sie sich für ein Konto bei Twenty registriert haben! 
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 msgstr "Der Arbeitsbereich wird in {remainingDays} {dayOrDays} deaktiviert, und alle seine Daten werden gelöscht."
 
-#: src/emails/password-update-notify.email.tsx:33
+#: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "Dies ist eine Bestätigung, dass das Passwort für Ihr Konto ({email}) erfolgreich am {formattedDate} geändert wurde."
 
-#: src/emails/password-reset-link.email.tsx:25
+#: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Dieser Link ist nur für den nächsten {duration} gültig. Wenn der Link nicht funktioniert, können Sie direkt den Link zur Überprüfung der Anmeldung verwenden:"
 
-#: src/emails/send-email-verification-link.email.tsx:22
+#: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
 msgstr "E-Mail verifizieren"
 

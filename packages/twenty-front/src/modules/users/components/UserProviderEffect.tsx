@@ -16,7 +16,7 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { isDefined } from 'twenty-shared';
+import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -70,7 +70,7 @@ export const UserProviderEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
-        locale: workspaceMember.locale ?? 'en',
+        locale: (workspaceMember.locale as keyof typeof APP_LOCALES) ?? 'en',
       };
     };
 
@@ -93,7 +93,9 @@ export const UserProviderEffect = () => {
           : TimeFormat[detectTimeFormat()],
       });
 
-      dynamicActivate(workspaceMember.locale ?? 'en');
+      dynamicActivate(
+        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? 'en',
+      );
     }
 
     if (isDefined(workspaceMembers)) {

@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -106,7 +107,7 @@ export class ResetPasswordService {
   async sendEmailPasswordResetLink(
     resetToken: PasswordResetToken,
     email: string,
-    locale: string,
+    locale: keyof typeof APP_LOCALES,
   ): Promise<EmailPasswordResetLink> {
     const user = await this.userRepository.findOneBy({
       email,

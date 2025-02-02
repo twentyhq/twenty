@@ -6,10 +6,11 @@ import { CallToAction } from 'src/components/CallToAction';
 import { Footer } from 'src/components/Footer';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { APP_LOCALES } from 'twenty-shared';
 
 type SendEmailVerificationLinkEmailProps = {
   link: string;
-  locale: string;
+  locale: keyof typeof APP_LOCALES;
 };
 
 export const SendEmailVerificationLinkEmail = ({

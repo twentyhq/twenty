@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -215,6 +215,11 @@ export enum BillingUsageType {
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type BuildDraftServerlessFunctionInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
 };
 
 export enum CalendarChannelVisibility {
@@ -689,6 +694,7 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   authorizeApp: AuthorizeApp;
+  buildDraftServerlessFunction: ServerlessFunction;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createDraftFromWorkflowVersion: WorkflowVersion;
@@ -760,6 +766,11 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
+};
+
+
+export type MutationBuildDraftServerlessFunctionArgs = {
+  input: BuildDraftServerlessFunctionInput;
 };
 
 
@@ -1444,6 +1455,7 @@ export type ServerlessFunctionExecutionResult = {
 /** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
   ERROR = 'ERROR',
+  IDLE = 'IDLE',
   SUCCESS = 'SUCCESS'
 }
 
@@ -1454,6 +1466,7 @@ export type ServerlessFunctionIdInput = {
 
 /** SyncStatus of the serverlessFunction */
 export enum ServerlessFunctionSyncStatus {
+  BUILDING = 'BUILDING',
   NOT_READY = 'NOT_READY',
   READY = 'READY'
 }
@@ -3211,7 +3224,7 @@ export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
 export const UpdatePasswordViaResetTokenDocument = gql`
-    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!, $locale: String!) {
+    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
   updatePasswordViaResetToken(
     passwordResetToken: $token
     newPassword: $newPassword
