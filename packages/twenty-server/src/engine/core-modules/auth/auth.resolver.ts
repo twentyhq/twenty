@@ -354,18 +354,19 @@ export class AuthResolver {
   @Mutation(() => InvalidatePassword)
   async updatePasswordViaResetToken(
     @Args()
-    {
-      passwordResetToken,
-      newPassword,
-      locale,
-    }: UpdatePasswordViaResetTokenInput,
+    { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
+    @Context() context: I18nContext,
   ): Promise<InvalidatePassword> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(id, newPassword, locale);
+    await this.authService.updatePassword(
+      id,
+      newPassword,
+      context.req.headers['x-locale'] || 'en',
+    );
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }

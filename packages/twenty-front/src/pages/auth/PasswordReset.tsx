@@ -72,7 +72,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -132,7 +132,6 @@ export const PasswordReset = () => {
         variables: {
           token: formData.passwordResetToken,
           newPassword: formData.newPassword,
-          locale: i18n.locale,
         },
       });
 
