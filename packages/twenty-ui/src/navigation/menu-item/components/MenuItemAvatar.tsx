@@ -1,11 +1,8 @@
 import { useTheme } from '@emotion/react';
-import {
-  Avatar,
-  AvatarProps,
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-} from '@ui/display';
-import { LightIconButtonGroup } from '@ui/input';
+import { Avatar, AvatarProps } from '@ui/display/avatar/components/Avatar';
+import { IconChevronRight } from '@ui/display/icon/components/TablerIcons';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
 import { MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
 import { MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared';
@@ -31,7 +28,7 @@ export type MenuItemAvatarProps = {
   testId?: string;
   text: string;
   hasSubMenu?: boolean;
-  baseUrl: string
+  baseUrl: string;
 };
 
 // TODO: merge with MenuItem
@@ -47,7 +44,7 @@ export const MenuItemAvatar = ({
   avatar,
   hasSubMenu = false,
   text,
-  baseUrl
+  baseUrl,
 }: MenuItemAvatarProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;

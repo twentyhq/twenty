@@ -401,7 +401,7 @@ const StyledShortcutLabel = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-export const Button = ({
+export const PrastoinButton = ({
   className,
   Icon,
   title,

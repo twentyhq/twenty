@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["jest", "node"],
-    // Why should this have a different baseUrl ?
     "baseUrl": "../..",
     "paths": {
       "@ui/*": ["./packages/twenty-ui/src/*"]

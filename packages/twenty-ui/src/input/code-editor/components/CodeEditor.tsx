@@ -2,7 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
-import { codeEditorTheme } from '@ui/input';
+import { codeEditorTheme } from '@ui/input/code-editor/theme/utils/codeEditorTheme';
 import { editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';

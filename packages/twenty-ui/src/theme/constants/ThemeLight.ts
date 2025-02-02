@@ -25,4 +25,4 @@ export const THEME_LIGHT = {
     code: CODE_LIGHT,
     IllustrationIcon: ILLUSTRATION_ICON_LIGHT,
   },
-};
+} as const;

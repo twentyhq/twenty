@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
-import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import {
   BORDER_COMMON,
   THEME_COMMON,

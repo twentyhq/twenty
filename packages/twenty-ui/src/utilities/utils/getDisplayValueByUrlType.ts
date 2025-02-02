@@ -1,4 +1,4 @@
-import { LinkType } from '@ui/navigation/link';
+import { LinkType } from '@ui/navigation/link/components/SocialLink';
 import { isDefined } from 'twenty-shared';
 
 type getUrlDisplayValueByUrlTypeProps = {

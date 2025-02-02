@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
-    "./themeType": {
+    "./theme": {
       "import": {
         "types": "./dist/theme/index.d.ts",
         "default": "./dist/theme/index.js"
