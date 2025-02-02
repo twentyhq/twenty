@@ -13,10 +13,15 @@
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./dist/locales/generated/*": {
+      "import": "./dist/locales/generated/*.mjs",
+      "require": "./dist/locales/generated/*.js",
+      "types": "./dist/locales/generated/*.d.ts"
     }
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^18.17.1", 
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }

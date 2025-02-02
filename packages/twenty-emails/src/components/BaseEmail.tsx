@@ -12,6 +12,8 @@ type BaseEmailProps = PropsWithChildren<{
 }>;
 
 export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {
+  i18n.activate(locale);
+
   return (
     <I18nProvider i18n={i18n}>
       <Html lang={locale}>

@@ -8,10 +8,9 @@
     "strict": true,
     "types": ["vite/client"],
     "baseUrl": ".",
-    "moduleResolution": "bundler"
   },
   "files": [],
-  "include": [],
+  "include": ["vite.config.ts"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

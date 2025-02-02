@@ -139,11 +139,8 @@ export class ResetPasswordService {
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
-    const html = render(emailTemplate);
-
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       from: `${this.environmentService.get(

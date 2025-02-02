@@ -6,7 +6,6 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { loadAndActivateLocale } from 'src/utils/loadAndActivateLocale';
 
 type PasswordUpdateNotifyEmailProps = {
   userName: string;
@@ -21,8 +20,6 @@ export const PasswordUpdateNotifyEmail = ({
   link,
   locale,
 }: PasswordUpdateNotifyEmailProps) => {
-  loadAndActivateLocale(locale);
-
   const helloString = userName?.length > 1 ? t`Dear ${userName}` : t`Dear`;
   const formattedDate = i18n.date(new Date());
 
@@ -36,8 +33,10 @@ export const PasswordUpdateNotifyEmail = ({
         <Trans>
           This is a confirmation that password for your account ({email}) was
           successfully changed on {formattedDate}.
-          <br />
-          <br />
+        </Trans>
+        <br />
+        <br />
+        <Trans>
           If you did not initiate this change, please contact your workspace
           owner immediately.
         </Trans>

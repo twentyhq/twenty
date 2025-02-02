@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
@@ -29,16 +30,22 @@ export const WarnSuspendedWorkspaceEmail = ({
         {helloString},
         <br />
         <br />
-        It appears that your workspace <b>{workspaceDisplayName}</b> has been
-        suspended for {daysSinceInactive} days.
+        <Trans>
+          It appears that your workspace <b>{workspaceDisplayName}</b> has been
+          suspended for {daysSinceInactive} days.
+        </Trans>
         <br />
         <br />
-        The workspace will be deactivated in {remainingDays} {dayOrDays}, and
-        all its data will be deleted.
+        <Trans>
+          The workspace will be deactivated in {remainingDays} {dayOrDays}, and
+          all its data will be deleted.
+        </Trans>
         <br />
         <br />
-        If you wish to continue using Twenty, please update your subscription
-        within the next {remainingDays} {dayOrDays}.
+        <Trans>
+          If you wish to continue using Twenty, please update your subscription
+          within the next {remainingDays} {dayOrDays}.
+        </Trans>
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"

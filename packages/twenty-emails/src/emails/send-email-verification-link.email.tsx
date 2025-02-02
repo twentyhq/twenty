@@ -6,7 +6,6 @@ import { CallToAction } from 'src/components/CallToAction';
 import { Footer } from 'src/components/Footer';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { loadAndActivateLocale } from 'src/utils/loadAndActivateLocale';
 
 type SendEmailVerificationLinkEmailProps = {
   link: string;
@@ -17,8 +16,6 @@ export const SendEmailVerificationLinkEmail = ({
   link,
   locale,
 }: SendEmailVerificationLinkEmailProps) => {
-  loadAndActivateLocale(locale);
-
   return (
     <BaseEmail width={333} locale={locale}>
       <Title value={t`Confirm your email address`} />

@@ -12,7 +12,6 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { loadAndActivateLocale } from 'src/utils/loadAndActivateLocale';
 import { getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
@@ -34,8 +33,6 @@ export const SendInviteLinkEmail = ({
   serverUrl,
   locale,
 }: SendInviteLinkEmailProps) => {
-  loadAndActivateLocale(locale);
-
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;

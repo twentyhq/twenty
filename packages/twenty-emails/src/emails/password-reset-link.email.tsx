@@ -5,7 +5,6 @@ import { CallToAction } from 'src/components/CallToAction';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { loadAndActivateLocale } from 'src/utils/loadAndActivateLocale';
 
 type PasswordResetLinkEmailProps = {
   duration: string;
@@ -18,8 +17,6 @@ export const PasswordResetLinkEmail = ({
   link,
   locale,
 }: PasswordResetLinkEmailProps) => {
-  loadAndActivateLocale(locale);
-
   return (
     <BaseEmail locale={locale}>
       <Title value={t`Reset your password 🗝`} />
@@ -28,8 +25,8 @@ export const PasswordResetLinkEmail = ({
         <Trans>
           This link is only valid for the next {duration}. If the link does not
           work, you can use the login verification link directly:
-          <br />
         </Trans>
+        <br />
         <Link href={link} value={link} />
       </MainText>
     </BaseEmail>

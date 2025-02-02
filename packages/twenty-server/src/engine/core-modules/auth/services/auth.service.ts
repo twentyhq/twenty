@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { render } from '@react-email/components';
+import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
@@ -419,10 +419,8 @@ export class AuthService {
       locale,
     });
 
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       from: `${this.environmentService.get(
