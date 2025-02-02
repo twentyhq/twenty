@@ -1,4 +1,4 @@
-name: twenty
+name: funnelmink
 
 services:
   change-vol-ownership:
@@ -13,7 +13,7 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: twentycrm/twenty:${TAG:-latest}
+    image: jarwarren/funnelmink:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
@@ -44,7 +44,7 @@ services:
     restart: always
 
   worker:
-    image: twentycrm/twenty:${TAG:-latest}
+    image: jarwarren/funnelmink:${TAG:-latest}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
@@ -80,6 +80,27 @@ services:
       timeout: 5s
       retries: 10
     restart: always
+
+  pgbackups:
+    image: jarwarren/postgres-backup-s3
+    platform: linux/amd64
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SCHEDULE: "0 0 * * *"
+      S3_BUCKET: ${BACKUP_S3_BUCKET}
+      S3_ENDPOINT: ${BACKUP_S3_ENDPOINT}
+      S3_PREFIX: ${BACKUP_S3_PREFIX}
+      S3_REGION: ${BACKUP_S3_REGION}
+      S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: default
+      POSTGRES_USER: twenty
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_EXTRA_OPTS: '--blobs'
+      HEALTHCHECK_PORT: 8080
 
   redis:
     image: redis
