@@ -424,8 +424,8 @@ export enum EnvironmentVariablesGroup {
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
   groupName: EnvironmentVariablesGroup;
-  standalone: Array<EnvironmentVariable>;
   subgroups: Array<EnvironmentVariablesSubgroupData>;
+  variables: Array<EnvironmentVariable>;
 };
 
 export type EnvironmentVariablesOutput = {
@@ -2218,7 +2218,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, standalone: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
+export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', groupName: EnvironmentVariablesGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', subgroupName: EnvironmentVariablesSubGroup, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3836,7 +3836,7 @@ export const GetEnvironmentVariablesGroupedDocument = gql`
   getEnvironmentVariablesGrouped {
     groups {
       groupName
-      standalone {
+      variables {
         name
         description
         value

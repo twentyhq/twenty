@@ -12,7 +12,7 @@ registerEnumType(EnvironmentVariablesGroup, {
 @ObjectType()
 export class EnvironmentVariablesGroupData {
   @Field(() => [EnvironmentVariable])
-  standalone: EnvironmentVariable[];
+  variables: EnvironmentVariable[];
 
   @Field(() => [EnvironmentVariablesSubgroupData])
   subgroups: EnvironmentVariablesSubgroupData[];

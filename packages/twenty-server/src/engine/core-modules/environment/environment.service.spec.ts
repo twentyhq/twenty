@@ -1,8 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-key';
-import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-names-key';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -26,11 +24,7 @@ describe('EnvironmentService', () => {
     service = module.get<EnvironmentService>(EnvironmentService);
     configService = module.get<ConfigService>(ConfigService);
 
-    Reflect.defineMetadata(
-      ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-      [],
-      EnvironmentVariables,
-    );
+    Reflect.defineMetadata('environment-variables', {}, EnvironmentVariables);
   });
 
   it('should be defined', () => {
@@ -46,22 +40,16 @@ describe('EnvironmentService', () => {
 
     it('should return environment variables with their metadata', () => {
       const mockMetadata = {
-        title: 'Test Var',
-        description: 'Test Description',
+        TEST_VAR: {
+          title: 'Test Var',
+          description: 'Test Description',
+        },
       };
-      const mockVarNames = ['TEST_VAR'];
 
       Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-        mockVarNames,
-        EnvironmentVariables,
-      );
-
-      Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY,
+        'environment-variables',
         mockMetadata,
-        EnvironmentVariables.prototype,
-        'TEST_VAR',
+        EnvironmentVariables,
       );
 
       jest.spyOn(configService, 'get').mockReturnValue('test-value');
@@ -71,30 +59,24 @@ describe('EnvironmentService', () => {
       expect(result).toEqual({
         TEST_VAR: {
           value: 'test-value',
-          metadata: mockMetadata,
+          metadata: mockMetadata.TEST_VAR,
         },
       });
     });
 
     it('should mask sensitive data according to masking config', () => {
       const mockMetadata = {
-        title: 'App Secret',
-        description: 'Application secret key',
-        sensitive: true,
+        APP_SECRET: {
+          title: 'App Secret',
+          description: 'Application secret key',
+          sensitive: true,
+        },
       };
-      const mockVarNames = ['APP_SECRET'];
 
       Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-        mockVarNames,
-        EnvironmentVariables,
-      );
-
-      Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY,
+        'environment-variables',
         mockMetadata,
-        EnvironmentVariables.prototype,
-        'APP_SECRET',
+        EnvironmentVariables,
       );
 
       jest.spyOn(configService, 'get').mockReturnValue('super-secret-value');
@@ -107,22 +89,16 @@ describe('EnvironmentService', () => {
 
     it('should use default value when environment variable is not set', () => {
       const mockMetadata = {
-        title: 'Debug Port',
-        description: 'Debug port number',
+        DEBUG_PORT: {
+          title: 'Debug Port',
+          description: 'Debug port number',
+        },
       };
-      const mockVarNames = ['DEBUG_PORT'];
 
       Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-        mockVarNames,
-        EnvironmentVariables,
-      );
-
-      Reflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY,
+        'environment-variables',
         mockMetadata,
-        EnvironmentVariables.prototype,
-        'DEBUG_PORT',
+        EnvironmentVariables,
       );
 
       jest.spyOn(configService, 'get').mockReturnValue(undefined);

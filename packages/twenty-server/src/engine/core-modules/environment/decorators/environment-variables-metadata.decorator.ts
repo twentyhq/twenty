@@ -1,7 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
 
-import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-key';
-import { ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY } from 'src/engine/core-modules/environment/constants/environment-variables-metadata-decorator-names-key';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
@@ -13,31 +11,27 @@ export interface EnvironmentVariablesMetadataOptions {
   sensitive?: boolean;
 }
 
+export type EnvironmentVariablesMetadataMap = {
+  [key: string]: EnvironmentVariablesMetadataOptions;
+};
+
 export function EnvironmentVariablesMetadata(
   options: EnvironmentVariablesMetadataOptions,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
+    const existingMetadata: EnvironmentVariablesMetadataMap =
+      TypedReflect.getMetadata('environment-variables', target.constructor) ??
+      {};
+
     TypedReflect.defineMetadata(
-      ENVIRONMENT_VARIABLES_METADATA_DECORATOR_KEY,
-      options,
-      target,
-      propertyKey.toString(),
+      'environment-variables',
+      {
+        ...existingMetadata,
+        [propertyKey.toString()]: options,
+      },
+      target.constructor,
     );
-
-    const existingVars =
-      TypedReflect.getMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-        target.constructor,
-      ) ?? [];
-
-    if (!existingVars.includes(propertyKey.toString())) {
-      TypedReflect.defineMetadata(
-        ENVIRONMENT_VARIABLES_METADATA_DECORATOR_NAMES_KEY,
-        [...existingVars, propertyKey.toString()],
-        target.constructor,
-      );
-    }
 
     registerDecorator({
       name: propertyKey.toString(),

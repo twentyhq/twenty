@@ -5,7 +5,7 @@ export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
     getEnvironmentVariablesGrouped {
       groups {
         groupName
-        standalone {
+        variables {
           name
           description
           value

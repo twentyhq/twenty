@@ -32,6 +32,13 @@ jest.mock(
   },
 );
 
+jest.mock(
+  'src/engine/core-modules/environment/constants/environment-variables-hidden-groups',
+  () => ({
+    ENVIRONMENT_VARIABLES_HIDDEN_GROUPS: new Set(['HIDDEN_GROUP']),
+  }),
+);
+
 describe('AdminPanelService', () => {
   let service: AdminPanelService;
 
@@ -258,7 +265,7 @@ describe('AdminPanelService', () => {
         groups: expect.arrayContaining([
           expect.objectContaining({
             groupName: 'GROUP_1',
-            standalone: [
+            variables: [
               {
                 name: 'VAR_1',
                 value: 'value1',
@@ -282,7 +289,7 @@ describe('AdminPanelService', () => {
           }),
           expect.objectContaining({
             groupName: 'GROUP_2',
-            standalone: [
+            variables: [
               {
                 name: 'VAR_3',
                 value: 'value3',
@@ -320,8 +327,8 @@ describe('AdminPanelService', () => {
         (g) => g.groupName === ('GROUP_1' as EnvironmentVariablesGroup),
       );
 
-      expect(group?.standalone[0].name).toBe('A_VAR');
-      expect(group?.standalone[1].name).toBe('Z_VAR');
+      expect(group?.variables[0].name).toBe('A_VAR');
+      expect(group?.variables[1].name).toBe('Z_VAR');
     });
 
     it('should handle empty environment variables', () => {
@@ -332,6 +339,35 @@ describe('AdminPanelService', () => {
       expect(result).toEqual({
         groups: [],
       });
+    });
+
+    it('should exclude hidden groups from the output', () => {
+      EnvironmentServiceGetAllMock.mockReturnValue({
+        VAR_1: {
+          value: 'value1',
+          metadata: {
+            group: 'HIDDEN_GROUP',
+            description: 'Description 1',
+          },
+        },
+        VAR_2: {
+          value: 'value2',
+          metadata: {
+            group: 'VISIBLE_GROUP',
+            description: 'Description 2',
+          },
+        },
+      });
+
+      const result = service.getEnvironmentVariablesGrouped();
+
+      expect(result.groups).toHaveLength(1);
+      expect(result.groups[0].groupName).toBe('VISIBLE_GROUP');
+      expect(result.groups).not.toContainEqual(
+        expect.objectContaining({
+          groupName: 'HIDDEN_GROUP',
+        }),
+      );
     });
   });
 });

@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { ENVIRONMENT_VARIABLES_GROUP_POSITION } from 'src/engine/core-modules/environment/constants/environment-variables-group-position';
+import { ENVIRONMENT_VARIABLES_HIDDEN_GROUPS } from 'src/engine/core-modules/environment/constants/environment-variables-hidden-groups';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -171,13 +172,17 @@ export class AdminPanelService {
     const groupedData = new Map<
       EnvironmentVariablesGroup,
       {
-        standalone: EnvironmentVariable[];
+        variables: EnvironmentVariable[];
         subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
       }
     >();
 
     for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
       const { group, subGroup, description } = metadata;
+
+      if (ENVIRONMENT_VARIABLES_HIDDEN_GROUPS.has(group)) {
+        continue;
+      }
 
       const envVar: EnvironmentVariable = {
         name: varName,
@@ -190,7 +195,7 @@ export class AdminPanelService {
 
       if (!currentGroup) {
         currentGroup = {
-          standalone: [],
+          variables: [],
           subgroups: new Map(),
         };
         groupedData.set(group, currentGroup);
@@ -205,7 +210,7 @@ export class AdminPanelService {
         }
         subgroupVars.push(envVar);
       } else {
-        currentGroup.standalone.push(envVar);
+        currentGroup.variables.push(envVar);
       }
     }
 
@@ -220,9 +225,7 @@ export class AdminPanelService {
       })
       .map(([groupName, data]) => ({
         groupName,
-        standalone: data.standalone.sort((a, b) =>
-          a.name.localeCompare(b.name),
-        ),
+        variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
         subgroups: Array.from(data.subgroups.entries())
           .sort((a, b) => a[0].localeCompare(b[0]))
           .map(([subgroupName, variables]) => ({
