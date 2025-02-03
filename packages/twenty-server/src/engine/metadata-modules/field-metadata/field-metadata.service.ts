@@ -621,12 +621,39 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return translatedMessage;
   }
 
+  private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
+    return {
+      id: v4(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...fieldMetadataInput,
+      isNullable: generateNullable(
+        fieldMetadataInput.type,
+        fieldMetadataInput.isNullable,
+        fieldMetadataInput.isRemoteCreation,
+      ),
+      defaultValue:
+        fieldMetadataInput.defaultValue ??
+        generateDefaultValue(fieldMetadataInput.type),
+      options: fieldMetadataInput.options
+        ? fieldMetadataInput.options.map((option) => ({
+            ...option,
+            id: uuidV4(),
+          }))
+        : undefined,
+      isActive: true,
+      isCustom: true,
+    };
+  }
+
   async createMany(
     fieldMetadataInputs: CreateFieldInput[],
   ): Promise<FieldMetadataEntity[]> {
     if (!fieldMetadataInputs.length) {
       return [];
     }
+
+    const workspaceId = fieldMetadataInputs[0].workspaceId;
 
     const queryRunner = this.metadataDataSource.createQueryRunner();
 
@@ -655,7 +682,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const objectMetadatas = await this.objectMetadataRepository.find({
         where: {
           id: In(objectMetadataIds),
-          workspaceId: fieldMetadataInputs[0].workspaceId,
+          workspaceId,
         },
         relations: ['fields'],
       });
@@ -704,28 +731,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadataInput.options = generateRatingOptions();
           }
 
-          const fieldMetadataForCreate = {
-            id: v4(),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            ...fieldMetadataInput,
-            isNullable: generateNullable(
-              fieldMetadataInput.type,
-              fieldMetadataInput.isNullable,
-              fieldMetadataInput.isRemoteCreation,
-            ),
-            defaultValue:
-              fieldMetadataInput.defaultValue ??
-              generateDefaultValue(fieldMetadataInput.type),
-            options: fieldMetadataInput.options
-              ? fieldMetadataInput.options.map((option) => ({
-                  ...option,
-                  id: uuidV4(),
-                }))
-              : undefined,
-            isActive: true,
-            isCustom: true,
-          };
+          const fieldMetadataForCreate =
+            this.prepareCustomFieldMetadata(fieldMetadataInput);
 
           this.validateFieldMetadata<CreateFieldInput>(
             fieldMetadataForCreate.type,
@@ -762,81 +769,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (migrationActions.length > 0) {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(`create-multiple-fields`),
-          fieldMetadataInputs[0].workspaceId,
+          workspaceId,
           migrationActions,
         );
 
         await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-          fieldMetadataInputs[0].workspaceId,
+          workspaceId,
         );
       }
 
-      const dataSourceMetadata =
-        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          fieldMetadataInputs[0].workspaceId,
-        );
-
-      const workspaceDataSource =
-        await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-      const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
-
-      if (!workspaceQueryRunner) {
-        throw new FieldMetadataException(
-          'Could not create workspace query runner',
-          FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-        );
-      }
-
-      await workspaceQueryRunner.connect();
-      await workspaceQueryRunner.startTransaction();
-
-      try {
-        for (const createdFieldMetadata of createdFieldMetadatas) {
-          const view = await workspaceQueryRunner?.query(
-            `SELECT id FROM ${dataSourceMetadata.schema}."view"
-            WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
-          );
-
-          if (!isEmpty(view)) {
-            const existingViewFields = (await workspaceQueryRunner?.query(
-              `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
-              WHERE "viewId" = '${view[0].id}'`,
-            )) as ViewFieldWorkspaceEntity[];
-
-            const createdFieldIsAlreadyInView = existingViewFields.some(
-              (existingViewField) =>
-                existingViewField.fieldMetadataId === createdFieldMetadata.id,
-            );
-
-            if (!createdFieldIsAlreadyInView) {
-              const lastPosition = existingViewFields
-                .map((viewField) => viewField.position)
-                .reduce((acc, position) => {
-                  if (position > acc) {
-                    return position;
-                  }
-
-                  return acc;
-                }, -1);
-
-              await workspaceQueryRunner?.query(
-                `INSERT INTO ${dataSourceMetadata.schema}."viewField"
-                ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-                VALUES ('${createdFieldMetadata.id}', '${
-                  lastPosition + 1
-                }', true, 180, '${view[0].id}')`,
-              );
-            }
-          }
-        }
-        await workspaceQueryRunner.commitTransaction();
-      } catch (error) {
-        await workspaceQueryRunner.rollbackTransaction();
-        throw error;
-      } finally {
-        await workspaceQueryRunner.release();
-      }
+      await this.createViewAndViewFields(createdFieldMetadatas, workspaceId);
 
       await queryRunner.commitTransaction();
 
@@ -847,8 +789,80 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     } finally {
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        fieldMetadataInputs[0].workspaceId,
+        workspaceId,
       );
+    }
+  }
+
+  private async createViewAndViewFields(
+    createdFieldMetadatas: FieldMetadataEntity[],
+    workspaceId: string,
+  ) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
+
+    if (!workspaceQueryRunner) {
+      throw new FieldMetadataException(
+        'Could not create workspace query runner',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await workspaceQueryRunner.connect();
+    await workspaceQueryRunner.startTransaction();
+
+    try {
+      for (const createdFieldMetadata of createdFieldMetadatas) {
+        const view = await workspaceQueryRunner?.query(
+          `SELECT id FROM ${dataSourceMetadata.schema}."view"
+        WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+        );
+
+        if (!isEmpty(view)) {
+          const existingViewFields = (await workspaceQueryRunner?.query(
+            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+          WHERE "viewId" = '${view[0].id}'`,
+          )) as ViewFieldWorkspaceEntity[];
+
+          const createdFieldIsAlreadyInView = existingViewFields.some(
+            (existingViewField) =>
+              existingViewField.fieldMetadataId === createdFieldMetadata.id,
+          );
+
+          if (!createdFieldIsAlreadyInView) {
+            const lastPosition = existingViewFields
+              .map((viewField) => viewField.position)
+              .reduce((acc, position) => {
+                if (position > acc) {
+                  return position;
+                }
+
+                return acc;
+              }, -1);
+
+            await workspaceQueryRunner?.query(
+              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+            ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+            VALUES ('${createdFieldMetadata.id}', '${
+              lastPosition + 1
+            }', true, 180, '${view[0].id}')`,
+            );
+          }
+        }
+      }
+      await workspaceQueryRunner.commitTransaction();
+    } catch (error) {
+      await workspaceQueryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await workspaceQueryRunner.release();
     }
   }
 }
