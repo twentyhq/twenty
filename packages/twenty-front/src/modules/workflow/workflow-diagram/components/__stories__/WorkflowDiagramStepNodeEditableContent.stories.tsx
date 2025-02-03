@@ -2,9 +2,9 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { fn } from '@storybook/test';
-import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { CatalogDecorator, CatalogStory } from 'twenty-ui';
+import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
 
@@ -74,16 +74,7 @@ export const All: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
 
 export const AllSelected: CatalogStory<
@@ -114,16 +105,7 @@ export const AllSelected: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
 
 export const AllSuccess: CatalogStory<
@@ -152,16 +134,7 @@ export const AllSuccess: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
 
 export const AllSuccessSelected: CatalogStory<
@@ -192,16 +165,7 @@ export const AllSuccessSelected: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
 
 export const AllFailure: CatalogStory<
@@ -230,16 +194,7 @@ export const AllFailure: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
 
 export const AllFailureSelected: CatalogStory<
@@ -270,14 +225,5 @@ export const AllFailureSelected: CatalogStory<
       ],
     },
   },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
+  decorators: [CatalogDecorator, ReactflowDecorator],
 };
