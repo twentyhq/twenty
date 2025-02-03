@@ -2,7 +2,7 @@ import { recordIndexEntityCountByGroupComponentFamilyState } from '@/object-reco
 import { recordIndexEntityCountNoGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexEntityCountNoGroupComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useSetRecordIndexEntityCount = (viewBarComponentId?: string) => {
   const recordIndexEntityCountNoGroupFamilyState =

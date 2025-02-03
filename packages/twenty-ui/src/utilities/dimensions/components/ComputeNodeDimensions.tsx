@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { isDefined } from '@ui/utilities';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 
 type ComputeNodeDimensionsProps = {
   children: (

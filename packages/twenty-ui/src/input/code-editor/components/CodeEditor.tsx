@@ -1,11 +1,11 @@
-import { Loader } from '@ui/feedback/loader/components/Loader';
-import { useTheme, css } from '@emotion/react';
-import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
-import { codeEditorTheme } from '@ui/input';
-import { isDefined } from '@ui/utilities';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
+import { Loader } from '@ui/feedback/loader/components/Loader';
+import { codeEditorTheme } from '@ui/input';
 import { editor } from 'monaco-editor';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared';
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   onChange?: (value: string) => void;

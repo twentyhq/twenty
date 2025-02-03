@@ -35,6 +35,15 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
+export const WithDescription: Story = {
+  args: {
+    text: 'Menu item',
+    hotKeys: ['⌘', '1'],
+    description: 'Description',
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
   args: {
     text: 'Menu item',

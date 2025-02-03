@@ -14,8 +14,8 @@ import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { Loader, MainButton } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledForm = styled.form`
   align-items: center;

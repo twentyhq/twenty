@@ -1,4 +1,4 @@
-import { isDefined } from './isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const isDomain = (url: string | undefined | null) =>
   isDefined(url) &&

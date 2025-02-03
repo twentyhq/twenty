@@ -5,8 +5,8 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewGroup } from '@/views/types/ViewGroup';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {

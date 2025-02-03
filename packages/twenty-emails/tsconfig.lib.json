@@ -2,6 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../.cache/tsc",
+    "composite": true,
+    "declaration": true,
     "types": [
       "node",
       "@nx/react/typings/image.d.ts",

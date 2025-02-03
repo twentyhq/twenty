@@ -4,7 +4,7 @@ import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/Workflo
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowEditStepContent = ({
   workflow,

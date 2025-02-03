@@ -21,12 +21,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
   IconMinus,
   IconPlus,
   LightIconButton,
   UndecoratedLink,
-  isDefined,
   useIcons,
 } from 'twenty-ui';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';

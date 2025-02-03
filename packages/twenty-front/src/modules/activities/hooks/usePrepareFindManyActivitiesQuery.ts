@@ -13,8 +13,8 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared';
 import { sortByAscString } from '~/utils/array/sortByAscString';
-import { isDefined } from '~/utils/isDefined';
 
 export const usePrepareFindManyActivitiesQuery = ({
   activityObjectNameSingular,

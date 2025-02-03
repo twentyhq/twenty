@@ -6,7 +6,7 @@ import { InformationBannerReconnectAccountInsufficientPermissions } from '@/info
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`

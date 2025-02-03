@@ -1,4 +1,4 @@
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 // Open options page programmatically in a new tab.
 // chrome.runtime.onInstalled.addListener((details) => {

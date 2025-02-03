@@ -9,8 +9,8 @@ import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPositi
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewType } from '@/views/types/ViewType';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(

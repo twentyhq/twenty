@@ -4,13 +4,13 @@ import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 import { createHash } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
+import { isDefined } from 'twenty-shared';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { isDefined } from 'src/utils/is-defined';
 
 export type WorkspaceTokenType =
   | 'ACCESS'

@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type EditableBreadcrumbItemProps = {

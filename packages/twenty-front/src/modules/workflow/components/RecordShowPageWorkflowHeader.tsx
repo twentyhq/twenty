@@ -8,6 +8,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconPlayerPlay,
@@ -15,7 +16,6 @@ import {
   IconPower,
   IconSettingsAutomation,
   IconTrash,
-  isDefined,
 } from 'twenty-ui';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 

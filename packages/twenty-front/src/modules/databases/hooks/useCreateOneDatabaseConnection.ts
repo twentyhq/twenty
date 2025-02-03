@@ -3,12 +3,12 @@ import { useMutation } from '@apollo/client';
 import { CREATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/createOneDatabaseConnection';
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { isDefined } from 'twenty-shared';
 import {
   CreateRemoteServerInput,
   CreateServerMutation,
   CreateServerMutationVariables,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useCreateOneDatabaseConnection = () => {
   const apolloMetadataClient = useApolloMetadataClient();

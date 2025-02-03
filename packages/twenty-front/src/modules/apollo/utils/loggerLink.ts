@@ -1,6 +1,6 @@
 import { ApolloLink, gql, Operation } from '@apollo/client';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
