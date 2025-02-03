@@ -132,7 +132,7 @@ export const MultipleSelectDropdown = ({
             />
           );
         })}
-        {showNoResult && <MenuItem text="No result" />}
+        {showNoResult && <MenuItem text="No results" />}
         {loadingItems && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>
     </SelectableList>

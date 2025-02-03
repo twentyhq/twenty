@@ -111,9 +111,6 @@ export const CommandMenuList = ({
               }}
             >
               {children}
-              {noResults && !loading && (
-                <StyledEmpty>No result found</StyledEmpty>
-              )}
               {commandGroups.map(({ heading, items }) =>
                 items?.length ? (
                   <CommandGroup heading={heading} key={heading}>
@@ -138,6 +135,9 @@ export const CommandMenuList = ({
                     })}
                   </CommandGroup>
                 ) : null,
+              )}
+              {noResults && !loading && (
+                <StyledEmpty>No results found</StyledEmpty>
               )}
             </SelectableList>
           </StyledInnerList>
