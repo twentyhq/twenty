@@ -22,9 +22,6 @@ export class RoleDTO {
   @Field({ nullable: false })
   isEditable: boolean;
 
-  @Field({ nullable: false })
-  workspaceId: string;
-
   @HideField()
   userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
 

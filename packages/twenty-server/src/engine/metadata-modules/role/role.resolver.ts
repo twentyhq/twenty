@@ -55,10 +55,11 @@ export class RoleResolver {
   @ResolveField('workspaceMembers', () => [WorkspaceMember])
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
     return this.userRoleService.getWorkspaceMembersAssignedToRole(
       role.id,
-      role.workspaceId,
+      workspace.id,
     );
   }
 }
