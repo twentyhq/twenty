@@ -11,34 +11,11 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 
-import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import { APP_LOCALES, isDefined, isValidLocale } from 'twenty-shared';
+initialI18nActivate();
 
 export const App = () => {
-  const urlLocale = fromUrl('lang');
-  const storageLocale = fromStorage('lang');
-  const navigatorLocale = fromNavigator();
-
-  let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
-
-  if (isDefined(urlLocale) && isValidLocale(urlLocale)) {
-    locale = urlLocale;
-    try {
-      localStorage.setItem('lang', urlLocale);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('Failed to save locale to localStorage:', error);
-    }
-  } else if (isDefined(storageLocale) && isValidLocale(storageLocale)) {
-    locale = storageLocale;
-  } else if (isDefined(navigatorLocale) && isValidLocale(navigatorLocale)) {
-    locale = navigatorLocale;
-  }
-
-  dynamicActivate(locale);
-
   return (
     <RecoilRoot>
       <RecoilURLSyncJSON location={{ part: 'queryParams' }}>

@@ -336,7 +336,7 @@ msgstr "Continuer"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:69
 msgid "Continue with Email"
-msgstr "Poursuivre avec le courrier électronique"
+msgstr "Continuer par mail"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
 msgid "Continue with Google"
@@ -1347,7 +1347,7 @@ msgstr "La modification de l'intitulé d'un champ doit-elle également entraîne
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:76
 msgid "Sign in"
-msgstr "S'inscrire"
+msgstr "Se connecter"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
