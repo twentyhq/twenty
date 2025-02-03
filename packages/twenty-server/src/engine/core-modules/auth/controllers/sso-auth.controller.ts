@@ -111,6 +111,7 @@ export class SSOAuthController {
     const workspaceIdentityProvider =
       await this.workspaceSSOIdentityProviderRepository.findOne({
         where: { id: req.user.identityProviderId },
+        relations: ['workspace'],
       });
 
     try {
@@ -170,13 +171,12 @@ export class SSOAuthController {
     payload: { email: string; workspaceInviteHash?: string },
     currentWorkspace: Workspace,
   ) {
-    const invitation =
-      payload.email && currentWorkspace
-        ? await this.authService.findInvitationForSignInUp({
-            currentWorkspace,
-            email: payload.email,
-          })
-        : undefined;
+    const invitation = payload.email
+      ? await this.authService.findInvitationForSignInUp({
+          currentWorkspace,
+          email: payload.email,
+        })
+      : undefined;
 
     const existingUser = await this.userRepository.findOne({
       where: {
