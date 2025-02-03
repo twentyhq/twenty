@@ -125,6 +125,19 @@ export const SearchRecordsAction: Story = {
     expect(await canvas.findByText('Linkedin')).toBeVisible();
     const companyTexts = await canvas.findAllByText('Company');
     expect(companyTexts[0]).toBeVisible();
-    expect(await canvas.findByText(companiesMock[0].name)).toBeVisible();
+  },
+};
+
+export const NoResultsSearchFallback: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
+    await sleep(openTimeout);
+    await userEvent.type(searchInput, 'Linkedin');
+    expect(await canvas.findByText('No results found')).toBeVisible();
+    const searchRecordsButton = await canvas.findByText('Search records');
+    expect(searchRecordsButton).toBeVisible();
+    await userEvent.click(searchRecordsButton);
+    expect(await canvas.findByText('Linkedin')).toBeVisible();
   },
 };

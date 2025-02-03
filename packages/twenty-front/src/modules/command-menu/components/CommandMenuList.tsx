@@ -137,7 +137,7 @@ export const CommandMenuList = ({
                 ) : null,
               )}
               {noResults && !loading && (
-                <StyledEmpty>No result found</StyledEmpty>
+                <StyledEmpty>No results found</StyledEmpty>
               )}
             </SelectableList>
           </StyledInnerList>
