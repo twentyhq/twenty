@@ -8,7 +8,6 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import {
   mockCurrentWorkspace,
   mockedWorkspaceMemberData,
@@ -20,13 +19,15 @@ import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { HttpResponse, graphql } from 'msw';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { CommandMenu } from '../CommandMenu';
 
-const companiesMock = getCompaniesMock();
-
 const openTimeout = 50;
+
+const companiesMock = getCompaniesMock();
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -139,5 +140,31 @@ export const NoResultsSearchFallback: Story = {
     expect(searchRecordsButton).toBeVisible();
     await userEvent.click(searchRecordsButton);
     expect(await canvas.findByText('Linkedin')).toBeVisible();
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('CombinedSearchRecords' ?? '', () => {
+          return HttpResponse.json({
+            data: {
+              searchCompanies: {
+                edges: [
+                  {
+                    node: companiesMock[0],
+                    cursor: null,
+                  },
+                ],
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: null,
+                  endCursor: null,
+                },
+              },
+            },
+          });
+        }),
+      ],
+    },
   },
 };
