@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
@@ -24,6 +25,29 @@ export class UserRoleService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
+  public async unassignRolesFromUserWorkspace({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const userWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
+      where: {
+        userWorkspaceId,
+        workspaceId,
+      },
+    });
+
+    if (!isEmpty(userWorkspaceRoles)) {
+      userWorkspaceRoles.forEach(async (userWorkspaceRole) => {
+        await this.userWorkspaceRoleRepository.delete({
+          id: userWorkspaceRole.id,
+        });
+      });
+    }
+  }
+
   public async assignRoleToUserWorkspace({
     workspaceId,
     userWorkspaceId,
@@ -46,17 +70,10 @@ export class UserRoleService {
       );
     }
 
-    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
-      where: {
-        userWorkspaceId,
-      },
+    await this.unassignRolesFromUserWorkspace({
+      userWorkspaceId: userWorkspace.id,
+      workspaceId,
     });
-
-    if (isDefined(userWorkspaceRole)) {
-      await this.userWorkspaceRoleRepository.delete({
-        id: userWorkspaceRole.id,
-      });
-    }
 
     await this.userWorkspaceRoleRepository.save({
       roleId,

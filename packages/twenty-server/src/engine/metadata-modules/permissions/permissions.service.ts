@@ -7,13 +7,13 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly roleService: RoleService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   public async getUserWorkspaceSettingsPermissions({
@@ -22,7 +22,7 @@ export class PermissionsService {
     userWorkspaceId: string;
   }): Promise<Record<SettingsFeatures, boolean>> {
     const roleOfUserWorkspace =
-      await this.roleService.getRoleForUserWorkspace(userWorkspaceId);
+      await this.userRoleService.getRoleForUserWorkspace(userWorkspaceId);
 
     let hasPermissionOnSettingFeature = false;
 
@@ -39,7 +39,7 @@ export class PermissionsService {
     );
   }
 
-  public async validatesUserHasWorkspaceSettingPermissionOrThrow({
+  public async validateUserHasWorkspaceSettingPermissionOrThrow({
     userWorkspaceId,
     setting,
   }: {
@@ -47,7 +47,7 @@ export class PermissionsService {
     setting: SettingsFeatures;
   }): Promise<void> {
     const userWorkspaceRole =
-      await this.roleService.getRoleForUserWorkspace(userWorkspaceId);
+      await this.userRoleService.getRoleForUserWorkspace(userWorkspaceId);
 
     if (userWorkspaceRole?.canUpdateAllSettings === true) {
       return;

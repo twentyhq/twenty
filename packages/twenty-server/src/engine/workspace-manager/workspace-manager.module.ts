@@ -7,6 +7,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/userRole/userRole.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -28,6 +29,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     PermissionsModule,
     TypeOrmModule.forFeature([UserWorkspace], 'core'),
     RoleModule,
+    UserRoleModule,
   ],
   exports: [WorkspaceManagerService],
   providers: [WorkspaceManagerService],

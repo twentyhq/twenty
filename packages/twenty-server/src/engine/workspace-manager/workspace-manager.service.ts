@@ -14,6 +14,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
@@ -38,6 +39,7 @@ export class WorkspaceManagerService {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   /**
@@ -214,7 +216,7 @@ export class WorkspaceManagerService {
       );
     }
 
-    await this.roleService.assignRoleToUserWorkspace({
+    await this.userRoleService.assignRoleToUserWorkspace({
       workspaceId,
       userWorkspaceId: userWorkspace[0].id,
       roleId: adminRole.id,

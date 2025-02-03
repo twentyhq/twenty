@@ -1,5 +1,3 @@
-import { Field } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
@@ -14,18 +12,15 @@ import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-w
 
 @Entity('role')
 export class RoleEntity {
-  @Field({ nullable: false })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field({ nullable: false })
   @Column({ nullable: false })
   label: string;
 
   @Column({ nullable: false, default: false })
   canUpdateAllSettings: boolean;
 
-  @Field({ nullable: false })
   @Column({ nullable: true, type: 'text' })
   description: string;
 
@@ -38,7 +33,6 @@ export class RoleEntity {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Field({ nullable: false })
   @Column({ nullable: false, default: true })
   isEditable: boolean;
 
