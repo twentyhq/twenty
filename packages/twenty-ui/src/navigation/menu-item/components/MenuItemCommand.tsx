@@ -63,9 +63,24 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   }
 `;
 
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+
+  &::before {
+    content: '·';
+    margin: ${({ theme }) => theme.spacing(0, 1)};
+  }
+`;
+
+const StyledTextContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
+  description?: string;
   hotKeys?: string[];
   className?: string;
   isSelected?: boolean;
@@ -76,6 +91,7 @@ export type MenuItemCommandProps = {
 export const MenuItemCommand = ({
   LeftIcon,
   text,
+  description,
   hotKeys,
   className,
   isSelected,
@@ -97,7 +113,10 @@ export const MenuItemCommand = ({
             <LeftIcon size={theme.icon.size.sm} />
           </StyledBigIconContainer>
         )}
-        <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
+        <StyledTextContainer>
+          <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
+          {description && <StyledDescription>{description}</StyledDescription>}
+        </StyledTextContainer>
         {RightComponent}
       </StyledMenuItemLeftContent>
       {!isMobile && <MenuItemCommandHotKeys hotKeys={hotKeys} />}

@@ -3,15 +3,6 @@ import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  Avatar,
-  AvatarGroup,
-  Card,
-  CardContent,
-  IconArrowRight,
-  IconLock,
-  isDefined,
-} from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -20,6 +11,15 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { isDefined } from 'twenty-shared';
+import {
+  Avatar,
+  AvatarGroup,
+  Card,
+  CardContent,
+  IconArrowRight,
+  IconLock,
+} from 'twenty-ui';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,

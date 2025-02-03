@@ -1,5 +1,5 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { ViewFilter } from '../types/ViewFilter';

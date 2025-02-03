@@ -11,7 +11,7 @@ import {
   WrappedValue,
 } from 'recoil';
 
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type CreateComponentFamilyStateArgs<
   ValueType,

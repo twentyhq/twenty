@@ -13,7 +13,7 @@ import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOu
 import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTriggerStepName';
 import isEmpty from 'lodash.isempty';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = ({

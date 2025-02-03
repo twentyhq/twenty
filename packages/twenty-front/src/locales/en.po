@@ -275,11 +275,11 @@ msgstr "Change {to}"
 msgid "Change Password"
 msgstr "Change Password"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
 msgid "Chinese — Simplified"
 msgstr "Chinese — Simplified"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:111
 msgid "Chinese — Traditional"
 msgstr "Chinese — Traditional"
 
@@ -877,6 +877,10 @@ msgstr "Invite your team"
 msgid "Italian"
 msgstr "Italian"
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+msgid "Japanese"
+msgstr "Japanese"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
 msgid "Korean"
 msgstr "Korean"
@@ -1145,11 +1149,11 @@ msgstr "Please type {confirmationText} to confirm you want to delete this webhoo
 #~ msgid "Portuguese"
 #~ msgstr "Portuguese"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
 msgid "Portuguese — Brazil"
 msgstr "Portuguese — Brazil"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
 msgid "Portuguese — Portugal"
 msgstr "Portuguese — Portugal"
 
@@ -1172,7 +1176,7 @@ msgstr "Preview"
 msgid "Profile"
 msgstr "Profile"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Pseudo-English"
 msgstr "Pseudo-English"
 

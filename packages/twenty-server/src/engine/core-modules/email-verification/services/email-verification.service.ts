@@ -5,6 +5,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -55,13 +56,12 @@ export class EmailVerificationService {
 
     const emailData = {
       link: verificationLink.toString(),
+      locale: 'en' as keyof typeof APP_LOCALES,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
+    const html = render(emailTemplate);
 
     const text = render(emailTemplate, {
       plainText: true,

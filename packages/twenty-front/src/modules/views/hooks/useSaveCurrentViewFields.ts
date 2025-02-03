@@ -6,8 +6,8 @@ import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { ViewField } from '@/views/types/ViewField';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {

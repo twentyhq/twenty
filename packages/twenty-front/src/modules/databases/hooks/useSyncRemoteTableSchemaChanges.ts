@@ -7,12 +7,12 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { isDefined } from 'twenty-shared';
 import {
   RemoteTableInput,
   SyncRemoteTableSchemaChangesMutation,
   SyncRemoteTableSchemaChangesMutationVariables,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();

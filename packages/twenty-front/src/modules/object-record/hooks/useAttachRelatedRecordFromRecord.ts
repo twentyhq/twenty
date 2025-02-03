@@ -7,7 +7,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;

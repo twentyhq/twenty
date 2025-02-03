@@ -1,3 +1,5 @@
+import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
+import { isDefined } from 'twenty-shared';
 import {
   ArrayTypeNode,
   ArrowFunction,
@@ -5,17 +7,15 @@ import {
   FunctionDeclaration,
   FunctionLikeDeclaration,
   LiteralTypeNode,
+  Node,
   PropertySignature,
   ScriptTarget,
   StringLiteral,
   SyntaxKind,
   TypeNode,
-  Node,
   UnionTypeNode,
   VariableStatement,
 } from 'typescript';
-import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
-import { isDefined } from 'twenty-ui';
 
 const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
   switch (typeNode.kind) {

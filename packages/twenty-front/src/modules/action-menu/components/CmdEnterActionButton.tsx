@@ -9,9 +9,11 @@ import { FeatureFlagKey } from '~/generated/graphql';
 export const CmdEnterActionButton = ({
   title,
   onClick,
+  disabled = false,
 }: {
   title: string;
   onClick: () => void;
+  disabled?: boolean;
 }) => {
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -32,6 +34,7 @@ export const CmdEnterActionButton = ({
       accent="blue"
       size="medium"
       onClick={onClick}
+      disabled={disabled}
       hotkeys={[getOsControlSymbol(), '⏎']}
     />
   );

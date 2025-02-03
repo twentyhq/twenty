@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
 import { gmail_v1 as gmailV1 } from 'googleapis';
+import { isDefined } from 'twenty-shared';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GmailGetMessagesService {

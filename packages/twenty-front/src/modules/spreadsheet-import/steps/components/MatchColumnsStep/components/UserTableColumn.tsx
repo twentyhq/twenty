@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ImportedRow } from '@/spreadsheet-import/types';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 import { Column } from '../MatchColumnsStep';
 

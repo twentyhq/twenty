@@ -8,7 +8,7 @@ import {
   WorkflowTriggerType,
   WorkflowVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useAllActiveWorkflowVersions = ({
   objectMetadataItem,

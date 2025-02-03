@@ -11,8 +11,8 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
-import { isDefined } from '~/utils/isDefined';
 
 export const RecordBoardColumnNewOpportunity = ({
   columnId,

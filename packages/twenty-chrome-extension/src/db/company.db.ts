@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared';
 import {
   CompanyInput,
   CreateCompanyResponse,
@@ -6,7 +7,6 @@ import {
 import { Company, CompanyFilterInput } from '~/generated/graphql';
 import { CREATE_COMPANY } from '~/graphql/company/mutations';
 import { FIND_COMPANY } from '~/graphql/company/queries';
-import { isDefined } from '~/utils/isDefined';
 
 import { callMutation, callQuery } from '../utils/requestDb';
 

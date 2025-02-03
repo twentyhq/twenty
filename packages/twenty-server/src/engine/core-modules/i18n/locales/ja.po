@@ -1,0 +1,2236 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 10:10+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ja\n"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
+msgid "(System) View Fields"
+msgstr "(システム）ビューフィールド"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
+msgid "(System) View Filter Groups"
+msgstr "(システム）フィルタグループの表示"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
+msgid "(System) View Filters"
+msgstr "(システム）ビューフィルタ"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
+msgid "(System) View Groups"
+msgstr "(システム）ビューグループ"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
+msgid "(System) View Sorts"
+msgstr "(システム）ビューソート"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:33
+msgid "(System) Views"
+msgstr "(システム）ビュー"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
+msgid "A Folder of favorites"
+msgstr "お気に入りのフォルダ"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:55
+msgid "A company"
+msgstr "A社"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
+msgid "A connected account"
+msgstr "接続アカウント"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
+msgid "A favorite that can be accessed from the left menu"
+msgstr "左メニューからアクセスできるお気に入り"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
+msgid "A group of related messages (e.g. email thread, chat thread)"
+msgstr "関連するメッセージのグループ（電子メールのスレッド、チャットのスレッドなど）"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
+msgid "A message sent or received through a messaging channel (email, chat, etc.)"
+msgstr "メッセージング・チャンネル（電子メール、チャットなど）を通じて送受信されるメッセージ。"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:46
+msgid "A note"
+msgstr "メモ"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
+msgid "A note target"
+msgstr "注意目標"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:59
+msgid "A person"
+msgstr "ある人物"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:48
+msgid "A task"
+msgstr "課題"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
+msgid "A task target"
+msgstr "タスクターゲット"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
+msgid "A webhook"
+msgstr "ウェブフック"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
+msgid "A workflow"
+msgstr "ワークフロー"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
+msgid "A workflow event listener"
+msgstr "ワークフローのイベントリスナー"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
+msgid "A workflow run"
+msgstr "ワークフローの実行"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
+msgid "A workflow version"
+msgstr "ワークフロー版"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
+msgid "A workspace member"
+msgstr "ワークスペース・メンバー"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
+msgid "API Key"
+msgstr "APIキー"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
+msgid "API Keys"
+msgstr "APIキー"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:113
+msgid "ARR"
+msgstr "受取通知"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
+msgid "Access Token"
+msgstr "アクセス・トークン"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
+#: src/modules/company/standard-objects/company.workspace-entity.ts:176
+msgid "Account Owner"
+msgstr "アカウント・オーナー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
+msgid "Account Owner For Companies"
+msgstr "企業向けアカウント・オーナー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
+msgid "Account owner for companies"
+msgstr "企業のアカウント・オーナー"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:123
+msgid "Address"
+msgstr "住所"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:264
+msgid "Address (deprecated) "
+msgstr "アドレス (非推奨) "
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:124
+msgid "Address of the company"
+msgstr "会社住所"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:265
+msgid "Address of the company - deprecated in favor of new address field"
+msgstr "会社の住所 - 新しい住所フィールドに取って代わられ、非推奨。"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:189
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
+msgid "Aggregate operation"
+msgstr "集計作業"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
+msgid "Aggregated / filtered event to be displayed on the timeline"
+msgstr "タイムライン上に表示される集計／フィルターされたイベント"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
+msgid "Amount"
+msgstr "金額"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
+msgid "An API key"
+msgstr "APIキー"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
+msgid "An attachment"
+msgstr "添付ファイル"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
+msgid "An audit log of actions performed in the system"
+msgstr "システムで実行されたアクションの監査ログ"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
+msgid "An event related to user behavior"
+msgstr "ユーザーの行動に関するイベント"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
+msgid "An opportunity"
+msgstr "機会"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:114
+msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
+msgstr "年間経常収益：企業の実際の年間売上高または推定年間売上高"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
+msgid "ApiKey expiration date"
+msgstr "ApiKeyの有効期限"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
+msgid "ApiKey name"
+msgstr "ApiKey名"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
+msgid "ApiKey revocation date"
+msgstr "ApiKeyの失効日"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
+msgid "Assigned tasks"
+msgstr "割り当てられたタスク"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:168
+msgid "Assignee"
+msgstr "譲受人"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
+msgid "Associated User Id"
+msgstr "関連ユーザーID"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
+msgid "Attachment"
+msgstr "アタッチメント"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
+msgid "Attachment author"
+msgstr "添付ファイル作成者"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
+msgid "Attachment company"
+msgstr "アタッチメント会社"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
+msgid "Attachment full path"
+msgstr "添付ファイルのフルパス"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
+msgid "Attachment name"
+msgstr "添付ファイル名"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
+msgid "Attachment note"
+msgstr "添付文書"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
+msgid "Attachment opportunity"
+msgstr "アタッチメントの機会"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
+msgid "Attachment person"
+msgstr "アタッチメント担当者"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
+msgid "Attachment task"
+msgstr "アタッチメント・タスク"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
+msgid "Attachment type"
+msgstr "アタッチメントタイプ"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:156
+#: src/modules/person/standard-objects/person.workspace-entity.ts:238
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:199
+#: src/modules/note/standard-objects/note.workspace-entity.ts:118
+#: src/modules/company/standard-objects/company.workspace-entity.ts:239
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
+#: src/engine/twenty-orm/custom.workspace-entity.ts:118
+msgid "Attachments"
+msgstr "アタッチメント"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
+msgid "Attachments created by the workspace member"
+msgstr "ワークスペース・メンバーが作成した添付ファイル"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:240
+msgid "Attachments linked to the company"
+msgstr "会社に関連する添付ファイル"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:239
+msgid "Attachments linked to the contact."
+msgstr "連絡先にリンクされている添付ファイル。"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
+msgid "Attachments linked to the opportunity"
+msgstr "この機会に関連する添付ファイル"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:123
+msgid "Attachments tied to the {label}"
+msgstr "{label}]に紐づくアタッチメント"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
+msgid "Audit Log"
+msgstr "監査ログ"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
+msgid "Audit Logs"
+msgstr "監査ログ"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
+msgid "Audit Logs linked to the workspace member"
+msgstr "ワークスペース・メンバにリンクされた監査ログ"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
+msgid "Auth failed at"
+msgstr "で認証に失敗した。"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
+msgid "Author"
+msgstr "著者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
+msgid "Authored attachments"
+msgstr "執筆者"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
+msgid "Automatically create People records when receiving or sending emails"
+msgstr "メールの受信・送信時に自動的にPeopleレコードを作成"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
+msgid "Automatically create records for people you participated with in an event."
+msgstr "イベントに一緒に参加した人の記録を自動的に作成します。"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:146
+msgid "Avatar"
+msgstr "アバター"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
+msgid "Avatar Url"
+msgstr "アバターURL"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
+msgid "Behavioral Event"
+msgstr "行動イベント"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
+msgid "Behavioral Events"
+msgstr "行動イベント"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
+msgid "Blocklist"
+msgstr "ブロックリスト"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
+msgid "Blocklisted handles"
+msgstr "ブロックリスト入りハンドル"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
+msgid "Blocklists"
+msgstr "ブロックリスト"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:77
+#: src/modules/task/standard-objects/task.workspace-entity.ts:87
+#: src/modules/note/standard-objects/note.workspace-entity.ts:75
+#: src/modules/note/standard-objects/note.workspace-entity.ts:85
+msgid "Body"
+msgstr "ボディ"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
+msgid "Cached record name"
+msgstr "キャッシュレコード名"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
+msgid "Calendar Channel"
+msgstr "カレンダーチャンネル"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
+msgid "Calendar Channel Event Association"
+msgstr "カレンダー チャンネルイベント協会"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:322
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:323
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
+msgid "Calendar Channel Event Associations"
+msgstr "カレンダー チャンネル イベント関連"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
+msgid "Calendar Channels"
+msgstr "カレンダー・チャンネル"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
+#: src/modules/person/standard-objects/person.workspace-entity.ts:262
+#: src/modules/person/standard-objects/person.workspace-entity.ts:263
+msgid "Calendar Event Participants"
+msgstr "カレンダーイベント参加者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
+msgid "Calendar event"
+msgstr "カレンダーイベント"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
+msgid "Calendar event participant"
+msgstr "カレンダーイベント参加者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
+msgid "Calendar event participants"
+msgstr "カレンダーイベント参加者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
+msgid "Calendar events"
+msgstr "カレンダー・イベント"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
+msgid "Channel ID"
+msgstr "チャンネルID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
+msgid "Channel Type"
+msgstr "チャンネル・タイプ"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:137
+msgid "City"
+msgstr "都市"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
+msgid "Close date"
+msgstr "締切日"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
+msgid "Color Scheme"
+msgstr "カラースキーム"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:108
+msgid "Compact View"
+msgstr "コンパクトビュー"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:54
+msgid "Companies"
+msgstr "企業"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
+#: src/modules/person/standard-objects/person.workspace-entity.ts:177
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:148
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:65
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:88
+#: src/modules/company/standard-objects/company.workspace-entity.ts:53
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
+msgid "Company"
+msgstr "会社概要"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:144
+msgid "Company record position"
+msgstr "会社記録ポジション"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
+msgid "Conference Solution"
+msgstr "会議ソリューション"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:28
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
+msgid "Connected Account"
+msgstr "接続アカウント"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
+msgid "Connected Accounts"
+msgstr "接続アカウント"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
+msgid "Connected accounts"
+msgstr "接続アカウント"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
+msgid "Contact auto creation policy"
+msgstr "コンタクト自動作成ポリシー"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:80
+msgid "Contact’s Emails"
+msgstr "連絡先のEメール"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:90
+msgid "Contact’s Linkedin account"
+msgstr "連絡先のLinkedinアカウント"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:100
+msgid "Contact’s X/Twitter account"
+msgstr "連絡先のX/Twitterアカウント"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:147
+msgid "Contact’s avatar"
+msgstr "コンタクトのアバター"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:138
+msgid "Contact’s city"
+msgstr "連絡先の都市"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:178
+msgid "Contact’s company"
+msgstr "連絡先の会社"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:110
+msgid "Contact’s job title"
+msgstr "連絡先の役職"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:70
+msgid "Contact’s name"
+msgstr "担当者名"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:119
+msgid "Contact’s phone number"
+msgstr "連絡先の電話番号"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:129
+msgid "Contact’s phone numbers"
+msgstr "連絡先の電話番号"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
+#: src/modules/task/standard-objects/task.workspace-entity.ts:136
+#: src/modules/person/standard-objects/person.workspace-entity.ts:167
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:123
+#: src/modules/note/standard-objects/note.workspace-entity.ts:98
+#: src/modules/company/standard-objects/company.workspace-entity.ts:154
+#: src/engine/twenty-orm/custom.workspace-entity.ts:61
+msgid "Created by"
+msgstr "作成者"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
+msgid "Creation DateTime"
+msgstr "作成日時"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
+#: src/engine/twenty-orm/base.workspace-entity.ts:26
+#: src/engine/twenty-orm/base.workspace-entity.ts:27
+msgid "Creation date"
+msgstr "作成日"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
+msgid "Date format"
+msgstr "日付形式"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:53
+msgid "Date when the record was deleted"
+msgstr "レコードが削除された日付"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:52
+msgid "Deleted at"
+msgstr "で削除"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:109
+msgid "Describes if the view is in compact mode"
+msgstr "ビューがコンパクトモードであるかどうかを示します。"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
+msgid "Description"
+msgstr "説明"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
+msgid "Direction"
+msgstr "ディレクション"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
+msgid "Display Name"
+msgstr "表示名"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
+msgid "Display Value"
+msgstr "表示値"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:73
+msgid "Domain Name"
+msgstr "ドメイン名"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:100
+msgid "Due Date"
+msgstr "期日"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:79
+msgid "Emails"
+msgstr "電子メール"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:83
+msgid "Employees"
+msgstr "従業員"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
+msgid "End Date"
+msgstr "終了日"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
+msgid "Event ID"
+msgstr "イベントID"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
+msgid "Event Listeners"
+msgstr "イベント・リスナー"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
+msgid "Event Participants"
+msgstr "イベント参加者"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
+msgid "Event company"
+msgstr "イベント会社"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
+msgid "Event context"
+msgstr "イベント・コンテキスト"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
+msgid "Event details"
+msgstr "イベント詳細"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
+msgid "Event external ID"
+msgstr "イベント外部ID"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:48
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
+msgid "Event name"
+msgstr "イベント名"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
+msgid "Event name/type"
+msgstr "イベント名/タイプ"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
+msgid "Event note"
+msgstr "イベントメモ"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
+msgid "Event opportunity"
+msgstr "イベントの機会"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
+msgid "Event person"
+msgstr "イベント関係者"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
+msgid "Event task"
+msgstr "イベントタスク"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
+msgid "Event workflow"
+msgstr "イベントのワークフロー"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
+msgid "Event workflow run"
+msgstr "イベントワークフローの実行"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
+msgid "Event workflow version"
+msgstr "イベントワークフローバージョン"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
+msgid "Event workspace member"
+msgstr "イベント・ワークスペース・メンバー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
+#: src/modules/person/standard-objects/person.workspace-entity.ts:276
+msgid "Events"
+msgstr "イベント"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:277
+msgid "Events linked to the person"
+msgstr "その人に関連する出来事"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
+msgid "Events linked to the workspace member"
+msgstr "ワークスペース・メンバーにリンクされたイベント"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
+msgid "Exclude group emails"
+msgstr "グループメールの除外"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
+msgid "Exclude non professional emails"
+msgstr "プロ以外のメールは除く"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
+msgid "Executed by"
+msgstr "実行者"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
+msgid "Expiration date"
+msgstr "有効期限"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
+msgid "Favorite"
+msgstr "お気に入り"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
+msgid "Favorite Folder"
+msgstr "お気に入りフォルダ"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
+msgid "Favorite Folders"
+msgstr "お気に入りのフォルダ"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
+msgid "Favorite company"
+msgstr "お気に入りの会社"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
+msgid "Favorite folder position"
+msgstr "お気に入りのフォルダ位置"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
+msgid "Favorite note"
+msgstr "お気に入りのメモ"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
+msgid "Favorite opportunity"
+msgstr "お気に入りの機会"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
+msgid "Favorite person"
+msgstr "好きな人"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
+msgid "Favorite position"
+msgstr "好きなポジション"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
+msgid "Favorite task"
+msgstr "好きな仕事"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
+msgid "Favorite view"
+msgstr "お気に入りの眺め"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
+msgid "Favorite workflow"
+msgstr "お気に入りのワークフロー"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
+msgid "Favorite workflow run"
+msgstr "お気に入りのワークフロー"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
+msgid "Favorite workflow version"
+msgstr "お気に入りのワークフローバージョン"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
+msgid "Favorite workspace member"
+msgstr "お気に入りのワークスペース・メンバー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:154
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:186
+#: src/modules/view/standard-objects/view.workspace-entity.ts:177
+#: src/modules/task/standard-objects/task.workspace-entity.ts:197
+#: src/modules/person/standard-objects/person.workspace-entity.ts:226
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:143
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:52
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:36
+#: src/modules/company/standard-objects/company.workspace-entity.ts:226
+#: src/engine/twenty-orm/custom.workspace-entity.ts:101
+msgid "Favorites"
+msgstr "お気に入り"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
+msgid "Favorites in this folder"
+msgstr "このフォルダのお気に入り"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:227
+msgid "Favorites linked to the company"
+msgstr "会社に関連したお気に入り"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:227
+msgid "Favorites linked to the contact"
+msgstr "連絡先にリンクされているお気に入り"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:144
+msgid "Favorites linked to the note"
+msgstr "メモにリンクされたお気に入り"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
+msgid "Favorites linked to the opportunity"
+msgstr "チャンスにリンクしたお気に入り"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:198
+msgid "Favorites linked to the task"
+msgstr "タスクにリンクされたお気に入り"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:178
+msgid "Favorites linked to the view"
+msgstr "ビューにリンクされたお気に入り"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
+msgid "Favorites linked to the workflow"
+msgstr "ワークフローにリンクされたお気に入り"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
+msgid "Favorites linked to the workflow run"
+msgstr "ワークフローにリンクされたお気に入り"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
+msgid "Favorites linked to the workflow version"
+msgstr "ワークフローのバージョンにリンクされたお気に入り"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
+msgid "Favorites linked to the workspace member"
+msgstr "ワークスペース・メンバーにリンクされたお気に入り"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:106
+msgid "Favorites tied to the {label}"
+msgstr "{label}]に紐づくお気に入り"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
+msgid "Field Metadata Id"
+msgstr "フィールド・メタデータID"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
+msgid "Field Value"
+msgstr "フィールド値"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:262
+#: src/modules/view/standard-objects/view.workspace-entity.ts:263
+msgid "Field metadata used for aggregate operation"
+msgstr "集約操作に使用されるフィールド・メタデータ"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
+msgid "Field used for full-text search"
+msgstr "全文検索に使用されるフィールド"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
+msgid "Folder for Message Channel"
+msgstr "メッセージチャンネル用フォルダ"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
+msgid "Folder name"
+msgstr "フォルダ名"
+
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
+msgid "Full path"
+msgstr "フルパス"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
+msgid "Group by this field value"
+msgstr "このフィールド値でグループ化する"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:126
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:127
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:46
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:86
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:87
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
+msgid "Handle"
+msgstr "ハンドル"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
+msgid "Handle Aliases"
+msgstr "ハンドルの別名"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
+msgid "Header message Id"
+msgstr "ヘッダー・メッセージId"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:133
+msgid "ICP"
+msgstr "ICP"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:79
+msgid "Icon"
+msgstr "アイコン"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:14
+#: src/engine/twenty-orm/base.workspace-entity.ts:15
+msgid "Id"
+msgstr "アイド"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:134
+msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
+msgstr "理想の顧客像：  その企業があなたにとって最も適切で価値のある顧客であるかどうかを示します。"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
+msgid "If the event is related to a particular object"
+msgstr "イベントが特定のオブジェクトに関連している場合"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
+msgid "Is Contact Auto Creation Enabled"
+msgstr "コンタクトの自動作成が有効になっているか"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
+msgid "Is Full Day"
+msgstr "全日"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
+msgid "Is Organizer"
+msgstr "オーガナイザー"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
+msgid "Is Sync Enabled"
+msgstr "同期が有効か"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
+msgid "Is canceled"
+msgstr "中止"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:109
+msgid "Job Title"
+msgstr "役職名"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
+msgid "Json object to provide context (user, device, workspace, etc.)"
+msgstr "コンテキスト（ユーザー、デバイス、ワークスペースなど）を提供するJsonオブジェクト。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
+msgid "Json object to provide output of the workflow run"
+msgstr "ワークフロー実行の出力を提供するJsonオブジェクト"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
+msgid "Json object to provide steps"
+msgstr "ステップを提供するJsonオブジェクト"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
+msgid "Json object to provide trigger"
+msgstr "トリガーを提供するJsonオブジェクト"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
+msgid "Json value for event details"
+msgstr "イベント詳細のJson値"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:68
+msgid "Key"
+msgstr "キー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
+msgid "Language"
+msgstr "言語"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
+msgid "Last published Version Id"
+msgstr "最終発行バージョンID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
+msgid "Last sync cursor"
+msgstr "最終同期カーソル"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
+msgid "Last sync date"
+msgstr "最終同期日"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
+msgid "Last sync history ID"
+msgstr "最終同期履歴ID"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:40
+msgid "Last time the record was changed"
+msgstr "前回の記録変更"
+
+#: src/engine/twenty-orm/base.workspace-entity.ts:39
+msgid "Last update"
+msgstr "最終更新日"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
+msgid "Linked Object Metadata Id"
+msgstr "リンクされたオブジェクトのメタデータID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:192
+msgid "Linked Opportunities"
+msgstr "リンクされた機会"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
+msgid "Linked Record cached name"
+msgstr "リンクレコードのキャッシュ名"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
+msgid "Linked Record id"
+msgstr "リンクレコードID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:89
+#: src/modules/company/standard-objects/company.workspace-entity.ts:93
+msgid "Linkedin"
+msgstr "リンクトイン"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:193
+msgid "List of opportunities for which that person is the point of contact"
+msgstr "担当者が窓口となる機会のリスト"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
+msgid "Location"
+msgstr "所在地"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
+msgid "Logical Operator"
+msgstr "論理演算子"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
+msgid "Logical operator for the filter group"
+msgstr "フィルタグループの論理演算子"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
+msgid "Meet Link"
+msgstr "リンク"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
+msgid "Message"
+msgstr "メッセージ"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
+msgid "Message Channel"
+msgstr "メッセージチャンネル"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
+msgid "Message Channel Association"
+msgstr "メッセージ・チャネル・アソシエーション"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
+msgid "Message Channel Id"
+msgstr "メッセージ・チャンネルID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
+msgid "Message Channel Message Association"
+msgstr "メッセージ・チャンネル メッセージ・アソシエーション"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
+msgid "Message Channel Message Associations"
+msgstr "メッセージ・チャンネル メッセージ・アソシエーション"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
+msgid "Message Channels"
+msgstr "メッセージ・チャンネル"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
+msgid "Message Direction"
+msgstr "メッセージの方向性"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
+msgid "Message External Id"
+msgstr "メッセージ外部ID"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
+msgid "Message Folder"
+msgstr "メッセージフォルダ"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
+msgid "Message Folders"
+msgstr "メッセージフォルダー"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
+msgid "Message Id"
+msgstr "メッセージID"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
+msgid "Message Participant"
+msgstr "メッセージ参加者"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
+#: src/modules/person/standard-objects/person.workspace-entity.ts:249
+#: src/modules/person/standard-objects/person.workspace-entity.ts:250
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:93
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:94
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
+msgid "Message Participants"
+msgstr "メッセージ参加者"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
+msgid "Message Synced with a Message Channel"
+msgstr "メッセージチャンネルと同期したメッセージ"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
+msgid "Message Thread"
+msgstr "メッセージスレッド"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
+msgid "Message Thread Id"
+msgstr "メッセージスレッドID"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
+msgid "Message Threads"
+msgstr "メッセージスレッド"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
+msgid "Message id from the message header"
+msgstr "メッセージヘッダからのメッセージID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
+msgid "Message id from the messaging provider"
+msgstr "メッセージング・プロバイダーからのメッセージID"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
+msgid "Messages"
+msgstr "メッセージ"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
+msgid "Messages from the channel."
+msgstr "チャンネルからのメッセージ"
+
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
+msgid "Messages from the thread."
+msgstr "スレッドからのメッセージ"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
+msgid "Messaging provider access token"
+msgstr "メッセージング・プロバイダのアクセストークン"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
+msgid "Messaging provider refresh token"
+msgstr "メッセージング・プロバイダのリフレッシュ・トークン"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:75
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:62
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:34
+#: src/modules/view/standard-objects/view.workspace-entity.ts:43
+#: src/modules/person/standard-objects/person.workspace-entity.ts:69
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:60
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:32
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:43
+#: src/modules/company/standard-objects/company.workspace-entity.ts:64
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:42
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:29
+#: src/engine/twenty-orm/custom.workspace-entity.ts:40
+#: src/engine/twenty-orm/custom.workspace-entity.ts:41
+msgid "Name"
+msgstr "名称"
+
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
+msgid "Name of the favorite folder"
+msgstr "お気に入りフォルダ名"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
+msgid "Name of the workflow run"
+msgstr "ワークフローの実行名"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
+#: src/modules/note/standard-objects/note.workspace-entity.ts:44
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
+msgid "Note"
+msgstr "注"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
+msgid "Note Target"
+msgstr "備考 ターゲット"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
+msgid "Note Targets"
+msgstr "ノート 目標"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:119
+msgid "Note attachments"
+msgstr "添付資料"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:76
+#: src/modules/note/standard-objects/note.workspace-entity.ts:86
+msgid "Note body"
+msgstr "ノート本体"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:56
+msgid "Note record position"
+msgstr "レコード位置"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:107
+msgid "Note targets"
+msgstr "注目標"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:67
+msgid "Note title"
+msgstr "タイトル"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
+msgid "NoteTarget company"
+msgstr "注対象会社"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
+msgid "NoteTarget note"
+msgstr "ノート対象ノート"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
+msgid "NoteTarget opportunity"
+msgstr "注チャンス"
+
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
+msgid "NoteTarget person"
+msgstr "ノート対象者"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:215
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
+#: src/modules/note/standard-objects/note.workspace-entity.ts:45
+#: src/modules/company/standard-objects/company.workspace-entity.ts:203
+#: src/engine/twenty-orm/custom.workspace-entity.ts:69
+msgid "Notes"
+msgstr "備考"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:204
+msgid "Notes tied to the company"
+msgstr "会社と結びついたノート"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:216
+msgid "Notes tied to the contact"
+msgstr "コンタクトに関連するメモ"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
+msgid "Notes tied to the opportunity"
+msgstr "機会に関する注意事項"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:74
+msgid "Notes tied to the {label}"
+msgstr "{label}]に紐づくメモ"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:84
+msgid "Number of employees in the company"
+msgstr "従業員数"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:51
+msgid "Object Metadata Id"
+msgstr "オブジェクト・メタデータID"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
+msgid "Object id"
+msgstr "オブジェクトID"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
+msgid "Object metadata id"
+msgstr "オブジェクトのメタデータID"
+
+#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
+msgid "Object name"
+msgstr "オブジェクト名"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
+msgid "Operand"
+msgstr "オペランド"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
+msgid "Operation"
+msgstr "オペレーション"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
+msgid "Operations"
+msgstr "オペレーション"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
+#: src/modules/company/standard-objects/company.workspace-entity.ts:214
+msgid "Opportunities"
+msgstr "チャンス"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:215
+msgid "Opportunities linked to the company."
+msgstr "会社に関連した機会。"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:48
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:80
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
+msgid "Opportunity"
+msgstr "チャンス"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
+msgid "Opportunity amount"
+msgstr "チャンス量"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
+msgid "Opportunity close date"
+msgstr "機会終了日"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
+msgid "Opportunity company"
+msgstr "オポチュニティ・カンパニー"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
+msgid "Opportunity point of contact"
+msgstr "チャンスの窓口"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
+msgid "Opportunity probability"
+msgstr "機会確率"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
+msgid "Opportunity record position"
+msgstr "機会記録ポジション"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
+msgid "Opportunity stage"
+msgstr "チャンスステージ"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:190
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
+msgid "Optional aggregate operation"
+msgstr "オプションの集計作業"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+msgstr "webhook ペイロードの HMAC 署名を計算するために使用するオプションの秘密。この秘密は Twenty と webhook コンシューマの間で共有され、webhook リクエストを認証します。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
+msgid "Output"
+msgstr "出力"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
+msgid "Parent View Filter Group"
+msgstr "親ビューフィルターグループ"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
+msgid "Parent View Filter Group Id"
+msgstr "親ビューフィルタグループID"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:58
+#: src/modules/company/standard-objects/company.workspace-entity.ts:164
+msgid "People"
+msgstr "人々"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:165
+msgid "People linked to the company."
+msgstr "会社に関係する人々。"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
+#: src/modules/person/standard-objects/person.workspace-entity.ts:57
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts:50
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:85
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:86
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:123
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
+msgid "Person"
+msgstr "人物"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:157
+msgid "Person record Position"
+msgstr "個人記録 ポジション"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:118
+msgid "Phone"
+msgstr "電話"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:128
+msgid "Phones"
+msgstr "電話"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
+msgid "Point of Contact"
+msgstr "連絡先"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:146
+#: src/modules/view/standard-objects/view.workspace-entity.ts:98
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:59
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:74
+#: src/modules/task/standard-objects/task.workspace-entity.ts:57
+#: src/modules/person/standard-objects/person.workspace-entity.ts:156
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:112
+#: src/modules/note/standard-objects/note.workspace-entity.ts:55
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:32
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:46
+#: src/modules/company/standard-objects/company.workspace-entity.ts:143
+#: src/engine/twenty-orm/custom.workspace-entity.ts:49
+#: src/engine/twenty-orm/custom.workspace-entity.ts:50
+msgid "Position"
+msgstr "ポジション"
+
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
+msgid "Position in the parent view filter group"
+msgstr "親ビューフィルタグループ内での位置"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
+msgid "Position in the view filter group"
+msgstr "ビューフィルタグループ内での位置"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
+msgid "Position in view filter group"
+msgstr "ビューフィルタグループ内の位置"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
+msgid "Preferred color scheme"
+msgstr "好みの配色"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
+msgid "Preferred language"
+msgstr "使用言語"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
+msgid "Probability"
+msgstr "確率"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
+msgid "Received At"
+msgstr "受理日時"
+
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
+msgid "Record id"
+msgstr "レコードID"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
+msgid "Recurring Event ID"
+msgstr "定期イベントID"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
+msgid "Refresh Token"
+msgstr "リフレッシュ・トークン"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
+msgid "Related user email address"
+msgstr "関連ユーザーのメールアドレス"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:144
+#: src/modules/note/standard-objects/note.workspace-entity.ts:106
+msgid "Relations"
+msgstr "関係"
+
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
+msgid "Response Status"
+msgstr "対応状況"
+
+#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
+msgid "Revocation date"
+msgstr "失効日"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
+msgid "Role"
+msgstr "役割"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
+msgid "Runs"
+msgstr "走行距離"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
+msgid "Scopes"
+msgstr "スコープ"
+
+#: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
+msgid "Search vector"
+msgstr "検索ベクトル"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
+msgid "Secret"
+msgstr "シークレット"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
+msgid "Size"
+msgstr "サイズ"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
+msgid "Stage"
+msgstr "ステージ"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
+msgid "Start Date"
+msgstr "開始日"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:110
+msgid "Status"
+msgstr "ステータス"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
+msgid "Statuses"
+msgstr "ステータス"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
+msgid "Subject"
+msgstr "テーマ"
+
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
+msgid "Sync Cursor"
+msgstr "同期カーソル"
+
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
+msgid "Sync Cursor. Used for syncing events from the calendar provider"
+msgstr "同期カーソル。カレンダー・プロバイダからのイベントの同期に使用"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
+msgid "Sync stage"
+msgstr "シンクステージ"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
+msgid "Sync stage started at"
+msgstr "シンクステージ開始"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
+msgid "Sync status"
+msgstr "同期ステータス"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
+msgid "Target Url"
+msgstr "ターゲットURL"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
+#: src/modules/task/standard-objects/task.workspace-entity.ts:46
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:35
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
+msgid "Task"
+msgstr "タスク"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
+msgid "Task Target"
+msgstr "タスクターゲット"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
+msgid "Task Targets"
+msgstr "タスク目標"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:169
+msgid "Task assignee"
+msgstr "タスク担当者"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:157
+msgid "Task attachments"
+msgstr "タスクアタッチメント"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:78
+#: src/modules/task/standard-objects/task.workspace-entity.ts:88
+msgid "Task body"
+msgstr "タスク本体"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:101
+msgid "Task due date"
+msgstr "タスクの期日"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:58
+msgid "Task record position"
+msgstr "タスクレコードの位置"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:111
+msgid "Task status"
+msgstr "タスクステータス"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:145
+msgid "Task targets"
+msgstr "タスク目標"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:69
+msgid "Task title"
+msgstr "タスクタイトル"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
+msgid "TaskTarget company"
+msgstr "タスクターゲット会社"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
+msgid "TaskTarget opportunity"
+msgstr "タスクターゲット機会"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
+msgid "TaskTarget person"
+msgstr "タスク対象者"
+
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
+msgid "TaskTarget task"
+msgstr "タスク対象タスク"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:47
+#: src/modules/person/standard-objects/person.workspace-entity.ts:204
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:177
+#: src/modules/company/standard-objects/company.workspace-entity.ts:192
+#: src/engine/twenty-orm/custom.workspace-entity.ts:85
+msgid "Tasks"
+msgstr "タスク"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
+msgid "Tasks assigned to the workspace member"
+msgstr "ワークスペース・メンバーに割り当てられたタスク"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:193
+msgid "Tasks tied to the company"
+msgstr "会社に関連した仕事"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:205
+msgid "Tasks tied to the contact"
+msgstr "コンタクトに関連するタスク"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
+msgid "Tasks tied to the opportunity"
+msgstr "機会に関するタスク"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:90
+msgid "Tasks tied to the {label}"
+msgstr "{label}]に関連するタスク"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
+msgid "Text"
+msgstr "テキスト"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
+msgid "The account handle (email, username, phone number, etc.)"
+msgstr "アカウントハンドル（Eメール、ユーザー名、電話番号など）"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
+msgid "The account provider"
+msgstr "口座提供者"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:94
+msgid "The company Linkedin account"
+msgstr "会社のLinkedinアカウント"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:104
+msgid "The company Twitter/X account"
+msgstr "Twitter/Xアカウント"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:65
+msgid "The company name"
+msgstr "会社名"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:74
+msgid "The company website URL. We use this url to fetch the company icon"
+msgstr "会社のウェブサイトのURL。会社のアイコンを取得するためにこのURLを使用します。"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
+#: src/modules/task/standard-objects/task.workspace-entity.ts:138
+#: src/modules/person/standard-objects/person.workspace-entity.ts:169
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:125
+#: src/modules/note/standard-objects/note.workspace-entity.ts:100
+#: src/modules/company/standard-objects/company.workspace-entity.ts:156
+#: src/engine/twenty-orm/custom.workspace-entity.ts:63
+msgid "The creator of the record"
+msgstr "記録の作成者"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
+msgid "The current statuses of the workflow versions"
+msgstr "ワークフローバージョンの現在のステータス"
+
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
+msgid "The date the message was received"
+msgstr "メッセージを受信した日付"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
+msgid "The executor of the workflow"
+msgstr "ワークフローの実行者"
+
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
+msgid "The folder this favorite belongs to"
+msgstr "このお気に入りのフォルダ"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
+msgid "The opportunity name"
+msgstr "機会名"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
+msgid "The workflow event listener name"
+msgstr "ワークフローイベントのリスナー名"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
+msgid "The workflow last published version id"
+msgstr "ワークフローの最終公開バージョンID"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
+msgid "The workflow name"
+msgstr "ワークフロー名"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
+msgid "The workflow version name"
+msgstr "ワークフローのバージョン名"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
+msgid "The workflow version status"
+msgstr "ワークフローのバージョンステータス"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
+msgid "Thread External Id"
+msgstr "スレッド外部ID"
+
+#: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
+msgid "Thread id from the messaging provider"
+msgstr "メッセージング・プロバイダーからのスレッドID"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
+msgid "Throttle Failure Count"
+msgstr "スロットル故障回数"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
+msgid "Time format"
+msgstr "時間形式"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
+msgid "Time zone"
+msgstr "タイムゾーン"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:198
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:34
+#: src/modules/task/standard-objects/task.workspace-entity.ts:185
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:211
+#: src/modules/note/standard-objects/note.workspace-entity.ts:131
+#: src/modules/company/standard-objects/company.workspace-entity.ts:251
+#: src/engine/twenty-orm/custom.workspace-entity.ts:134
+msgid "Timeline Activities"
+msgstr "タイムライン活動"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:252
+msgid "Timeline Activities linked to the company"
+msgstr "タイムライン 会社に関連する活動"
+
+#: src/modules/note/standard-objects/note.workspace-entity.ts:132
+msgid "Timeline Activities linked to the note."
+msgstr "メモにリンクされたタイムライン活動。"
+
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
+msgid "Timeline Activities linked to the opportunity."
+msgstr "タイムライン 機会に関連する活動。"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:186
+msgid "Timeline Activities linked to the task."
+msgstr "タイムライン タスクにリンクされた活動"
+
+#: src/engine/twenty-orm/custom.workspace-entity.ts:139
+msgid "Timeline Activities tied to the {label}"
+msgstr "{label}]に紐づくタイムライン活動"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
+msgid "Timeline Activity"
+msgstr "タイムライン活動"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
+msgid "Timeline activities linked to the run"
+msgstr "ランに関連したタイムライン活動"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
+msgid "Timeline activities linked to the version"
+msgstr "バージョンにリンクしたタイムライン活動"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
+msgid "Timeline activities linked to the workflow"
+msgstr "ワークフローにリンクされたタイムラインアクティビティ"
+
+#: src/modules/task/standard-objects/task.workspace-entity.ts:68
+#: src/modules/note/standard-objects/note.workspace-entity.ts:66
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
+msgid "Title"
+msgstr "タイトル"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:59
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
+msgid "Type"
+msgstr "タイプ"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
+msgid "Update DateTime"
+msgstr "更新日時"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
+msgid "User Email"
+msgstr "ユーザーEメール"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
+msgid "User Id"
+msgstr "ユーザーID"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
+msgid "User time zone"
+msgstr "ユーザーのタイムゾーン"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
+msgid "User's preferred date format"
+msgstr "ユーザーが希望する日付フォーマット"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
+msgid "User's preferred time format"
+msgstr "ユーザーが希望する時間フォーマット"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
+msgid "Value"
+msgstr "価値"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
+msgid "Version status"
+msgstr "バージョンステータス"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
+msgid "Version steps"
+msgstr "バージョン・ステップ"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
+msgid "Version trigger"
+msgstr "バージョン・トリガー"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
+msgid "Versions"
+msgstr "バージョン"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:31
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:70
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:67
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:38
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:39
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
+msgid "View"
+msgstr "表示"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
+msgid "View Field"
+msgstr "フィールドを見る"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
+msgid "View Field position"
+msgstr "フィールドポジションを見る"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
+msgid "View Field related view"
+msgstr "ビューフィールド関連ビュー"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
+msgid "View Field size"
+msgstr "フィールドサイズを見る"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
+msgid "View Field target field"
+msgstr "対象フィールドを見る"
+
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
+msgid "View Field visibility"
+msgstr "フィールドの視界を見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:117
+#: src/modules/view/standard-objects/view.workspace-entity.ts:118
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
+msgid "View Fields"
+msgstr "ビュー・フィールズ"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
+msgid "View Filter"
+msgstr "フィルターを見る"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
+msgid "View Filter Display Value"
+msgstr "フィルター表示値の表示"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
+msgid "View Filter Group"
+msgstr "フィルターグループを見る"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
+msgid "View Filter Group Id"
+msgstr "フィルターグループIDを表示"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:153
+#: src/modules/view/standard-objects/view.workspace-entity.ts:154
+#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
+msgid "View Filter Groups"
+msgstr "フィルターグループの表示"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
+msgid "View Filter operand"
+msgstr "フィルタ・オペランドを表示"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
+msgid "View Filter related view"
+msgstr "フィルター関連のビュー"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
+msgid "View Filter target field"
+msgstr "フィルター対象フィールドを表示"
+
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
+msgid "View Filter value"
+msgstr "フィルター値を見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:141
+#: src/modules/view/standard-objects/view.workspace-entity.ts:142
+#: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
+msgid "View Filters"
+msgstr "フィルターを見る"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
+msgid "View Group"
+msgstr "グループを見る"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
+msgid "View Group related view"
+msgstr "グループ関連ビュー"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
+msgid "View Group target field"
+msgstr "グループ対象フィールドを表示"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
+msgid "View Group visibility"
+msgstr "グループの可視性を表示"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:129
+#: src/modules/view/standard-objects/view.workspace-entity.ts:130
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
+msgid "View Groups"
+msgstr "グループを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:88
+msgid "View Kanban column field"
+msgstr "カンバン列フィールドを表示"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
+msgid "View Sort"
+msgstr "ソートを見る"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
+msgid "View Sort direction"
+msgstr "ソート方向を見る"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
+msgid "View Sort related view"
+msgstr "関連するビューを並べ替える"
+
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
+msgid "View Sort target field"
+msgstr "ソート対象フィールドを表示"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:165
+#: src/modules/view/standard-objects/view.workspace-entity.ts:166
+#: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
+msgid "View Sorts"
+msgstr "種類を見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:80
+msgid "View icon"
+msgstr "アイコンを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:69
+msgid "View key"
+msgstr "キーを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:44
+msgid "View name"
+msgstr "名前を見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:99
+msgid "View position"
+msgstr "ポジションを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:52
+msgid "View target object"
+msgstr "対象オブジェクトを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:60
+msgid "View type"
+msgstr "タイプを見る"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:32
+msgid "Views"
+msgstr "ビュー"
+
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
+msgid "Visibility"
+msgstr "視認性"
+
+#: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
+#: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
+msgid "Visible"
+msgstr "可視"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
+msgid "Webhook"
+msgstr "ウェブフック"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
+msgid "Webhook operation"
+msgstr "ウェブフック操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
+msgid "Webhook operations"
+msgstr "ウェブフック操作"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
+msgid "Webhook target url"
+msgstr "WebhookターゲットURL"
+
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
+msgid "Webhooks"
+msgstr "ウェブフック"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:172
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:43
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:194
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:133
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
+msgid "Workflow"
+msgstr "ワークフロー"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
+msgid "Workflow Run"
+msgstr "ワークフローの実行"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
+msgid "Workflow Runs"
+msgstr "ワークフローの実行"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
+msgid "Workflow Version"
+msgstr "ワークフロー版"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
+msgid "Workflow Versions"
+msgstr "ワークフローのバージョン"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
+msgid "Workflow event listeners linked to the workflow."
+msgstr "ワークフローにリンクされたワークフローイベントリスナー。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
+msgid "Workflow linked to the run."
+msgstr "ランにリンクされたワークフロー。"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
+msgid "Workflow record position"
+msgstr "ワークフローの記録位置"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
+msgid "Workflow run ended at"
+msgstr "ワークフローの実行は次の時点で終了した。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
+msgid "Workflow run position"
+msgstr "ワークフロー実行位置"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
+msgid "Workflow run started at"
+msgstr "ワークフローの実行開始"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
+msgid "Workflow run status"
+msgstr "ワークフロー実行状況"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
+msgid "Workflow runs linked to the version."
+msgstr "バージョンにリンクされたワークフローの実行。"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
+msgid "Workflow runs linked to the workflow."
+msgstr "ワークフローにリンクされたワークフローの実行。"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
+msgid "Workflow version"
+msgstr "ワークフロー版"
+
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
+msgid "Workflow version linked to the run."
+msgstr "ランにリンクされたワークフローのバージョン。"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
+msgid "Workflow version position"
+msgstr "ワークフローのバージョン位置"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
+msgid "Workflow versions linked to the workflow."
+msgstr "ワークフローにリンクされたワークフローのバージョン。"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
+msgid "WorkflowEventListener"
+msgstr "ワークフローイベントリスナー"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
+msgid "WorkflowEventListener workflow"
+msgstr "WorkflowEventListener ワークフロー"
+
+#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
+msgid "WorkflowEventListeners"
+msgstr "ワークフローイベントリスナー"
+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
+msgid "WorkflowVersion"
+msgstr "ワークフローバージョン"
+
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
+msgid "WorkflowVersion workflow"
+msgstr "ワークフローバージョンワークフロー"
+
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
+msgid "Workflows"
+msgstr "ワークフロー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
+#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:90
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:100
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:58
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
+msgid "Workspace Member"
+msgstr "ワークスペース・メンバー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
+msgid "Workspace Members"
+msgstr "ワークスペース・メンバー"
+
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
+msgid "Workspace member"
+msgstr "ワークスペース・メンバー"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
+msgid "Workspace member avatar"
+msgstr "ワークスペース・メンバーのアバター"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
+msgid "Workspace member name"
+msgstr "ワークスペース・メンバー名"
+
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
+msgid "WorkspaceMember"
+msgstr "ワークスペース・メンバー"
+
+#: src/modules/person/standard-objects/person.workspace-entity.ts:99
+#: src/modules/company/standard-objects/company.workspace-entity.ts:103
+msgid "X"
+msgstr "X"
+
+#: src/modules/company/standard-objects/company.workspace-entity.ts:177
+msgid "Your team member responsible for managing the company account"
+msgstr "企業アカウントの管理を担当するチームメンバー"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
+msgid "handle"
+msgstr "ハンドル"
+
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
+msgid "iCal UID"
+msgstr "iCal UID"
+
+#: src/modules/view/standard-objects/view.workspace-entity.ts:87
+msgid "kanbanfieldMetadataId"
+msgstr "kanbanfieldMetadataId"
+
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
+msgid "provider"
+msgstr "プロバイダー"

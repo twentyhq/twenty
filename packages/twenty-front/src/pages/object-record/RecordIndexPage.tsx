@@ -22,8 +22,7 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 
 const StyledIndexContainer = styled.div`
   display: flex;
