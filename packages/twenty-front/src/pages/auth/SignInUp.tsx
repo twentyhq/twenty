@@ -21,9 +21,9 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
 
-import { useMatch, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
-import { AppPath } from '@/types/AppPath';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 
 const StandardContent = ({
   workspacePublicData,
@@ -57,14 +57,14 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
+    useWorkspaceFromInviteHash();
 
   const [searchParams] = useSearchParams();
 
-  const currentPage = useMatch(AppPath.Invite);
-
   const title = useMemo(() => {
-    if (isDefined(currentPage) && currentPage.pattern.path === AppPath.Invite) {
-      return `Join ${workspacePublicData?.displayName ?? ''} team`;
+    if (isDefined(workspaceInviteHash)) {
+      return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
     }
 
     return `Welcome to ${
@@ -74,7 +74,11 @@ export const SignInUp = () => {
           ? 'Your Workspace'
           : workspacePublicData?.displayName
     }`;
-  }, [workspacePublicData?.displayName, currentPage]);
+  }, [
+    workspaceFromInviteHash?.displayName,
+    workspaceInviteHash,
+    workspacePublicData?.displayName,
+  ]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;

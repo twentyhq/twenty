@@ -13,8 +13,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { AppPath } from '@/types/AppPath';
 import { SignInUp } from '../SignInUp';
-import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
-import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/Invite',
@@ -27,17 +25,6 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query(
-          getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
-          () => {
-            return HttpResponse.json({
-              data: {
-                getPublicWorkspaceDataBySubdomain:
-                  mockedPublicWorkspaceDataBySubdomain,
-              },
-            });
-          },
-        ),
         graphql.query(
           getOperationName(GET_WORKSPACE_FROM_INVITE_HASH) ?? '',
           () => {
@@ -86,7 +73,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Join Twenty Eng team', undefined, {
+    await canvas.findByText('Join Twenty dev team', undefined, {
       timeout: 5000,
     });
 

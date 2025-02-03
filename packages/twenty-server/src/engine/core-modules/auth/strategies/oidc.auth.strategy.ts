@@ -61,7 +61,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
   private extractState(req: Request): {
     identityProviderId: string;
-    workspaceInviteHash: string;
+    workspaceInviteHash?: string;
   } {
     try {
       const state = JSON.parse(
