@@ -6,7 +6,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { permissionsGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception-handler';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 
 @Resolver()
@@ -16,18 +17,34 @@ export class PermissionsResolver {
     private readonly roleService: RoleService,
   ) {}
 
-  @Query(() => [RoleEntity])
+  @Query(() => [RoleDTO])
   async getRoles(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<RoleEntity[]> {
-    await this.permissionsService.validatesUserHasWorkspaceSettingPermissionOrThrow(
-      {
-        userWorkspaceId,
-        setting: SettingsFeatures.ROLES,
-      },
-    );
+  ): Promise<RoleDTO[]> {
+    try {
+      await this.permissionsService.validatesUserHasWorkspaceSettingPermissionOrThrow(
+        {
+          userWorkspaceId,
+          setting: SettingsFeatures.ROLES,
+        },
+      );
 
-    return await this.roleService.getWorkspaceRoles(workspace.id);
+      const roles = await this.roleService.getWorkspaceRoles(workspace.id);
+
+      return roles.map((role) => ({
+        id: role.id,
+        label: role.label,
+        canUpdateAllSettings: role.canUpdateAllSettings,
+        description: role.description,
+        workspaceId: role.workspaceId,
+        createdAt: role.createdAt,
+        updatedAt: role.updatedAt,
+        isEditable: role.isEditable,
+        userWorkspaceRoles: role.userWorkspaceRoles,
+      }));
+    } catch (error) {
+      return permissionsGraphqlApiExceptionHandler(error);
+    }
   }
 }
