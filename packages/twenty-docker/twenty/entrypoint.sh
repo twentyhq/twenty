@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e
 
-echo "Entrypoint script iniciado..."
+echo "Entrypoint script starting..."
 
 # Verificar variável de ambiente obrigatória
 if [ -z "$PG_DATABASE_URL" ]; then
-  echo "Erro: A variável PG_DATABASE_URL não está definida."
+  echo "Erro: The variable 'PG_DATABASE_URL' ist not defined."
   exit 1
 fi
 
@@ -20,28 +20,30 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
     PGPORT=$(echo $PG_DATABASE_URL | awk -F ':' '{print $4}' | awk -F '/' '{print $1}')
     PGDB=$(echo $PG_DATABASE_URL | awk -F '/' '{print $NF}')
 
-    echo "Conectando ao banco: host=${PGHOST}, port=${PGPORT}, user=${PGUSER}, db=${PGDB}"
+    echo "Connecting to db: host=${PGHOST}, port=${PGPORT}, user=${PGUSER}, db=${PGDB}"
 
     # Criar banco de dados se não existir
     if ! PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${PGDB}'" | grep -q 1; then
-        echo "Banco de dados não encontrado. Criando o banco ${PGDB}..."
+        echo "Db not found. Creating ${PGDB}..."
         PGPASSWORD=${PGPASS} psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE \"${PGDB}\""
+        # Run setup and migration and seed scripts
+        echo "Running migrations..."
+        NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+        yarn database:migrate:prod
+        yarn
+        yes | npx nx command-no-deps -- workspace:seed:dev
+        # Mark initialization as done
+        touch /app/docker-data/db_status
+        echo "Successfuly migrated DB!"
     else
-        echo "Banco de dados já existe."
+        echo "Database ${PGDB} already exist."
+        echo "Running migrations..."
+        NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+        yarn database:migrate:prod
+        echo "Successfuly migrated DB!"
     fi
-
-    # Run setup and migration and seed scripts
-    echo "Rodando migrações..."
-    NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
-    yarn database:migrate:prod
-    yarn
-    yes | npx nx command-no-deps -- workspace:seed:dev
-
-    # Mark initialization as done
-    echo "Successfuly migrated DB!"
-    touch /app/docker-data/db_status
 else
-  echo "DB migrations desabilitadas."
+  echo "DB migrations disabled."
 fi
 
 # Continue with the original Docker command
