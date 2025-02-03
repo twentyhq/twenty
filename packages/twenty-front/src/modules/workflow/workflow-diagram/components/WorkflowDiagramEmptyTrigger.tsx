@@ -15,7 +15,7 @@ export const WorkflowDiagramEmptyTrigger = () => {
     <WorkflowDiagramBaseStepNode
       name="Add a Trigger"
       nodeType="trigger"
-      variant="placeholder"
+      variant="disabled"
       Icon={<StyledStepNodeLabelIconContainer />}
     />
   );

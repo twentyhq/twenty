@@ -1,6 +1,7 @@
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramBaseStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -17,9 +18,11 @@ const StyledStepNodeLabelIconContainer = styled.div`
 
 export const WorkflowDiagramStepNodeBase = ({
   data,
+  variant,
   RightFloatingElement,
 }: {
   data: WorkflowDiagramStepNodeData;
+  variant: WorkflowDiagramNodeVariant;
   RightFloatingElement?: React.ReactNode;
 }) => {
   const theme = useTheme();
@@ -93,6 +96,7 @@ export const WorkflowDiagramStepNodeBase = ({
   return (
     <WorkflowDiagramBaseStepNode
       name={data.name}
+      variant={variant}
       nodeType={data.nodeType}
       Icon={renderStepIcon()}
       RightFloatingElement={RightFloatingElement}
