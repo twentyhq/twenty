@@ -55,16 +55,19 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('1a. should delete one person', async () => {
-    const response = await makeRestAPIRequest(
-      'delete',
-      `/people/${PERSON_1_ID}`,
-    );
+    const response = await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_1_ID}`,
+    });
 
     expect(response.body.data.deletePerson.id).toBe(PERSON_1_ID);
   });
 
   it('1.b. should return a BadRequestException when trying to delete a non-existing person', async () => {
-    await makeRestAPIRequest('delete', `/people/${FAKE_PERSON_ID}`)
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${FAKE_PERSON_ID}`,
+    })
       .expect(400)
       .expect((res) => {
         expect(res.body.messages[0]).toContain(
@@ -75,8 +78,12 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('1.c. should return an UnauthorizedException when no token is provided', async () => {
-    await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
-      authorization: '',
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_1_ID}`,
+      headers: {
+        authorization: '',
+      },
     })
       .expect(401)
       .expect((res) => {
@@ -85,8 +92,12 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('1.d. should return an UnauthorizedException when an invalid token is provided', async () => {
-    await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
-      authorization: 'Bearer invalid-token',
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_1_ID}`,
+      headers: {
+        authorization: 'Bearer invalid-token',
+      },
     })
       .expect(401)
       .expect((res) => {
@@ -95,8 +106,12 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('1.e. should return an UnauthorizedException when an expired token is provided', async () => {
-    await makeRestAPIRequest('delete', `/people/${PERSON_1_ID}`, {
-      authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}`,
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_1_ID}`,
+      headers: {
+        authorization: `Bearer ${EXPIRED_ACCESS_TOKEN}`,
+      },
     })
       .expect(401)
       .expect((res) => {
