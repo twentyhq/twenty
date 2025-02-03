@@ -6,7 +6,7 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { formatMultiObjectRecordSearchResults } from '@/object-record/relation-picker/utils/formatMultiObjectRecordSearchResults';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export type MultiObjectRecordQueryResult = {
   [namePlural: string]: RecordGqlConnection;

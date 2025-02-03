@@ -19,7 +19,7 @@ import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

@@ -11,7 +11,7 @@ import { useUpsertRecordsInCacheForPrefetchKey } from '@/prefetch/hooks/internal
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusSuspended } from '@/workspace/hooks/useIsWorkspaceActivationStatusSuspended';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);

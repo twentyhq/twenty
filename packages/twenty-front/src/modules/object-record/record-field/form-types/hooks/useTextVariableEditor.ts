@@ -1,4 +1,4 @@
-import { initializeEditorContent } from '@/workflow/workflow-variables/utils/initializeEditorContent';
+import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -7,8 +7,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import { default as Placeholder } from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { Editor, useEditor } from '@tiptap/react';
-import { useState } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 type UseTextVariableEditorProps = {
   placeholder: string | undefined;
@@ -25,8 +24,6 @@ export const useTextVariableEditor = ({
   defaultValue,
   onUpdate,
 }: UseTextVariableEditorProps) => {
-  const [isInitializing, setIsInitializing] = useState(true);
-
   const editor = useEditor({
     extensions: [
       Document,
@@ -45,17 +42,11 @@ export const useTextVariableEditor = ({
         : []),
       History,
     ],
+    content: isDefined(defaultValue)
+      ? getInitialEditorContent(defaultValue)
+      : undefined,
     editable: !readonly,
-    onCreate: ({ editor }) => {
-      if (isDefined(defaultValue)) {
-        initializeEditorContent(editor, defaultValue);
-      }
-      setIsInitializing(false);
-    },
     onUpdate: ({ editor }) => {
-      if (isInitializing) {
-        return;
-      }
       onUpdate(editor);
     },
     editorProps: {

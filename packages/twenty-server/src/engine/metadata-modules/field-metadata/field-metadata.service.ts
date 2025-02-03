@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { FieldMetadataType } from 'twenty-shared';
+import { APP_LOCALES, FieldMetadataType, isDefined } from 'twenty-shared';
 import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
@@ -61,7 +61,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
-import { isDefined } from 'src/utils/is-defined';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -779,7 +778,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   async resolveTranslatableString(
     fieldMetadata: FieldMetadataDTO,
     labelKey: 'label' | 'description',
-    locale: string | undefined,
+    locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (fieldMetadata.isCustom) {
       return fieldMetadata[labelKey] ?? '';

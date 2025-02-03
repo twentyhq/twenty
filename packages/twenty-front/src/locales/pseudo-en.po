@@ -275,11 +275,11 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
 msgid "Chinese — Simplified"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:111
 msgid "Chinese — Traditional"
 msgstr ""
 
@@ -877,6 +877,10 @@ msgstr ""
 msgid "Italian"
 msgstr ""
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+msgid "Japanese"
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
 msgid "Korean"
 msgstr ""
@@ -1145,11 +1149,11 @@ msgstr ""
 #~ msgid "Portuguese"
 #~ msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
 msgid "Portuguese — Brazil"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
 msgid "Portuguese — Portugal"
 msgstr ""
 
@@ -1172,7 +1176,7 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:113
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
 msgid "Pseudo-English"
 msgstr ""
 

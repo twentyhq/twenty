@@ -17,7 +17,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type EditableFilterDropdownButtonProps = {
   viewFilterDropdownId: string;

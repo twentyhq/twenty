@@ -12,7 +12,7 @@ import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const RecordIndexTableContainerEffect = () => {
   const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();

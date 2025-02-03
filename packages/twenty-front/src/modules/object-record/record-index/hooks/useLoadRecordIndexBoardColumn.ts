@@ -13,7 +13,7 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;

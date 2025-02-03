@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
 
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = THEME_COMMON.spacing(4);

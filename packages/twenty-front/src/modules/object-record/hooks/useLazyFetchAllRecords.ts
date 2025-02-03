@@ -1,10 +1,10 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useCallback, useState } from 'react';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
-import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 
 type UseLazyFetchAllRecordIdsParams<T> = Omit<
   UseFindManyRecordsParams<T>,

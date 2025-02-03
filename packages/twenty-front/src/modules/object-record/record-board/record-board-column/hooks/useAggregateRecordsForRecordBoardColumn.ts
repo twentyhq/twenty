@@ -4,7 +4,7 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { useAggregateRecordsForHeader } from '@/object-record/record-table/hooks/useAggregateRecordsForHeader';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useAggregateRecordsForRecordBoardColumn = () => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);

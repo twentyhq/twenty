@@ -5,6 +5,7 @@ export const APP_LOCALES = {
   it: 'it',
   es: 'es',
   ko: 'ko',
+  ja: 'ja',
   'pt-PT': 'pt-PT',
   'pt-BR': 'pt-BR',
   'zh-Hans': 'zh-Hans',

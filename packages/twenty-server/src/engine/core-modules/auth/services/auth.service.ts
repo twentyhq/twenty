@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { render } from '@react-email/components';
+import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
@@ -379,6 +380,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
+    locale: keyof typeof APP_LOCALES,
   ): Promise<UpdatePassword> {
     if (!userId) {
       throw new AuthException(
@@ -415,14 +417,11 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
+      locale,
     });
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       from: `${this.environmentService.get(

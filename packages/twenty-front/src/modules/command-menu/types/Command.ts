@@ -16,6 +16,7 @@ export type Command = {
   id: string;
   to?: string;
   label: string;
+  description?: string;
   type?: CommandType;
   scope?: CommandScope;
   Icon?: IconComponent;

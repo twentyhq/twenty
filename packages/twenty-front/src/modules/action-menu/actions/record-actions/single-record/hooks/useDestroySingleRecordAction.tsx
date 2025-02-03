@@ -9,7 +9,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({

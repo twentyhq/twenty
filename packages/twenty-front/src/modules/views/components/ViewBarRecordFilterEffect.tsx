@@ -8,7 +8,7 @@ import { currentViewIdComponentState } from '@/views/states/currentViewIdCompone
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const ViewBarRecordFilterEffect = () => {
   const { records: views, isDataPrefetched } = usePrefetchedData<View>(

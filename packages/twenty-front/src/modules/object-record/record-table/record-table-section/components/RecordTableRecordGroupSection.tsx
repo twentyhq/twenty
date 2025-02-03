@@ -1,12 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import {
-  AnimatedLightIconButton,
-  IconChevronDown,
-  isDefined,
-  Tag,
-} from 'twenty-ui';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
@@ -21,6 +15,8 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
+import { AnimatedLightIconButton, IconChevronDown, Tag } from 'twenty-ui';
 
 const StyledTrContainer = styled.tr`
   cursor: pointer;

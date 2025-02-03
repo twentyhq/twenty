@@ -77,6 +77,7 @@ export const useSearchRecords = () => {
       people?.map(({ id, name: { firstName, lastName }, avatarUrl }) => ({
         id,
         label: `${firstName} ${lastName}`,
+        description: 'Person',
         to: `object/person/${id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -96,6 +97,7 @@ export const useSearchRecords = () => {
       companies?.map((company) => ({
         id: company.id,
         label: company.name ?? '',
+        description: 'Company',
         to: `object/company/${company.id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -116,6 +118,7 @@ export const useSearchRecords = () => {
       opportunities?.map(({ id, name }) => ({
         id,
         label: name ?? '',
+        description: 'Opportunity',
         to: `object/opportunity/${id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
@@ -143,6 +146,7 @@ export const useSearchRecords = () => {
       notes?.map((note) => ({
         id: note.id,
         label: note.title ?? '',
+        description: 'Note',
         to: '',
         onCommandClick: () => openNoteRightDrawer(note.id),
         shouldCloseCommandMenuOnClick: true,
@@ -156,6 +160,7 @@ export const useSearchRecords = () => {
       tasks?.map((task) => ({
         id: task.id,
         label: task.title ?? '',
+        description: 'Task',
         to: '',
         onCommandClick: () => openTaskRightDrawer(task.id),
         shouldCloseCommandMenuOnClick: true,
@@ -182,6 +187,7 @@ export const useSearchRecords = () => {
       objectRecords.map((objectRecord) => ({
         id: objectRecord.record.id,
         label: objectRecord.recordIdentifier.name,
+        description: objectRecord.objectMetadataItem.labelSingular,
         to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (

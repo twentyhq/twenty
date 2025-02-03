@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -33,6 +33,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -336,6 +337,7 @@ export class AuthResolver {
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
+    @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLink> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
@@ -345,6 +347,7 @@ export class AuthResolver {
     return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
+      context.req.headers['x-locale'] || 'en',
     );
   }
 
@@ -352,13 +355,18 @@ export class AuthResolver {
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
+    @Context() context: I18nContext,
   ): Promise<InvalidatePassword> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
       );
 
-    await this.authService.updatePassword(id, newPassword);
+    await this.authService.updatePassword(
+      id,
+      newPassword,
+      context.req.headers['x-locale'] || 'en',
+    );
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }

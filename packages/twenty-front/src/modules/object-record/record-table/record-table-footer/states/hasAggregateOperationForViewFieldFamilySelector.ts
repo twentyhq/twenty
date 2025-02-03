@@ -1,6 +1,6 @@
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { selectorFamily } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const hasAggregateOperationForViewFieldFamilySelector = selectorFamily<
   boolean,

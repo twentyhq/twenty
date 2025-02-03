@@ -17,7 +17,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;

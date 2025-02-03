@@ -7,11 +7,11 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
+import { isDefined } from 'twenty-shared';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { isDefined } from '~/utils/isDefined';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;

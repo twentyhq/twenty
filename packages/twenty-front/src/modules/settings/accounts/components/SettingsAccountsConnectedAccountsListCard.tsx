@@ -7,8 +7,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isDefined } from '~/utils/isDefined';
 import { SettingsListCard } from '../../components/SettingsListCard';
 
 const ProviderIcons: { [k: string]: IconComponent } = {

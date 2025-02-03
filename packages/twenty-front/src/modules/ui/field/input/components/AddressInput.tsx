@@ -12,7 +12,8 @@ import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDr
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
-import { isDefined, MOBILE_VIEWPORT } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledAddressContainer = styled.div`
   padding: 4px 8px;

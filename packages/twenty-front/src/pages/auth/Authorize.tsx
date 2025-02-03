@@ -5,10 +5,10 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared';
 import { MainButton, UndecoratedLink } from 'twenty-ui';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isDefined } from '~/utils/isDefined';
 
 type App = { id: string; name: string; logo: string };
 

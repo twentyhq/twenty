@@ -9,9 +9,9 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;

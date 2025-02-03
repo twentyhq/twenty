@@ -8,7 +8,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconArrowBackUp, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconArrowBackUp } from 'twenty-ui';
 
 export const ResetContextToSelectionCommandButton = () => {
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(

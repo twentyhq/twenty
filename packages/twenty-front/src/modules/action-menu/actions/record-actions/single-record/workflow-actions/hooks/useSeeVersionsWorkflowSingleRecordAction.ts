@@ -4,7 +4,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =

@@ -1,10 +1,3 @@
-import {
-  IconChevronDown,
-  IconForbid,
-  isDefined,
-  LightIconButton,
-} from 'twenty-ui';
-
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
@@ -23,6 +16,8 @@ import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/compone
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared';
+import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 import { isValidUuid } from '~/utils/isValidUuid';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`

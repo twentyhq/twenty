@@ -8,7 +8,7 @@ import { currentViewIdComponentState } from '@/views/states/currentViewIdCompone
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);

@@ -22,7 +22,7 @@ import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStat
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { VariantFilterChip } from './VariantFilterChip';
 
 export type ViewBarDetailsProps = {
