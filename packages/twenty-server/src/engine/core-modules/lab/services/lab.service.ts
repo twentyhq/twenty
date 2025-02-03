@@ -31,7 +31,7 @@ export class LabService {
   async updateLabPublicFeatureFlag(
     workspaceId: string,
     payload: UpdateLabPublicFeatureFlagInput,
-  ): Promise<void> {
+  ): Promise<FeatureFlag> {
     featureFlagValidator.assertIsFeatureFlagKey(
       payload.publicFeatureFlag,
       new FeatureFlagException(
@@ -62,15 +62,24 @@ export class LabService {
       (flag) => flag.key === FeatureFlagKey[payload.publicFeatureFlag],
     );
 
-    if (!existingFlag) {
-      throw new FeatureFlagException(
-        'Public feature flag not found',
-        FeatureFlagExceptionCode.FEATURE_FLAG_NOT_FOUND,
-      );
+    if (existingFlag) {
+      await this.featureFlagRepository.update(existingFlag.id, {
+        value: payload.value,
+      });
+
+      return { ...existingFlag, value: payload.value };
     }
 
-    await this.featureFlagRepository.update(existingFlag.id, {
+    const newFlag = await this.featureFlagRepository.save({
+      key: FeatureFlagKey[payload.publicFeatureFlag],
       value: payload.value,
+      workspaceId: workspace.id,
     });
+
+    workspace.featureFlags = [...(workspace.featureFlags || []), newFlag];
+
+    await this.workspaceRepository.save(workspace);
+
+    return newFlag;
   }
 }
