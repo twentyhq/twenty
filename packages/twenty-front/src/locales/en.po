@@ -154,6 +154,10 @@ msgstr "Allow the invitation of new users by sharing an invite link."
 msgid "Allow users to sign in with an email and password."
 msgstr "Allow users to sign in with an email and password."
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "An error occurred while updating password"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "An optional description"
@@ -200,6 +204,10 @@ msgstr "Assign roles to specify each member's access permissions"
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "Assigned to"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "At least 8 characters long."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -327,11 +335,11 @@ msgstr "Configure your emails and calendar settings."
 msgid "Connect a new account to your workspace"
 msgstr "Connect a new account to your workspace"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "Connect with Google"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "Connect with Microsoft"
 
@@ -339,7 +347,7 @@ msgstr "Connect with Microsoft"
 msgid "Connected accounts"
 msgstr "Connected accounts"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "Context"
 
@@ -361,7 +369,7 @@ msgstr "Continue with Google"
 msgid "Continue with Microsoft"
 msgstr "Continue with Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "Copilot"
 
@@ -761,7 +769,7 @@ msgid "Fields Count"
 msgstr "Fields Count"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "Filter"
@@ -769,6 +777,10 @@ msgstr "Filter"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "Filters"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "Forgot your password?"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -809,7 +821,7 @@ msgstr "Get the most out of your workspace by inviting your team."
 msgid "Get your subscription"
 msgstr "Get your subscription"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "Global"
 
@@ -1072,7 +1084,7 @@ msgstr "New Role"
 msgid "New Webhook"
 msgstr "New Webhook"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "No connected account"
 
@@ -1088,7 +1100,7 @@ msgstr "No workflow versions yet"
 msgid "Not empty"
 msgstr "Not empty"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "Object"
 
@@ -1126,6 +1138,10 @@ msgstr "Page Not Found"
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
 msgstr "Password"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "Password has been updated"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
@@ -1213,7 +1229,7 @@ msgstr "Read documentation"
 msgid "Receive an email containing password update link"
 msgstr "Receive an email containing password update link"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "Record Selection"
 
@@ -1280,6 +1296,10 @@ msgstr "Run a workflow and return here to view its executions"
 msgid "Search"
 msgstr "Search"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "Search ''{commandMenuSearch}'' with..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "Search a field..."
@@ -1289,7 +1309,7 @@ msgid "Search an index..."
 msgstr "Search an index..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "Search fields"
 
@@ -1379,6 +1399,10 @@ msgstr "Sign in"
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
 msgstr "Sign up"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "Single sign-on (SSO)"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
@@ -1489,6 +1513,10 @@ msgstr "The values of this field"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
 msgstr "The values of this field must be unique"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "There was an error while updating password."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1607,8 +1635,12 @@ msgid "Webhooks"
 msgstr "Webhooks"
 
 #: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
-msgstr "Welcome to"
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "Welcome to {workspaceName}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1671,8 +1703,8 @@ msgid "Your name as it will be displayed"
 msgstr "Your name as it will be displayed"
 
 #: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr "Your Workspace"
+#~ msgid "Your Workspace"
+#~ msgstr "Your Workspace"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"

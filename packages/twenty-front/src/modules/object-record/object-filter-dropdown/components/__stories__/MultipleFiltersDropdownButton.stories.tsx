@@ -4,7 +4,6 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -12,7 +11,6 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
 import {
@@ -35,10 +33,6 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         (item) => item.nameSingular === CoreObjectNameSingular.Company,
       )!;
       const instanceId = 'entity-tasks-filter-scope';
-      const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
-        availableFilterDefinitionsComponentState,
-        instanceId,
-      );
 
       const setTableColumns = useSetRecoilComponentStateV2(
         tableColumnsComponentState,
@@ -54,16 +48,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           }),
       );
 
-      const filterDefinitions = companyObjectMetadataItem.fields.map(
-        (fieldMetadataItem) =>
-          formatFieldMetadataItemAsFilterDefinition({
-            field: fieldMetadataItem,
-          }),
-      );
-
       setTableColumns(columns);
-
-      setAvailableFilterDefinitions(filterDefinitions);
 
       return (
         <RecordIndexContextProvider

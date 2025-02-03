@@ -21,6 +21,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
 
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
@@ -29,24 +30,19 @@ const StandardContent = ({
   workspacePublicData,
   signInUpForm,
   signInUpStep,
+  title,
 }: {
   workspacePublicData: PublicWorkspaceDataOutput | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
+  title: string;
 }) => {
   return (
     <>
       <AnimatedEaseIn>
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
-      <Title animate>
-        {t`Welcome to`}{' '}
-        {!isDefined(workspacePublicData?.displayName)
-          ? DEFAULT_WORKSPACE_NAME
-          : workspacePublicData?.displayName === ''
-            ? t`Your Workspace`
-            : workspacePublicData?.displayName}
-      </Title>
+      <Title animate>{title}</Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
     </>
@@ -62,8 +58,27 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
+    useWorkspaceFromInviteHash();
 
   const [searchParams] = useSearchParams();
+
+  const title = useMemo(() => {
+    if (isDefined(workspaceInviteHash)) {
+      return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
+    }
+    const workspaceName = !isDefined(workspacePublicData?.displayName)
+      ? DEFAULT_WORKSPACE_NAME
+      : workspacePublicData?.displayName === ''
+        ? 'Your Workspace'
+        : workspacePublicData?.displayName;
+
+    return t`Welcome to ${workspaceName}`;
+  }, [
+    workspaceFromInviteHash?.displayName,
+    workspaceInviteHash,
+    workspacePublicData?.displayName,
+  ]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;
@@ -111,6 +126,7 @@ export const SignInUp = () => {
       workspacePublicData={workspacePublicData}
       signInUpForm={signInUpForm}
       signInUpStep={signInUpStep}
+      title={title}
     />
   );
 };

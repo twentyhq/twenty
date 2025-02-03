@@ -1,30 +1,42 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isDefined } from 'twenty-shared';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
 
 jest.mock('@/prefetch/hooks/usePrefetchedData');
 
 describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
-  const mockFilterDefinition: RecordFilterDefinition = {
-    fieldMetadataId: 'field-1',
-    label: 'Test Field',
-    type: 'TEXT',
-    iconName: 'IconText',
-  };
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      'Missing mock object metadata item with name singular "company"',
+    );
+  }
+
+  const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
+
+  const mockFilterDefinition: RecordFilterDefinition =
+    formatFieldMetadataItemAsFilterDefinition({
+      field: mockFieldMetadataItem,
+    });
 
   const mockViewFilter: ViewFilter = {
     __typename: 'ViewFilter',
     id: 'filter-1',
-    fieldMetadataId: 'field-1',
+    fieldMetadataId: mockFieldMetadataItem.id,
     operand: ViewFilterOperand.Contains,
     value: 'test',
     displayValue: 'test',
@@ -36,17 +48,15 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   const mockView = {
     id: 'view-1',
     name: 'Test View',
-    objectMetadataId: 'object-1',
+    objectMetadataId: mockObjectMetadataItem.id,
     viewFilters: [mockViewFilter],
   };
 
-  beforeEach(() => {
+  it('should apply filters from current view', () => {
     (usePrefetchedData as jest.Mock).mockReturnValue({
       records: [mockView],
     });
-  });
 
-  it('should apply filters from current view', () => {
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
@@ -69,12 +79,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
                 instanceId: 'instanceId',
               }),
               mockView.id,
-            );
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockFilterDefinition],
             );
           },
         }),
@@ -127,12 +131,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
               }),
               mockView.id,
             );
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockFilterDefinition],
-            );
           },
         }),
       },
@@ -177,12 +175,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
                 instanceId: 'instanceId',
               }),
               mockView.id,
-            );
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockFilterDefinition],
             );
           },
         }),

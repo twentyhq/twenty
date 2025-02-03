@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-03 18:18+0100\n"
+"POT-Creation-Date: 2025-02-03 20:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -153,6 +153,10 @@ msgstr "允许通过共享邀请链接来邀请新用户。"
 msgid "Allow users to sign in with an email and password."
 msgstr "允许用户使用电子邮件和密码登录。"
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "更新密码时发生错误"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "可选描述"
@@ -177,6 +181,10 @@ msgstr "分配角色以指定每个成员的访问权限"
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "分配给"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "至少 8 个字符。"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -304,11 +312,11 @@ msgstr "配置电子邮件和日历设置。"
 msgid "Connect a new account to your workspace"
 msgstr "将新账户连接到工作区"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "与谷歌连接"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "与微软联系"
 
@@ -316,7 +324,7 @@ msgstr "与微软联系"
 msgid "Connected accounts"
 msgstr "连接账户"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "背景"
 
@@ -338,7 +346,7 @@ msgstr "继续使用 Google"
 msgid "Continue with Microsoft"
 msgstr "继续与微软合作"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "副驾驶"
 
@@ -734,7 +742,7 @@ msgid "Fields Count"
 msgstr "字段计数"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "过滤器"
@@ -742,6 +750,10 @@ msgstr "过滤器"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "过滤器"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "忘记密码？"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -774,7 +786,7 @@ msgstr "邀请您的团队，充分利用您的工作空间。"
 msgid "Get your subscription"
 msgstr "获取订阅"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "全球"
 
@@ -1037,7 +1049,7 @@ msgstr "新钥匙"
 msgid "New record"
 msgstr "新纪录"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "无连接账户"
 
@@ -1053,7 +1065,7 @@ msgstr "暂无工作流程版本"
 msgid "Not empty"
 msgstr "非空"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "对象"
 
@@ -1087,6 +1099,10 @@ msgstr "页面未找到"
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
 msgstr "密码"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "密码已更新"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
@@ -1162,7 +1178,7 @@ msgstr "阅读文件"
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "记录选择"
 
@@ -1233,6 +1249,10 @@ msgstr "SSO"
 msgid "Search"
 msgstr "搜索"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "用\"'{commandMenuSearch}'\"搜索..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "搜索字段..."
@@ -1242,7 +1262,7 @@ msgid "Search an index..."
 msgstr "搜索索引..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "搜索字段"
 
@@ -1332,6 +1352,10 @@ msgstr "登录"
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
 msgstr "注册"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "单点登录（SSO）"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
@@ -1438,6 +1462,10 @@ msgstr "该字段的值"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
 msgstr "该字段的值必须是唯一的"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "更新密码时出现错误。"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1547,9 +1575,9 @@ msgstr "网络钩子"
 msgid "Webhooks"
 msgstr "网络钩子"
 
-#: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
-msgstr "欢迎来到"
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "欢迎来到 {workspaceName}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1597,10 +1625,6 @@ msgstr "编写说明"
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr "您将立即被收取全年的费用。"
-
-#: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr "您的工作空间"
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."

@@ -1,15 +1,17 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
   IconFilter,
   MenuItemLeftContent,
@@ -66,8 +68,10 @@ export const AdvancedFilterButton = () => {
     objectId: objectMetadataId ?? null,
   });
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
   );
 
   const handleClick = () => {
@@ -88,24 +92,27 @@ export const AdvancedFilterButton = () => {
 
       upsertCombinedViewFilterGroup(newViewFilterGroup);
 
-      const defaultFilterDefinition =
-        availableFilterDefinitions.find(
-          (filterDefinition) =>
-            filterDefinition.fieldMetadataId ===
+      const defaultFieldMetadataItem =
+        availableFieldMetadataItemsForFilter.find(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id ===
             objectMetadataItem?.labelIdentifierFieldMetadataId,
-        ) ?? availableFilterDefinitions?.[0];
+        ) ?? availableFieldMetadataItemsForFilter[0];
 
-      if (!defaultFilterDefinition) {
+      if (!isDefined(defaultFieldMetadataItem)) {
         throw new Error('Missing default filter definition');
       }
 
+      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+        field: defaultFieldMetadataItem,
+      });
+
       upsertCombinedViewFilter({
         id: v4(),
-        fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
-        operand: getRecordFilterOperandsForRecordFilterDefinition(
-          defaultFilterDefinition,
-        )[0],
-        definition: defaultFilterDefinition,
+        fieldMetadataId: defaultFieldMetadataItem.id,
+        operand:
+          getRecordFilterOperandsForRecordFilterDefinition(filterDefinition)[0],
+        definition: filterDefinition,
         value: '',
         displayValue: '',
         viewFilterGroupId: newViewFilterGroup.id,

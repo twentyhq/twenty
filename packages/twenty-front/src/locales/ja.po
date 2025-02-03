@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-03 18:18+0100\n"
+"POT-Creation-Date: 2025-02-03 20:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -153,6 +153,10 @@ msgstr "招待リンクを共有することで、新規ユーザーの招待を
 msgid "Allow users to sign in with an email and password."
 msgstr "ユーザーが電子メールとパスワードでサインインできるようにする。"
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "パスワードの更新中にエラーが発生しました"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "任意の説明"
@@ -177,6 +181,10 @@ msgstr "各メンバーのアクセス権限を指定するロールの割り当
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "担当"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "8文字以上。"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -304,11 +312,11 @@ msgstr "メールとカレンダーの設定"
 msgid "Connect a new account to your workspace"
 msgstr "新しいアカウントをワークスペースに接続する"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "グーグルとつながる"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "マイクロソフトとつながる"
 
@@ -316,7 +324,7 @@ msgstr "マイクロソフトとつながる"
 msgid "Connected accounts"
 msgstr "接続アカウント"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "コンテクスト"
 
@@ -338,7 +346,7 @@ msgstr "Googleで続ける"
 msgid "Continue with Microsoft"
 msgstr "マイクロソフトを続ける"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "コパイロット"
 
@@ -734,7 +742,7 @@ msgid "Fields Count"
 msgstr "フィールド数"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "フィルター"
@@ -742,6 +750,10 @@ msgstr "フィルター"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "フィルター"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "パスワードをお忘れですか？"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -774,7 +786,7 @@ msgstr "チームを招待して、ワークスペースを最大限に活用し
 msgid "Get your subscription"
 msgstr "購読を申し込む"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "グローバル"
 
@@ -1037,7 +1049,7 @@ msgstr "新しいキー"
 msgid "New record"
 msgstr "新記録"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "接続アカウントなし"
 
@@ -1053,7 +1065,7 @@ msgstr "ワークフローのバージョンはまだない"
 msgid "Not empty"
 msgstr "空ではない"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "対象"
 
@@ -1087,6 +1099,10 @@ msgstr "ページが見つかりません"
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
 msgstr "パスワード"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "パスワードが更新されました"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
@@ -1162,7 +1178,7 @@ msgstr "ドキュメントを読む"
 msgid "Receive an email containing password update link"
 msgstr "パスワード更新リンクを含むメールを受け取る"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "レコード選択"
 
@@ -1233,6 +1249,10 @@ msgstr "SSO"
 msgid "Search"
 msgstr "検索"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "''{commandMenuSearch}''で検索..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "フィールドを検索..."
@@ -1242,7 +1262,7 @@ msgid "Search an index..."
 msgstr "インデックスを検索..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "検索フィールド"
 
@@ -1332,6 +1352,10 @@ msgstr "ログイン"
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
 msgstr "登録する"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "シングルサインオン（SSO）"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
@@ -1438,6 +1462,10 @@ msgstr "このフィールドの値"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
 msgstr "このフィールドの値は一意でなければならない。"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "パスワードの更新中にエラーが発生しました。"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1547,9 +1575,9 @@ msgstr "ウェブフック"
 msgid "Webhooks"
 msgstr "ウェブフック"
 
-#: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
-msgstr "ようこそ"
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "{workspaceName}]へようこそ"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1597,10 +1625,6 @@ msgstr "説明を書く"
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr "その場合、すぐに1年分の料金が請求されます。"
-
-#: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr "ワークスペース"
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."

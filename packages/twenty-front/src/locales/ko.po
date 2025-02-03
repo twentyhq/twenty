@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-03 18:18+0100\n"
+"POT-Creation-Date: 2025-02-03 20:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -153,6 +153,10 @@ msgstr "초대 링크를 공유하여 새 사용자를 초대할 수 있습니�
 msgid "Allow users to sign in with an email and password."
 msgstr "사용자가 이메일과 비밀번호로 로그인할 수 있도록 허용합니다."
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "비밀번호를 업데이트하는 동안 오류가 발생했습니다"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "선택적 설명"
@@ -177,6 +181,10 @@ msgstr "역할을 할당하여 각 구성원의 액세스 권한을 지정하세
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "할당 대상"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "8자 이상이어야 합니다."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -304,11 +312,11 @@ msgstr "이메일 및 캘린더 설정을 구성합니다."
 msgid "Connect a new account to your workspace"
 msgstr "새 계정을 워크스페이스에 연결"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "Google과 연결"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "Microsoft와 연결"
 
@@ -316,7 +324,7 @@ msgstr "Microsoft와 연결"
 msgid "Connected accounts"
 msgstr "연결된 계정"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "컨텍스트"
 
@@ -338,7 +346,7 @@ msgstr "Google을 계속 사용하세요"
 msgid "Continue with Microsoft"
 msgstr "Microsoft와 함께 계속하기"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "부조종사"
 
@@ -734,7 +742,7 @@ msgid "Fields Count"
 msgstr "필드 수"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "필터"
@@ -742,6 +750,10 @@ msgstr "필터"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "필터"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "비밀번호를 잊어버리셨나요?"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -774,7 +786,7 @@ msgstr "팀을 초대하여 업무 공간을 최대한 활용하세요."
 msgid "Get your subscription"
 msgstr "구독 신청하기"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "글로벌"
 
@@ -1037,7 +1049,7 @@ msgstr "새 키"
 msgid "New record"
 msgstr "새로운 기록"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "연결된 계정 없음"
 
@@ -1053,7 +1065,7 @@ msgstr "아직 워크플로 버전이 없습니다"
 msgid "Not empty"
 msgstr "비어 있지 않음"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "개체"
 
@@ -1087,6 +1099,10 @@ msgstr "페이지를 찾을 수 없음"
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
 msgstr "비밀번호"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "비밀번호가 업데이트되었습니다"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
@@ -1162,7 +1178,7 @@ msgstr "문서 읽기"
 msgid "Receive an email containing password update link"
 msgstr "비밀번호 업데이트 링크가 포함된 이메일 수신"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "레코드 선택"
 
@@ -1233,6 +1249,10 @@ msgstr "SSO"
 msgid "Search"
 msgstr "검색"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "''{commandMenuSearch}''으로 검색..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "필드 검색..."
@@ -1242,7 +1262,7 @@ msgid "Search an index..."
 msgstr "색인 검색..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "검색 필드"
 
@@ -1332,6 +1352,10 @@ msgstr "로그인"
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
 msgstr "가입하기"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "싱글 사인온(SSO)"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
@@ -1438,6 +1462,10 @@ msgstr "이 필드의 값은 다음과 같습니다"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
 msgstr "이 필드의 값은 고유해야 합니다"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "비밀번호를 업데이트하는 동안 오류가 발생했습니다."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1547,9 +1575,9 @@ msgstr "웹훅"
 msgid "Webhooks"
 msgstr "웹훅"
 
-#: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
-msgstr "에 오신 것을 환영합니다"
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "{workspaceName}]에 오신 것을 환영합니다"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1597,10 +1625,6 @@ msgstr "설명 작성"
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr "1년치 요금이 즉시 청구됩니다."
-
-#: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr "내 작업 공간"
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."

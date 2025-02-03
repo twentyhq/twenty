@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-03 18:18+0100\n"
+"POT-Creation-Date: 2025-02-03 20:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -153,6 +153,10 @@ msgstr "Permettre l'invitation de nouveaux utilisateurs en partageant un lien d'
 msgid "Allow users to sign in with an email and password."
 msgstr "Permettre aux utilisateurs de se connecter à l'aide d'un courriel et d'un mot de passe."
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "Une erreur s'est produite lors de la mise à jour du mot de passe"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "Une description facultative"
@@ -177,6 +181,10 @@ msgstr "Attribuer des rôles pour spécifier les autorisations d'accès de chaqu
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "Affecté à"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "Au moins 8 caractères."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -304,11 +312,11 @@ msgstr "Configurez vos courriels et votre calendrier."
 msgid "Connect a new account to your workspace"
 msgstr "Connecter un nouveau compte à votre espace de travail"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "Se connecter à Google"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "Se connecter avec Microsoft"
 
@@ -316,7 +324,7 @@ msgstr "Se connecter avec Microsoft"
 msgid "Connected accounts"
 msgstr "Comptes connectés"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "Contexte"
 
@@ -338,7 +346,7 @@ msgstr "Continuer avec Google"
 msgid "Continue with Microsoft"
 msgstr "Continuer avec Microsoft"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "Copilote"
 
@@ -734,7 +742,7 @@ msgid "Fields Count"
 msgstr "Nombre de champs"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "Filtre"
@@ -742,6 +750,10 @@ msgstr "Filtre"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
 msgstr "Filtres"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "Vous avez oublié votre mot de passe ?"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -774,7 +786,7 @@ msgstr "Tirez le meilleur parti de votre espace de travail en y invitant votre �
 msgid "Get your subscription"
 msgstr "S'abonner"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "Mondial"
 
@@ -1037,7 +1049,7 @@ msgstr "Nouvelle clé"
 msgid "New record"
 msgstr "Nouveau record"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "Pas de compte connecté"
 
@@ -1053,7 +1065,7 @@ msgstr "Pas encore de versions de flux de travail"
 msgid "Not empty"
 msgstr "Non vide"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "Objet"
 
@@ -1087,6 +1099,10 @@ msgstr "Page non trouvée"
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
 msgstr "Mot de passe"
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "Le mot de passe a été mis à jour"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
@@ -1162,7 +1178,7 @@ msgstr "Lire la documentation"
 msgid "Receive an email containing password update link"
 msgstr "Recevoir un courriel contenant un lien de mise à jour du mot de passe"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "Sélection des enregistrements"
 
@@ -1233,6 +1249,10 @@ msgstr "SSO"
 msgid "Search"
 msgstr "Recherche"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "Rechercher ''{commandMenuSearch}'' avec..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "Rechercher un champ..."
@@ -1242,7 +1262,7 @@ msgid "Search an index..."
 msgstr "Rechercher un index..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "Champs de recherche"
 
@@ -1332,6 +1352,10 @@ msgstr "S'inscrire"
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
 msgstr "S'inscrire"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "Signature unique (SSO)"
 
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
@@ -1438,6 +1462,10 @@ msgstr "Les valeurs de ce champ"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
 msgstr "Les valeurs de ce champ doivent être uniques"
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "Une erreur s'est produite lors de la mise à jour du mot de passe."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1547,9 +1575,9 @@ msgstr "Crochet Web"
 msgid "Webhooks"
 msgstr "Crochets Web"
 
-#: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
-msgstr "Bienvenue à"
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "Bienvenue à {workspaceName}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1597,10 +1625,6 @@ msgstr "Rédiger une description"
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
 msgstr "Vous serez immédiatement facturé pour l'année entière."
-
-#: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr "Votre espace de travail"
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."

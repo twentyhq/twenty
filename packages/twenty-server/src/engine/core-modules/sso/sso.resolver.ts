@@ -3,6 +3,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import omit from 'lodash.omit';
+
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoOutput } from 'src/engine/core-modules/sso/dtos/delete-sso.output';
@@ -47,10 +49,11 @@ export class SSOResolver {
   }
 
   @Mutation(() => GetAuthorizationUrlOutput)
-  async getAuthorizationUrl(
-    @Args('input') { identityProviderId }: GetAuthorizationUrlInput,
-  ) {
-    return this.sSOService.getAuthorizationUrl(identityProviderId);
+  async getAuthorizationUrl(@Args('input') params: GetAuthorizationUrlInput) {
+    return await this.sSOService.getAuthorizationUrl(
+      params.identityProviderId,
+      omit(params, ['identityProviderId']),
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)

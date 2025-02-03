@@ -154,6 +154,10 @@ msgstr ""
 msgid "Allow users to sign in with an email and password."
 msgstr ""
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr ""
@@ -199,6 +203,10 @@ msgstr ""
 
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
+msgstr ""
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
 msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
@@ -327,11 +335,11 @@ msgstr ""
 msgid "Connect a new account to your workspace"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr ""
 
@@ -339,7 +347,7 @@ msgstr ""
 msgid "Connected accounts"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr ""
 
@@ -361,7 +369,7 @@ msgstr ""
 msgid "Continue with Microsoft"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr ""
 
@@ -761,13 +769,17 @@ msgid "Fields Count"
 msgstr ""
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:265
 msgid "Filters"
+msgstr ""
+
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
 msgstr ""
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
@@ -809,7 +821,7 @@ msgstr ""
 msgid "Get your subscription"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr ""
 
@@ -1072,7 +1084,7 @@ msgstr ""
 msgid "New Webhook"
 msgstr ""
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr ""
 
@@ -1088,7 +1100,7 @@ msgstr ""
 msgid "Not empty"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr ""
 
@@ -1125,6 +1137,10 @@ msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:156
 msgid "Password"
+msgstr ""
+
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
 msgstr ""
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
@@ -1213,7 +1229,7 @@ msgstr ""
 msgid "Receive an email containing password update link"
 msgstr ""
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr ""
 
@@ -1280,6 +1296,10 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr ""
@@ -1289,7 +1309,7 @@ msgid "Search an index..."
 msgstr ""
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr ""
 
@@ -1378,6 +1398,10 @@ msgstr ""
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
 msgid "Sign up"
+msgstr ""
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
 msgstr ""
 
 #: src/pages/onboarding/InviteTeam.tsx:236
@@ -1488,6 +1512,10 @@ msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
+msgstr ""
+
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
 msgstr ""
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
@@ -1607,7 +1635,11 @@ msgid "Webhooks"
 msgstr ""
 
 #: src/pages/auth/SignInUp.tsx:43
-msgid "Welcome to"
+#~ msgid "Welcome to"
+#~ msgstr ""
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
 msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
@@ -1671,8 +1703,8 @@ msgid "Your name as it will be displayed"
 msgstr ""
 
 #: src/pages/auth/SignInUp.tsx:47
-msgid "Your Workspace"
-msgstr ""
+#~ msgid "Your Workspace"
+#~ msgstr ""
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"

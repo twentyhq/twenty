@@ -1,3 +1,4 @@
+import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import {
   ActionMenuEntryScope,
@@ -128,6 +129,25 @@ export const useCommandMenuCommands = () => {
       hotKeys: actionMenuEntry.hotKeys,
     }));
 
+  const searchRecordsAction = actionMenuEntries.find(
+    (actionMenuEntry) =>
+      actionMenuEntry.key === RecordAgnosticActionsKey.SEARCH_RECORDS,
+  );
+
+  const fallbackCommands: Command[] = searchRecordsAction
+    ? [
+        {
+          id: searchRecordsAction.key,
+          label: i18n._(searchRecordsAction.label),
+          Icon: searchRecordsAction.Icon,
+          onCommandClick: searchRecordsAction.onClick,
+          type: CommandType.StandardAction,
+          scope: CommandScope.Global,
+          hotKeys: searchRecordsAction.hotKeys,
+        },
+      ]
+    : [];
+
   return {
     copilotCommands,
     navigateCommands,
@@ -136,5 +156,6 @@ export const useCommandMenuCommands = () => {
     actionObjectCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
+    fallbackCommands,
   };
 };
