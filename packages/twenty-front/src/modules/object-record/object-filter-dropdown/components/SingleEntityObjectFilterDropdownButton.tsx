@@ -8,13 +8,14 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '../../record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
@@ -44,23 +45,22 @@ export const SingleEntityObjectFilterDropdownButton = ({
     selectedOperandInDropdownComponentState,
   );
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-  );
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
 
-  const availableFilterDefinition = availableFilterDefinitions[0];
+  const firstFieldMetadataItem = filterableFieldMetadataItems[0];
+
+  const firstFieldDefinition = formatFieldMetadataItemAsFilterDefinition({
+    field: firstFieldMetadataItem,
+  });
 
   React.useEffect(() => {
-    setFieldMetadataItemIdUsedInDropdown(
-      availableFilterDefinition.fieldMetadataId,
-    );
-    setFilterDefinitionUsedInDropdown(availableFilterDefinition);
-    const defaultOperand = getRecordFilterOperandsForRecordFilterDefinition(
-      availableFilterDefinition,
-    )[0];
+    setFieldMetadataItemIdUsedInDropdown(firstFieldDefinition.fieldMetadataId);
+    setFilterDefinitionUsedInDropdown(firstFieldDefinition);
+    const defaultOperand =
+      getRecordFilterOperandsForRecordFilterDefinition(firstFieldDefinition)[0];
     setSelectedOperandInDropdown(defaultOperand);
   }, [
-    availableFilterDefinition,
+    firstFieldDefinition,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setFieldMetadataItemIdUsedInDropdown,

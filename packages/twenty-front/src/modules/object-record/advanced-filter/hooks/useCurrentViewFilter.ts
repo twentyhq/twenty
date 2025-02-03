@@ -1,6 +1,5 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useFilterDefinitionsFromFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterDefinitionsFromFilterableFieldMetadataItems';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 
 export const useCurrentViewFilter = ({
@@ -8,9 +7,8 @@ export const useCurrentViewFilter = ({
 }: {
   viewFilterId?: string;
 }) => {
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-  );
+  const { filterDefinitions } =
+    useFilterDefinitionsFromFilterableFieldMetadataItems();
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -22,10 +20,7 @@ export const useCurrentViewFilter = ({
     return undefined;
   }
 
-  const [filter] = mapViewFiltersToFilters(
-    [viewFilter],
-    availableFilterDefinitions,
-  );
+  const [filter] = mapViewFiltersToFilters([viewFilter], filterDefinitions);
 
   return filter;
 };

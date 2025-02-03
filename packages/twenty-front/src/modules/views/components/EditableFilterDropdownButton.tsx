@@ -4,19 +4,19 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from 'twenty-shared';
 
 type EditableFilterDropdownButtonProps = {
@@ -49,21 +49,25 @@ export const EditableFilterDropdownButton = ({
     viewFilterDropdownId,
   );
 
-  // TODO: verify this instance id works
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-    viewFilterDropdownId,
-  );
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
 
   const { closeDropdown } = useDropdown(viewFilterDropdownId);
 
   const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
 
   useEffect(() => {
-    const filterDefinition = availableFilterDefinitions.find(
-      (filterDefinition) =>
-        filterDefinition.fieldMetadataId === viewFilter.fieldMetadataId,
+    const fieldMetadataItem = filterableFieldMetadataItems.find(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.id === viewFilter.fieldMetadataId,
     );
+
+    if (!isDefined(fieldMetadataItem)) {
+      return;
+    }
+
+    const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+      field: fieldMetadataItem,
+    });
 
     if (isDefined(filterDefinition)) {
       setFilterDefinitionUsedInDropdown(filterDefinition);
@@ -72,7 +76,7 @@ export const EditableFilterDropdownButton = ({
       setSelectedFilter(viewFilter);
     }
   }, [
-    availableFilterDefinitions,
+    filterableFieldMetadataItems,
     setFilterDefinitionUsedInDropdown,
     setFieldMetadataItemIdUsedInDropdown,
     viewFilter,

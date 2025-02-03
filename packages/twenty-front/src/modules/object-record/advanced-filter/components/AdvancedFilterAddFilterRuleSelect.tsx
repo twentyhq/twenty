@@ -1,17 +1,18 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { IconLibraryPlus, IconPlus, LightButton, MenuItem } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -49,33 +50,39 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     objectId: objectMetadataId,
   });
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataId,
+    }),
   );
 
-  const getDefaultFilterDefinition = useCallback(() => {
-    const defaultFilterDefinition =
-      availableFilterDefinitions.find(
-        (filterDefinition) =>
-          filterDefinition.fieldMetadataId ===
+  const getDefaultFieldMetadataItem = useCallback(() => {
+    const defaultFieldMetadataItem =
+      availableFieldMetadataItemsForFilter.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id ===
           objectMetadataItem?.labelIdentifierFieldMetadataId,
-      ) ?? availableFilterDefinitions?.[0];
+      ) ?? availableFieldMetadataItemsForFilter[0];
 
-    if (!defaultFilterDefinition) {
+    if (!defaultFieldMetadataItem) {
       throw new Error('Missing default filter definition');
     }
 
-    return defaultFilterDefinition;
-  }, [availableFilterDefinitions, objectMetadataItem]);
+    return defaultFieldMetadataItem;
+  }, [availableFieldMetadataItemsForFilter, objectMetadataItem]);
 
   const handleAddFilter = () => {
     closeDropdown();
 
-    const defaultFilterDefinition = getDefaultFilterDefinition();
+    const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
+
+    const defaultFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
+      field: defaultFieldMetadataItem,
+    });
 
     upsertCombinedViewFilter({
       id: v4(),
-      fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
+      fieldMetadataId: defaultFieldMetadataItem.id,
       operand: getRecordFilterOperandsForRecordFilterDefinition(
         defaultFilterDefinition,
       )[0],
@@ -104,11 +111,15 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     upsertCombinedViewFilterGroup(newViewFilterGroup);
 
-    const defaultFilterDefinition = getDefaultFilterDefinition();
+    const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
+
+    const defaultFilterDefinition = formatFieldMetadataItemAsFilterDefinition({
+      field: defaultFieldMetadataItem,
+    });
 
     upsertCombinedViewFilter({
       id: v4(),
-      fieldMetadataId: defaultFilterDefinition.fieldMetadataId,
+      fieldMetadataId: defaultFieldMetadataItem.id,
       operand: getRecordFilterOperandsForRecordFilterDefinition(
         defaultFilterDefinition,
       )[0],
