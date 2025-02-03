@@ -600,6 +600,7 @@ export type FullName = {
 
 export type GetAuthorizationUrlInput = {
   identityProviderId: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 export type GetAuthorizationUrlOutput = {

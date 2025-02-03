@@ -152,10 +152,17 @@ export class SSOService {
 
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
+    searchParams?: Record<string, string | boolean>,
   ) {
     const authorizationUrl = new URL(this.environmentService.get('SERVER_URL'));
 
     authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        authorizationUrl.searchParams.append(key, value.toString());
+      });
+    }
 
     return authorizationUrl.toString();
   }
@@ -191,7 +198,10 @@ export class SSOService {
     });
   }
 
-  async getAuthorizationUrl(identityProviderId: string) {
+  async getAuthorizationUrl(
+    identityProviderId: string,
+    searchParams: Record<string, string | boolean>,
+  ) {
     const identityProvider =
       (await this.workspaceSSOIdentityProviderRepository.findOne({
         where: {
@@ -208,7 +218,7 @@ export class SSOService {
 
     return {
       id: identityProvider.id,
-      authorizationURL: this.buildIssuerURL(identityProvider),
+      authorizationURL: this.buildIssuerURL(identityProvider, searchParams),
       type: identityProvider.type,
     };
   }

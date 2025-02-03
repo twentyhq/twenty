@@ -12,11 +12,11 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { AppPath } from '@/types/AppPath';
-import { Invite } from '../Invite';
+import { SignInUp } from '../SignInUp';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/Invite',
-  component: Invite,
+  component: SignInUp,
   decorators: [PageDecorator],
   args: {
     routePath: AppPath.Invite,
@@ -67,7 +67,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof Invite>;
+export type Story = StoryObj<typeof SignInUp>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
