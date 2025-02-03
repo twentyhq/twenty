@@ -1,19 +1,18 @@
-import { Field } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
   CreateDateColumn,
-  Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 
-@Entity('role')
-export class RoleEntity {
+@ObjectType()
+export class RoleDTO {
   @Field({ nullable: false })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -42,9 +41,9 @@ export class RoleEntity {
   @Column({ nullable: false, default: true })
   isEditable: boolean;
 
-  @OneToMany(
-    () => UserWorkspaceRoleEntity,
-    (userWorkspaceRole: UserWorkspaceRoleEntity) => userWorkspaceRole.role,
-  )
+  @HideField()
   userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
+
+  @Field(() => [WorkspaceMember], { nullable: true })
+  workspaceMembers?: WorkspaceMember[];
 }
