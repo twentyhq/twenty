@@ -78,7 +78,7 @@ export const Default: Story = {
     });
 
     const continueWithEmailButton = await canvas.findByText(
-      'Continue With Email',
+      'Continue with Email',
     );
 
     await fireEvent.click(continueWithEmailButton);
