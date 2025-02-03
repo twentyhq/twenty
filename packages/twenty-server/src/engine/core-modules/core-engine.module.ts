@@ -4,6 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
+import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -21,7 +22,9 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
@@ -32,25 +35,23 @@ import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.modul
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
+import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
+import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-import { MetaModule } from 'src/engine/core-modules/meta/meta.module';
-import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
-import { AgentModule } from 'src/engine/core-modules/agent/agent.module';
-import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
-import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -139,6 +140,7 @@ import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google
     AgentModule,
     InboxModule,
     GoogleStorageModule,
+    TelephonyModule,
   ],
   exports: [
     AnalyticsModule,

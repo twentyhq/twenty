@@ -1,4 +1,4 @@
-import { ServiceFn } from 'src/utils/generics';
+import { ServiceFn } from 'src/engine/utils/generics';
 
 export type DeleteTelephonyArgs = {
   id: string;

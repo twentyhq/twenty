@@ -1,6 +1,6 @@
 import { CreateTelephonyInput } from 'src/engine/core-modules/telephony/inputs';
 import { Telephony } from 'src/engine/core-modules/telephony/telephony.entity';
-import { ServiceFn } from 'src/utils/generics';
+import { ServiceFn } from 'src/engine/utils/generics';
 
 export type CreateTelephonyArgs = CreateTelephonyInput;
 
