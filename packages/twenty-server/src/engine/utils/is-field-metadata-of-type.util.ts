@@ -4,11 +4,19 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export const isFieldMetadataOfType = <T extends FieldMetadataType>(
+export function isFieldMetadataOfType<T extends FieldMetadataType>(
+  fieldMetadata: FieldMetadataInterface<'default' | T>,
+  type: T,
+): fieldMetadata is FieldMetadataInterface<T>;
+export function isFieldMetadataOfType<T extends FieldMetadataType>(
+  fieldMetadata: FieldMetadataEntity<'default' | T>,
+  type: T,
+): fieldMetadata is FieldMetadataEntity<T>;
+export function isFieldMetadataOfType<T extends FieldMetadataType>(
   fieldMetadata:
     | FieldMetadataInterface<'default' | T>
     | FieldMetadataEntity<'default' | T>,
   type: T,
-): fieldMetadata is FieldMetadataInterface<T> | FieldMetadataEntity<T> => {
+): boolean {
   return fieldMetadata.type === type;
-};
+}
