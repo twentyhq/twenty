@@ -36,6 +36,7 @@ export type FieldMetadataDateTimeSettings = {
 export type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
+  joinColumnName?: string;
 };
 
 type FieldMetadataSettingsMapping = {

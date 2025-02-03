@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -18,6 +18,7 @@ import {
   deduceRelationDirection,
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
+import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Command({
   name: 'upgrade-0.41:migrate-relations-to-field-metadata',
@@ -65,10 +66,13 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
         `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
       );
 
-      const fieldMetadataCollection = (await this.fieldMetadataRepository.find({
-        where: { workspaceId, type: FieldMetadataType.RELATION },
+      const fieldMetadataCollection = await this.fieldMetadataRepository.find({
+        where: {
+          workspaceId,
+          type: In([FieldMetadataType.RELATION, FieldMetadataType.UUID]),
+        },
         relations: ['fromRelationMetadata', 'toRelationMetadata'],
-      })) as unknown as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+      });
 
       if (!fieldMetadataCollection.length) {
         this.logger.log(
@@ -80,9 +84,21 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
         return;
       }
 
-      const fieldMetadataToUpdateCollection = fieldMetadataCollection.map(
-        (fieldMetadata) => this.mapFieldMetadata(fieldMetadata),
+      const joinColumnFieldMetadataCollection = fieldMetadataCollection.filter(
+        (fieldMetadata) =>
+          isFieldMetadataOfType(fieldMetadata, FieldMetadataType.UUID),
       );
+
+      const fieldMetadataToUpdateCollection = fieldMetadataCollection
+        .filter((fieldMetadata) =>
+          isFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
+        )
+        .map((fieldMetadata) =>
+          this.updateRelationFieldMetadata(
+            joinColumnFieldMetadataCollection,
+            fieldMetadata,
+          ),
+        );
 
       if (fieldMetadataToUpdateCollection.length > 0) {
         await this.fieldMetadataRepository.save(
@@ -98,11 +114,16 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
     }
   }
 
-  private mapFieldMetadata(
+  private updateRelationFieldMetadata(
+    joinColumnFieldMetadataCollection: FieldMetadataEntity<FieldMetadataType.UUID>[],
     fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
   ): FieldMetadataEntity<FieldMetadataType.RELATION> {
     const relationMetadata =
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+    const joinColumnFieldMetadata = joinColumnFieldMetadataCollection.find(
+      (joinColumnFieldMetadata) =>
+        joinColumnFieldMetadata.name === `${fieldMetadata.name}Id`,
+    );
 
     const relationDirection = deduceRelationDirection(
       fieldMetadata,
@@ -132,6 +153,7 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
       settings: {
         relationType,
         onDelete: relationMetadata.onDeleteAction,
+        joinColumnName: joinColumnFieldMetadata?.name,
       },
       relationTargetFieldMetadataId,
       relationTargetObjectMetadataId,
