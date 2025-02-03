@@ -1,0 +1,17 @@
+export enum EnvironmentVariablesSubGroup {
+  PasswordAuth = 'password-auth',
+  GoogleAuth = 'google-auth',
+  MicrosoftAuth = 'microsoft-auth',
+  SmtpConfig = 'smtp-config',
+  EmailSettings = 'email-settings',
+  S3Config = 's3-config',
+  Tokens = 'tokens',
+  SSL = 'ssl',
+  RateLimiting = 'rate-limiting',
+  LambdaConfig = 'lambda-config',
+  TinybirdConfig = 'tinybird-config',
+  StripeConfig = 'stripe-config',
+  SentryConfig = 'sentry-config',
+  FrontSupportConfig = 'front-support-config',
+  CloudflareConfig = 'cloudflare-config',
+}
