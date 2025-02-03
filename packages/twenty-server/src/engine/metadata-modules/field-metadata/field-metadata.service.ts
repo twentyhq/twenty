@@ -646,6 +646,85 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
   }
 
+  private groupFieldInputsByObjectId(
+    fieldMetadataInputs: CreateFieldInput[],
+  ): Record<string, CreateFieldInput[]> {
+    return fieldMetadataInputs.reduce(
+      (acc, input) => {
+        if (!acc[input.objectMetadataId]) {
+          acc[input.objectMetadataId] = [];
+        }
+        acc[input.objectMetadataId].push(input);
+
+        return acc;
+      },
+      {} as Record<string, CreateFieldInput[]>,
+    );
+  }
+
+  private async validateAndCreateFieldMetadata(
+    fieldMetadataInput: CreateFieldInput,
+    objectMetadata: ObjectMetadataEntity,
+    fieldMetadataRepository: Repository<FieldMetadataEntity>,
+  ): Promise<FieldMetadataEntity> {
+    if (!fieldMetadataInput.isRemoteCreation) {
+      assertMutationNotOnRemoteObject(objectMetadata);
+    }
+
+    if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
+      if (
+        !fieldMetadataInput.options &&
+        fieldMetadataInput.type !== FieldMetadataType.RATING
+      ) {
+        throw new FieldMetadataException(
+          'Options are required for enum fields',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+    }
+
+    if (fieldMetadataInput.type === FieldMetadataType.RATING) {
+      fieldMetadataInput.options = generateRatingOptions();
+    }
+
+    const fieldMetadataForCreate =
+      this.prepareCustomFieldMetadata(fieldMetadataInput);
+
+    this.validateFieldMetadata<CreateFieldInput>(
+      fieldMetadataForCreate.type,
+      fieldMetadataForCreate,
+      objectMetadata,
+    );
+
+    if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
+      validateNameAndLabelAreSyncOrThrow(
+        fieldMetadataForCreate.label,
+        fieldMetadataForCreate.name,
+      );
+    }
+
+    return await fieldMetadataRepository.save(fieldMetadataForCreate);
+  }
+
+  private async createMigrationActions(
+    createdFieldMetadata: FieldMetadataEntity,
+    objectMetadata: ObjectMetadataEntity,
+    isRemoteCreation: boolean,
+  ): Promise<WorkspaceMigrationTableAction | null> {
+    if (isRemoteCreation) {
+      return null;
+    }
+
+    return {
+      name: computeObjectTargetTable(objectMetadata),
+      action: WorkspaceMigrationTableActionType.ALTER,
+      columns: this.workspaceMigrationFactory.createColumnActions(
+        WorkspaceMigrationColumnActionType.CREATE,
+        createdFieldMetadata,
+      ),
+    };
+  }
+
   async createMany(
     fieldMetadataInputs: CreateFieldInput[],
   ): Promise<FieldMetadataEntity[]> {
@@ -654,7 +733,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
-
     const queryRunner = this.metadataDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -666,19 +744,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      const inputsByObjectId = fieldMetadataInputs.reduce(
-        (acc, input) => {
-          if (!acc[input.objectMetadataId]) {
-            acc[input.objectMetadataId] = [];
-          }
-          acc[input.objectMetadataId].push(input);
-
-          return acc;
-        },
-        {} as Record<string, CreateFieldInput[]>,
-      );
-
+      const inputsByObjectId =
+        this.groupFieldInputsByObjectId(fieldMetadataInputs);
       const objectMetadataIds = Object.keys(inputsByObjectId);
+
       const objectMetadatas = await this.objectMetadataRepository.find({
         where: {
           id: In(objectMetadataIds),
@@ -688,11 +757,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
 
       const objectMetadataMap = objectMetadatas.reduce(
-        (acc, obj) => {
-          acc[obj.id] = obj;
-
-          return acc;
-        },
+        (acc, obj) => ({ ...acc, [obj.id]: obj }),
         {} as Record<string, ObjectMetadataEntity>,
       );
 
@@ -701,7 +766,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       for (const objectMetadataId of objectMetadataIds) {
         const objectMetadata = objectMetadataMap[objectMetadataId];
-        const inputs = inputsByObjectId[objectMetadataId];
 
         if (!objectMetadata) {
           throw new FieldMetadataException(
@@ -710,58 +774,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
 
+        const inputs = inputsByObjectId[objectMetadataId];
+
         for (const fieldMetadataInput of inputs) {
-          if (!fieldMetadataInput.isRemoteCreation) {
-            assertMutationNotOnRemoteObject(objectMetadata);
-          }
-
-          if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
-            if (
-              !fieldMetadataInput.options &&
-              fieldMetadataInput.type !== FieldMetadataType.RATING
-            ) {
-              throw new FieldMetadataException(
-                'Options are required for enum fields',
-                FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-              );
-            }
-          }
-
-          if (fieldMetadataInput.type === FieldMetadataType.RATING) {
-            fieldMetadataInput.options = generateRatingOptions();
-          }
-
-          const fieldMetadataForCreate =
-            this.prepareCustomFieldMetadata(fieldMetadataInput);
-
-          this.validateFieldMetadata<CreateFieldInput>(
-            fieldMetadataForCreate.type,
-            fieldMetadataForCreate,
-            objectMetadata,
-          );
-
-          if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
-            validateNameAndLabelAreSyncOrThrow(
-              fieldMetadataForCreate.label,
-              fieldMetadataForCreate.name,
+          const createdFieldMetadata =
+            await this.validateAndCreateFieldMetadata(
+              fieldMetadataInput,
+              objectMetadata,
+              fieldMetadataRepository,
             );
-          }
-
-          const createdFieldMetadata = await fieldMetadataRepository.save(
-            fieldMetadataForCreate,
-          );
 
           createdFieldMetadatas.push(createdFieldMetadata);
 
-          if (!fieldMetadataInput.isRemoteCreation) {
-            migrationActions.push({
-              name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: this.workspaceMigrationFactory.createColumnActions(
-                WorkspaceMigrationColumnActionType.CREATE,
-                createdFieldMetadata,
-              ),
-            });
+          const migrationAction = await this.createMigrationActions(
+            createdFieldMetadata,
+            objectMetadata,
+            fieldMetadataInput.isRemoteCreation ?? false,
+          );
+
+          if (migrationAction) {
+            migrationActions.push(migrationAction);
           }
         }
       }
