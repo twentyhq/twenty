@@ -82,7 +82,7 @@ export const CommandMenu = () => {
         .concat(matchingWorkflowRunGlobalCommands),
     },
     {
-      heading: t`Fallback`,
+      heading: t`Search ''${commandMenuSearch}'' with...`,
       items: fallbackCommands,
     },
   ];
