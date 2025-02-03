@@ -6,15 +6,11 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Create One endpoint', () => {
-  let createdPerson: any;
-
   afterAll(async () => {
-    if (createdPerson) {
-      await makeRestAPIRequest({
-        method: 'delete',
-        path: `/people/${createdPerson.id}`,
-      });
-    }
+    await makeRestAPIRequest({
+      method: 'delete',
+      path: `/people/${PERSON_2_ID}`,
+    }).expect(200);
   });
 
   it('2.a. should create a new person', async () => {
@@ -30,7 +26,8 @@ describe('Core REST API Create One endpoint', () => {
       body: requestBody,
     });
 
-    createdPerson = response.body.data.createPerson;
+    const createdPerson = response.body.data.createPerson;
+
     expect(createdPerson.id).toBe(PERSON_2_ID);
     expect(createdPerson.city).toBe(personCity);
   });

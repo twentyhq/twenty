@@ -3,7 +3,6 @@ import {
   PERSON_1_ID,
 } from 'test/integration/constants/mock-person-ids.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
@@ -15,20 +14,14 @@ describe('Core REST API Delete One endpoint', () => {
   beforeAll(async () => {
     const personCity1 = generateRecordName(PERSON_1_ID);
 
-    // TODO: move this creation to REST API when the POST method is migrated
-    const graphqlOperation = createManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: PERSON_GQL_FIELDS,
-      data: [
-        {
-          id: PERSON_1_ID,
-          city: personCity1,
-        },
-      ],
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/people',
+      body: {
+        id: PERSON_1_ID,
+        city: personCity1,
+      },
     });
-
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
 
     people = response.body.data.createPeople;
     expect(people.length).toBe(1);
