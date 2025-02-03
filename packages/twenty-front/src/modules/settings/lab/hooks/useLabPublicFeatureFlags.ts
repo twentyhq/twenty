@@ -17,7 +17,10 @@ export const useLabPublicFeatureFlags = () => {
 
   const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
     onCompleted: (data) => {
-      if (isDefined(currentWorkspace) && data.updateLabPublicFeatureFlag) {
+      if (
+        isDefined(currentWorkspace) &&
+        data.updateLabPublicFeatureFlag !== null
+      ) {
         const updatedFlag = data.updateLabPublicFeatureFlag;
 
         setCurrentWorkspace({
