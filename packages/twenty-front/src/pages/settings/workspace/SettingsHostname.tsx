@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
