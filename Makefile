@@ -16,9 +16,8 @@ kvoip-v2-postgres-on-docker:
 		sleep 1; \
 	done
 	docker exec kvoipv2_pg psql -U postgres -d postgres \
-		-c "CREATE ROLE \"kvoipv2_user\" SUPERUSER LOGIN PASSWORD 'kvoipv2_password';" \
-		-c "CREATE DATABASE \"kvoip-v2_db\" WITH OWNER kvoipv2_user;" \
-		-c "CREATE DATABASE \"kvoip-v2_db_test\" WITH OWNER kvoipv2_user;"
+		-c "CREATE DATABASE \"kvoip-v2_db\" WITH OWNER postgres;" \
+		-c "CREATE DATABASE \"kvoip-v2_db_test\" WITH OWNER postgres;"
 
 postgres-on-docker:
 	docker run -d \
