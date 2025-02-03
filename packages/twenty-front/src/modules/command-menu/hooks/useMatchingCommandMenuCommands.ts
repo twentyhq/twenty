@@ -16,6 +16,7 @@ export const useMatchingCommandMenuCommands = ({
     actionGlobalCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
+    fallbackCommands,
   } = useCommandMenuCommands();
 
   const matchingNavigateCommands = matchCommands(navigateCommands);
@@ -55,5 +56,6 @@ export const useMatchingCommandMenuCommands = ({
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
     matchingNavigateCommands,
+    fallbackCommands: noResults ? fallbackCommands : [],
   };
 };
