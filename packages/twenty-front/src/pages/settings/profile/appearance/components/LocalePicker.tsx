@@ -8,7 +8,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -124,7 +123,7 @@ export const LocalePicker = () => {
         dropdownId="preferred-locale"
         dropdownWidthAuto
         fullWidth
-        value={i18n.locale}
+        value={currentWorkspaceMember.locale}
         options={localeOptions}
         onChange={(value) =>
           handleLocaleChange(value as keyof typeof APP_LOCALES)

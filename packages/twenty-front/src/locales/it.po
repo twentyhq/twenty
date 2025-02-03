@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-01 10:10+0100\n"
+"POT-Creation-Date: 2025-02-03 20:59+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,7 +41,7 @@ msgstr "Nome API"
 msgid "API keys"
 msgstr "Chiavi API"
 
-#: src/modules/ui/input/components/ImageInput.tsx:157
+#: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "Interruzione"
 
@@ -153,6 +153,10 @@ msgstr "Consentire l'invito di nuovi utenti condividendo un link di invito."
 msgid "Allow users to sign in with an email and password."
 msgstr "Consentire agli utenti di accedere con un'e-mail e una password."
 
+#: src/pages/auth/PasswordReset.tsx:162
+msgid "An error occurred while updating password"
+msgstr "Si è verificato un errore durante l'aggiornamento della password"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
 msgstr "Una descrizione opzionale"
@@ -177,6 +181,10 @@ msgstr "Assegnare ruoli per specificare le autorizzazioni di accesso di ogni mem
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
 msgstr "Assegnato a"
+
+#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
+msgid "At least 8 characters long."
+msgstr "Almeno 8 caratteri."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
@@ -213,7 +221,11 @@ msgstr "Elenco di blocco"
 msgid "Book a Call"
 msgstr "Prenota una chiamata"
 
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "Utilizzando Twenty, l'utente accetta la"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
 msgstr "Calcolare"
 
@@ -256,11 +268,11 @@ msgstr "Modifica della password"
 msgid "Change {to}"
 msgstr "Cambiare {to}"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
 msgstr "Cinese semplificato"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:111
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "Chinese — Traditional"
 msgstr "Cinese tradizionale"
 
@@ -300,11 +312,11 @@ msgstr "Configurare le impostazioni di e-mail e calendario."
 msgid "Connect a new account to your workspace"
 msgstr "Collegare un nuovo account al proprio spazio di lavoro"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:46
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
 msgid "Connect with Google"
 msgstr "Connettersi con Google"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:54
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
 msgid "Connect with Microsoft"
 msgstr "Connettetevi con Microsoft"
 
@@ -312,16 +324,29 @@ msgstr "Connettetevi con Microsoft"
 msgid "Connected accounts"
 msgstr "Conti collegati"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:91
+#: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
 msgstr "Contesto"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:86
 msgid "Continue"
 msgstr "Continua"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:63
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:69
+msgid "Continue with Email"
+msgstr "Continua con l'e-mail"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "Continua con Google"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "Continua con Microsoft"
+
+#: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
 msgstr "Copilota"
 
@@ -516,7 +541,7 @@ msgstr "Distruggere"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
@@ -595,12 +620,12 @@ msgstr "I dipendenti"
 msgid "Empty"
 msgstr "Vuoto"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
 msgstr "URL del punto finale"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:71
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "English"
 msgstr "Inglese"
 
@@ -640,7 +665,7 @@ msgstr "Oggetti esistenti"
 msgid "Exit Settings"
 msgstr "Impostazioni di uscita"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:58
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
 msgid "Expected selected node to be a create step node."
 msgstr "Si prevede che il nodo selezionato sia un nodo di creazione di passi."
 
@@ -697,7 +722,7 @@ msgstr "Esportazione in PDF"
 msgid "Export view"
 msgstr "Vista di esportazione"
 
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:58
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
 msgstr "Preferiti"
 
@@ -706,7 +731,7 @@ msgid "Field type"
 msgstr "Tipo di campo"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:95
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -717,7 +742,7 @@ msgid "Fields Count"
 msgstr "Conteggio dei campi"
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:102
-#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:82
+#: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx:44
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx:24
 msgid "Filter"
 msgstr "Filtro"
@@ -726,7 +751,11 @@ msgstr "Filtro"
 msgid "Filters"
 msgstr "Filtri"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:75
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
+msgid "Forgot your password?"
+msgstr "Avete dimenticato la password?"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
 msgstr "Francese"
 
@@ -745,7 +774,7 @@ msgstr "Funzioni"
 msgid "General"
 msgstr "Generale"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:83
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "German"
 msgstr "Tedesco"
 
@@ -757,7 +786,7 @@ msgstr "Sfruttate al massimo il vostro spazio di lavoro invitando il vostro team
 msgid "Get your subscription"
 msgstr "Abbonamento"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:77
+#: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
 msgstr "Globale"
 
@@ -787,7 +816,7 @@ msgstr "Se avete perso questa chiave, potete rigenerarla, ma sappiate che qualsi
 msgid "Inactive"
 msgstr "Inattivo"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:107
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
 msgid "Indexes"
 msgstr "Indici"
 
@@ -842,15 +871,15 @@ msgstr "Link di invito inviato agli indirizzi e-mail"
 msgid "Invite your team"
 msgstr "Invita il tuo team"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:87
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Italian"
 msgstr "Italiano"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Japanese"
 msgstr "Giapponese"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Korean"
 msgstr "Coreano"
 
@@ -1001,7 +1030,7 @@ msgstr "Nuova password"
 msgid "New Role"
 msgstr "Nuovo ruolo"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:81
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
 msgid "New Webhook"
 msgstr "Nuovo webhook"
 
@@ -1020,7 +1049,7 @@ msgstr "Nuova chiave"
 msgid "New record"
 msgstr "Nuovo record"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:41
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
 msgstr "Nessun account collegato"
 
@@ -1036,7 +1065,7 @@ msgstr "Non ci sono ancora versioni del flusso di lavoro"
 msgid "Not empty"
 msgstr "Non vuoto"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:73
+#: src/modules/command-menu/components/CommandMenu.tsx:75
 msgid "Object"
 msgstr "Oggetto"
 
@@ -1071,6 +1100,10 @@ msgstr "Pagina non trovata"
 msgid "Password"
 msgstr "Password"
 
+#: src/pages/auth/PasswordReset.tsx:146
+msgid "Password has been updated"
+msgstr "La password è stata aggiornata"
+
 #: src/modules/settings/profile/components/ChangePassword.tsx:34
 msgid "Password reset link has been sent to the email"
 msgstr "Il link per la reimpostazione della password è stato inviato all'e-mail"
@@ -1098,7 +1131,7 @@ msgstr "Distruggere definitivamente il record"
 msgid "Picture"
 msgstr "Immagine"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:102
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
 msgid "Please enter a valid URL"
 msgstr "Inserire un URL valido"
 
@@ -1110,11 +1143,11 @@ msgstr "Digitare \"{confirmationValue}\" per confermare che si desidera eliminar
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Digitare {confirmationText} per confermare l'eliminazione di questo webhook."
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "Portuguese — Brazil"
 msgstr "Portoghese - Brasile"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Portuguese — Portugal"
 msgstr "Portoghese - Portogallo"
 
@@ -1123,13 +1156,17 @@ msgstr "Portoghese - Portogallo"
 msgid "Preview"
 msgstr "Anteprima"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "Informativa sulla privacy"
+
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
 msgid "Profile"
 msgstr "Profilo"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
 msgid "Pseudo-English"
 msgstr "Pseudoinglese"
 
@@ -1141,7 +1178,7 @@ msgstr "Leggi la documentazione"
 msgid "Receive an email containing password update link"
 msgstr "Ricevere un'e-mail contenente il link per l'aggiornamento della password"
 
-#: src/modules/command-menu/components/CommandMenu.tsx:67
+#: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
 msgstr "Selezione dei record"
 
@@ -1164,7 +1201,7 @@ msgstr "Rigenerazione della chiave"
 msgid "Releases"
 msgstr "Comunicati"
 
-#: src/modules/ui/input/components/ImageInput.tsx:173
+#: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
 msgstr "Rimuovere"
 
@@ -1184,11 +1221,11 @@ msgstr "Rimuovi dai preferiti"
 msgid "Reset Password"
 msgstr "Reimpostare la password"
 
-#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:46
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
 msgid "Reset to"
 msgstr "Azzeramento a"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx:221
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
 msgid "Results"
 msgstr "Risultati"
 
@@ -1212,6 +1249,10 @@ msgstr "SSO"
 msgid "Search"
 msgstr "Ricerca"
 
+#: src/modules/command-menu/components/CommandMenu.tsx:85
+msgid "Search ''{commandMenuSearch}'' with..."
+msgstr "Cerca ''{commandMenuSearch}'' con..."
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:182
 msgid "Search a field..."
 msgstr "Ricerca in un campo..."
@@ -1221,7 +1262,7 @@ msgid "Search an index..."
 msgstr "Ricerca in un indice..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:182
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
 msgstr "Campi di ricerca"
 
@@ -1289,7 +1330,7 @@ msgstr "Impostare il nome del dominio"
 msgid "Set the name of your subdomain"
 msgstr "Impostare il nome del sottodominio"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:101
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1304,6 +1345,18 @@ msgstr "Condividete questo link per invitare gli utenti a unirsi al vostro spazi
 msgid "Should changing a field's label also change the API name?"
 msgstr "La modifica dell'etichetta di un campo deve cambiare anche il nome dell'API?"
 
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:76
+msgid "Sign in"
+msgstr "Accedi"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
+msgid "Sign up"
+msgstr "Iscriviti"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx:38
+msgid "Single sign-on (SSO)"
+msgstr "Accesso singolo (SSO)"
+
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
 msgstr "Salto"
@@ -1313,7 +1366,7 @@ msgstr "Salto"
 msgid "Sort"
 msgstr "Ordinamento"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:79
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Spanish"
 msgstr "Spagnolo"
 
@@ -1370,6 +1423,10 @@ msgstr "Impostazioni di sistema - {systemTimeFormatLabel}"
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Impostazioni di sistema - {systemDateFormatLabel}"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "Termini di servizio"
+
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:156
 msgid "Test"
@@ -1406,6 +1463,10 @@ msgstr "I valori di questo campo"
 msgid "The values of this field must be unique"
 msgstr "I valori di questo campo devono essere unici"
 
+#: src/pages/auth/PasswordReset.tsx:139
+msgid "There was an error while updating password."
+msgstr "Si è verificato un errore durante l'aggiornamento della password."
+
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
 msgstr "C'è stato un problema"
@@ -1422,7 +1483,7 @@ msgstr "Questa azione non può essere annullata. L'intera area di lavoro verrà 
 msgid "Time format"
 msgstr "Formato dell'ora"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:48
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:49
 msgid "Trigger Type"
 msgstr "Tipo di innesco"
 
@@ -1435,11 +1496,11 @@ msgstr "Il tipo di attivazione deve essere Manuale, quando non sono selezionati 
 msgid "Type"
 msgstr "Tipo"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:116
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:117
 msgid "Type anything"
 msgstr "Tipo qualsiasi cosa"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
 msgid "URL"
 msgstr "URL"
@@ -1453,7 +1514,7 @@ msgstr "Unico"
 msgid "Unlimited contacts"
 msgstr "Contatti illimitati"
 
-#: src/modules/ui/input/components/ImageInput.tsx:165
+#: src/modules/ui/input/components/ImageInput.tsx:164
 msgid "Upload"
 msgstr "Caricare"
 
@@ -1497,11 +1558,11 @@ msgstr "Visualizza i dettagli della fatturazione"
 msgid "Visualize"
 msgstr "Visualizzare"
 
-#: src/modules/ui/input/components/ImageInput.tsx:178
+#: src/modules/ui/input/components/ImageInput.tsx:177
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Supportiamo PNG, JPEG e GIF quadrati di dimensioni inferiori a 10 MB"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Verranno inviate richieste POST a questo endpoint per ogni nuovo evento"
@@ -1513,6 +1574,10 @@ msgstr "Webhook"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:65
 msgid "Webhooks"
 msgstr "Ganci web"
+
+#: src/pages/auth/SignInUp.tsx:76
+msgid "Welcome to {workspaceName}"
+msgstr "Benvenuti a {workspaceName}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1535,7 +1600,7 @@ msgstr "Il flusso di lavoro non può essere testato"
 #: src/pages/settings/roles/SettingsRoles.tsx:59
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
@@ -1573,6 +1638,10 @@ msgstr "Il vostro nome come verrà visualizzato"
 msgid "Your workspace will be disabled"
 msgstr "L'area di lavoro verrà disabilitata"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "e"
+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
 msgstr "dipendenti"
@@ -1602,7 +1671,7 @@ msgstr "all'anno"
 msgid "yes"
 msgstr "sì"
 
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} di {fieldLabel}"
 

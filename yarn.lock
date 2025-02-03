@@ -7094,6 +7094,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lingui/detect-locale@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@lingui/detect-locale@npm:5.2.0"
+  checksum: 10c0/4757ef7ca4003af6fb2b062d61bce9fc145c4ab6863db0a714ee8b3cc00a840b26bda21829ca05a63a992c25309ee42480a730a62185c837e419e792544287f5
+  languageName: node
+  linkType: hard
+
 "@lingui/format-po@npm:^5.1.2":
   version: 5.1.2
   resolution: "@lingui/format-po@npm:5.1.2"
@@ -45872,6 +45879,7 @@ __metadata:
   dependencies:
     "@blocknote/xl-docx-exporter": "npm:^0.22.0"
     "@blocknote/xl-pdf-exporter": "npm:^0.22.0"
+    "@lingui/detect-locale": "npm:^5.2.0"
     "@nivo/calendar": "npm:^0.87.0"
     "@nivo/core": "npm:^0.87.0"
     "@nivo/line": "npm:^0.87.0"
