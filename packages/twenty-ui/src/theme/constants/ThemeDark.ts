@@ -1,5 +1,6 @@
 import { BLUR_DARK } from '@ui/theme/constants/BlurDark';
 import { ILLUSTRATION_ICON_DARK } from '@ui/theme/constants/IllustrationIconDark';
+import { RESPONSIVE_COLORS_DARK } from '@ui/theme/constants/ResponsiveColorsDark';
 import { SNACK_BAR_DARK, ThemeType } from '..';
 import { ACCENT_DARK } from './AccentDark';
 import { BACKGROUND_DARK } from './BackgroundDark';
@@ -24,5 +25,6 @@ export const THEME_DARK: ThemeType = {
     tag: TAG_DARK,
     code: CODE_DARK,
     IllustrationIcon: ILLUSTRATION_ICON_DARK,
+    responsiveColors: RESPONSIVE_COLORS_DARK,
   },
 };
