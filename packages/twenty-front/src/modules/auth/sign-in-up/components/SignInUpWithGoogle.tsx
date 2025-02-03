@@ -1,12 +1,13 @@
-import { IconGoogle, MainButton, HorizontalSeparator } from 'twenty-ui';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useTheme } from '@emotion/react';
-import { useRecoilValue } from 'recoil';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { HorizontalSeparator, IconGoogle, MainButton } from 'twenty-ui';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();
@@ -14,6 +15,7 @@ const GoogleIcon = memo(() => {
 });
 
 export const SignInUpWithGoogle = () => {
+  const { t } = useLingui();
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { signInWithGoogle } = useSignInWithGoogle();
 
@@ -21,7 +23,7 @@ export const SignInUpWithGoogle = () => {
     <>
       <MainButton
         Icon={GoogleIcon}
-        title="Continue with Google"
+        title={t`Continue with Google`}
         onClick={signInWithGoogle}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
         fullWidth

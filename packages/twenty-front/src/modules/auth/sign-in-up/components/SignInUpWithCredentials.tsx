@@ -11,6 +11,7 @@ import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
@@ -25,6 +26,7 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpWithCredentials = () => {
+  const { t } = useLingui();
   const form = useFormContext<Form>();
 
   const signInUpStep = useRecoilValue(signInUpStepState);
@@ -64,25 +66,25 @@ export const SignInUpWithCredentials = () => {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return t`Continue with Email`;
     }
 
     if (
       signInUpMode === SignInUpMode.SignIn &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign in';
+      return t`Sign in`;
     }
 
     if (
       signInUpMode === SignInUpMode.SignUp &&
       signInUpStep === SignInUpStep.Password
     ) {
-      return 'Sign up';
+      return t`Sign up`;
     }
 
-    return 'Continue';
-  }, [signInUpMode, signInUpStep]);
+    return t`Continue`;
+  }, [signInUpMode, signInUpStep, t]);
 
   const shouldWaitForCaptchaToken =
     signInUpStep !== SignInUpStep.Init &&

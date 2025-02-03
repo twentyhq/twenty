@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-01 10:10+0100\n"
+"POT-Creation-Date: 2025-02-03 18:18+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,7 +41,7 @@ msgstr "API 이름"
 msgid "API keys"
 msgstr "API 키"
 
-#: src/modules/ui/input/components/ImageInput.tsx:157
+#: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
 msgstr "중단"
 
@@ -213,7 +213,11 @@ msgstr "차단 목록"
 msgid "Book a Call"
 msgstr "통화 예약하기"
 
-#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:72
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
+msgid "By using Twenty, you agree to the"
+msgstr "Twenty를 사용함으로써 귀하는 다음 약관에 동의하게 됩니다"
+
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
 msgstr "계산"
 
@@ -256,11 +260,11 @@ msgstr "비밀번호 변경"
 msgid "Change {to}"
 msgstr "변경 {to}"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:107
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
 msgstr "중국어 - 간체"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:111
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "Chinese — Traditional"
 msgstr "중국어 - 번체"
 
@@ -318,8 +322,21 @@ msgstr "컨텍스트"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:86
 msgid "Continue"
 msgstr "계속하기"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:69
+msgid "Continue with Email"
+msgstr "이메일로 계속하기"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
+msgid "Continue with Google"
+msgstr "Google을 계속 사용하세요"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
+msgid "Continue with Microsoft"
+msgstr "Microsoft와 함께 계속하기"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:63
 msgid "Copilot"
@@ -516,7 +533,7 @@ msgstr "파괴"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:78
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:79
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:220
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
@@ -595,12 +612,12 @@ msgstr "직원"
 msgid "Empty"
 msgstr "비어 있음"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:96
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
 msgstr "엔드포인트 URL"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:71
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "English"
 msgstr "영어"
 
@@ -640,7 +657,7 @@ msgstr "기존 개체"
 msgid "Exit Settings"
 msgstr "설정 종료"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:58
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
 msgid "Expected selected node to be a create step node."
 msgstr "선택한 노드가 생성 단계 노드가 될 것으로 예상됩니다."
 
@@ -697,7 +714,7 @@ msgstr "PDF로 내보내기"
 msgid "Export view"
 msgstr "내보내기 보기"
 
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:58
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
 msgstr "즐겨 찾기"
 
@@ -706,7 +723,7 @@ msgid "Field type"
 msgstr "필드 유형"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:43
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:95
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:96
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:22
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:27
 msgid "Fields"
@@ -726,7 +743,7 @@ msgstr "필터"
 msgid "Filters"
 msgstr "필터"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:75
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
 msgstr "프랑스어"
 
@@ -745,7 +762,7 @@ msgstr "기능"
 msgid "General"
 msgstr "일반"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:83
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:81
 msgid "German"
 msgstr "독일어"
 
@@ -787,7 +804,7 @@ msgstr "이 키를 분실한 경우 다시 생성할 수 있지만 이 키를 �
 msgid "Inactive"
 msgstr "비활성"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:107
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:108
 msgid "Indexes"
 msgstr "색인"
 
@@ -842,15 +859,15 @@ msgstr "이메일 주소로 전송된 초대 링크"
 msgid "Invite your team"
 msgstr "팀 초대하기"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:87
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Italian"
 msgstr "이탈리아어"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:95
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:93
 msgid "Japanese"
 msgstr "일본어"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:91
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:89
 msgid "Korean"
 msgstr "한국어"
 
@@ -1001,7 +1018,7 @@ msgstr "새 비밀번호"
 msgid "New Role"
 msgstr "새로운 역할"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:81
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
 msgid "New Webhook"
 msgstr "새로운 웹훅"
 
@@ -1098,7 +1115,7 @@ msgstr "기록 영구 파기"
 msgid "Picture"
 msgstr "사진"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:102
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:103
 msgid "Please enter a valid URL"
 msgstr "유효한 URL을 입력하세요"
 
@@ -1110,11 +1127,11 @@ msgstr "\"{confirmationValue}\"을 입력하여 이 API 키를 삭제할 것인�
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "{confirmationText}]을 입력하여 이 웹훅을 삭제할 것인지 확인하세요."
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:103
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "Portuguese — Brazil"
 msgstr "포르투갈어 - 브라질"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:99
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Portuguese — Portugal"
 msgstr "포르투갈어 - 포르투갈"
 
@@ -1123,13 +1140,17 @@ msgstr "포르투갈어 - 포르투갈"
 msgid "Preview"
 msgstr "미리 보기"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
+msgid "Privacy Policy"
+msgstr "개인정보 보호정책"
+
 #: src/pages/settings/SettingsProfile.tsx:19
 #: src/pages/settings/SettingsProfile.tsx:25
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:108
 msgid "Profile"
 msgstr "프로필"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:117
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:115
 msgid "Pseudo-English"
 msgstr "의사 영어"
 
@@ -1164,7 +1185,7 @@ msgstr "키 다시 생성"
 msgid "Releases"
 msgstr "릴리스"
 
-#: src/modules/ui/input/components/ImageInput.tsx:173
+#: src/modules/ui/input/components/ImageInput.tsx:172
 msgid "Remove"
 msgstr "제거"
 
@@ -1184,11 +1205,11 @@ msgstr "즐겨찾기에서 제거"
 msgid "Reset Password"
 msgstr "비밀번호 재설정"
 
-#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:46
+#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx:47
 msgid "Reset to"
 msgstr "다음으로 재설정"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx:221
+#: src/modules/command-menu/hooks/useSearchRecords.tsx:227
 msgid "Results"
 msgstr "결과"
 
@@ -1289,7 +1310,7 @@ msgstr "도메인 이름 설정"
 msgid "Set the name of your subdomain"
 msgstr "하위 도메인의 이름 설정"
 
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:101
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:33
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:57
@@ -1304,6 +1325,14 @@ msgstr "이 링크를 공유하여 사용자를 워크스페이스에 초대하�
 msgid "Should changing a field's label also change the API name?"
 msgstr "필드의 레이블을 변경하면 API 이름도 변경되어야 하나요?"
 
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:76
+msgid "Sign in"
+msgstr "로그인"
+
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
+msgid "Sign up"
+msgstr "가입하기"
+
 #: src/pages/onboarding/InviteTeam.tsx:236
 msgid "Skip"
 msgstr "건너뛰기"
@@ -1313,7 +1342,7 @@ msgstr "건너뛰기"
 msgid "Sort"
 msgstr "정렬"
 
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:79
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Spanish"
 msgstr "스페인어"
 
@@ -1370,6 +1399,10 @@ msgstr "시스템 설정 - {systemTimeFormatLabel}"
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "시스템 설정 - {systemDateFormatLabel}"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
+msgid "Terms of Service"
+msgstr "서비스 약관"
+
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:156
 msgid "Test"
@@ -1422,7 +1455,7 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 전체 워크
 msgid "Time format"
 msgstr "시간 형식"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:48
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:49
 msgid "Trigger Type"
 msgstr "트리거 유형"
 
@@ -1435,11 +1468,11 @@ msgstr "트리거 유형은 수동 - 선택된 레코드가 없는 경우여야 
 msgid "Type"
 msgstr "유형"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:116
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:117
 msgid "Type anything"
 msgstr "아무거나 입력"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:100
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
 msgid "URL"
 msgstr "URL"
@@ -1453,7 +1486,7 @@ msgstr "고유"
 msgid "Unlimited contacts"
 msgstr "무제한 연락처"
 
-#: src/modules/ui/input/components/ImageInput.tsx:165
+#: src/modules/ui/input/components/ImageInput.tsx:164
 msgid "Upload"
 msgstr "업로드"
 
@@ -1497,11 +1530,11 @@ msgstr "청구 세부 정보 보기"
 msgid "Visualize"
 msgstr "시각화"
 
-#: src/modules/ui/input/components/ImageInput.tsx:178
+#: src/modules/ui/input/components/ImageInput.tsx:177
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "10MB 미만의 정사각형 PNG, JPEG 및 GIF를 지원합니다"
 
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:98
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:239
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "모든 새로운 이벤트에 대해 이 엔드포인트로 POST 요청을 보냅니다"
@@ -1513,6 +1546,10 @@ msgstr "웹훅"
 #: src/pages/settings/developers/SettingsDevelopers.tsx:65
 msgid "Webhooks"
 msgstr "웹훅"
+
+#: src/pages/auth/SignInUp.tsx:43
+msgid "Welcome to"
+msgstr "에 오신 것을 환영합니다"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
@@ -1535,7 +1572,7 @@ msgstr "워크플로를 테스트할 수 없습니다"
 #: src/pages/settings/roles/SettingsRoles.tsx:59
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:74
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:216
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:85
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:165
@@ -1561,6 +1598,10 @@ msgstr "설명 작성"
 msgid "You will be charged immediately for the full year."
 msgstr "1년치 요금이 즉시 청구됩니다."
 
+#: src/pages/auth/SignInUp.tsx:47
+msgid "Your Workspace"
+msgstr "내 작업 공간"
+
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "크레딧 잔액은 월 청구서 결제에 사용됩니다."
@@ -1572,6 +1613,10 @@ msgstr "표시되는 사용자 이름"
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
+
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "그리고"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
@@ -1602,7 +1647,7 @@ msgstr "연간"
 msgid "yes"
 msgstr "yes"
 
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:129
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} 중 {fieldLabel}"
 

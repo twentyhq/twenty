@@ -6,13 +6,16 @@ import { useMemo } from 'react';
 import { AnimatedEaseIn } from 'twenty-ui';
 
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
+import { useLingui } from '@lingui/react/macro';
 
 export const Invite = () => {
+  const { t } = useLingui();
   const { workspace: workspaceFromInviteHash } = useWorkspaceFromInviteHash();
 
   const title = useMemo(() => {
-    return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
-  }, [workspaceFromInviteHash?.displayName]);
+    const teamName = workspaceFromInviteHash?.displayName ?? '';
+    return t`Join ${teamName} team`;
+  }, [workspaceFromInviteHash?.displayName, t]);
 
   return (
     <>

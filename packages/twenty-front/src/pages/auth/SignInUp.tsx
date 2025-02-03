@@ -21,6 +21,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
 
+import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
 
@@ -39,11 +40,11 @@ const StandardContent = ({
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>
-        Welcome to{' '}
+        {t`Welcome to`}{' '}
         {!isDefined(workspacePublicData?.displayName)
           ? DEFAULT_WORKSPACE_NAME
           : workspacePublicData?.displayName === ''
-            ? 'Your Workspace'
+            ? t`Your Workspace`
             : workspacePublicData?.displayName}
       </Title>
       {signInUpForm}

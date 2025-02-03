@@ -11,14 +11,29 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { messages as enMessages } from '../../../locales/generated/en';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-i18n.load({
-  en: enMessages,
-});
-i18n.activate('en');
+import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
+import { APP_LOCALES, isDefined, isValidLocale } from 'twenty-shared';
 
 export const App = () => {
+  const urlLocale = fromUrl('lang');
+  const storageLocale = fromStorage('lang');
+  const navigatorLocale = fromNavigator();
+
+  let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
+
+  if (isDefined(urlLocale) && isValidLocale(urlLocale)) {
+    locale = urlLocale;
+    localStorage.setItem('lang', urlLocale);
+  } else if (isDefined(storageLocale) && isValidLocale(storageLocale)) {
+    locale = storageLocale;
+  } else if (isDefined(navigatorLocale) && isValidLocale(navigatorLocale)) {
+    locale = navigatorLocale;
+  }
+
+  dynamicActivate(locale);
+
   return (
     <RecoilRoot>
       <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
