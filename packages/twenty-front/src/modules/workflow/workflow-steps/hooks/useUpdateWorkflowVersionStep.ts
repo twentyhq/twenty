@@ -1,18 +1,18 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { isDefined } from 'twenty-shared';
 import {
   UpdateWorkflowVersionStepInput,
   UpdateWorkflowVersionStepMutation,
   UpdateWorkflowVersionStepMutationVariables,
   WorkflowAction,
 } from '~/generated/graphql';
-import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
-import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { isDefined } from 'twenty-ui';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
 
 export const useUpdateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();

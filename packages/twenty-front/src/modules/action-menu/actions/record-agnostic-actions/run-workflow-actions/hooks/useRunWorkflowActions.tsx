@@ -7,8 +7,8 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
 
-import { capitalize } from 'twenty-shared';
-import { IconSettingsAutomation, isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
+import { IconSettingsAutomation } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowActions = () => {

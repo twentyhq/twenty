@@ -2,8 +2,7 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from '~/utils/isDefined';
+import { capitalize, isDefined } from 'twenty-shared';
 
 export const triggerAttachRelationOptimisticEffect = ({
   cache,

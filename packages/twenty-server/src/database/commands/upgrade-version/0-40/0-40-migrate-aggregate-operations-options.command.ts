@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -30,7 +31,6 @@ import {
   VIEW_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { isDefined } from 'src/utils/is-defined';
 
 @Command({
   name: 'upgrade-0.40:migrate-aggregate-operation-options',

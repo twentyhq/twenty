@@ -1,12 +1,12 @@
-import { useCallback, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 const StyledComboInputContainer = styled.div`
   display: flex;

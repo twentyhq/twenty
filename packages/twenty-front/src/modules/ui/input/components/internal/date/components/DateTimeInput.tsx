@@ -12,7 +12,7 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
 import { isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 const StyledInputContainer = styled.div`
   align-items: center;

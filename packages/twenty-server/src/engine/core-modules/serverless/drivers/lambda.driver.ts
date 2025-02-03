@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
 import { join } from 'path';
 
-import dotenv from 'dotenv';
 import {
   CreateFunctionCommand,
   DeleteFunctionCommand,
@@ -10,51 +9,52 @@ import {
   InvokeCommandInput,
   Lambda,
   LambdaClientConfig,
+  ListLayerVersionsCommand,
+  ListLayerVersionsCommandInput,
   PublishLayerVersionCommand,
   PublishLayerVersionCommandInput,
   PublishVersionCommand,
   PublishVersionCommandInput,
   ResourceNotFoundException,
   UpdateFunctionCodeCommand,
-  waitUntilFunctionUpdatedV2,
-  ListLayerVersionsCommandInput,
-  ListLayerVersionsCommand,
   UpdateFunctionConfigurationCommand,
   UpdateFunctionConfigurationCommandInput,
+  waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
+import dotenv from 'dotenv';
+import { isDefined } from 'twenty-shared';
 
 import {
   ServerlessDriver,
   ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
+import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
+import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
+import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
+import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
+import {
+  LambdaBuildDirectoryManager,
+  NODE_LAYER_SUBFOLDER,
+} from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
   ServerlessFunctionEntity,
   ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
-  LambdaBuildDirectoryManager,
-  NODE_LAYER_SUBFOLDER,
-} from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
-import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { isDefined } from 'src/utils/is-defined';
-import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
-import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
-import { compileTypescript } from 'src/engine/core-modules/serverless/drivers/utils/compile-typescript';
-import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
-import { OUTDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/outdir-folder';
 
-const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 30;
+const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -133,7 +133,7 @@ export class LambdaDriver implements ServerlessDriver {
     await lambdaBuildDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn si undefined');
+      throw new Error('new layer version arn if undefined');
     }
 
     return result.LayerVersionArn;
@@ -177,15 +177,13 @@ export class LambdaDriver implements ServerlessDriver {
     return join(SERVERLESS_TMPDIR_FOLDER, serverlessFunction.id, version);
   };
 
-  async build(serverlessFunction: ServerlessFunctionEntity, version: string) {
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
+  async build(serverlessFunction: ServerlessFunctionEntity, version: 'draft') {
+    if (version !== 'draft') {
+      throw new Error("We can only build 'draft' version with lambda driver");
+    }
 
     const inMemoryServerlessFunctionFolderPath =
-      this.getInMemoryServerlessFunctionFolderPath(
-        serverlessFunction,
-        computedVersion,
-      );
+      this.getInMemoryServerlessFunctionFolderPath(serverlessFunction, version);
 
     const folderPath = getServerlessFolder({
       serverlessFunction,

@@ -29,7 +29,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { THEME_COMMON, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;

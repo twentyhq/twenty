@@ -1,5 +1,5 @@
 import { JSONContent } from '@tiptap/react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const parseEditorContent = (json: JSONContent): string => {
   const parseNode = (node: JSONContent): string => {

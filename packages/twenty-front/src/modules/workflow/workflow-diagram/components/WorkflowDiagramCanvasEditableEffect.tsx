@@ -17,7 +17,8 @@ import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { IconBolt, isDefined, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconBolt, useIcons } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { t } = useLingui();

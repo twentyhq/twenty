@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { isDefined } from 'twenty-shared';
 import { Button } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 

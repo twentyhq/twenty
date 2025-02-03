@@ -2,7 +2,7 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
 import { RightDrawerWorkflowViewStepContent } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStepContent';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowViewStep = () => {
   const workflowVersionId = useRecoilValue(workflowVersionIdState);

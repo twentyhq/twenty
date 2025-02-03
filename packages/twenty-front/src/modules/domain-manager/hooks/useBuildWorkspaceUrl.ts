@@ -1,6 +1,6 @@
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useBuildWorkspaceUrl = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);

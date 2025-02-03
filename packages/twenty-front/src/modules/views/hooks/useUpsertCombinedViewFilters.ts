@@ -9,7 +9,7 @@ import { unsavedToDeleteViewFilterIdsComponentFamilyState } from '@/views/states
 import { unsavedToUpsertViewFiltersComponentFamilyState } from '@/views/states/unsavedToUpsertViewFiltersComponentFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { shouldReplaceFilter } from '@/views/utils/shouldReplaceFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useUpsertCombinedViewFilters = (viewBarComponentId?: string) => {
   const unsavedToUpsertViewFiltersCallbackState =

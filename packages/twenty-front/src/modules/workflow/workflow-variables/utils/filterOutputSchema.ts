@@ -6,7 +6,7 @@ import {
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 const isValidRecordOutputSchema = (
   outputSchema: RecordOutputSchema,

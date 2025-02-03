@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -10,7 +12,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -21,6 +23,7 @@ type SendInviteLinkEmailProps = {
     lastName: string;
   };
   serverUrl: string;
+  locale: keyof typeof APP_LOCALES;
 };
 
 export const SendInviteLinkEmail = ({
@@ -28,14 +31,15 @@ export const SendInviteLinkEmail = ({
   workspace,
   sender,
   serverUrl,
+  locale,
 }: SendInviteLinkEmailProps) => {
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
 
   return (
-    <BaseEmail width={333}>
-      <Title value="Join your team on Twenty" />
+    <BaseEmail width={333} locale={locale}>
+      <Title value={t`Join your team on Twenty`} />
       <MainText>
         {capitalize(sender.firstName)} (
         <Link
@@ -43,13 +47,14 @@ export const SendInviteLinkEmail = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        ) has invited you to join a workspace called <b>{workspace.name}</b>
+        )<Trans>has invited you to join a workspace called </Trans>
+        <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>
         {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
         {workspace.name && <HighlightedText value={workspace.name} />}
-        <CallToAction href={link} value="Accept invite" />
+        <CallToAction href={link} value={t`Accept invite`} />
       </HighlightedContainer>
       <WhatIsTwenty />
     </BaseEmail>

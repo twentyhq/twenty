@@ -6,7 +6,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const ViewBarSortEffect = () => {
   const { upsertCombinedViewSort } = useUpsertCombinedViewSorts();

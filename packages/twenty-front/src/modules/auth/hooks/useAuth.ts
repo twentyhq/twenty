@@ -20,6 +20,7 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -29,7 +30,6 @@ import {
   useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
 } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -280,7 +280,9 @@ export const useAuth = () => {
             )
           : TimeFormat[detectTimeFormat()],
       });
-      dynamicActivate(workspaceMember.locale ?? 'en');
+      dynamicActivate(
+        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? 'en',
+      );
     }
 
     const workspace = user.currentWorkspace ?? null;

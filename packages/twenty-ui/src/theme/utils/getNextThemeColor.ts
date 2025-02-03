@@ -1,5 +1,5 @@
 import { MAIN_COLOR_NAMES, ThemeColor } from '@ui/theme';
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 export const getNextThemeColor = (currentColor?: ThemeColor): ThemeColor => {
   if (!isDefined(currentColor)) {

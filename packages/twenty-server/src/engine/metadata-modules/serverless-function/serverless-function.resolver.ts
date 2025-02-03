@@ -24,6 +24,7 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { BuildDraftServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/build-draft-serverless-function.input';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -197,6 +198,24 @@ export class ServerlessFunctionResolver {
       const { id } = input;
 
       return await this.serverlessFunctionService.publishOneServerlessFunction(
+        id,
+        workspaceId,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => ServerlessFunctionDTO)
+  async buildDraftServerlessFunction(
+    @Args('input') input: BuildDraftServerlessFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+      const { id } = input;
+
+      return await this.serverlessFunctionService.buildDraftServerlessFunction(
         id,
         workspaceId,
       );

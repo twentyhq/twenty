@@ -18,8 +18,8 @@ import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hook
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 import { useMatch, useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';

@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
   H1Title,
@@ -22,7 +22,6 @@ import {
   H2Title,
   IconSearch,
   IconUser,
-  isDefined,
   Section,
   Toggle,
 } from 'twenty-ui';
