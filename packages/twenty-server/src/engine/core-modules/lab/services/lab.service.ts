@@ -78,6 +78,8 @@ export class LabService {
 
     workspace.featureFlags = [...(workspace.featureFlags || []), newFlag];
 
+    await this.workspaceRepository.save(workspace);
+
     return newFlag;
   }
 }
