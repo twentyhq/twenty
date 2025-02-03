@@ -17,7 +17,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
