@@ -4,6 +4,11 @@ export const UPDATE_LAB_PUBLIC_FEATURE_FLAG = gql`
   mutation UpdateLabPublicFeatureFlag(
     $input: UpdateLabPublicFeatureFlagInput!
   ) {
-    updateLabPublicFeatureFlag(input: $input)
+    updateLabPublicFeatureFlag(input: $input) {
+      id
+      key
+      value
+      workspaceId
+    }
   }
 `;

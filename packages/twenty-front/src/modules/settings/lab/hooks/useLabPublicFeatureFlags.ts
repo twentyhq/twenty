@@ -15,7 +15,26 @@ export const useLabPublicFeatureFlags = () => {
   );
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation();
+  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
+    onCompleted: (data) => {
+      if (isDefined(currentWorkspace) && data.updateLabPublicFeatureFlag) {
+        const updatedFlag = data.updateLabPublicFeatureFlag;
+
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          featureFlags: [
+            ...(currentWorkspace.featureFlags?.filter(
+              (flag) => flag.key !== updatedFlag.key,
+            ) ?? []),
+            updatedFlag,
+          ],
+        });
+      }
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
 
   const handleLabPublicFeatureFlagUpdate = async (
     publicFeatureFlag: FeatureFlagKey,
@@ -35,19 +54,7 @@ export const useLabPublicFeatureFlags = () => {
           value,
         },
       },
-      onError: (error) => {
-        setError(error.message);
-      },
     });
-
-    if (isDefined(response.data)) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        featureFlags: currentWorkspace.featureFlags?.map((flag) =>
-          flag.key === publicFeatureFlag ? { ...flag, value } : flag,
-        ),
-      });
-    }
 
     return !!response.data;
   };
