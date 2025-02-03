@@ -16,21 +16,21 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
-export type WorkflowEventTriggerJobData = {
+export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
   payload: object;
 };
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
-export class WorkflowEventTriggerJob {
+export class WorkflowTriggerJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
-  @Process(WorkflowEventTriggerJob.name)
-  async handle(data: WorkflowEventTriggerJobData): Promise<void> {
+  @Process(WorkflowTriggerJob.name)
+  async handle(data: WorkflowTriggerJobData): Promise<void> {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
