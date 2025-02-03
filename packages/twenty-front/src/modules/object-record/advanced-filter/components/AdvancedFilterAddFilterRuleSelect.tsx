@@ -42,7 +42,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const objectMetadataId =
     currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
 
-  if (!objectMetadataId) {
+  if (!isDefined(objectMetadataId)) {
     throw new Error('Object metadata id is missing from current view');
   }
 
@@ -64,12 +64,18 @@ export const AdvancedFilterAddFilterRuleSelect = ({
           objectMetadataItem?.labelIdentifierFieldMetadataId,
       ) ?? availableFieldMetadataItemsForFilter[0];
 
-    if (!defaultFieldMetadataItem) {
-      throw new Error('Missing default filter definition');
+    if (!isDefined(defaultFieldMetadataItem)) {
+      throw new Error(
+        `Could not find default field metadata item for object ${objectMetadataId}`,
+      );
     }
 
     return defaultFieldMetadataItem;
-  }, [availableFieldMetadataItemsForFilter, objectMetadataItem]);
+  }, [
+    availableFieldMetadataItemsForFilter,
+    objectMetadataItem,
+    objectMetadataId,
+  ]);
 
   const handleAddFilter = () => {
     closeDropdown();
