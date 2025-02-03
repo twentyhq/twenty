@@ -203,3 +203,81 @@ export const AllSuccessSelected: CatalogStory<
     },
   ],
 };
+
+export const AllFailure: CatalogStory<
+  Story,
+  typeof WorkflowDiagramStepNodeEditableContent
+> = {
+  args: {
+    onDelete: fn(),
+    variant: 'failure',
+  },
+  parameters: {
+    msw: graphqlMocks,
+    catalog: {
+      options: {
+        elementContainer: {
+          width: 250,
+          style: { position: 'relative' },
+        },
+      },
+      dimensions: [
+        {
+          name: 'step type',
+          values: ALL_STEPS,
+          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+        },
+      ],
+    },
+  },
+  decorators: [
+    CatalogDecorator,
+    (Story) => {
+      return (
+        <ReactFlowProvider>
+          <Story />
+        </ReactFlowProvider>
+      );
+    },
+  ],
+};
+
+export const AllFailureSelected: CatalogStory<
+  Story,
+  typeof WorkflowDiagramStepNodeEditableContent
+> = {
+  args: {
+    onDelete: fn(),
+    variant: 'failure',
+    selected: true,
+  },
+  parameters: {
+    msw: graphqlMocks,
+    catalog: {
+      options: {
+        elementContainer: {
+          width: 250,
+          style: { position: 'relative' },
+          className: 'selectable selected',
+        },
+      },
+      dimensions: [
+        {
+          name: 'step type',
+          values: ALL_STEPS,
+          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+        },
+      ],
+    },
+  },
+  decorators: [
+    CatalogDecorator,
+    (Story) => {
+      return (
+        <ReactFlowProvider>
+          <Story />
+        </ReactFlowProvider>
+      );
+    },
+  ],
+};

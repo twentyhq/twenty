@@ -37,7 +37,10 @@ const StyledStepNodeType = styled.div<{
         `;
       }
       case 'failure': {
-        return undefined;
+        return css`
+          background-color: ${theme.tag.background.red};
+          color: ${theme.color.red};
+        `;
       }
     }
   }}
@@ -100,6 +103,12 @@ const StyledStepNodeInnerContainer = styled.div<{
           return css`
             background-color: ${theme.responsiveColors.turquoise1};
             border-color: ${theme.responsiveColors.turquoise4};
+          `;
+        }
+        case 'failure': {
+          return css`
+            background-color: ${theme.background.danger};
+            border-color: ${theme.color.red};
           `;
         }
       }
