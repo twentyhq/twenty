@@ -161,7 +161,7 @@ export const MatchColumnSelect = ({
                     </React.Fragment>
                   ))}
                   {options?.length === 0 && (
-                    <MenuItem key="No result" text="No result" />
+                    <MenuItem key="No results" text="No results" />
                   )}
                 </DropdownMenuItemsContainer>
               </DropdownMenu>

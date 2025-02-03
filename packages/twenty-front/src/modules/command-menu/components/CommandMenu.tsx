@@ -32,6 +32,7 @@ export const CommandMenu = () => {
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
     matchingNavigateCommands,
+    fallbackCommands,
   } = useMatchingCommandMenuCommands({
     commandMenuSearch,
   });
@@ -44,6 +45,7 @@ export const CommandMenu = () => {
       matchingStandardActionGlobalCommands,
       matchingWorkflowRunGlobalCommands,
       matchingNavigateCommands,
+      fallbackCommands,
     )
     .filter(isDefined);
 
@@ -78,6 +80,10 @@ export const CommandMenu = () => {
       items: matchingStandardActionGlobalCommands
         .concat(matchingNavigateCommands)
         .concat(matchingWorkflowRunGlobalCommands),
+    },
+    {
+      heading: t`Search ''${commandMenuSearch}'' with...`,
+      items: fallbackCommands,
     },
   ];
 
