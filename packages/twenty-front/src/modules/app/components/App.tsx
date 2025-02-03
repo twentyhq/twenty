@@ -25,7 +25,12 @@ export const App = () => {
 
   if (isDefined(urlLocale) && isValidLocale(urlLocale)) {
     locale = urlLocale;
-    localStorage.setItem('lang', urlLocale);
+    try {
+      localStorage.setItem('lang', urlLocale);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to save locale to localStorage:', error);
+    }
   } else if (isDefined(storageLocale) && isValidLocale(storageLocale)) {
     locale = storageLocale;
   } else if (isDefined(navigatorLocale) && isValidLocale(navigatorLocale)) {

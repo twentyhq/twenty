@@ -22,7 +22,7 @@ import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
 
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
 
@@ -50,6 +50,8 @@ const StandardContent = ({
 };
 
 export const SignInUp = () => {
+  const { t } = useLingui();
+
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -62,7 +64,6 @@ export const SignInUp = () => {
     useWorkspaceFromInviteHash();
 
   const [searchParams] = useSearchParams();
-
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
       return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
@@ -70,7 +71,7 @@ export const SignInUp = () => {
     const workspaceName = !isDefined(workspacePublicData?.displayName)
       ? DEFAULT_WORKSPACE_NAME
       : workspacePublicData?.displayName === ''
-        ? 'Your Workspace'
+        ? t`Your Workspace`
         : workspacePublicData?.displayName;
 
     return t`Welcome to ${workspaceName}`;
@@ -78,6 +79,7 @@ export const SignInUp = () => {
     workspaceFromInviteHash?.displayName,
     workspaceInviteHash,
     workspacePublicData?.displayName,
+    t,
   ]);
 
   const signInUpForm = useMemo(() => {
