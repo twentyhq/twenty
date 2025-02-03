@@ -144,7 +144,7 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('CombinedSearchRecords' ?? '', () => {
+        graphql.query('CombinedSearchRecords', () => {
           return HttpResponse.json({
             data: {
               searchCompanies: {
