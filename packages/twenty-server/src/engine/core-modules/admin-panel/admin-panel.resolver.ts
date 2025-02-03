@@ -1,7 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
@@ -45,5 +46,11 @@ export class AdminPanelResolver {
     );
 
     return true;
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @Query(() => EnvironmentVariablesOutput)
+  async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
+    return this.adminService.getEnvironmentVariablesGrouped();
   }
 }

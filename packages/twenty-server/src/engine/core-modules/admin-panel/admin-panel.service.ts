@@ -3,12 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
+import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
+import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { ENVIRONMENT_VARIABLES_GROUP_POSITION } from 'src/engine/core-modules/environment/constants/environment-variables-group-position';
+import { ENVIRONMENT_VARIABLES_HIDDEN_GROUPS } from 'src/engine/core-modules/environment/constants/environment-variables-hidden-groups';
+import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
@@ -25,6 +33,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
+    private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -156,5 +165,75 @@ export class AdminPanelService {
         workspaceId: workspace.id,
       });
     }
+  }
+
+  getEnvironmentVariablesGrouped(): EnvironmentVariablesOutput {
+    const rawEnvVars = this.environmentService.getAll();
+    const groupedData = new Map<
+      EnvironmentVariablesGroup,
+      {
+        variables: EnvironmentVariable[];
+        subgroups: Map<EnvironmentVariablesSubGroup, EnvironmentVariable[]>;
+      }
+    >();
+
+    for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
+      const { group, subGroup, description } = metadata;
+
+      if (ENVIRONMENT_VARIABLES_HIDDEN_GROUPS.has(group)) {
+        continue;
+      }
+
+      const envVar: EnvironmentVariable = {
+        name: varName,
+        description,
+        value: String(value),
+        sensitive: metadata.sensitive ?? false,
+      };
+
+      let currentGroup = groupedData.get(group);
+
+      if (!currentGroup) {
+        currentGroup = {
+          variables: [],
+          subgroups: new Map(),
+        };
+        groupedData.set(group, currentGroup);
+      }
+
+      if (subGroup) {
+        let subgroupVars = currentGroup.subgroups.get(subGroup);
+
+        if (!subgroupVars) {
+          subgroupVars = [];
+          currentGroup.subgroups.set(subGroup, subgroupVars);
+        }
+        subgroupVars.push(envVar);
+      } else {
+        currentGroup.variables.push(envVar);
+      }
+    }
+
+    const groups: EnvironmentVariablesGroupData[] = Array.from(
+      groupedData.entries(),
+    )
+      .sort((a, b) => {
+        const positionA = ENVIRONMENT_VARIABLES_GROUP_POSITION[a[0]];
+        const positionB = ENVIRONMENT_VARIABLES_GROUP_POSITION[b[0]];
+
+        return positionA - positionB;
+      })
+      .map(([groupName, data]) => ({
+        groupName,
+        variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
+        subgroups: Array.from(data.subgroups.entries())
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([subgroupName, variables]) => ({
+            subgroupName,
+            variables,
+          })),
+      }));
+
+    return { groups };
   }
 }
