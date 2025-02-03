@@ -87,7 +87,7 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveWorkspacesComm
       const joinColumnFieldMetadataCollection = fieldMetadataCollection.filter(
         (fieldMetadata) =>
           isFieldMetadataOfType(fieldMetadata, FieldMetadataType.UUID),
-      );
+      ) as FieldMetadataEntity<FieldMetadataType.UUID>[];
 
       const fieldMetadataToUpdateCollection = fieldMetadataCollection
         .filter((fieldMetadata) =>
