@@ -26,7 +26,10 @@ export const useLabPublicFeatureFlags = () => {
             ...(currentWorkspace.featureFlags?.filter(
               (flag) => flag.key !== updatedFlag.key,
             ) ?? []),
-            updatedFlag,
+            {
+              ...updatedFlag,
+              workspaceId: currentWorkspace.id,
+            },
           ],
         });
       }

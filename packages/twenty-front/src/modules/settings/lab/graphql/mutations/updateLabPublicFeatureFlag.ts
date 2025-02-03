@@ -8,7 +8,6 @@ export const UPDATE_LAB_PUBLIC_FEATURE_FLAG = gql`
       id
       key
       value
-      workspaceId
     }
   }
 `;
