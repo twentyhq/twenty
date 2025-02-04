@@ -24,12 +24,6 @@ const StyledStepNodeType = styled.div<{
 }>`
   ${({ nodeVariant, theme }) => {
     switch (nodeVariant) {
-      case 'empty':
-      case 'default': {
-        return css`
-          background-color: ${theme.background.tertiary};
-        `;
-      }
       case 'success': {
         return css`
           background-color: ${theme.tag.background.turquoise};
@@ -40,6 +34,11 @@ const StyledStepNodeType = styled.div<{
         return css`
           background-color: ${theme.tag.background.red};
           color: ${theme.color.red};
+        `;
+      }
+      default: {
+        return css`
+          background-color: ${theme.background.tertiary};
         `;
       }
     }
@@ -62,9 +61,6 @@ const StyledStepNodeType = styled.div<{
             background-color: ${theme.color.blue};
             color: ${theme.font.color.inverted};
           `;
-        }
-        default: {
-          return undefined;
         }
       }
     }}
@@ -93,13 +89,6 @@ const StyledStepNodeInnerContainer = styled.div<{
   .selectable:focus-visible & {
     ${({ theme, variant }) => {
       switch (variant) {
-        case 'empty':
-        case 'default': {
-          return css`
-            background-color: ${theme.accent.quaternary};
-            border-color: ${theme.color.blue};
-          `;
-        }
         case 'success': {
           return css`
             background-color: ${theme.responsiveColors.turquoise1};
@@ -110,6 +99,12 @@ const StyledStepNodeInnerContainer = styled.div<{
           return css`
             background-color: ${theme.background.danger};
             border-color: ${theme.color.red};
+          `;
+        }
+        default: {
+          return css`
+            background-color: ${theme.accent.quaternary};
+            border-color: ${theme.color.blue};
           `;
         }
       }
