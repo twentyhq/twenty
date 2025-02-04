@@ -9,6 +9,7 @@ import {
   useRecordInlineCellContext,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
@@ -61,6 +62,8 @@ export const RecordInlineCellDisplayMode = ({
 }: React.PropsWithChildren<unknown>) => {
   const { isFocused } = useFieldFocus();
 
+  const { t } = useLingui();
+
   const {
     editModeContentOnly,
 
@@ -80,7 +83,7 @@ export const RecordInlineCellDisplayMode = ({
 
   const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
 
-  const emptyPlaceHolder = showLabel ? 'Empty' : label;
+  const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
   return (
     <>

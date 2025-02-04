@@ -1,12 +1,6 @@
-import {
-  IconChevronDown,
-  IconForbid,
-  isDefined,
-  LightIconButton,
-} from 'twenty-ui';
-
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
@@ -22,20 +16,11 @@ import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/compone
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared';
+import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 import { isValidUuid } from '~/utils/isValidUuid';
 
-const StyledFormSelectContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-right: none;
-  border-bottom-right-radius: none;
-  border-top-right-radius: none;
-  box-sizing: border-box;
-  display: flex;
-  overflow: 'hidden';
-  width: 100%;
+const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;
   align-items: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -76,6 +61,8 @@ export type WorkflowSingleRecordPickerProps = {
   defaultValue: RecordId | Variable;
   onChange: (value: RecordId | Variable) => void;
   objectNameSingular: string;
+  disabled?: boolean;
+  testId?: string;
 };
 
 export const WorkflowSingleRecordPicker = ({
@@ -83,6 +70,8 @@ export const WorkflowSingleRecordPicker = ({
   defaultValue,
   objectNameSingular,
   onChange,
+  disabled,
+  testId,
 }: WorkflowSingleRecordPickerProps) => {
   const draftValue: WorkflowSingleRecordPickerValue =
     isStandaloneVariableString(defaultValue)
@@ -137,60 +126,65 @@ export const WorkflowSingleRecordPicker = ({
   };
 
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
-        <StyledFormSelectContainer>
+        <StyledFormSelectContainer hasRightElement={!disabled}>
           <WorkflowSingleRecordFieldChip
             draftValue={draftValue}
             selectedRecord={selectedRecord}
             objectNameSingular={objectNameSingular}
             onRemove={handleUnlinkVariable}
+            disabled={disabled}
           />
-          <DropdownScope dropdownScopeId={dropdownId}>
-            <Dropdown
-              dropdownId={dropdownId}
-              dropdownPlacement="left-start"
-              onClose={handleCloseRelationPickerDropdown}
-              clickableComponent={
-                <LightIconButton
-                  className="displayOnHover"
-                  Icon={IconChevronDown}
-                  accent="tertiary"
-                />
-              }
-              dropdownComponents={
-                <RecordPickerComponentInstanceContext.Provider
-                  value={{ instanceId: dropdownId }}
-                >
-                  <SingleRecordSelect
-                    EmptyIcon={IconForbid}
-                    emptyLabel={'No ' + objectNameSingular}
-                    onCancel={() => closeDropdown()}
-                    onRecordSelected={handleRecordSelected}
-                    objectNameSingular={objectNameSingular}
-                    recordPickerInstanceId={dropdownId}
-                    selectedRecordIds={
-                      draftValue?.value &&
-                      !isStandaloneVariableString(draftValue.value)
-                        ? [draftValue.value]
-                        : []
-                    }
+          {!disabled && (
+            <DropdownScope dropdownScopeId={dropdownId}>
+              <Dropdown
+                dropdownId={dropdownId}
+                dropdownPlacement="left-start"
+                onClose={handleCloseRelationPickerDropdown}
+                clickableComponent={
+                  <LightIconButton
+                    className="displayOnHover"
+                    Icon={IconChevronDown}
+                    accent="tertiary"
                   />
-                </RecordPickerComponentInstanceContext.Provider>
-              }
-              dropdownHotkeyScope={{ scope: dropdownId }}
-            />
-          </DropdownScope>
+                }
+                dropdownComponents={
+                  <RecordPickerComponentInstanceContext.Provider
+                    value={{ instanceId: dropdownId }}
+                  >
+                    <SingleRecordSelect
+                      EmptyIcon={IconForbid}
+                      emptyLabel={'No ' + objectNameSingular}
+                      onCancel={() => closeDropdown()}
+                      onRecordSelected={handleRecordSelected}
+                      objectNameSingular={objectNameSingular}
+                      recordPickerInstanceId={dropdownId}
+                      selectedRecordIds={
+                        draftValue?.value &&
+                        !isStandaloneVariableString(draftValue.value)
+                          ? [draftValue.value]
+                          : []
+                      }
+                    />
+                  </RecordPickerComponentInstanceContext.Provider>
+                }
+                dropdownHotkeyScope={{ scope: dropdownId }}
+              />
+            </DropdownScope>
+          )}
         </StyledFormSelectContainer>
-        <StyledSearchVariablesDropdownContainer>
-          <WorkflowVariablesDropdown
-            inputId={variablesDropdownId}
-            onVariableSelect={handleVariableTagInsert}
-            disabled={false}
-            objectNameSingularToSelect={objectNameSingular}
-          />
-        </StyledSearchVariablesDropdownContainer>
+
+        {!disabled && (
+          <StyledSearchVariablesDropdownContainer>
+            <WorkflowVariablesDropdown
+              inputId={variablesDropdownId}
+              onVariableSelect={handleVariableTagInsert}
+              objectNameSingularToSelect={objectNameSingular}
+            />
+          </StyledSearchVariablesDropdownContainer>
+        )}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>
   );

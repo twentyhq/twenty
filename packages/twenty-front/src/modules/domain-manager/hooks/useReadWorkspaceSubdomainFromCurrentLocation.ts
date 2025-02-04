@@ -1,7 +1,7 @@
-import { isDefined } from '~/utils/isDefined';
+import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { isDefined } from 'twenty-shared';
 
 export const useReadWorkspaceSubdomainFromCurrentLocation = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);

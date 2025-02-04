@@ -11,12 +11,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { IconsProvider } from 'twenty-ui';
-import { messages as enMessages } from '../../../locales/generated/en';
+import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 
-i18n.load({
-  en: enMessages,
-});
-i18n.activate('en');
+initialI18nActivate();
 
 export const App = () => {
   return (

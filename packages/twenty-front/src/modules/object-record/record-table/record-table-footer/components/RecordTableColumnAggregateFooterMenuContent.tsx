@@ -8,10 +8,11 @@ import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/Tabl
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
-import { isFieldMetadataDateKind } from 'twenty-shared';
-import { IconCheck, isDefined, MenuItem } from 'twenty-ui';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared';
+import { IconCheck, MenuItem } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
@@ -85,7 +86,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             onClick={() => {
               onContentChange('datesAggregateOperationsOptions');
             }}
-            text={'Dates'}
+            text={t`Date`}
             hasSubMenu
           />
         )}

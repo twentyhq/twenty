@@ -28,7 +28,6 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
-      domainName
       inviteHash
       allowImpersonation
       activationStatus
@@ -37,7 +36,8 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
       subdomain
-      hasValidEntrepriseKey
+      hasValidEnterpriseKey
+      hostname
       featureFlags {
         id
         key
@@ -61,7 +61,6 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         logo
         displayName
-        domainName
         subdomain
       }
     }

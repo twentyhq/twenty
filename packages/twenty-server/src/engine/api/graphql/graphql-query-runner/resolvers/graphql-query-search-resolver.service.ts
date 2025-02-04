@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Brackets } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -17,10 +18,8 @@ import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-bu
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverService<
@@ -33,8 +32,16 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
     const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        authContext.workspace.id,
+      );
+
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        objectMetadataMaps,
+        featureFlagsMap,
+      );
 
     if (!isDefined(executionArgs.args.searchInput)) {
       return typeORMObjectRecordsParser.createConnection({
@@ -71,34 +78,41 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
 
     const countQueryBuilder = queryBuilder.clone();
 
-    const resultsWithTsVector = (await queryBuilder
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            searchTerms === ''
-              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
-            searchTerms === '' ? {} : { searchTerms },
-          ).orWhere(
-            searchTermsOr === ''
-              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
-            searchTermsOr === '' ? {} : { searchTermsOr },
-          );
-        }),
-      )
-      .orderBy(
-        `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-        'DESC',
-      )
-      .addOrderBy(
-        `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
-        'DESC',
-      )
-      .setParameter('searchTerms', searchTerms)
-      .setParameter('searchTermsOr', searchTermsOr)
-      .take(limit)
-      .getMany()) as ObjectRecord[];
+    const resultsQueryBuilder =
+      searchTerms !== ''
+        ? queryBuilder
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(
+                  `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
+                  { searchTerms },
+                ).orWhere(
+                  `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
+                  { searchTermsOr },
+                );
+              }),
+            )
+            .orderBy(
+              `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
+              'DESC',
+            )
+            .addOrderBy(
+              `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
+              'DESC',
+            )
+            .setParameter('searchTerms', searchTerms)
+            .setParameter('searchTermsOr', searchTermsOr)
+            .take(limit)
+        : queryBuilder
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
+              }),
+            )
+            .take(limit);
+
+    const resultsWithTsVector =
+      (await resultsQueryBuilder.getMany()) as ObjectRecord[];
 
     const objectRecords = formatResult<ObjectRecord[]>(
       resultsWithTsVector,
@@ -113,10 +127,8 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
       : 0;
     const order = undefined;
 
-    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
-
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await processNestedRelationsHelper.processNestedRelations({
+      await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,

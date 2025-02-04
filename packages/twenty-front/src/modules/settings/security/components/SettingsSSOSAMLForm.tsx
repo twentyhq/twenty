@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   H2Title,
@@ -19,7 +20,6 @@ import {
   Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -62,12 +62,12 @@ export const SettingsSSOSAMLForm = () => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
       const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
+      e.target.value = '';
       if (!samlMetadataParsed.success) {
-        enqueueSnackBar('Invalid File', {
+        return enqueueSnackBar('Invalid File', {
           variant: SnackBarVariant.Error,
           duration: 2000,
         });
-        return;
       }
       setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
       setValue('certificate', samlMetadataParsed.data.certificate);

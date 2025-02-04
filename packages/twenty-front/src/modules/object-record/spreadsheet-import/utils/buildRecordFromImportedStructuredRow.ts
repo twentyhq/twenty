@@ -8,7 +8,7 @@ import {
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
@@ -33,7 +33,7 @@ export const buildRecordFromImportedStructuredRow = (
     },
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
-    LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
+    LINKS: { primaryLinkUrlLabel },
     EMAILS: { primaryEmailLabel },
     PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
@@ -118,14 +118,11 @@ export const buildRecordFromImportedStructuredRow = (
       case FieldMetadataType.LINKS: {
         if (
           isDefined(
-            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`] ||
-              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
-            primaryLinkLabel: castToString(
-              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
-            ),
+            primaryLinkLabel: '',
             primaryLinkUrl: castToString(
               importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
             ),

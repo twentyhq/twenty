@@ -1,5 +1,7 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
+import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -9,6 +11,7 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
@@ -19,7 +22,7 @@ import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.secondary};
@@ -44,9 +47,6 @@ export const CommandMenuContainer = ({
 }) => {
   const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
@@ -73,38 +73,53 @@ export const CommandMenuContainer = ({
 
   const theme = useTheme();
 
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
+
   return (
-    <ContextStoreComponentInstanceContext.Provider
+    <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: 'command-menu' }}
     >
-      <ActionMenuComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: 'command-menu' }}
       >
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: false,
-            onActionExecutedCallback: toggleCommandMenu,
-          }}
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'command-menu' }}
         >
-          <RecordActionMenuEntriesSetter />
-          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
-          <ActionMenuConfirmationModals />
-          {isCommandMenuOpened && (
-            <StyledCommandMenu
-              data-testid="command-menu"
-              ref={commandMenuRef}
-              className="command-menu"
-              animate={targetVariantForAnimation}
-              initial="closed"
-              exit="closed"
-              variants={COMMAND_MENU_ANIMATION_VARIANTS}
-              transition={{ duration: theme.animation.duration.normal }}
-            >
-              {children}
-            </StyledCommandMenu>
-          )}
-        </ActionMenuContext.Provider>
-      </ActionMenuComponentInstanceContext.Provider>
-    </ContextStoreComponentInstanceContext.Provider>
+          <ActionMenuContext.Provider
+            value={{
+              isInRightDrawer: false,
+              onActionExecutedCallback: ({ key }) => {
+                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS) {
+                  toggleCommandMenu();
+                }
+              },
+            }}
+          >
+            <RecordActionMenuEntriesSetter />
+            <RecordAgnosticActionMenuEntriesSetter />
+            {isWorkflowEnabled && (
+              <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+            )}
+            <ActionMenuConfirmationModals />
+            {isCommandMenuOpened && (
+              <StyledCommandMenu
+                data-testid="command-menu"
+                ref={commandMenuRef}
+                className="command-menu"
+                animate={targetVariantForAnimation}
+                initial="closed"
+                exit="closed"
+                variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                transition={{ duration: theme.animation.duration.normal }}
+              >
+                {children}
+              </StyledCommandMenu>
+            )}
+          </ActionMenuContext.Provider>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordFiltersComponentInstanceContext.Provider>
   );
 };

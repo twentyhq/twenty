@@ -184,3 +184,35 @@ test('Replace the trigger of an active version', async ({
     'Create Record',
   ]);
 });
+
+test("Nodes can't be deleted by pressing Backspace or Delete keys", async ({
+  workflowVisualizer,
+  page,
+}) => {
+  await workflowVisualizer.triggerNode.click();
+
+  await page.keyboard.press('Backspace');
+  await page.keyboard.press('Delete');
+
+  await expect(workflowVisualizer.triggerNode).toBeVisible();
+
+  const { createdStepId: firstStepId } =
+    await workflowVisualizer.createStep('create-record');
+  const firstStep = workflowVisualizer.getStepNode(firstStepId);
+
+  await firstStep.click();
+
+  await expect(workflowVisualizer.getDeleteNodeButton(firstStep)).toBeVisible();
+
+  await page.keyboard.press('Backspace');
+  await page.keyboard.press('Delete');
+
+  await expect(firstStep).toBeVisible();
+
+  await workflowVisualizer.addStepButton.click();
+
+  await page.keyboard.press('Backspace');
+  await page.keyboard.press('Delete');
+
+  await expect(workflowVisualizer.addStepButton).toBeVisible();
+});

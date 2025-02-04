@@ -82,8 +82,8 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       jobId: options?.id,
       priority: options?.priority,
       repeat: options?.repeat,
-      removeOnComplete: 100,
-      removeOnFail: 500,
+      removeOnComplete: true,
+      removeOnFail: 100,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
@@ -128,8 +128,8 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: 100,
-      removeOnFail: 500,
+      removeOnComplete: true,
+      removeOnFail: 100,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);

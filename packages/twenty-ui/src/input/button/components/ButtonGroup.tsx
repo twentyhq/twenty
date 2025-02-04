@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { ReactNode } from 'react';
 
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 import { ButtonPosition, ButtonProps } from './Button';
 

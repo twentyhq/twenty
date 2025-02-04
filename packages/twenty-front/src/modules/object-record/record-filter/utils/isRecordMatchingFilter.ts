@@ -36,8 +36,8 @@ import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isM
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
 const isLeafFilter = (
@@ -49,6 +49,9 @@ const isLeafFilter = (
 const isAndFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is AndObjectRecordFilter => 'and' in filter && !!filter.and;
+
+const isImplicitAndFilter = (filter: RecordGqlOperationFilter) =>
+  Object.keys(filter).length > 1;
 
 const isOrFilter = (
   filter: RecordGqlOperationFilter,
@@ -69,6 +72,16 @@ export const isRecordMatchingFilter = ({
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
+  }
+
+  if (isImplicitAndFilter(filter)) {
+    return Object.entries(filter).every(([filterKey, value]) =>
+      isRecordMatchingFilter({
+        record,
+        filter: { [filterKey]: value },
+        objectMetadataItem,
+      }),
+    );
   }
 
   if (isAndFilter(filter)) {

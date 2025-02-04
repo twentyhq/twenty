@@ -136,14 +136,14 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        enqueueSnackBar('There was an error while updating password.', {
+        enqueueSnackBar(t`There was an error while updating password.`, {
           variant: SnackBarVariant.Error,
         });
         return;
       }
 
       if (isLoggedIn) {
-        enqueueSnackBar('Password has been updated', {
+        enqueueSnackBar(t`Password has been updated`, {
           variant: SnackBarVariant.Success,
         });
         navigate(AppPath.Index);
@@ -159,7 +159,7 @@ export const PasswordReset = () => {
       enqueueSnackBar(
         err instanceof Error
           ? err.message
-          : 'An error occurred while updating password',
+          : t`An error occurred while updating password`,
         {
           variant: SnackBarVariant.Error,
         },

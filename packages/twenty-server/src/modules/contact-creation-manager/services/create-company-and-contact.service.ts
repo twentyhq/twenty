@@ -127,6 +127,9 @@ export class CreateCompanyAndContactService {
             : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
       }));
 
     return this.createContactService.createPeople(

@@ -11,7 +11,7 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   fieldMetadataId: string,

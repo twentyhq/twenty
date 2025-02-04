@@ -216,7 +216,7 @@ describe('useDiscardDraftWorkflowSingleRecordAction', () => {
     expect(result.current.shouldBeRegistered).toBe(true);
   });
 
-  it('should call deactivateWorkflowVersion on click', () => {
+  it('should call deleteOneWorkflowVersion on click', () => {
     (useWorkflowWithCurrentVersion as jest.Mock).mockImplementation(
       () => draftWorkflowMock,
     );

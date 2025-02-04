@@ -17,7 +17,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
-@ObjectType('billingEntitlement')
+@ObjectType()
 @Unique('IndexOnFeatureKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
 export class BillingEntitlement {
   @IDField(() => UUIDScalarType)

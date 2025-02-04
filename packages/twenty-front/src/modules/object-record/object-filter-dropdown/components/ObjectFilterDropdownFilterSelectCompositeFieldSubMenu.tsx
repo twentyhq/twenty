@@ -1,6 +1,7 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
+import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownFirstLevelFilterDefinitionComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFirstLevelFilterDefinitionComponentState';
@@ -21,13 +22,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useState } from 'react';
-import {
-  IconApps,
-  IconChevronLeft,
-  isDefined,
-  MenuItem,
-  useIcons,
-} from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
@@ -59,6 +55,10 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
 
   const setFilterDefinitionUsedInDropdown = useSetRecoilComponentStateV2(
     filterDefinitionUsedInDropdownComponentState,
+  );
+
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+    fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
@@ -110,6 +110,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       }
 
       setFilterDefinitionUsedInDropdown(definition);
+      setFieldMetadataItemIdUsedInDropdown(definition.fieldMetadataId);
 
       setSelectedOperandInDropdown(
         getRecordFilterOperandsForRecordFilterDefinition(definition)[0],
@@ -122,6 +123,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   };
 
   const handleSubMenuBack = () => {
+    setFieldMetadataItemIdUsedInDropdown(null);
     setFilterDefinitionUsedInDropdown(null);
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownFirstLevelFilterDefinition(null);

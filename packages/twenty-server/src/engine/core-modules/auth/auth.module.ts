@@ -17,6 +17,7 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -25,14 +26,16 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
@@ -40,10 +43,10 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -65,12 +68,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         Workspace,
         User,
         AppToken,
-        FeatureFlagEntity,
+        FeatureFlag,
         WorkspaceSSOIdentityProvider,
         KeyValuePair,
+        UserWorkspace,
       ],
       'core',
     ),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,
@@ -81,6 +86,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     FeatureFlagModule,
     WorkspaceInvitationModule,
     EmailVerificationModule,
+    GuardRedirectModule,
   ],
   controllers: [
     GoogleAuthController,

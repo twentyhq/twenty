@@ -10,7 +10,10 @@ import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-tabl
 import { STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/standardAggregateOperationOptions';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 
+import { useLingui } from '@lingui/react/macro';
+
 export const RecordTableColumnAggregateFooterDropdownContent = () => {
+  const { t } = useLingui();
   const { currentContentId, fieldMetadataType } = useDropdown({
     context: RecordTableColumnAggregateFooterDropdownContext,
   });
@@ -32,7 +35,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="More options"
+          title={t`More options`}
         />
       );
     }
@@ -46,7 +49,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="Count"
+          title={t`Count`}
         />
       );
     }
@@ -60,7 +63,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="Percent"
+          title={t`Percent`}
         />
       );
     }
@@ -74,7 +77,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       return (
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
-          title="Dates"
+          title={t`Date`}
         />
       );
     }

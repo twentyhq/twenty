@@ -26,7 +26,7 @@ export const mockedEmptyPersonData = {
   __typename: 'Person',
 };
 
-export const peopleQueryResult: { people: RecordGqlConnection } = {
+export const peopleQueryResult = {
   people: {
     __typename: 'PersonConnection',
     totalCount: 16,
@@ -58,8 +58,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           email: 'asd.com',
           name: {
             __typename: 'FullName',
-            firstName: 'Test ',
-            lastName: 'tTest',
+            firstName: 'Test',
+            lastName: 'Test',
           },
           noteTargets: {
             __typename: 'NoteTargetConnection',
@@ -1719,4 +1719,4 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
       },
     ],
   },
-};
+} satisfies { people: RecordGqlConnection };

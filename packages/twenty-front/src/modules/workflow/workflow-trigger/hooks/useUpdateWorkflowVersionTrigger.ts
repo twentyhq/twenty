@@ -1,13 +1,13 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
   WorkflowTrigger,
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { isDefined } from 'twenty-shared';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,

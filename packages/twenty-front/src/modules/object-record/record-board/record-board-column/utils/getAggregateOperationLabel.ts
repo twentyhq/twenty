@@ -1,35 +1,36 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { t } from '@lingui/core/macro';
 
 export const getAggregateOperationLabel = (
   operation: ExtendedAggregateOperations,
 ) => {
   switch (operation) {
     case AGGREGATE_OPERATIONS.min:
-      return 'Min';
+      return t`Min`;
     case AGGREGATE_OPERATIONS.max:
-      return 'Max';
+      return t`Max`;
     case AGGREGATE_OPERATIONS.avg:
-      return 'Average';
+      return t`Average`;
     case AGGREGATE_OPERATIONS.sum:
-      return 'Sum';
+      return t`Sum`;
     case AGGREGATE_OPERATIONS.count:
-      return 'Count all';
+      return t`Count all`;
     case AGGREGATE_OPERATIONS.countEmpty:
-      return 'Count empty';
+      return t`Count empty`;
     case AGGREGATE_OPERATIONS.countNotEmpty:
-      return 'Count not empty';
+      return t`Count not empty`;
     case AGGREGATE_OPERATIONS.countUniqueValues:
-      return 'Count unique values';
+      return t`Count unique values`;
     case AGGREGATE_OPERATIONS.percentageEmpty:
-      return 'Percent empty';
+      return t`Percent empty`;
     case AGGREGATE_OPERATIONS.percentageNotEmpty:
-      return 'Percent not empty';
+      return t`Percent not empty`;
     case DATE_AGGREGATE_OPERATIONS.earliest:
-      return 'Earliest date';
+      return t`Earliest date`;
     case DATE_AGGREGATE_OPERATIONS.latest:
-      return 'Latest date';
+      return t`Latest date`;
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);
   }

@@ -7,8 +7,8 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from '~/utils/isDefined';
 
 export const SentryInitEffect = () => {
   const sentryConfig = useRecoilValue(sentryConfigState);

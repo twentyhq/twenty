@@ -5,6 +5,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -12,7 +13,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -37,7 +38,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspaceSubdomain?: string,
+    subdomain: string,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -50,18 +51,17 @@ export class EmailVerificationService {
       this.domainManagerService.buildEmailVerificationURL({
         emailVerificationToken,
         email,
-        workspaceSubdomain,
+        subdomain,
       });
 
     const emailData = {
       link: verificationLink.toString(),
+      locale: 'en' as keyof typeof APP_LOCALES,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
+    const html = render(emailTemplate);
 
     const text = render(emailTemplate, {
       plainText: true,
@@ -80,10 +80,7 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async resendEmailVerificationToken(
-    email: string,
-    workspaceSubdomain?: string,
-  ) {
+  async resendEmailVerificationToken(email: string, subdomain: string) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
         'Email verification token cannot be sent because email verification is not required',
@@ -124,7 +121,7 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspaceSubdomain);
+    await this.sendVerificationEmail(user.id, email, subdomain);
 
     return { success: true };
   }

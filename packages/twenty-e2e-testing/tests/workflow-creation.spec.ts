@@ -26,9 +26,6 @@ test('Create workflow', async ({ page }) => {
     await createWorkflowButton.click(),
   ]);
 
-  const nameInputClosedState = page.getByText('Name').first();
-  await nameInputClosedState.click();
-
   const nameInput = page.getByRole('textbox');
   await nameInput.fill(NEW_WORKFLOW_NAME);
   await nameInput.press('Enter');
@@ -37,23 +34,11 @@ test('Create workflow', async ({ page }) => {
   const newWorkflowId = body.data.createWorkflow.id;
 
   try {
-    const newWorkflowRowEntryName = page
-      .getByTestId(`row-id-${newWorkflowId}`)
-      .locator('div')
-      .filter({ hasText: NEW_WORKFLOW_NAME })
-      .nth(2);
-
-    await Promise.all([
-      page.waitForURL(
-        (url) => url.pathname === `/object/workflow/${newWorkflowId}`,
-      ),
-
-      newWorkflowRowEntryName.click(),
-    ]);
-
     const workflowName = page.getByRole('button', { name: NEW_WORKFLOW_NAME });
 
     await expect(workflowName).toBeVisible();
+
+    await expect(page).toHaveURL(`/object/workflow/${newWorkflowId}`);
   } finally {
     await deleteWorkflow({
       page,

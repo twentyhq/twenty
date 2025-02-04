@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 
+import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
 import { GraphqlQueryCreateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-one-resolver.service';
 import { GraphqlQueryDeleteManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-delete-many-resolver.service';
@@ -42,7 +45,13 @@ const graphqlQueryResolvers = [
     WorkspaceQueryRunnerModule,
     FeatureFlagModule,
   ],
-  providers: [ApiEventEmitterService, ...graphqlQueryResolvers],
+  providers: [
+    ApiEventEmitterService,
+    ProcessNestedRelationsHelper,
+    ProcessNestedRelationsV2Helper,
+    ProcessAggregateHelper,
+    ...graphqlQueryResolvers,
+  ],
   exports: [...graphqlQueryResolvers],
 })
 export class GraphqlQueryRunnerModule {}

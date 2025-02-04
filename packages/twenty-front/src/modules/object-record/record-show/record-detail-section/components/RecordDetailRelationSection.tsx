@@ -32,6 +32,7 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 type RecordDetailRelationSectionProps = {
@@ -45,6 +46,7 @@ const StyledAddDropdown = styled(Dropdown)`
 export const RecordDetailRelationSection = ({
   loading,
 }: RecordDetailRelationSectionProps) => {
+  const { t } = useLingui();
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -168,6 +170,8 @@ export const RecordDetailRelationSection = ({
 
   if (loading) return null;
 
+  const relationRecordsCount = relationRecords.length;
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -177,8 +181,8 @@ export const RecordDetailRelationSection = ({
             ? {
                 to: filterLinkHref,
                 label:
-                  relationRecords.length > 0
-                    ? `All (${relationRecords.length})`
+                  relationRecordsCount > 0
+                    ? t`All (${relationRecordsCount})`
                     : '',
               }
             : undefined

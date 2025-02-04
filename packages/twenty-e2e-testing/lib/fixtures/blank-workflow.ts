@@ -20,6 +20,9 @@ export class WorkflowVisualizerPage {
   readonly workflowNameButton: Locator;
   readonly triggerNode: Locator;
   readonly background: Locator;
+  readonly useAsDraftButton: Locator;
+  readonly overrideDraftButton: Locator;
+  readonly discardDraftButton: Locator;
 
   #actionNames: Record<WorkflowActionType, string> = {
     'create-record': 'Create Record',
@@ -70,6 +73,13 @@ export class WorkflowVisualizerPage {
     });
     this.triggerNode = this.#page.getByTestId('rf__node-trigger');
     this.background = page.locator('.react-flow__pane');
+    this.useAsDraftButton = page.getByRole('button', { name: 'Use as draft' });
+    this.overrideDraftButton = page.getByRole('button', {
+      name: 'Override Draft',
+    });
+    this.discardDraftButton = page.getByRole('button', {
+      name: 'Discard Draft',
+    });
   }
 
   async createOneWorkflow() {

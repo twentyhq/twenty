@@ -2,8 +2,10 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class MessageImportDriverException extends CustomException {
   code: MessageImportDriverExceptionCode;
+
   constructor(message: string, code: MessageImportDriverExceptionCode) {
     super(message, code);
+    this.code = code;
   }
 }
 

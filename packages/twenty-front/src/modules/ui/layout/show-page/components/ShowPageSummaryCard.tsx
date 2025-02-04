@@ -1,16 +1,17 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
+import { isDefined } from 'twenty-shared';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { isDefined } from '~/utils/isDefined';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -153,7 +154,7 @@ export const ShowPageSummaryCard = ({
         <StyledTitle isMobile={isMobile}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
           <StyledDate isMobile={isMobile} id={dateElementId}>
-            Added {beautifiedCreatedAt}
+            <Trans>Added {beautifiedCreatedAt}</Trans>
           </StyledDate>
         )}
         <AppTooltip

@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
 import { millisecondsToSeconds } from 'date-fns';
 import {
   animate,
   AnimationPlaybackControls,
   ValueAnimationTransition,
 } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
 
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 export const useProgressAnimation = ({
   autoPlay = true,

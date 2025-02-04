@@ -9,14 +9,16 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
@@ -60,33 +62,48 @@ export const useCreateOneRecord = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+  const createOneRecord = async (recordInput: Partial<CreatedObjectRecord>) => {
     setLoading(true);
 
-    const idForCreation = input.id ?? v4();
+    const idForCreation = recordInput.id ?? v4();
 
     const sanitizedInput = {
       ...sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: input,
+        recordInput,
       }),
       id: idForCreation,
     };
 
+    const optimisticRecordInput = computeOptimisticRecordFromInput({
+      cache: apolloClient.cache,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordInput: { ...recordInput, id: idForCreation },
+    });
     const recordCreatedInCache = createOneRecordInCache({
-      ...input,
+      ...optimisticRecordInput,
       id: idForCreation,
       __typename: getObjectTypename(objectMetadataItem.nameSingular),
     });
 
     if (isDefined(recordCreatedInCache)) {
-      triggerCreateRecordsOptimisticEffect({
-        cache: apolloClient.cache,
+      const optimisticRecordNode = getRecordNodeFromRecord({
         objectMetadataItem,
-        recordsToCreate: [recordCreatedInCache],
         objectMetadataItems,
-        shouldMatchRootQueryFilter,
+        record: recordCreatedInCache,
+        computeReferences: false,
       });
+
+      if (optimisticRecordNode !== null) {
+        triggerCreateRecordsOptimisticEffect({
+          cache: apolloClient.cache,
+          objectMetadataItem,
+          recordsToCreate: [optimisticRecordNode],
+          objectMetadataItems,
+          shouldMatchRootQueryFilter,
+        });
+      }
     }
 
     const mutationResponseField =
@@ -100,16 +117,16 @@ export const useCreateOneRecord = <
         },
         update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
-
-          if (!record || skipPostOptmisticEffect) return;
-
-          triggerCreateRecordsOptimisticEffect({
-            cache,
-            objectMetadataItem,
-            recordsToCreate: [record],
-            objectMetadataItems,
-            shouldMatchRootQueryFilter,
-          });
+          if (skipPostOptmisticEffect === false && isDefined(record)) {
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToCreate: [record],
+              objectMetadataItems,
+              shouldMatchRootQueryFilter,
+              checkForRecordInCache: true,
+            });
+          }
 
           setLoading(false);
         },

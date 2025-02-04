@@ -11,7 +11,7 @@ import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRe
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
-import { capitalize } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
@@ -49,11 +49,11 @@ export const useDeleteOneRecord = ({
 
       const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
 
-      const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
+      const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
         objectMetadataItem,
         objectMetadataItems,
-        computeReferences: true,
+        computeReferences: false,
       });
 
       const computedOptimisticRecord = {
@@ -62,15 +62,14 @@ export const useDeleteOneRecord = ({
         ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
       };
 
-      const optimisticRecordWithConnection =
-        getRecordNodeFromRecord<ObjectRecord>({
-          record: computedOptimisticRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          computeReferences: true,
-        });
+      const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
+        record: computedOptimisticRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        computeReferences: false,
+      });
 
-      if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
+      if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
         return null;
       }
 
@@ -84,8 +83,8 @@ export const useDeleteOneRecord = ({
       triggerUpdateRecordOptimisticEffect({
         cache: apolloClient.cache,
         objectMetadataItem,
-        currentRecord: cachedRecordWithConnection,
-        updatedRecord: optimisticRecordWithConnection,
+        currentRecord: cachedRecordNode,
+        updatedRecord: optimisticRecordNode,
         objectMetadataItems,
       });
 
@@ -98,12 +97,13 @@ export const useDeleteOneRecord = ({
           update: (cache, { data }) => {
             const record = data?.[mutationResponseField];
 
-            if (!record || !cachedRecord) return;
+            if (!isDefined(record) || !isDefined(computedOptimisticRecord))
+              return;
 
             triggerUpdateRecordOptimisticEffect({
               cache,
               objectMetadataItem,
-              currentRecord: cachedRecord,
+              currentRecord: computedOptimisticRecord,
               updatedRecord: record,
               objectMetadataItems,
             });
@@ -123,8 +123,8 @@ export const useDeleteOneRecord = ({
           triggerUpdateRecordOptimisticEffect({
             cache: apolloClient.cache,
             objectMetadataItem,
-            currentRecord: optimisticRecordWithConnection,
-            updatedRecord: cachedRecordWithConnection,
+            currentRecord: optimisticRecordNode,
+            updatedRecord: cachedRecordNode,
             objectMetadataItems,
           });
 

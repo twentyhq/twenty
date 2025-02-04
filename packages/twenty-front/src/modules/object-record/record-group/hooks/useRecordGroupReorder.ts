@@ -10,9 +10,9 @@ import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 type UseRecordGroupHandlersParams = {
   viewBarId: string;

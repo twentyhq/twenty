@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { v4 as uuidv4 } from 'uuid';
-import { isDefined } from '~/utils/isDefined';
 
 import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import {

@@ -10,6 +10,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
+import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
 import { MenuItem } from 'twenty-ui';
 
@@ -44,7 +45,8 @@ export const RecordIndexActionMenuDropdown = () => {
 
   //TODO: remove this
   const width = actionMenuEntries.some(
-    (actionMenuEntry) => actionMenuEntry.label === 'Remove from favorites',
+    (actionMenuEntry) =>
+      i18n._(actionMenuEntry.label) === 'Remove from favorites',
   )
     ? 200
     : undefined;
@@ -75,7 +77,7 @@ export const RecordIndexActionMenuDropdown = () => {
                   closeDropdown();
                 }}
                 accent={item.accent}
-                text={item.label}
+                text={i18n._(item.label)}
               />
             ))}
           </DropdownMenuItemsContainer>

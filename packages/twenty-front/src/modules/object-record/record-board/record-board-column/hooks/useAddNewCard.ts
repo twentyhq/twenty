@@ -7,7 +7,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

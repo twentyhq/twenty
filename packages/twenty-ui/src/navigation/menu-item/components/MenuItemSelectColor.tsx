@@ -1,11 +1,12 @@
 import { useTheme } from '@emotion/react';
 
 import {
+  StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { ColorSample, ColorSampleVariant, IconCheck } from '@ui/display';
+import { ColorSample, ColorSampleVariant } from '@ui/display';
 import { ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
@@ -55,7 +56,7 @@ export const MenuItemSelectColor = ({
         <ColorSample colorName={color} variant={variant} />
         <StyledMenuItemLabel>{colorLabels[color]}</StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.md} />}
+      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

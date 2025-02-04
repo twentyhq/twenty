@@ -89,6 +89,7 @@ export const generateEmptyFieldValue = (
         source: 'MANUAL',
         workspaceMemberId: null,
         name: '',
+        context: {},
       };
     }
     case FieldMetadataType.PHONES: {

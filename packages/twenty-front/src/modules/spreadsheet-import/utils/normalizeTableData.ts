@@ -8,7 +8,7 @@ import {
   ImportedStructuredRow,
 } from '@/spreadsheet-import/types';
 
-import { isDefined } from '@ui/utilities/isDefined';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 

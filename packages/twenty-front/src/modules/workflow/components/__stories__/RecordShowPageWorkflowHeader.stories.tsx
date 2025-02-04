@@ -4,6 +4,7 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { expect, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -12,6 +13,7 @@ const meta: Meta<typeof RecordShowPageWorkflowHeader> = {
   title: 'Modules/Workflow/RecordShowPageWorkflowHeader',
   component: RecordShowPageWorkflowHeader,
   decorators: [
+    I18nFrontDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

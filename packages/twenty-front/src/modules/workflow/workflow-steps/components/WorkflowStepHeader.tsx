@@ -49,12 +49,14 @@ export const WorkflowStepHeader = ({
   iconColor,
   initialTitle,
   headerType,
+  disabled,
 }: {
   onTitleChange: (newTitle: string) => void;
   Icon: IconComponent;
   iconColor: string;
   initialTitle: string;
   headerType: string;
+  disabled?: boolean;
 }) => {
   const theme = useTheme();
   const [title, setTitle] = useState(initialTitle);
@@ -67,17 +69,16 @@ export const WorkflowStepHeader = ({
   return (
     <StyledHeader>
       <StyledHeaderIconContainer>
-        {
-          <Icon
-            color={iconColor}
-            stroke={theme.icon.stroke.sm}
-            size={theme.icon.size.lg}
-          />
-        }
+        <Icon
+          color={iconColor}
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.lg}
+        />
       </StyledHeaderIconContainer>
       <StyledHeaderInfo>
         <StyledHeaderTitle>
           <TextInput
+            disabled={disabled}
             value={title}
             copyButton={false}
             hotkeyScope="workflow-step-title"

@@ -12,4 +12,6 @@ export type RecordFilter = {
   operand: ViewFilterOperand;
   positionInViewFilterGroup?: number | null;
   definition: RecordFilterDefinition;
+  label?: string;
+  subFieldName?: string;
 };

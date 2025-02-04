@@ -1,4 +1,4 @@
-import { CommandMenuPages } from '@/command-menu/components/CommandMenuPages';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { createState } from '@ui/utilities/state/utils/createState';
 
 export const commandMenuPageState = createState<CommandMenuPages>({

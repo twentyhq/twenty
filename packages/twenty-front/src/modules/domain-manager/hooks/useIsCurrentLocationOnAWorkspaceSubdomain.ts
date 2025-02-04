@@ -1,8 +1,8 @@
-import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useRecoilValue } from 'recoil';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 
 export const useIsCurrentLocationOnAWorkspaceSubdomain = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();

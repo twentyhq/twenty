@@ -11,6 +11,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewType } from '@/views/types/ViewType';
+import { Trans } from '@lingui/react/macro';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -36,7 +37,7 @@ export const ObjectOptionsDropdown = ({
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
         <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
-          Options
+          <Trans>Options</Trans>
         </StyledHeaderDropdownButton>
       }
       onClose={handleResetContent}

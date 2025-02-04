@@ -12,6 +12,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -25,6 +26,7 @@ describe('AccessTokenService', () => {
   let userRepository: Repository<User>;
   let workspaceRepository: Repository<Workspace>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
+  let userWorkspaceRepository: Repository<UserWorkspace>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -64,6 +66,10 @@ describe('AccessTokenService', () => {
           useClass: Repository,
         },
         {
+          provide: getRepositoryToken(UserWorkspace, 'core'),
+          useClass: Repository,
+        },
+        {
           provide: EmailService,
           useValue: {},
         },
@@ -92,6 +98,9 @@ describe('AccessTokenService', () => {
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
+    userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
+      getRepositoryToken(UserWorkspace, 'core'),
+    );
   });
 
   it('should be defined', () => {
@@ -109,6 +118,7 @@ describe('AccessTokenService', () => {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       };
+      const mockUserWorkspace = { id: 'userWorkspaceId' };
       const mockWorkspaceMember = { id: 'workspace-member-id' };
       const mockToken = 'mock-token';
 
@@ -117,6 +127,9 @@ describe('AccessTokenService', () => {
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as Workspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'findOne')
+        .mockResolvedValue(mockUserWorkspace as UserWorkspace);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({

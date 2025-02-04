@@ -9,9 +9,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 
 import { AppPath } from '@/types/AppPath';
+import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isDefined } from '~/utils/isDefined';
 
 export const useWorkspaceFromInviteHash = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -24,6 +24,7 @@ export const useWorkspaceFromInviteHash = () => {
   );
   const { data: workspaceFromInviteHash, loading } =
     useGetWorkspaceFromInviteHashQuery({
+      skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {
         enqueueSnackBar(error.message, {

@@ -13,7 +13,6 @@ import {
   Route,
 } from 'react-router-dom';
 import { Authorize } from '~/pages/auth/Authorize';
-import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -28,7 +27,7 @@ import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
-  isServerlessFunctionSettingsEnabled?: boolean,
+  isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
@@ -43,7 +42,7 @@ export const useCreateAppRouter = (
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
-          <Route path={AppPath.Invite} element={<Invite />} />
+          <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
@@ -62,9 +61,7 @@ export const useCreateAppRouter = (
             element={
               <SettingsRoutes
                 isBillingEnabled={isBillingEnabled}
-                isServerlessFunctionSettingsEnabled={
-                  isServerlessFunctionSettingsEnabled
-                }
+                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }

@@ -6,6 +6,9 @@ import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkfl
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
+
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconPlayerPlay,
@@ -13,7 +16,6 @@ import {
   IconPower,
   IconSettingsAutomation,
   IconTrash,
-  isDefined,
 } from 'twenty-ui';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
@@ -22,6 +24,7 @@ export const RecordShowPageWorkflowHeader = ({
 }: {
   workflowId: string;
 }) => {
+  const { t } = useLingui();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const isWaitingForWorkflowWithCurrentVersion =
@@ -44,7 +47,7 @@ export const RecordShowPageWorkflowHeader = ({
   return (
     <>
       <Button
-        title="Test"
+        title={t`Test`}
         variant="secondary"
         Icon={IconPlayerPlay}
         disabled={isWaitingForWorkflowWithCurrentVersion}
@@ -52,10 +55,9 @@ export const RecordShowPageWorkflowHeader = ({
           assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
           if (!canWorkflowBeTested) {
-            enqueueSnackBar('Workflow cannot be tested', {
+            enqueueSnackBar(t`Workflow cannot be tested`, {
               variant: SnackBarVariant.Error,
-              detailedMessage:
-                'Trigger type should be Manual - when no record(s) are selected',
+              detailedMessage: t`Trigger type should be Manual - when no record(s) are selected`,
               icon: (
                 <IconSettingsAutomation
                   size={16}
@@ -68,7 +70,6 @@ export const RecordShowPageWorkflowHeader = ({
 
           await runWorkflowVersion({
             workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-            workflowName: workflowWithCurrentVersion.name,
           });
         }}
       />
@@ -76,7 +77,7 @@ export const RecordShowPageWorkflowHeader = ({
       {workflowWithCurrentVersion?.currentVersion?.status === 'DRAFT' &&
       workflowWithCurrentVersion.versions?.length > 1 ? (
         <Button
-          title="Discard Draft"
+          title={t`Discard Draft`}
           variant="secondary"
           Icon={IconTrash}
           disabled={isWaitingForWorkflowWithCurrentVersion}
@@ -95,7 +96,7 @@ export const RecordShowPageWorkflowHeader = ({
       {workflowWithCurrentVersion?.currentVersion?.status === 'DRAFT' ||
       workflowWithCurrentVersion?.currentVersion?.status === 'DEACTIVATED' ? (
         <Button
-          title="Activate"
+          title={t`Activate`}
           variant="secondary"
           Icon={IconPower}
           disabled={isWaitingForWorkflowWithCurrentVersion}
@@ -112,7 +113,7 @@ export const RecordShowPageWorkflowHeader = ({
         />
       ) : workflowWithCurrentVersion?.currentVersion?.status === 'ACTIVE' ? (
         <Button
-          title="Deactivate"
+          title={t`Deactivate`}
           variant="secondary"
           Icon={IconPlayerStop}
           disabled={isWaitingForWorkflowWithCurrentVersion}
@@ -121,9 +122,10 @@ export const RecordShowPageWorkflowHeader = ({
               workflowWithCurrentVersion,
             );
 
-            return deactivateWorkflowVersion(
-              workflowWithCurrentVersion.currentVersion.id,
-            );
+            return deactivateWorkflowVersion({
+              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+              workflowId: workflowWithCurrentVersion.id,
+            });
           }}
         />
       ) : null}

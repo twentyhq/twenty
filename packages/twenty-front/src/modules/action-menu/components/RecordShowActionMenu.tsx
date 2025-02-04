@@ -1,5 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
+import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordShowActionMenuButtons } from '@/action-menu/components/RecordShowActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -29,12 +30,12 @@ export const RecordShowActionMenu = ({
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
   );
 
   // TODO: refactor RecordShowPageBaseHeader to use the context store
@@ -63,7 +64,10 @@ export const RecordShowActionMenu = ({
           )}
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
-          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+          <RecordAgnosticActionMenuEntriesSetter />
+          {isWorkflowEnabled && (
+            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
+          )}
         </ActionMenuContext.Provider>
       )}
     </>

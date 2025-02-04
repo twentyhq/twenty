@@ -32,30 +32,20 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: environmentService.get('AUTH_MICROSOFT_CALLBACK_URL'),
-      tenant: environmentService.get('AUTH_MICROSOFT_TENANT_ID'),
+      tenant: 'common',
       scope: ['user.read'],
       passReqToCallback: true,
     });
   }
 
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: any) {
     options = {
       ...options,
       state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
+        workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        ...(req.params.billingCheckoutSessionState
-          ? {
-              billingCheckoutSessionState:
-                req.params.billingCheckoutSessionState,
-            }
-          : {}),
-        ...(req.params.workspacePersonalInviteToken
-          ? {
-              workspacePersonalInviteToken:
-                req.params.workspacePersonalInviteToken,
-            }
-          : {}),
+        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
 

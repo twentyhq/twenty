@@ -86,6 +86,7 @@ const companyMocks = [
               source
               workspaceMemberId
               name
+              context
             }
             deletedAt
             domainName {
@@ -162,6 +163,7 @@ const companyMocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   id
@@ -185,6 +187,7 @@ const companyMocks = [
                     source
                     workspaceMemberId
                     name
+                    context
                   }
                   deletedAt
                   emails {

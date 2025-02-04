@@ -13,6 +13,7 @@ const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
+  BUILDING = 'BUILDING',
   READY = 'READY',
 }
 

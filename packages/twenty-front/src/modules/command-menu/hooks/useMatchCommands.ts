@@ -10,9 +10,10 @@ export const useMatchCommands = ({
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
 
   const checkInShortcuts = (cmd: Command, search: string) => {
-    return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
+    const concatenatedString = cmd.hotKeys?.join('') ?? '';
+    return concatenatedString
       .toLowerCase()
-      .includes(search.toLowerCase());
+      .includes(search.toLowerCase().trim());
   };
 
   const checkInLabels = (cmd: Command, search: string) => {

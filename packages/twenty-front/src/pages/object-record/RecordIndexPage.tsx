@@ -9,6 +9,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
@@ -21,8 +22,7 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared';
-import { isDefined } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -81,28 +81,32 @@ export const RecordIndexPage = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{
-              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-            }}
+          <RecordFiltersComponentInstanceContext.Provider
+            value={{ instanceId: recordIndexId }}
           >
-            <ActionMenuComponentInstanceContext.Provider
+            <ContextStoreComponentInstanceContext.Provider
               value={{
                 instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
               }}
             >
-              <PageTitle title={`${capitalize(objectNamePlural)}`} />
-              <RecordIndexPageHeader />
-              <PageBody>
-                <StyledIndexContainer>
-                  <RecordIndexContainerContextStoreObjectMetadataEffect />
-                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                  <MainContextStoreComponentInstanceIdSetterEffect />
-                  <RecordIndexContainer />
-                </StyledIndexContainer>
-              </PageBody>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
+              <ActionMenuComponentInstanceContext.Provider
+                value={{
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                }}
+              >
+                <PageTitle title={`${capitalize(objectNamePlural)}`} />
+                <RecordIndexPageHeader />
+                <PageBody>
+                  <StyledIndexContainer>
+                    <RecordIndexContainerContextStoreObjectMetadataEffect />
+                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                    <MainContextStoreComponentInstanceIdSetterEffect />
+                    <RecordIndexContainer />
+                  </StyledIndexContainer>
+                </PageBody>
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>
     </PageContainer>

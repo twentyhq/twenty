@@ -21,7 +21,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      hasValidEntrepriseKey: false,
+      hasValidEnterpriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
       isGoogleAuthEnabled: true,

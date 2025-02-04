@@ -1,25 +1,28 @@
 import { WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { DatabaseTriggerName } from '@/workflow/workflow-trigger/constants/DatabaseTriggerName';
-import { IconComponent, IconPlus, IconRefreshDot, IconTrash } from 'twenty-ui';
+import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 
 export const DATABASE_TRIGGER_TYPES: Array<{
-  name: DatabaseTriggerName;
+  defaultLabel: DatabaseTriggerDefaultLabel;
   type: WorkflowTriggerType;
-  icon: IconComponent;
+  icon: string;
+  event: string;
 }> = [
   {
-    name: DatabaseTriggerName.RECORD_IS_CREATED,
+    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
     type: 'DATABASE_EVENT',
-    icon: IconPlus,
+    icon: 'IconPlus',
+    event: 'created',
   },
   {
-    name: DatabaseTriggerName.RECORD_IS_UPDATED,
+    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
     type: 'DATABASE_EVENT',
-    icon: IconRefreshDot,
+    icon: 'IconRefreshDot',
+    event: 'updated',
   },
   {
-    name: DatabaseTriggerName.RECORD_IS_DELETED,
+    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
     type: 'DATABASE_EVENT',
-    icon: IconTrash,
+    icon: 'IconTrash',
+    event: 'deleted',
   },
 ];

@@ -1,3 +1,4 @@
+export * from './animation/components/AnimatedCircleLoading';
 export * from './animation/components/AnimatedContainer';
 export * from './animation/components/AnimatedEaseIn';
 export * from './animation/components/AnimatedEaseInOut';
@@ -9,7 +10,6 @@ export * from './device/getOsControlSymbol';
 export * from './device/getOsShortcutSeparator';
 export * from './device/getUserDevice';
 export * from './dimensions/components/ComputeNodeDimensions';
-export * from './isDefined';
 export * from './responsive/hooks/useIsMobile';
 export * from './screen-size/hooks/useScreenSize';
 export * from './state/utils/createState';

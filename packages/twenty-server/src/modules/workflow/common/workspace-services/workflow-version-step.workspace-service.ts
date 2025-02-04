@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -26,7 +29,6 @@ import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { isDefined } from 'src/utils/is-defined';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -51,6 +53,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   private async getStepDefaultDefinition({
@@ -459,6 +462,11 @@ export class WorkflowVersionStepWorkspaceService {
         name: `v${workflowVersionsCount + 1}`,
         status: WorkflowVersionStatus.DRAFT,
       });
+
+      await this.emitWorkflowVersionCreationEvent({
+        workflowVersion: draftWorkflowVersion,
+        workspaceId,
+      });
     }
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);
@@ -505,5 +513,42 @@ export class WorkflowVersionStepWorkspaceService {
         break;
       }
     }
+  }
+
+  private async emitWorkflowVersionCreationEvent({
+    workflowVersion,
+    workspaceId,
+  }: {
+    workflowVersion: WorkflowVersionWorkspaceEntity;
+    workspaceId: string;
+  }) {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: 'workflowVersion',
+        workspaceId,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new WorkflowVersionStepException(
+        'Object metadata not found',
+        WorkflowVersionStepExceptionCode.FAILURE,
+      );
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workflowVersion',
+      action: DatabaseEventAction.CREATED,
+      events: [
+        {
+          recordId: workflowVersion.id,
+          objectMetadata,
+          properties: {
+            after: workflowVersion,
+          },
+        },
+      ],
+      workspaceId,
+    });
   }
 }

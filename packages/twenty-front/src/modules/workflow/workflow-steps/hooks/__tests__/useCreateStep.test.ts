@@ -5,7 +5,7 @@ import { useCreateStep } from '../useCreateStep';
 const mockOpenRightDrawer = jest.fn();
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
-  data: { createWorkflowVersionStep: { id: '1' } },
+  data: { createWorkflowVersionStep: { id: '1', type: 'CODE' } },
 });
 
 jest.mock('recoil', () => ({

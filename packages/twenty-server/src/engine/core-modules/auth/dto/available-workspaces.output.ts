@@ -38,6 +38,9 @@ export class AvailableWorkspaceOutput {
   subdomain: string;
 
   @Field(() => String, { nullable: true })
+  hostname?: string;
+
+  @Field(() => String, { nullable: true })
   logo?: string;
 
   @Field(() => [SSOConnection])

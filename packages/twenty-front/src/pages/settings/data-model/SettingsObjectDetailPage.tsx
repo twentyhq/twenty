@@ -16,7 +16,10 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   H3Title,
@@ -27,7 +30,6 @@ import {
   IconSettings,
   MAIN_COLORS,
   UndecoratedLink,
-  isDefined,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -91,19 +93,19 @@ export const SettingsObjectDetailPage = () => {
   const tabs = [
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
-      title: 'Fields',
+      title: t`Fields`,
       Icon: IconListDetails,
       hide: false,
     },
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
-      title: 'Settings',
+      title: t`Settings`,
       Icon: IconSettings,
       hide: false,
     },
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
-      title: 'Indexes',
+      title: t`Indexes`,
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
       pill: (

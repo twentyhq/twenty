@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -21,7 +22,7 @@ import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-p
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -106,6 +107,7 @@ export class ResetPasswordService {
   async sendEmailPasswordResetLink(
     resetToken: PasswordResetToken,
     email: string,
+    locale: keyof typeof APP_LOCALES,
   ): Promise<EmailPasswordResetLink> {
     const user = await this.userRepository.findOneBy({
       email,
@@ -133,16 +135,13 @@ export class ResetPasswordService {
           long: true,
         },
       ),
+      locale,
     };
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
 
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       from: `${this.environmentService.get(

@@ -14,7 +14,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -73,7 +73,9 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
       resetTableRowSelection();
 
-      await deleteManyRecords(recordIdsToDelete);
+      await deleteManyRecords({
+        recordIdsToDelete,
+      });
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
     const isRemoteObject = objectMetadataItem.isRemote;
