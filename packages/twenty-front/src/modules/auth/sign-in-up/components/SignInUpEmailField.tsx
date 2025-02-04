@@ -36,7 +36,7 @@ export const SignInUpEmailField = ({
         name="email"
         control={form.control}
         render={({
-          field: { onBlur, value, onChange },
+          field: { onChange, onBlur, value },
           fieldState: { error },
         }) => (
           <StyledInputContainer>
