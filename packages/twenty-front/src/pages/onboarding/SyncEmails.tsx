@@ -89,6 +89,11 @@ export const SyncEmails = () => {
     isMicrosoftCalendarEnabledState,
   );
 
+  const isGoogleProviderEnabled =
+    isGoogleMessagingEnabled || isGoogleCalendarEnabled;
+  const isMicrosoftProviderEnabled =
+    isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
+
   useScopedHotkeys(
     [Key.Enter],
     async () => {
@@ -115,7 +120,7 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <StyledProviderContainer>
-        {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
+        {isGoogleProviderEnabled && (
           <MainButton
             title="Sync with Google"
             onClick={() => handleButtonClick('google')}
@@ -123,12 +128,19 @@ export const SyncEmails = () => {
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
         )}
-        {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
+        {isMicrosoftProviderEnabled && (
           <MainButton
             title="Sync with Outlook"
             onClick={() => handleButtonClick('microsoft')}
             width={200}
             Icon={() => <IconMicrosoft size={theme.icon.size.sm} />}
+          />
+        )}
+        {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && (
+          <MainButton
+            title="Continue"
+            onClick={continueWithoutSync}
+            width={144}
           />
         )}
       </StyledProviderContainer>
