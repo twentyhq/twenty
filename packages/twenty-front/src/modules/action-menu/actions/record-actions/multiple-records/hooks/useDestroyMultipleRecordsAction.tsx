@@ -6,6 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -43,12 +44,18 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
-    const graphqlFilter = computeContextStoreFilters(
-      contextStoreTargetedRecordsRule,
-      contextStoreFilters,
-      objectMetadataItem,
-      filterValueDependencies,
-    );
+    const deletedAtFilter: RecordGqlOperationFilter = {
+      deletedAt: { is: 'NOT_NULL' },
+    };
+    const graphqlFilter = {
+      ...computeContextStoreFilters(
+        contextStoreTargetedRecordsRule,
+        contextStoreFilters,
+        objectMetadataItem,
+        filterValueDependencies,
+      ),
+      ...deletedAtFilter,
+    };
 
     const deletedAtFieldMetadata = objectMetadataItem.fields.find(
       (field) => field.name === 'deletedAt',
