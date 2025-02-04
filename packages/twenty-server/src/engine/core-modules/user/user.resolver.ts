@@ -13,13 +13,19 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
+import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -28,25 +34,22 @@ import {
   OnboardingService,
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -70,6 +73,9 @@ export class UserResolver {
     private readonly fileService: FileService,
     private readonly analyticsService: AnalyticsService,
     private readonly domainManagerService: DomainManagerService,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   @Query(() => User)
@@ -159,22 +165,65 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember[]> {
-    const workspaceMembers =
+    const workspaceMemberEntities =
       await this.userService.loadWorkspaceMembers(workspace);
 
-    for (const workspaceMember of workspaceMembers) {
-      if (workspaceMember.avatarUrl) {
+    const workspaceMembers: WorkspaceMember[] = [];
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+        workspaceId: workspace.id,
+      },
+    });
+
+    for (const workspaceMemberEntity of workspaceMemberEntities) {
+      if (workspaceMemberEntity.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
-          workspaceMemberId: workspaceMember.id,
+          workspaceMemberEntityId: workspaceMemberEntity.id,
           workspaceId: workspace.id,
         });
 
-        workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
       }
+
+      const userWorkspace = userWorkspaces?.find(
+        (userWorkspace) =>
+          userWorkspace.userId === workspaceMemberEntity.userId,
+      );
+
+      if (!userWorkspace) {
+        throw new Error('User workspace not found');
+      }
+
+      const role = await this.userRoleService
+        .getRolesForUserWorkspace(userWorkspace.id)
+        .then(([roleEntity]) => {
+          if (!isDefined(roleEntity)) {
+            return null;
+          } else {
+            return {
+              id: roleEntity.id,
+              label: roleEntity.label,
+              canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+              description: roleEntity.description,
+              isEditable: roleEntity.isEditable,
+              userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+            };
+          }
+        });
+
+      const workspaceMember = {
+        ...workspaceMemberEntity,
+        roles: role ? [role] : [],
+        userWorkspaceId: userWorkspace.id,
+      } as WorkspaceMember;
+
+      workspaceMembers.push(workspaceMember);
     }
 
     // TODO: Fix typing disrepency between Entity and DTO
-    return workspaceMembers as WorkspaceMember[];
+    return workspaceMembers;
   }
 
   @ResolveField(() => String, {

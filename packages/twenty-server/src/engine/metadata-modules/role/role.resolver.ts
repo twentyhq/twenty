@@ -1,6 +1,13 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { isDefined, SettingsFeatures } from 'twenty-shared';
 
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,6 +57,35 @@ export class RoleResolver {
     } catch (error) {
       return permissionsGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @Mutation(() => WorkspaceMember)
+  async updateWorkspaceMemberRole(
+    @AuthUserWorkspaceId() currentUserWorkspaceId: string,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('workspaceMemberId') workspaceMemberId: string,
+    @Args('roleId', { type: () => String, nullable: true })
+    roleId: string | null,
+  ): Promise<WorkspaceMember> {
+    await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
+      {
+        userWorkspaceId: currentUserWorkspaceId,
+        setting: SettingsFeatures.ROLES,
+      },
+    );
+
+    if (!isDefined(roleId)) {
+      return this.userRoleService.unassignRolesFromWorkspaceMember({
+        workspaceMemberId,
+        workspaceId: workspace.id,
+      });
+    }
+
+    return this.userRoleService.assignRoleToWorkspaceMember({
+      workspaceId: workspace.id,
+      workspaceMemberId,
+      roleId,
+    });
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMember])
