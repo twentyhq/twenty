@@ -169,37 +169,42 @@ export class MicrosoftAPIsService {
           workspaceId,
         });
 
-        const newCalendarChannel = await calendarChannelRepository.save(
-          {
-            id: v4(),
-            connectedAccountId: newOrExistingConnectedAccountId,
-            handle,
-            visibility:
-              calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
-          },
-          {},
-          manager,
-        );
-
-        const calendarChannelMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'calendarChannel', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'calendarChannel',
-          action: DatabaseEventAction.CREATED,
-          events: [
+        if (
+          this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
+        ) {
+          const newCalendarChannel = await calendarChannelRepository.save(
             {
-              recordId: newCalendarChannel.id,
-              objectMetadata: calendarChannelMetadata,
-              properties: {
-                after: newCalendarChannel,
-              },
+              id: v4(),
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              visibility:
+                calendarVisibility ||
+                CalendarChannelVisibility.SHARE_EVERYTHING,
             },
-          ],
-          workspaceId,
-        });
+            {},
+            manager,
+          );
+
+          const calendarChannelMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: { nameSingular: 'calendarChannel', workspaceId },
+            });
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'calendarChannel',
+            action: DatabaseEventAction.CREATED,
+            events: [
+              {
+                recordId: newCalendarChannel.id,
+                objectMetadata: calendarChannelMetadata,
+                properties: {
+                  after: newCalendarChannel,
+                },
+              },
+            ],
+            workspaceId,
+          });
+        }
       } else {
         const updatedConnectedAccount = await connectedAccountRepository.update(
           {
@@ -311,20 +316,22 @@ export class MicrosoftAPIsService {
       }
     }
 
-    const calendarChannels = await calendarChannelRepository.find({
-      where: {
-        connectedAccountId: newOrExistingConnectedAccountId,
-      },
-    });
-
-    for (const calendarChannel of calendarChannels) {
-      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-        CalendarEventListFetchJob.name,
-        {
-          calendarChannelId: calendarChannel.id,
-          workspaceId,
+    if (this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')) {
+      const calendarChannels = await calendarChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+          CalendarEventListFetchJob.name,
+          {
+            calendarChannelId: calendarChannel.id,
+            workspaceId,
+          },
+        );
+      }
     }
   }
 }

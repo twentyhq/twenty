@@ -1,4 +1,6 @@
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import styled from '@emotion/styled';
@@ -43,11 +45,17 @@ export const SettingsAccountsListEmptyStateCard = ({
     isMicrosoftMessagingEnabledState,
   );
 
+  const isGoogleCalendarEnabled = useRecoilValue(isGoogleCalendarEnabledState);
+
+  const isMicrosoftCalendarEnabled = useRecoilValue(
+    isMicrosoftCalendarEnabledState,
+  );
+
   return (
     <Card>
       <StyledHeader>{label || t`No connected account`}</StyledHeader>
       <StyledBody>
-        {isGoogleMessagingEnabled && (
+        {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
           <Button
             Icon={IconGoogle}
             title={t`Connect with Google`}
@@ -56,7 +64,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           />
         )}
 
-        {isMicrosoftMessagingEnabled && (
+        {(isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled) && (
           <Button
             Icon={IconMicrosoft}
             title={t`Connect with Microsoft`}
