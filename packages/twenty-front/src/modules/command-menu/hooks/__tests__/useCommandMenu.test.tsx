@@ -198,4 +198,26 @@ describe('useCommandMenu', () => {
     });
     expect(result.current.isCommandMenuOpened).toBe(false);
   });
+
+  it('should navigate to a page in history', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconSearch,
+      });
+    });
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenuHistory(0);
+    });
+
+    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: 'Search',
+      Icon: IconSearch,
+    });
+  });
 });

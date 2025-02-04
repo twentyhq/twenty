@@ -169,7 +169,7 @@ export const useCommandMenu = () => {
         .getLoadable(commandMenuNavigationStackState)
         .getValue();
 
-      const newNavigationStack = currentNavigationStack.slice(0, pageIndex);
+      const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
 
       set(commandMenuNavigationStackState, newNavigationStack);
 
