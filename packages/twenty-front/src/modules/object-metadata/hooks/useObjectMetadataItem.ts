@@ -5,6 +5,10 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isDefined } from 'twenty-shared';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 export const useObjectMetadataItem = ({
@@ -17,7 +21,22 @@ export const useObjectMetadataItem = ({
     }),
   );
 
+  const isWorkflowEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
+
+  const isWorkflowToBeFiltered =
+    !isWorkflowEnabled &&
+    (objectNameSingular === CoreObjectNameSingular.Workflow ||
+      isWorkflowSubObjectMetadata(objectNameSingular));
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  if (isWorkflowToBeFiltered) {
+    throw new Error(
+      'Workflow is not enabled. If you want to use it, please enable it in the lab.',
+    );
+  }
 
   if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
