@@ -1,9 +1,13 @@
 import { DestroyManyRecordsProps } from '@/object-record/hooks/useDestroyManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { expect } from '@storybook/test';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import {
+  GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
+  getJestMetadataAndApolloMocksAndActionMenuWrapper,
+} from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { useDestroyMultipleRecordsAction } from '../useDestroyMultipleRecordsAction';
@@ -11,6 +15,10 @@ import { useDestroyMultipleRecordsAction } from '../useDestroyMultipleRecordsAct
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
+const personMockObjectMetadataItemDeletedAtField =
+  personMockObjectMetadataItem.fields.find((el) => el.name === 'deletedAt');
+if (personMockObjectMetadataItemDeletedAtField === undefined)
+  throw new Error('Should never occurs');
 
 const [firstPeopleMock, secondPeopleMock] = getPeopleMock().map((record) => ({
   ...record,
@@ -40,31 +48,57 @@ jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
   }),
 }));
 
-const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
-  apolloMocks: [],
-  componentInstanceId: '1',
-  contextStoreCurrentObjectMetadataNameSingular:
-    personMockObjectMetadataItem.nameSingular,
-  contextStoreTargetedRecordsRule: {
-    mode: 'selection',
-    selectedRecordIds: [firstPeopleMock.id, secondPeopleMock.id],
-  },
-  contextStoreNumberOfSelectedRecords: 2,
-  onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(recordStoreFamilyState(firstPeopleMock.id), firstPeopleMock);
-    snapshot.set(recordStoreFamilyState(secondPeopleMock.id), secondPeopleMock);
-  },
-});
+const getWrapper = (
+  overrides?: Partial<GetJestMetadataAndApolloMocksAndActionMenuWrapperProps>,
+) =>
+  getJestMetadataAndApolloMocksAndActionMenuWrapper({
+    apolloMocks: [],
+    componentInstanceId: '1',
+    contextStoreCurrentObjectMetadataNameSingular:
+      personMockObjectMetadataItem.nameSingular,
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [firstPeopleMock.id, secondPeopleMock.id],
+    },
+    contextStoreFilters: [],
+    contextStoreNumberOfSelectedRecords: 2,
+    onInitializeRecoilSnapshot: (snapshot) => {
+      snapshot.set(recordStoreFamilyState(firstPeopleMock.id), firstPeopleMock);
+      snapshot.set(
+        recordStoreFamilyState(secondPeopleMock.id),
+        secondPeopleMock,
+      );
+    },
+    ...overrides,
+  });
+
+const defaultWrapper = getWrapper();
 
 describe('useDestroyMultipleRecordsAction', () => {
-  it.skip('should call destroyManyRecords on click if records are filtered by deletedAt', async () => {
+  it('should call destroyManyRecords on click if records are filtered by deletedAt', async () => {
     const { result } = renderHook(
       () =>
         useDestroyMultipleRecordsAction({
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
-        wrapper,
+        wrapper: getWrapper({
+          contextStoreFilters: [
+            {
+              id: '1553cda7-893d-4d89-b7ab-04969a4c2927',
+              fieldMetadataId: personMockObjectMetadataItemDeletedAtField.id,
+              value: '',
+              displayValue: '',
+              operand: ViewFilterOperand.IsNotEmpty,
+              definition: {
+                label: 'Deleted',
+                iconName: 'IconTrash',
+                fieldMetadataId: personMockObjectMetadataItemDeletedAtField.id,
+                type: 'DATE_TIME',
+              },
+            },
+          ],
+        }),
       },
     );
 
@@ -74,7 +108,7 @@ describe('useDestroyMultipleRecordsAction', () => {
       result.current.onClick();
     });
 
-    expect(result.current.ConfirmationModal?.props?.isOpen).toBeTruthy();
+    expect(result.current.ConfirmationModal?.props?.isOpen).toBe(true);
 
     act(() => {
       result.current.ConfirmationModal?.props?.onConfirmClick();
@@ -96,7 +130,7 @@ describe('useDestroyMultipleRecordsAction', () => {
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {
-        wrapper,
+        wrapper: defaultWrapper,
       },
     );
 
