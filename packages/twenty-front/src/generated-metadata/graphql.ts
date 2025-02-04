@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -309,6 +310,7 @@ export type ComputeStepOutputSchemaInput = {
 };
 
 export type CreateAgentInput = {
+  inboxesIds: Array<Scalars['String']['input']>;
   isAdmin: Scalars['Boolean']['input'];
   memberId: Scalars['ID']['input'];
   sectorIds: Array<Scalars['String']['input']>;

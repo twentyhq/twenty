@@ -4,7 +4,10 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
+import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/SettingsServiceCenterAgents';
+import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
 import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center/SettingsServiceCenterEditSector';
+import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
 
@@ -307,10 +310,18 @@ export const SettingsRoutes = ({
         path={SettingsPath.ServiceCenter}
         element={<SettingsServiceCenter />}
       />
-      {/* <Route
+      <Route
         path={SettingsPath.ServiceCenterAgents}
         element={<SettingsServiceCenterAgents />}
-      /> */}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewAgent}
+        element={<SettingsServiceCenterNewAgent />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterEditAgent}
+        element={<SettingsServiceCenterEditAgent />}
+      />
       <Route
         path={SettingsPath.ServiceCenterSectors}
         element={<SettingsServiceCenterSectors />}

@@ -6,15 +6,15 @@ export type Inbox = {
   whatsappIntegration?: {
     id: string;
     label: string;
-    phoneNumber: string;
+    phoneId: string;
     disabled: boolean;
   };
-  messengerIntegration?: {
-    id: string;
-    label: string;
-    fb_page: string;
-    disabled: boolean;
-  };
+  // messengerIntegration?: {
+  //   id: string;
+  //   label: string;
+  //   fb_page: string;
+  //   disabled: boolean;
+  // };
   workspace: {
     id: string;
     displayName: string;
