@@ -143,6 +143,12 @@ export const ClientConfigProviderEffect = () => {
     });
     setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
     setLabPublicFeatureFlags(data?.clientConfig?.publicFeatureFlags);
+    setMicrosoftMessagingEnabled(
+      data?.clientConfig?.isMicrosoftMessagingEnabled,
+    );
+    setMicrosoftCalendarEnabled(data?.clientConfig?.isMicrosoftCalendarEnabled);
+    setGoogleMessagingEnabled(data?.clientConfig?.isGoogleMessagingEnabled);
+    setGoogleCalendarEnabled(data?.clientConfig?.isGoogleCalendarEnabled);
   }, [
     data,
     setIsDebugMode,
