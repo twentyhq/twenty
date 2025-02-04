@@ -122,7 +122,7 @@ export const SignInUpWithCredentials = () => {
           {signInUpStep !== SignInUpStep.Init && (
             <SignInUpEmailField
               showErrors={showErrors}
-              onChange={onEmailChange}
+              onInputChange={onEmailChange}
             />
           )}
           {signInUpStep === SignInUpStep.Password && (

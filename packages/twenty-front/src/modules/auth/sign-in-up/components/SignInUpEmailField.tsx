@@ -15,17 +15,12 @@ const StyledInputContainer = styled.div`
 
 export const SignInUpEmailField = ({
   showErrors,
-  onChange,
+  onInputChange,
 }: {
   showErrors: boolean;
-  onChange?: (value: string) => void;
+  onInputChange?: (value: string) => void;
 }) => {
   const form = useFormContext<Form>();
-
-  const onInputChange = (value: string) => {
-    if (isDefined(onChange)) onChange(value);
-    form.setValue('email', value);
-  };
 
   return (
     <StyledFullWidthMotionDiv
@@ -40,14 +35,20 @@ export const SignInUpEmailField = ({
       <Controller
         name="email"
         control={form.control}
-        render={({ field: { onBlur, value }, fieldState: { error } }) => (
+        render={({
+          field: { onBlur, value, onChange },
+          fieldState: { error },
+        }) => (
           <StyledInputContainer>
             <TextInput
               autoFocus
               value={value}
               placeholder="Email"
               onBlur={onBlur}
-              onChange={onInputChange}
+              onChange={(email: string) => {
+                if (isDefined(onInputChange)) onInputChange(email);
+                onChange(email);
+              }}
               error={showErrors ? error?.message : undefined}
               fullWidth
             />
