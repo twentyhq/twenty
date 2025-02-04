@@ -61,10 +61,11 @@ export class RestApiCoreController {
   }
 
   @Patch()
+  @UseFilters(RestApiExceptionFilter)
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.update(request);
+    const result = await this.restApiCoreServiceV2.update(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    res.status(200).send(result);
   }
 
   // This endpoint is not documented in the OpenAPI schema.
