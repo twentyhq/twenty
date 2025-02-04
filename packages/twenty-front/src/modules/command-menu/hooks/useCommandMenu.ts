@@ -143,10 +143,7 @@ export const useCommandMenu = () => {
         const newNavigationStack = currentNavigationStack.slice(0, -1);
         const lastNavigationStackItem = newNavigationStack.at(-1);
 
-        if (
-          newNavigationStack.length === 0 ||
-          !isDefined(lastNavigationStackItem)
-        ) {
+        if (!isDefined(lastNavigationStackItem)) {
           closeCommandMenu();
           return;
         }
@@ -174,14 +171,13 @@ export const useCommandMenu = () => {
 
       set(commandMenuNavigationStackState, newNavigationStack);
 
-      if (newNavigationStack.length === 0) {
+      const newNavigationStackItem = newNavigationStack.at(-1);
+
+      if (!isDefined(newNavigationStackItem)) {
         throw new Error(
           `No command menu navigation stack item found for index ${pageIndex}`,
         );
       }
-
-      const newNavigationStackItem =
-        newNavigationStack[newNavigationStack.length - 1];
 
       set(commandMenuPageState, newNavigationStackItem?.page);
       set(commandMenuPageInfoState, {
