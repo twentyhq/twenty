@@ -42,8 +42,10 @@ const StyledDetailLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledDetailValue = styled.div`
-  overflow-wrap: break-word;
+const StyledEllipsisLabel = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const StyledTransitionedIconChevronRight = styled(IconChevronRight)<{
@@ -85,10 +87,14 @@ export const SettingsAdminEnvVariablesRow = ({
         gridAutoColumns="4fr 3fr 2fr 1fr 1fr"
       >
         <StyledTruncatedCell color="primary">
-          {variable.name}
+          <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
         </StyledTruncatedCell>
-        <StyledTruncatedCell>{variable.description}</StyledTruncatedCell>
-        <StyledTruncatedCell>{displayValue}</StyledTruncatedCell>
+        <StyledTruncatedCell>
+          <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
+        </StyledTruncatedCell>
+        <StyledTruncatedCell>
+          <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
+        </StyledTruncatedCell>
         <TableCell align="right">
           {variable.sensitive && variable.value !== '' && (
             <LightIconButton
@@ -109,11 +115,11 @@ export const SettingsAdminEnvVariablesRow = ({
       <AnimatedExpandableContainer isExpanded={isExpanded}>
         <StyledExpandedDetails>
           <StyledDetailLabel>Name:</StyledDetailLabel>
-          <StyledDetailValue>{variable.name}</StyledDetailValue>
+          <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
           <StyledDetailLabel>Description:</StyledDetailLabel>
-          <StyledDetailValue>{variable.description}</StyledDetailValue>
+          <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
           <StyledDetailLabel>Value:</StyledDetailLabel>
-          <StyledDetailValue>{displayValue}</StyledDetailValue>
+          <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledExpandedDetails>
       </AnimatedExpandableContainer>
     </>
