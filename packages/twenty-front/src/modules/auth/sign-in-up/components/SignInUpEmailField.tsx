@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { isDefined } from 'twenty-shared';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -12,8 +13,19 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const SignInUpEmailField = ({ showErrors }: { showErrors: boolean }) => {
+export const SignInUpEmailField = ({
+  showErrors,
+  onChange,
+}: {
+  showErrors: boolean;
+  onChange?: (value: string) => void;
+}) => {
   const form = useFormContext<Form>();
+
+  const onInputChange = (value: string) => {
+    if (isDefined(onChange)) onChange(value);
+    form.setValue('email', value);
+  };
 
   return (
     <StyledFullWidthMotionDiv
@@ -28,17 +40,14 @@ export const SignInUpEmailField = ({ showErrors }: { showErrors: boolean }) => {
       <Controller
         name="email"
         control={form.control}
-        render={({
-          field: { onChange, onBlur, value },
-          fieldState: { error },
-        }) => (
+        render={({ field: { onBlur, value }, fieldState: { error } }) => (
           <StyledInputContainer>
             <TextInput
               autoFocus
               value={value}
               placeholder="Email"
               onBlur={onBlur}
-              onChange={onChange}
+              onChange={onInputChange}
               error={showErrors ? error?.message : undefined}
               fullWidth
             />
