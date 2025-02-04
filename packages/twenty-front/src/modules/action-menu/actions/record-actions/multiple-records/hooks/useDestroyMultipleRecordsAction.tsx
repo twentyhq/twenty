@@ -99,7 +99,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         setIsOpen={setIsDestroyRecordsModalOpen}
         title={'Permanently Destroy Records'}
         subtitle={
-          "Are you sure you want to destroy these records? They won't be able to be recovered anymore."
+          "Are you sure you want to destroy these records? They won't be recoverable anymore."
         }
         onConfirmClick={handleDestroyClick}
         deleteButtonText={'Destroy Records'}
