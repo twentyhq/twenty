@@ -146,6 +146,7 @@ export class MiddlewareService {
     request.workspaceId = data.workspace.id;
     request.workspaceMetadataVersion = metadataVersion;
     request.workspaceMemberId = data.workspaceMemberId;
+    request.userWorkspaceId = data.userWorkspaceId;
   }
 
   private getStatus(error: any): number {

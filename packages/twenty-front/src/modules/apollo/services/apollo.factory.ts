@@ -17,6 +17,7 @@ import { isDefined } from 'twenty-shared';
 import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
+import { i18n } from '@lingui/core';
 import { GraphQLFormattedError } from 'graphql';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils/loggerLink';
@@ -71,7 +72,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               : '',
             ...(this.currentWorkspaceMember?.locale
               ? { 'x-locale': this.currentWorkspaceMember.locale }
-              : {}),
+              : { 'x-locale': i18n.locale }),
           },
         };
       });

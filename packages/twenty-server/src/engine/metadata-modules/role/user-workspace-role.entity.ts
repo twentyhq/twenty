@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -9,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RoleEntity } from 'src/engine/metadata-modules/permissions/role.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('userWorkspaceRole')
 @Unique('IndexOnUserWorkspaceRoleUnique', ['userWorkspaceId', 'roleId'])
@@ -26,6 +27,7 @@ export class UserWorkspaceRoleEntity {
   @ManyToOne(() => RoleEntity, (role) => role.userWorkspaceRoles, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'uuid' })

@@ -5,7 +5,6 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
-import { SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockFilterDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
@@ -37,7 +36,6 @@ export const SignInBackgroundMockContainerEffect = ({
 
   const {
     setAvailableSortDefinitions,
-    setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
   } = useInitViewBar(viewId);
@@ -48,7 +46,6 @@ export const SignInBackgroundMockContainerEffect = ({
     setViewObjectMetadataId?.(objectMetadataItem.id);
 
     setAvailableSortDefinitions?.(SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS);
-    setAvailableFilterDefinitions?.(SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS);
     setAvailableFieldDefinitions?.(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
     setAvailableTableColumns(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
@@ -62,7 +59,6 @@ export const SignInBackgroundMockContainerEffect = ({
   }, [
     setViewObjectMetadataId,
     setAvailableSortDefinitions,
-    setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     objectMetadataItem,
     setAvailableTableColumns,

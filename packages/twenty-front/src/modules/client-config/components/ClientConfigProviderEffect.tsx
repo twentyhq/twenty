@@ -9,6 +9,10 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
@@ -55,6 +59,22 @@ export const ClientConfigProviderEffect = () => {
 
   const setLabPublicFeatureFlags = useSetRecoilState(
     labPublicFeatureFlagsState,
+  );
+
+  const setMicrosoftMessagingEnabled = useSetRecoilState(
+    isMicrosoftMessagingEnabledState,
+  );
+
+  const setMicrosoftCalendarEnabled = useSetRecoilState(
+    isMicrosoftCalendarEnabledState,
+  );
+
+  const setGoogleMessagingEnabled = useSetRecoilState(
+    isGoogleMessagingEnabledState,
+  );
+
+  const setGoogleCalendarEnabled = useSetRecoilState(
+    isGoogleCalendarEnabledState,
   );
 
   const { data, loading, error } = useGetClientConfigQuery({
@@ -123,6 +143,12 @@ export const ClientConfigProviderEffect = () => {
     });
     setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
     setLabPublicFeatureFlags(data?.clientConfig?.publicFeatureFlags);
+    setMicrosoftMessagingEnabled(
+      data?.clientConfig?.isMicrosoftMessagingEnabled,
+    );
+    setMicrosoftCalendarEnabled(data?.clientConfig?.isMicrosoftCalendarEnabled);
+    setGoogleMessagingEnabled(data?.clientConfig?.isGoogleMessagingEnabled);
+    setGoogleCalendarEnabled(data?.clientConfig?.isGoogleCalendarEnabled);
   }, [
     data,
     setIsDebugMode,
@@ -143,6 +169,10 @@ export const ClientConfigProviderEffect = () => {
     setAuthProviders,
     setCanManageFeatureFlags,
     setLabPublicFeatureFlags,
+    setMicrosoftMessagingEnabled,
+    setMicrosoftCalendarEnabled,
+    setGoogleMessagingEnabled,
+    setGoogleCalendarEnabled,
   ]);
 
   return <></>;

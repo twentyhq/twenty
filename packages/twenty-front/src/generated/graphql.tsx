@@ -251,6 +251,10 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
   isEmailVerificationRequired: Scalars['Boolean'];
+  isGoogleCalendarEnabled: Scalars['Boolean'];
+  isGoogleMessagingEnabled: Scalars['Boolean'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
@@ -600,6 +604,7 @@ export type FullName = {
 
 export type GetAuthorizationUrlInput = {
   identityProviderId: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 export type GetAuthorizationUrlOutput = {
@@ -799,7 +804,7 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
-  updateLabPublicFeatureFlag: Scalars['Boolean'];
+  updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
@@ -1245,6 +1250,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getRoles: Array<RoleDto>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1441,6 +1447,16 @@ export enum RemoteTableStatus {
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
+};
+
+export type RoleDto = {
+  __typename?: 'RoleDTO';
+  canUpdateAllSettings: Scalars['Boolean'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isEditable: Scalars['Boolean'];
+  label: Scalars['String'];
+  workspaceMembers: Array<WorkspaceMember>;
 };
 
 export type RunWorkflowVersionInput = {
@@ -1681,7 +1697,6 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
@@ -2192,7 +2207,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2225,7 +2240,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 }>;
 
 
-export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
+export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3677,6 +3692,10 @@ export const GetClientConfigDocument = gql`
         imagePath
       }
     }
+    isMicrosoftMessagingEnabled
+    isMicrosoftCalendarEnabled
+    isGoogleMessagingEnabled
+    isGoogleCalendarEnabled
   }
 }
     `;
@@ -3884,7 +3903,11 @@ export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeo
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
-  updateLabPublicFeatureFlag(input: $input)
+  updateLabPublicFeatureFlag(input: $input) {
+    id
+    key
+    value
+  }
 }
     `;
 export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
