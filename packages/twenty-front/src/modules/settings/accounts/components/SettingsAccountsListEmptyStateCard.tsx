@@ -1,6 +1,9 @@
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import {
   Button,
   Card,
@@ -33,23 +36,34 @@ export const SettingsAccountsListEmptyStateCard = ({
 
   const { t } = useLingui();
 
+  const isGoogleMessagingEnabled = useRecoilValue(
+    isGoogleMessagingEnabledState,
+  );
+  const isMicrosoftMessagingEnabled = useRecoilValue(
+    isMicrosoftMessagingEnabledState,
+  );
+
   return (
     <Card>
       <StyledHeader>{label || t`No connected account`}</StyledHeader>
       <StyledBody>
-        <Button
-          Icon={IconGoogle}
-          title={t`Connect with Google`}
-          variant="secondary"
-          onClick={() => triggerApisOAuth('google')}
-        />
+        {isGoogleMessagingEnabled && (
+          <Button
+            Icon={IconGoogle}
+            title={t`Connect with Google`}
+            variant="secondary"
+            onClick={() => triggerApisOAuth('google')}
+          />
+        )}
 
-        <Button
-          Icon={IconMicrosoft}
-          title={t`Connect with Microsoft`}
-          variant="secondary"
-          onClick={() => triggerApisOAuth('microsoft')}
-        />
+        {isMicrosoftMessagingEnabled && (
+          <Button
+            Icon={IconMicrosoft}
+            title={t`Connect with Microsoft`}
+            variant="secondary"
+            onClick={() => triggerApisOAuth('microsoft')}
+          />
+        )}
       </StyledBody>
     </Card>
   );

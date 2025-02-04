@@ -258,6 +258,10 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
+  isGoogleCalendarEnabled: Scalars['Boolean']['output'];
+  isGoogleMessagingEnabled: Scalars['Boolean']['output'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
@@ -460,6 +464,69 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
+};
+
+export type EnvironmentVariable = {
+  __typename?: 'EnvironmentVariable';
+  description: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  sensitive: Scalars['Boolean']['output'];
+  value: Scalars['String']['output'];
+};
+
+export enum EnvironmentVariablesGroup {
+  Analytics = 'Analytics',
+  Authentication = 'Authentication',
+  Billing = 'Billing',
+  Cache = 'Cache',
+  Database = 'Database',
+  Email = 'Email',
+  Frontend = 'Frontend',
+  LLM = 'LLM',
+  Logging = 'Logging',
+  QueueConfig = 'QueueConfig',
+  Security = 'Security',
+  ServerConfig = 'ServerConfig',
+  Serverless = 'Serverless',
+  Storage = 'Storage',
+  Support = 'Support',
+  Workspace = 'Workspace'
+}
+
+export type EnvironmentVariablesGroupData = {
+  __typename?: 'EnvironmentVariablesGroupData';
+  groupName: EnvironmentVariablesGroup;
+  subgroups: Array<EnvironmentVariablesSubgroupData>;
+  variables: Array<EnvironmentVariable>;
+};
+
+export type EnvironmentVariablesOutput = {
+  __typename?: 'EnvironmentVariablesOutput';
+  groups: Array<EnvironmentVariablesGroupData>;
+};
+
+export enum EnvironmentVariablesSubGroup {
+  CloudflareConfig = 'CloudflareConfig',
+  EmailSettings = 'EmailSettings',
+  FrontSupportConfig = 'FrontSupportConfig',
+  GoogleAuth = 'GoogleAuth',
+  LambdaConfig = 'LambdaConfig',
+  MicrosoftAuth = 'MicrosoftAuth',
+  PasswordAuth = 'PasswordAuth',
+  RateLimiting = 'RateLimiting',
+  S3Config = 'S3Config',
+  SSL = 'SSL',
+  SentryConfig = 'SentryConfig',
+  SmtpConfig = 'SmtpConfig',
+  StripeConfig = 'StripeConfig',
+  TinybirdConfig = 'TinybirdConfig',
+  Tokens = 'Tokens'
+}
+
+export type EnvironmentVariablesSubgroupData = {
+  __typename?: 'EnvironmentVariablesSubgroupData';
+  subgroupName: EnvironmentVariablesSubGroup;
+  variables: Array<EnvironmentVariable>;
 };
 
 export type ExecuteServerlessFunctionInput = {
@@ -819,7 +886,7 @@ export type Mutation = {
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateBillingSubscription: BillingUpdateOutput;
-  updateLabPublicFeatureFlag: Scalars['Boolean']['output'];
+  updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1314,10 +1381,12 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getRoles: Array<RoleDto>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1584,6 +1653,16 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean']['output'];
 };
 
+export type RoleDto = {
+  __typename?: 'RoleDTO';
+  canUpdateAllSettings: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  isEditable: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  workspaceMembers: Array<WorkspaceMember>;
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']['input']>;
@@ -1822,7 +1901,6 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  isCustom?: InputMaybe<Scalars['Boolean']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
   isSystem?: InputMaybe<Scalars['Boolean']['input']>;
