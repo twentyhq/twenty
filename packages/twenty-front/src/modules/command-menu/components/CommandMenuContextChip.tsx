@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared';
 
 const StyledChip = styled.button<{
   withText: boolean;
-  isHoverable: boolean;
+  onClick?: () => void;
 }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
@@ -22,11 +22,11 @@ const StyledChip = styled.button<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   color: ${({ theme }) => theme.font.color.primary};
-  cursor: ${({ isHoverable }) => (isHoverable ? 'pointer' : 'default')};
+  cursor: ${({ onClick }) => (isDefined(onClick) ? 'pointer' : 'default')};
 
   &:hover {
-    background: ${({ isHoverable, theme }) =>
-      isHoverable
+    background: ${({ onClick, theme }) =>
+      isDefined(onClick)
         ? theme.background.transparent.medium
         : theme.background.transparent.light};
   }
@@ -46,11 +46,7 @@ export const CommandMenuContextChip = ({
   onClick?: () => void;
 }) => {
   return (
-    <StyledChip
-      withText={isNonEmptyString(text)}
-      onClick={onClick}
-      isHoverable={isDefined(onClick)}
-    >
+    <StyledChip withText={isNonEmptyString(text)} onClick={onClick}>
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <Fragment key={index}>{Icon}</Fragment>
