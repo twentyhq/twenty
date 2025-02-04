@@ -28,7 +28,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     key: FeatureFlagKey.IsWorkflowEnabled,
     metadata: {
       label: 'Workflows',
-      description: 'Create some custom workflows to automate your work.',
+      description: 'Create custom workflows to automate your work.',
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
     },
   },
