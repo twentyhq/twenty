@@ -123,15 +123,15 @@ msgstr "첫 번째 {objectLabel} 추가"
 
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
 msgid "Added {beautifiedCreatedAt}"
-msgstr "{beautifiedCreatedAt}] 추가"
+msgstr "{beautifiedCreatedAt} 추가"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
-msgstr "모두"
+msgstr "전체"
 
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
 msgid "All ({relationRecordsCount})"
-msgstr "모두 ({relationRecordsCount})"
+msgstr "전체 ({relationRecordsCount})"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:68
 msgid "All roles"
@@ -139,23 +139,23 @@ msgstr "모든 역할"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
-msgstr "Google의 싱글 사인온 기능을 통해 로그인을 허용합니다."
+msgstr "Google의 SSO 기능을 통한 로그인 허용."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
 msgid "Allow logins through Microsoft's single sign-on functionality."
-msgstr "Microsoft의 싱글 사인온 기능을 통해 로그인을 허용합니다."
+msgstr "Microsoft의 SSO 기능을 통한 로그인 허용."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
 msgid "Allow the invitation of new users by sharing an invite link."
-msgstr "초대 링크를 공유하여 새 사용자를 초대할 수 있습니다."
+msgstr "초대 링크 공유를 통한 새 사용자 초대 허용."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
 msgid "Allow users to sign in with an email and password."
-msgstr "사용자가 이메일과 비밀번호로 로그인할 수 있도록 허용합니다."
+msgstr "이메일과 비밀번호로 로그인 허용."
 
 #: src/pages/auth/PasswordReset.tsx:162
 msgid "An error occurred while updating password"
-msgstr "비밀번호를 업데이트하는 동안 오류가 발생했습니다"
+msgstr "비밀번호 업데이트 중 오류가 발생했습니다"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
@@ -163,11 +163,11 @@ msgstr "선택적 설명"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
-msgstr "모양"
+msgstr "외관"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
-msgstr "청구 간격을 변경하시겠습니까?"
+msgstr "청구 주기를 변경하시겠습니까?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -176,19 +176,19 @@ msgstr "오름차순"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:69
 msgid "Assign roles to specify each member's access permissions"
-msgstr "역할을 할당하여 각 구성원의 액세스 권한을 지정하세요"
+msgstr "각 구성원의 접근 권한을 지정하려면 역할을 할당하세요"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:36
 msgid "Assigned to"
-msgstr "할당 대상"
+msgstr "할당됨"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
-msgstr "8자 이상이어야 합니다."
+msgstr "최소 8자 이상."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
-msgstr "하나 이상의 인증 방법을 사용하도록 설정해야 합니다"
+msgstr "하나 이상의 인증 방법이 활성화되어야 합니다"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
@@ -196,7 +196,7 @@ msgstr "인증"
 
 #: src/pages/auth/Authorize.tsx:127
 msgid "Authorize"
-msgstr "권한 부여"
+msgstr "승인"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
@@ -219,11 +219,11 @@ msgstr "차단 목록"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:210
 msgid "Book a Call"
-msgstr "통화 예약하기"
+msgstr "통화 예약"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
 msgid "By using Twenty, you agree to the"
-msgstr "Twenty를 사용함으로써 귀하는 다음 약관에 동의하게 됩니다"
+msgstr "Twenty를 사용함으로써 귀하는 다음에 동의합니다"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
@@ -252,7 +252,7 @@ msgstr "요금제 취소"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
-msgstr "언제든지 취소"
+msgstr "언제든지 취소 가능"
 
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
@@ -266,7 +266,7 @@ msgstr "비밀번호 변경"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
-msgstr "변경 {to}"
+msgstr "{to}로 변경"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
@@ -306,7 +306,7 @@ msgstr "앱 전체에 날짜가 표시되는 방식 구성"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
 msgid "Configure your emails and calendar settings."
-msgstr "이메일 및 캘린더 설정을 구성합니다."
+msgstr "이메일 및 캘린더 설정 구성."
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
@@ -332,19 +332,19 @@ msgstr "컨텍스트"
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:86
 msgid "Continue"
-msgstr "계속하기"
+msgstr "계속"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:69
 msgid "Continue with Email"
-msgstr "이메일로 계속하기"
+msgstr "이메일로 계속"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
 msgid "Continue with Google"
-msgstr "Google을 계속 사용하세요"
+msgstr "Google로 계속"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
 msgid "Continue with Microsoft"
-msgstr "Microsoft와 함께 계속하기"
+msgstr "Microsoft로 계속"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
@@ -361,40 +361,40 @@ msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
 msgid "Count"
-msgstr "Count"
+msgstr "개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
-msgstr "모두 계산"
+msgstr "전체 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
 msgid "Count empty"
-msgstr "비어있는 카운트"
+msgstr "비어 있는 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
 msgid "Count not empty"
-msgstr "비어 있지 않은 카운트"
+msgstr "비어 있지 않은 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
 msgid "Count unique values"
-msgstr "고유 값 계산"
+msgstr "고유 값 개수"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
-msgstr "API 키 만들기"
+msgstr "API 키 생성"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
-msgstr "웹훅 만들기"
+msgstr "Webhook 생성"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr "워크플로를 만들고 여기로 돌아와서 버전을 확인합니다"
+msgstr "워크플로를 생성하고 여기로 돌아와 버전을 확인하세요"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:55
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:44
 msgid "Create new record"
-msgstr "새 레코드 만들기"
+msgstr "새 레코드 생성"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -402,7 +402,7 @@ msgstr "사용자 지정 개체"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
 msgid "Customise the fields available in the {objectLabelSingular} views."
-msgstr "{objectLabelSingular}] 보기에서 사용 가능한 필드를 사용자 지정합니다."
+msgstr "{objectLabelSingular} 보기에서 사용 가능한 필드를 사용자 지정하세요."
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
@@ -410,7 +410,7 @@ msgstr "도메인 사용자 지정"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:64
 msgid "Customize your workspace security"
-msgstr "업무 공간 보안 사용자 지정"
+msgstr "워크스페이스 보안 사용자 지정"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -449,7 +449,7 @@ msgstr "비활성화"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr "\"개체 레이블 및 API 이름 동기화\"를 비활성화하여 사용자 지정 API 이름을 설정합니다"
+msgstr "\"개체 레이블 및 API 이름 동기화\"를 비활성화하여 사용자 지정 API 이름을 설정하세요"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:80
 msgid "Deactivate Workflow"
@@ -461,7 +461,7 @@ msgstr "이 필드 비활성화"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
-msgstr "개체의 이름과 설명을 정의합니다"
+msgstr "개체의 이름과 설명을 정의하세요"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
@@ -512,16 +512,16 @@ msgstr "이 통합 삭제"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
 msgid "Delete webhook"
-msgstr "웹훅 삭제"
+msgstr "Webhook 삭제"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
 msgid "Delete workspace"
-msgstr "작업 공간 삭제"
+msgstr "워크스페이스 삭제"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
 msgid "Delete your whole workspace"
-msgstr "전체 작업 공간 삭제"
+msgstr "전체 워크스페이스 삭제"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
@@ -537,7 +537,7 @@ msgstr "설명"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:252
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
 msgid "Destroy"
-msgstr "파괴"
+msgstr "파기"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
@@ -572,7 +572,7 @@ msgstr "예: 백오피스 통합"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
 msgid "Earliest"
-msgstr "가장 빠른"
+msgstr "가장 빠름"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
 msgid "Earliest date"
@@ -580,15 +580,15 @@ msgstr "가장 빠른 날짜"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
-msgstr "청구 간격 편집"
+msgstr "청구 주기 편집"
 
 #: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
-msgstr "결제 방법 편집, 송장 확인 등 다양한 기능 제공"
+msgstr "결제 방법 편집, 송장 확인 등"
 
 #: src/pages/settings/SettingsWorkspace.tsx:52
 msgid "Edit your subdomain name or set a custom domain."
-msgstr "하위 도메인 이름을 편집하거나 사용자 정의 도메인을 설정합니다."
+msgstr "하위 도메인 이름을 편집하거나 사용자 지정 도메인을 설정하세요."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
@@ -631,7 +631,7 @@ msgstr "영어"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:157
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
-msgstr "{withCreditCardTrialPeriodDuration}]일 무료 체험을 즐겨보세요"
+msgstr "{withCreditCardTrialPeriodDuration}일 무료 체험을 즐기세요"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
@@ -647,15 +647,15 @@ msgstr "API 키 재생성 오류: {err}"
 
 #: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
-msgstr "구독을 전환하는 동안 오류가 발생했습니다 {to}."
+msgstr "구독 전환 중 오류 발생: {to}."
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
-msgstr "비동기 이벤트에 대한 알림을 위한 웹훅 엔드포인트를 설정합니다."
+msgstr "비동기 이벤트 알림을 위한 Webhook 엔드포인트 설정."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
 msgid "Exclude the following people and domains from my email sync"
-msgstr "내 이메일 동기화에서 다음 사람 및 도메인 제외하기"
+msgstr "다음 사람 및 도메인을 이메일 동기화에서 제외"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"
@@ -667,7 +667,7 @@ msgstr "설정 종료"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
 msgid "Expected selected node to be a create step node."
-msgstr "선택한 노드가 생성 단계 노드가 될 것으로 예상됩니다."
+msgstr "선택한 노드는 생성 단계 노드여야 합니다."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
@@ -681,11 +681,11 @@ msgstr "만료"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:126
 msgid "Expiration Date"
-msgstr "만료 날짜"
+msgstr "만료일"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:259
 msgid "Expires in"
-msgstr "만료일"
+msgstr "만료까지 남은 시간"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:78
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:136
@@ -708,7 +708,7 @@ msgstr "내보내기"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:127
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
 msgid "Export records"
-msgstr "기록 내보내기"
+msgstr "레코드 내보내기"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:56
 msgid "Export to PDF"
@@ -720,11 +720,11 @@ msgstr "PDF로 내보내기"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:140
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
 msgid "Export view"
-msgstr "내보내기 보기"
+msgstr "보기 내보내기"
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
-msgstr "즐겨 찾기"
+msgstr "즐겨찾기"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:35
 msgid "Field type"
@@ -753,7 +753,7 @@ msgstr "필터"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
-msgstr "비밀번호를 잊어버리셨나요?"
+msgstr "비밀번호를 잊으셨나요?"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
@@ -761,7 +761,7 @@ msgstr "프랑스어"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
-msgstr "전체 액세스 권한"
+msgstr "전체 접근"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:199
 msgid "Functions"
@@ -780,11 +780,11 @@ msgstr "독일어"
 
 #: src/pages/onboarding/InviteTeam.tsx:184
 msgid "Get the most out of your workspace by inviting your team."
-msgstr "팀을 초대하여 업무 공간을 최대한 활용하세요."
+msgstr "팀을 초대하여 워크스페이스를 최대한 활용하세요."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:148
 msgid "Get your subscription"
-msgstr "구독 신청하기"
+msgstr "구독 신청"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:79
 msgid "Global"
@@ -792,7 +792,7 @@ msgstr "글로벌"
 
 #: src/pages/settings/SettingsWorkspace.tsx:65
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Twenty 지원팀에 회원님의 워크스페이스에 대한 임시 액세스 권한을 부여하여 문제를 해결하거나 회원님을 대신하여 콘텐츠를 복구할 수 있도록 하세요. 언제든지 액세스 권한을 취소할 수 있습니다."
+msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해결하거나 콘텐츠를 복구할 수 있도록 하세요. 언제든지 접근 권한을 취소할 수 있습니다."
 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
@@ -809,7 +809,7 @@ msgstr "식별자"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:273
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
-msgstr "이 키를 분실한 경우 다시 생성할 수 있지만 이 키를 사용하는 모든 스크립트를 업데이트해야 한다는 점에 유의하세요. 확인하려면 \"{confirmationValue}\"을 입력하세요."
+msgstr "이 키를 분실한 경우 다시 생성할 수 있지만, 이 키를 사용하는 모든 스크립트를 업데이트해야 합니다. 확인하려면 \"{confirmationValue}\"을 입력하세요."
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:215
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:214
@@ -822,7 +822,7 @@ msgstr "색인"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:106
 msgid "Input must be in camel case and cannot start with a number"
-msgstr "입력은 대소문자를 구분해야 하며 숫자로 시작할 수 없습니다"
+msgstr "입력은 카멜 케이스여야 하며 숫자로 시작할 수 없습니다"
 
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:28
 msgid "Instances"
@@ -836,7 +836,7 @@ msgstr "통합"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:57
 msgid "Invalid auth provider"
-msgstr "잘못된 인증 공급자"
+msgstr "잘못된 인증 제공자"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:21
 msgid "Invalid email"
@@ -853,7 +853,7 @@ msgstr "잘못된 양식 값"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
 msgid "Invite by Link"
-msgstr "링크로 초대하기"
+msgstr "링크로 초대"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
@@ -861,7 +861,7 @@ msgstr "이메일로 초대"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
-msgstr "링크로 초대하기"
+msgstr "링크로 초대"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
 msgid "Invite link sent to email addresses"
@@ -869,7 +869,7 @@ msgstr "이메일 주소로 전송된 초대 링크"
 
 #: src/pages/onboarding/InviteTeam.tsx:181
 msgid "Invite your team"
-msgstr "팀 초대하기"
+msgstr "팀 초대"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:85
 msgid "Italian"
@@ -885,7 +885,7 @@ msgstr "한국어"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:217
 msgid "Lab"
-msgstr "Lab"
+msgstr "실험실"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
@@ -897,11 +897,11 @@ msgstr "최신"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:33
 msgid "Latest date"
-msgstr "최근 날짜"
+msgstr "최신 날짜"
 
 #: src/pages/onboarding/InviteTeam.tsx:127
 msgid "Link copied to clipboard"
-msgstr "링크가 클립보드에 복사됨"
+msgstr "링크가 클립보드에 복사되었습니다"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:206
 msgid "Log out"
@@ -917,11 +917,11 @@ msgstr "회원 관리"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:168
 msgid "Manage the members of your space here"
-msgstr "여기에서 스페이스의 구성원 관리하기"
+msgstr "여기에서 워크스페이스의 회원을 관리하세요"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:57
 msgid "Manage your internet accounts."
-msgstr "인터넷 계정을 관리합니다."
+msgstr "인터넷 계정을 관리하세요."
 
 #: src/pages/settings/SettingsBilling.tsx:145
 msgid "Manage your subscription"
@@ -946,7 +946,7 @@ msgstr "회원"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:11
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:11
 msgid "Min"
-msgstr "Min"
+msgstr "최소"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:38
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:59
@@ -982,7 +982,7 @@ msgstr "API 키 이름"
 
 #: src/pages/settings/SettingsWorkspace.tsx:44
 msgid "Name of your workspace"
-msgstr "작업 공간의 이름"
+msgstr "워크스페이스 이름"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:180
@@ -1012,7 +1012,7 @@ msgstr "이전 워크플로로 이동"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
-msgstr "신규"
+msgstr "새로운"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
@@ -1028,11 +1028,11 @@ msgstr "새 비밀번호"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:52
 msgid "New Role"
-msgstr "새로운 역할"
+msgstr "새 역할"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
 msgid "New Webhook"
-msgstr "새로운 웹훅"
+msgstr "새 Webhook"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
 msgid "New account"
@@ -1047,7 +1047,7 @@ msgstr "새 키"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:56
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
 msgid "New record"
-msgstr "새로운 기록"
+msgstr "새 레코드"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
 msgid "No connected account"
@@ -1055,11 +1055,11 @@ msgstr "연결된 계정 없음"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:13
 msgid "No workflow runs yet"
-msgstr "아직 워크플로가 실행되지 않습니다"
+msgstr "아직 워크플로 실행 없음"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:9
 msgid "No workflow versions yet"
-msgstr "아직 워크플로 버전이 없습니다"
+msgstr "아직 워크플로 버전 없음"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:25
 msgid "Not empty"
@@ -1078,7 +1078,7 @@ msgstr "개체"
 
 #: src/pages/not-found/NotFound.tsx:47
 msgid "Off the beaten path"
-msgstr "잘 알려지지 않은 길에서 벗어나기"
+msgstr "잘 알려지지 않은 길"
 
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx:53
 msgid "Opened"
@@ -1115,16 +1115,16 @@ msgstr "퍼센트"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:27
 msgid "Percent empty"
-msgstr "비어 있는 비율"
+msgstr "비어 있는 퍼센트"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:29
 msgid "Percent not empty"
-msgstr "비어 있지 않은 비율"
+msgstr "비어 있지 않은 퍼센트"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:251
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:153
 msgid "Permanently destroy record"
-msgstr "기록 영구 파기"
+msgstr "레코드 영구 삭제"
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -1137,11 +1137,11 @@ msgstr "유효한 URL을 입력하세요"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:256
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
-msgstr "\"{confirmationValue}\"을 입력하여 이 API 키를 삭제할 것인지 확인합니다. 이 키를 사용하는 모든 스크립트는 작동이 중지된다는 점에 유의하세요."
+msgstr "\"{confirmationValue}\"을 입력하여 이 API 키를 삭제할 것인지 확인하세요. 이 키를 사용하는 모든 스크립트는 작동이 중지됩니다."
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:358
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr "{confirmationText}]을 입력하여 이 웹훅을 삭제할 것인지 확인하세요."
+msgstr "{confirmationText}을 입력하여 이 Webhook을 삭제할 것인지 확인하세요."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "Portuguese — Brazil"
@@ -1154,7 +1154,7 @@ msgstr "포르투갈어 - 포르투갈"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
 msgid "Preview"
-msgstr "미리 보기"
+msgstr "미리보기"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:37
 msgid "Privacy Policy"
@@ -1176,7 +1176,7 @@ msgstr "문서 읽기"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:53
 msgid "Receive an email containing password update link"
-msgstr "비밀번호 업데이트 링크가 포함된 이메일 수신"
+msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:69
 msgid "Record Selection"
@@ -1184,16 +1184,16 @@ msgstr "레코드 선택"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
 msgid "Regenerate Key"
-msgstr "키 다시 생성"
+msgstr "키 재생성"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
-msgstr "API 키 다시 생성하기"
+msgstr "API 키 재생성"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
-msgstr "키 다시 생성"
+msgstr "키 재생성"
 
 #: src/pages/settings/Releases.tsx:111
 #: src/pages/settings/Releases.tsx:117
@@ -1237,7 +1237,7 @@ msgstr "역할"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
-msgstr "워크플로를 실행하고 여기로 돌아와 실행을 확인합니다"
+msgstr "워크플로를 실행하고 여기로 돌아와 실행 결과를 확인하세요"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:47
 msgid "SSO"
@@ -1264,7 +1264,7 @@ msgstr "색인 검색..."
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
 msgid "Search fields"
-msgstr "검색 필드"
+msgstr "필드 검색"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:166
 msgid "Search for an object..."
@@ -1272,7 +1272,7 @@ msgstr "개체 검색..."
 
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts:23
 msgid "Search records"
-msgstr "기록 검색"
+msgstr "레코드 검색"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:33
 #: src/pages/settings/security/SettingsSecurity.tsx:40
@@ -1304,7 +1304,7 @@ msgstr "버전 기록 보기"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:266
 msgid "Select the events you wish to send to this endpoint"
-msgstr "이 엔드포인트로 보내려는 이벤트를 선택합니다"
+msgstr "이 엔드포인트로 보내려는 이벤트를 선택하세요"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:52
 msgid "Select your preferred language"
@@ -1328,7 +1328,7 @@ msgstr "도메인 이름 설정"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:37
 msgid "Set the name of your subdomain"
-msgstr "하위 도메인의 이름 설정"
+msgstr "하위 도메인 이름 설정"
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx:102
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:50
@@ -1388,7 +1388,7 @@ msgstr "하위 도메인은 3자보다 짧을 수 없습니다"
 
 #: src/pages/settings/SettingsBilling.tsx:120
 msgid "Subscription has been switched {to}"
-msgstr "구독이 전환되었습니다 {to}"
+msgstr "구독이 {to}로 전환되었습니다"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:17
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:17
@@ -1401,19 +1401,19 @@ msgstr "지원"
 
 #: src/pages/settings/SettingsBilling.tsx:187
 msgid "Switch billing {to}"
-msgstr "스위치 청구 {to}"
+msgstr "청구 {to}로 전환"
 
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
-msgstr "스위치 {from}"
+msgstr "{from}에서 전환"
 
 #: src/pages/settings/SettingsBilling.tsx:163
 msgid "Switch {to}"
-msgstr "스위치 {to}"
+msgstr "{to}로 전환"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
-msgstr "필드 레이블 및 API 이름 동기화"
+msgstr "필드 레이블과 API 이름 동기화"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
 msgid "System Settings - {systemTimeFormatLabel}"
@@ -1439,7 +1439,7 @@ msgstr "테스트 워크플로"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:240
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:267
 msgid "The description of this field"
-msgstr "이 필드에 대한 설명"
+msgstr "이 필드의 설명"
 
 #: src/pages/settings/SettingsProfile.tsx:43
 msgid "The email associated to your account"
@@ -1457,7 +1457,7 @@ msgstr "찾고 계신 페이지는 이미 사라졌거나 존재하지 않습니
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:229
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:252
 msgid "The values of this field"
-msgstr "이 필드의 값은 다음과 같습니다"
+msgstr "이 필드의 값"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:224
 msgid "The values of this field must be unique"
@@ -1465,7 +1465,7 @@ msgstr "이 필드의 값은 고유해야 합니다"
 
 #: src/pages/auth/PasswordReset.tsx:139
 msgid "There was an error while updating password."
-msgstr "비밀번호를 업데이트하는 동안 오류가 발생했습니다."
+msgstr "비밀번호 업데이트 중 오류가 발생했습니다."
 
 #: src/modules/settings/profile/components/ChangePassword.tsx:38
 msgid "There was an issue"
@@ -1473,7 +1473,7 @@ msgstr "문제가 발생했습니다"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:323
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 해당 사용자가 영구적으로 삭제되고 모든 과제에서 제거됩니다."
+msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 사용자가 영구적으로 삭제되고 모든 할당에서 제거됩니다."
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:48
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
@@ -1489,7 +1489,7 @@ msgstr "트리거 유형"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:60
 msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "트리거 유형은 수동 - 선택된 레코드가 없는 경우여야 합니다"
+msgstr "트리거 유형은 수동이어야 합니다 - 선택된 레코드가 없는 경우"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:56
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:16
@@ -1498,7 +1498,7 @@ msgstr "유형"
 
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx:117
 msgid "Type anything"
-msgstr "아무거나 입력"
+msgstr "아무거나 입력하세요"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
@@ -1525,7 +1525,7 @@ msgstr "초안으로 사용"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx:37
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "문자, 숫자, 대시만 사용합니다. 문자 또는 숫자로 시작하고 끝내기"
+msgstr "문자, 숫자, 대시만 사용하세요. 문자 또는 숫자로 시작하고 끝내세요"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:16
 msgid "Use our API or add your first {objectLabel} manually"
@@ -1569,27 +1569,27 @@ msgstr "모든 새로운 이벤트에 대해 이 엔드포인트로 POST 요청�
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:223
 msgid "Webhook"
-msgstr "웹훅"
+msgstr "Webhook"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:65
 msgid "Webhooks"
-msgstr "웹훅"
+msgstr "Webhooks"
 
 #: src/pages/auth/SignInUp.tsx:76
 msgid "Welcome to {workspaceName}"
-msgstr "{workspaceName}]에 오신 것을 환영합니다"
+msgstr "{workspaceName}에 오신 것을 환영합니다"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:127
 msgid "When the API key will expire."
-msgstr "API 키가 만료되는 시기."
+msgstr "API 키 만료일."
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:220
 msgid "When the key will be disabled"
-msgstr "키가 비활성화되는 경우"
+msgstr "키 비활성화 시기"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:58
 msgid "Workflow cannot be tested"
-msgstr "워크플로를 테스트할 수 없습니다"
+msgstr "워크플로를 테스트할 수 없음"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:146
 #: src/pages/settings/SettingsWorkspace.tsx:32
@@ -1612,27 +1612,27 @@ msgstr "워크플로를 테스트할 수 없습니다"
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:141
 #: src/modules/favorites/components/WorkspaceFavorites.tsx:19
 msgid "Workspace"
-msgstr "작업 공간"
+msgstr "워크스페이스"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:46
 msgid "Workspace Deletion"
-msgstr "작업 공간 삭제"
+msgstr "워크스페이스 삭제"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
-msgstr "설명 작성"
+msgstr "설명을 작성하세요"
 
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
-msgstr "1년치 요금이 즉시 청구됩니다."
+msgstr "1년 요금이 즉시 청구됩니다."
 
 #: src/pages/settings/SettingsBilling.tsx:55
 msgid "Your credit balance will be used to pay the monthly bills."
-msgstr "크레딧 잔액은 월 청구서 결제에 사용됩니다."
+msgstr "크레딧 잔액이 월 청구서 결제에 사용됩니다."
 
 #: src/pages/settings/SettingsProfile.tsx:36
 msgid "Your name as it will be displayed"
-msgstr "표시되는 사용자 이름"
+msgstr "표시될 이름"
 
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
@@ -1640,7 +1640,7 @@ msgstr "워크스페이스가 비활성화됩니다"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
 msgid "and"
-msgstr "그리고"
+msgstr "및"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
@@ -1648,7 +1648,7 @@ msgstr "직원"
 
 #: src/pages/settings/SettingsBilling.tsx:47
 msgid "from monthly to yearly"
-msgstr "월별에서 연간으로"
+msgstr "월간에서 연간으로"
 
 #: src/pages/settings/SettingsBilling.tsx:54
 msgid "from yearly to monthly"
@@ -1660,20 +1660,20 @@ msgstr "또는"
 
 #: src/pages/settings/SettingsBilling.tsx:53
 msgid "to monthly"
-msgstr "월 단위로"
+msgstr "월간으로"
 
 #: src/pages/settings/SettingsBilling.tsx:46
 msgid "to yearly"
-msgstr "연간"
+msgstr "연간으로"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
 msgid "yes"
-msgstr "yes"
+msgstr "예"
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
-msgstr "{aggregateLabel} 중 {fieldLabel}"
+msgstr "{fieldLabel}의 {aggregateLabel}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
