@@ -93,6 +93,7 @@ const StyledStepNodeInnerContainer = styled.div<{
   .selectable:focus-visible & {
     ${({ theme, variant }) => {
       switch (variant) {
+        case 'disabled':
         case 'default': {
           return css`
             background-color: ${theme.accent.quaternary};
