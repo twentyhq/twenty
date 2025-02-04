@@ -14,7 +14,12 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { IconX, LightIconButton, useIsMobile } from 'twenty-ui';
+import {
+  IconChevronLeft,
+  IconX,
+  LightIconButton,
+  useIsMobile,
+} from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -81,7 +86,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
@@ -96,6 +101,12 @@ export const CommandMenuTopBar = () => {
   return (
     <StyledInputContainer>
       <StyledContentContainer>
+        <CommandMenuContextChip
+          Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+          onClick={() => {
+            goBackFromCommandMenu();
+          }}
+        />
         {commandMenuPage !== CommandMenuPages.SearchRecords &&
           isDefined(contextStoreCurrentObjectMetadataId) && (
             <CommandMenuContextRecordChip
