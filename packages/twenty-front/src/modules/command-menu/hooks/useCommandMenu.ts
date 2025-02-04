@@ -134,31 +134,34 @@ export const useCommandMenu = () => {
     [openCommandMenu],
   );
 
-  const goBackFromCommandMenu = useRecoilCallback(({ snapshot, set }) => {
-    return () => {
-      const currentNavigationStack = snapshot
-        .getLoadable(commandMenuNavigationStackState)
-        .getValue();
+  const goBackFromCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return () => {
+        const currentNavigationStack = snapshot
+          .getLoadable(commandMenuNavigationStackState)
+          .getValue();
 
-      const newNavigationStack = currentNavigationStack.slice(0, -1);
+        const newNavigationStack = currentNavigationStack.slice(0, -1);
 
-      if (newNavigationStack.length === 0) {
-        closeCommandMenu();
-      }
+        if (newNavigationStack.length === 0) {
+          closeCommandMenu();
+        }
 
-      const lastNavigationStackItem =
-        newNavigationStack[newNavigationStack.length - 1];
+        const lastNavigationStackItem =
+          newNavigationStack[newNavigationStack.length - 1];
 
-      set(commandMenuPageState, lastNavigationStackItem?.page);
+        set(commandMenuPageState, lastNavigationStackItem?.page);
 
-      set(commandMenuPageInfoState, {
-        title: lastNavigationStackItem?.pageTitle,
-        Icon: lastNavigationStackItem?.pageIcon,
-      });
+        set(commandMenuPageInfoState, {
+          title: lastNavigationStackItem?.pageTitle,
+          Icon: lastNavigationStackItem?.pageIcon,
+        });
 
-      set(commandMenuNavigationStackState, newNavigationStack);
-    };
-  }, []);
+        set(commandMenuNavigationStackState, newNavigationStack);
+      };
+    },
+    [closeCommandMenu],
+  );
 
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
