@@ -91,8 +91,8 @@ const StyledStepNodeInnerContainer = styled.div<{
       switch (variant) {
         case 'success': {
           return css`
-            background-color: ${theme.responsiveColors.turquoise1};
-            border-color: ${theme.responsiveColors.turquoise4};
+            background-color: ${theme.adaptiveColors.turquoise1};
+            border-color: ${theme.adaptiveColors.turquoise4};
           `;
         }
         case 'failure': {

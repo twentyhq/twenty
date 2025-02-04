@@ -1,6 +1,6 @@
+import { ADAPTIVE_COLORS_LIGHT } from '@ui/theme/constants/AdaptiveColorsLight';
 import { BLUR_LIGHT } from '@ui/theme/constants/BlurLight';
 import { ILLUSTRATION_ICON_LIGHT } from '@ui/theme/constants/IllustrationIconLight';
-import { RESPONSIVE_COLORS_LIGHT } from '@ui/theme/constants/ResponsiveColorsLight';
 import { SNACK_BAR_LIGHT } from '@ui/theme/constants/SnackBarLight';
 import { ACCENT_LIGHT } from './AccentLight';
 import { BACKGROUND_LIGHT } from './BackgroundLight';
@@ -25,6 +25,6 @@ export const THEME_LIGHT = {
     tag: TAG_LIGHT,
     code: CODE_LIGHT,
     IllustrationIcon: ILLUSTRATION_ICON_LIGHT,
-    responsiveColors: RESPONSIVE_COLORS_LIGHT,
+    adaptiveColors: ADAPTIVE_COLORS_LIGHT,
   },
 };

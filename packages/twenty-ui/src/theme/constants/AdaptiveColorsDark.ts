@@ -1,6 +1,6 @@
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 
-export const RESPONSIVE_COLORS_DARK = {
+export const ADAPTIVE_COLORS_DARK = {
   turquoise1: THEME_COMMON.color.turquoise80,
   turquoise2: THEME_COMMON.color.turquoise70,
   turquoise3: THEME_COMMON.color.turquoise60,
