@@ -24,7 +24,7 @@ const StyledStepNodeType = styled.div<{
 }>`
   ${({ workflowVariant, theme }) => {
     switch (workflowVariant) {
-      case 'disabled':
+      case 'empty':
       case 'default': {
         return css`
           background-color: ${theme.background.tertiary};
@@ -56,7 +56,7 @@ const StyledStepNodeType = styled.div<{
   .selectable:focus-visible & {
     ${({ workflowVariant, theme }) => {
       switch (workflowVariant) {
-        case 'disabled':
+        case 'empty':
         case 'default': {
           return css`
             background-color: ${theme.color.blue};
@@ -81,7 +81,7 @@ const StyledStepNodeInnerContainer = styled.div<{
   border-style: solid;
   border-width: ${NODE_BORDER_WIDTH}px;
   box-shadow: ${({ variant, theme }) =>
-    variant === 'disabled' ? 'none' : theme.boxShadow.strong};
+    variant === 'empty' ? 'none' : theme.boxShadow.strong};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
@@ -93,7 +93,7 @@ const StyledStepNodeInnerContainer = styled.div<{
   .selectable:focus-visible & {
     ${({ theme, variant }) => {
       switch (variant) {
-        case 'disabled':
+        case 'empty':
         case 'default': {
           return css`
             background-color: ${theme.accent.quaternary};
@@ -126,7 +126,7 @@ const StyledStepNodeLabel = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ variant, theme }) =>
-    variant === 'disabled'
+    variant === 'empty'
       ? theme.font.color.extraLight
       : theme.font.color.primary};
   max-width: 200px;
