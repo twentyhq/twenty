@@ -42,8 +42,16 @@ export const useCommandMenu = () => {
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const openCommandMenu = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          return;
+        }
+
         copyContextStoreStates({
           instanceIdToCopyFrom: mainContextStoreComponentInstanceId,
           instanceIdToCopyTo: 'command-menu',
