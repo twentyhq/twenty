@@ -203,15 +203,13 @@ export const useCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  const openRecordsSearchPage = useRecoilCallback(() => {
-    return () => {
-      navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search records',
-        pageIcon: IconSearch,
-      });
-    };
-  }, [navigateCommandMenu]);
+  const openRecordsSearchPage = () => {
+    navigateCommandMenu({
+      page: CommandMenuPages.SearchRecords,
+      pageTitle: 'Search records',
+      pageIcon: IconSearch,
+    });
+  };
 
   const setGlobalCommandMenuContext = useRecoilCallback(
     ({ set }) => {
