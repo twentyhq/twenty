@@ -51,7 +51,7 @@ export class HttpExceptionHandlerService {
 
     return response.status(statusCode).send({
       statusCode,
-      error: exception.code || 'Bad Request',
+      error: exception.name || 'Bad Request',
       messages: [exception?.message],
     });
   };
