@@ -109,7 +109,7 @@ export const SettingsRoles = () => {
                     <StyledNameCell>
                       <IconUser size={theme.icon.size.md} />
                       {role.label}
-                      {role.isEditable && (
+                      {!role.isEditable && (
                         <IconLock size={theme.icon.size.sm} />
                       )}
                     </StyledNameCell>
