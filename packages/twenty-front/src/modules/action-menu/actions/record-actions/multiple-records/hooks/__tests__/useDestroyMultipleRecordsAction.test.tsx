@@ -12,12 +12,10 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const [firstPeopleMock, secondPeopleMock, _rest] = getPeopleMock().map(
-  (record) => ({
-    ...record,
-    deletedAt: new Date().toISOString(),
-  }),
-);
+const [firstPeopleMock, secondPeopleMock] = getPeopleMock().map((record) => ({
+  ...record,
+  deletedAt: new Date().toISOString(),
+}));
 
 const destroyManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();

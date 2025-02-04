@@ -78,10 +78,6 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
-    console.log({
-      isRemoteObject,
-      isDeletedFilterActive,
-    });
     const shouldBeRegistered =
       !isRemoteObject &&
       isDeletedFilterActive &&
@@ -90,7 +86,6 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       contextStoreNumberOfSelectedRecords > 0;
 
     const onClick = () => {
-      console.log({ shouldBeRegistered });
       if (!shouldBeRegistered) {
         return;
       }
