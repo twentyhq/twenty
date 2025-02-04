@@ -191,14 +191,11 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
-    position: 7,
+    position: 10,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
   },
 };
