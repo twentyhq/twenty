@@ -1246,6 +1246,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getRoles: Array<RoleDto>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1442,6 +1443,16 @@ export enum RemoteTableStatus {
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
+};
+
+export type RoleDto = {
+  __typename?: 'RoleDTO';
+  canUpdateAllSettings: Scalars['Boolean'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isEditable: Scalars['Boolean'];
+  label: Scalars['String'];
+  workspaceMembers: Array<WorkspaceMember>;
 };
 
 export type RunWorkflowVersionInput = {
