@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -48,6 +49,7 @@ export class MicrosoftAPIsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async refreshMicrosoftRefreshToken(input: {
@@ -291,20 +293,22 @@ export class MicrosoftAPIsService {
       }
     });
 
-    const messageChannels = await messageChannelRepository.find({
-      where: {
-        connectedAccountId: newOrExistingConnectedAccountId,
-      },
-    });
-
-    for (const messageChannel of messageChannels) {
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        {
-          workspaceId,
-          messageChannelId: messageChannel.id,
+    if (this.environmentService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')) {
+      const messageChannels = await messageChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const messageChannel of messageChannels) {
+        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+          MessagingMessageListFetchJob.name,
+          {
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
+        );
+      }
     }
 
     const calendarChannels = await calendarChannelRepository.find({
