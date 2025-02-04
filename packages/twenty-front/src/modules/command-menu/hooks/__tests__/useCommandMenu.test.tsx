@@ -138,4 +138,64 @@ describe('useCommandMenu', () => {
       Icon: undefined,
     });
   });
+
+  it('should go back from a page', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconSearch,
+      });
+    });
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.ViewRecord,
+        pageTitle: 'View Record',
+      });
+    });
+
+    expect(result.current.commandMenuNavigationStack).toEqual([
+      {
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconSearch,
+      },
+      {
+        page: CommandMenuPages.ViewRecord,
+        pageTitle: 'View Record',
+      },
+    ]);
+
+    act(() => {
+      result.current.commandMenu.goBackFromCommandMenu();
+    });
+
+    expect(result.current.commandMenuNavigationStack).toEqual([
+      {
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconSearch,
+      },
+    ]);
+    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: 'Search',
+      Icon: IconSearch,
+    });
+
+    act(() => {
+      result.current.commandMenu.goBackFromCommandMenu();
+    });
+
+    expect(result.current.commandMenuNavigationStack).toEqual([]);
+    expect(result.current.commandMenuPage).toBe(undefined);
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: undefined,
+      Icon: undefined,
+    });
+    expect(result.current.isCommandMenuOpened).toBe(false);
+  });
 });

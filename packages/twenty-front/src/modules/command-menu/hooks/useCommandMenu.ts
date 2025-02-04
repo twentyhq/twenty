@@ -142,14 +142,18 @@ export const useCommandMenu = () => {
 
       const newNavigationStack = currentNavigationStack.slice(0, -1);
 
+      if (newNavigationStack.length === 0) {
+        closeCommandMenu();
+      }
+
       const lastNavigationStackItem =
         newNavigationStack[newNavigationStack.length - 1];
 
-      set(commandMenuPageState, lastNavigationStackItem.page);
+      set(commandMenuPageState, lastNavigationStackItem?.page);
 
       set(commandMenuPageInfoState, {
-        title: lastNavigationStackItem.pageTitle,
-        Icon: lastNavigationStackItem.pageIcon,
+        title: lastNavigationStackItem?.pageTitle,
+        Icon: lastNavigationStackItem?.pageIcon,
       });
 
       set(commandMenuNavigationStackState, newNavigationStack);
