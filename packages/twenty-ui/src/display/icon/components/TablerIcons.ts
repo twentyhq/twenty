@@ -10,11 +10,8 @@ export {
   IconArrowBackUp,
   IconArrowDown,
   IconArrowLeft,
-  IconArrowRight,
-  IconArrowUp,
-  IconArrowUpRight,
-  IconArrowsVertical,
-  IconAt,
+  IconArrowRight, IconArrowsVertical, IconArrowUp,
+  IconArrowUpRight, IconAt,
   IconBaselineDensitySmall,
   IconBell,
   IconBolt,
@@ -39,10 +36,7 @@ export {
   IconCheckbox,
   IconChevronDown,
   IconChevronLeft,
-  IconChevronRight,
-  IconChevronUp,
-  IconChevronsRight,
-  IconCircleDot,
+  IconChevronRight, IconChevronsRight, IconChevronUp, IconCircleDot,
   IconCircleOff,
   IconCirclePlus,
   IconCircleX,
@@ -227,6 +221,7 @@ export {
   IconSend,
   IconServer,
   IconSettings,
+  IconSettings2,
   IconSettingsAutomation,
   IconSlash,
   IconSortAZ,
@@ -260,7 +255,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
