@@ -6,11 +6,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-    Banner,
-    H1Title,
-    H1TitleFontColor,
-    IconChevronRight,
-    Section,
+  H1Title,
+  H1TitleFontColor,
+  IconChevronRight,
+  Section,
 } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 
@@ -65,21 +64,6 @@ const StyledTransitionedIconChevronRight = styled(IconChevronRight)<{
     isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
   transition: ${({ theme }) =>
     `transform ${theme.animation.duration.normal}s ease`};
-`;
-
-const StyledBannerContainer = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const StyledBanner = styled(Banner)`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledBannerText = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 interface VariableRowProps {

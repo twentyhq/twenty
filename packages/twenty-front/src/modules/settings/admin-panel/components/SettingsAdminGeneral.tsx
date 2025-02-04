@@ -16,14 +16,14 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
-    Button,
-    H1Title,
-    H1TitleFontColor,
-    H2Title,
-    IconSearch,
-    IconUser,
-    Section,
-    Toggle,
+  Button,
+  H1Title,
+  H1TitleFontColor,
+  H2Title,
+  IconSearch,
+  IconUser,
+  Section,
+  Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
