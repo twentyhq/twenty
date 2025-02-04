@@ -9,6 +9,9 @@
   "scripts": {
     "build": "npx vite build"
   },
+  "dependencies": {
+    "twenty-shared": "workspace:*"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
