@@ -24,6 +24,7 @@ export const useWorkspaceFromInviteHash = () => {
   );
   const { data: workspaceFromInviteHash, loading } =
     useGetWorkspaceFromInviteHashQuery({
+      skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {
         enqueueSnackBar(error.message, {

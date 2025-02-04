@@ -27,6 +27,7 @@ export type SAMLRequest = Omit<
   user: {
     identityProviderId: string;
     forceSubdomainUrl: boolean;
+    workspaceInviteHash?: string;
     email: string;
   };
 };
@@ -80,6 +81,9 @@ export class SamlAuthStrategy extends PassportStrategy(
         RelayState: JSON.stringify({
           identityProviderId: req.params.identityProviderId,
           ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
+          ...(req.query.workspaceInviteHash
+            ? { workspaceInviteHash: req.query.workspaceInviteHash }
+            : {}),
         }),
       },
     });
@@ -87,6 +91,7 @@ export class SamlAuthStrategy extends PassportStrategy(
 
   private extractState(req: Request): {
     identityProviderId: string;
+    workspaceInviteHash?: string;
     forceSubdomainUrl: boolean;
   } {
     try {
@@ -95,6 +100,7 @@ export class SamlAuthStrategy extends PassportStrategy(
 
         return {
           identityProviderId: RelayState.identityProviderId,
+          workspaceInviteHash: RelayState.workspaceInviteHash,
           forceSubdomainUrl: !!RelayState.forceSubdomainUrl,
         };
       }
@@ -118,11 +124,7 @@ export class SamlAuthStrategy extends PassportStrategy(
       }
       const state = this.extractState(request);
 
-      const result: Pick<SAMLRequest, 'user'> = {
-        user: { ...state, email },
-      };
-
-      done(null, result);
+      done(null, { ...state, email });
     } catch (err) {
       done(err);
     }

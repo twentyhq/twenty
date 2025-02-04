@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewEventContext } from '@/views/events/contexts/ViewEventContext';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isPersistingViewFieldsComponentState } from '@/views/states/isPersistingViewFieldsComponentState';
 import { View } from '@/views/types/View';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -22,11 +21,6 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
   const [currentViewSnapshot, setCurrentViewSnapshot] = useState<
     View | undefined
   >(undefined);
-
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-    viewBarId,
-  );
 
   const isPersistingViewFields = useRecoilComponentValueV2(
     isPersistingViewFieldsComponentState,
@@ -52,7 +46,6 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
       }
     }
   }, [
-    availableFilterDefinitions,
     currentViewSnapshot,
     currentViewWithCombinedFiltersAndSorts,
     isPersistingViewFields,

@@ -6,9 +6,12 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useApolloClient } from '@apollo/client';
 import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
+import { useParams } from 'react-router-dom';
 
 export const useSSO = () => {
   const apolloClient = useApolloClient();
+  const workspaceInviteHash = useParams().workspaceInviteHash;
+
   const { enqueueSnackBar } = useSnackBar();
   const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
   const { redirect } = useRedirect();
@@ -21,6 +24,7 @@ export const useSSO = () => {
           input: {
             identityProviderId,
             forceSubdomainUrl: isForceSubdomainUrlEnable,
+            workspaceInviteHash
           },
         },
       });

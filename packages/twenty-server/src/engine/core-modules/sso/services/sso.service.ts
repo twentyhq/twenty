@@ -200,7 +200,7 @@ export class SSOService {
 
   async getAuthorizationUrl(
     identityProviderId: string,
-    forceSubdomainUrl: boolean,
+    searchParams: Record<string, string | boolean>,
   ) {
     const identityProvider =
       (await this.workspaceSSOIdentityProviderRepository.findOne({
@@ -218,9 +218,7 @@ export class SSOService {
 
     return {
       id: identityProvider.id,
-      authorizationURL: this.buildIssuerURL(identityProvider, {
-        forceSubdomainUrl,
-      }),
+      authorizationURL: this.buildIssuerURL(identityProvider, searchParams),
       type: identityProvider.type,
     };
   }

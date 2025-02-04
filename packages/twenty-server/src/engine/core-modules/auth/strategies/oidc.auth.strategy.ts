@@ -3,7 +3,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import { isEmail } from 'class-validator';
 import { Request } from 'express';
 import { Strategy, StrategyOptions, TokenSet } from 'openid-client';
 
@@ -22,6 +21,7 @@ export type OIDCRequest = Omit<
     email: string;
     firstName?: string | null;
     lastName?: string | null;
+    workspaceInviteHash?: string;
   };
 };
 
@@ -52,12 +52,16 @@ export class OIDCAuthStrategy extends PassportStrategy(
       state: JSON.stringify({
         identityProviderId: req.params.identityProviderId,
         ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
+        ...(req.query.workspaceInviteHash
+          ? { workspaceInviteHash: req.query.workspaceInviteHash }
+          : {}),
       }),
     });
   }
 
   private extractState(req: Request): {
     identityProviderId: string;
+    workspaceInviteHash?: string;
     forceSubdomainUrl: boolean;
   } {
     try {
@@ -73,6 +77,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
       return {
         identityProviderId: state.identityProviderId,
+        workspaceInviteHash: state.workspaceInviteHash,
         forceSubdomainUrl: !!state.forceSubdomainUrl,
       };
     } catch (err) {
@@ -90,12 +95,20 @@ export class OIDCAuthStrategy extends PassportStrategy(
 
       const userinfo = await this.client.userinfo(tokenset);
 
-      if (!userinfo.email || !isEmail(userinfo.email)) {
-        return done(new Error('Invalid email'));
+      const email = userinfo.email ?? userinfo.upn;
+
+      if (!email || typeof email !== 'string') {
+        return done(
+          new AuthException(
+            'Email not found in identity provider payload',
+            AuthExceptionCode.INVALID_DATA,
+          ),
+        );
       }
 
       done(null, {
-        email: userinfo.email,
+        email,
+        workspaceInviteHash: state.workspaceInviteHash,
         forceSubdomainUrl: state.forceSubdomainUrl,
         identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),

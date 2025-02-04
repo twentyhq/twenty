@@ -613,6 +613,7 @@ export type FullName = {
 export type GetAuthorizationUrlInput = {
   forceSubdomainUrl: Scalars['Boolean']['input'];
   identityProviderId: Scalars['String']['input'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type GetAuthorizationUrlOutput = {

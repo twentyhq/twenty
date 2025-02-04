@@ -601,6 +601,7 @@ export type FullName = {
 export type GetAuthorizationUrlInput = {
   forceSubdomainUrl: Scalars['Boolean'];
   identityProviderId: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 export type GetAuthorizationUrlOutput = {
@@ -800,7 +801,7 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
-  updateLabPublicFeatureFlag: Scalars['Boolean'];
+  updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
@@ -1681,7 +1682,6 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
@@ -2232,7 +2232,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 }>;
 
 
-export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: boolean };
+export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
 export type CreateOidcIdentityProviderMutationVariables = Exact<{
   input: SetupOidcSsoInput;
@@ -3910,7 +3910,11 @@ export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeo
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
-  updateLabPublicFeatureFlag(input: $input)
+  updateLabPublicFeatureFlag(input: $input) {
+    id
+    key
+    value
+  }
 }
     `;
 export type UpdateLabPublicFeatureFlagMutationFn = Apollo.MutationFunction<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;

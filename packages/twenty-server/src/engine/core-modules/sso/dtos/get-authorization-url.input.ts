@@ -2,7 +2,7 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsString } from 'class-validator';
+import { IsOptional, IsBoolean, IsString } from 'class-validator';
 
 @InputType()
 export class GetAuthorizationUrlInput {
@@ -13,4 +13,9 @@ export class GetAuthorizationUrlInput {
   @Field(() => Boolean)
   @IsBoolean()
   forceSubdomainUrl: boolean;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  workspaceInviteHash?: string;
 }
