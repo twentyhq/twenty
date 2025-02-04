@@ -196,26 +196,28 @@ export class UserResolver {
         throw new Error('User workspace not found');
       }
 
-      const role = await this.userRoleService
+      const roles = await this.userRoleService
         .getRolesForUserWorkspace(userWorkspace.id)
         .then(([roleEntity]) => {
           if (!isDefined(roleEntity)) {
-            return null;
+            return [];
           } else {
-            return {
-              id: roleEntity.id,
-              label: roleEntity.label,
-              canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-              description: roleEntity.description,
-              isEditable: roleEntity.isEditable,
-              userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-            };
+            return [
+              {
+                id: roleEntity.id,
+                label: roleEntity.label,
+                canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+                description: roleEntity.description,
+                isEditable: roleEntity.isEditable,
+                userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+              },
+            ];
           }
         });
 
       const workspaceMember = {
         ...workspaceMemberEntity,
-        roles: role ? [role] : [],
+        roles,
         userWorkspaceId: userWorkspace.id,
       } as WorkspaceMember;
 

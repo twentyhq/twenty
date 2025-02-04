@@ -36,24 +36,10 @@ export class UserRoleService {
     workspaceId: string;
     roleId: string;
   }): Promise<WorkspaceMember> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        id: workspaceMemberId,
-      },
-    });
-
-    if (!isDefined(workspaceMember)) {
-      throw new PermissionsException(
-        'Workspace member not found',
-        PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
+    const workspaceMember = await this.getWorkspaceMemberOrThrow(
+      workspaceMemberId,
+      workspaceId,
+    );
 
     const userWorkspace = await this.getUserWorkspaceForUser(
       workspaceMember.userId,
