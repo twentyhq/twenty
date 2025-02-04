@@ -231,6 +231,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     ],
     useAction: useDeleteSingleRecordAction,
   },
+  // Should also be done for workflow ?
   deleteMultipleRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
