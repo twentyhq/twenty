@@ -11,9 +11,5 @@ export const commandMenuNavigationStackState = createState<
   CommandMenuNavigationStackItem[]
 >({
   key: 'command-menu/commandMenuNavigationStackState',
-  defaultValue: [
-    {
-      page: CommandMenuPages.Root,
-    },
-  ],
+  defaultValue: [],
 });
