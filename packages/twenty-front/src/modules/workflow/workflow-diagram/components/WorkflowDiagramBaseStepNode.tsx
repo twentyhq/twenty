@@ -118,7 +118,7 @@ const StyledStepNodeInnerContainer = styled.div<{
 `;
 
 const StyledStepNodeLabel = styled.div<{
-  variant?: WorkflowDiagramNodeVariant;
+  variant: WorkflowDiagramNodeVariant;
 }>`
   align-items: center;
   display: flex;
