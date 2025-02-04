@@ -38,7 +38,9 @@ export const SettingsServiceCenterSection = () => {
             {'Create, edit, delete, and view agents and more.'}
           </SettingsNavigationCard>
         </UndecoratedLink>
-        <UndecoratedLink to={getSettingsPath(SettingsPath.Workspace)}>
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.ServiceCenterTelephony)}
+        >
           <SettingsNavigationCard Icon={IconPhone} title={'Telephony'}>
             {'Manage your telephony extension settings here.'}
           </SettingsNavigationCard>
