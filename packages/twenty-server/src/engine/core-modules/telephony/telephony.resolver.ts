@@ -154,24 +154,24 @@ export class TelephonyResolver {
     const ramalBody = this.getRamalBody(createTelephonyInput);
 
     try {
-      // const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
-      //   ...ramalBody,
-      // });
-
-      // if (createdRamal) {
-      const result = await this.telephonyService.createTelehony({
-        ...createTelephonyInput,
-        // ramal_id: createdRamal.data.id,
+      const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
+        ...ramalBody,
       });
 
-      await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        createTelephonyInput.workspaceId,
-        createTelephonyInput.memberId,
-        createTelephonyInput.numberExtension,
-      );
+      if (createdRamal) {
+        const result = await this.telephonyService.createTelehony({
+          ...createTelephonyInput,
+          ramal_id: createdRamal.data.id,
+        });
 
-      return result;
-      // }
+        await this.telephonyService.setExtensionNumberInWorkspaceMember(
+          createTelephonyInput.workspaceId,
+          createTelephonyInput.memberId,
+          createTelephonyInput.numberExtension,
+        );
+
+        return result;
+      }
     } catch (error) {
       return error;
     }

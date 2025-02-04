@@ -20,6 +20,7 @@ import { SettingsServiceCenterNewTelephonyExtension } from '~/pages/settings/ser
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
+import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -365,6 +366,10 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterNewTelephonyExtension}
         element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.EditTelephony}
+        element={<SettingsTelephonyEdit />}
       />
       <Route
         path={SettingsPath.ServiceCenterSectors}
