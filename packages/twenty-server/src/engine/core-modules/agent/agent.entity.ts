@@ -14,9 +14,9 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 
 @Entity({ name: 'agent', schema: 'core' })
 @ObjectType('Agent')

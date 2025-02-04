@@ -9,6 +9,8 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { AgentResolver } from 'src/engine/core-modules/agent/agent.resolver';
 import { AgentService } from 'src/engine/core-modules/agent/agent.service';
+import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
+import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { SectorService } from 'src/engine/core-modules/sector/sector.service';
@@ -20,8 +22,12 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([Agent, Workspace, Sector], 'core'),
+        NestjsQueryTypeOrmModule.forFeature(
+          [Agent, Workspace, Sector, Inbox],
+          'core',
+        ),
         TypeORMModule,
+        InboxModule,
       ],
     }),
     DataSourceModule,

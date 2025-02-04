@@ -44,11 +44,13 @@ export class WhatsappIntegrationService {
     });
 
     await this.whatsappIntegrationRepository.save(createdIntegration);
-    await this.subscribeWebhook(createdIntegration);
+
     await this.inboxService.create(
       createdIntegration,
       IntegrationType.WHATSAPP,
     );
+
+    await this.subscribeWebhook(createdIntegration);
 
     return createdIntegration;
   }

@@ -5,16 +5,16 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
+import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum IntegrationType {
   WHATSAPP = 'whatsapp',
@@ -55,5 +55,5 @@ export class Inbox {
 
   @Field(() => [Agent])
   @ManyToMany(() => Agent, (agent) => agent.inboxes)
-  agents: Relation<Agent[]>;
+  agents: Agent[];
 }

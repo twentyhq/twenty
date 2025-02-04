@@ -4,12 +4,18 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsBoolean,
+  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
 @InputType()
 export class UpdateAgentInput {
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
   @Field(() => ID)
   @IsString()
   memberId: string;
@@ -24,4 +30,10 @@ export class UpdateAgentInput {
   @ArrayNotEmpty()
   @IsString({ each: true })
   sectorIds: string[];
+
+  @Field(() => [String])
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  inboxesIds: string[];
 }

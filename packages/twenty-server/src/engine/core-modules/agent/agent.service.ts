@@ -7,6 +7,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { CreateAgentInput } from 'src/engine/core-modules/agent/dtos/create-agent.input';
 import { UpdateAgentInput } from 'src/engine/core-modules/agent/dtos/update-agent.input';
+import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -21,6 +22,8 @@ export class AgentService {
     private readonly sectorRepository: Repository<Sector>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    @InjectRepository(Inbox, 'core')
+    private readonly inboxRepository: Repository<Inbox>,
   ) {}
 
   async create(createInput: CreateAgentInput): Promise<Agent> {
@@ -42,10 +45,19 @@ export class AgentService {
       throw new Error('One or more sectors not found');
     }
 
+    const inboxes = await this.inboxRepository.findBy({
+      id: In(createInput.inboxesIds),
+    });
+
+    if (inboxes.length !== createInput.inboxesIds.length) {
+      throw new Error('One or more inboxes not found');
+    }
+
     const createdAgent = this.agentRepository.create({
       ...createInput,
       workspace,
       sectors,
+      inboxes,
     });
 
     return await this.agentRepository.save(createdAgent);
@@ -54,21 +66,29 @@ export class AgentService {
   async findAll(workspaceId: string): Promise<Agent[]> {
     return await this.agentRepository.find({
       where: { workspace: { id: workspaceId } },
-      relations: ['workspace', 'sectors'],
+      relations: [
+        'workspace',
+        'sectors',
+        'inboxes',
+        'inboxes.whatsappIntegration',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
     });
   }
 
   async findById(agentId: string): Promise<Agent | null> {
     return await this.agentRepository.findOne({
       where: { id: agentId },
-      relations: ['workspace', 'sectors'],
+      relations: ['workspace', 'sectors', 'inboxes'],
     });
   }
 
   async update(updateInput: UpdateAgentInput): Promise<Agent> {
     const agent = await this.agentRepository.findOne({
-      where: { id: updateInput.memberId },
-      relations: ['workspace', 'sectors'],
+      where: { id: updateInput.id },
+      relations: ['workspace', 'sectors', 'inboxes'],
     });
 
     if (!agent) {
@@ -92,6 +112,20 @@ export class AgentService {
       }
 
       updatedAgent.sectors = sectors;
+    }
+
+    if (updateInput.inboxesIds && Array.isArray(updateInput.inboxesIds)) {
+      const inboxes = await this.inboxRepository.find({
+        where: {
+          id: In(updateInput.inboxesIds),
+        },
+      });
+
+      if (inboxes.length !== updateInput.inboxesIds.length) {
+        throw new Error('One or more inboxes not found');
+      }
+
+      updatedAgent.inboxes = inboxes;
     }
 
     return await this.agentRepository.save(updatedAgent);

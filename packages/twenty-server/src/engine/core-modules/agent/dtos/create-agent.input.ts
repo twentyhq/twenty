@@ -1,9 +1,9 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 
 import {
+  ArrayNotEmpty,
   IsArray,
   IsBoolean,
-  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -24,8 +24,14 @@ export class CreateAgentInput {
   workspaceId: string;
 
   @Field(() => [String])
-  @IsNotEmpty()
   @IsArray()
+  @ArrayNotEmpty()
   @IsString({ each: true })
   sectorIds: string[];
+
+  @Field(() => [String])
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  inboxesIds: string[];
 }
