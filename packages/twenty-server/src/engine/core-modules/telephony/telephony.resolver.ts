@@ -34,11 +34,6 @@ export class TelephonyResolver {
     cliente_id: 3,
   };
 
-  body = {
-    pos_registro_inicial: 0,
-    cliente_id: 1,
-  };
-
   getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
     return {
       dados: {
@@ -47,7 +42,7 @@ export class TelephonyResolver {
         numero: input.numberExtension,
         senha_sip: input.SIPPassword,
         caller_id_externo: input.callerExternalID,
-        cliente_id: 1,
+        cliente_id: this.bodyPROD.cliente_id,
         grupo_ramais: '1',
         centro_custo: '1',
         dupla_autenticacao_ip_permitido: '1',
@@ -159,24 +154,24 @@ export class TelephonyResolver {
     const ramalBody = this.getRamalBody(createTelephonyInput);
 
     try {
-      // const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
-      //   ...ramalBody,
-      // });
-
-      // if (createdRamal) {
-      const result = await this.telephonyService.createTelehony({
-        ...createTelephonyInput,
-        // ramal_id: createdRamal.data.id,
+      const createdRamal = await PABXPRODapi.post('/inserir_ramal', {
+        ...ramalBody,
       });
 
-      await this.telephonyService.setExtensionNumberInWorkspaceMember(
-        createTelephonyInput.workspaceId,
-        createTelephonyInput.memberId,
-        createTelephonyInput.numberExtension,
-      );
+      if (createdRamal) {
+        const result = await this.telephonyService.createTelehony({
+          ...createTelephonyInput,
+          ramal_id: createdRamal.data.id,
+        });
 
-      return result;
-      // }
+        await this.telephonyService.setExtensionNumberInWorkspaceMember(
+          createTelephonyInput.workspaceId,
+          createTelephonyInput.memberId,
+          createTelephonyInput.numberExtension,
+        );
+
+        return result;
+      }
     } catch (error) {
       return error;
     }
@@ -300,6 +295,17 @@ export class TelephonyResolver {
     });
 
     return data;
+  }
+
+  @Query(() => TelephonyExtension, { nullable: true })
+  async getUserSoftfone(
+    @Args('extNum', { type: () => String }) extNum: string,
+  ): Promise<TelephonyExtension> {
+    const extensions = await PABXPRODapi.get('/listar_ramais', {
+      data: { ...this.bodyPROD, numero: extNum },
+    });
+
+    return extensions.data.dados[0];
   }
 
   @Mutation(() => Boolean)

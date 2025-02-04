@@ -25429,6 +25429,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dangerously-set-html-content@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "dangerously-set-html-content@npm:1.1.0"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 10c0/5ec26a0a024360bf091b74d844532355f6cacc2a938d973c8ec8ecb03c4454553f6d3389823790e588825df4e82a2fb065453e244032c201ddd94e2806f67240
+  languageName: node
+  linkType: hard
+
 "dargs@npm:^7.0.0":
   version: 7.0.0
   resolution: "dargs@npm:7.0.0"
@@ -47009,6 +47018,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     danger: "npm:^11.3.0"
     danger-plugin-todos: "npm:^1.3.1"
+    dangerously-set-html-content: "npm:^1.1.0"
     dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
     date-fns-tz: "npm:^2.0.0"

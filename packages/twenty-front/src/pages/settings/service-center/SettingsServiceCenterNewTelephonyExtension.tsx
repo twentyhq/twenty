@@ -22,7 +22,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line import/no-duplicates
@@ -36,7 +35,6 @@ export const SettingsServiceCenterNewTelephonyExtension = () => {
   const { enqueueSnackBar } = useSnackBar();
   const { createTelephony } = useCreateTelephony();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const theme = useTheme();
 
   const formConfig = useForm<SettingsNewTelephonySchemaValues>({
     mode: 'onTouched',
