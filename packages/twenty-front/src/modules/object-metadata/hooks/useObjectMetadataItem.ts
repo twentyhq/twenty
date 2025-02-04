@@ -5,8 +5,7 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isDefined } from 'twenty-shared';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -26,9 +25,7 @@ export const useObjectMetadataItem = ({
   );
 
   const isWorkflowToBeFiltered =
-    !isWorkflowEnabled &&
-    (objectNameSingular === CoreObjectNameSingular.Workflow ||
-      isWorkflowSubObjectMetadata(objectNameSingular));
+    !isWorkflowEnabled && isWorkflowRelatedObjectMetadata(objectNameSingular);
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 

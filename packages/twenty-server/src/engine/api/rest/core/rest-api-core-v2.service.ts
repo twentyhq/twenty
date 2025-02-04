@@ -48,6 +48,32 @@ export class RestApiCoreServiceV2 {
     );
   }
 
+  async update(request: Request) {
+    const { id: recordId } = parseCorePath(request);
+
+    if (!recordId) {
+      throw new BadRequestException('Record ID not found');
+    }
+
+    const { objectMetadataNameSingular, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
+
+    const recordToUpdate = await repository.findOneOrFail({
+      where: { id: recordId },
+    });
+
+    const updatedRecord = await repository.save({
+      ...recordToUpdate,
+      ...request.body,
+    });
+
+    return this.formatResult(
+      'update',
+      objectMetadataNameSingular,
+      updatedRecord,
+    );
+  }
+
   private formatResult<T>(
     operation: 'delete' | 'create' | 'update' | 'find',
     objectNameSingular: string,
