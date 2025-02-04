@@ -163,6 +163,33 @@ export const useCommandMenu = () => {
     [closeCommandMenu],
   );
 
+  const navigateCommandMenuHistory = useRecoilCallback(({ snapshot, set }) => {
+    return (pageIndex: number) => {
+      const currentNavigationStack = snapshot
+        .getLoadable(commandMenuNavigationStackState)
+        .getValue();
+
+      const newNavigationStack = currentNavigationStack.slice(0, pageIndex);
+
+      set(commandMenuNavigationStackState, newNavigationStack);
+
+      if (newNavigationStack.length === 0) {
+        throw new Error(
+          `No command menu navigation stack item found for index ${pageIndex}`,
+        );
+      }
+
+      const newNavigationStackItem =
+        newNavigationStack[newNavigationStack.length - 1];
+
+      set(commandMenuPageState, newNavigationStackItem?.page);
+      set(commandMenuPageInfoState, {
+        title: newNavigationStackItem?.pageTitle,
+        Icon: newNavigationStackItem?.pageIcon,
+      });
+    };
+  }, []);
+
   const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (recordId: string, objectNameSingular: string) => {
@@ -238,6 +265,7 @@ export const useCommandMenu = () => {
     openCommandMenu,
     closeCommandMenu,
     navigateCommandMenu,
+    navigateCommandMenuHistory,
     goBackFromCommandMenu,
     openRecordsSearchPage,
     openRecordInCommandMenu,
