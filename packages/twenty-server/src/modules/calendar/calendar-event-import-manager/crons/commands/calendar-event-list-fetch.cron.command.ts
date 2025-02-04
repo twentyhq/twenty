@@ -20,14 +20,14 @@ export class CalendarEventListFetchCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      CalendarEventListFetchCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: CalendarEventListFetchCronJob.name,
+      data: undefined,
+      options: {
         repeat: {
           pattern: CALENDAR_EVENTS_LIST_CRON_PATTERN,
         },
       },
-    );
+    });
   }
 }

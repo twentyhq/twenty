@@ -340,19 +340,20 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.MANUAL:
         return;
       case WorkflowTriggerType.CRON:
-        await this.messageQueueService.addCron<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
+        await this.messageQueueService.addCron<WorkflowTriggerJobData>({
+          jobName: WorkflowTriggerJob.name,
+          jobId: workflowVersion.workflowId,
+          data: {
             workspaceId: this.getWorkspaceId(),
             workflowId: workflowVersion.workflowId,
             payload: {},
           },
-          {
+          options: {
             repeat: {
               pattern: workflowVersion.trigger.settings.pattern,
             },
           },
-        );
+        });
 
         return;
       default: {
@@ -378,10 +379,10 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.MANUAL:
         return;
       case WorkflowTriggerType.CRON:
-        await this.messageQueueService.removeCron(
-          WorkflowTriggerJob.name,
-          workflowVersion.trigger.settings.pattern,
-        );
+        await this.messageQueueService.removeCron({
+          jobName: WorkflowTriggerJob.name,
+          jobId: workflowVersion.workflowId,
+        });
 
         return;
       default:

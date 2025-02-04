@@ -67,36 +67,47 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     this.workerMap[queueName] = worker;
   }
 
-  async addCron<T>(
-    queueName: MessageQueue,
-    jobName: string,
-    data: T,
-    options?: QueueCronJobOptions,
-  ): Promise<void> {
+  async addCron<T>({
+    queueName,
+    jobName,
+    data,
+    options,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    data: T;
+    options: QueueCronJobOptions;
+    jobId?: string;
+  }): Promise<void> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
+    const name = `${jobName}${jobId ? `.${jobId}` : ''}`;
     const queueOptions: JobsOptions = {
-      jobId: options?.id,
       priority: options?.priority,
       repeat: options?.repeat,
       removeOnComplete: true,
       removeOnFail: 100,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    await this.queueMap[queueName].add(name, data, queueOptions);
   }
 
-  async removeCron(
-    queueName: MessageQueue,
-    jobName: string,
-    pattern: string,
-  ): Promise<void> {
-    await this.queueMap[queueName].removeRepeatable(jobName, {
-      pattern,
-    });
+  async removeCron({
+    queueName,
+    jobName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobId?: string;
+  }): Promise<void> {
+    const name = `${jobName}${jobId ? `.${jobId}` : ''}`;
+
+    await this.queueMap[queueName].removeRepeatableByKey(name);
   }
 
   async add<T>(
