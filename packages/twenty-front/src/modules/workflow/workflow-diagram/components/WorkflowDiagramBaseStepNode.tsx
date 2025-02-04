@@ -20,10 +20,10 @@ const StyledStepNodeContainer = styled.div`
 `;
 
 const StyledStepNodeType = styled.div<{
-  workflowVariant: WorkflowDiagramNodeVariant;
+  nodeVariant: WorkflowDiagramNodeVariant;
 }>`
-  ${({ workflowVariant, theme }) => {
-    switch (workflowVariant) {
+  ${({ nodeVariant, theme }) => {
+    switch (nodeVariant) {
       case 'empty':
       case 'default': {
         return css`
@@ -54,8 +54,8 @@ const StyledStepNodeType = styled.div<{
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
-    ${({ workflowVariant, theme }) => {
-      switch (workflowVariant) {
+    ${({ nodeVariant, theme }) => {
+      switch (nodeVariant) {
         case 'empty':
         case 'default': {
           return css`
@@ -178,7 +178,7 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
 
-      <StyledStepNodeType variant="small" workflowVariant={variant}>
+      <StyledStepNodeType variant="small" nodeVariant={variant}>
         {capitalize(nodeType)}
       </StyledStepNodeType>
 
