@@ -23,6 +23,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { isDefined } from 'twenty-shared';
 import { IconSearch } from 'twenty-ui';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
@@ -140,14 +141,15 @@ export const useCommandMenu = () => {
           .getValue();
 
         const newNavigationStack = currentNavigationStack.slice(0, -1);
+        const lastNavigationStackItem = newNavigationStack.at(-1);
 
-        if (newNavigationStack.length === 0) {
+        if (
+          newNavigationStack.length === 0 ||
+          !isDefined(lastNavigationStackItem)
+        ) {
           closeCommandMenu();
           return;
         }
-
-        const lastNavigationStackItem =
-          newNavigationStack[newNavigationStack.length - 1];
 
         set(commandMenuPageState, lastNavigationStackItem.page);
 
