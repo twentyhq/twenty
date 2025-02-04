@@ -191,7 +191,7 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(undefined);
+    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: undefined,
       Icon: undefined,

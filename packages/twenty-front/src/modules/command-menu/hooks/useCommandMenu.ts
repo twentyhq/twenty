@@ -77,9 +77,7 @@ export const useCommandMenu = () => {
           });
           set(isCommandMenuOpenedState, false);
           set(commandMenuSearchState, '');
-          set(commandMenuNavigationStackState, [
-            { page: CommandMenuPages.Root },
-          ]);
+          set(commandMenuNavigationStackState, []);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
 
@@ -145,16 +143,17 @@ export const useCommandMenu = () => {
 
         if (newNavigationStack.length === 0) {
           closeCommandMenu();
+          return;
         }
 
         const lastNavigationStackItem =
           newNavigationStack[newNavigationStack.length - 1];
 
-        set(commandMenuPageState, lastNavigationStackItem?.page);
+        set(commandMenuPageState, lastNavigationStackItem.page);
 
         set(commandMenuPageInfoState, {
-          title: lastNavigationStackItem?.pageTitle,
-          Icon: lastNavigationStackItem?.pageIcon,
+          title: lastNavigationStackItem.pageTitle,
+          Icon: lastNavigationStackItem.pageIcon,
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
