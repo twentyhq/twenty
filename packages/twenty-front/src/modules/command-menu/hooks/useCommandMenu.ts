@@ -88,24 +88,6 @@ export const useCommandMenu = () => {
     [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
 
-  const toggleCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
-
-        set(commandMenuSearchState, '');
-
-        if (isCommandMenuOpened) {
-          closeCommandMenu();
-        } else {
-          openCommandMenu();
-        }
-      },
-    [closeCommandMenu, openCommandMenu],
-  );
-
   const navigateCommandMenu = useRecoilCallback(
     ({ snapshot, set }) => {
       return ({
@@ -131,6 +113,26 @@ export const useCommandMenu = () => {
       };
     },
     [openCommandMenu],
+  );
+
+  const toggleCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        set(commandMenuSearchState, '');
+
+        if (isCommandMenuOpened) {
+          closeCommandMenu();
+        } else {
+          navigateCommandMenu({
+            page: CommandMenuPages.Root,
+          });
+        }
+      },
+    [closeCommandMenu, navigateCommandMenu],
   );
 
   const goBackFromCommandMenu = useRecoilCallback(
@@ -257,7 +259,6 @@ export const useCommandMenu = () => {
   );
 
   return {
-    openCommandMenu,
     closeCommandMenu,
     navigateCommandMenu,
     navigateCommandMenuHistory,
