@@ -7,6 +7,10 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
+import {
+  CommandMenuNavigationStackItem,
+  commandMenuNavigationStackState,
+} from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -73,6 +77,9 @@ export const useCommandMenu = () => {
           });
           set(isCommandMenuOpenedState, false);
           set(commandMenuSearchState, '');
+          set(commandMenuNavigationStackState, [
+            { page: CommandMenuPages.Root },
+          ]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
 
@@ -100,31 +107,77 @@ export const useCommandMenu = () => {
     [closeCommandMenu, openCommandMenu],
   );
 
-  const openRecordInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (recordId: string, objectNameSingular: string) => {
+  const navigateCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return ({
+        page,
+        pageTitle,
+        pageIcon,
+      }: CommandMenuNavigationStackItem) => {
+        set(commandMenuPageState, page);
+        set(commandMenuPageInfoState, {
+          title: pageTitle,
+          Icon: pageIcon,
+        });
+
+        const currentNavigationStack = snapshot
+          .getLoadable(commandMenuNavigationStackState)
+          .getValue();
+
+        set(commandMenuNavigationStackState, [
+          ...currentNavigationStack,
+          { page, pageTitle, pageIcon },
+        ]);
         openCommandMenu();
-        set(commandMenuPageState, CommandMenuPages.ViewRecord);
-        set(viewableRecordNameSingularState, objectNameSingular);
-        set(viewableRecordIdState, recordId);
       };
     },
     [openCommandMenu],
   );
 
-  const openRecordsSearchPage = useRecoilCallback(
+  const goBackFromCommandMenu = useRecoilCallback(({ snapshot, set }) => {
+    return () => {
+      const currentNavigationStack = snapshot
+        .getLoadable(commandMenuNavigationStackState)
+        .getValue();
+
+      const newNavigationStack = currentNavigationStack.slice(0, -1);
+
+      const lastNavigationStackItem =
+        newNavigationStack[newNavigationStack.length - 1];
+
+      set(commandMenuPageState, lastNavigationStackItem.page);
+
+      set(commandMenuPageInfoState, {
+        title: lastNavigationStackItem.pageTitle,
+        Icon: lastNavigationStackItem.pageIcon,
+      });
+
+      set(commandMenuNavigationStackState, newNavigationStack);
+    };
+  }, []);
+
+  const openRecordInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return () => {
-        set(commandMenuPageState, CommandMenuPages.SearchRecords);
-        set(commandMenuPageInfoState, {
-          title: 'Search',
-          Icon: IconSearch,
+      return (recordId: string, objectNameSingular: string) => {
+        set(viewableRecordNameSingularState, objectNameSingular);
+        set(viewableRecordIdState, recordId);
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewRecord,
         });
-        openCommandMenu();
       };
     },
-    [openCommandMenu],
+    [navigateCommandMenu],
   );
+
+  const openRecordsSearchPage = useRecoilCallback(() => {
+    return () => {
+      navigateCommandMenu({
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Search records',
+        pageIcon: IconSearch,
+      });
+    };
+  }, [navigateCommandMenu]);
 
   const setGlobalCommandMenuContext = useRecoilCallback(
     ({ set }) => {
@@ -177,6 +230,8 @@ export const useCommandMenu = () => {
   return {
     openCommandMenu,
     closeCommandMenu,
+    navigateCommandMenu,
+    goBackFromCommandMenu,
     openRecordsSearchPage,
     openRecordInCommandMenu,
     toggleCommandMenu,
