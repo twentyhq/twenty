@@ -1,16 +1,9 @@
+import { SettingsAdminEnvVariablesRow } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesRow';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import {
-  H1Title,
-  H1TitleFontColor,
-  IconChevronRight,
-  Section,
-} from 'twenty-ui';
+import { H1Title, H1TitleFontColor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 
 const StyledTable = styled(Table)`
@@ -23,6 +16,19 @@ const StyledGroupContainer = styled.div`
 
 const StyledSubGroupContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledGroupVariablesContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSubGroupTitle = styled.div`
@@ -32,108 +38,28 @@ const StyledSubGroupTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
-
-const StyledExpandedDetails = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  margin: ${({ theme }) => theme.spacing(2)} 0;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
-
-const StyledDetailRow = styled.div`
-  margin: ${({ theme }) => theme.spacing(1)} 0;
-`;
-
-const StyledDetailLabel = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-right: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTransitionedIconChevronRight = styled(IconChevronRight)<{
-  isExpanded: boolean;
-}>`
-  cursor: pointer;
-  transform: ${({ isExpanded }) =>
-    isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
-`;
-
-interface VariableRowProps {
-  variable: {
-    name: string;
-    description: string;
-    value: string;
-  };
-}
-
-const VariableRow = ({ variable }: VariableRowProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const theme = useTheme();
-
-  return (
-    <>
-      <TableRow
-        onClick={() => setIsExpanded(!isExpanded)}
-        gridAutoColumns="4fr 3fr 2fr 1fr"
-      >
-        <StyledTruncatedCell color="primary">
-          {variable.name}
-        </StyledTruncatedCell>
-        <StyledTruncatedCell>{variable.description}</StyledTruncatedCell>
-        <StyledTruncatedCell align="right">
-          {variable.value}
-        </StyledTruncatedCell>
-        <TableCell align="right">
-          <StyledTransitionedIconChevronRight
-            isExpanded={isExpanded}
-            size={theme.icon.size.sm}
-          />
-        </TableCell>
-      </TableRow>
-      {isExpanded && (
-        <StyledExpandedDetails>
-          <StyledDetailRow>
-            <StyledDetailLabel>Name:</StyledDetailLabel>
-            {variable.name}
-          </StyledDetailRow>
-          <StyledDetailRow>
-            <StyledDetailLabel>Description:</StyledDetailLabel>
-            {variable.description}
-          </StyledDetailRow>
-          <StyledDetailRow>
-            <StyledDetailLabel>Value:</StyledDetailLabel>
-            {variable.value}
-          </StyledDetailRow>
-        </StyledExpandedDetails>
-      )}
-    </>
-  );
-};
-
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } =
     useGetEnvironmentVariablesGroupedQuery();
 
   const renderVariablesTable = (
-    variables: Array<{ name: string; description: string; value: string }>,
+    variables: Array<{
+      name: string;
+      description: string;
+      value: string;
+      sensitive: boolean;
+    }>,
   ) => (
     <StyledTable>
-      <TableRow gridAutoColumns="4fr 3fr 2fr 1fr">
+      <TableRow gridAutoColumns="4fr 3fr 2fr 1fr 1fr">
         <TableHeader>Name</TableHeader>
         <TableHeader>Description</TableHeader>
-        <TableHeader align="right">Value</TableHeader>
-        <TableHeader></TableHeader>
+        <TableHeader>Value</TableHeader>
+        <TableHeader align="right"></TableHeader>
+        <TableHeader align="right"></TableHeader>
       </TableRow>
       {variables.map((variable) => (
-        <VariableRow key={variable.name} variable={variable} />
+        <SettingsAdminEnvVariablesRow key={variable.name} variable={variable} />
       ))}
     </StyledTable>
   );
@@ -147,10 +73,10 @@ export const SettingsAdminEnvVariables = () => {
               title={group.groupName}
               fontColor={H1TitleFontColor.Primary}
             />
-
-            {group.variables.length > 0 &&
-              renderVariablesTable(group.variables)}
-
+            <StyledGroupVariablesContainer>
+              {group.variables.length > 0 &&
+                renderVariablesTable(group.variables)}
+            </StyledGroupVariablesContainer>
             {group.subgroups.map((subgroup) => (
               <StyledSubGroupContainer key={subgroup.subgroupName}>
                 <StyledSubGroupTitle>
