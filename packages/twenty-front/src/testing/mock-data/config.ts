@@ -53,4 +53,8 @@ export const mockedClientConfig: ClientConfig = {
   api: { mutationMaximumAffectedRecords: 100 },
   canManageFeatureFlags: true,
   publicFeatureFlags: [],
+  isMicrosoftMessagingEnabled: true,
+  isMicrosoftCalendarEnabled: true,
+  isGoogleMessagingEnabled: true,
+  isGoogleCalendarEnabled: true,
 };

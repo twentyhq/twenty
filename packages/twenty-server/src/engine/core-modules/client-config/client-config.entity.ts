@@ -127,4 +127,16 @@ export class ClientConfig {
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  @Field(() => Boolean)
+  isMicrosoftMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isMicrosoftCalendarEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleMessagingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isGoogleCalendarEnabled: boolean;
 }
