@@ -24,7 +24,7 @@ export const useSSO = () => {
           input: {
             identityProviderId,
             forceSubdomainUrl: isForceSubdomainUrlEnable,
-            workspaceInviteHash
+            workspaceInviteHash,
           },
         },
       });
