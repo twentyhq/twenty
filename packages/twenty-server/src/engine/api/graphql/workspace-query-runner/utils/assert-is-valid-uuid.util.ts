@@ -1,8 +1,9 @@
+import { isValidUuid } from 'twenty-shared';
+
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { isValidUuid } from 'src/utils/is-valid-uuid';
 
 export const assertIsValidUuid = (value: string) => {
   if (!isValidUuid(value)) {
