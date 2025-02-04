@@ -68,7 +68,6 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     });
 
     const handleDeleteClick = useCallback(async () => {
-      // Necessary ?
       const recordsToDestroy = await fetchAllRecordIds();
       const recordIdsToDestroy = recordsToDestroy.map((record) => record.id);
 

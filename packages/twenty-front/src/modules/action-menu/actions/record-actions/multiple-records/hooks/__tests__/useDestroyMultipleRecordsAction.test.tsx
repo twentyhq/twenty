@@ -22,7 +22,6 @@ const [firstPeopleMock, secondPeopleMock, _rest] = getPeopleMock().map(
 const destroyManyRecordsMock = jest.fn();
 const resetTableRowSelectionMock = jest.fn();
 
-// TODO discuss that should mock prototype to avoid duplicated import ? Also no typed
 jest.mock('@/object-record/hooks/useDestroyManyRecords', () => ({
   useDestroyManyRecords: () => ({
     destroyManyRecords: destroyManyRecordsMock,
@@ -60,7 +59,6 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 });
 
 describe('useDestroyMultipleRecordsAction', () => {
-  // TODO modify jest wrapper to allow injecting custom filters in contextStoreFiltersComponentState
   it.skip('should call destroyManyRecords on click if records are filtered by deletedAt', async () => {
     const { result } = renderHook(
       () =>
