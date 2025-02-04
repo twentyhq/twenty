@@ -188,7 +188,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
   destroyMultipleRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.DESTROY,
+    key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
     position: 7,
@@ -197,7 +197,7 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     isPinned: true,
     availableOn: [
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      // ActionViewType.SHOW_PAGE,
+      ActionViewType.SHOW_PAGE,
     ],
     useAction: useDestroyMultipleRecordsAction,
   },
