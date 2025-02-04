@@ -4,8 +4,8 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -89,7 +89,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       !isRemoteObject &&
       isDeletedFilterActive &&
       isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
+      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
       contextStoreNumberOfSelectedRecords > 0;
 
     const onClick = () => {
