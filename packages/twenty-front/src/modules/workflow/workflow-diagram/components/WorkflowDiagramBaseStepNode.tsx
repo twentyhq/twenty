@@ -4,13 +4,13 @@ import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/Node
 import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
 import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui';
-
-type Variant = 'placeholder';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -19,52 +19,109 @@ const StyledStepNodeContainer = styled.div`
   padding-block: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledStepNodeType = styled(Label)`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm} 0 0;
+const StyledStepNodeType = styled.div<{
+  nodeVariant: WorkflowDiagramNodeVariant;
+}>`
+  ${({ nodeVariant, theme }) => {
+    switch (nodeVariant) {
+      case 'success': {
+        return css`
+          background-color: ${theme.tag.background.turquoise};
+          color: ${theme.tag.text.turquoise};
+        `;
+      }
+      case 'failure': {
+        return css`
+          background-color: ${theme.tag.background.red};
+          color: ${theme.color.red};
+        `;
+      }
+      default: {
+        return css`
+          background-color: ${theme.background.tertiary};
+        `;
+      }
+    }
+  }}
 
+  align-self: flex-start;
+  border-radius: ${({ theme }) =>
+    `${theme.border.radius.sm} ${theme.border.radius.sm} 0 0`};
   margin-left: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  align-self: flex-start;
 
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.font.color.inverted};
+    ${({ nodeVariant, theme }) => {
+      switch (nodeVariant) {
+        case 'empty':
+        case 'default': {
+          return css`
+            background-color: ${theme.color.blue};
+            color: ${theme.font.color.inverted};
+          `;
+        }
+      }
+    }}
   }
-`;
+`.withComponent(Label);
 
-const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
+const StyledStepNodeInnerContainer = styled.div<{
+  variant: WorkflowDiagramNodeVariant;
+}>`
   background-color: ${({ theme }) => theme.background.secondary};
-  border: ${NODE_BORDER_WIDTH}px solid
-    ${({ theme }) => theme.border.color.medium};
+  border-color: ${({ theme }) => theme.border.color.medium};
+
   border-radius: ${({ theme }) => theme.border.radius.md};
+  border-style: solid;
+  border-width: ${NODE_BORDER_WIDTH}px;
+  box-shadow: ${({ variant, theme }) =>
+    variant === 'empty' ? 'none' : theme.boxShadow.strong};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
 
   position: relative;
-  box-shadow: ${({ variant, theme }) =>
-    variant === 'placeholder' ? 'none' : theme.boxShadow.strong};
 
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.accent.quaternary};
-    border-color: ${({ theme }) => theme.color.blue};
+    ${({ theme, variant }) => {
+      switch (variant) {
+        case 'success': {
+          return css`
+            background-color: ${theme.adaptiveColors.turquoise1};
+            border-color: ${theme.adaptiveColors.turquoise4};
+          `;
+        }
+        case 'failure': {
+          return css`
+            background-color: ${theme.background.danger};
+            border-color: ${theme.color.red};
+          `;
+        }
+        default: {
+          return css`
+            background-color: ${theme.accent.quaternary};
+            border-color: ${theme.color.blue};
+          `;
+        }
+      }
+    }}
   }
 `;
 
-const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
+const StyledStepNodeLabel = styled.div<{
+  variant: WorkflowDiagramNodeVariant;
+}>`
   align-items: center;
   display: flex;
   font-size: 13px;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
   color: ${({ variant, theme }) =>
-    variant === 'placeholder'
+    variant === 'empty'
       ? theme.font.color.extraLight
       : theme.font.color.primary};
   max-width: 200px;
@@ -106,7 +163,7 @@ export const WorkflowDiagramBaseStepNode = ({
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
-  variant?: Variant;
+  variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
 }) => {
@@ -116,7 +173,7 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
 
-      <StyledStepNodeType variant="small">
+      <StyledStepNodeType variant="small" nodeVariant={variant}>
         {capitalize(nodeType)}
       </StyledStepNodeType>
 

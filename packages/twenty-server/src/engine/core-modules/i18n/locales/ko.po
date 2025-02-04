@@ -9,11 +9,11 @@ msgstr ""
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
 msgid "(System) View Fields"
-msgstr "(시스템) 필드 보기"
+msgstr "(시스템) 보기 필드"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
 msgid "(System) View Filter Groups"
-msgstr "(시스템) 필터 그룹 보기"
+msgstr "(시스템) 보기 필터 그룹"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
 msgid "(System) View Filters"
@@ -21,7 +21,7 @@ msgstr "(시스템) 보기 필터"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
 msgid "(System) View Groups"
-msgstr "(시스템) 그룹 보기"
+msgstr "(시스템) 보기 그룹"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
 msgid "(System) View Sorts"
@@ -45,7 +45,7 @@ msgstr "연결된 계정"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
 msgid "A favorite that can be accessed from the left menu"
-msgstr "왼쪽 메뉴에서 액세스할 수 있는 즐겨찾기"
+msgstr "왼쪽 메뉴에서 접근할 수 있는 즐겨찾기"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
 msgid "A group of related messages (e.g. email thread, chat thread)"
@@ -53,11 +53,11 @@ msgstr "관련 메시지 그룹(예: 이메일 스레드, 채팅 스레드)"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr "메시징 채널(이메일, 채팅 등)을 통해 주고받은 메시지입니다"
+msgstr "메시징 채널(이메일, 채팅 등)을 통해 주고받은 메시지"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
-msgstr "참고"
+msgstr "노트"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
 msgid "A note target"
@@ -81,19 +81,19 @@ msgstr "웹훅"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
 msgid "A workflow"
-msgstr "워크플로"
+msgstr "워크플로우"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
 msgid "A workflow event listener"
-msgstr "워크플로 이벤트 리스너"
+msgstr "워크플로우 이벤트 리스너"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
 msgid "A workflow run"
-msgstr "워크플로 실행"
+msgstr "워크플로우 실행"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
 msgid "A workflow version"
-msgstr "워크플로 버전"
+msgstr "워크플로우 버전"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
 msgid "A workspace member"
@@ -143,7 +143,7 @@ msgstr "회사 주소"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:265
 msgid "Address of the company - deprecated in favor of new address field"
-msgstr "회사 주소 - 새 주소 필드를 위해 더 이상 사용되지 않습니다"
+msgstr "회사 주소 - 새 주소 필드를 위해 더 이상 사용되지 않음"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:189
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
@@ -184,15 +184,15 @@ msgstr "연간 반복 수익: 회사의 실제 또는 예상 연간 수익"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
 msgid "ApiKey expiration date"
-msgstr "ApiKey 만료일"
+msgstr "API 키 만료일"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
 msgid "ApiKey name"
-msgstr "API키 이름"
+msgstr "API 키 이름"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
 msgid "ApiKey revocation date"
-msgstr "ApiKey 해지 날짜"
+msgstr "API 키 해지 날짜"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
 msgid "Assigned tasks"
@@ -200,7 +200,7 @@ msgstr "할당된 작업"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:168
 msgid "Assignee"
-msgstr "양수인"
+msgstr "담당자"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
 msgid "Associated User Id"
@@ -258,11 +258,11 @@ msgstr "첨부 파일"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
 msgid "Attachments created by the workspace member"
-msgstr "워크스페이스 구성원이 만든 첨부 파일"
+msgstr "워크스페이스 멤버가 만든 첨부 파일"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:240
 msgid "Attachments linked to the company"
-msgstr "회사로 연결된 첨부 파일"
+msgstr "회사에 연결된 첨부 파일"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:239
 msgid "Attachments linked to the contact."
@@ -274,7 +274,7 @@ msgstr "기회에 연결된 첨부 파일"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:123
 msgid "Attachments tied to the {label}"
-msgstr "{label}]에 연결된 첨부 파일"
+msgstr "{label}에 연결된 첨부 파일"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
 msgid "Audit Log"
@@ -292,7 +292,7 @@ msgstr "워크스페이스 멤버에 연결된 감사 로그"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
 msgid "Auth failed at"
-msgstr "인증에 실패했습니다"
+msgstr "인증 실패"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
 msgid "Author"
@@ -304,11 +304,11 @@ msgstr "작성된 첨부 파일"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
 msgid "Automatically create People records when receiving or sending emails"
-msgstr "이메일을 받거나 보낼 때 자동으로 사람 레코드 만들기"
+msgstr "이메일을 받거나 보낼 때 사람 레코드를 자동으로 생성"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
 msgid "Automatically create records for people you participated with in an event."
-msgstr "이벤트에 함께 참여한 사람들에 대한 기록을 자동으로 생성합니다."
+msgstr "이벤트에 함께 참여한 사람들에 대한 기록을 자동으로 생성"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:146
 msgid "Avatar"
@@ -427,7 +427,7 @@ msgstr "컴팩트 보기"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:54
 msgid "Companies"
-msgstr "기업"
+msgstr "회사"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
@@ -519,7 +519,7 @@ msgstr "연락처 전화번호"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:154
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
-msgstr "만든 사람"
+msgstr "작성자"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
@@ -543,11 +543,11 @@ msgstr "레코드가 삭제된 날짜"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:52
 msgid "Deleted at"
-msgstr "다음에서 삭제됨"
+msgstr "삭제된 날짜"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:109
 msgid "Describes if the view is in compact mode"
-msgstr "뷰가 콤팩트 모드인지 여부를 설명합니다"
+msgstr "뷰가 컴팩트 모드인지 설명"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
@@ -659,20 +659,20 @@ msgstr "이벤트 작업"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
 msgid "Event workflow"
-msgstr "이벤트 워크플로"
+msgstr "이벤트 워크플로우"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
 msgid "Event workflow run"
-msgstr "이벤트 워크플로 실행"
+msgstr "이벤트 워크플로우 실행"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
 msgid "Event workflow version"
-msgstr "이벤트 워크플로 버전"
+msgstr "이벤트 워크플로우 버전"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
 msgid "Event workspace member"
-msgstr "이벤트 워크스페이스 멤버"
+msgstr "이벤트 작업 공간 멤버"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
 #: src/modules/person/standard-objects/person.workspace-entity.ts:276
@@ -681,11 +681,11 @@ msgstr "이벤트"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:277
 msgid "Events linked to the person"
-msgstr "개인과 연결된 이벤트"
+msgstr "사람과 연결된 이벤트"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
 msgid "Events linked to the workspace member"
-msgstr "워크스페이스 멤버에 연결된 이벤트"
+msgstr "작업 공간 멤버와 연결된 이벤트"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
@@ -699,11 +699,11 @@ msgstr "비업무용 이메일 제외"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
 msgid "Executed by"
-msgstr "실행 주체"
+msgstr "실행자"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
 msgid "Expiration date"
-msgstr "만료일"
+msgstr "만료 날짜"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
 msgid "Favorite"
@@ -712,19 +712,19 @@ msgstr "즐겨찾기"
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
 msgid "Favorite Folder"
-msgstr "즐겨찾는 폴더"
+msgstr "즐겨찾기 폴더"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
 msgid "Favorite Folders"
-msgstr "즐겨찾는 폴더"
+msgstr "즐겨찾기 폴더들"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
 msgid "Favorite company"
-msgstr "즐겨 찾는 회사"
+msgstr "즐겨찾는 회사"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
 msgid "Favorite folder position"
-msgstr "즐겨찾는 폴더 위치"
+msgstr "즐겨찾기 폴더 위치"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
 msgid "Favorite note"
@@ -732,35 +732,35 @@ msgstr "즐겨찾는 노트"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
 msgid "Favorite opportunity"
-msgstr "가장 좋아하는 기회"
+msgstr "즐겨찾는 기회"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
 msgid "Favorite person"
-msgstr "좋아하는 사람"
+msgstr "즐겨찾는 사람"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
 msgid "Favorite position"
-msgstr "즐겨 찾는 위치"
+msgstr "즐겨찾기 위치"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
 msgid "Favorite task"
-msgstr "즐겨 찾는 작업"
+msgstr "즐겨찾는 작업"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
 msgid "Favorite view"
-msgstr "즐겨 찾기 보기"
+msgstr "즐겨찾기 보기"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
 msgid "Favorite workflow"
-msgstr "즐겨찾는 워크플로"
+msgstr "즐겨찾기 워크플로우"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
 msgid "Favorite workflow run"
-msgstr "즐겨찾는 워크플로 실행"
+msgstr "즐겨찾기 워크플로우 실행"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
 msgid "Favorite workflow version"
-msgstr "즐겨찾는 워크플로 버전"
+msgstr "즐겨찾기 워크플로우 버전"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
 msgid "Favorite workspace member"
@@ -780,7 +780,7 @@ msgstr "즐겨찾는 워크스페이스 멤버"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:226
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
-msgstr "즐겨 찾기"
+msgstr "즐겨찾기"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
 msgid "Favorites in this folder"
@@ -812,15 +812,15 @@ msgstr "보기에 연결된 즐겨찾기"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
 msgid "Favorites linked to the workflow"
-msgstr "워크플로에 연결된 즐겨찾기"
+msgstr "워크플로우에 연결된 즐겨찾기"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
 msgid "Favorites linked to the workflow run"
-msgstr "워크플로 실행에 연결된 즐겨찾기"
+msgstr "워크플로우 실행에 연결된 즐겨찾기"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
 msgid "Favorites linked to the workflow version"
-msgstr "워크플로 버전에 연결된 즐겨찾기"
+msgstr "워크플로우 버전에 연결된 즐겨찾기"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
 msgid "Favorites linked to the workspace member"
@@ -828,7 +828,7 @@ msgstr "워크스페이스 멤버에 연결된 즐겨찾기"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:106
 msgid "Favorites tied to the {label}"
-msgstr "{label}]에 연결된 즐겨찾기"
+msgstr "{label}에 연결된 즐겨찾기"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
@@ -903,7 +903,7 @@ msgstr "Id"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:134
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
-msgstr "이상적인 고객 프로필:  회사가 귀하에게 가장 적합하고 가치 있는 고객인지 여부를 나타냅니다"
+msgstr "이상적인 고객 프로필: 회사가 귀하에게 가장 적합하고 가치 있는 고객인지 여부를 나타냅니다"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
 msgid "If the event is related to a particular object"
@@ -914,7 +914,7 @@ msgstr "이벤트가 특정 개체와 관련된 경우"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
 msgid "Is Contact Auto Creation Enabled"
-msgstr "연락처 자동 생성이 사용 설정되어 있습니까?"
+msgstr "연락처 자동 생성 사용 여부"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
@@ -924,7 +924,7 @@ msgstr "하루 종일"
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
 msgid "Is Organizer"
-msgstr "Is Organizer"
+msgstr "주최자 여부"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
@@ -949,11 +949,11 @@ msgstr "컨텍스트(사용자, 기기, 워크스페이스 등)를 제공하는 
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
 msgid "Json object to provide output of the workflow run"
-msgstr "Json 객체를 사용하여 워크플로 실행의 출력을 제공합니다"
+msgstr "워크플로우 실행 출력을 제공하는 Json 객체"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
 msgid "Json object to provide steps"
-msgstr "Json 객체를 사용하여 단계 제공"
+msgstr "단계를 제공하는 Json 객체"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
 msgid "Json object to provide trigger"
@@ -975,7 +975,7 @@ msgstr "언어"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
 msgid "Last published Version Id"
-msgstr "마지막으로 게시된 버전 ID"
+msgstr "마지막 게시된 버전 ID"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
@@ -1045,7 +1045,7 @@ msgstr "필터 그룹의 논리 연산자"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
 msgid "Meet Link"
-msgstr "링크 만나기"
+msgstr "Meet 링크"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
@@ -1155,19 +1155,19 @@ msgstr "메시지"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
 msgid "Messages from the channel."
-msgstr "채널에서 보낸 메시지."
+msgstr "채널의 메시지."
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
 msgid "Messages from the thread."
-msgstr "스레드에서 보낸 메시지."
+msgstr "스레드의 메시지."
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
 msgid "Messaging provider access token"
-msgstr "메시징 공급자 액세스 토큰"
+msgstr "메시징 제공업체 액세스 토큰"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
 msgid "Messaging provider refresh token"
-msgstr "메시징 공급자 새로 고침 토큰"
+msgstr "메시징 제공업체 새로 고침 토큰"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
@@ -1189,7 +1189,7 @@ msgstr "이름"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
 msgid "Name of the favorite folder"
-msgstr "즐겨찾기 폴더의 이름"
+msgstr "즐겨찾기 폴더 이름"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
 msgid "Name of the workflow run"
@@ -1201,7 +1201,7 @@ msgstr "워크플로 실행 이름"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
-msgstr "참고"
+msgstr "노트"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
 msgid "Note Target"
@@ -1234,19 +1234,19 @@ msgstr "노트 제목"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
 msgid "NoteTarget company"
-msgstr "참고대상 회사"
+msgstr "노트 대상 회사"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
 msgid "NoteTarget note"
-msgstr "노트대상 노트"
+msgstr "노트 대상 노트"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
 msgid "NoteTarget opportunity"
-msgstr "참고타겟 기회"
+msgstr "노트 대상 기회"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
 msgid "NoteTarget person"
-msgstr "참고대상자"
+msgstr "노트 대상자"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:215
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
@@ -1254,46 +1254,46 @@ msgstr "참고대상자"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:203
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
-msgstr "참고"
+msgstr "노트"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:204
 msgid "Notes tied to the company"
-msgstr "회사와 연결된 메모"
+msgstr "회사에 연결된 노트"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:216
 msgid "Notes tied to the contact"
-msgstr "연락처에 연결된 메모"
+msgstr "연락처에 연결된 노트"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
 msgid "Notes tied to the opportunity"
-msgstr "기회와 연결된 메모"
+msgstr "기회에 연결된 노트"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:74
 msgid "Notes tied to the {label}"
-msgstr "{label}]에 연결된 메모"
+msgstr "{label}에 연결된 노트"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:84
 msgid "Number of employees in the company"
-msgstr "회사 내 직원 수"
+msgstr "회사 직원 수"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:51
 msgid "Object Metadata Id"
-msgstr "개체 메타데이터 ID"
+msgstr "객체 메타데이터 ID"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
 msgid "Object id"
-msgstr "개체 ID"
+msgstr "객체 ID"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
 msgid "Object metadata id"
-msgstr "개체 메타데이터 ID"
+msgstr "객체 메타데이터 ID"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
 msgid "Object name"
-msgstr "개체 이름"
+msgstr "객체 이름"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
 msgid "Operand"
@@ -1301,11 +1301,11 @@ msgstr "피연산자"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
 msgid "Operation"
-msgstr "운영"
+msgstr "작업"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
 msgid "Operations"
-msgstr "운영"
+msgstr "작업"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
 #: src/modules/company/standard-objects/company.workspace-entity.ts:214
@@ -1314,7 +1314,7 @@ msgstr "기회"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:215
 msgid "Opportunities linked to the company."
-msgstr "회사와 연계된 기회."
+msgstr "회사에 연결된 기회."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
@@ -1339,7 +1339,7 @@ msgstr "기회 회사"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
 msgid "Opportunity point of contact"
-msgstr "기회 접점"
+msgstr "기회 담당자"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
 msgid "Opportunity probability"
@@ -1347,7 +1347,7 @@ msgstr "기회 확률"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
 msgid "Opportunity record position"
-msgstr "기회 기록 위치"
+msgstr "기회 레코드 위치"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
 msgid "Opportunity stage"
@@ -1360,7 +1360,7 @@ msgstr "선택적 집계 작업"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "웹훅 페이로드에 대한 HMAC 서명을 계산하는 데 사용되는 선택적 비밀입니다. 이 비밀은 웹훅 요청을 인증하기 위해 Twenty와 웹훅 소비자 간에 공유됩니다."
+msgstr "웹훅 페이로드의 HMAC 서명을 계산하는 데 사용되는 선택적 비밀입니다. 이 비밀은 웹훅 요청을 인증하기 위해 Twenty와 웹훅 소비자 간에 공유됩니다."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
 msgid "Output"
@@ -1377,11 +1377,11 @@ msgstr "상위 뷰 필터 그룹 ID"
 #: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/company/standard-objects/company.workspace-entity.ts:164
 msgid "People"
-msgstr "사람"
+msgstr "사람들"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:165
 msgid "People linked to the company."
-msgstr "회사와 연결된 사람들."
+msgstr "회사에 연결된 사람들."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
@@ -1398,7 +1398,7 @@ msgstr "사람"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:157
 msgid "Person record Position"
-msgstr "개인 기록 위치"
+msgstr "사람 레코드 위치"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:118
 msgid "Phone"
@@ -1406,11 +1406,11 @@ msgstr "전화"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:128
 msgid "Phones"
-msgstr "전화"
+msgstr "전화번호"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
 msgid "Point of Contact"
-msgstr "연락 창구"
+msgstr "담당자"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
@@ -1436,20 +1436,20 @@ msgstr "상위 뷰 필터 그룹 내 위치"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
 msgid "Position in the view filter group"
-msgstr "보기 필터 그룹 내 위치"
+msgstr "뷰 필터 그룹 내 위치"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
 msgid "Position in view filter group"
-msgstr "보기 필터 그룹 내 위치"
+msgstr "뷰 필터 그룹 내 위치"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
 msgid "Preferred color scheme"
-msgstr "기본 색상 구성"
+msgstr "선호하는 색상 구성"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
 msgid "Preferred language"
-msgstr "기본 언어"
+msgstr "선호하는 언어"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
 msgid "Probability"
@@ -1457,7 +1457,7 @@ msgstr "확률"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
 msgid "Received At"
-msgstr "수신 위치"
+msgstr "수신 시간"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
@@ -1471,7 +1471,7 @@ msgstr "반복 이벤트 ID"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
 msgid "Refresh Token"
-msgstr "토큰 새로 고침"
+msgstr "새로 고침 토큰"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
 msgid "Related user email address"
@@ -1520,7 +1520,7 @@ msgstr "크기"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
 msgid "Stage"
-msgstr "스테이지"
+msgstr "단계"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
@@ -1562,7 +1562,7 @@ msgstr "동기화 단계"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
 msgid "Sync stage started at"
-msgstr "동기화 단계 시작"
+msgstr "동기화 단계 시작 시간"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
@@ -1589,11 +1589,11 @@ msgstr "작업 대상"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
 msgid "Task Targets"
-msgstr "작업 목표"
+msgstr "작업 대상"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:169
 msgid "Task assignee"
-msgstr "작업 할당자"
+msgstr "작업 담당자"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:157
 msgid "Task attachments"
@@ -1610,7 +1610,7 @@ msgstr "작업 마감일"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:58
 msgid "Task record position"
-msgstr "작업 기록 위치"
+msgstr "작업 레코드 위치"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:111
 msgid "Task status"
@@ -1630,7 +1630,7 @@ msgstr "작업 대상 회사"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
 msgid "TaskTarget opportunity"
-msgstr "태스크 타겟 기회"
+msgstr "작업 대상 기회"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
 msgid "TaskTarget person"
@@ -1654,7 +1654,7 @@ msgstr "워크스페이스 멤버에게 할당된 작업"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:193
 msgid "Tasks tied to the company"
-msgstr "회사와 연결된 작업"
+msgstr "회사에 연결된 작업"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:205
 msgid "Tasks tied to the contact"
@@ -1662,11 +1662,11 @@ msgstr "연락처에 연결된 작업"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
 msgid "Tasks tied to the opportunity"
-msgstr "기회와 연결된 작업"
+msgstr "기회에 연결된 작업"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:90
 msgid "Tasks tied to the {label}"
-msgstr "{label}]에 연결된 작업"
+msgstr "{label}에 연결된 작업"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
@@ -1675,19 +1675,19 @@ msgstr "텍스트"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
 msgid "The account handle (email, username, phone number, etc.)"
-msgstr "계정 핸들(이메일, 사용자 아이디, 전화번호 등)"
+msgstr "계정 핸들(이메일, 사용자 이름, 전화번호 등)"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
 msgid "The account provider"
-msgstr "계정 공급자"
+msgstr "계정 제공자"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:94
 msgid "The company Linkedin account"
-msgstr "회사 링크드인 계정"
+msgstr "회사 Linkedin 계정"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:104
 msgid "The company Twitter/X account"
-msgstr "회사 트위터/X 계정"
+msgstr "회사 Twitter/X 계정"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:65
 msgid "The company name"
@@ -1695,7 +1695,7 @@ msgstr "회사 이름"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:74
 msgid "The company website URL. We use this url to fetch the company icon"
-msgstr "회사 웹사이트 URL입니다. 이 URL을 사용하여 회사 아이콘을 가져옵니다"
+msgstr "회사 웹사이트 URL. 이 URL을 사용하여 회사 아이콘을 가져옵니다"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
@@ -1705,7 +1705,7 @@ msgstr "회사 웹사이트 URL입니다. 이 URL을 사용하여 회사 아이�
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
-msgstr "기록 작성자"
+msgstr "레코드 작성자"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
 msgid "The current statuses of the workflow versions"
@@ -1713,11 +1713,11 @@ msgstr "워크플로 버전의 현재 상태"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
 msgid "The date the message was received"
-msgstr "메시지를 받은 날짜"
+msgstr "메시지 수신 날짜"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
 msgid "The executor of the workflow"
-msgstr "워크플로우의 실행자"
+msgstr "워크플로 실행자"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
 msgid "The folder this favorite belongs to"
@@ -1733,7 +1733,7 @@ msgstr "워크플로 이벤트 리스너 이름"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
 msgid "The workflow last published version id"
-msgstr "워크플로우 마지막으로 게시된 버전 ID"
+msgstr "워크플로 마지막 게시 버전 ID"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
 msgid "The workflow name"
@@ -1753,14 +1753,14 @@ msgstr "스레드 외부 ID"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
 msgid "Thread id from the messaging provider"
-msgstr "메시징 공급자의 스레드 ID"
+msgstr "메시징 제공업체의 스레드 ID"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
 msgid "Throttle Failure Count"
-msgstr "스로틀 실패 횟수"
+msgstr "제한 실패 횟수"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
 msgid "Time format"
@@ -1784,7 +1784,7 @@ msgstr "타임라인 활동"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:252
 msgid "Timeline Activities linked to the company"
-msgstr "회사와 연결된 타임라인 활동"
+msgstr "회사에 연결된 타임라인 활동"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:132
 msgid "Timeline Activities linked to the note."
@@ -1792,15 +1792,15 @@ msgstr "노트에 연결된 타임라인 활동"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
 msgid "Timeline Activities linked to the opportunity."
-msgstr "타임라인 기회와 연결된 활동"
+msgstr "기회에 연결된 타임라인 활동"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:186
 msgid "Timeline Activities linked to the task."
-msgstr "타임라인 작업과 연결된 활동."
+msgstr "작업에 연결된 타임라인 활동"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:139
 msgid "Timeline Activities tied to the {label}"
-msgstr "{label}]에 연결된 타임라인 활동"
+msgstr "{label}에 연결된 타임라인 활동"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
 msgid "Timeline Activity"
@@ -1808,7 +1808,7 @@ msgstr "타임라인 활동"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
 msgid "Timeline activities linked to the run"
-msgstr "런과 연결된 타임라인 활동"
+msgstr "실행에 연결된 타임라인 활동"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
 msgid "Timeline activities linked to the version"
@@ -1858,7 +1858,7 @@ msgstr "사용자가 선호하는 시간 형식"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
 msgid "Value"
-msgstr "가치"
+msgstr "값"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
 msgid "Version status"
@@ -1889,131 +1889,131 @@ msgstr "보기"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
 msgid "View Field"
-msgstr "필드 보기"
+msgstr "보기 필드"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
 msgid "View Field position"
-msgstr "필드 위치 보기"
+msgstr "보기 필드 위치"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
 msgid "View Field related view"
-msgstr "필드 관련 보기 보기"
+msgstr "보기 필드 관련 보기"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
 msgid "View Field size"
-msgstr "필드 크기 보기"
+msgstr "보기 필드 크기"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
 msgid "View Field target field"
-msgstr "필드 대상 필드 보기"
+msgstr "보기 필드 대상 필드"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
 msgid "View Field visibility"
-msgstr "필드 가시성 보기"
+msgstr "보기 필드 가시성"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:117
 #: src/modules/view/standard-objects/view.workspace-entity.ts:118
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
 msgid "View Fields"
-msgstr "필드 보기"
+msgstr "보기 필드"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
 msgid "View Filter"
-msgstr "필터 보기"
+msgstr "보기 필터"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
 msgid "View Filter Display Value"
-msgstr "필터 표시 값 보기"
+msgstr "보기 필터 표시 값"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
 msgid "View Filter Group"
-msgstr "필터 그룹 보기"
+msgstr "보기 필터 그룹"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
 msgid "View Filter Group Id"
-msgstr "필터 그룹 ID 보기"
+msgstr "보기 필터 그룹 ID"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:153
 #: src/modules/view/standard-objects/view.workspace-entity.ts:154
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
 msgid "View Filter Groups"
-msgstr "필터 그룹 보기"
+msgstr "보기 필터 그룹"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
 msgid "View Filter operand"
-msgstr "필터 피연산자 보기"
+msgstr "보기 필터 피연산자"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
 msgid "View Filter related view"
-msgstr "필터 관련 보기 보기"
+msgstr "보기 필터 관련 보기"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
 msgid "View Filter target field"
-msgstr "필터 대상 필드 보기"
+msgstr "보기 필터 대상 필드"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
 msgid "View Filter value"
-msgstr "필터 값 보기"
+msgstr "보기 필터 값"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:141
 #: src/modules/view/standard-objects/view.workspace-entity.ts:142
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
 msgid "View Filters"
-msgstr "필터 보기"
+msgstr "보기 필터"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
 msgid "View Group"
-msgstr "그룹 보기"
+msgstr "보기 그룹"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
 msgid "View Group related view"
-msgstr "그룹 관련 보기 보기"
+msgstr "보기 그룹 관련 보기"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
 msgid "View Group target field"
-msgstr "그룹 대상 필드 보기"
+msgstr "보기 그룹 대상 필드"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
 msgid "View Group visibility"
-msgstr "그룹 가시성 보기"
+msgstr "보기 그룹 가시성"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:129
 #: src/modules/view/standard-objects/view.workspace-entity.ts:130
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
 msgid "View Groups"
-msgstr "그룹 보기"
+msgstr "보기 그룹"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:88
 msgid "View Kanban column field"
-msgstr "칸반 열 필드 보기"
+msgstr "보기 칸반 열 필드"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
 msgid "View Sort"
-msgstr "정렬 보기"
+msgstr "보기 정렬"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
 msgid "View Sort direction"
-msgstr "정렬 방향 보기"
+msgstr "보기 정렬 방향"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
 msgid "View Sort related view"
-msgstr "정렬 관련 보기 보기"
+msgstr "보기 정렬 관련 보기"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
 msgid "View Sort target field"
-msgstr "대상 필드 정렬 보기"
+msgstr "보기 정렬 대상 필드"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:165
 #: src/modules/view/standard-objects/view.workspace-entity.ts:166
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
 msgid "View Sorts"
-msgstr "정렬 보기"
+msgstr "보기 정렬"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:80
 msgid "View icon"
-msgstr "아이콘 보기"
+msgstr "보기 아이콘"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:69
 msgid "View key"
@@ -2021,15 +2021,15 @@ msgstr "보기 키"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:44
 msgid "View name"
-msgstr "이름 보기"
+msgstr "보기 이름"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:99
 msgid "View position"
-msgstr "위치 보기"
+msgstr "보기 위치"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:52
 msgid "View target object"
-msgstr "대상 개체 보기"
+msgstr "보기 대상 개체"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:60
 msgid "View type"
@@ -2037,7 +2037,7 @@ msgstr "보기 유형"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:32
 msgid "Views"
-msgstr "조회수"
+msgstr "보기들"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
@@ -2049,27 +2049,27 @@ msgstr "가시성"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
 msgid "Visible"
-msgstr "가시성"
+msgstr "보임"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
 msgid "Webhook"
-msgstr "웹훅"
+msgstr "Webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
 msgid "Webhook operation"
-msgstr "웹훅 작업"
+msgstr "Webhook 작업"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
 msgid "Webhook operations"
-msgstr "웹훅 작업"
+msgstr "Webhook 작업들"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
 msgid "Webhook target url"
-msgstr "웹훅 대상 URL"
+msgstr "Webhook 대상 URL"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
 msgid "Webhooks"
-msgstr "웹훅"
+msgstr "Webhooks"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
@@ -2080,103 +2080,103 @@ msgstr "웹훅"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
 msgid "Workflow"
-msgstr "워크플로"
+msgstr "Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
-msgstr "워크플로 실행"
+msgstr "Workflow 실행"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
 msgid "Workflow Runs"
-msgstr "워크플로 실행"
+msgstr "Workflow 실행들"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
 msgid "Workflow Version"
-msgstr "워크플로 버전"
+msgstr "Workflow 버전"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
 msgid "Workflow Versions"
-msgstr "워크플로 버전"
+msgstr "Workflow 버전들"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
 msgid "Workflow event listeners linked to the workflow."
-msgstr "워크플로에 연결된 워크플로 이벤트 리스너."
+msgstr "Workflow에 연결된 이벤트 리스너."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
 msgid "Workflow linked to the run."
-msgstr "실행에 연결된 워크플로."
+msgstr "실행에 연결된 Workflow."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
 msgid "Workflow record position"
-msgstr "워크플로우 기록 위치"
+msgstr "Workflow 기록 위치"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
 msgid "Workflow run ended at"
-msgstr "워크플로 실행은 다음에서 종료됩니다"
+msgstr "Workflow 실행 종료 시간"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
 msgid "Workflow run position"
-msgstr "워크플로 실행 위치"
+msgstr "Workflow 실행 위치"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
 msgid "Workflow run started at"
-msgstr "워크플로 실행은 다음에서 시작됩니다"
+msgstr "Workflow 실행 시작 시간"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
 msgid "Workflow run status"
-msgstr "워크플로 실행 상태"
+msgstr "Workflow 실행 상태"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
 msgid "Workflow runs linked to the version."
-msgstr "워크플로는 버전에 연결된 상태로 실행됩니다."
+msgstr "버전에 연결된 Workflow 실행들."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
 msgid "Workflow runs linked to the workflow."
-msgstr "워크플로에 연결된 워크플로가 실행됩니다."
+msgstr "Workflow에 연결된 실행들."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
 msgid "Workflow version"
-msgstr "워크플로 버전"
+msgstr "Workflow 버전"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
 msgid "Workflow version linked to the run."
-msgstr "실행에 연결된 워크플로 버전입니다."
+msgstr "실행에 연결된 Workflow 버전."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
 msgid "Workflow version position"
-msgstr "워크플로 버전 위치"
+msgstr "Workflow 버전 위치"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
 msgid "Workflow versions linked to the workflow."
-msgstr "워크플로에 연결된 워크플로 버전."
+msgstr "Workflow에 연결된 버전들."
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
 msgid "WorkflowEventListener"
-msgstr "워크플로우 이벤트 리스너"
+msgstr "Workflow 이벤트 리스너"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
 msgid "WorkflowEventListener workflow"
-msgstr "워크플로우 이벤트 리스너 워크플로우"
+msgstr "Workflow 이벤트 리스너 Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
 msgid "WorkflowEventListeners"
-msgstr "워크플로우 이벤트 리스너"
+msgstr "Workflow 이벤트 리스너들"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
 msgid "WorkflowVersion"
-msgstr "워크플로 버전"
+msgstr "Workflow 버전"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
 msgid "WorkflowVersion workflow"
-msgstr "워크플로버전 워크플로"
+msgstr "Workflow 버전 Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
 msgid "Workflows"
-msgstr "워크플로"
+msgstr "Workflows"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
@@ -2190,7 +2190,7 @@ msgstr "워크스페이스 멤버"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
 msgid "Workspace Members"
-msgstr "워크스페이스 멤버"
+msgstr "워크스페이스 멤버들"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
 msgid "Workspace member"
@@ -2202,7 +2202,7 @@ msgstr "워크스페이스 멤버 아바타"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
 msgid "Workspace member name"
-msgstr "워크스페이스 구성원 이름"
+msgstr "워크스페이스 멤버 이름"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
@@ -2216,7 +2216,7 @@ msgstr "X"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:177
 msgid "Your team member responsible for managing the company account"
-msgstr "회사 계정 관리를 담당하는 팀원"
+msgstr "회사 계정을 관리하는 팀원"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
 msgid "handle"

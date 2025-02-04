@@ -128,6 +128,15 @@ export const MultiItemFieldInput = <T,>({
       }
     }
 
+    if (inputValue === '' && isAddingNewItem) {
+      return;
+    }
+
+    if (inputValue === '' && !isAddingNewItem) {
+      handleDeleteItem(itemToEditIndex);
+      return;
+    }
+
     const newItem = formatInput
       ? formatInput(inputValue)
       : (inputValue as unknown as T);

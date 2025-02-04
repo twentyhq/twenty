@@ -201,6 +201,22 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
+    subGroup: EnvironmentVariablesSubGroup.MicrosoftAuth,
+    description: 'Is Microsoft messaging provider enabled',
+  })
+  @CastToBoolean()
+  MESSAGING_PROVIDER_MICROSOFT_ENABLED = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Authentication,
+    subGroup: EnvironmentVariablesSubGroup.MicrosoftAuth,
+    description: 'Is Microsoft Calendar provider enabled',
+  })
+  @CastToBoolean()
+  CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Authentication,
     subGroup: EnvironmentVariablesSubGroup.Tokens,
     sensitive: true,
     description: 'Access token secret',

@@ -50,7 +50,6 @@ export class LabService {
 
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
-      relations: ['featureFlags'],
     });
 
     workspaceValidator.assertIsDefinedOrThrow(
@@ -58,9 +57,12 @@ export class LabService {
       new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
     );
 
-    const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === FeatureFlagKey[payload.publicFeatureFlag],
-    );
+    const existingFlag = await this.featureFlagRepository.findOne({
+      where: {
+        workspaceId,
+        key: FeatureFlagKey[payload.publicFeatureFlag],
+      },
+    });
 
     if (existingFlag) {
       await this.featureFlagRepository.update(existingFlag.id, {
@@ -70,16 +72,10 @@ export class LabService {
       return { ...existingFlag, value: payload.value };
     }
 
-    const newFlag = await this.featureFlagRepository.save({
+    return this.featureFlagRepository.save({
       key: FeatureFlagKey[payload.publicFeatureFlag],
       value: payload.value,
-      workspaceId: workspace.id,
+      workspaceId,
     });
-
-    workspace.featureFlags = [...(workspace.featureFlags || []), newFlag];
-
-    await this.workspaceRepository.save(workspace);
-
-    return newFlag;
   }
 }
