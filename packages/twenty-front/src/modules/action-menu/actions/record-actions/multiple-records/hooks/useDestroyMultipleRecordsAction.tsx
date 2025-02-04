@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared';
 
 export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
-    const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
       useState(false);
 
     const { resetTableRowSelection } = useRecordTable({
@@ -67,7 +67,7 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       recordGqlFields: { id: true },
     });
 
-    const handleDeleteClick = useCallback(async () => {
+    const handleDestroyClick = useCallback(async () => {
       const recordsToDestroy = await fetchAllRecordIds();
       const recordIdsToDestroy = recordsToDestroy.map((record) => record.id);
 
@@ -90,18 +90,18 @@ export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         return;
       }
 
-      setIsDeleteRecordsModalOpen(true);
+      setIsDestroyRecordsModalOpen(true);
     };
 
     const confirmationModal = (
       <ConfirmationModal
-        isOpen={isDeleteRecordsModalOpen}
-        setIsOpen={setIsDeleteRecordsModalOpen}
+        isOpen={isDestroyRecordsModalOpen}
+        setIsOpen={setIsDestroyRecordsModalOpen}
         title={'Permanently Destroy Records'}
         subtitle={
           "Are you sure you want to destroy these records? They won't be able to be recovered anymore."
         }
-        onConfirmClick={handleDeleteClick}
+        onConfirmClick={handleDestroyClick}
         deleteButtonText={'Destroy Records'}
       />
     );
