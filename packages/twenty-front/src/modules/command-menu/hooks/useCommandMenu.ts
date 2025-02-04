@@ -206,7 +206,7 @@ export const useCommandMenu = () => {
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.SearchRecords,
-      pageTitle: 'Search records',
+      pageTitle: 'Search',
       pageIcon: IconSearch,
     });
   };
