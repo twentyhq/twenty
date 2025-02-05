@@ -45870,6 +45870,8 @@ __metadata:
 "twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
+  dependencies:
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
