@@ -151,9 +151,7 @@ export const ObjectFilterDropdownFilterSelect = ({
       filterDefinition: selectedFilterDefinition,
     });
 
-    setFieldMetadataItemIdUsedInDropdown(
-      selectedFilterDefinition.fieldMetadataId,
-    );
+    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
     closeAdvancedFilterDropdown();
   };

@@ -2,7 +2,7 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export const subFieldNameUsedInDropdownComponentState = createComponentStateV2<
-  string | null
+  string | null | undefined
 >({
   key: 'subFieldNameUsedInDropdownComponentState',
   defaultValue: null,

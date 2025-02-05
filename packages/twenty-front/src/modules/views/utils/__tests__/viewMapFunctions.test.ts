@@ -10,6 +10,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+
 import { FieldMetadataType } from '~/generated/graphql';
 
 const baseDefinition = {
@@ -65,6 +66,10 @@ describe('mapViewFiltersToFilters', () => {
           ...baseDefinition,
           type: 'FULL_NAME',
         },
+        label: baseDefinition.label,
+        type: 'FULL_NAME',
+        positionInViewFilterGroup: undefined,
+        viewFilterGroupId: undefined,
       },
     ];
     expect(
