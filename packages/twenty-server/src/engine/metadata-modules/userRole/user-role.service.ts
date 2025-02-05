@@ -1,11 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -26,54 +24,6 @@ export class UserRoleService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
-
-  public async assignRoleToWorkspaceMember({
-    workspaceMemberId,
-    workspaceId,
-    roleId,
-  }: {
-    workspaceMemberId: string;
-    workspaceId: string;
-    roleId: string;
-  }): Promise<WorkspaceMember> {
-    const workspaceMember = await this.getWorkspaceMemberOrThrow(
-      workspaceMemberId,
-      workspaceId,
-    );
-
-    const userWorkspace = await this.getUserWorkspaceForUser(
-      workspaceMember.userId,
-      workspaceId,
-    );
-
-    const [roleForUserWorkspace] = await this.getRolesForUserWorkspace(
-      userWorkspace.id,
-    );
-
-    if (roleForUserWorkspace?.id === roleId) {
-      console.warn('Role already assigned');
-
-      return {
-        ...workspaceMember,
-        userWorkspaceId: userWorkspace.id,
-        roles: [roleForUserWorkspace],
-      } as WorkspaceMember;
-    }
-
-    await this.assignRoleToUserWorkspace({
-      workspaceId: workspaceId,
-      userWorkspaceId: userWorkspace.id,
-      roleId: roleId,
-    });
-
-    const roles = await this.getRolesForUserWorkspace(userWorkspace.id);
-
-    return {
-      ...workspaceMember,
-      userWorkspaceId: userWorkspace.id,
-      roles,
-    } as WorkspaceMember;
-  }
 
   public async assignRoleToUserWorkspace({
     workspaceId,
@@ -110,7 +60,13 @@ export class UserRoleService {
       );
     }
 
-    await this.unassignRolesFromUserWorkspace({
+    const [currentRole] = await this.getRolesForUserWorkspace(userWorkspace.id);
+
+    if (currentRole?.id === roleId) {
+      return;
+    }
+
+    await this.unassignAllRolesFromUserWorkspace({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
     });
@@ -122,38 +78,7 @@ export class UserRoleService {
     });
   }
 
-  public async unassignRolesFromWorkspaceMember({
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<WorkspaceMember> {
-    const workspaceMember = await this.getWorkspaceMemberOrThrow(
-      workspaceMemberId,
-      workspaceId,
-    );
-
-    const userWorkspace = await this.getUserWorkspaceForUser(
-      workspaceMember.userId,
-      workspaceId,
-    );
-
-    await this.unassignRolesFromUserWorkspace({
-      userWorkspaceId: userWorkspace.id,
-      workspaceId,
-    });
-
-    const roles = await this.getRolesForUserWorkspace(userWorkspace.id);
-
-    return {
-      ...workspaceMember,
-      userWorkspaceId: userWorkspace.id,
-      roles,
-    } as WorkspaceMember;
-  }
-
-  public async unassignRolesFromUserWorkspace({
+  public async unassignAllRolesFromUserWorkspace({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -165,31 +90,15 @@ export class UserRoleService {
       workspaceId,
     );
 
-    const userWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
-      where: {
-        userWorkspaceId,
-        workspaceId,
-      },
+    await this.userWorkspaceRoleRepository.delete({
+      userWorkspaceId,
+      workspaceId,
     });
-
-    if (!isEmpty(userWorkspaceRoles)) {
-      await Promise.all(
-        userWorkspaceRoles.map((userWorkspaceRole) =>
-          this.userWorkspaceRoleRepository.delete({
-            id: userWorkspaceRole.id,
-          }),
-        ),
-      );
-    }
   }
 
   public async getRolesForUserWorkspace(
     userWorkspaceId: string,
   ): Promise<RoleDTO[] | []> {
-    if (!isDefined(userWorkspaceId)) {
-      return [];
-    }
-
     const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
       where: {
         userWorkspaceId,
@@ -254,53 +163,6 @@ export class UserRoleService {
     });
 
     return workspaceMembers;
-  }
-
-  private async getUserWorkspaceForUser(
-    userId: string,
-    workspaceId: string,
-  ): Promise<UserWorkspace> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        userId,
-        workspaceId,
-      },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      throw new PermissionsException(
-        'User workspace not found',
-        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    return userWorkspace;
-  }
-
-  private async getWorkspaceMemberOrThrow(
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        id: workspaceMemberId,
-      },
-    });
-
-    if (!isDefined(workspaceMember)) {
-      throw new PermissionsException(
-        'Workspace member not found',
-        PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
-
-    return workspaceMember;
   }
 
   private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(

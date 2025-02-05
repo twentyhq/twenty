@@ -47,7 +47,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
+import { UserRoleService } from 'src/engine/metadata-modules/userRole/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -170,15 +170,18 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
+    const uwerWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+        workspaceId: workspace.id,
+      },
+    });
+
     const userWorkspacesByUserId = new Map(
-      (
-        await this.userWorkspaceRepository.find({
-          where: {
-            userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
-            workspaceId: workspace.id,
-          },
-        })
-      ).map((userWorkspace) => [userWorkspace.userId, userWorkspace]),
+      uwerWorkspaces.map((userWorkspace) => [
+        userWorkspace.userId,
+        userWorkspace,
+      ]),
     );
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
