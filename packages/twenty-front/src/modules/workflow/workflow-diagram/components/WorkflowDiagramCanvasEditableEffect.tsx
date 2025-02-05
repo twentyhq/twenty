@@ -8,13 +8,21 @@ import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/Emp
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  WorkflowDiagramNode,
+  WorkflowDiagramStepNodeData,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconBolt, useIcons } from 'twenty-ui';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
+  const { t } = useLingui();
+  const { getIcon } = useIcons();
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
@@ -37,7 +45,10 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
-        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType);
+        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType, {
+          title: t`Trigger Type`,
+          Icon: IconBolt,
+        });
 
         return;
       }
@@ -45,7 +56,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       const isCreateStepNode = selectedNode.type === CREATE_STEP_STEP_ID;
       if (isCreateStepNode) {
         if (selectedNode.data.nodeType !== 'create-step') {
-          throw new Error('Expected selected node to be a create step node.');
+          throw new Error(t`Expected selected node to be a create step node.`);
         }
 
         startNodeCreation(selectedNode.data.parentNodeId);
@@ -53,9 +64,14 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
+      const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
+
       setWorkflowSelectedNode(selectedNode.id);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepEdit);
+      openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
+        title: selectedNodeData.name,
+        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
+      });
     },
     [
       setWorkflowSelectedNode,
@@ -64,6 +80,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       closeRightDrawer,
       closeCommandMenu,
       startNodeCreation,
+      getIcon,
+      t,
     ],
   );
 

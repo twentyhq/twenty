@@ -23,6 +23,7 @@ export const ActorFieldDisplay = () => {
       source={fieldValue.source}
       avatarUrl={fieldValue.workspaceMember?.avatarUrl}
       workspaceMemberId={fieldValue.workspaceMemberId}
+      context={fieldValue.context}
     />
   ) : null;
 };

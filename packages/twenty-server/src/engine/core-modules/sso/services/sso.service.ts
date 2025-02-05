@@ -23,6 +23,7 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class SSOService {
@@ -32,19 +33,30 @@ export class SSOService {
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
-    const isSSOBillingEnabled =
-      await this.billingService.hasFreeAccessOrEntitlement(
-        workspaceId,
-        this.featureLookUpKey,
-      );
+    const isSSOBillingEnabled = await this.billingService.hasEntitlement(
+      workspaceId,
+      this.featureLookUpKey,
+    );
 
     if (!isSSOBillingEnabled) {
       throw new SSOException(
         `No entitlement found for this workspace`,
         SSOExceptionCode.SSO_DISABLE,
+      );
+    }
+  }
+
+  private async getIssuerForOIDC(issuerUrl: string) {
+    try {
+      return await Issuer.discover(issuerUrl);
+    } catch (err) {
+      throw new SSOException(
+        'Invalid issuer',
+        SSOExceptionCode.INVALID_ISSUER_URL,
       );
     }
   }
@@ -59,21 +71,7 @@ export class SSOService {
     try {
       await this.isSSOEnabled(workspaceId);
 
-      if (!data.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
-
-      const issuer = await Issuer.discover(data.issuer);
-
-      if (!issuer.metadata.issuer) {
-        throw new SSOException(
-          'Invalid issuer URL from discovery',
-          SSOExceptionCode.INVALID_ISSUER_URL,
-        );
-      }
+      const issuer = await this.getIssuerForOIDC(data.issuer);
 
       const identityProvider =
         await this.workspaceSSOIdentityProviderRepository.save({
@@ -96,6 +94,8 @@ export class SSOService {
       if (err instanceof SSOException) {
         return err;
       }
+
+      this.exceptionHandlerService.captureExceptions([err]);
 
       return new SSOException(
         'Unknown SSO configuration error',
@@ -129,13 +129,11 @@ export class SSOService {
     };
   }
 
-  async findSSOIdentityProviderById(identityProviderId?: string) {
-    // if identityProviderId is not provide, typeorm return a random idp instead of undefined
-    if (!identityProviderId) return undefined;
-
+  async findSSOIdentityProviderById(identityProviderId: string) {
     return (await this.workspaceSSOIdentityProviderRepository.findOne({
       where: { id: identityProviderId },
-    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | undefined;
+      relations: ['workspace'],
+    })) as (SSOConfiguration & WorkspaceSSOIdentityProvider) | null;
   }
 
   buildCallbackUrl(
@@ -154,10 +152,17 @@ export class SSOService {
 
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
+    searchParams?: Record<string, string | boolean>,
   ) {
     const authorizationUrl = new URL(this.environmentService.get('SERVER_URL'));
 
     authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        authorizationUrl.searchParams.append(key, value.toString());
+      });
+    }
 
     return authorizationUrl.toString();
   }
@@ -193,7 +198,10 @@ export class SSOService {
     });
   }
 
-  async getAuthorizationUrl(identityProviderId: string) {
+  async getAuthorizationUrl(
+    identityProviderId: string,
+    searchParams: Record<string, string | boolean>,
+  ) {
     const identityProvider =
       (await this.workspaceSSOIdentityProviderRepository.findOne({
         where: {
@@ -210,7 +218,7 @@ export class SSOService {
 
     return {
       id: identityProvider.id,
-      authorizationURL: this.buildIssuerURL(identityProvider),
+      authorizationURL: this.buildIssuerURL(identityProvider, searchParams),
       type: identityProvider.type,
     };
   }

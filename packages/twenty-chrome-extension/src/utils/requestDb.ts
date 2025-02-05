@@ -1,8 +1,8 @@
 import { OperationVariables } from '@apollo/client';
 import { DocumentNode } from 'graphql';
 
+import { isDefined } from 'twenty-shared';
 import getApolloClient from '~/utils/apolloClient';
-import { isDefined } from '~/utils/isDefined';
 
 export const callQuery = async <T>(
   query: DocumentNode,

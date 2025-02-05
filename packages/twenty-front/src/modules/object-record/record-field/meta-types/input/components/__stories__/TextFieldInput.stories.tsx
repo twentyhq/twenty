@@ -47,7 +47,7 @@ const TextFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'text',
           label: 'Text',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           iconName: 'IconTag',
           metadata: {
             fieldName: 'Text',

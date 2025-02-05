@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export type ToggleSize = 'small' | 'medium';
 

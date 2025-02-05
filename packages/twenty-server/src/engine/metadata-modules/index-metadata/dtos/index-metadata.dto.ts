@@ -33,7 +33,7 @@ registerEnumType(IndexType, {
   description: 'Type of the index',
 });
 
-@ObjectType('index')
+@ObjectType('Index')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },

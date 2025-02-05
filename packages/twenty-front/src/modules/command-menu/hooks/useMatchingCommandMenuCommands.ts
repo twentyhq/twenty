@@ -12,23 +12,21 @@ export const useMatchingCommandMenuCommands = ({
     copilotCommands,
     navigateCommands,
     actionRecordSelectionCommands,
+    actionObjectCommands,
     actionGlobalCommands,
     workflowRunRecordSelectionCommands,
     workflowRunGlobalCommands,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
-    isLoading,
+    fallbackCommands,
   } = useCommandMenuCommands();
 
-  const matchingNavigateCommand = matchCommands(navigateCommands);
+  const matchingNavigateCommands = matchCommands(navigateCommands);
 
   const matchingStandardActionRecordSelectionCommands = matchCommands(
     actionRecordSelectionCommands,
   );
+
+  const matchingStandardActionObjectCommands =
+    matchCommands(actionObjectCommands);
 
   const matchingStandardActionGlobalCommands =
     matchCommands(actionGlobalCommands);
@@ -41,33 +39,23 @@ export const useMatchingCommandMenuCommands = ({
     workflowRunGlobalCommands,
   );
 
-  const isNoResults =
+  const noResults =
     !matchingStandardActionRecordSelectionCommands.length &&
     !matchingWorkflowRunRecordSelectionCommands.length &&
     !matchingStandardActionGlobalCommands.length &&
     !matchingWorkflowRunGlobalCommands.length &&
-    !matchingNavigateCommand.length &&
-    !peopleCommands?.length &&
-    !companyCommands?.length &&
-    !opportunityCommands?.length &&
-    !noteCommands?.length &&
-    !tasksCommands?.length &&
-    !customObjectCommands?.length;
+    !matchingStandardActionObjectCommands.length &&
+    !matchingNavigateCommands.length;
 
   return {
-    isNoResults,
-    isLoading,
+    noResults,
     copilotCommands,
     matchingStandardActionRecordSelectionCommands,
+    matchingStandardActionObjectCommands,
     matchingWorkflowRunRecordSelectionCommands,
     matchingStandardActionGlobalCommands,
     matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommand,
-    peopleCommands,
-    companyCommands,
-    opportunityCommands,
-    noteCommands,
-    tasksCommands,
-    customObjectCommands,
+    matchingNavigateCommands,
+    fallbackCommands: noResults ? fallbackCommands : [],
   };
 };

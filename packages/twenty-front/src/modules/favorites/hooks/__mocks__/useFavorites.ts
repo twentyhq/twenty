@@ -129,6 +129,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       domainName {
@@ -183,6 +184,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       id
@@ -204,6 +206,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       id
@@ -224,6 +227,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       emails {
@@ -273,6 +277,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       id
@@ -290,6 +295,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       dueAt
@@ -336,6 +342,7 @@ mutation UpdateOneFavorite(
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       endedAt
@@ -417,6 +424,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               domainName {
@@ -471,6 +479,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               id
@@ -492,6 +501,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               id
@@ -512,6 +522,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               emails {
@@ -561,6 +572,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               id
@@ -578,6 +590,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               dueAt
@@ -624,6 +637,7 @@ export const mocks = [
                 source
                 workspaceMemberId
                 name
+                context
               }
               deletedAt
               endedAt

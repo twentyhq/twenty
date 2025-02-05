@@ -18,9 +18,11 @@ import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hook
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared';
 import { AnimatedEaseIn } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
 
@@ -28,24 +30,19 @@ const StandardContent = ({
   workspacePublicData,
   signInUpForm,
   signInUpStep,
+  title,
 }: {
   workspacePublicData: PublicWorkspaceDataOutput | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
+  title: string;
 }) => {
   return (
     <>
       <AnimatedEaseIn>
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
-      <Title animate>
-        Welcome to{' '}
-        {!isDefined(workspacePublicData?.displayName)
-          ? DEFAULT_WORKSPACE_NAME
-          : workspacePublicData?.displayName === ''
-            ? 'Your Workspace'
-            : workspacePublicData?.displayName}
-      </Title>
+      <Title animate>{title}</Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
     </>
@@ -53,6 +50,8 @@ const StandardContent = ({
 };
 
 export const SignInUp = () => {
+  const { t } = useLingui();
+
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -61,8 +60,27 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
+    useWorkspaceFromInviteHash();
 
   const [searchParams] = useSearchParams();
+  const title = useMemo(() => {
+    if (isDefined(workspaceInviteHash)) {
+      return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
+    }
+    const workspaceName = !isDefined(workspacePublicData?.displayName)
+      ? DEFAULT_WORKSPACE_NAME
+      : workspacePublicData?.displayName === ''
+        ? t`Your Workspace`
+        : workspacePublicData?.displayName;
+
+    return t`Welcome to ${workspaceName}`;
+  }, [
+    workspaceFromInviteHash?.displayName,
+    workspaceInviteHash,
+    workspacePublicData?.displayName,
+    t,
+  ]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;
@@ -110,6 +128,7 @@ export const SignInUp = () => {
       workspacePublicData={workspacePublicData}
       signInUpForm={signInUpForm}
       signInUpStep={signInUpStep}
+      title={title}
     />
   );
 };

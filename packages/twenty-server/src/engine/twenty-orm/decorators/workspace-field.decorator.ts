@@ -1,3 +1,4 @@
+import { MessageDescriptor } from '@lingui/core';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -14,8 +15,12 @@ export interface WorkspaceFieldOptions<
 > {
   standardId: string;
   type: T;
-  label: string | ((objectMetadata: ObjectMetadataEntity) => string);
-  description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
+  label:
+    | MessageDescriptor
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
+  description?:
+    | MessageDescriptor
+    | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
@@ -72,9 +77,25 @@ export function WorkspaceField<T extends FieldMetadataType>(
       target: object.constructor,
       standardId: options.standardId,
       name: propertyKey.toString(),
-      label: options.label,
+      label:
+        typeof options.label === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.label as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.label.message ?? ''),
       type: options.type,
-      description: options.description,
+      description:
+        typeof options.description === 'function'
+          ? (objectMetadata: ObjectMetadataEntity) =>
+              (
+                options.description as (
+                  obj: ObjectMetadataEntity,
+                ) => MessageDescriptor
+              )(objectMetadata).message ?? ''
+          : (options.description?.message ?? ''),
       icon: options.icon,
       defaultValue,
       options: options.options,

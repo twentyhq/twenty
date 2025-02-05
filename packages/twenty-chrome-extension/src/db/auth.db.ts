@@ -1,10 +1,10 @@
+import { isDefined } from 'twenty-shared';
 import {
   ExchangeAuthCodeInput,
   ExchangeAuthCodeResponse,
   Tokens,
 } from '~/db/types/auth.types';
 import { EXCHANGE_AUTHORIZATION_CODE } from '~/graphql/auth/mutations';
-import { isDefined } from '~/utils/isDefined';
 import { callMutation } from '~/utils/requestDb';
 
 export const exchangeAuthorizationCode = async (

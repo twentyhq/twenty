@@ -11,6 +11,7 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   IllustrationIconCurrency,
   IllustrationIconLink,
@@ -36,7 +37,7 @@ type SettingsCompositeFieldTypeConfigArray = Record<
 >;
 
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
-  [FieldMetadataType.Currency]: {
+  [FieldMetadataType.CURRENCY]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
     subFields: ['amountMicros'],
@@ -51,7 +52,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
-  [FieldMetadataType.Emails]: {
+  [FieldMetadataType.EMAILS]: {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
@@ -70,7 +71,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
-  [FieldMetadataType.Links]: {
+  [FieldMetadataType.LINKS]: {
     label: 'Links',
     Icon: IllustrationIconLink,
     exampleValue: {
@@ -87,7 +88,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       secondaryLinks: 'Secondary Links',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
-  [FieldMetadataType.Phones]: {
+  [FieldMetadataType.PHONES]: {
     label: 'Phones',
     Icon: IllustrationIconPhone,
     exampleValue: {
@@ -112,7 +113,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
-  [FieldMetadataType.FullName]: {
+  [FieldMetadataType.FULL_NAME]: {
     label: 'Full Name',
     Icon: IllustrationIconUser,
     exampleValue: { firstName: 'John', lastName: 'Doe' },
@@ -124,7 +125,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       lastName: 'Last Name',
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
-  [FieldMetadataType.Address]: {
+  [FieldMetadataType.ADDRESS]: {
     label: 'Address',
     Icon: IllustrationIconMap,
     subFields: [
@@ -167,7 +168,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
-  [FieldMetadataType.Actor]: {
+  [FieldMetadataType.ACTOR]: {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
@@ -177,8 +178,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       source: 'Source',
       name: 'Name',
       workspaceMemberId: 'Workspace Member ID',
+      context: 'Context',
     },
-    exampleValue: { source: 'source', name: 'name', workspaceMemberId: 'id' },
+    exampleValue: {
+      source: 'source',
+      name: 'name',
+      workspaceMemberId: 'id',
+      context: { provider: ConnectedAccountProvider.GOOGLE },
+    },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
   [FieldMetadataType.RichTextV2]: {
     label: 'Rich Text',

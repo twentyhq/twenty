@@ -37,7 +37,8 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   );
 
   const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
-    skip: currentWorkspace?.hasValidEntrepriseKey === false,
+    fetchPolicy: 'network-only',
+    skip: currentWorkspace?.hasValidEnterpriseKey === false,
     onCompleted: (data) => {
       setSSOIdentitiesProviders(
         data?.listSSOIdentityProvidersByWorkspaceId ?? [],
@@ -53,11 +54,11 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   return loading || !SSOIdentitiesProviders.length ? (
     <StyledLink
       to={getSettingsPath(SettingsPath.NewSSOIdentityProvider)}
-      isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+      isDisabled={currentWorkspace?.hasValidEnterpriseKey !== true}
     >
       <SettingsCard
         title={t`Add SSO Identity Provider`}
-        disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+        disabled={currentWorkspace?.hasValidEnterpriseKey !== true}
         Icon={<IconKey />}
       />
     </StyledLink>

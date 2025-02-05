@@ -6,5 +6,5 @@ export const WorkflowDiagramStepNodeReadonly = ({
 }: {
   data: WorkflowDiagramStepNodeData;
 }) => {
-  return <WorkflowDiagramStepNodeBase data={data} />;
+  return <WorkflowDiagramStepNodeBase variant="default" data={data} />;
 };

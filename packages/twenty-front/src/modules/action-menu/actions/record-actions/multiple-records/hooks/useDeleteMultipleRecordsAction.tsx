@@ -4,8 +4,8 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -14,7 +14,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -73,7 +73,9 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
       resetTableRowSelection();
 
-      await deleteManyRecords(recordIdsToDelete);
+      await deleteManyRecords({
+        recordIdsToDelete,
+      });
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
     const isRemoteObject = objectMetadataItem.isRemote;
@@ -82,7 +84,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       !isRemoteObject &&
       !isDeletedFilterActive &&
       isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
+      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
       contextStoreNumberOfSelectedRecords > 0;
 
     const onClick = () => {

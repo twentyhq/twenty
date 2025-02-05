@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 
 export const query = gql`
-  query ObjectMetadataItems($objectFilter: objectFilter, $fieldFilter: fieldFilter) {
+  query ObjectMetadataItems($objectFilter: ObjectFilter, $fieldFilter: FieldFilter) {
     objects(paging: {first: 1000}, filter: $objectFilter) {
       edges {
         node {

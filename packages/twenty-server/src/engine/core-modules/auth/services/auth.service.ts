@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { render } from '@react-email/components';
+import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
@@ -26,7 +27,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
+import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
@@ -35,26 +36,26 @@ import {
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SocialSsoService } from 'src/engine/core-modules/auth/services/social-sso.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   AuthProviderWithPasswordType,
   ExistingUserOrNewUser,
   SignInUpBaseParams,
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -98,7 +99,7 @@ export class AuthService {
       );
 
     if (invitation) {
-      await this.workspaceInvitationService.validateInvitation({
+      await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: invitation.value,
         email: user.email,
       });
@@ -113,7 +114,10 @@ export class AuthService {
     );
   }
 
-  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+  async getLoginTokenFromCredentials(
+    input: GetLoginTokenFromCredentialsInput,
+    targetWorkspace: Workspace,
+  ) {
     if (!targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
         'Email/Password auth is not enabled for this workspace',
@@ -123,7 +127,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: {
-        email: challengeInput.email,
+        email: input.email,
       },
       relations: ['workspaces'],
     });
@@ -144,10 +148,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await compareHash(
-      challengeInput.password,
-      user.passwordHash,
-    );
+    const isValid = await compareHash(input.password, user.passwordHash);
 
     if (!isValid) {
       throw new AuthException(
@@ -379,6 +380,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
+    locale: keyof typeof APP_LOCALES,
   ): Promise<UpdatePassword> {
     if (!userId) {
       throw new AuthException(
@@ -415,14 +417,11 @@ export class AuthService {
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainManagerService.getBaseUrl().toString(),
+      locale,
     });
 
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       from: `${this.environmentService.get(
@@ -460,7 +459,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    subdomain?: string;
+    subdomain: string;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
@@ -475,34 +474,29 @@ export class AuthService {
     return url.toString();
   }
 
-  async findInvitationForSignInUp({
-    currentWorkspace,
-    workspacePersonalInviteToken,
-    email,
-  }: {
-    currentWorkspace?: Workspace | null;
-    workspacePersonalInviteToken?: string;
-    email?: string;
-  }) {
-    if (!currentWorkspace) return undefined;
+  async findInvitationForSignInUp(
+    params: {
+      currentWorkspace: Workspace;
+    } & ({ workspacePersonalInviteToken: string } | { email: string }),
+  ) {
+    const qr = this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken"."workspaceId" = :workspaceId', {
+        workspaceId: params.currentWorkspace.id,
+      })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
+      });
 
-    const qr = this.appTokenRepository.createQueryBuilder('appToken');
-
-    qr.where('"appToken"."workspaceId" = :workspaceId', {
-      workspaceId: currentWorkspace.id,
-    }).andWhere('"appToken".type = :type', {
-      type: AppTokenType.InvitationToken,
-    });
-
-    if (email) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
-        email,
+    if ('workspacePersonalInviteToken' in params) {
+      qr.andWhere('"appToken".value = :personalInviteToken', {
+        personalInviteToken: params.workspacePersonalInviteToken,
       });
     }
 
-    if (workspacePersonalInviteToken) {
-      qr.andWhere('"appToken".value = :personalInviteToken', {
-        personalInviteToken: workspacePersonalInviteToken,
+    if ('email' in params) {
+      qr.andWhere('"appToken".context->>\'email\' = :email', {
+        email: params.email,
       });
     }
 
@@ -567,18 +561,40 @@ export class AuthService {
     workspaceInviteHash?: string;
   } & ExistingUserOrNewUser &
     SignInUpBaseParams) {
-    const hasInvitation = invitation || workspaceInviteHash;
+    const hasPublicInviteLink = !!workspaceInviteHash;
+    const hasPersonalInvitation = !!invitation;
+    const isInvitedToWorkspace = hasPersonalInvitation || hasPublicInviteLink;
     const isTargetAnExistingWorkspace = !!workspace;
     const isAnExistingUser = userData.type === 'existingUser';
 
-    if (!hasInvitation && isTargetAnExistingWorkspace && isAnExistingUser) {
+    if (
+      hasPublicInviteLink &&
+      !hasPersonalInvitation &&
+      workspace &&
+      !workspace.isPublicInviteLinkEnabled
+    ) {
+      throw new AuthException(
+        'Public invite link is disabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      isAnExistingUser
+    ) {
       return await this.userService.hasUserAccessToWorkspaceOrThrow(
         userData.existingUser.id,
         workspace.id,
       );
     }
 
-    if (!hasInvitation && isTargetAnExistingWorkspace && !isAnExistingUser) {
+    if (
+      !isInvitedToWorkspace &&
+      isTargetAnExistingWorkspace &&
+      !isAnExistingUser
+    ) {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

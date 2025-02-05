@@ -23,7 +23,10 @@ export class StripeProductService {
   }
 
   async getAllProducts() {
-    const products = await this.stripe.products.list();
+    const products = await this.stripe.products.list({
+      active: true,
+      limit: 100,
+    });
 
     return products.data;
   }

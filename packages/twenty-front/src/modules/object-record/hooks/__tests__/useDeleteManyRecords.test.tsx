@@ -52,7 +52,9 @@ describe('useDeleteManyRecords', () => {
     );
 
     await act(async () => {
-      const res = await result.current.deleteManyRecords(personIds);
+      const res = await result.current.deleteManyRecords({
+        recordIdsToDelete: personIds,
+      });
       expect(res).toBeDefined();
       expect(res[0]).toHaveProperty('id');
     });

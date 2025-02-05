@@ -11,7 +11,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 type SelectFilterParams = {

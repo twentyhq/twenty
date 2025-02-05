@@ -11,7 +11,8 @@ import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconVariablePlus, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconVariablePlus } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
@@ -47,6 +48,8 @@ export const WorkflowVariablesDropdown = ({
     objectNameSingularToSelect,
   });
 
+  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+
   const initialStep =
     availableVariablesInWorkflowStep.length === 1
       ? availableVariablesInWorkflowStep[0]
@@ -64,7 +67,7 @@ export const WorkflowVariablesDropdown = ({
 
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
-    setSelectedStep(undefined);
+    setSelectedStep(initialStep);
     closeDropdown();
   };
 
@@ -72,11 +75,11 @@ export const WorkflowVariablesDropdown = ({
     setSelectedStep(undefined);
   };
 
-  if (disabled === true) {
+  if (disabled === true || noAvailableVariables) {
     return (
       <StyledDropdownVariableButtonContainer
         isUnfolded={isDropdownOpen}
-        disabled={disabled}
+        disabled={true}
         transparentBackground
       >
         <IconVariablePlus
@@ -97,7 +100,6 @@ export const WorkflowVariablesDropdown = ({
       clickableComponent={
         <StyledDropdownVariableButtonContainer
           isUnfolded={isDropdownOpen}
-          disabled={disabled}
           transparentBackground
         >
           <IconVariablePlus size={theme.icon.size.sm} />

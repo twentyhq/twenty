@@ -9,7 +9,7 @@ import {
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
@@ -34,7 +34,7 @@ export const buildRecordFromImportedStructuredRow = (
     },
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
-    LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
+    LINKS: { primaryLinkUrlLabel },
     EMAILS: { primaryEmailLabel },
     PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
     RICH_TEXT_V2: { blocknoteLabel, markdownLabel },
@@ -44,15 +44,15 @@ export const buildRecordFromImportedStructuredRow = (
     const importedFieldValue = importedStructuredRow[field.name];
 
     switch (field.type) {
-      case FieldMetadataType.Boolean:
+      case FieldMetadataType.BOOLEAN:
         recordToBuild[field.name] =
           importedFieldValue === 'true' || importedFieldValue === true;
         break;
-      case FieldMetadataType.Number:
-      case FieldMetadataType.Numeric:
+      case FieldMetadataType.NUMBER:
+      case FieldMetadataType.NUMERIC:
         recordToBuild[field.name] = Number(importedFieldValue);
         break;
-      case FieldMetadataType.Currency:
+      case FieldMetadataType.CURRENCY:
         if (
           isDefined(
             importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
@@ -73,7 +73,7 @@ export const buildRecordFromImportedStructuredRow = (
           };
         }
         break;
-      case FieldMetadataType.Address: {
+      case FieldMetadataType.ADDRESS: {
         if (
           isDefined(
             importedStructuredRow[`${addressStreet1Label} (${field.name})`] ||
@@ -117,17 +117,14 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.Links: {
+      case FieldMetadataType.LINKS: {
         if (
           isDefined(
-            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`] ||
-              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
-            primaryLinkLabel: castToString(
-              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
-            ),
+            primaryLinkLabel: '',
             primaryLinkUrl: castToString(
               importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
             ),
@@ -136,7 +133,7 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.Phones: {
+      case FieldMetadataType.PHONES: {
         if (
           isDefined(
             importedStructuredRow[
@@ -163,7 +160,7 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.RichTextV2: {
+      case FieldMetadataType.RICH_TEXT_V2: {
         if (
           isDefined(
             importedStructuredRow[`${blocknoteLabel} (${field.name})`] ||
@@ -181,7 +178,7 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.Emails: {
+      case FieldMetadataType.EMAILS: {
         if (
           isDefined(
             importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
@@ -196,7 +193,7 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       }
-      case FieldMetadataType.Relation:
+      case FieldMetadataType.RELATION:
         if (
           isDefined(importedFieldValue) &&
           (isNonEmptyString(importedFieldValue) || importedFieldValue !== false)
@@ -204,7 +201,7 @@ export const buildRecordFromImportedStructuredRow = (
           recordToBuild[field.name + 'Id'] = importedFieldValue;
         }
         break;
-      case FieldMetadataType.FullName:
+      case FieldMetadataType.FULL_NAME:
         if (
           isDefined(
             importedStructuredRow[`${firstNameLabel} (${field.name})`] ??
@@ -219,13 +216,13 @@ export const buildRecordFromImportedStructuredRow = (
           };
         }
         break;
-      case FieldMetadataType.Actor:
+      case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
           source: 'IMPORT',
         };
         break;
-      case FieldMetadataType.Array:
-      case FieldMetadataType.MultiSelect: {
+      case FieldMetadataType.ARRAY:
+      case FieldMetadataType.MULTI_SELECT: {
         const stringArrayJSONSchema = z
           .preprocess((value) => {
             try {
@@ -243,7 +240,7 @@ export const buildRecordFromImportedStructuredRow = (
           stringArrayJSONSchema.parse(importedFieldValue);
         break;
       }
-      case FieldMetadataType.RawJson: {
+      case FieldMetadataType.RAW_JSON: {
         if (typeof importedFieldValue === 'string') {
           try {
             recordToBuild[field.name] = JSON.parse(importedFieldValue);

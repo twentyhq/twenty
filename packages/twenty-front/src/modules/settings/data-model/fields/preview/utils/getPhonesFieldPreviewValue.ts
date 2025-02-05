@@ -32,10 +32,10 @@ export const getPhonesFieldPreviewValue = ({
     'defaultValue' | 'options' | 'type'
   >;
 }): FieldPhonesValue | null => {
-  if (fieldMetadataItem.type !== FieldMetadataType.Phones) return null;
+  if (fieldMetadataItem.type !== FieldMetadataType.PHONES) return null;
 
   const phonesFieldTypeConfig = getSettingsFieldTypeConfig(
-    FieldMetadataType.Phones,
+    FieldMetadataType.PHONES,
   );
 
   const placeholderDefaultValue = phonesFieldTypeConfig.exampleValue;

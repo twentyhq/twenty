@@ -12,9 +12,7 @@ export const PASSWORD_REGEX = /^.{8,}$/;
 const saltRounds = 10;
 
 export const hashPassword = async (password: string) => {
-  const hash = await bcrypt.hash(password, saltRounds);
-
-  return hash;
+  return await bcrypt.hash(password, saltRounds);
 };
 
 export const compareHash = async (password: string, passwordHash: string) => {

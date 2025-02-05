@@ -1,6 +1,6 @@
 {
   "name": "twenty-emails",
-  "version": "0.35.4",
+  "version": "0.42.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -9,10 +9,14 @@
   "scripts": {
     "build": "npx vite build"
   },
+  "dependencies": {
+    "twenty-shared": "workspace:*"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "engines": {

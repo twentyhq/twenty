@@ -10,6 +10,7 @@ export const CHECK_USER_EXISTS = gql`
           id
           displayName
           subdomain
+          hostname
           logo
           sso {
             type

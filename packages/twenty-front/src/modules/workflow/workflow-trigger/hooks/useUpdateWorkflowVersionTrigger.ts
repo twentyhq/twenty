@@ -1,13 +1,13 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
   WorkflowTrigger,
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { isDefined } from 'twenty-shared';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -28,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
     const outputSchema = (
       await computeStepOutputSchema({
@@ -42,7 +42,7 @@ export const useUpdateWorkflowVersionTrigger = ({
     };
 
     await updateOneWorkflowVersion({
-      idToUpdate: workflowVersion.id,
+      idToUpdate: workflowVersionId,
       updateOneRecordInput: {
         trigger: updatedTrigger,
       },

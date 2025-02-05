@@ -7,7 +7,7 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export type AggregateRecordsData = {
   [fieldName: string]: {

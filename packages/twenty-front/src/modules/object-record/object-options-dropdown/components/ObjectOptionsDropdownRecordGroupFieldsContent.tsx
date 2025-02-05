@@ -26,8 +26,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -74,7 +74,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       objectNamePlural,
     },
     {
-      fieldType: FieldMetadataType.Select,
+      fieldType: FieldMetadataType.SELECT,
     },
   );
 

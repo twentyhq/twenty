@@ -10,11 +10,11 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { isDefined } from 'twenty-shared';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -70,7 +70,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
           | { firstName: string | undefined; lastName: string | undefined };
         [key: string]: any;
       } =
-        labelIdentifierType === FieldMetadataType.FullName
+        labelIdentifierType === FieldMetadataType.FULL_NAME
           ? {
               id: newRecordId,
               name:
@@ -85,7 +85,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.ManyToOne
+        RelationDefinitionType.MANY_TO_ONE
       ) {
         createRecordPayload[
           `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
@@ -96,7 +96,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       if (
         relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.OneToMany
+        RelationDefinitionType.ONE_TO_MANY
       ) {
         await updateOneRecord({
           idToUpdate: recordId,

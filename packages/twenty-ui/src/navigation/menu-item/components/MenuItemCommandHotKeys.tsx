@@ -34,27 +34,24 @@ const StyledCommandKey = styled.div`
 `;
 
 export type MenuItemCommandHotKeysProps = {
-  firstHotKey?: string;
+  hotKeys?: string[];
   joinLabel?: string;
-  secondHotKey?: string;
 };
 
 export const MenuItemCommandHotKeys = ({
-  firstHotKey,
-  secondHotKey,
+  hotKeys,
   joinLabel = 'then',
 }: MenuItemCommandHotKeysProps) => {
   return (
     <StyledCommandText>
-      {firstHotKey && (
+      {hotKeys && (
         <StyledCommandTextContainer>
-          <StyledCommandKey>{firstHotKey}</StyledCommandKey>
-          {secondHotKey && (
+          {hotKeys.map((hotKey, index) => (
             <>
-              {joinLabel}
-              <StyledCommandKey>{secondHotKey}</StyledCommandKey>
+              <StyledCommandKey key={index}>{hotKey}</StyledCommandKey>
+              {index < hotKeys.length - 1 && joinLabel}
             </>
-          )}
+          ))}
         </StyledCommandTextContainer>
       )}
     </StyledCommandText>

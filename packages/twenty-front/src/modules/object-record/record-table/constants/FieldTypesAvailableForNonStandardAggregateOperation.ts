@@ -4,27 +4,27 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION = {
   [AGGREGATE_OPERATIONS.min]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.CURRENCY,
   ],
   [AGGREGATE_OPERATIONS.max]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.CURRENCY,
   ],
   [AGGREGATE_OPERATIONS.avg]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.CURRENCY,
   ],
   [AGGREGATE_OPERATIONS.sum]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.CURRENCY,
   ],
   [DATE_AGGREGATE_OPERATIONS.earliest]: [
-    FieldMetadataType.DateTime,
-    FieldMetadataType.Date,
+    FieldMetadataType.DATE_TIME,
+    FieldMetadataType.DATE,
   ],
   [DATE_AGGREGATE_OPERATIONS.latest]: [
-    FieldMetadataType.DateTime,
-    FieldMetadataType.Date,
+    FieldMetadataType.DATE_TIME,
+    FieldMetadataType.DATE,
   ],
 };

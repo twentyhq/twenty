@@ -1,10 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import isEmpty from 'lodash.isempty';
+import { Repository } from 'typeorm';
+
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
@@ -25,7 +37,15 @@ export class WorkspaceManagerService {
     private readonly seederService: SeederService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly permissionsService: PermissionsService,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly roleService: RoleService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   /**
@@ -49,6 +69,13 @@ export class WorkspaceManagerService {
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
     });
+
+    const permissionsEnabled =
+      await this.permissionsService.isPermissionsEnabled();
+
+    if (permissionsEnabled === true) {
+      await this.initPermissions(workspaceId);
+    }
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
@@ -104,16 +131,10 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsWorkflowEnabled,
-      workspaceId,
-    );
-
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
-      isWorkflowEnabled,
     );
   }
 
@@ -140,16 +161,10 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsWorkflowEnabled,
-      workspaceId,
-    );
-
     await seedWorkspaceWithDemoData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
-      isWorkflowEnabled,
     );
 
     await this.seederService.seedCustomObjects(
@@ -175,10 +190,49 @@ export class WorkspaceManagerService {
    */
   public async delete(workspaceId: string): Promise<void> {
     // Delete data from metadata tables
+    await this.relationMetadataRepository.delete({
+      workspaceId,
+    });
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+    });
+
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+  }
+
+  private async initPermissions(workspaceId: string) {
+    const adminRole = await this.roleService.createAdminRole({
+      workspaceId,
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    if (isEmpty(userWorkspace)) {
+      throw new PermissionsException(
+        'User workspace not found',
+        PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (userWorkspace.length > 1) {
+      throw new PermissionsException(
+        'Multiple user workspaces found, cannot tell which one should be admin',
+        PermissionsExceptionCode.TOO_MANY_ADMIN_CANDIDATES,
+      );
+    }
+
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId,
+      userWorkspaceId: userWorkspace[0].id,
+      roleId: adminRole.id,
+    });
   }
 }

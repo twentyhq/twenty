@@ -2,7 +2,7 @@ import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenu
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const actionMenuEntriesComponentSelector = createComponentSelectorV2<
   ActionMenuEntry[]

@@ -9,6 +9,7 @@ import { selectedFilterComponentState } from '@/object-record/object-filter-drop
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -17,7 +18,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
@@ -61,6 +62,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(viewComponentId);
 
+  // TODO: this should be removed as it is not consistent across re-renders
   const [fieldId] = useState(v4());
 
   const sourceTypes = getActorSourceMultiSelectOptions(
@@ -73,6 +75,8 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const { emptyRecordFilter } = useEmptyRecordFilter();
 
+  const { removeRecordFilter } = useRemoveRecordFilter();
+
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
@@ -83,8 +87,13 @@ export const ObjectFilterDropdownSourceSelect = ({
           (id) => id !== itemToSelect.id,
         );
 
+    if (!filterDefinitionUsedInDropdown) {
+      throw new Error('Filter definition used in dropdown should be defined');
+    }
+
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
+      removeRecordFilter(filterDefinitionUsedInDropdown.fieldMetadataId);
       deleteCombinedViewFilter(fieldId);
       return;
     }

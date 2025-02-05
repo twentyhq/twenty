@@ -86,7 +86,7 @@ export const RecordInlineCellContainer = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   if (isFieldText(fieldDefinition)) {
-    assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
+    assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
   }
 
   const { setIsFocused } = useFieldFocus();

@@ -9,6 +9,7 @@ import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
@@ -26,18 +27,23 @@ export class GraphqlQueryParser {
   private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
+  private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
     objectMetadataMaps: ObjectMetadataMaps,
+    featureFlagsMap: FeatureFlagMap,
   ) {
     this.objectMetadataMaps = objectMetadataMaps;
     this.fieldMetadataMapByName = fieldMetadataMapByName;
+    this.featureFlagsMap = featureFlagsMap;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
+      featureFlagsMap,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
+      featureFlagsMap,
     );
   }
 
@@ -122,6 +128,7 @@ export class GraphqlQueryParser {
 
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
+      this.featureFlagsMap,
     );
 
     return selectedFieldsParser.parse(graphqlSelectedFields, parentFields);

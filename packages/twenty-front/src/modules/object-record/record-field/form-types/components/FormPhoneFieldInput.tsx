@@ -38,14 +38,14 @@ export const FormPhoneFieldInput = ({
     onPersist({
       primaryPhoneCountryCode: newCountry,
       primaryPhoneCallingCode: newCallingCode,
-      primaryPhoneNumber: defaultValue?.primaryPhoneNumber || '',
+      primaryPhoneNumber: defaultValue?.primaryPhoneNumber ?? '',
     });
   };
 
   const handleNumberChange = (number: string | number | null) => {
     onPersist({
-      primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode || '',
-      primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode || '',
+      primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
+      primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
       primaryPhoneNumber: number ? `${number}` : '',
     });
   };
@@ -58,7 +58,6 @@ export const FormPhoneFieldInput = ({
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode || ''}
           onPersist={handleCountryChange}
           readonly={readonly}
-          VariablePicker={VariablePicker}
         />
         <FormNumberFieldInput
           label="Phone Number"

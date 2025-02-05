@@ -139,7 +139,18 @@ export const ScrollWrapper = ({
     },
     events: {
       updated: (osInstance) => {
-        const { scrollOffsetElement: target } = osInstance.elements();
+        const {
+          scrollOffsetElement: target,
+          scrollbarVertical,
+          scrollbarHorizontal,
+        } = osInstance.elements();
+
+        if (scrollbarVertical !== null) {
+          scrollbarVertical.track.dataset.selectDisable = 'true';
+        }
+        if (scrollbarHorizontal !== null) {
+          scrollbarHorizontal.track.dataset.selectDisable = 'true';
+        }
         setScrollBottom(
           target.scrollHeight - target.clientHeight - target.scrollTop,
         );

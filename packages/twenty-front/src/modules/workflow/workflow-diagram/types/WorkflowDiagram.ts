@@ -17,6 +17,7 @@ export type WorkflowDiagramStepNodeData =
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
       name: string;
+      icon?: string;
     }
   | {
       nodeType: 'action';

@@ -12,7 +12,7 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useUpsertTableRecordInGroup = (recordGroupId: string) => {
   const { objectMetadataItem, objectNameSingular } =

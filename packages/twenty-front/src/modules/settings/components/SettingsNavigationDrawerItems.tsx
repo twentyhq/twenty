@@ -8,9 +8,11 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFlask,
   IconFunction,
   IconHierarchy2,
   IconKey,
+  IconLock,
   IconMail,
   IconRocket,
   IconServer,
@@ -22,6 +24,7 @@ import {
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -53,17 +56,19 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
-  const isFunctionSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFunctionSettingsEnabled,
+  const isPermissionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsEnabled,
   );
-  const isFreeAccessEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsFreeAccessEnabled,
-  );
-  const isBillingPageEnabled =
-    billing?.isBillingEnabled && !isFreeAccessEnabled;
+
+  // We want to disable this serverless function setting menu but keep the code
+  // for now
+  const isFunctionSettingsEnabled = false;
+
+  const isBillingPageEnabled = billing?.isBillingEnabled;
 
   const currentUser = useRecoilValue(currentUserState);
   const isAdminPageEnabled = currentUser?.canImpersonate;
+  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
@@ -151,6 +156,13 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCurrencyDollar}
           />
         )}
+        {isPermissionsEnabled && (
+          <SettingsNavigationDrawerItem
+            label={t`Roles`}
+            path={SettingsPath.Roles}
+            Icon={IconLock}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label={t`Data model`}
           path={SettingsPath.Objects}
@@ -198,6 +210,13 @@ export const SettingsNavigationDrawerItems = () => {
             label={t`Server Admin Panel`}
             path={SettingsPath.AdminPanel}
             Icon={IconServer}
+          />
+        )}
+        {labPublicFeatureFlags?.length > 0 && (
+          <SettingsNavigationDrawerItem
+            label={t`Lab`}
+            path={SettingsPath.Lab}
+            Icon={IconFlask}
           />
         )}
         <SettingsNavigationDrawerItem

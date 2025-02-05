@@ -10,7 +10,7 @@
     "types": ["node"],
     "outDir": "../../.cache/tsc",
     "paths": {
-      "@ui/*": ["packages/twenty-ui/src/*"]
+      "@ui/*": ["./src/*"]
     }
   },
   "files": [],

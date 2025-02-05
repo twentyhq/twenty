@@ -24,7 +24,7 @@ registerEnumType(RelationMetadataType, {
   description: 'Type of the relation',
 });
 
-@ObjectType('relation')
+@ObjectType('RelationMetadata')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },

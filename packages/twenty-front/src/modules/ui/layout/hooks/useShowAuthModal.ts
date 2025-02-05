@@ -6,9 +6,9 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { isDefined } from 'twenty-shared';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -36,18 +36,18 @@ export const useShowAuthModal = () => {
 
     if (
       !isLoggedIn ||
-      onboardingStatus === OnboardingStatus.PlanRequired ||
-      onboardingStatus === OnboardingStatus.ProfileCreation ||
-      onboardingStatus === OnboardingStatus.WorkspaceActivation ||
-      onboardingStatus === OnboardingStatus.SyncEmail ||
-      onboardingStatus === OnboardingStatus.InviteTeam
+      onboardingStatus === OnboardingStatus.PLAN_REQUIRED ||
+      onboardingStatus === OnboardingStatus.PROFILE_CREATION ||
+      onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION ||
+      onboardingStatus === OnboardingStatus.SYNC_EMAIL ||
+      onboardingStatus === OnboardingStatus.INVITE_TEAM
     ) {
       return true;
     }
 
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        (onboardingStatus === OnboardingStatus.Completed &&
+        (onboardingStatus === OnboardingStatus.COMPLETED &&
           !isDefined(subscriptionStatus)) ||
         subscriptionStatus === SubscriptionStatus.Canceled
       );

@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -41,15 +41,15 @@ export const SettingsObjectNewFieldSelect = () => {
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.TEXT,
     },
   });
   const excludedFieldTypes: SettingsFieldType[] = (
     [
-      FieldMetadataType.Numeric,
-      FieldMetadataType.RichText,
-      FieldMetadataType.RichTextV2,
-      FieldMetadataType.Actor,
+      FieldMetadataType.NUMERIC,
+      FieldMetadataType.RICH_TEXT,
+      FieldMetadataType.RICH_TEXT_V2,
+      FieldMetadataType.ACTOR,
     ] as const
   ).filter(isDefined);
 

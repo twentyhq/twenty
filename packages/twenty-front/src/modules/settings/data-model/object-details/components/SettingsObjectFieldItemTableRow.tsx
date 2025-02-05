@@ -21,12 +21,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import {
   IconMinus,
   IconPlus,
   LightIconButton,
   UndecoratedLink,
-  isDefined,
   useIcons,
 } from 'twenty-ui';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -247,8 +247,8 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
-            relationType === RelationDefinitionType.ManyToOne ||
-            relationType === RelationDefinitionType.OneToOne
+            relationType === RelationDefinitionType.MANY_TO_ONE ||
+            relationType === RelationDefinitionType.ONE_TO_ONE
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }

@@ -11,7 +11,7 @@ import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStrin
 
 export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
   return z.object({
-    __typename: z.literal('field').optional(),
+    __typename: z.literal('Field').optional(),
     createdAt: z.string().datetime(),
     defaultValue: z.any().optional(),
     description: z.string().trim().nullable().optional(),
@@ -44,23 +44,23 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
         relationId: z.string().uuid(),
         direction: z.nativeEnum(RelationDefinitionType),
         sourceFieldMetadata: z.object({
-          __typename: z.literal('field').optional(),
+          __typename: z.literal('Field').optional(),
           id: z.string().uuid(),
           name: z.string().trim().min(1),
         }),
         sourceObjectMetadata: z.object({
-          __typename: z.literal('object').optional(),
+          __typename: z.literal('Object').optional(),
           id: z.string().uuid(),
           namePlural: z.string().trim().min(1),
           nameSingular: z.string().trim().min(1),
         }),
         targetFieldMetadata: z.object({
-          __typename: z.literal('field').optional(),
+          __typename: z.literal('Field').optional(),
           id: z.string().uuid(),
           name: z.string().trim().min(1),
         }),
         targetObjectMetadata: z.object({
-          __typename: z.literal('object').optional(),
+          __typename: z.literal('Object').optional(),
           id: z.string().uuid(),
           namePlural: z.string().trim().min(1),
           nameSingular: z.string().trim().min(1),

@@ -29,7 +29,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { THEME_COMMON, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -51,9 +52,17 @@ const StyledResetReactflowStyles = styled.div`
     min-height: 0;
     min-width: 0;
   }
+  .react-flow__handle-top {
+    transform: translate(-50%, -50%);
+  }
+  .react-flow__handle-bottom {
+    transform: translate(-50%, 100%);
+  }
   .react-flow__handle.connectionindicator {
     cursor: pointer;
   }
+
+  --xy-edge-stroke: ${({ theme }) => theme.border.color.strong};
 
   --xy-node-border-radius: none;
   --xy-node-border: none;
@@ -219,6 +228,10 @@ export const WorkflowDiagramCanvasBase = ({
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
+        onBeforeDelete={async () => {
+          // Abort all non-programmatic deletions
+          return false;
+        }}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
@@ -233,7 +246,7 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer>
+      <StyledStatusTagContainer data-testid="workflow-visualizer-status">
         <WorkflowVersionStatusTag versionStatus={status} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>

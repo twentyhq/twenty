@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,7 +13,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
-import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
+import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
@@ -53,7 +53,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
-  const [apiKeyToken, setApiKeyToken] = useRecoilState(apiKeyTokenState);
+  const apiKeyToken = useRecoilValue(apiKeyTokenFamilyState(apiKeyId));
+
+  const setApiKeyTokenCallback = useRecoilCallback(
+    ({ set }) =>
+      (apiKeyId: string, token: string) => {
+        set(apiKeyTokenFamilyState(apiKeyId), token);
+      },
+    [],
+  );
+
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
@@ -129,7 +138,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         await deleteIntegration(false);
 
         if (isNonEmptyString(apiKey?.token)) {
-          setApiKeyToken(apiKey.token);
+          setApiKeyTokenCallback(apiKey.id, apiKey.token);
           navigate(SettingsPath.DevelopersApiKeyDetail, {
             apiKeyId: apiKey.id,
           });
@@ -169,12 +178,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 <>
                   <H2Title
                     title={t`API Key`}
-                    description={t`Copy this key as it will only be visible this one time`}
+                    description={t`Copy this key as it will not be visible again`}
                   />
                   <ApiKeyInput apiKey={apiKeyToken} />
-                  <StyledInfo>
-                    {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
-                  </StyledInfo>
                 </>
               ) : (
                 <>

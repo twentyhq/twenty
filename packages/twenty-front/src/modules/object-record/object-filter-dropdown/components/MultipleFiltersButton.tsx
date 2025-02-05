@@ -2,6 +2,7 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { Trans } from '@lingui/react/macro';
 
 export const MultipleFiltersButton = () => {
   const { resetFilterDropdown } = useResetFilterDropdown();
@@ -20,7 +21,7 @@ export const MultipleFiltersButton = () => {
       onClick={handleClick}
       isUnfolded={isDropdownOpen}
     >
-      Filter
+      <Trans>Filter</Trans>
     </StyledHeaderDropdownButton>
   );
 };

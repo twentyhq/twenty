@@ -2,6 +2,8 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+
 export function generateDefaultValue(
   type: FieldMetadataType,
 ): FieldMetadataDefaultValue {
@@ -46,6 +48,17 @@ export function generateDefaultValue(
         primaryPhoneCountryCode: "''",
         primaryPhoneCallingCode: "''",
         additionalPhones: null,
+      };
+    case FieldMetadataType.RICH_TEXT_V2:
+      return {
+        blocknote: "''",
+        markdown: "''",
+      };
+    case FieldMetadataType.ACTOR:
+      return {
+        source: `'${FieldActorSource.MANUAL}'`,
+        name: "'System'",
+        context: {},
       };
     default:
       return null;

@@ -10,13 +10,9 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { useSetRecoilState } from 'recoil';
-import {
-  Button,
-  IconPencil,
-  IconPlayerStop,
-  IconPower,
-  isDefined,
-} from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { Button, IconPencil, IconPlayerStop, IconPower } from 'twenty-ui';
+
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const RecordShowPageWorkflowVersionHeader = ({
@@ -130,7 +126,10 @@ export const RecordShowPageWorkflowVersionHeader = ({
           Icon={IconPlayerStop}
           disabled={isWaitingForWorkflowVersion}
           onClick={() => {
-            return deactivateWorkflowVersion(workflowVersion.id);
+            return deactivateWorkflowVersion({
+              workflowVersionId: workflowVersion.id,
+              workflowId: workflowVersion.workflowId,
+            });
           }}
         />
       ) : null}
