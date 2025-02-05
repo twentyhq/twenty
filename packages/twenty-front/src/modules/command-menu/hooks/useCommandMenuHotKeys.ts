@@ -78,7 +78,8 @@ export const useCommandMenuHotKeys = () => {
         )
       ) {
         setGlobalCommandMenuContext();
-      } else {
+      }
+      if (commandMenuPage !== CommandMenuPages.Root) {
         goBackFromCommandMenu();
       }
     },
