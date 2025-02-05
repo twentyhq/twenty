@@ -180,7 +180,7 @@ export class UserResolver {
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
-          workspaceMemberEntityId: workspaceMemberEntity.id,
+          workspaceMemberId: workspaceMemberEntity.id,
           workspaceId: workspace.id,
         });
 

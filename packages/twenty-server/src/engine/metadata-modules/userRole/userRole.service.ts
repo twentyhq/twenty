@@ -97,6 +97,19 @@ export class UserRoleService {
       );
     }
 
+    const role = await this.roleRepository.findOne({
+      where: {
+        id: roleId,
+      },
+    });
+
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        'Role not found',
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
     await this.unassignRolesFromUserWorkspace({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
