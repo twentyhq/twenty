@@ -70,7 +70,7 @@ const StyledStepNodeType = styled.div<{
 const StyledStepNodeInnerContainer = styled.div<{
   variant: WorkflowDiagramNodeVariant;
 }>`
-  background-color: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.secondary};
   border-color: ${({ theme }) => theme.border.color.medium};
 
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -99,26 +99,26 @@ const StyledStepNodeInnerContainer = styled.div<{
     }}
   }
 
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
+  .selectable:is(.selected, :focus, :focus-visible)
+    :is(.workflow-node-container, .workflow-node-container:hover)
+    & {
     ${({ theme, variant }) => {
       switch (variant) {
         case 'success': {
           return css`
-            background-color: ${theme.adaptiveColors.turquoise1};
+            background: ${theme.adaptiveColors.turquoise1};
             border-color: ${theme.adaptiveColors.turquoise4};
           `;
         }
         case 'failure': {
           return css`
-            background-color: ${theme.background.danger};
+            background: ${theme.background.danger};
             border-color: ${theme.color.red};
           `;
         }
         default: {
           return css`
-            background-color: ${theme.adaptiveColors.blue1};
+            background: ${theme.adaptiveColors.blue1};
             border-color: ${theme.color.blue};
           `;
         }
