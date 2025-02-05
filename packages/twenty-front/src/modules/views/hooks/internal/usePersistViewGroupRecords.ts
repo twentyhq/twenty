@@ -26,14 +26,12 @@ export const usePersistViewGroupRecords = () => {
 
   const createViewGroupRecords = useCallback(
     (viewGroupsToCreate: ViewGroup[], view: GraphQLView) => {
-      if (!viewGroupsToCreate.length) return;
+      if (viewGroupsToCreate.length === 0) return;
 
       return createManyRecords(
         viewGroupsToCreate.map((viewGroup) => ({
           ...viewGroup,
-          view: {
-            id: view.id,
-          },
+          viewId: view.id,
         })),
       );
     },
