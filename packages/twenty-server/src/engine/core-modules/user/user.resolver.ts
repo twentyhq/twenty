@@ -170,12 +170,16 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
-        workspaceId: workspace.id,
-      },
-    });
+    const userWorkspacesByUserId = new Map(
+      (
+        await this.userWorkspaceRepository.find({
+          where: {
+            userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+            workspaceId: workspace.id,
+          },
+        })
+      ).map((userWorkspace) => [userWorkspace.userId, userWorkspace]),
+    );
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
@@ -187,9 +191,8 @@ export class UserResolver {
         workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
       }
 
-      const userWorkspace = userWorkspaces?.find(
-        (userWorkspace) =>
-          userWorkspace.userId === workspaceMemberEntity.userId,
+      const userWorkspace = userWorkspacesByUserId.get(
+        workspaceMemberEntity.userId,
       );
 
       if (!userWorkspace) {
