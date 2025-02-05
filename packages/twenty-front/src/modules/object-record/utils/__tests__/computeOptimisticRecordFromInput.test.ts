@@ -64,7 +64,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
-  it('should generate correct optimistic record even if recordInput contains internal field __typename', () => {
+  it('should generate correct optimistic record even if recordInput contains field __typename', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadaItem();
     const companyObjectMetadataItem = getCompanyObjectMetadataItem();
