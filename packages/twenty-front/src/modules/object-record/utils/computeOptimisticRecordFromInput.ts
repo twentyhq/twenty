@@ -5,7 +5,7 @@ import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
-import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/ObjectRecordTypename';
+import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
