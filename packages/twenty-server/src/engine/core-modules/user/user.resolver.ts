@@ -27,6 +27,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -76,6 +78,7 @@ export class UserResolver {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
@@ -202,30 +205,38 @@ export class UserResolver {
         throw new Error('User workspace not found');
       }
 
-      const roles = await this.userRoleService
-        .getRolesForUserWorkspace(userWorkspace.id)
-        .then(([roleEntity]) => {
-          if (!isDefined(roleEntity)) {
-            return [];
-          } else {
-            return [
-              {
-                id: roleEntity.id,
-                label: roleEntity.label,
-                canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-                description: roleEntity.description,
-                isEditable: roleEntity.isEditable,
-                userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-              },
-            ];
-          }
-        });
+      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsEnabled,
+        workspace.id,
+      );
 
-      const workspaceMember = {
+      const workspaceMember: WorkspaceMember = {
         ...workspaceMemberEntity,
-        roles,
         userWorkspaceId: userWorkspace.id,
       } as WorkspaceMember;
+
+      if (permissionsEnabled === true) {
+        const roles = await this.userRoleService
+          .getRolesForUserWorkspace(userWorkspace.id)
+          .then(([roleEntity]) => {
+            if (!isDefined(roleEntity)) {
+              return [];
+            } else {
+              return [
+                {
+                  id: roleEntity.id,
+                  label: roleEntity.label,
+                  canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+                  description: roleEntity.description,
+                  isEditable: roleEntity.isEditable,
+                  userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+                },
+              ];
+            }
+          });
+
+        workspaceMember.roles = roles;
+      }
 
       workspaceMembers.push(workspaceMember);
     }

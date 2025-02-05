@@ -9,6 +9,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -46,6 +47,7 @@ import { UserService } from './services/user.service';
     AnalyticsModule,
     DomainManagerModule,
     UserRoleModule,
+    FeatureFlagModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],
