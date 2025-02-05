@@ -1,0 +1,30 @@
+import { ThemeProvider, useTheme } from '@emotion/react';
+import isEmpty from 'lodash.isempty';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  THEME_LIGHT,
+} from 'twenty-ui';
+
+export const NoChats = () => {
+  const theme = useTheme();
+
+  return (
+    <ThemeProvider theme={isEmpty(theme) ? THEME_LIGHT : theme}>
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="emptyTimeline" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            Send a message
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            Search for a member and start chatting
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    </ThemeProvider>
+  );
+};

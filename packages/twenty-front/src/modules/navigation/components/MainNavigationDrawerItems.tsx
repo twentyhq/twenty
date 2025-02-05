@@ -18,6 +18,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
@@ -63,6 +64,7 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
+          <ChatNavigationNavItem />
           <NavigationDrawerItem
             label="Chatbot"
             to={'/chatbot'}

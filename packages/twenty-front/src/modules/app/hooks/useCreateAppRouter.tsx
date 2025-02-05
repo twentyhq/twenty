@@ -3,6 +3,7 @@ import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import ChatProvider from '@/chat/internal/context/chatContext';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
@@ -15,6 +16,7 @@ import {
 import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
+import { Chat } from '~/pages/chat/internal/InternalChat';
 import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -67,6 +69,14 @@ export const useCreateAppRouter = (
                 isAdminPageEnabled={isAdminPageEnabled}
                 isPermissionsEnabled={isPermissionsEnabled}
               />
+            }
+          />
+          <Route
+            path={AppPath.InternalChat}
+            element={
+              <ChatProvider>
+                <Chat />
+              </ChatProvider>
             }
           />
           <Route path={AppPath.Chatbot} element={<Chatbot />} />

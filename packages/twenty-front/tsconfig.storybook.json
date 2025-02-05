@@ -10,5 +10,5 @@
     "src/**/*.stories.mdx",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
-  ]
+, "src/modules/chat/internal/types/chat.ts"  ]
 }
