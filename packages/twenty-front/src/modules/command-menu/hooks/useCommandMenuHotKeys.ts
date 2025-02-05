@@ -13,7 +13,6 @@ import { Key } from 'ts-key-enum';
 
 export const useCommandMenuHotKeys = () => {
   const {
-    closeCommandMenu,
     openRecordsSearchPage,
     toggleCommandMenu,
     goBackFromCommandMenu,
@@ -38,7 +37,7 @@ export const useCommandMenuHotKeys = () => {
       toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu],
+    [closeKeyboardShortcutMenu, toggleCommandMenu],
   );
 
   useScopedHotkeys(
@@ -84,7 +83,13 @@ export const useCommandMenuHotKeys = () => {
       }
     },
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
+    [
+      commandMenuPage,
+      commandMenuSearch,
+      contextStoreTargetedRecordsRuleComponent,
+      goBackFromCommandMenu,
+      setGlobalCommandMenuContext,
+    ],
     {
       preventDefault: false,
     },
