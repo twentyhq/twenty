@@ -19,6 +19,7 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -58,7 +59,7 @@ export const SyncEmails = () => {
   const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
-  const handleButtonClick = async (provider: string) => {
+  const handleButtonClick = async (provider: ConnectedAccountProvider) => {
     const calendarChannelVisibility =
       visibility === MessageChannelVisibility.SHARE_EVERYTHING
         ? CalendarChannelVisibility.SHARE_EVERYTHING
@@ -123,7 +124,7 @@ export const SyncEmails = () => {
         {isGoogleProviderEnabled && (
           <MainButton
             title="Sync with Google"
-            onClick={() => handleButtonClick('google')}
+            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
             width={200}
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
@@ -131,7 +132,9 @@ export const SyncEmails = () => {
         {isMicrosoftProviderEnabled && (
           <MainButton
             title="Sync with Outlook"
-            onClick={() => handleButtonClick('microsoft')}
+            onClick={() =>
+              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
+            }
             width={200}
             Icon={() => <IconMicrosoft size={theme.icon.size.sm} />}
           />
