@@ -15,7 +15,7 @@ const StyledCardGrid = styled.div`
 
 const StyledImage = styled.img`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: 240px;
+  height: 120px;
   width: 100%;
   object-fit: cover;
 `;
