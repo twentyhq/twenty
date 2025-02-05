@@ -49,7 +49,7 @@ export const SettingsLabContent = () => {
               return 1;
             return 0;
           })
-          .map((flag, index) => (
+          .map((flag) => (
             <Card key={flag.key} rounded>
               {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
                 <StyledImage
