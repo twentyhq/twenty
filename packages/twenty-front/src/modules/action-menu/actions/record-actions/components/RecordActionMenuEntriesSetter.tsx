@@ -57,9 +57,9 @@ export const RecordActionMenuEntriesSetter = () => {
   );
 
   const actionsToRegister = isDefined(viewType)
-    ? Object.values(actionConfig ?? {}).filter((action) =>
-        action.availableOn?.includes(viewType),
-      )
+    ? Object.values(actionConfig ?? {})
+        .filter((action) => action.availableOn?.includes(viewType))
+        .sort((a, b) => a.position - b.position)
     : [];
 
   return (

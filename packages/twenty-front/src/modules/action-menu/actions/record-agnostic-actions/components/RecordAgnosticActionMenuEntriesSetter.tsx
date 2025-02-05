@@ -4,9 +4,14 @@ import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agn
 export const RecordAgnosticActionMenuEntriesSetter = () => {
   return (
     <>
-      {Object.values(RECORD_AGNOSTIC_ACTIONS_CONFIG).map((action) => (
-        <RegisterAgnosticRecordActionEffect key={action.key} action={action} />
-      ))}
+      {Object.values(RECORD_AGNOSTIC_ACTIONS_CONFIG)
+        .sort((a, b) => a.position - b.position)
+        .map((action) => (
+          <RegisterAgnosticRecordActionEffect
+            key={action.key}
+            action={action}
+          />
+        ))}
     </>
   );
 };
