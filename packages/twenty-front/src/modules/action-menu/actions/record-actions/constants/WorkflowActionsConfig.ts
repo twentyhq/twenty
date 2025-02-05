@@ -1,4 +1,5 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
+import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
@@ -192,7 +193,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 10,
-    isPinned: false,
+    isPinned: true,
     Icon: IconHeart,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -224,7 +225,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     position: 12,
     Icon: IconTrash,
     accent: 'danger',
-    isPinned: false,
+    isPinned: true,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -253,7 +254,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     position: 14,
     Icon: IconTrashX,
     accent: 'danger',
-    isPinned: false,
+    isPinned: true,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -285,5 +286,18 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
+  },
+  destroyMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.DESTROY,
+    label: msg`Permanently destroy records`,
+    shortLabel: msg`Destroy`,
+    position: 17,
+    Icon: IconTrashX,
+    accent: 'danger',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    useAction: useDestroyMultipleRecordsAction,
   },
 };
