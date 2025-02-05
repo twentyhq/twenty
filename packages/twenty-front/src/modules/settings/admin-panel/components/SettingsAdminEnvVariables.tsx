@@ -33,7 +33,9 @@ const StyledSubGroupTitle = styled.div`
 
 const StyledSubGroupDescription = styled.div``;
 
-const StyledGroupDescription = styled.div``;
+const StyledGroupDescription = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
 
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
