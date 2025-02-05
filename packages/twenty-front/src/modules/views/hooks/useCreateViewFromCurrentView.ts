@@ -146,7 +146,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          await createViewGroupRecords(viewGroupsToCreate, newView);
+          await createViewGroupRecords({
+            viewGroupsToCreate,
+            viewId: newView.id,
+          });
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {

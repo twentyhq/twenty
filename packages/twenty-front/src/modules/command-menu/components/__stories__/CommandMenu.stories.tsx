@@ -16,10 +16,13 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -28,6 +31,20 @@ import { CommandMenu } from '../CommandMenu';
 const openTimeout = 50;
 
 const companiesMock = getCompaniesMock();
+
+// Mock workspace with feature flag enabled
+const mockWorkspaceWithFeatureFlag = {
+  ...mockCurrentWorkspace,
+  featureFlags: [
+    ...(mockCurrentWorkspace.featureFlags || []),
+    {
+      id: 'mock-id',
+      key: FeatureFlagKey.IsCommandMenuV2Enabled,
+      value: true,
+      workspaceId: mockCurrentWorkspace.id,
+    },
+  ],
+};
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -62,10 +79,18 @@ const meta: Meta<typeof CommandMenu> = {
       const setIsCommandMenuOpened = useSetRecoilState(
         isCommandMenuOpenedState,
       );
+      const setCommandMenuNavigationStack = useSetRecoilState(
+        commandMenuNavigationStackState,
+      );
 
-      setCurrentWorkspace(mockCurrentWorkspace);
+      setCurrentWorkspace(mockWorkspaceWithFeatureFlag);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
+      setCommandMenuNavigationStack([
+        {
+          page: CommandMenuPages.Root,
+        },
+      ]);
 
       return <Story />;
     },
@@ -166,5 +191,30 @@ export const NoResultsSearchFallback: Story = {
         }),
       ],
     },
+  },
+};
+
+export const GoBack: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const goBackButton = await canvas.findByTestId(
+      'command-menu-go-back-button',
+    );
+    await userEvent.click(goBackButton);
+    await expect(goBackButton).not.toBeVisible();
+  },
+};
+
+export const ClickOnSearchRecordsAndGoBack: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    const searchRecordsButton = await canvas.findByText('Search records');
+    await userEvent.click(searchRecordsButton);
+    await sleep(openTimeout);
+    const goBackButton = await canvas.findByTestId(
+      'command-menu-go-back-button',
+    );
+    await userEvent.click(goBackButton);
+    expect(await canvas.findByText('Search records')).toBeVisible();
   },
 };

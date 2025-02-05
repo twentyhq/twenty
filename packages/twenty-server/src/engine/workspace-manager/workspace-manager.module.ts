@@ -9,7 +9,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/userRole/userRole.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';

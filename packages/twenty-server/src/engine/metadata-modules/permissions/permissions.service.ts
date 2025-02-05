@@ -7,7 +7,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class PermissionsService {
@@ -21,8 +21,8 @@ export class PermissionsService {
   }: {
     userWorkspaceId: string;
   }): Promise<Record<SettingsFeatures, boolean>> {
-    const roleOfUserWorkspace =
-      await this.userRoleService.getRoleForUserWorkspace(userWorkspaceId);
+    const [roleOfUserWorkspace] =
+      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
 
     let hasPermissionOnSettingFeature = false;
 
@@ -46,15 +46,15 @@ export class PermissionsService {
     userWorkspaceId: string;
     setting: SettingsFeatures;
   }): Promise<void> {
-    const userWorkspaceRole =
-      await this.userRoleService.getRoleForUserWorkspace(userWorkspaceId);
+    const [userWorkspaceRole] =
+      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
 
     if (userWorkspaceRole?.canUpdateAllSettings === true) {
       return;
     }
 
     throw new PermissionsException(
-      `User does not have permission to update this setting: ${setting}`,
+      `User does not have permission to access this setting: ${setting}`,
       PermissionsExceptionCode.PERMISSION_DENIED,
     );
   }

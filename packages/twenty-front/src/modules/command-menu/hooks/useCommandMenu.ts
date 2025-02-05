@@ -42,8 +42,16 @@ export const useCommandMenu = () => {
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const openCommandMenu = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          return;
+        }
+
         copyContextStoreStates({
           instanceIdToCopyFrom: mainContextStoreComponentInstanceId,
           instanceIdToCopyTo: 'command-menu',
@@ -88,24 +96,6 @@ export const useCommandMenu = () => {
     [goBackToPreviousHotkeyScope, resetContextStoreStates, resetSelectedItem],
   );
 
-  const toggleCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
-
-        set(commandMenuSearchState, '');
-
-        if (isCommandMenuOpened) {
-          closeCommandMenu();
-        } else {
-          openCommandMenu();
-        }
-      },
-    [closeCommandMenu, openCommandMenu],
-  );
-
   const navigateCommandMenu = useRecoilCallback(
     ({ snapshot, set }) => {
       return ({
@@ -131,6 +121,26 @@ export const useCommandMenu = () => {
       };
     },
     [openCommandMenu],
+  );
+
+  const toggleCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        set(commandMenuSearchState, '');
+
+        if (isCommandMenuOpened) {
+          closeCommandMenu();
+        } else {
+          navigateCommandMenu({
+            page: CommandMenuPages.Root,
+          });
+        }
+      },
+    [closeCommandMenu, navigateCommandMenu],
   );
 
   const goBackFromCommandMenu = useRecoilCallback(
@@ -257,7 +267,6 @@ export const useCommandMenu = () => {
   );
 
   return {
-    openCommandMenu,
     closeCommandMenu,
     navigateCommandMenu,
     navigateCommandMenuHistory,
