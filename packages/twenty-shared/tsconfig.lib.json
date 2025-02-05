@@ -3,6 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "baseUrl": ".",
     "outDir": "../../.cache/tsc",
     "types": [
       "node",
