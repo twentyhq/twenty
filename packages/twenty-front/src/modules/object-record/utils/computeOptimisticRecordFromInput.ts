@@ -24,9 +24,13 @@ export const computeOptimisticRecordFromInput = ({
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
-    (fieldName) =>
-      objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
-      undefined,
+    (fieldName) => {
+      const isUnknownMetadataItemField =
+        objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
+        undefined;
+      const isInternalfield = fieldName.startsWith('__');
+      return isUnknownMetadataItemField && !isInternalfield;
+    },
   );
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
@@ -93,7 +97,7 @@ export const computeOptimisticRecordFromInput = ({
 
     if (!isUndefined(recordInputFieldValue)) {
       throw new Error(
-        'Should never provide relation mutation through anything else than the fieldId e.g companyId',
+        `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
       );
     }
 
