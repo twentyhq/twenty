@@ -1,8 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -14,11 +13,7 @@ export const useFilteredObjectMetadataItems = () => {
   );
 
   const isWorkflowToBeFiltered = (nameSingular: string) => {
-    return (
-      !isWorkflowEnabled &&
-      (nameSingular === CoreObjectNameSingular.Workflow ||
-        isWorkflowSubObjectMetadata(nameSingular))
-    );
+    return !isWorkflowEnabled && isWorkflowRelatedObjectMetadata(nameSingular);
   };
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
