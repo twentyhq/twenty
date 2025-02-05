@@ -2,6 +2,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -19,7 +20,9 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
@@ -34,6 +37,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly typeORMService: TypeORMService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(userWorkspaceRepository);
   }
@@ -195,5 +199,52 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         [] as AvailableWorkspaceOutput['sso'],
       ),
     }));
+  }
+
+  async getUserWorkspaceForUserOrThrow({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<UserWorkspace> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      throw new Error('User workspace not found');
+    }
+
+    return userWorkspace;
+  }
+
+  async getWorkspaceMemberOrThrow({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceMemberWorkspaceEntity> {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: {
+        id: workspaceMemberId,
+      },
+    });
+
+    if (!isDefined(workspaceMember)) {
+      throw new Error('Workspace member not found');
+    }
+
+    return workspaceMember;
   }
 }
