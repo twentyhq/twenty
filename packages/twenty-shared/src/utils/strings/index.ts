@@ -1,2 +1,1 @@
-export * from './capitalize.util';
-export * from './isValidUuid.util';
+export * from './capitalize';

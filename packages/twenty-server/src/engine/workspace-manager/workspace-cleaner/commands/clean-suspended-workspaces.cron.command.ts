@@ -19,12 +19,12 @@ export class CleanSuspendedWorkspacesCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      CleanSuspendedWorkspacesJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: CleanSuspendedWorkspacesJob.name,
+      data: undefined,
+      options: {
         repeat: { pattern: cleanSuspendedWorkspaceCronPattern },
       },
-    );
+    });
   }
 }

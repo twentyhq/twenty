@@ -26,14 +26,12 @@ export const usePersistViewGroupRecords = () => {
 
   const createViewGroupRecords = useCallback(
     (viewGroupsToCreate: ViewGroup[], view: GraphQLView) => {
-      if (!viewGroupsToCreate.length) return;
+      if (viewGroupsToCreate.length === 0) return;
 
       return createManyRecords(
         viewGroupsToCreate.map((viewGroup) => ({
           ...viewGroup,
-          view: {
-            id: view.id,
-          },
+          viewId: view.id,
         })),
       );
     },
@@ -87,9 +85,12 @@ export const usePersistViewGroupRecords = () => {
     async (viewGroupsToDelete: ViewGroup[]) => {
       if (!viewGroupsToDelete.length) return;
 
-      return destroyManyRecords(
-        viewGroupsToDelete.map((viewGroup) => viewGroup.id),
+      const recordIdsToDestroy = viewGroupsToDelete.map(
+        (viewGroup) => viewGroup.id,
       );
+      return destroyManyRecords({
+        recordIdsToDestroy,
+      });
     },
     [destroyManyRecords],
   );
