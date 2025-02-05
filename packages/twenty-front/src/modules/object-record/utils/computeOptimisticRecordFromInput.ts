@@ -5,7 +5,7 @@ import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
-import { OBJECT_RECORD_TYPENAME_KEY } from '@/object-record/constants/ObjectRecordTypename';
+import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -29,7 +29,7 @@ export const computeOptimisticRecordFromInput = ({
       const isUnknownMetadataItemField =
         objectMetadataItem.fields.find((field) => field.name === recordKey) ===
         undefined;
-      const isTypenameField = recordKey === OBJECT_RECORD_TYPENAME_KEY;
+      const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
       return isUnknownMetadataItemField && !isTypenameField;
     },
   );
