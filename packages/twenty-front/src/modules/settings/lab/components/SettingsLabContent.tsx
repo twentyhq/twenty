@@ -18,6 +18,7 @@ const StyledImage = styled.img`
   height: 120px;
   width: 100%;
   object-fit: cover;
+  display: flex;
 `;
 
 export const SettingsLabContent = () => {
