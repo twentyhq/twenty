@@ -57,9 +57,11 @@ export const ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA: Record<
     description: '',
   },
   [EnvironmentVariablesSubGroup.CaptchaConfig]: {
-    description: '',
+    description:
+      'This protects critical endpoints like login and signup with a captcha to prevent bot attacks. Likely unnecessary for self-hosting scenarios.',
   },
   [EnvironmentVariablesSubGroup.ServerlessConfig]: {
-    description: '',
+    description:
+      'In our multi-tenant cloud app, we offload untrusted custom code from workflows to a serverless system (Lambda) for enhanced security and scalability. Self-hosters with a single tenant can typically ignore this configuration.',
   },
 };
