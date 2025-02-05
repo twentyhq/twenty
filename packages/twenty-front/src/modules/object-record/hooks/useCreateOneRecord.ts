@@ -62,9 +62,7 @@ export const useCreateOneRecord = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const createOneRecord = async (
-    recordInput: Partial<CreatedObjectRecord>,
-  ) => {
+  const createOneRecord = async (recordInput: Partial<CreatedObjectRecord>) => {
     setLoading(true);
 
     const idForCreation = recordInput.id ?? v4();
