@@ -49,7 +49,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/user-role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -173,7 +173,7 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    const uwerWorkspaces = await this.userWorkspaceRepository.find({
+    const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
         workspaceId: workspace.id,
@@ -181,7 +181,7 @@ export class UserResolver {
     });
 
     const userWorkspacesByUserId = new Map(
-      uwerWorkspaces.map((userWorkspace) => [
+      userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
@@ -221,18 +221,18 @@ export class UserResolver {
           .then(([roleEntity]) => {
             if (!isDefined(roleEntity)) {
               return [];
-            } else {
-              return [
-                {
-                  id: roleEntity.id,
-                  label: roleEntity.label,
-                  canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-                  description: roleEntity.description,
-                  isEditable: roleEntity.isEditable,
-                  userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-                },
-              ];
             }
+
+            return [
+              {
+                id: roleEntity.id,
+                label: roleEntity.label,
+                canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+                description: roleEntity.description,
+                isEditable: roleEntity.isEditable,
+                userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+              },
+            ];
           });
 
         workspaceMember.roles = roles;

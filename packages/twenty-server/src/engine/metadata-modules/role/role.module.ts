@@ -8,7 +8,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { UserRoleModule } from 'src/engine/metadata-modules/userRole/user-role.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
   imports: [

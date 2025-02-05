@@ -18,7 +18,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { permissionsGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception-handler';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/user-role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -83,7 +83,7 @@ export class RoleResolver {
       });
 
     const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUser({
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
         userId: workspaceMember.userId,
         workspaceId: workspace.id,
       });
