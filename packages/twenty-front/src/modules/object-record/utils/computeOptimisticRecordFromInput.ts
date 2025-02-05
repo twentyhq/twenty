@@ -25,11 +25,11 @@ export const computeOptimisticRecordFromInput = ({
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
-    (fieldName) => {
+    (recordKey) => {
       const isUnknownMetadataItemField =
-        objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
+        objectMetadataItem.fields.find((field) => field.name === recordKey) ===
         undefined;
-      const isTypenameField = fieldName === OBJECT_RECORD_TYPENAME_KEY;
+      const isTypenameField = recordKey === OBJECT_RECORD_TYPENAME_KEY;
       return isUnknownMetadataItemField && !isTypenameField;
     },
   );
