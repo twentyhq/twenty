@@ -11,6 +11,7 @@ import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue
 import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
@@ -75,7 +76,7 @@ export class PgBossDriver
     options: QueueCronJobOptions;
     jobId?: string;
   }): Promise<void> {
-    const name = `${queueName}.${jobName}${jobId ? `.${jobId}` : ''}`;
+    const name = `${queueName}.${getJobKey({ jobName, jobId })}`;
 
     await this.pgBoss.schedule(
       name,
@@ -93,7 +94,7 @@ export class PgBossDriver
     jobName: string;
     jobId?: string;
   }): Promise<void> {
-    const name = `${queueName}.${jobName}${jobId ? `.${jobId}` : ''}`;
+    const name = `${queueName}.${getJobKey({ jobName, jobId })}`;
 
     await this.pgBoss.unschedule(name);
   }

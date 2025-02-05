@@ -13,6 +13,7 @@ import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interface
 import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -66,16 +67,6 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     );
   }
 
-  private getJobKey = ({
-    jobName,
-    jobId,
-  }: {
-    jobName: string;
-    jobId?: string;
-  }) => {
-    return `${jobName}${jobId ? `.${jobId}` : ''}`;
-  };
-
   async addCron<T>({
     queueName,
     jobName,
@@ -103,7 +94,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     };
 
     await this.queueMap[queueName].upsertJobScheduler(
-      this.getJobKey({ jobName, jobId }),
+      getJobKey({ jobName, jobId }),
       options?.repeat,
       {
         name: jobName,
@@ -123,7 +114,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     jobId?: string;
   }): Promise<void> {
     await this.queueMap[queueName].removeJobScheduler(
-      this.getJobKey({ jobName, jobId }),
+      getJobKey({ jobName, jobId }),
     );
   }
 
