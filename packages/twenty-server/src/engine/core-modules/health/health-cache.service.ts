@@ -47,7 +47,7 @@ export class HealthCacheService {
       [status]: (currentCounter?.[status] || 0) + increment,
     };
 
-    await this.cacheStorage.set(key, updatedCounter, HEALTH_CACHE_TTL);
+    return await this.cacheStorage.set(key, updatedCounter, HEALTH_CACHE_TTL);
   }
 
   async getMessageChannelSyncJobByStatusCounter() {
@@ -75,6 +75,35 @@ export class HealthCacheService {
       ][]) {
         aggregatedCounter[status] += count;
       }
+    }
+
+    return aggregatedCounter;
+  }
+
+  async incrementInvalidCaptchaCounter() {
+    const key = this.getKeyWithTimestamp(HealthCounterCacheKeys.InvalidCaptcha);
+
+    const currentCounter = await this.cacheStorage.get<number>(key);
+    const updatedCounter = (currentCounter || 0) + 1;
+
+    return await this.cacheStorage.set(key, updatedCounter, HEALTH_CACHE_TTL);
+  }
+
+  async getInvalidCaptchaCounter() {
+    const cacheKeys = this.getLastXMinutesTimestamps(TIME_WINDOW_MINUTES).map(
+      (timestamp) =>
+        this.getKeyWithTimestamp(
+          HealthCounterCacheKeys.InvalidCaptcha,
+          timestamp,
+        ),
+    );
+
+    let aggregatedCounter = 0;
+
+    for (const key of cacheKeys) {
+      const counter = await this.cacheStorage.get<number>(key);
+
+      aggregatedCounter += counter || 0;
     }
 
     return aggregatedCounter;

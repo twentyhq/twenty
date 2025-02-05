@@ -20,4 +20,9 @@ export class HealthController {
   getMessageChannelSyncJobByStatusCounter() {
     return this.healthCacheService.getMessageChannelSyncJobByStatusCounter();
   }
+
+  @Get('/invalid-captcha')
+  getInvalidCaptchaCounter() {
+    return this.healthCacheService.getInvalidCaptchaCounter();
+  }
 }
