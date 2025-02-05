@@ -6,7 +6,8 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
@@ -16,16 +17,16 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared';
 
-export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
+export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
-    const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
       useState(false);
 
     const { resetTableRowSelection } = useRecordTable({
       recordTableId: objectMetadataItem.namePlural,
     });
 
-    const { deleteManyRecords } = useDeleteManyRecords({
+    const { destroyManyRecords } = useDestroyManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
@@ -43,12 +44,18 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
-    const graphqlFilter = computeContextStoreFilters(
-      contextStoreTargetedRecordsRule,
-      contextStoreFilters,
-      objectMetadataItem,
-      filterValueDependencies,
-    );
+    const deletedAtFilter: RecordGqlOperationFilter = {
+      deletedAt: { is: 'NOT_NULL' },
+    };
+    const graphqlFilter = {
+      ...computeContextStoreFilters(
+        contextStoreTargetedRecordsRule,
+        contextStoreFilters,
+        objectMetadataItem,
+        filterValueDependencies,
+      ),
+      ...deletedAtFilter,
+    };
 
     const deletedAtFieldMetadata = objectMetadataItem.fields.find(
       (field) => field.name === 'deletedAt',
@@ -67,22 +74,20 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       recordGqlFields: { id: true },
     });
 
-    const handleDeleteClick = useCallback(async () => {
-      const recordsToDelete = await fetchAllRecordIds();
-      const recordIdsToDelete = recordsToDelete.map((record) => record.id);
+    const handleDestroyClick = useCallback(async () => {
+      const recordsToDestroy = await fetchAllRecordIds();
+      const recordIdsToDestroy = recordsToDestroy.map((record) => record.id);
 
       resetTableRowSelection();
 
-      await deleteManyRecords({
-        recordIdsToDelete,
-      });
-    }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
+      await destroyManyRecords({ recordIdsToDestroy });
+    }, [destroyManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
     const shouldBeRegistered =
       !isRemoteObject &&
-      !isDeletedFilterActive &&
+      isDeletedFilterActive &&
       isDefined(contextStoreNumberOfSelectedRecords) &&
       contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
       contextStoreNumberOfSelectedRecords > 0;
@@ -92,17 +97,19 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         return;
       }
 
-      setIsDeleteRecordsModalOpen(true);
+      setIsDestroyRecordsModalOpen(true);
     };
 
     const confirmationModal = (
       <ConfirmationModal
-        isOpen={isDeleteRecordsModalOpen}
-        setIsOpen={setIsDeleteRecordsModalOpen}
-        title={'Delete Records'}
-        subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
-        onConfirmClick={handleDeleteClick}
-        deleteButtonText={'Delete Records'}
+        isOpen={isDestroyRecordsModalOpen}
+        setIsOpen={setIsDestroyRecordsModalOpen}
+        title={'Permanently Destroy Records'}
+        subtitle={
+          "Are you sure you want to destroy these records? They won't be recoverable anymore."
+        }
+        onConfirmClick={handleDestroyClick}
+        deleteButtonText={'Destroy Records'}
       />
     );
 
