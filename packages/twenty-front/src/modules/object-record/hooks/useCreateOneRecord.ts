@@ -64,7 +64,7 @@ export const useCreateOneRecord = <
 
   const createOneRecord = async (
     recordInput: Partial<CreatedObjectRecord>,
-  ): Promise<CreatedObjectRecord | null> => {
+  ) => {
     setLoading(true);
 
     const idForCreation = recordInput.id ?? v4();
