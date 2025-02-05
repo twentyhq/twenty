@@ -13,7 +13,7 @@ msgstr "接受邀請"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr "该工作区中的所有数据已被永久删除。"
+msgstr "此工作區中的所有數據已被永久刪除。"
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
@@ -33,23 +33,23 @@ msgstr "您好"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "如果您没有启动此更改，请立即联系您的工作区所有者。"
+msgstr "如果您未發起此更改，請立即聯繫您的工作區擁有者。"
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "如果您希望继续使用 Twenty，请在 {remainingDays} {dayOrDays} 内更新您的订阅。"
+msgstr "如果您希望繼續使用 Twenty，請在接下來的 {remainingDays} {dayOrDays} 內更新您的訂閱。"
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "如果您想再次使用 Twenty，可以创建一个新的工作区。"
+msgstr "如果您想再次使用 Twenty，可以創建一個新的工作區。"
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "您的工作区<0>{workspaceDisplayName}</0>已被暂停 {daysSinceInactive} 天。"
+msgstr "您的工作區 <0>{workspaceDisplayName}</0> 已被暫停 {daysSinceInactive} 天。"
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr "加入您的團隊，來 Twenty"
+msgstr "加入您的團隊，使用 Twenty"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
@@ -65,23 +65,23 @@ msgstr "重設您的密碼 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "感謝您在 Twenty 註冊帳戶！在開始之前，我們需要確認這是您。請點擊以上鏈接以驗證您的電子郵件地址。"
+msgstr "感謝您在 Twenty 註冊帳戶！在開始之前，我們需要確認是您本人。請點擊上方驗證您的電子郵件地址。"
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "工作区将在 {remainingDays} {dayOrDays} 中停用，其所有数据将被删除。"
+msgstr "工作區將在 {remainingDays} {dayOrDays} 後停用，所有數據將被刪除。"
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "确认您的账户（{email}）密码已在 {formattedDate} 上成功更改。"
+msgstr "這是確認您的帳戶（{email}）的密碼已於 {formattedDate} 成功更改。"
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "此链接仅对下 {duration} 次有效。如果链接无效，您可以直接使用登录验证链接："
+msgstr "此鏈接僅在接下來的 {duration} 內有效。如果鏈接無效，您可以直接使用登錄驗證鏈接："
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr "更新您的订阅"
+msgstr "更新您的訂閱"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
@@ -89,7 +89,7 @@ msgstr "驗證電子郵件"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "您的工作区<0>[{workspaceDisplayName}</0>] 已被删除，因为您的订阅已于 {inactiveDaysBeforeDelete} 天前过期。"
+msgstr "由於您的訂閱已於 {inactiveDaysBeforeDelete} 天前過期，您的工作區 <0>{workspaceDisplayName}</0> 已被刪除。"
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "

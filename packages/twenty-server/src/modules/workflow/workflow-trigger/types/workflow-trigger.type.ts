@@ -3,6 +3,7 @@ import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
   MANUAL = 'MANUAL',
+  CRON = 'CRON',
 }
 
 type BaseWorkflowTriggerSettings = {
@@ -35,8 +36,16 @@ export type WorkflowManualTrigger = BaseTrigger & {
   };
 };
 
+export type WorkflowCronTrigger = BaseTrigger & {
+  type: WorkflowTriggerType.CRON;
+  settings: {
+    pattern: string;
+  };
+};
+
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger
-  | WorkflowManualTrigger;
+  | WorkflowManualTrigger
+  | WorkflowCronTrigger;
