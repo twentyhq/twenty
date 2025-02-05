@@ -9,8 +9,6 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  Max,
-  Min,
   ValidateIf,
   validateSync,
 } from 'class-validator';
@@ -52,9 +50,9 @@ export class EnvironmentVariables {
   AUTH_PASSWORD_ENABLED = true;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     description:
-      'Enable pre-filling of the sign-in form if password authentication is enabled',
+      'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
   })
   @CastToBoolean()
   @IsOptional()
@@ -73,6 +71,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the email verification token is valid',
   })
   @IsDuration()
@@ -81,6 +80,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the password reset token is valid',
   })
   @IsDuration()
@@ -228,7 +228,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the access token is valid',
   })
   @IsDuration()
@@ -237,7 +237,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the refresh token is valid',
   })
   @IsOptional()
@@ -245,7 +245,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Cooldown period for refreshing tokens',
   })
   @IsDuration()
@@ -254,7 +254,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the login token is valid',
   })
   @IsDuration()
@@ -263,7 +263,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the file token is valid',
   })
   @IsDuration()
@@ -272,7 +272,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the invitation token is valid',
   })
   @IsDuration()
@@ -281,7 +281,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the short-term token is valid',
   })
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
@@ -791,7 +791,7 @@ export class EnvironmentVariables {
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Cache,
+    group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'URL for cache storage (e.g., Redis connection URL)',
   })
@@ -824,17 +824,6 @@ export class EnvironmentVariables {
   @IsEnum(NodeEnvironment)
   @IsString()
   NODE_ENV: NodeEnvironment = NodeEnvironment.development;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Port for the debug server',
-  })
-  @CastToPositiveNumber()
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Max(65535)
-  DEBUG_PORT = 9000;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -872,6 +861,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.RateLimiting,
     description: 'Maximum number of records affected by mutations',
   })
   @CastToPositiveNumber()

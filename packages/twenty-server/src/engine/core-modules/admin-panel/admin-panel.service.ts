@@ -12,8 +12,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { ENVIRONMENT_VARIABLES_GROUP_POSITION } from 'src/engine/core-modules/environment/constants/environment-variables-group-position';
+import { ENVIRONMENT_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-group-metadata';
 import { ENVIRONMENT_VARIABLES_HIDDEN_GROUPS } from 'src/engine/core-modules/environment/constants/environment-variables-hidden-groups';
+import { ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-sub-group-metadata';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environment/enums/environment-variables-sub-group.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -218,20 +219,21 @@ export class AdminPanelService {
       groupedData.entries(),
     )
       .sort((a, b) => {
-        const positionA = ENVIRONMENT_VARIABLES_GROUP_POSITION[a[0]];
-        const positionB = ENVIRONMENT_VARIABLES_GROUP_POSITION[b[0]];
+        const positionA = ENVIRONMENT_VARIABLES_GROUP_METADATA[a[0]].position;
+        const positionB = ENVIRONMENT_VARIABLES_GROUP_METADATA[b[0]].position;
 
         return positionA - positionB;
       })
       .map(([name, data]) => ({
         name,
-        description: '',
+        description: ENVIRONMENT_VARIABLES_GROUP_METADATA[name].description,
         variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
         subgroups: Array.from(data.subgroups.entries())
           .sort((a, b) => a[0].localeCompare(b[0]))
           .map(([name, variables]) => ({
             name,
-            description: '',
+            description:
+              ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA[name].description,
             variables,
           })),
       }));

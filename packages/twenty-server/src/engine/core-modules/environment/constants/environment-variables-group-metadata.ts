@@ -1,8 +1,13 @@
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 
+type GroupMetadata = {
+  position: number;
+  description: string;
+};
+
 export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
   EnvironmentVariablesGroup,
-  { position: number; description: string }
+  GroupMetadata
 > = {
   [EnvironmentVariablesGroup.ServerConfig]: {
     position: 100,
@@ -62,6 +67,7 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
   },
   [EnvironmentVariablesGroup.Other]: {
     position: 1700,
-    description: '',
+    description:
+      "The variables in this section are mostly used for internal purposes (running our Cloud offering), but shouldn't usually be required for a simple self-hosted instance",
   },
 };

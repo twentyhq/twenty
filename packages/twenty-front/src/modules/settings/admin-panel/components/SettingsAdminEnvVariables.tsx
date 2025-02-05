@@ -38,6 +38,10 @@ const StyledSubGroupTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledSubGroupDescription = styled.div``;
+
+const StyledGroupDescription = styled.div``;
+
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } =
     useGetEnvironmentVariablesGroupedQuery();
@@ -70,6 +74,11 @@ export const SettingsAdminEnvVariables = () => {
         (group) => (
           <StyledGroupContainer key={group.name}>
             <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
+            {group.description !== '' && (
+              <StyledGroupDescription>
+                {group.description}
+              </StyledGroupDescription>
+            )}
             <StyledGroupVariablesContainer>
               {group.variables.length > 0 &&
                 renderVariablesTable(group.variables)}
@@ -77,6 +86,11 @@ export const SettingsAdminEnvVariables = () => {
             {group.subgroups.map((subgroup) => (
               <StyledSubGroupContainer key={subgroup.name}>
                 <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
+                {subgroup.description !== '' && (
+                  <StyledSubGroupDescription>
+                    {subgroup.description}
+                  </StyledSubGroupDescription>
+                )}
                 {renderVariablesTable(subgroup.variables)}
               </StyledSubGroupContainer>
             ))}

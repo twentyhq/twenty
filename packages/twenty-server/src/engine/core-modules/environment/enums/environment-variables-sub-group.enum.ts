@@ -4,7 +4,7 @@ export enum EnvironmentVariablesSubGroup {
   MicrosoftAuth = 'microsoft-auth',
   EmailSettings = 'email-settings',
   StorageConfig = 'storage-config',
-  Tokens = 'tokens',
+  TokensDuration = 'tokens-duration',
   SSL = 'ssl',
   RateLimiting = 'rate-limiting',
   TinybirdConfig = 'tinybird-config',
