@@ -39,6 +39,37 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  'src/engine/core-modules/environment/constants/environment-variables-group-metadata',
+  () => ({
+    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
+      GROUP_1: {
+        position: 100,
+        description: '',
+      },
+      GROUP_2: {
+        position: 200,
+        description: '',
+      },
+      VISIBLE_GROUP: {
+        position: 300,
+        description: '',
+      },
+    },
+  }),
+);
+
+jest.mock(
+  'src/engine/core-modules/environment/constants/environment-variables-sub-group-metadata',
+  () => ({
+    ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA: {
+      SUBGROUP_1: {
+        description: '',
+      },
+    },
+  }),
+);
+
 describe('AdminPanelService', () => {
   let service: AdminPanelService;
 
@@ -262,9 +293,10 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       expect(result).toEqual({
-        groups: expect.arrayContaining([
-          expect.objectContaining({
+        groups: [
+          {
             name: 'GROUP_1',
+            description: '',
             variables: [
               {
                 name: 'VAR_1',
@@ -276,6 +308,7 @@ describe('AdminPanelService', () => {
             subgroups: [
               {
                 name: 'SUBGROUP_1',
+                description: '',
                 variables: [
                   {
                     name: 'VAR_2',
@@ -286,9 +319,10 @@ describe('AdminPanelService', () => {
                 ],
               },
             ],
-          }),
-          expect.objectContaining({
+          },
+          {
             name: 'GROUP_2',
+            description: '',
             variables: [
               {
                 name: 'VAR_3',
@@ -298,8 +332,8 @@ describe('AdminPanelService', () => {
               },
             ],
             subgroups: [],
-          }),
-        ]),
+          },
+        ],
       });
     });
 
