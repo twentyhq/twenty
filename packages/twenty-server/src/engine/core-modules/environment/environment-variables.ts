@@ -480,6 +480,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.TinybirdConfig,
     description:
       'Used on our cloud app for telemetry (different from self-hosted telemetry)',
   })
@@ -489,7 +490,7 @@ export class EnvironmentVariables {
   ANALYTICS_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
+    group: EnvironmentVariablesGroup.Logging,
     description: 'Is telemetry enabled',
   })
   @CastToBoolean()
@@ -498,7 +499,7 @@ export class EnvironmentVariables {
   TELEMETRY_ENABLED = true;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TinybirdConfig,
     sensitive: true,
     description: 'Tinybird ingest token',
@@ -508,7 +509,7 @@ export class EnvironmentVariables {
   TINYBIRD_INGEST_TOKEN: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TinybirdConfig,
     sensitive: true,
     description: 'Tinybird workspace UUID',
@@ -518,7 +519,7 @@ export class EnvironmentVariables {
   TINYBIRD_WORKSPACE_UUID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TinybirdConfig,
     sensitive: true,
     description: 'Tinybird generate JWT token',
@@ -529,7 +530,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     description: 'Is billing enabled',
   })
   @CastToBoolean()
@@ -539,7 +540,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     description: 'Billing plan required link',
   })
   @IsString()
@@ -548,7 +549,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     description: 'Billing free trial with credit card duration in days',
   })
   @IsNumber()
@@ -559,7 +560,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     description: 'Billing free trial without credit card duration in days',
   })
   @IsNumber()
@@ -570,7 +571,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     sensitive: true,
     description: 'Billing Stripe API key',
   })
@@ -580,7 +581,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     sensitive: true,
     description: 'Billing Stripe webhook secret',
   })
@@ -591,7 +592,7 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     sensitive: true,
-    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
+    subGroup: EnvironmentVariablesSubGroup.BillingConfig,
     description: 'Billing Stripe base plan product ID',
   })
   @IsString()
@@ -721,7 +722,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
+    subGroup: EnvironmentVariablesSubGroup.SupportChatConfig,
     description: 'Support driver',
   })
   @IsEnum(SupportDriver)
@@ -730,7 +731,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
+    subGroup: EnvironmentVariablesSubGroup.SupportChatConfig,
     sensitive: true,
     description: 'Support front chat ID',
   })
@@ -740,7 +741,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
-    subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
+    subGroup: EnvironmentVariablesSubGroup.SupportChatConfig,
     sensitive: true,
     description: 'Support front HMAC key',
   })
@@ -749,7 +750,7 @@ export class EnvironmentVariables {
   SUPPORT_FRONT_HMAC_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Database,
+    group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'Database URL',
   })
@@ -763,8 +764,9 @@ export class EnvironmentVariables {
   PG_DATABASE_URL: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Database,
-    description: 'Is SSL allowed for database',
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description:
+      'Allow connections to a database with self-signed certificates',
   })
   @CastToBoolean()
   @IsBoolean()
@@ -890,18 +892,19 @@ export class EnvironmentVariables {
   API_RATE_LIMITING_LIMIT = 500;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.SSL,
-    description: 'SSL key path',
+    description: 'SSL key path, used to enable HTTPS when developping locally',
   })
   @IsString()
   @IsOptional()
   SSL_KEY_PATH: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.SSL,
-    description: 'SSL certificate path',
+    description:
+      'SSL certificate path, used to enable HTTPS when developping locally',
   })
   @IsString()
   @IsOptional()
