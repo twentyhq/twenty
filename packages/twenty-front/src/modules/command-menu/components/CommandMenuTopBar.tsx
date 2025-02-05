@@ -115,6 +115,7 @@ export const CommandMenuTopBar = () => {
             onClick={() => {
               goBackFromCommandMenu();
             }}
+            testId="command-menu-go-back-button"
           />
         )}
         {commandMenuPage !== CommandMenuPages.SearchRecords &&

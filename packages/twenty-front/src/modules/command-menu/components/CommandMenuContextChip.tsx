@@ -40,13 +40,19 @@ export const CommandMenuContextChip = ({
   Icons,
   text,
   onClick,
+  testId,
 }: {
   Icons: React.ReactNode[];
   text?: string;
   onClick?: () => void;
+  testId?: string;
 }) => {
   return (
-    <StyledChip withText={isNonEmptyString(text)} onClick={onClick}>
+    <StyledChip
+      withText={isNonEmptyString(text)}
+      onClick={onClick}
+      data-testid={testId}
+    >
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <Fragment key={index}>{Icon}</Fragment>
