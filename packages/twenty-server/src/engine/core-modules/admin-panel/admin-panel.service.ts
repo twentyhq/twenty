@@ -223,13 +223,15 @@ export class AdminPanelService {
 
         return positionA - positionB;
       })
-      .map(([groupName, data]) => ({
-        groupName,
+      .map(([name, data]) => ({
+        name,
+        description: '',
         variables: data.variables.sort((a, b) => a.name.localeCompare(b.name)),
         subgroups: Array.from(data.subgroups.entries())
           .sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([subgroupName, variables]) => ({
-            subgroupName,
+          .map(([name, variables]) => ({
+            name,
+            description: '',
             variables,
           })),
       }));

@@ -495,7 +495,7 @@ export enum EnvironmentVariablesGroup {
 
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
-  groupName: EnvironmentVariablesGroup;
+  name: EnvironmentVariablesGroup;
   subgroups: Array<EnvironmentVariablesSubgroupData>;
   variables: Array<EnvironmentVariable>;
 };

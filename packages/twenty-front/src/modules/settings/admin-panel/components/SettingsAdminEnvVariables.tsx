@@ -68,20 +68,15 @@ export const SettingsAdminEnvVariables = () => {
     <Section>
       {environmentVariables?.getEnvironmentVariablesGrouped.groups.map(
         (group) => (
-          <StyledGroupContainer key={group.groupName}>
-            <H1Title
-              title={group.groupName}
-              fontColor={H1TitleFontColor.Primary}
-            />
+          <StyledGroupContainer key={group.name}>
+            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
             <StyledGroupVariablesContainer>
               {group.variables.length > 0 &&
                 renderVariablesTable(group.variables)}
             </StyledGroupVariablesContainer>
             {group.subgroups.map((subgroup) => (
-              <StyledSubGroupContainer key={subgroup.subgroupName}>
-                <StyledSubGroupTitle>
-                  {subgroup.subgroupName}
-                </StyledSubGroupTitle>
+              <StyledSubGroupContainer key={subgroup.name}>
+                <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
                 {renderVariablesTable(subgroup.variables)}
               </StyledSubGroupContainer>
             ))}

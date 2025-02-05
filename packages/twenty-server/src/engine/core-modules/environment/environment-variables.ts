@@ -645,14 +645,6 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    description: 'Driver used for logging (console, etc.)',
-  })
-  @IsEnum(LoggerDriverType)
-  @IsOptional()
-  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Logging,
     description: 'Enable or disable buffering for logs before sending',
   })
   @CastToBoolean()
@@ -679,7 +671,16 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    subGroup: EnvironmentVariablesSubGroup.SentryConfig,
+    subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
+    description: 'Driver used for logging (console, etc.)',
+  })
+  @IsEnum(LoggerDriverType)
+  @IsOptional()
+  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Logging,
+    subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
     description: 'Data Source Name (DSN) for Sentry logging',
   })
   @ValidateIf(
@@ -690,7 +691,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    subGroup: EnvironmentVariablesSubGroup.SentryConfig,
+    subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
     description: 'Front-end DSN for Sentry logging',
   })
   @ValidateIf(
@@ -701,7 +702,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    subGroup: EnvironmentVariablesSubGroup.SentryConfig,
+    subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
     description: 'Release version for Sentry logging',
   })
   @ValidateIf(
@@ -713,7 +714,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    subGroup: EnvironmentVariablesSubGroup.SentryConfig,
+    subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
     description: 'Environment name for Sentry logging',
   })
   @ValidateIf(

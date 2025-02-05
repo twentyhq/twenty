@@ -9,7 +9,7 @@ export enum EnvironmentVariablesSubGroup {
   RateLimiting = 'rate-limiting',
   TinybirdConfig = 'tinybird-config',
   BillingConfig = 'billing-config',
-  SentryConfig = 'sentry-config',
+  ExceptionHandler = 'exception-handler',
   SupportChatConfig = 'support-chat-config',
   CloudflareConfig = 'cloudflare-config',
   CaptchaConfig = 'captcha-config',

@@ -264,7 +264,7 @@ describe('AdminPanelService', () => {
       expect(result).toEqual({
         groups: expect.arrayContaining([
           expect.objectContaining({
-            groupName: 'GROUP_1',
+            name: 'GROUP_1',
             variables: [
               {
                 name: 'VAR_1',
@@ -275,7 +275,7 @@ describe('AdminPanelService', () => {
             ],
             subgroups: [
               {
-                subgroupName: 'SUBGROUP_1',
+                name: 'SUBGROUP_1',
                 variables: [
                   {
                     name: 'VAR_2',
@@ -288,7 +288,7 @@ describe('AdminPanelService', () => {
             ],
           }),
           expect.objectContaining({
-            groupName: 'GROUP_2',
+            name: 'GROUP_2',
             variables: [
               {
                 name: 'VAR_3',
@@ -324,7 +324,7 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       const group = result.groups.find(
-        (g) => g.groupName === ('GROUP_1' as EnvironmentVariablesGroup),
+        (g) => g.name === ('GROUP_1' as EnvironmentVariablesGroup),
       );
 
       expect(group?.variables[0].name).toBe('A_VAR');
@@ -362,10 +362,10 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       expect(result.groups).toHaveLength(1);
-      expect(result.groups[0].groupName).toBe('VISIBLE_GROUP');
+      expect(result.groups[0].name).toBe('VISIBLE_GROUP');
       expect(result.groups).not.toContainEqual(
         expect.objectContaining({
-          groupName: 'HIDDEN_GROUP',
+          name: 'HIDDEN_GROUP',
         }),
       );
     });
