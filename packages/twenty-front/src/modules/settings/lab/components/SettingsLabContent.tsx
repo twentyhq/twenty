@@ -29,6 +29,7 @@ const StyledImage = styled.img<{ isFirstCard: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
   width: 100%;
+  object-fit: cover;
 `;
 
 export const SettingsLabContent = () => {
