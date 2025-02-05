@@ -1,9 +1,10 @@
 import { getTriggerStepName } from '../getTriggerStepName';
+import { WorkflowTriggerType } from 'twenty-shared';
 
 it('returns the expected name for a DATABASE_EVENT trigger', () => {
   expect(
     getTriggerStepName({
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
       name: '',
       settings: {
         eventName: 'company.created',
@@ -16,7 +17,7 @@ it('returns the expected name for a DATABASE_EVENT trigger', () => {
 it('returns the expected name for a MANUAL trigger without a defined objectType', () => {
   expect(
     getTriggerStepName({
-      type: 'MANUAL',
+      type: WorkflowTriggerType.MANUAL,
       name: '',
       settings: {
         objectType: undefined,
@@ -29,7 +30,7 @@ it('returns the expected name for a MANUAL trigger without a defined objectType'
 it('returns the expected name for a MANUAL trigger with a defined objectType', () => {
   expect(
     getTriggerStepName({
-      type: 'MANUAL',
+      type: WorkflowTriggerType.MANUAL,
       name: '',
       settings: {
         objectType: 'company',

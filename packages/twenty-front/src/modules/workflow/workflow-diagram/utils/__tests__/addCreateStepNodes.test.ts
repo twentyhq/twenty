@@ -1,4 +1,8 @@
-import { WorkflowStep, WorkflowTrigger } from 'twenty-shared';
+import {
+  WorkflowStep,
+  WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'twenty-shared';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { addCreateStepNodes } from '../addCreateStepNodes';
 
@@ -6,7 +10,7 @@ describe('addCreateStepNodes', () => {
   it("adds a create step node to the end of a single-branch flow and doesn't change the shape of other nodes", () => {
     const trigger: WorkflowTrigger = {
       name: 'Company created',
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
       settings: {
         eventName: 'company.created',
         outputSchema: {},

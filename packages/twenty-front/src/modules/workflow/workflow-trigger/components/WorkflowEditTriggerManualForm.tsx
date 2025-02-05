@@ -44,8 +44,8 @@ export const WorkflowEditTriggerManualForm = ({
 
   const manualTriggerAvailability: WorkflowManualTriggerAvailability =
     isDefined(trigger.settings.objectType)
-      ? 'WHEN_RECORD_SELECTED'
-      : 'EVERYWHERE';
+      ? WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED
+      : WorkflowManualTriggerAvailability.EVERYWHERE;
 
   const headerTitle = isDefined(trigger.name) ? trigger.name : 'Manual Trigger';
 
@@ -94,7 +94,8 @@ export const WorkflowEditTriggerManualForm = ({
           }}
         />
 
-        {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
+        {manualTriggerAvailability ===
+        WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED ? (
           <Select
             dropdownId="workflow-edit-manual-trigger-object"
             label="Object"

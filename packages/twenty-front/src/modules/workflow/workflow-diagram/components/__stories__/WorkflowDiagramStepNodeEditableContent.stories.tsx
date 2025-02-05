@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-
+import { WorkflowTriggerType, WorkflowActionType } from 'twenty-shared';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
@@ -20,31 +20,35 @@ type Story = StoryObj<typeof WorkflowDiagramStepNodeEditableContent>;
 const ALL_STEPS = [
   {
     nodeType: 'trigger',
-    triggerType: 'DATABASE_EVENT',
+    triggerType: WorkflowTriggerType.DATABASE_EVENT,
     name: 'Record is Created',
   },
-  { nodeType: 'trigger', triggerType: 'MANUAL', name: 'Manual' },
+  {
+    nodeType: 'trigger',
+    triggerType: WorkflowTriggerType.MANUAL,
+    name: 'Manual',
+  },
   {
     nodeType: 'action',
-    actionType: 'CREATE_RECORD',
+    actionType: WorkflowActionType.CREATE_RECORD,
     name: 'Create Record',
   },
   {
     nodeType: 'action',
-    actionType: 'UPDATE_RECORD',
+    actionType: WorkflowActionType.UPDATE_RECORD,
     name: 'Update Record',
   },
   {
     nodeType: 'action',
-    actionType: 'DELETE_RECORD',
+    actionType: WorkflowActionType.DELETE_RECORD,
     name: 'Delete Record',
   },
   {
     nodeType: 'action',
-    actionType: 'SEND_EMAIL',
+    actionType: WorkflowActionType.SEND_EMAIL,
     name: 'Send Email',
   },
-  { nodeType: 'action', actionType: 'CODE', name: 'Code' },
+  { nodeType: 'action', actionType: WorkflowActionType.CODE, name: 'Code' },
 ] satisfies WorkflowDiagramStepNodeData[];
 
 export const All: CatalogStory<

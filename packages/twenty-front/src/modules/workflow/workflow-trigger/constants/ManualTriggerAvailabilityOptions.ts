@@ -8,12 +8,12 @@ export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
 }> = [
   {
     label: 'When record(s) are selected',
-    value: 'WHEN_RECORD_SELECTED',
+    value: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED,
     Icon: IconCheckbox,
   },
   {
     label: 'When no record(s) are selected',
-    value: 'EVERYWHERE',
+    value: WorkflowManualTriggerAvailability.EVERYWHERE,
     Icon: IconSquare,
   },
 ];

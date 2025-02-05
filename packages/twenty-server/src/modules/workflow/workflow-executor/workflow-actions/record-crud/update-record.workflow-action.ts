@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import {
+  WorkflowUpdateRecordActionInput,
+  WorkflowActionResult,
+} from 'twenty-shared';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -17,8 +21,6 @@ import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { WorkflowUpdateRecordActionInput } from 'twenty-shared';
-import { WorkflowActionResult } from 'twenty-shared';
 
 @Injectable()
 export class UpdateRecordWorkflowAction implements WorkflowAction {

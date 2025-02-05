@@ -9,19 +9,19 @@ export const DATABASE_TRIGGER_TYPES: Array<{
 }> = [
   {
     defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-    type: 'DATABASE_EVENT',
+    type: WorkflowTriggerType.DATABASE_EVENT,
     icon: 'IconPlus',
     event: 'created',
   },
   {
     defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
-    type: 'DATABASE_EVENT',
+    type: WorkflowTriggerType.DATABASE_EVENT,
     icon: 'IconRefreshDot',
     event: 'updated',
   },
   {
     defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
-    type: 'DATABASE_EVENT',
+    type: WorkflowTriggerType.DATABASE_EVENT,
     icon: 'IconTrash',
     event: 'deleted',
   },

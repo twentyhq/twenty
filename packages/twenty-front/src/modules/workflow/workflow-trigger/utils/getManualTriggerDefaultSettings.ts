@@ -13,13 +13,13 @@ export const getManualTriggerDefaultSettings = ({
   activeObjectMetadataItems: ObjectMetadataItem[];
 }): WorkflowManualTriggerSettings => {
   switch (availability) {
-    case 'EVERYWHERE': {
+    case WorkflowManualTriggerAvailability.EVERYWHERE: {
       return {
         objectType: undefined,
         outputSchema: {},
       };
     }
-    case 'WHEN_RECORD_SELECTED': {
+    case WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED: {
       return {
         objectType: activeObjectMetadataItems[0].nameSingular,
         outputSchema: {},

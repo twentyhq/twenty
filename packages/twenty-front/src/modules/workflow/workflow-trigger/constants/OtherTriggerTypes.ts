@@ -7,7 +7,7 @@ export const OTHER_TRIGGER_TYPES: Array<{
 }> = [
   {
     defaultLabel: 'Launch manually',
-    type: 'MANUAL',
+    type: WorkflowTriggerType.MANUAL,
     icon: 'IconHandMove',
   },
 ];

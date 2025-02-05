@@ -9,6 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormCreateRecord } from '../WorkflowEditActionFormCreateRecord';
+import { WorkflowActionType } from 'twenty-shared';
 
 const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
   title: 'Modules/Workflow/WorkflowEditActionFormCreateRecord',
@@ -20,7 +21,7 @@ const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
     action: {
       id: getWorkflowNodeIdMock(),
       name: 'Create Record',
-      type: 'CREATE_RECORD',
+      type: WorkflowActionType.CREATE_RECORD,
       valid: false,
       settings: {
         input: {

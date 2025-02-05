@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { WorkflowDatabaseEventTrigger } from 'twenty-shared';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
-import { WorkflowDatabaseEventTrigger } from 'twenty-shared';
 
 @Injectable()
 export class DatabaseEventTriggerService {

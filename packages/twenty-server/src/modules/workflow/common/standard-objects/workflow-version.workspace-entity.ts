@@ -1,5 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import {
+  FieldMetadataType,
+  WorkflowAction,
+  WorkflowTrigger,
+} from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -22,8 +26,6 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowAction } from 'twenty-shared';
-import { WorkflowTrigger } from 'twenty-shared';
 
 export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',

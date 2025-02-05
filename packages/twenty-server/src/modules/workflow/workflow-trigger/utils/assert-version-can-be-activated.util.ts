@@ -1,3 +1,5 @@
+import { WorkflowTriggerType } from 'twenty-shared';
+
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -7,7 +9,6 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'twenty-shared';
 
 export function assertVersionCanBeActivated(
   workflowVersion: WorkflowVersionWorkspaceEntity,

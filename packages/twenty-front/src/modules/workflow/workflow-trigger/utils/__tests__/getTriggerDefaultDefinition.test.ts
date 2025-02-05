@@ -1,13 +1,14 @@
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
+import { WorkflowTriggerType } from 'twenty-shared';
 
 describe('getTriggerDefaultDefinition', () => {
   it('throws if the activeObjectMetadataItems list is empty', () => {
     expect(() => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-        type: 'DATABASE_EVENT',
+        type: WorkflowTriggerType.DATABASE_EVENT,
         activeObjectMetadataItems: [],
       });
     }).toThrow();
@@ -17,11 +18,12 @@ describe('getTriggerDefaultDefinition', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-        type: 'DATABASE_EVENT',
+        type: WorkflowTriggerType.DATABASE_EVENT,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
+      name: '',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -33,11 +35,12 @@ describe('getTriggerDefaultDefinition', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
-        type: 'DATABASE_EVENT',
+        type: WorkflowTriggerType.DATABASE_EVENT,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
+      name: '',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
@@ -49,11 +52,12 @@ describe('getTriggerDefaultDefinition', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
-        type: 'DATABASE_EVENT',
+        type: WorkflowTriggerType.DATABASE_EVENT,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
+      name: '',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
@@ -65,11 +69,12 @@ describe('getTriggerDefaultDefinition', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-        type: 'DATABASE_EVENT',
+        type: WorkflowTriggerType.DATABASE_EVENT,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
-      type: 'DATABASE_EVENT',
+      type: WorkflowTriggerType.DATABASE_EVENT,
+      name: '',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -81,11 +86,12 @@ describe('getTriggerDefaultDefinition', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: 'Launch manually',
-        type: 'MANUAL',
+        type: WorkflowTriggerType.MANUAL,
         activeObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
-      type: 'MANUAL',
+      type: WorkflowTriggerType.MANUAL,
+      name: '',
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},

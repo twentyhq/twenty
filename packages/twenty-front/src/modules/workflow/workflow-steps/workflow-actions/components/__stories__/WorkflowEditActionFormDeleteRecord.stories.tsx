@@ -1,4 +1,4 @@
-import { WorkflowDeleteRecordAction } from 'twenty-shared';
+import { WorkflowDeleteRecordAction, WorkflowActionType } from 'twenty-shared';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
@@ -14,7 +14,7 @@ import { WorkflowEditActionFormDeleteRecord } from '../WorkflowEditActionFormDel
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
   name: 'Delete Record',
-  type: 'DELETE_RECORD',
+  type: WorkflowActionType.DELETE_RECORD,
   valid: false,
   settings: {
     input: {

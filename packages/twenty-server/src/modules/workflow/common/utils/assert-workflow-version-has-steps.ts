@@ -1,5 +1,6 @@
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowAction } from 'twenty-shared';
+
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,

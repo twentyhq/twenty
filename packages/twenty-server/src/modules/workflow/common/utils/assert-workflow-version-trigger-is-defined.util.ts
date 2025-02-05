@@ -1,9 +1,10 @@
+import { WorkflowTrigger } from 'twenty-shared';
+
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTrigger } from 'twenty-shared';
 
 export function assertWorkflowVersionTriggerIsDefined(
   workflowVersion: WorkflowVersionWorkspaceEntity,

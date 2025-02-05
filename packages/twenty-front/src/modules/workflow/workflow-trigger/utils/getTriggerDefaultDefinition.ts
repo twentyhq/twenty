@@ -1,5 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { WorkflowTrigger, WorkflowTriggerType } from 'twenty-shared';
+import {
+  WorkflowTrigger,
+  WorkflowTriggerType,
+  WorkflowManualTriggerAvailability,
+} from 'twenty-shared';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
@@ -20,9 +24,10 @@ export const getTriggerDefaultDefinition = ({
   }
 
   switch (type) {
-    case 'DATABASE_EVENT': {
+    case WorkflowTriggerType.DATABASE_EVENT: {
       return {
         type,
+        name: '',
         settings: {
           eventName: `${activeObjectMetadataItems[0].nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
@@ -33,11 +38,12 @@ export const getTriggerDefaultDefinition = ({
         },
       };
     }
-    case 'MANUAL': {
+    case WorkflowTriggerType.MANUAL: {
       return {
         type,
+        name: '',
         settings: getManualTriggerDefaultSettings({
-          availability: 'WHEN_RECORD_SELECTED',
+          availability: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED,
           activeObjectMetadataItems,
         }),
       };

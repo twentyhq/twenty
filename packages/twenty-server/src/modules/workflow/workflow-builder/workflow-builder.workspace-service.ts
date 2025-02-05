@@ -7,6 +7,8 @@ import {
   OutputSchema,
   WorkflowTrigger,
   WorkflowTriggerType,
+  WorkflowAction,
+  WorkflowActionType,
 } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -16,7 +18,6 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import { WorkflowAction, WorkflowActionType } from 'twenty-shared';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {

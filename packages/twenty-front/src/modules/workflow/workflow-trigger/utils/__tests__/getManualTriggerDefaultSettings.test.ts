@@ -1,10 +1,11 @@
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getManualTriggerDefaultSettings } from '../getManualTriggerDefaultSettings';
+import { WorkflowManualTriggerAvailability } from 'twenty-shared';
 
 it('returns settings for a manual trigger that can be activated from any where', () => {
   expect(
     getManualTriggerDefaultSettings({
-      availability: 'EVERYWHERE',
+      availability: WorkflowManualTriggerAvailability.EVERYWHERE,
       activeObjectMetadataItems: generatedMockObjectMetadataItems,
     }),
   ).toStrictEqual({
@@ -16,7 +17,7 @@ it('returns settings for a manual trigger that can be activated from any where',
 it('returns settings for a manual trigger that can be activated from any where', () => {
   expect(
     getManualTriggerDefaultSettings({
-      availability: 'WHEN_RECORD_SELECTED',
+      availability: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED,
       activeObjectMetadataItems: generatedMockObjectMetadataItems,
     }),
   ).toStrictEqual({

@@ -6,6 +6,8 @@ import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
   OrderByDirection,
+  WorkflowFindRecordsActionInput,
+  WorkflowActionResult,
 } from 'twenty-shared';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -25,8 +27,6 @@ import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { WorkflowFindRecordsActionInput } from 'twenty-shared';
-import { WorkflowActionResult } from 'twenty-shared';
 
 @Injectable()
 export class FindRecordsWorflowAction implements WorkflowAction {

@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
-
 import { WorkflowAction } from 'twenty-shared';
 
 @InputType()

@@ -2,7 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-shared';
+import { isDefined, WorkflowTriggerType } from 'twenty-shared';
 
 export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -14,9 +14,10 @@ export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataI
 
     const shouldBeRegistered =
       isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-      workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
+      workflowWithCurrentVersion?.currentVersion.trigger.type ===
+        WorkflowTriggerType.MANUAL &&
       !isDefined(
-        workflowWithCurrentVersion.currentVersion.trigger.settings.objectType,
+        workflowWithCurrentVersion?.currentVersion.trigger.settings.objectType,
       );
 
     const onClick = () => {
@@ -25,7 +26,7 @@ export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataI
       }
 
       runWorkflowVersion({
-        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+        workflowVersionId: workflowWithCurrentVersion?.currentVersion.id,
       });
     };
 

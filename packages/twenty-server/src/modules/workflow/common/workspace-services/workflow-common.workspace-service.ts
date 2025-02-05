@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkflowActionType } from 'twenty-shared';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -9,7 +11,6 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { WorkflowActionType } from 'twenty-shared';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()

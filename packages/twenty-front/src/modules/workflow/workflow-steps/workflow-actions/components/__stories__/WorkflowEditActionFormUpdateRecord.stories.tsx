@@ -1,4 +1,4 @@
-import { WorkflowUpdateRecordAction } from 'twenty-shared';
+import { WorkflowActionType, WorkflowUpdateRecordAction } from 'twenty-shared';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
@@ -14,7 +14,7 @@ import { WorkflowEditActionFormUpdateRecord } from '../WorkflowEditActionFormUpd
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
   name: 'Update Record',
-  type: 'UPDATE_RECORD',
+  type: WorkflowActionType.UPDATE_RECORD,
   settings: {
     input: {
       objectName: 'person',
