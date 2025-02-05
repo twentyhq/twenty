@@ -13,7 +13,6 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -49,6 +48,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -173,19 +173,34 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
-        workspaceId: workspace.id,
-      },
-    });
-
-    const userWorkspacesByUserId = new Map(
-      userWorkspaces.map((userWorkspace) => [
-        userWorkspace.userId,
-        userWorkspace,
-      ]),
+    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsPermissionsEnabled,
+      workspace.id,
     );
+
+    let userWorkspacesByUserId = new Map<string, UserWorkspace>();
+    let rolesByUserWorkspaces = new Map<string, RoleDTO[]>();
+
+    if (permissionsEnabled === true) {
+      const userWorkspaces = await this.userWorkspaceRepository.find({
+        where: {
+          userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
+          workspaceId: workspace.id,
+        },
+      });
+
+      userWorkspacesByUserId = new Map(
+        userWorkspaces.map((userWorkspace) => [
+          userWorkspace.userId,
+          userWorkspace,
+        ]),
+      );
+
+      rolesByUserWorkspaces =
+        await this.userRoleService.getRolesByUserWorkspaces(
+          userWorkspaces.map((userWorkspace) => userWorkspace.id),
+        );
+    }
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
@@ -197,45 +212,33 @@ export class UserResolver {
         workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
       }
 
-      const userWorkspace = userWorkspacesByUserId.get(
-        workspaceMemberEntity.userId,
-      );
-
-      if (!userWorkspace) {
-        throw new Error('User workspace not found');
-      }
-
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        workspace.id,
-      );
-
-      const workspaceMember: WorkspaceMember = {
-        ...workspaceMemberEntity,
-        userWorkspaceId: userWorkspace.id,
-      } as WorkspaceMember;
+      const workspaceMember = workspaceMemberEntity as WorkspaceMember;
 
       if (permissionsEnabled === true) {
-        const roles = await this.userRoleService
-          .getRolesForUserWorkspace(userWorkspace.id)
-          .then(([roleEntity]) => {
-            if (!isDefined(roleEntity)) {
-              return [];
-            }
+        const userWorkspace = userWorkspacesByUserId.get(
+          workspaceMemberEntity.userId,
+        );
 
-            return [
-              {
-                id: roleEntity.id,
-                label: roleEntity.label,
-                canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-                description: roleEntity.description,
-                isEditable: roleEntity.isEditable,
-                userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-              },
-            ];
-          });
+        if (!userWorkspace) {
+          throw new Error('User workspace not found');
+        }
 
-        workspaceMember.roles = roles;
+        workspaceMember.userWorkspaceId = userWorkspace.id;
+
+        const workspaceMemberRoles = (
+          rolesByUserWorkspaces.get(userWorkspace.id) ?? []
+        ).map((roleEntity) => {
+          return {
+            id: roleEntity.id,
+            label: roleEntity.label,
+            canUpdateAllSettings: roleEntity.canUpdateAllSettings,
+            description: roleEntity.description,
+            isEditable: roleEntity.isEditable,
+            userWorkspaceRoles: roleEntity.userWorkspaceRoles,
+          };
+        });
+
+        workspaceMember.roles = workspaceMemberRoles;
       }
 
       workspaceMembers.push(workspaceMember);
