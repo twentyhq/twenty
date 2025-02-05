@@ -16,6 +16,7 @@ export const useCommandMenuHotKeys = () => {
     closeCommandMenu,
     openRecordsSearchPage,
     toggleCommandMenu,
+    goBackFromCommandMenu,
     setGlobalCommandMenuContext,
   } = useCommandMenu();
 
@@ -55,18 +56,21 @@ export const useCommandMenuHotKeys = () => {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeCommandMenu();
+      goBackFromCommandMenu();
     },
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
+    [goBackFromCommandMenu],
   );
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
+      if (isNonEmptyString(commandMenuSearch)) {
+        return;
+      }
+
       if (
         commandMenuPage === CommandMenuPages.Root &&
-        !isNonEmptyString(commandMenuSearch) &&
         !(
           contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
           contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length ===
@@ -74,6 +78,8 @@ export const useCommandMenuHotKeys = () => {
         )
       ) {
         setGlobalCommandMenuContext();
+      } else {
+        goBackFromCommandMenu();
       }
     },
     AppHotkeyScope.CommandMenuOpen,
