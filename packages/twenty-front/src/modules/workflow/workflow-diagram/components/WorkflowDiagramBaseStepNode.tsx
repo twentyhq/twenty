@@ -50,18 +50,16 @@ const StyledStepNodeType = styled.div<{
   margin-left: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
+  .selectable:is(.selected, :focus, :focus-visible) & {
     ${({ nodeVariant, theme }) => {
       switch (nodeVariant) {
         case 'empty':
-        case 'default': {
+        case 'default':
+        case 'not-executed':
           return css`
             background-color: ${theme.color.blue};
             color: ${theme.font.color.inverted};
           `;
-        }
       }
     }}
   }
@@ -70,7 +68,7 @@ const StyledStepNodeType = styled.div<{
 const StyledStepNodeInnerContainer = styled.div<{
   variant: WorkflowDiagramNodeVariant;
 }>`
-  background-color: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.secondary};
   border-color: ${({ theme }) => theme.border.color.medium};
 
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -84,26 +82,41 @@ const StyledStepNodeInnerContainer = styled.div<{
 
   position: relative;
 
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
+  transition: background ${({ theme }) => theme.animation.duration.fast} ease;
+
+  .workflow-node-container:hover & {
+    ${({ theme }) => {
+      return css`
+        background: linear-gradient(
+            0deg,
+            ${theme.background.transparent.lighter} 0%,
+            ${theme.background.transparent.lighter} 100%
+          ),
+          ${theme.background.secondary};
+      `;
+    }}
+  }
+
+  .selectable:is(.selected, :focus, :focus-visible)
+    :is(.workflow-node-container, .workflow-node-container:hover)
+    & {
     ${({ theme, variant }) => {
       switch (variant) {
         case 'success': {
           return css`
-            background-color: ${theme.adaptiveColors.turquoise1};
+            background: ${theme.adaptiveColors.turquoise1};
             border-color: ${theme.adaptiveColors.turquoise4};
           `;
         }
         case 'failure': {
           return css`
-            background-color: ${theme.background.danger};
+            background: ${theme.background.danger};
             border-color: ${theme.color.red};
           `;
         }
         default: {
           return css`
-            background-color: ${theme.accent.quaternary};
+            background: ${theme.adaptiveColors.blue1};
             border-color: ${theme.color.blue};
           `;
         }
@@ -120,11 +133,20 @@ const StyledStepNodeLabel = styled.div<{
   font-size: 13px;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
-  color: ${({ variant, theme }) =>
-    variant === 'empty'
-      ? theme.font.color.extraLight
-      : theme.font.color.primary};
+  color: ${({ variant, theme }) => {
+    switch (variant) {
+      case 'empty':
+      case 'not-executed':
+        return theme.font.color.light;
+      default:
+        return theme.font.color.primary;
+    }
+  }};
   max-width: 200px;
+
+  .selectable:is(.selected, :focus, :focus-visible) & {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 export const StyledHandle = styled(Handle)`
@@ -168,7 +190,7 @@ export const WorkflowDiagramBaseStepNode = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   return (
-    <StyledStepNodeContainer>
+    <StyledStepNodeContainer className="workflow-node-container">
       {nodeType !== 'trigger' ? (
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}

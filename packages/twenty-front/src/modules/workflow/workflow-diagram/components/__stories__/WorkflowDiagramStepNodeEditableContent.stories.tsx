@@ -1,21 +1,33 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
+import { ComponentProps } from 'react';
 import { CatalogDecorator, CatalogStory } from 'twenty-ui';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
 
-const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
+type ComponentState = 'default' | 'hover' | 'selected';
+
+type WrapperProps = ComponentProps<
+  typeof WorkflowDiagramStepNodeEditableContent
+> & { state: ComponentState };
+
+const Wrapper = (_props: WrapperProps) => {
+  return <div></div>;
+};
+
+const meta: Meta<WrapperProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowDiagramStepNodeEditableContent>;
+type Story = StoryObj<typeof Wrapper>;
 
 const ALL_STEPS = [
   {
@@ -47,17 +59,13 @@ const ALL_STEPS = [
   { nodeType: 'action', actionType: 'CODE', name: 'Code' },
 ] satisfies WorkflowDiagramStepNodeData[];
 
-export const All: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
+export const Catalog: CatalogStory<Story, typeof Wrapper> = {
   args: {
     onDelete: fn(),
-    variant: 'default',
-    selected: false,
   },
   parameters: {
     msw: graphqlMocks,
+    pseudo: { hover: ['.hover'] },
     catalog: {
       options: {
         elementContainer: {
@@ -71,159 +79,36 @@ export const All: CatalogStory<
           values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
         },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator, ReactflowDecorator],
-};
-
-export const AllSelected: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    variant: 'default',
-    selected: true,
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-          className: 'selectable selected',
-        },
-      },
-      dimensions: [
         {
-          name: 'step type',
-          values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+          name: 'variant',
+          values: [
+            'empty',
+            'default',
+            'success',
+            'failure',
+            'not-executed',
+          ] satisfies WorkflowDiagramNodeVariant[],
+          props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
         },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator, ReactflowDecorator],
-};
-
-export const AllSuccess: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    variant: 'success',
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-        },
-      },
-      dimensions: [
         {
-          name: 'step type',
-          values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+          name: 'state',
+          values: ['default', 'hover', 'selected'] satisfies ComponentState[],
+          props: (state: ComponentState) => ({ state }),
         },
       ],
     },
   },
-  decorators: [CatalogDecorator, ReactflowDecorator],
-};
-
-export const AllSuccessSelected: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    variant: 'success',
-    selected: true,
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-          className: 'selectable selected',
-        },
-      },
-      dimensions: [
-        {
-          name: 'step type',
-          values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
-        },
-      ],
+  decorators: [
+    (Story, { args }) => {
+      return (
+        <div
+          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
+        >
+          <Story />
+        </div>
+      );
     },
-  },
-  decorators: [CatalogDecorator, ReactflowDecorator],
-};
-
-export const AllFailure: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    variant: 'failure',
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-        },
-      },
-      dimensions: [
-        {
-          name: 'step type',
-          values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
-        },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator, ReactflowDecorator],
-};
-
-export const AllFailureSelected: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    variant: 'failure',
-    selected: true,
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-          className: 'selectable selected',
-        },
-      },
-      dimensions: [
-        {
-          name: 'step type',
-          values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
-        },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator, ReactflowDecorator],
+    CatalogDecorator,
+    ReactflowDecorator,
+  ],
 };

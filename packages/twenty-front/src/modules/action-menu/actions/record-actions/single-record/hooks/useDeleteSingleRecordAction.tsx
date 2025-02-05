@@ -85,7 +85,7 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         onConfirmClick={() => {
           handleDeleteClick();
           if (isInRightDrawer) {
-            closeRightDrawer();
+            closeRightDrawer({ emitCloseEvent: false });
           }
         }}
         deleteButtonText={'Delete Record'}
