@@ -4,30 +4,18 @@ import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatu
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Card, MOBILE_VIEWPORT } from 'twenty-ui';
+import { Card } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCardGrid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
   grid-template-columns: 1fr;
-
-  & > *:not(:first-child) {
-    grid-column: span 1;
-  }
-
-  @media (min-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: repeat(2, 1fr);
-
-    & > *:first-child {
-      grid-column: 1 / -1;
-    }
-  }
 `;
 
-const StyledImage = styled.img<{ isFirstCard: boolean }>`
+const StyledImage = styled.img`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: ${({ isFirstCard }) => (isFirstCard ? '240px' : '120px')};
+  height: 240px;
   width: 100%;
   object-fit: cover;
 `;
@@ -66,7 +54,6 @@ export const SettingsLabContent = () => {
                 <StyledImage
                   src={flag.metadata.imagePath}
                   alt={flag.metadata.label}
-                  isFirstCard={index === 0}
                   onError={() => handleImageError(flag.key)}
                 />
               ) : (
