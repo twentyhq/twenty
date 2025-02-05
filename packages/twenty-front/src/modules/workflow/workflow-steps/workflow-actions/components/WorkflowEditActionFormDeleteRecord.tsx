@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowDeleteRecordAction, isDefined } from 'twenty-shared';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { useTheme } from '@emotion/react';
@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';

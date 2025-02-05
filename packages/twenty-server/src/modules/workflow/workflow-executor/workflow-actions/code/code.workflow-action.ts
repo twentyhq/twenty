@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkflowCodeActionInput, WorkflowActionResult } from 'twenty-shared';
+
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -8,8 +10,6 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {

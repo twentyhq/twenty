@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
 
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowVersionStatus } from 'twenty-shared';
 import { WorkflowVersionStatusTag } from '../WorkflowVersionStatusTag';
 
 const meta: Meta<typeof WorkflowVersionStatusTag> = {

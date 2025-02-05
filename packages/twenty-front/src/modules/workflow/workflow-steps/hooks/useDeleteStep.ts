@@ -4,10 +4,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { WorkflowVersion, WorkflowWithCurrentVersion } from 'twenty-shared';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 
 export const useDeleteStep = ({

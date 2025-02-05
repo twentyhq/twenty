@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion } from 'twenty-shared';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../assertWorkflowWithCurrentVersionIsDefined';
 
 it('throws when provided workflow is undefined', () => {

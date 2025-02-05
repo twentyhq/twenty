@@ -1,6 +1,5 @@
-import { WorkflowStep } from '@/workflow/types/Workflow';
+import { WorkflowStep, isDefined } from 'twenty-shared';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-shared';
 
 /**
  * This function returns the reference of the array where the step should be positioned

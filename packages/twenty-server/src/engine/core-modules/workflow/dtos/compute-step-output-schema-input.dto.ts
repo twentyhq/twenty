@@ -2,8 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowAction } from 'twenty-shared';
+import { WorkflowTrigger } from 'twenty-shared';
 
 @InputType()
 export class ComputeStepOutputSchemaInput {

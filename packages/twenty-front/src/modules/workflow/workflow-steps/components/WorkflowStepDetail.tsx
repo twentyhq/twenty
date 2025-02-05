@@ -2,7 +2,8 @@ import {
   WorkflowAction,
   WorkflowTrigger,
   WorkflowVersion,
-} from '@/workflow/types/Workflow';
+  isDefined,
+} from 'twenty-shared';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormCreateRecord';
@@ -12,7 +13,6 @@ import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-steps/wo
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { Suspense, lazy } from 'react';
-import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
 const WorkflowEditActionFormServerlessFunction = lazy(() =>

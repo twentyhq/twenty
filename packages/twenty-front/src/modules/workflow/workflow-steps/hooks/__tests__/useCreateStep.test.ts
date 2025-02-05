@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion, WorkflowActionType } from 'twenty-shared';
 import { renderHook } from '@testing-library/react';
 import { useCreateStep } from '../useCreateStep';
 
@@ -53,7 +53,7 @@ describe('useCreateStep', () => {
         workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
       }),
     );
-    await result.current.createStep('CODE');
+    await result.current.createStep(WorkflowActionType.CODE);
 
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
     expect(mockOpenRightDrawer).toHaveBeenCalled();

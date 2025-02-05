@@ -8,9 +8,8 @@ import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDra
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { Workflow, WorkflowVersion, isDefined } from 'twenty-shared';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { Button, IconPencil, IconPlayerStop, IconPower } from 'twenty-ui';
 
 import { useNavigateApp } from '~/hooks/useNavigateApp';

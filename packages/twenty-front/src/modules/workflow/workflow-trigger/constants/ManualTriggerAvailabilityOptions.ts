@@ -1,4 +1,4 @@
-import { WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
+import { WorkflowManualTriggerAvailability } from 'twenty-shared';
 import { IconCheckbox, IconComponent, IconSquare } from 'twenty-ui';
 
 export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{

@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
+import { BaseOutputSchema } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 
 export const generateFakeObjectRecordEvent = (

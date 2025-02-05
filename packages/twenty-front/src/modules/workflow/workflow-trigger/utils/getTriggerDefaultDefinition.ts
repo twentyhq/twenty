@@ -1,8 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  WorkflowTrigger,
-  WorkflowTriggerType,
-} from '@/workflow/types/Workflow';
+import { WorkflowTrigger, WorkflowTriggerType } from 'twenty-shared';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';

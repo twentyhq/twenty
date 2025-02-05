@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { InputSchemaPropertyType } from 'twenty-shared';
 
 type Leaf = {
   isLeaf: true;

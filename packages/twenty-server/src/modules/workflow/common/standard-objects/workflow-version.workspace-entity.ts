@@ -22,8 +22,8 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowAction } from 'twenty-shared';
+import { WorkflowTrigger } from 'twenty-shared';
 
 export enum WorkflowVersionStatus {
   DRAFT = 'DRAFT',

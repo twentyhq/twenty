@@ -1,4 +1,4 @@
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
+import { WorkflowActionResult } from 'twenty-shared';
 
 export interface WorkflowAction {
   execute(workflowStepInput: unknown): Promise<WorkflowActionResult>;

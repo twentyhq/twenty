@@ -14,8 +14,8 @@ import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
+import { WorkflowDeleteRecordActionInput } from 'twenty-shared';
+import { WorkflowActionResult } from 'twenty-shared';
 
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowAction {

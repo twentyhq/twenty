@@ -1,10 +1,9 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { isDefined, WorkflowWithCurrentVersion } from 'twenty-shared';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowEditStepContent = ({
   workflow,

@@ -4,7 +4,7 @@ import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { WorkflowCodeAction, isDefined } from 'twenty-shared';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/utils/setNestedValue';
 
@@ -33,7 +33,6 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 

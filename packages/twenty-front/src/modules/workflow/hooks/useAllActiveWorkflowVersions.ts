@@ -4,11 +4,11 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
-  Workflow,
   WorkflowTriggerType,
+  isDefined,
+  Workflow,
   WorkflowVersion,
-} from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
+} from 'twenty-shared';
 
 export const useAllActiveWorkflowVersions = ({
   objectMetadataItem,
@@ -62,7 +62,9 @@ export const useAllActiveWorkflowVersions = ({
   if (!isDefined(objectMetadataItem)) {
     return {
       records: records.filter(
-        (record) => !isDefined(record.trigger?.settings.objectType),
+        (record) =>
+          record.trigger?.type === WorkflowTriggerType.MANUAL &&
+          !isDefined(record.trigger?.settings.objectType),
       ),
     };
   }

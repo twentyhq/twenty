@@ -6,7 +6,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import { WorkflowSendEmailAction, isDefined } from 'twenty-shared';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -14,7 +14,6 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { IconPlus, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';

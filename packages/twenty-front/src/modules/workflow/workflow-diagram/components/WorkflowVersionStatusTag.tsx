@@ -1,4 +1,4 @@
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowVersionStatus } from 'twenty-shared';
 import { Tag } from 'twenty-ui';
 
 export const WorkflowVersionStatusTag = ({

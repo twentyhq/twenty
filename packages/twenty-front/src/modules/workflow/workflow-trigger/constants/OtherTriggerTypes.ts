@@ -1,4 +1,4 @@
-import { WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { WorkflowTriggerType } from 'twenty-shared';
 
 export const OTHER_TRIGGER_TYPES: Array<{
   defaultLabel: string;

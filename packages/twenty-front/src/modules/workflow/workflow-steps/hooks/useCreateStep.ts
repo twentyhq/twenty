@@ -3,15 +3,15 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
+  isDefined,
   WorkflowStepType,
   WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+} from 'twenty-shared';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
 
 export const useCreateStep = ({

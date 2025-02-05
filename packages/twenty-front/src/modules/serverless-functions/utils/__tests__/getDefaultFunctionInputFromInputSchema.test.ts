@@ -1,4 +1,4 @@
-import { InputSchema } from '@/workflow/types/InputSchema';
+import { InputSchema } from 'twenty-shared';
 import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/utils/getDefaultFunctionInputFromInputSchema';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {

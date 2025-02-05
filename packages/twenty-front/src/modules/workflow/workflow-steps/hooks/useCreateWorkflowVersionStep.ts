@@ -4,9 +4,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { WorkflowVersion, isDefined } from 'twenty-shared';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { isDefined } from 'twenty-shared';
 import {
   CreateWorkflowVersionStepInput,
   CreateWorkflowVersionStepMutation,

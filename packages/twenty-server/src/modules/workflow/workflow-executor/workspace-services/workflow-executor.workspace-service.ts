@@ -11,8 +11,8 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionResult } from 'twenty-shared';
+import { WorkflowAction } from 'twenty-shared';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 

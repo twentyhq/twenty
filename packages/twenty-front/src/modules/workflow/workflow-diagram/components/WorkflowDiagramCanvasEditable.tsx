@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion } from 'twenty-shared';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
 import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepNode';

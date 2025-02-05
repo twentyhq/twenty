@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   WorkflowManualTriggerAvailability,
   WorkflowManualTriggerSettings,
-} from '@/workflow/types/Workflow';
+} from 'twenty-shared';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 
 export const getManualTriggerDefaultSettings = ({

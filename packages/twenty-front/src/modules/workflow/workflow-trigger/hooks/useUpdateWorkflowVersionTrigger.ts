@@ -4,10 +4,10 @@ import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutpu
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import {
   WorkflowTrigger,
+  isDefined,
   WorkflowVersion,
   WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
+} from 'twenty-shared';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,

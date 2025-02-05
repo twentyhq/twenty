@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { Workflow, WorkflowVersion } from 'twenty-shared';
 
 export const useWorkflowVersion = (workflowVersionId: string) => {
   const { record: workflowVersion } = useFindOneRecord<

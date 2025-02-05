@@ -1,6 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { WorkflowVersionStatus, isDefined } from 'twenty-shared';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
@@ -29,7 +29,6 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`

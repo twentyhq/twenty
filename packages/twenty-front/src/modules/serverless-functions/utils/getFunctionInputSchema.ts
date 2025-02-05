@@ -1,5 +1,4 @@
-import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
-import { isDefined } from 'twenty-shared';
+import { InputSchema, InputSchemaProperty, isDefined } from 'twenty-shared';
 import {
   ArrayTypeNode,
   ArrowFunction,

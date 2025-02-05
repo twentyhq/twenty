@@ -1,4 +1,4 @@
-import { WorkflowStepType } from '@/workflow/types/Workflow';
+import { WorkflowStepType } from 'twenty-shared';
 
 export const OTHER_ACTIONS: Array<{
   label: string;

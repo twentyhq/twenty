@@ -3,7 +3,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowTrigger } from 'twenty-shared';
 
 export function assertWorkflowVersionTriggerIsDefined(
   workflowVersion: WorkflowVersionWorkspaceEntity,

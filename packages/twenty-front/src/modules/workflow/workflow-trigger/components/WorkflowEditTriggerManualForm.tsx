@@ -3,14 +3,14 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
-} from '@/workflow/types/Workflow';
+  isDefined,
+} from 'twenty-shared';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { useTheme } from '@emotion/react';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps = {

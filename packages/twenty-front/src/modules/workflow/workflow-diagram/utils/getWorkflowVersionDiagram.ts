@@ -1,7 +1,6 @@
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { WorkflowVersion, isDefined } from 'twenty-shared';
 import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
-import { isDefined } from 'twenty-shared';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
   nodes: [],

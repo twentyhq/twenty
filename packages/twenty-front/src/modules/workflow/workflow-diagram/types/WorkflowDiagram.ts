@@ -1,7 +1,4 @@
-import {
-  WorkflowActionType,
-  WorkflowTriggerType,
-} from '@/workflow/types/Workflow';
+import { WorkflowActionType, WorkflowTriggerType } from 'twenty-shared';
 import { Edge, Node } from '@xyflow/react';
 
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;

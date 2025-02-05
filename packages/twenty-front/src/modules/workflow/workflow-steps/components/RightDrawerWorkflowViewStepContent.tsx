@@ -1,8 +1,7 @@
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { WorkflowVersion, isDefined } from 'twenty-shared';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 
 export const RightDrawerWorkflowViewStepContent = ({
   workflowVersion,

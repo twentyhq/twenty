@@ -2,24 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared';
+import {
+  isDefined,
+  OutputSchema,
+  WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import {
-  WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  WorkflowTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowAction, WorkflowActionType } from 'twenty-shared';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {

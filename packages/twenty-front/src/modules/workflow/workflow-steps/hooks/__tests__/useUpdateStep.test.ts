@@ -1,4 +1,4 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { WorkflowWithCurrentVersion, WorkflowActionType } from 'twenty-shared';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { renderHook } from '@testing-library/react';
 
@@ -48,7 +48,7 @@ describe('useUpdateStep', () => {
       id: '1',
       name: 'name',
       valid: true,
-      type: 'CODE',
+      type: WorkflowActionType.CODE,
       settings: {
         input: {
           serverlessFunctionId: 'id',

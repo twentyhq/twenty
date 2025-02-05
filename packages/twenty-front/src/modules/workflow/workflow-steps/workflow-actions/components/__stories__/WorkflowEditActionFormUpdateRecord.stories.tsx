@@ -1,4 +1,4 @@
-import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowUpdateRecordAction } from 'twenty-shared';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';

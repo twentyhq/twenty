@@ -20,10 +20,10 @@ import {
   IsUUID,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
+import { InputSchema } from 'twenty-shared';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
 
 registerEnumType(ServerlessFunctionSyncStatus, {
   name: 'ServerlessFunctionSyncStatus',

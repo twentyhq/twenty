@@ -4,14 +4,13 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
-import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowCreateRecordAction, isDefined } from 'twenty-shared';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';

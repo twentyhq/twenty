@@ -1,11 +1,8 @@
+import { Leaf, Node, RecordOutputSchema } from 'twenty-shared';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
-import {
-  Leaf,
-  Node,
-  RecordOutputSchema,
-} from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/utils/should-generate-field-fake-value';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 

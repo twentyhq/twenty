@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import { WorkflowStep, WorkflowTrigger, isDefined } from 'twenty-shared';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
@@ -11,7 +11,6 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 export const generateWorkflowDiagram = ({

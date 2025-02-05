@@ -1,4 +1,4 @@
-import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowDeleteRecordAction } from 'twenty-shared';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
