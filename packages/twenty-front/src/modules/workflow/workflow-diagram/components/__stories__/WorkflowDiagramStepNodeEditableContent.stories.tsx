@@ -82,10 +82,11 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
         {
           name: 'variant',
           values: [
-            'default',
             'empty',
+            'default',
             'success',
             'failure',
+            'not-executed',
           ] satisfies WorkflowDiagramNodeVariant[],
           props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
         },

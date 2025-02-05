@@ -56,12 +56,12 @@ const StyledStepNodeType = styled.div<{
     ${({ nodeVariant, theme }) => {
       switch (nodeVariant) {
         case 'empty':
-        case 'default': {
+        case 'default':
+        case 'not-executed':
           return css`
             background-color: ${theme.color.blue};
             color: ${theme.font.color.inverted};
           `;
-        }
       }
     }}
   }
@@ -135,10 +135,15 @@ const StyledStepNodeLabel = styled.div<{
   font-size: 13px;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   column-gap: ${({ theme }) => theme.spacing(2)};
-  color: ${({ variant, theme }) =>
-    variant === 'empty'
-      ? theme.font.color.extraLight
-      : theme.font.color.primary};
+  color: ${({ variant, theme }) => {
+    switch (variant) {
+      case 'empty':
+      case 'not-executed':
+        return theme.font.color.light;
+      default:
+        return theme.font.color.primary;
+    }
+  }};
   max-width: 200px;
 `;
 
