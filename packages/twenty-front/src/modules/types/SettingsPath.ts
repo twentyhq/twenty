@@ -24,6 +24,8 @@ export enum SettingsPath {
   ServiceCenterAgents = 'service-center/agents',
   ServiceCenterNewAgent = 'service-center/agents/new',
   ServiceCenterEditAgent = 'service-center/agents/:agentSlug/edit',
+  ServiceCenterServiceLevel = 'service-center/sla',
+  ServiceCenterEditServiceLevel = 'service-center/service-level/:slaSlug/edit',
   Workspace = 'workspace',
   Domain = 'domain',
   Developers = 'developers',

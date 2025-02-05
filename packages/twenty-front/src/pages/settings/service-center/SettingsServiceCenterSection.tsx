@@ -5,7 +5,7 @@ import { SettingsNavigationCard } from '@/settings/service-center/components/Set
 import { SettingsPath } from '@/types/SettingsPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2 } from '@tabler/icons-react';
+import { IconIdBadge2, IconMailCog } from '@tabler/icons-react';
 
 const StyledCardsContainer = styled.div`
   display: grid;
@@ -41,6 +41,13 @@ export const SettingsServiceCenterSection = () => {
         <UndecoratedLink to={getSettingsPath(SettingsPath.Workspace)}>
           <SettingsNavigationCard Icon={IconPhone} title={'Telephony'}>
             {'Manage your telephony extension settings here.'}
+          </SettingsNavigationCard>
+        </UndecoratedLink>
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.ServiceCenterServiceLevel)}
+        >
+          <SettingsNavigationCard Icon={IconMailCog} title={'Service Level'}>
+            {'Set the maximum response time for customer support in minutes.'}
           </SettingsNavigationCard>
         </UndecoratedLink>
       </StyledCardsContainer>

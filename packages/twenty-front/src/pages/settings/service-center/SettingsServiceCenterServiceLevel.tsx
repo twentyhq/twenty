@@ -1,31 +1,30 @@
 import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsServiceCenterSection } from '~/pages/settings/service-center/SettingsServiceCenterSection';
+import { ServiceCenterServiceLevelAgreement } from '@/settings/service-center/service-level/components/ServiceCenterServiceLevelAgreement';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const SettingsServiceCenter = () => {
+export const SettingsServiceCenterServiceLevel = () => {
   return (
     <SubMenuTopBarContainer
-      title={'Service Center'}
+      title={'Service Level Agreement'}
       links={[
         {
-          children: 'Workspace',
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: 'Service Center',
+          href: getSettingsPath(SettingsPath.ServiceCenter),
         },
-        { children: 'Service Center' },
+        { children: 'Service Level Agreement' },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
             title={''}
-            description={'Manage all agents and sectors here.'}
+            description={'Manage all the service center settings here.'}
           />
-
-          <SettingsServiceCenterSection />
+          <ServiceCenterServiceLevelAgreement />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

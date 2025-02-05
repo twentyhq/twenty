@@ -10,6 +10,8 @@ import { SettingsServiceCenterEditSector } from '~/pages/settings/service-center
 import { SettingsServiceCenterNewAgent } from '~/pages/settings/service-center/SettingsServiceCenterNewAgent';
 import { SettingsServiceCenterNewSector } from '~/pages/settings/service-center/SettingsServiceCenterNewSector';
 import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/SettingsServiceCenterSectors';
+import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
+import { SettingsServiceCenterEditServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterEditServiceLevel';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -333,6 +335,14 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterEditSector}
         element={<SettingsServiceCenterEditSector />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterServiceLevel}
+        element={<SettingsServiceCenterServiceLevel />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterEditServiceLevel}
+        element={<SettingsServiceCenterEditServiceLevel />}
       />
       <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
       <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
