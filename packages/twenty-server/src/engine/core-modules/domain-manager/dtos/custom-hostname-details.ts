@@ -1,47 +1,19 @@
-import { createUnionType, Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-class CustomHostnameOwnershipVerificationTxt {
+class CustomHostnameVerification {
   @Field(() => String)
-  type: 'txt';
+  validationType: 'ownership' | 'ssl';
 
   @Field(() => String)
-  name: string;
+  type: 'txt' | 'cname';
+
+  @Field(() => String)
+  key: string;
 
   @Field(() => String)
   value: string;
 }
-
-@ObjectType()
-class CustomHostnameOwnershipVerificationHttp {
-  @Field()
-  type: 'http';
-
-  @Field(() => String)
-  body: string;
-
-  @Field(() => String)
-  url: string;
-}
-
-const CustomHostnameOwnershipVerification = createUnionType({
-  name: 'OwnershipVerification',
-  types: () =>
-    [
-      CustomHostnameOwnershipVerificationTxt,
-      CustomHostnameOwnershipVerificationHttp,
-    ] as const,
-  resolveType(value) {
-    if ('type' in value && value.type === 'txt') {
-      return CustomHostnameOwnershipVerificationTxt;
-    }
-    if ('type' in value && value.type === 'http') {
-      return CustomHostnameOwnershipVerificationHttp;
-    }
-
-    return null;
-  },
-});
 
 @ObjectType()
 export class CustomHostnameDetails {
@@ -51,8 +23,14 @@ export class CustomHostnameDetails {
   @Field(() => String)
   hostname: string;
 
-  @Field(() => [CustomHostnameOwnershipVerification])
-  ownershipVerifications: Array<typeof CustomHostnameOwnershipVerification>;
+  @Field(() => [CustomHostnameVerification])
+  records: Array<CustomHostnameVerification>;
+
+  @Field(() => [String])
+  verificationErrors: Array<string>;
+
+  @Field(() => String, { nullable: true })
+  sslStatus?: string;
 
   @Field(() => String, { nullable: true })
   status?:

@@ -280,47 +280,71 @@ export class DomainManagerService {
     }
 
     if (response.result.length === 1) {
+      console.log(
+        '>>>>>>>>>>>>>>',
+        JSON.stringify(response.result[0], null, 4),
+      );
+
       return {
         id: response.result[0].id,
         hostname: response.result[0].hostname,
         status: response.result[0].status,
-        ownershipVerifications: [
+        verificationErrors: response.result[0].verification_errors ?? [],
+        sslStatus: response.result[0].ssl.status,
+        records: [
           response.result[0].ownership_verification,
-          response.result[0].ownership_verification_http,
-        ].reduce(
-          (acc, ownershipVerification) => {
-            if (!ownershipVerification) return acc;
+          ...(response.result[0].ssl?.validation_records ?? []),
+          // @ts-expect-error trust me it exists
+          ...(response.result[0].ssl?.dcv_delegation_records ?? []),
+        ]
+          .map<CustomHostnameDetails['records'][0] | undefined>(
+            (record: Record<string, string>) => {
+              if (!record) return;
 
-            if (
-              'http_body' in ownershipVerification &&
-              'http_url' in ownershipVerification &&
-              ownershipVerification.http_body &&
-              ownershipVerification.http_url
-            ) {
-              acc.push({
-                type: 'http',
-                body: ownershipVerification.http_body,
-                url: ownershipVerification.http_url,
-              });
-            }
+              if (
+                'cname' in record &&
+                'cname_target' in record &&
+                record.cname &&
+                record.cname_target
+              ) {
+                return {
+                  validationType: 'ssl' as const,
+                  type: 'cname' as const,
+                  key: record.cname,
+                  value: record.cname_target,
+                };
+              }
 
-            if (
-              'type' in ownershipVerification &&
-              ownershipVerification.type === 'txt' &&
-              ownershipVerification.value &&
-              ownershipVerification.name
-            ) {
-              acc.push({
-                type: 'txt',
-                value: ownershipVerification.value,
-                name: ownershipVerification.name,
-              });
-            }
+              if (
+                'txt_name' in record &&
+                'txt_value' in record &&
+                record.txt_name &&
+                record.txt_value
+              ) {
+                return {
+                  validationType: 'ssl' as const,
+                  type: 'txt' as const,
+                  key: record.txt_name,
+                  value: record.txt_value,
+                };
+              }
 
-            return acc;
-          },
-          [] as CustomHostnameDetails['ownershipVerifications'],
-        ),
+              if (
+                'type' in record &&
+                record.type === 'txt' &&
+                record.value &&
+                record.name
+              ) {
+                return {
+                  validationType: 'ownership' as const,
+                  type: 'txt' as const,
+                  key: record.name,
+                  value: record.value,
+                };
+              }
+            },
+          )
+          .filter(isDefined),
       };
     }
 

@@ -385,21 +385,17 @@ export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  ownershipVerifications: Array<OwnershipVerification>;
+  records: Array<CustomHostnameVerification>;
+  sslStatus?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  verificationErrors: Array<Scalars['String']['output']>;
 };
 
-export type CustomHostnameOwnershipVerificationHttp = {
-  __typename?: 'CustomHostnameOwnershipVerificationHttp';
-  body: Scalars['String']['output'];
+export type CustomHostnameVerification = {
+  __typename?: 'CustomHostnameVerification';
+  key: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type CustomHostnameOwnershipVerificationTxt = {
-  __typename?: 'CustomHostnameOwnershipVerificationTxt';
-  name: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  validationType: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -1308,8 +1304,6 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
 };
-
-export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';

@@ -322,21 +322,17 @@ export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String'];
   id: Scalars['String'];
-  ownershipVerifications: Array<OwnershipVerification>;
+  records: Array<CustomHostnameVerification>;
+  sslStatus?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['String']>;
+  verificationErrors: Array<Scalars['String']>;
 };
 
-export type CustomHostnameOwnershipVerificationHttp = {
-  __typename?: 'CustomHostnameOwnershipVerificationHttp';
-  body: Scalars['String'];
+export type CustomHostnameVerification = {
+  __typename?: 'CustomHostnameVerification';
+  key: Scalars['String'];
   type: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type CustomHostnameOwnershipVerificationTxt = {
-  __typename?: 'CustomHostnameOwnershipVerificationTxt';
-  name: Scalars['String'];
-  type: Scalars['String'];
+  validationType: Scalars['String'];
   value: Scalars['String'];
 };
 
@@ -1175,8 +1171,6 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
-
-export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -2410,7 +2404,7 @@ export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorks
 export type GetHostnameDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status?: string | null, ownershipVerifications: Array<{ __typename?: 'CustomHostnameOwnershipVerificationHttp', type: string, body: string, url: string } | { __typename?: 'CustomHostnameOwnershipVerificationTxt', type: string, name: string, value: string }> } | null };
+export type GetHostnameDetailsQuery = { __typename?: 'Query', getHostnameDetails?: { __typename?: 'CustomHostnameDetails', hostname: string, status?: string | null, sslStatus?: string | null, verificationErrors: Array<string>, records: Array<{ __typename?: 'CustomHostnameVerification', type: string, key: string, value: string, validationType: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -4794,19 +4788,15 @@ export const GetHostnameDetailsDocument = gql`
     query GetHostnameDetails {
   getHostnameDetails {
     hostname
-    ownershipVerifications {
-      ... on CustomHostnameOwnershipVerificationTxt {
-        type
-        name
-        value
-      }
-      ... on CustomHostnameOwnershipVerificationHttp {
-        type
-        body
-        url
-      }
+    records {
+      type
+      key
+      value
+      validationType
     }
     status
+    sslStatus
+    verificationErrors
   }
 }
     `;
