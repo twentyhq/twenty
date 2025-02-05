@@ -5,6 +5,7 @@ import {
   getRecordFromCache,
   GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
+import { OBJECT_RECORD_TYPENAME_KEY } from '@/object-record/constants/ObjectRecordTypename';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -24,9 +25,13 @@ export const computeOptimisticRecordFromInput = ({
   objectMetadataItems,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
-    (fieldName) =>
-      objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
-      undefined,
+    (fieldName) => {
+      const isUnknownMetadataItemField =
+        objectMetadataItem.fields.find(({ name }) => name === fieldName) ===
+        undefined;
+      const isTypenameField = fieldName === OBJECT_RECORD_TYPENAME_KEY;
+      return isUnknownMetadataItemField && !isTypenameField;
+    },
   );
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
@@ -93,7 +98,7 @@ export const computeOptimisticRecordFromInput = ({
 
     if (!isUndefined(recordInputFieldValue)) {
       throw new Error(
-        'Should never provide relation mutation through anything else than the fieldId e.g companyId',
+        `Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: ${fieldMetadataItem.name}`,
       );
     }
 
