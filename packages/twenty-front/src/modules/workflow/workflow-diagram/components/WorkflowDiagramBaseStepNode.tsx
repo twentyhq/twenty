@@ -145,6 +145,10 @@ const StyledStepNodeLabel = styled.div<{
     }
   }};
   max-width: 200px;
+
+  .selectable:is(.selected, :focus, :focus-visible) & {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 export const StyledHandle = styled(Handle)`
