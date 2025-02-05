@@ -30,10 +30,9 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledTableRow = styled(TableRow)`
-  cursor: pointer;
-
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
+    cursor: pointer;
   }
 `;
 
@@ -128,57 +127,55 @@ export const SettingsRoles = () => {
             </StyledTableHeaderRow>
             {!isRolesLoading &&
               rolesData?.getRoles.map((role) => (
-                <StyledTable key={role.id}>
-                  <StyledTableRow>
-                    <TableCell>
-                      <StyledNameCell>
-                        <IconUser size={theme.icon.size.md} />
-                        {role.label}
-                        {!role.isEditable && (
-                          <IconLock size={theme.icon.size.sm} />
-                        )}
-                      </StyledNameCell>
-                    </TableCell>
-                    <TableCell align={'right'}>
-                      <StyledAssignedCell>
-                        <StyledAvatarGroup>
-                          {role.workspaceMembers
-                            .slice(0, 5)
-                            .map((workspaceMember) => (
-                              <>
-                                <StyledAvatarContainer
-                                  key={workspaceMember.id}
-                                  id={`avatar-${workspaceMember.id}`}
-                                >
-                                  <Avatar
-                                    avatarUrl={workspaceMember.avatarUrl}
-                                    placeholderColorSeed={workspaceMember.id}
-                                    placeholder={
-                                      workspaceMember.name.firstName ?? ''
-                                    }
-                                    type="rounded"
-                                    size="sm"
-                                  />
-                                </StyledAvatarContainer>
-                                <AppTooltip
-                                  anchorSelect={`#avatar-${workspaceMember.id}`}
-                                  content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-                                  noArrow
-                                  place="top"
-                                  positionStrategy="fixed"
-                                  delay={TooltipDelay.shortDelay}
+                <StyledTableRow key={role.id}>
+                  <TableCell>
+                    <StyledNameCell>
+                      <IconUser size={theme.icon.size.md} />
+                      {role.label}
+                      {!role.isEditable && (
+                        <IconLock size={theme.icon.size.sm} />
+                      )}
+                    </StyledNameCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledAssignedCell>
+                      <StyledAvatarGroup>
+                        {role.workspaceMembers
+                          .slice(0, 5)
+                          .map((workspaceMember) => (
+                            <>
+                              <StyledAvatarContainer
+                                key={workspaceMember.id}
+                                id={`avatar-${workspaceMember.id}`}
+                              >
+                                <Avatar
+                                  avatarUrl={workspaceMember.avatarUrl}
+                                  placeholderColorSeed={workspaceMember.id}
+                                  placeholder={
+                                    workspaceMember.name.firstName ?? ''
+                                  }
+                                  type="rounded"
+                                  size="sm"
                                 />
-                              </>
-                            ))}
-                        </StyledAvatarGroup>
-                        {role.workspaceMembers.length}
-                      </StyledAssignedCell>
-                    </TableCell>
-                    <TableCell align={'right'}>
-                      <StyledIconChevronRight size={theme.icon.size.md} />
-                    </TableCell>
-                  </StyledTableRow>
-                </StyledTable>
+                              </StyledAvatarContainer>
+                              <AppTooltip
+                                anchorSelect={`#avatar-${workspaceMember.id}`}
+                                content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                                noArrow
+                                place="top"
+                                positionStrategy="fixed"
+                                delay={TooltipDelay.shortDelay}
+                              />
+                            </>
+                          ))}
+                      </StyledAvatarGroup>
+                      {role.workspaceMembers.length}
+                    </StyledAssignedCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledIconChevronRight size={theme.icon.size.md} />
+                  </TableCell>
+                </StyledTableRow>
               ))}
           </StyledTable>
           <StyledBottomSection>
