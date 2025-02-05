@@ -1023,14 +1023,16 @@ export class EnvironmentVariables {
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.QueueConfig,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.RateLimiting,
     description: 'Throttle limit for workflow execution',
   })
   @CastToPositiveNumber()
   WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.QueueConfig,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.RateLimiting,
     description: 'Time-to-live for workflow execution throttle in milliseconds',
   })
   @CastToPositiveNumber()
