@@ -27,6 +27,7 @@ export const WorkflowDiagramStepNodeEditable = ({
   return (
     <WorkflowDiagramStepNodeEditableContent
       data={data}
+      variant="default"
       selected={selected ?? false}
       onDelete={() => {
         deleteStep(id);

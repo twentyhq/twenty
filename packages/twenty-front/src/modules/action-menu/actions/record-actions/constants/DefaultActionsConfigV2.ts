@@ -1,4 +1,5 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
+import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
@@ -183,5 +184,18 @@ export const DEFAULT_ACTIONS_CONFIG_V2: Record<
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToNextRecordSingleRecordAction,
+  },
+  destroyMultipleRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: MultipleRecordsActionKeys.DESTROY,
+    label: msg`Permanently destroy records`,
+    shortLabel: msg`Destroy`,
+    position: 10,
+    Icon: IconTrashX,
+    accent: 'danger',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+    useAction: useDestroyMultipleRecordsAction,
   },
 };

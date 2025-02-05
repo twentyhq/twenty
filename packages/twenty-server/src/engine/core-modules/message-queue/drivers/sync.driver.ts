@@ -24,11 +24,15 @@ export class SyncDriver implements MessageQueueDriver {
     await this.processJob(queueName, { id: '', name: jobName, data });
   }
 
-  async addCron<T extends MessageQueueJobData | undefined>(
-    queueName: MessageQueue,
-    jobName: string,
-    data: T,
-  ): Promise<void> {
+  async addCron<T extends MessageQueueJobData | undefined>({
+    queueName,
+    jobName,
+    data,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    data: T;
+  }): Promise<void> {
     this.logger.log(`Running cron job with SyncDriver`);
     await this.processJob(queueName, {
       id: '',
@@ -38,7 +42,7 @@ export class SyncDriver implements MessageQueueDriver {
     });
   }
 
-  async removeCron(queueName: MessageQueue) {
+  async removeCron({ queueName }: { queueName: MessageQueue }) {
     this.logger.log(`Removing '${queueName}' cron job with SyncDriver`);
   }
 

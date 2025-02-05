@@ -29,6 +29,13 @@ import {
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { assertNever } from 'src/utils/assert';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  WorkflowTriggerJob,
+  WorkflowTriggerJobData,
+} from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -41,6 +48,8 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   private getWorkspaceId() {
@@ -330,6 +339,23 @@ export class WorkflowTriggerWorkspaceService {
         return;
       case WorkflowTriggerType.MANUAL:
         return;
+      case WorkflowTriggerType.CRON:
+        await this.messageQueueService.addCron<WorkflowTriggerJobData>({
+          jobName: WorkflowTriggerJob.name,
+          jobId: workflowVersion.workflowId,
+          data: {
+            workspaceId: this.getWorkspaceId(),
+            workflowId: workflowVersion.workflowId,
+            payload: {},
+          },
+          options: {
+            repeat: {
+              pattern: workflowVersion.trigger.settings.pattern,
+            },
+          },
+        });
+
+        return;
       default: {
         assertNever(workflowVersion.trigger);
       }
@@ -351,6 +377,13 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+        return;
+      case WorkflowTriggerType.CRON:
+        await this.messageQueueService.removeCron({
+          jobName: WorkflowTriggerJob.name,
+          jobId: workflowVersion.workflowId,
+        });
+
         return;
       default:
         assertNever(workflowVersion.trigger);

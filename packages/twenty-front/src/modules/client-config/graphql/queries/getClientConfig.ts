@@ -56,6 +56,10 @@ export const GET_CLIENT_CONFIG = gql`
           imagePath
         }
       }
+      isMicrosoftMessagingEnabled
+      isMicrosoftCalendarEnabled
+      isGoogleMessagingEnabled
+      isGoogleCalendarEnabled
     }
   }
 `;

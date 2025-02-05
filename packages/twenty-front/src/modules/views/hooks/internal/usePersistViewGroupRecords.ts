@@ -87,9 +87,12 @@ export const usePersistViewGroupRecords = () => {
     async (viewGroupsToDelete: ViewGroup[]) => {
       if (!viewGroupsToDelete.length) return;
 
-      return destroyManyRecords(
-        viewGroupsToDelete.map((viewGroup) => viewGroup.id),
+      const recordIdsToDestroy = viewGroupsToDelete.map(
+        (viewGroup) => viewGroup.id,
       );
+      return destroyManyRecords({
+        recordIdsToDestroy,
+      });
     },
     [destroyManyRecords],
   );

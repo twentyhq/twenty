@@ -8,7 +8,8 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist"
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "typecheck": {},
     "lint": {

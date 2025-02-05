@@ -258,6 +258,10 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
+  isGoogleCalendarEnabled: Scalars['Boolean']['output'];
+  isGoogleMessagingEnabled: Scalars['Boolean']['output'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
