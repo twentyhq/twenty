@@ -19,14 +19,14 @@ export class StartDataSeedDemoWorkspaceCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      DataSeedDemoWorkspaceJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: DataSeedDemoWorkspaceJob.name,
+      data: undefined,
+      options: {
         repeat: {
           pattern: dataSeedDemoWorkspaceCronPattern,
         },
       },
-    );
+    });
   }
 }

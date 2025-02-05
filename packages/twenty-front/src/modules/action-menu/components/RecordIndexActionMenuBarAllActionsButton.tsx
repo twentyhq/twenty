@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconLayoutSidebarRightExpand, getOsControlSymbol } from 'twenty-ui';
@@ -38,11 +39,17 @@ const StyledSeparator = styled.div<{ size: 'sm' | 'md' }>`
 
 export const RecordIndexActionMenuBarAllActionsButton = () => {
   const theme = useTheme();
-  const { openCommandMenu } = useCommandMenu();
+  const { navigateCommandMenu } = useCommandMenu();
   return (
     <>
       <StyledSeparator size="md" />
-      <StyledButton onClick={() => openCommandMenu()}>
+      <StyledButton
+        onClick={() =>
+          navigateCommandMenu({
+            page: CommandMenuPages.Root,
+          })
+        }
+      >
         <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
         <StyledButtonLabel>All Actions</StyledButtonLabel>
         <StyledSeparator size="sm" />

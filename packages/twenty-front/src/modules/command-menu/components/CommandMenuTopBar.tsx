@@ -9,12 +9,21 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { IconX, LightIconButton, useIsMobile } from 'twenty-ui';
+import {
+  Button,
+  IconChevronLeft,
+  IconX,
+  LightIconButton,
+  getOsControlSymbol,
+  useIsMobile,
+} from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -81,7 +90,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
@@ -93,9 +102,22 @@ export const CommandMenuTopBar = () => {
 
   const theme = useTheme();
 
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
   return (
     <StyledInputContainer>
       <StyledContentContainer>
+        {isCommandMenuV2Enabled && (
+          <CommandMenuContextChip
+            Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+            onClick={() => {
+              goBackFromCommandMenu();
+            }}
+            testId="command-menu-go-back-button"
+          />
+        )}
         {commandMenuPage !== CommandMenuPages.SearchRecords &&
           isDefined(contextStoreCurrentObjectMetadataId) && (
             <CommandMenuContextRecordChip
@@ -120,14 +142,29 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <StyledCloseButtonContainer>
-          <LightIconButton
-            accent={'tertiary'}
-            size={'medium'}
-            Icon={IconX}
-            onClick={closeCommandMenu}
-          />
-        </StyledCloseButtonContainer>
+        <>
+          {isCommandMenuV2Enabled ? (
+            <Button
+              Icon={IconX}
+              dataTestId="page-header-close-command-menu-button"
+              size={'small'}
+              variant="secondary"
+              accent="default"
+              hotkeys={[getOsControlSymbol(), 'K']}
+              ariaLabel="Close command menu"
+              onClick={closeCommandMenu}
+            />
+          ) : (
+            <StyledCloseButtonContainer>
+              <LightIconButton
+                accent={'tertiary'}
+                size={'medium'}
+                Icon={IconX}
+                onClick={closeCommandMenu}
+              />
+            </StyledCloseButtonContainer>
+          )}
+        </>
       )}
     </StyledInputContainer>
   );
