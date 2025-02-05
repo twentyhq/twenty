@@ -64,7 +64,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
-  it('should generate correct optimistic even if recordInput contains internal field __typename', () => {
+  it('should generate correct optimistic record even if recordInput contains internal field __typename', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadaItem();
     const companyObjectMetadataItem = getCompanyObjectMetadataItem();
@@ -158,7 +158,7 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
-  it('should throw an error if recordInput contains fiels unrelated to the current objectMetadata', () => {
+  it('should throw an error if recordInput contains fields unrelated to the current objectMetadata', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getPersonObjectMetadaItem();
 
