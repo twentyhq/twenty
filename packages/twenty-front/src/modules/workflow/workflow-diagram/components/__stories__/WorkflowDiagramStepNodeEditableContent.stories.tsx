@@ -12,29 +12,17 @@ import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNo
 
 type ComponentState = 'default' | 'hover' | 'selected';
 
-type WrapperProps = Omit<
-  ComponentProps<typeof WorkflowDiagramStepNodeEditableContent>,
-  'selected'
+type WrapperProps = ComponentProps<
+  typeof WorkflowDiagramStepNodeEditableContent
 > & { state: ComponentState };
 
-const Wrapper = ({ data, variant, onDelete, state }: WrapperProps) => {
-  return (
-    <div
-      className={`selectable ${state === 'selected' ? 'selected' : state === 'hover' ? 'hover' : ''}`}
-    >
-      <WorkflowDiagramStepNodeEditableContent
-        data={data}
-        variant={variant}
-        selected={state === 'selected'}
-        onDelete={onDelete}
-      />
-    </div>
-  );
+const Wrapper = (_props: WrapperProps) => {
+  return <div></div>;
 };
 
-const meta: Meta<typeof Wrapper> = {
+const meta: Meta<WrapperProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
-  component: Wrapper,
+  component: WorkflowDiagramStepNodeEditableContent,
 };
 
 export default meta;
@@ -109,5 +97,17 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
       ],
     },
   },
-  decorators: [CatalogDecorator, ReactflowDecorator],
+  decorators: [
+    (Story, { args }) => {
+      return (
+        <div
+          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
+        >
+          <Story />
+        </div>
+      );
+    },
+    CatalogDecorator,
+    ReactflowDecorator,
+  ],
 };
