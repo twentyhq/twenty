@@ -22,15 +22,15 @@ export class MessagingMessageChannelSyncStatusMonitoringCronCommand extends Comm
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      MessagingMessageChannelSyncStatusMonitoringCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: MessagingMessageChannelSyncStatusMonitoringCronJob.name,
+      data: undefined,
+      options: {
         repeat: {
           pattern:
             MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
         },
       },
-    );
+    });
   }
 }
