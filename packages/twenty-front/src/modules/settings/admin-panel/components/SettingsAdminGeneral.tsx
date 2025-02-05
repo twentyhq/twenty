@@ -1,8 +1,10 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
+import { useUserLookup } from '@/settings/admin-panel/hooks/useUserLookup';
+import { adminPanelErrorState } from '@/settings/admin-panel/states/adminPanelErrorState';
+import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -65,9 +67,10 @@ export const SettingsAdminGeneral = () => {
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
+  const userLookupResult = useRecoilValue(userLookupResultState);
+  const adminPanelError = useRecoilValue(adminPanelErrorState);
 
-  const { userLookupResult, handleUserLookup, isLoading, error } =
-    useFeatureFlagsManagement();
+  const { handleUserLookup, isLoading } = useUserLookup();
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
@@ -76,20 +79,20 @@ export const SettingsAdminGeneral = () => {
 
     const result = await handleUserLookup(userIdentifier);
 
-    if (isDefined(result?.user?.id) && !error) {
+    if (isDefined(result?.user?.id) && !adminPanelError) {
       setUserId(result.user.id.trim());
     }
 
     if (
       isDefined(result?.workspaces) &&
       result.workspaces.length > 0 &&
-      !error
+      !adminPanelError
     ) {
       setActiveTabId(result.workspaces[0].id);
     }
   };
 
-  const shouldShowUserData = userLookupResult && !error;
+  const shouldShowUserData = userLookupResult && !adminPanelError;
 
   const activeWorkspace = userLookupResult?.workspaces.find(
     (workspace) => workspace.id === activeTabId,
@@ -107,6 +110,10 @@ export const SettingsAdminGeneral = () => {
           baseUrl: REACT_APP_SERVER_BASE_URL,
         }) ?? '',
     })) ?? [];
+
+  const userFullName = `${userLookupResult?.user.firstName || ''} ${
+    userLookupResult?.user.lastName || ''
+  }`.trim();
 
   return (
     <>
@@ -145,8 +152,10 @@ export const SettingsAdminGeneral = () => {
           />
         </StyledContainer>
 
-        {(error || impersonateError) && (
-          <StyledErrorSection>{error ?? impersonateError}</StyledErrorSection>
+        {(adminPanelError || impersonateError) && (
+          <StyledErrorSection>
+            {adminPanelError ?? impersonateError}
+          </StyledErrorSection>
         )}
       </Section>
 
@@ -154,12 +163,7 @@ export const SettingsAdminGeneral = () => {
         <Section>
           <StyledUserInfo>
             <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
-            <H2Title
-              title={`${userLookupResult.user.firstName || ''} ${
-                userLookupResult.user.lastName || ''
-              }`.trim()}
-              description="User Name"
-            />
+            <H2Title title={userFullName} description="User Name" />
             <H2Title
               title={userLookupResult.user.email}
               description="User Email"

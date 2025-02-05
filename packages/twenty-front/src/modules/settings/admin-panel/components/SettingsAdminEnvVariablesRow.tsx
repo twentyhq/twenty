@@ -56,12 +56,10 @@ const StyledExpandedLabel = styled.div`
   overflow: visible;
 `;
 
-const StyledTransitionedIconChevronRight = styled(IconChevronRight)<{
-  isExpanded: boolean;
-}>`
+const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
   cursor: pointer;
-  transform: ${({ isExpanded }) =>
-    isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
+  transform: ${({ $isExpanded }: { $isExpanded: boolean }) =>
+    $isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
   transition: ${({ theme }) =>
     `transform ${theme.animation.duration.normal}s ease`};
 `;
@@ -112,7 +110,7 @@ export const SettingsAdminEnvVariablesRow = ({
         </TableCell>
         <TableCell align="right">
           <StyledTransitionedIconChevronRight
-            isExpanded={isExpanded}
+            $isExpanded={isExpanded}
             size={theme.icon.size.sm}
           />
         </TableCell>

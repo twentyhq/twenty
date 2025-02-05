@@ -1,7 +1,7 @@
 import { Button, H2Title, IconUser, Toggle } from 'twenty-ui';
 
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
+import { useFeatureFlag } from '@/settings/admin-panel/hooks/useFeatureFlag';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -32,7 +32,8 @@ export const SettingsAdminWorkspaceContent = ({
     canImpersonate,
   } = useImpersonate();
 
-  const { handleFeatureFlagUpdate } = useFeatureFlagsManagement();
+  const { handleFeatureFlagUpdate } = useFeatureFlag();
+
   if (!activeWorkspace) return null;
 
   return (
