@@ -1,14 +1,11 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -21,9 +18,7 @@ import {
   H1TitleFontColor,
   H2Title,
   IconSearch,
-  IconUser,
   Section,
-  Toggle,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -47,10 +42,6 @@ const StyledUserInfo = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(5)};
 `;
 
-const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
-`;
-
 const StyledTabListContainer = styled.div`
   align-items: center;
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
@@ -69,24 +60,14 @@ export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const [userId, setUserId] = useState('');
 
-  const {
-    handleImpersonate,
-    isLoading: isImpersonateLoading,
-    error: impersonateError,
-    canImpersonate,
-  } = useImpersonate();
+  const { error: impersonateError } = useImpersonate();
 
   const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
 
-  const {
-    userLookupResult,
-    handleUserLookup,
-    handleFeatureFlagUpdate,
-    isLoading,
-    error,
-  } = useFeatureFlagsManagement();
+  const { userLookupResult, handleUserLookup, isLoading, error } =
+    useFeatureFlagsManagement();
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
 
@@ -126,70 +107,6 @@ export const SettingsAdminGeneral = () => {
           baseUrl: REACT_APP_SERVER_BASE_URL,
         }) ?? '',
     })) ?? [];
-
-  const renderWorkspaceContent = () => {
-    if (!activeWorkspace) return null;
-
-    return (
-      <>
-        <H2Title title={activeWorkspace.name} description={'Workspace Name'} />
-        <H2Title
-          title={`${activeWorkspace.totalUsers} ${
-            activeWorkspace.totalUsers > 1 ? 'Users' : 'User'
-          }`}
-          description={'Total Users'}
-        />
-        {canImpersonate && (
-          <Button
-            Icon={IconUser}
-            variant="primary"
-            accent="blue"
-            title={'Impersonate'}
-            onClick={() => handleImpersonate(userId, activeWorkspace.id)}
-            disabled={
-              isImpersonateLoading ||
-              activeWorkspace.allowImpersonation === false
-            }
-            dataTestId="impersonate-button"
-          />
-        )}
-
-        {canManageFeatureFlags && (
-          <StyledTable>
-            <TableRow
-              gridAutoColumns="1fr 100px"
-              mobileGridAutoColumns="1fr 80px"
-            >
-              <TableHeader>Feature Flag</TableHeader>
-              <TableHeader align="right">Status</TableHeader>
-            </TableRow>
-
-            {activeWorkspace.featureFlags.map((flag) => (
-              <TableRow
-                gridAutoColumns="1fr 100px"
-                mobileGridAutoColumns="1fr 80px"
-                key={flag.key}
-              >
-                <TableCell>{flag.key}</TableCell>
-                <TableCell align="right">
-                  <Toggle
-                    value={flag.value}
-                    onChange={(newValue) =>
-                      handleFeatureFlagUpdate(
-                        activeWorkspace.id,
-                        flag.key,
-                        newValue,
-                      )
-                    }
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </StyledTable>
-        )}
-      </>
-    );
-  };
 
   return (
     <>
@@ -259,7 +176,10 @@ export const SettingsAdminGeneral = () => {
             />
           </StyledTabListContainer>
           <StyledContentContainer>
-            {renderWorkspaceContent()}
+            <SettingsAdminWorkspaceContent
+              activeWorkspace={activeWorkspace}
+              userId={userId}
+            />
           </StyledContentContainer>
         </Section>
       )}
