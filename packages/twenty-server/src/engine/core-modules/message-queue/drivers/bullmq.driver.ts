@@ -1,8 +1,8 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
 import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
-import omitBy from 'lodash.omitby';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared';
 
 import {
   QueueCronJobOptions,
@@ -49,23 +49,32 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
   ) {
-    const worker = new Worker(
+    const workerOptions = isDefined(options?.concurrency)
+      ? {
+          ...this.options,
+          concurrency: options.concurrency,
+        }
+      : this.options;
+
+    this.workerMap[queueName] = new Worker(
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
       },
-      omitBy(
-        {
-          ...this.options,
-          concurrency: options?.concurrency,
-        },
-        (value) => value === undefined,
-      ),
+      workerOptions,
     );
-
-    this.workerMap[queueName] = worker;
   }
+
+  private getJobKey = ({
+    jobName,
+    jobId,
+  }: {
+    jobName: string;
+    jobId?: string;
+  }) => {
+    return `${jobName}${jobId ? `.${jobId}` : ''}`;
+  };
 
   async addCron<T>({
     queueName,
@@ -85,7 +94,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const name = `${jobName}${jobId ? `.${jobId}` : ''}`;
+
     const queueOptions: JobsOptions = {
       priority: options?.priority,
       repeat: options?.repeat,
@@ -93,7 +102,15 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       removeOnFail: 100,
     };
 
-    await this.queueMap[queueName].add(name, data, queueOptions);
+    await this.queueMap[queueName].upsertJobScheduler(
+      this.getJobKey({ jobName, jobId }),
+      options?.repeat,
+      {
+        name: jobName,
+        data,
+        opts: queueOptions,
+      },
+    );
   }
 
   async removeCron({
@@ -105,9 +122,9 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     jobName: string;
     jobId?: string;
   }): Promise<void> {
-    const name = `${jobName}${jobId ? `.${jobId}` : ''}`;
-
-    await this.queueMap[queueName].removeRepeatableByKey(name);
+    await this.queueMap[queueName].removeJobScheduler(
+      this.getJobKey({ jobName, jobId }),
+    );
   }
 
   async add<T>(
