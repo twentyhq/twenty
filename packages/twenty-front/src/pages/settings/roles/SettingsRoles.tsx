@@ -2,9 +2,11 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Avatar,
+  Button,
   H2Title,
   IconChevronRight,
   IconLock,
+  IconPlus,
   IconUser,
   Section,
 } from 'twenty-ui';
@@ -22,7 +24,6 @@ import { FeatureFlagKey, useGetRolesQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTable = styled(Table)`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -61,6 +62,18 @@ const StyledAvatarGroup = styled.div`
   }
 `;
 
+const StyledTableHeaderRow = styled(Table)`
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+`;
+
+const StyledBottomSection = styled(Section)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
+  display: flex;
+  justify-content: flex-end;
+`;
+
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
@@ -95,50 +108,68 @@ export const SettingsRoles = () => {
             title={t`All roles`}
             description={t`Assign roles to specify each member's access permissions`}
           />
-
           <StyledTable>
-            <TableRow>
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Assigned to`}</TableHeader>
-              <TableHeader />
-            </TableRow>
+            <StyledTableHeaderRow>
+              <TableRow>
+                <TableHeader>
+                  <Trans>Name</Trans>
+                </TableHeader>
+                <TableHeader align={'right'}>
+                  <Trans>Assigned to</Trans>
+                </TableHeader>
+                <TableHeader align={'right'}></TableHeader>
+              </TableRow>
+            </StyledTableHeaderRow>
             {!isRolesLoading &&
               rolesData?.getRoles.map((role) => (
-                <StyledTableRow key={role.id}>
-                  <TableCell>
-                    <StyledNameCell>
-                      <IconUser size={theme.icon.size.md} />
-                      {role.label}
-                      {!role.isEditable && (
-                        <IconLock size={theme.icon.size.sm} />
-                      )}
-                    </StyledNameCell>
-                  </TableCell>
-                  <TableCell>
-                    <StyledAssignedCell>
-                      <StyledAvatarGroup>
-                        {role.workspaceMembers
-                          .slice(0, 5)
-                          .map((workspaceMember) => (
-                            <Avatar
-                              key={workspaceMember.id}
-                              avatarUrl={workspaceMember.avatarUrl}
-                              placeholderColorSeed={workspaceMember.id}
-                              placeholder={workspaceMember.name.firstName ?? ''}
-                              type="rounded"
-                              size="sm"
-                            />
-                          ))}
-                      </StyledAvatarGroup>
-                      {role.workspaceMembers.length}
-                    </StyledAssignedCell>
-                  </TableCell>
-                  <TableCell>
-                    <StyledIconChevronRight size={theme.icon.size.md} />
-                  </TableCell>
-                </StyledTableRow>
+                <StyledTable key={role.id}>
+                  <StyledTableRow>
+                    <TableCell>
+                      <StyledNameCell>
+                        <IconUser size={theme.icon.size.md} />
+                        {role.label}
+                        {!role.isEditable && (
+                          <IconLock size={theme.icon.size.sm} />
+                        )}
+                      </StyledNameCell>
+                    </TableCell>
+                    <TableCell align={'right'}>
+                      <StyledAssignedCell>
+                        <StyledAvatarGroup>
+                          {role.workspaceMembers
+                            .slice(0, 5)
+                            .map((workspaceMember) => (
+                              <Avatar
+                                key={workspaceMember.id}
+                                avatarUrl={workspaceMember.avatarUrl}
+                                placeholderColorSeed={workspaceMember.id}
+                                placeholder={
+                                  workspaceMember.name.firstName ?? ''
+                                }
+                                type="rounded"
+                                size="sm"
+                              />
+                            ))}
+                        </StyledAvatarGroup>
+                        {role.workspaceMembers.length}
+                      </StyledAssignedCell>
+                    </TableCell>
+                    <TableCell align={'right'}>
+                      <StyledIconChevronRight size={theme.icon.size.md} />
+                    </TableCell>
+                  </StyledTableRow>
+                </StyledTable>
               ))}
           </StyledTable>
+          <StyledBottomSection>
+            <Button
+              Icon={IconPlus}
+              title={t`Create Role`}
+              variant="secondary"
+              size="small"
+              soon
+            />
+          </StyledBottomSection>
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
