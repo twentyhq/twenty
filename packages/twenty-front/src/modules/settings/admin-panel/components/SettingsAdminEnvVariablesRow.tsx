@@ -35,6 +35,8 @@ const StyledExpandedDetails = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   gap: ${({ theme }) => theme.spacing(1)};
+  height: fit-content;
+  min-height: min-content;
 `;
 
 const StyledDetailLabel = styled.div`
@@ -46,6 +48,12 @@ const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+`;
+
+const StyledExpandedLabel = styled.div`
+  word-break: break-word;
+  white-space: normal;
+  overflow: visible;
 `;
 
 const StyledTransitionedIconChevronRight = styled(IconChevronRight)<{
@@ -65,8 +73,6 @@ export const SettingsAdminEnvVariablesRow = ({
   const [showSensitiveValue, setShowSensitiveValue] = useState(false);
   const theme = useTheme();
 
-  // could be a better way to handle this
-  // could be a util?
   const displayValue =
     variable.value === ''
       ? 'null'
@@ -74,7 +80,6 @@ export const SettingsAdminEnvVariablesRow = ({
         ? '••••••'
         : variable.value;
 
-  // we should autohide the value after a few seconds of not hovering over it
   const handleToggleVisibility = (event: React.MouseEvent) => {
     event.stopPropagation();
     setShowSensitiveValue(!showSensitiveValue);
@@ -112,14 +117,14 @@ export const SettingsAdminEnvVariablesRow = ({
           />
         </TableCell>
       </TableRow>
-      <AnimatedExpandableContainer isExpanded={isExpanded}>
+      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
         <StyledExpandedDetails>
           <StyledDetailLabel>Name:</StyledDetailLabel>
           <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
           <StyledDetailLabel>Description:</StyledDetailLabel>
-          <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
+          <StyledExpandedLabel>{variable.description}</StyledExpandedLabel>
           <StyledDetailLabel>Value:</StyledDetailLabel>
-          <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
+          <StyledExpandedLabel>{displayValue}</StyledExpandedLabel>
         </StyledExpandedDetails>
       </AnimatedExpandableContainer>
     </>
