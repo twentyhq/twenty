@@ -84,6 +84,21 @@ const StyledStepNodeInnerContainer = styled.div<{
 
   position: relative;
 
+  transition: background ${({ theme }) => theme.animation.duration.fast} ease;
+
+  .workflow-node-container:hover & {
+    ${({ theme }) => {
+      return css`
+        background: linear-gradient(
+            0deg,
+            ${theme.background.transparent.lighter} 0%,
+            ${theme.background.transparent.lighter} 100%
+          ),
+          ${theme.background.secondary};
+      `;
+    }}
+  }
+
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
@@ -168,7 +183,7 @@ export const WorkflowDiagramBaseStepNode = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   return (
-    <StyledStepNodeContainer>
+    <StyledStepNodeContainer className="workflow-node-container">
       {nodeType !== 'trigger' ? (
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
