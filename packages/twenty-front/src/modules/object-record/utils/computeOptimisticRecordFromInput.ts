@@ -27,8 +27,9 @@ export const computeOptimisticRecordFromInput = ({
   const unknownRecordInputFields = Object.keys(recordInput).filter(
     (recordKey) => {
       const isUnknownMetadataItemField =
-        objectMetadataItem.fields.find(({ name: fieldName }) => fieldName === recordKey) ===
-        undefined;
+        objectMetadataItem.fields.find(
+          ({ name: fieldName }) => fieldName === recordKey,
+        ) === undefined;
       const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
       return isUnknownMetadataItemField && !isTypenameField;
     },
