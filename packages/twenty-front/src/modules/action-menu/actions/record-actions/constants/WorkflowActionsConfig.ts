@@ -293,7 +293,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
-    position: 10,
+    position: 17,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
