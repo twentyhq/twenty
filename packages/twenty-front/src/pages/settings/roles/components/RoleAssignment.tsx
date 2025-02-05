@@ -6,12 +6,13 @@ type RoleAssignmentProps = {
   role: Pick<Role, 'id' | 'label' | 'canUpdateAllSettings'>;
 };
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   return (
     <Section>
       <H2Title
         title={t`Assigned members`}
-        description={t`This Role is assign to one workspace member.`}
+        description={t`This Role is assigned to these workspace member.`}
       />
     </Section>
   );

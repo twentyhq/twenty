@@ -6,6 +6,7 @@ type RolePermissionsProps = {
   role: Pick<Role, 'id' | 'label' | 'canUpdateAllSettings'>;
 };
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 export const RolePermissions = ({ role }: RolePermissionsProps) => {
   return (
     <Section>
