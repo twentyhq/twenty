@@ -118,7 +118,7 @@ const StyledStepNodeInnerContainer = styled.div<{
         }
         default: {
           return css`
-            background-color: ${theme.accent.quaternary};
+            background-color: ${theme.adaptiveColors.blue1};
             border-color: ${theme.color.blue};
           `;
         }
