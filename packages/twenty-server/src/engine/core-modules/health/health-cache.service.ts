@@ -16,7 +16,7 @@ export class HealthCacheService {
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  private getKeyWithTimestamp(key: string, timestamp?: number): string {
+  private getCacheKeyWithTimestamp(key: string, timestamp?: number): string {
     const minuteTimestamp = timestamp ?? Math.floor(Date.now() / 60000) * 60000;
 
     return `${key}:${minuteTimestamp}`;
@@ -35,25 +35,31 @@ export class HealthCacheService {
     status: MessageChannelSyncStatus,
     increment: number,
   ) {
-    const key = this.getKeyWithTimestamp(
+    const cacheKey = this.getCacheKeyWithTimestamp(
       HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
     );
 
     const currentCounter =
-      await this.cacheStorage.get<MessageChannelSyncJobByStatusCounter>(key);
+      await this.cacheStorage.get<MessageChannelSyncJobByStatusCounter>(
+        cacheKey,
+      );
 
     const updatedCounter = {
-      ...currentCounter,
+      ...(currentCounter || {}),
       [status]: (currentCounter?.[status] || 0) + increment,
     };
 
-    return await this.cacheStorage.set(key, updatedCounter, HEALTH_CACHE_TTL);
+    return await this.cacheStorage.set(
+      cacheKey,
+      updatedCounter,
+      HEALTH_CACHE_TTL,
+    );
   }
 
   async getMessageChannelSyncJobByStatusCounter() {
     const cacheKeys = this.getLastXMinutesTimestamps(TIME_WINDOW_MINUTES).map(
       (timestamp) =>
-        this.getKeyWithTimestamp(
+        this.getCacheKeyWithTimestamp(
           HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
           timestamp,
         ),
@@ -81,18 +87,24 @@ export class HealthCacheService {
   }
 
   async incrementInvalidCaptchaCounter() {
-    const key = this.getKeyWithTimestamp(HealthCounterCacheKeys.InvalidCaptcha);
+    const cacheKey = this.getCacheKeyWithTimestamp(
+      HealthCounterCacheKeys.InvalidCaptcha,
+    );
 
-    const currentCounter = await this.cacheStorage.get<number>(key);
+    const currentCounter = await this.cacheStorage.get<number>(cacheKey);
     const updatedCounter = (currentCounter || 0) + 1;
 
-    return await this.cacheStorage.set(key, updatedCounter, HEALTH_CACHE_TTL);
+    return await this.cacheStorage.set(
+      cacheKey,
+      updatedCounter,
+      HEALTH_CACHE_TTL,
+    );
   }
 
   async getInvalidCaptchaCounter() {
     const cacheKeys = this.getLastXMinutesTimestamps(TIME_WINDOW_MINUTES).map(
       (timestamp) =>
-        this.getKeyWithTimestamp(
+        this.getCacheKeyWithTimestamp(
           HealthCounterCacheKeys.InvalidCaptcha,
           timestamp,
         ),
