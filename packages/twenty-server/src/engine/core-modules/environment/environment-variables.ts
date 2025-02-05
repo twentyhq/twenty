@@ -1045,6 +1045,15 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   ENTERPRISE_KEY: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Analytics,
+    description: 'Health monitoring time window in minutes',
+  })
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
 }
 
 export const validate = (

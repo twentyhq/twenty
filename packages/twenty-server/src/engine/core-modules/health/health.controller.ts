@@ -16,12 +16,12 @@ export class HealthController {
     return this.health.check([]);
   }
 
-  @Get('/message-channel-sync-job-by-status')
+  @Get('/message-channel-sync-job-by-status-counter')
   getMessageChannelSyncJobByStatusCounter() {
     return this.healthCacheService.getMessageChannelSyncJobByStatusCounter();
   }
 
-  @Get('/invalid-captcha')
+  @Get('/invalid-captcha-counter')
   getInvalidCaptchaCounter() {
     return this.healthCacheService.getInvalidCaptchaCounter();
   }

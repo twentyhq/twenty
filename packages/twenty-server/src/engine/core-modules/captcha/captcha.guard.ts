@@ -23,8 +23,9 @@ export class CaptchaGuard implements CanActivate {
 
     const result = await this.captchaService.validate(token || '');
 
-    if (result.success) return true;
-    else {
+    if (result.success) {
+      return true;
+    } else {
       await this.healthCacheService.incrementInvalidCaptchaCounter();
 
       throw new BadRequestException(
