@@ -21,6 +21,7 @@ export const seedUsers = async (
       'lastName',
       'email',
       'passwordHash',
+      'canImpersonate',
     ])
     .orIgnore()
     .values([

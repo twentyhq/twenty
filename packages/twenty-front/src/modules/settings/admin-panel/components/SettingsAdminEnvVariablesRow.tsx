@@ -4,11 +4,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
-    AnimatedExpandableContainer,
-    IconChevronRight,
-    IconEye,
-    IconEyeOff,
-    LightIconButton,
+  AnimatedExpandableContainer,
+  IconChevronRight,
+  IconEye,
+  IconEyeOff,
+  LightIconButton,
 } from 'twenty-ui';
 type SettingsAdminEnvVariablesRowProps = {
   variable: {
