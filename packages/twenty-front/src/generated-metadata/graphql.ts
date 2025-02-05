@@ -1386,7 +1386,7 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
-  getRoles: Array<RoleDto>;
+  getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1653,8 +1653,8 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean']['output'];
 };
 
-export type RoleDto = {
-  __typename?: 'RoleDTO';
+export type Role = {
+  __typename?: 'Role';
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];

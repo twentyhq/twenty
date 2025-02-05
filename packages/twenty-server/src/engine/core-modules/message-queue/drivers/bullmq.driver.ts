@@ -1,8 +1,8 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
 import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
-import omitBy from 'lodash.omitby';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared';
 
 import {
   QueueCronJobOptions,
@@ -13,6 +13,7 @@ import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interface
 import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -49,54 +50,72 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
   ) {
-    const worker = new Worker(
+    const workerOptions = isDefined(options?.concurrency)
+      ? {
+          ...this.options,
+          concurrency: options.concurrency,
+        }
+      : this.options;
+
+    this.workerMap[queueName] = new Worker(
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
       },
-      omitBy(
-        {
-          ...this.options,
-          concurrency: options?.concurrency,
-        },
-        (value) => value === undefined,
-      ),
+      workerOptions,
     );
-
-    this.workerMap[queueName] = worker;
   }
 
-  async addCron<T>(
-    queueName: MessageQueue,
-    jobName: string,
-    data: T,
-    options?: QueueCronJobOptions,
-  ): Promise<void> {
+  async addCron<T>({
+    queueName,
+    jobName,
+    data,
+    options,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    data: T;
+    options: QueueCronJobOptions;
+    jobId?: string;
+  }): Promise<void> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
+
     const queueOptions: JobsOptions = {
-      jobId: options?.id,
       priority: options?.priority,
       repeat: options?.repeat,
       removeOnComplete: true,
       removeOnFail: 100,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    await this.queueMap[queueName].upsertJobScheduler(
+      getJobKey({ jobName, jobId }),
+      options?.repeat,
+      {
+        name: jobName,
+        data,
+        opts: queueOptions,
+      },
+    );
   }
 
-  async removeCron(
-    queueName: MessageQueue,
-    jobName: string,
-    pattern: string,
-  ): Promise<void> {
-    await this.queueMap[queueName].removeRepeatable(jobName, {
-      pattern,
-    });
+  async removeCron({
+    queueName,
+    jobName,
+    jobId,
+  }: {
+    queueName: MessageQueue;
+    jobName: string;
+    jobId?: string;
+  }): Promise<void> {
+    await this.queueMap[queueName].removeJobScheduler(
+      getJobKey({ jobName, jobId }),
+    );
   }
 
   async add<T>(

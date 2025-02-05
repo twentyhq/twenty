@@ -22,12 +22,12 @@ export class MessagingMessageListFetchCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      MessagingMessageListFetchCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: MessagingMessageListFetchCronJob.name,
+      data: undefined,
+      options: {
         repeat: { pattern: MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN },
       },
-    );
+    });
   }
 }

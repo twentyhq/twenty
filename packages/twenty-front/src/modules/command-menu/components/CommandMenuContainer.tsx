@@ -1,4 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
@@ -91,7 +92,10 @@ export const CommandMenuContainer = ({
             value={{
               isInRightDrawer: false,
               onActionExecutedCallback: ({ key }) => {
-                if (key !== RecordAgnosticActionsKey.SEARCH_RECORDS) {
+                if (
+                  key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                  key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
+                ) {
                   toggleCommandMenu();
                 }
               },

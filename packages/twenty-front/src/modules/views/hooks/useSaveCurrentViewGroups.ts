@@ -128,7 +128,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
         );
 
         await Promise.all([
-          createViewGroupRecords(viewGroupsToCreate, view),
+          createViewGroupRecords({ viewGroupsToCreate, viewId: view.id }),
           updateViewGroupRecords(viewGroupsToUpdate),
         ]);
       },

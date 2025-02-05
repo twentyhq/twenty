@@ -19,7 +19,8 @@ type useDestroyManyRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-type DestroyManyRecordsOptions = {
+export type DestroyManyRecordsProps = {
+  recordIdsToDestroy: string[];
   skipOptimisticEffect?: boolean;
   delayInMsBetweenRequests?: number;
 };
@@ -56,16 +57,19 @@ export const useDestroyManyRecords = ({
     objectMetadataItem.namePlural,
   );
 
-  const destroyManyRecords = async (
-    idsToDestroy: string[],
-    options?: DestroyManyRecordsOptions,
-  ) => {
-    const numberOfBatches = Math.ceil(idsToDestroy.length / mutationPageSize);
+  const destroyManyRecords = async ({
+    recordIdsToDestroy,
+    delayInMsBetweenRequests,
+    skipOptimisticEffect = false,
+  }: DestroyManyRecordsProps) => {
+    const numberOfBatches = Math.ceil(
+      recordIdsToDestroy.length / mutationPageSize,
+    );
 
     const destroyedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchedIdToDestroy = idsToDestroy.slice(
+      const batchedIdToDestroy = recordIdsToDestroy.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
@@ -80,7 +84,7 @@ export const useDestroyManyRecords = ({
           variables: {
             filter: { id: { in: batchedIdToDestroy } },
           },
-          optimisticResponse: options?.skipOptimisticEffect
+          optimisticResponse: skipOptimisticEffect
             ? undefined
             : {
                 [mutationResponseField]: batchedIdToDestroy.map(
@@ -90,7 +94,7 @@ export const useDestroyManyRecords = ({
                   }),
                 ),
               },
-          update: options?.skipOptimisticEffect
+          update: skipOptimisticEffect
             ? undefined
             : (cache, { data }) => {
                 const records = data?.[mutationResponseField];
@@ -126,8 +130,8 @@ export const useDestroyManyRecords = ({
 
       destroyedRecords.push(...destroyedRecordsForThisBatch);
 
-      if (isDefined(options?.delayInMsBetweenRequests)) {
-        await sleep(options.delayInMsBetweenRequests);
+      if (isDefined(delayInMsBetweenRequests)) {
+        await sleep(delayInMsBetweenRequests);
       }
     }
 
