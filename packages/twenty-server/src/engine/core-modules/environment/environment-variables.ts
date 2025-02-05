@@ -37,7 +37,6 @@ import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environmen
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
-import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
 
@@ -779,11 +778,6 @@ export class EnvironmentVariables {
     description: 'Cache storage URL',
   })
   @IsOptional()
-  @ValidateIf(
-    (env) =>
-      env.CACHE_STORAGE_TYPE === CacheStorageType.Redis ||
-      env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.BullMQ,
-  )
   @IsUrl({
     protocols: ['redis'],
     require_tld: false,
@@ -1004,12 +998,6 @@ export class EnvironmentVariables {
   @IsNumber()
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.QueueConfig,
-    description: 'Queue driver type',
-  })
-  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.QueueConfig,

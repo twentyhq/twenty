@@ -67,10 +67,6 @@ resource "kubernetes_deployment" "twentycrm_worker" {
             name  = "STORAGE_TYPE"
             value = "local"
           }
-          env {
-            name  = "MESSAGE_QUEUE_TYPE"
-            value = "bull-mq"
-          }
 
           env {
             name = "APP_SECRET"
