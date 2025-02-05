@@ -50,9 +50,7 @@ const StyledStepNodeType = styled.div<{
   margin-left: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
+  .selectable:is(.selected, :focus, :focus-visible) & {
     ${({ nodeVariant, theme }) => {
       switch (nodeVariant) {
         case 'empty':
