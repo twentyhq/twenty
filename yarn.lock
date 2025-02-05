@@ -22018,20 +22018,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^4.15.0":
-  version: 4.18.2
-  resolution: "bullmq@npm:4.18.2"
+"bullmq@npm:^5.40.0":
+  version: 5.40.0
+  resolution: "bullmq@npm:5.40.0"
   dependencies:
-    cron-parser: "npm:^4.6.0"
-    glob: "npm:^8.0.3"
-    ioredis: "npm:^5.3.2"
-    lodash: "npm:^4.17.21"
-    msgpackr: "npm:^1.6.2"
+    cron-parser: "npm:^4.9.0"
+    ioredis: "npm:^5.4.1"
+    msgpackr: "npm:^1.11.2"
     node-abort-controller: "npm:^3.1.1"
     semver: "npm:^7.5.4"
     tslib: "npm:^2.0.0"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/09371a6d53377e556a37e3e046576bb20056a14ac26d29528bd0a4054c33f458f1764ae696ae6a39fda688e8215ef34f1ba94fe56ba89db5b9ad2c9aa0082f2f
+  checksum: 10c0/00ca72939af44815cfd33e366d2bf650232ac14bc2e3afe32c3aa4bbd74e6b23bec6622f1ecf4a0da684c548ac5553738457a9780bba9bfe23bb831efb766eb8
   languageName: node
   linkType: hard
 
@@ -24025,7 +24023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cron-parser@npm:^4.0.0, cron-parser@npm:^4.6.0":
+"cron-parser@npm:^4.0.0, cron-parser@npm:^4.9.0":
   version: 4.9.0
   resolution: "cron-parser@npm:4.9.0"
   dependencies:
@@ -29005,7 +29003,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^8.0.1, glob@npm:^8.0.3, glob@npm:^8.1.0":
+"glob@npm:^8.0.1, glob@npm:^8.1.0":
   version: 8.1.0
   resolution: "glob@npm:8.1.0"
   dependencies:
@@ -31081,9 +31079,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:^5.3.2":
-  version: 5.4.1
-  resolution: "ioredis@npm:5.4.1"
+"ioredis@npm:^5.4.1":
+  version: 5.4.2
+  resolution: "ioredis@npm:5.4.2"
   dependencies:
     "@ioredis/commands": "npm:^1.1.1"
     cluster-key-slot: "npm:^1.1.0"
@@ -31094,7 +31092,7 @@ __metadata:
     redis-errors: "npm:^1.2.0"
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/5d28b7c89a3cab5b76d75923d7d4ce79172b3a1ca9be690133f6e8e393a7a4b4ffd55513e618bbb5504fed80d9e1395c9d9531a7c5c5c84aa4c4e765cca75456
+  checksum: 10c0/e59d2cceb43ed74b487d7b50fa91b93246e734e5d4835c7e62f64e44da072f12ab43b044248012e6f8b76c61a7c091a2388caad50e8ad69a8ce5515a730b23b8
   languageName: node
   linkType: hard
 
@@ -36774,15 +36772,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msgpackr@npm:^1.6.2":
-  version: 1.11.0
-  resolution: "msgpackr@npm:1.11.0"
+"msgpackr@npm:^1.11.2":
+  version: 1.11.2
+  resolution: "msgpackr@npm:1.11.2"
   dependencies:
     msgpackr-extract: "npm:^3.0.2"
   dependenciesMeta:
     msgpackr-extract:
       optional: true
-  checksum: 10c0/a7edc36754ec9f8469bc14c896f0f36e0e3de595c0bb5ac7b2ab8c2a72a2e188c12f1345d71a127f8537d9bbc880407a7073ac1d29c27822178bc0b81ae7370e
+  checksum: 10c0/7d2e81ca82c397b2352d470d6bc8f4a967fe4fe14f8fc1fc9906b23009fdfb543999b1ad29c700b8861581e0b6bf903d6f0fefb69a09375cbca6d4d802e6c906
   languageName: node
   linkType: hard
 
@@ -46188,7 +46186,7 @@ __metadata:
     bcrypt: "npm:^5.1.1"
     better-sqlite3: "npm:^9.2.2"
     body-parser: "npm:^1.20.2"
-    bullmq: "npm:^4.15.0"
+    bullmq: "npm:^5.40.0"
     bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
     class-transformer: "npm:^0.5.1"

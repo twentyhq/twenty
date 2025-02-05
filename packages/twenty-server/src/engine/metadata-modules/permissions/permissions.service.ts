@@ -54,7 +54,7 @@ export class PermissionsService {
     }
 
     throw new PermissionsException(
-      `User does not have permission to update this setting: ${setting}`,
+      `User does not have permission to access this setting: ${setting}`,
       PermissionsExceptionCode.PERMISSION_DENIED,
     );
   }
