@@ -11,6 +11,7 @@ export const permissionsGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof PermissionsException) {
     switch (error.code) {
       case PermissionsExceptionCode.PERMISSION_DENIED:
+      case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
         throw new ForbiddenError(error.message);
       default:
         throw new InternalServerError(error.message);
