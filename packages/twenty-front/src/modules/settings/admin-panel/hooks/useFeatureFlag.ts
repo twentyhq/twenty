@@ -3,8 +3,8 @@ import { userLookupResultState } from '@/settings/admin-panel/states/userLookupR
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
-    FeatureFlagKey,
-    useUpdateWorkspaceFeatureFlagMutation,
+  FeatureFlagKey,
+  useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
 
 export const useFeatureFlag = () => {
