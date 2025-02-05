@@ -22,4 +22,7 @@ export class EnvironmentVariablesGroupData {
 
   @Field(() => String, { defaultValue: '' })
   description: string;
+
+  @Field(() => Boolean, { defaultValue: false })
+  isHiddenOnLoad: boolean;
 }

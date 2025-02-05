@@ -427,6 +427,7 @@ export enum EnvironmentVariablesGroup {
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
   description: Scalars['String'];
+  isHiddenOnLoad: Scalars['Boolean'];
   name: EnvironmentVariablesGroup;
   subgroups: Array<EnvironmentVariablesSubgroupData>;
   variables: Array<EnvironmentVariable>;
@@ -452,7 +453,7 @@ export enum EnvironmentVariablesSubGroup {
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
   TinybirdConfig = 'TinybirdConfig',
-  Tokens = 'Tokens'
+  TokensDuration = 'TokensDuration'
 }
 
 export type EnvironmentVariablesSubgroupData = {
@@ -813,6 +814,7 @@ export type Mutation = {
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
+  updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
@@ -1057,6 +1059,12 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String'];
   value: Scalars['Boolean'];
   workspaceId: Scalars['String'];
+};
+
+
+export type MutationUpdateWorkspaceMemberRoleArgs = {
+  roleId?: InputMaybe<Scalars['String']>;
+  workspaceMemberId: Scalars['String'];
 };
 
 
@@ -1945,8 +1953,10 @@ export type WorkspaceMember = {
   id: Scalars['UUID'];
   locale?: Maybe<Scalars['String']>;
   name: FullName;
+  roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
+  userWorkspaceId: Scalars['String'];
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
@@ -2234,7 +2244,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', name: EnvironmentVariablesSubGroup, description: string, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
+export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }>, subgroups: Array<{ __typename?: 'EnvironmentVariablesSubgroupData', name: EnvironmentVariablesSubGroup, description: string, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> }> } };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -3862,6 +3872,7 @@ export const GetEnvironmentVariablesGroupedDocument = gql`
     groups {
       name
       description
+      isHiddenOnLoad
       variables {
         name
         description

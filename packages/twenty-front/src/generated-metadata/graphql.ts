@@ -484,10 +484,9 @@ export enum EnvironmentVariablesGroup {
   Frontend = 'Frontend',
   LLM = 'LLM',
   Logging = 'Logging',
+  Other = 'Other',
   QueueConfig = 'QueueConfig',
-  Security = 'Security',
   ServerConfig = 'ServerConfig',
-  Serverless = 'Serverless',
   Storage = 'Storage',
   Support = 'Support',
   Workspace = 'Workspace'
@@ -495,6 +494,8 @@ export enum EnvironmentVariablesGroup {
 
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
+  description: Scalars['String']['output'];
+  isHiddenOnLoad: Scalars['Boolean']['output'];
   name: EnvironmentVariablesGroup;
   subgroups: Array<EnvironmentVariablesSubgroupData>;
   variables: Array<EnvironmentVariable>;
@@ -506,26 +507,27 @@ export type EnvironmentVariablesOutput = {
 };
 
 export enum EnvironmentVariablesSubGroup {
+  BillingConfig = 'BillingConfig',
+  CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
   EmailSettings = 'EmailSettings',
-  FrontSupportConfig = 'FrontSupportConfig',
+  ExceptionHandler = 'ExceptionHandler',
   GoogleAuth = 'GoogleAuth',
-  LambdaConfig = 'LambdaConfig',
   MicrosoftAuth = 'MicrosoftAuth',
   PasswordAuth = 'PasswordAuth',
   RateLimiting = 'RateLimiting',
-  S3Config = 'S3Config',
   SSL = 'SSL',
-  SentryConfig = 'SentryConfig',
-  SmtpConfig = 'SmtpConfig',
-  StripeConfig = 'StripeConfig',
+  ServerlessConfig = 'ServerlessConfig',
+  StorageConfig = 'StorageConfig',
+  SupportChatConfig = 'SupportChatConfig',
   TinybirdConfig = 'TinybirdConfig',
-  Tokens = 'Tokens'
+  TokensDuration = 'TokensDuration'
 }
 
 export type EnvironmentVariablesSubgroupData = {
   __typename?: 'EnvironmentVariablesSubgroupData';
-  subgroupName: EnvironmentVariablesSubGroup;
+  description: Scalars['String']['output'];
+  name: EnvironmentVariablesSubGroup;
   variables: Array<EnvironmentVariable>;
 };
 
@@ -895,6 +897,7 @@ export type Mutation = {
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
+  updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: Scalars['String']['output'];
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
@@ -1189,6 +1192,12 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateWorkspaceMemberRoleArgs = {
+  roleId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberId: Scalars['String']['input'];
 };
 
 
@@ -2166,8 +2175,10 @@ export type WorkspaceMember = {
   id: Scalars['UUID']['output'];
   locale?: Maybe<Scalars['String']['output']>;
   name: FullName;
+  roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
+  userWorkspaceId: Scalars['String']['output'];
 };
 
 /** Date format as Month first, Day first, Year first or system as default */

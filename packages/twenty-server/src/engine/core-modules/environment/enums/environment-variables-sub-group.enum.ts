@@ -14,4 +14,5 @@ export enum EnvironmentVariablesSubGroup {
   CloudflareConfig = 'cloudflare-config',
   CaptchaConfig = 'captcha-config',
   ServerlessConfig = 'serverless-config',
+  LLM = 'llm',
 }

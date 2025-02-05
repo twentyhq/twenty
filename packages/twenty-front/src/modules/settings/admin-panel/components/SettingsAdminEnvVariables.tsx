@@ -1,6 +1,7 @@
 import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
 import styled from '@emotion/styled';
-import { H1Title, H1TitleFontColor, Section } from 'twenty-ui';
+import { useState } from 'react';
+import { Button, H1Title, H1TitleFontColor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 
 const StyledGroupContainer = styled.div`
@@ -37,6 +38,8 @@ const StyledGroupDescription = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledShowMoreButton = styled(Button)``;
+
 export const SettingsAdminEnvVariables = () => {
   const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
     {
@@ -44,37 +47,66 @@ export const SettingsAdminEnvVariables = () => {
     },
   );
 
+  const [showHiddenGroups, setShowHiddenGroups] = useState<
+    Record<string, boolean>
+  >({});
+
+  const toggleGroupVisibility = (groupName: string) => {
+    setShowHiddenGroups((prev) => ({
+      ...prev,
+      [groupName]: !prev[groupName],
+    }));
+  };
+
   return (
     <Section>
       {environmentVariables?.getEnvironmentVariablesGrouped.groups.map(
-        (group) => (
-          <StyledGroupContainer key={group.name}>
-            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
-            {group.description !== '' && (
-              <StyledGroupDescription>
-                {group.description}
-              </StyledGroupDescription>
-            )}
-            {group.variables.length > 0 && (
-              <StyledGroupVariablesContainer>
-                <SettingsAdminEnvVariablesTable variables={group.variables} />
-              </StyledGroupVariablesContainer>
-            )}
-            {group.subgroups.map((subgroup) => (
-              <StyledSubGroupContainer key={subgroup.name}>
-                <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
-                {subgroup.description !== '' && (
-                  <StyledSubGroupDescription>
-                    {subgroup.description}
-                  </StyledSubGroupDescription>
-                )}
-                <SettingsAdminEnvVariablesTable
-                  variables={subgroup.variables}
-                />
-              </StyledSubGroupContainer>
-            ))}
-          </StyledGroupContainer>
-        ),
+        (group) => {
+          const isHidden =
+            group.isHiddenOnLoad && !showHiddenGroups[group.name];
+          if (isHidden === true) {
+            return (
+              <StyledShowMoreButton
+                key={group.name}
+                onClick={() => toggleGroupVisibility(group.name)}
+                title={
+                  showHiddenGroups[group.name] ? 'Show Less' : 'Show More...'
+                }
+              ></StyledShowMoreButton>
+            );
+          }
+          return (
+            <StyledGroupContainer key={group.name}>
+              <H1Title
+                title={group.name}
+                fontColor={H1TitleFontColor.Primary}
+              />
+              {group.description !== '' && (
+                <StyledGroupDescription>
+                  {group.description}
+                </StyledGroupDescription>
+              )}
+              {group.variables.length > 0 && (
+                <StyledGroupVariablesContainer>
+                  <SettingsAdminEnvVariablesTable variables={group.variables} />
+                </StyledGroupVariablesContainer>
+              )}
+              {group.subgroups.map((subgroup) => (
+                <StyledSubGroupContainer key={subgroup.name}>
+                  <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
+                  {subgroup.description !== '' && (
+                    <StyledSubGroupDescription>
+                      {subgroup.description}
+                    </StyledSubGroupDescription>
+                  )}
+                  <SettingsAdminEnvVariablesTable
+                    variables={subgroup.variables}
+                  />
+                </StyledSubGroupContainer>
+              ))}
+            </StyledGroupContainer>
+          );
+        },
       )}
     </Section>
   );

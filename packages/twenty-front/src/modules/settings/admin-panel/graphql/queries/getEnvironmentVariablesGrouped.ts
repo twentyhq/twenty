@@ -6,6 +6,7 @@ export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
       groups {
         name
         description
+        isHiddenOnLoad
         variables {
           name
           description

@@ -925,33 +925,38 @@ export class EnvironmentVariables {
   CLOUDFLARE_ZONE_ID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.LLM,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.LLM,
     description: 'Driver for the LLM chat model',
   })
   LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.LLM,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.LLM,
     sensitive: true,
     description: 'API key for OpenAI integration',
   })
   OPENAI_API_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.LLM,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.LLM,
     sensitive: true,
     description: 'Secret key for Langfuse integration',
   })
   LANGFUSE_SECRET_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.LLM,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.LLM,
     description: 'Public key for Langfuse integration',
   })
   LANGFUSE_PUBLIC_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.LLM,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.LLM,
     description: 'Driver for LLM tracing',
   })
   LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;

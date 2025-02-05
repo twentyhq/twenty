@@ -11,7 +11,6 @@ export enum EnvironmentVariablesGroup {
   Billing = 'billing',
   Frontend = 'frontend',
   Support = 'support',
-  LLM = 'llm',
   Workspace = 'workspace',
   Other = 'other',
 }

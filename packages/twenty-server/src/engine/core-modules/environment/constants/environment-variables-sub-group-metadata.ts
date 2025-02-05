@@ -64,4 +64,8 @@ export const ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA: Record<
     description:
       'In our multi-tenant cloud app, we offload untrusted custom code from workflows to a serverless system (Lambda) for enhanced security and scalability. Self-hosters with a single tenant can typically ignore this configuration.',
   },
+  [EnvironmentVariablesSubGroup.LLM]: {
+    description:
+      'Configure the LLM provider and model to use for the app. This is experimental and not linked to any public feature.',
+  },
 };

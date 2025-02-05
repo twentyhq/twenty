@@ -33,13 +33,6 @@ jest.mock(
 );
 
 jest.mock(
-  'src/engine/core-modules/environment/constants/environment-variables-hidden-groups',
-  () => ({
-    ENVIRONMENT_VARIABLES_HIDDEN_GROUPS: new Set(['HIDDEN_GROUP']),
-  }),
-);
-
-jest.mock(
   'src/engine/core-modules/environment/constants/environment-variables-group-metadata',
   () => ({
     ENVIRONMENT_VARIABLES_GROUP_METADATA: {
@@ -373,35 +366,6 @@ describe('AdminPanelService', () => {
       expect(result).toEqual({
         groups: [],
       });
-    });
-
-    it('should exclude hidden groups from the output', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
-        VAR_1: {
-          value: 'value1',
-          metadata: {
-            group: 'HIDDEN_GROUP',
-            description: 'Description 1',
-          },
-        },
-        VAR_2: {
-          value: 'value2',
-          metadata: {
-            group: 'VISIBLE_GROUP',
-            description: 'Description 2',
-          },
-        },
-      });
-
-      const result = service.getEnvironmentVariablesGrouped();
-
-      expect(result.groups).toHaveLength(1);
-      expect(result.groups[0].name).toBe('VISIBLE_GROUP');
-      expect(result.groups).not.toContainEqual(
-        expect.objectContaining({
-          name: 'HIDDEN_GROUP',
-        }),
-      );
     });
   });
 });
