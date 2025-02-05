@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
+  AppTooltip,
   Avatar,
   Button,
   H2Title,
@@ -9,6 +10,7 @@ import {
   IconPlus,
   IconUser,
   Section,
+  TooltipDelay,
 } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -78,6 +80,10 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledAvatarContainer = styled.div`
+  border: 0px;
+`;
+
 export const SettingsRoles = () => {
   const { t } = useLingui();
   const isPermissionsEnabled = useIsFeatureEnabled(
@@ -139,16 +145,30 @@ export const SettingsRoles = () => {
                           {role.workspaceMembers
                             .slice(0, 5)
                             .map((workspaceMember) => (
-                              <Avatar
-                                key={workspaceMember.id}
-                                avatarUrl={workspaceMember.avatarUrl}
-                                placeholderColorSeed={workspaceMember.id}
-                                placeholder={
-                                  workspaceMember.name.firstName ?? ''
-                                }
-                                type="rounded"
-                                size="sm"
-                              />
+                              <>
+                                <StyledAvatarContainer
+                                  key={workspaceMember.id}
+                                  id={`avatar-${workspaceMember.id}`}
+                                >
+                                  <Avatar
+                                    avatarUrl={workspaceMember.avatarUrl}
+                                    placeholderColorSeed={workspaceMember.id}
+                                    placeholder={
+                                      workspaceMember.name.firstName ?? ''
+                                    }
+                                    type="rounded"
+                                    size="sm"
+                                  />
+                                </StyledAvatarContainer>
+                                <AppTooltip
+                                  anchorSelect={`#avatar-${workspaceMember.id}`}
+                                  content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                                  noArrow
+                                  place="top"
+                                  positionStrategy="fixed"
+                                  delay={TooltipDelay.shortDelay}
+                                />
+                              </>
                             ))}
                         </StyledAvatarGroup>
                         {role.workspaceMembers.length}
