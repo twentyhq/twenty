@@ -15,6 +15,8 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
@@ -27,50 +29,61 @@ export class WorkflowTriggerJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
-    const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
-        'workflow',
-      );
+    try {
+      const workflowRepository =
+        await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+        );
 
-    const workflow = await workflowRepository.findOneByOrFail({
-      id: data.workflowId,
-    });
+      const workflow = await workflowRepository.findOneByOrFail({
+        id: data.workflowId,
+      });
 
-    if (!workflow.lastPublishedVersionId) {
-      throw new WorkflowTriggerException(
-        'Workflow has no published version',
-        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      if (!workflow.lastPublishedVersionId) {
+        throw new WorkflowTriggerException(
+          'Workflow has no published version',
+          WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+        );
+      }
+
+      const workflowVersionRepository =
+        await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+        );
+
+      const workflowVersion = await workflowVersionRepository.findOneByOrFail({
+        id: workflow.lastPublishedVersionId,
+      });
+
+      if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+        throw new WorkflowTriggerException(
+          'Workflow version is not active',
+          WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+        );
+      }
+
+      await this.workflowRunnerWorkspaceService.run(
+        data.workspaceId,
+        workflow.lastPublishedVersionId,
+        data.payload,
+        {
+          source: FieldActorSource.WORKFLOW,
+          name: workflow.name,
+        },
       );
+    } catch (e) {
+      // We remove cron if it exists when no valid workflowVersion exists
+      await this.messageQueueService.removeCron({
+        jobName: WorkflowTriggerJob.name,
+        jobId: data.workflowId,
+      });
+      throw e;
     }
-
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
-      );
-
-    const workflowVersion = await workflowVersionRepository.findOneByOrFail({
-      id: workflow.lastPublishedVersionId,
-    });
-
-    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-      throw new WorkflowTriggerException(
-        'Workflow version is not active',
-        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
-      );
-    }
-
-    await this.workflowRunnerWorkspaceService.run(
-      data.workspaceId,
-      workflow.lastPublishedVersionId,
-      data.payload,
-      {
-        source: FieldActorSource.WORKFLOW,
-        name: workflow.name,
-      },
-    );
   }
 }
