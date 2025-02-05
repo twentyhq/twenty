@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared';
 
-// If the chip has text, we add extra padding to have a more balanced design
 const StyledChip = styled.button<{
   withText: boolean;
   onClick?: () => void;
@@ -16,6 +15,7 @@ const StyledChip = styled.button<{
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(6)};
+  /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
     ${({ theme, withText }) => (withText ? theme.spacing(2) : theme.spacing(1))};
   font-size: ${({ theme }) => theme.font.size.sm};

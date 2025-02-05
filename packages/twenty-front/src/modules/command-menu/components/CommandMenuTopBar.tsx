@@ -146,12 +146,12 @@ export const CommandMenuTopBar = () => {
           {isCommandMenuV2Enabled ? (
             <Button
               Icon={IconX}
-              dataTestId="page-header-open-command-menu-button"
-              size={isMobile ? 'medium' : 'small'}
+              dataTestId="page-header-close-command-menu-button"
+              size={'small'}
               variant="secondary"
               accent="default"
               hotkeys={[getOsControlSymbol(), 'K']}
-              ariaLabel="Open command menu"
+              ariaLabel="Close command menu"
               onClick={closeCommandMenu}
             />
           ) : (
