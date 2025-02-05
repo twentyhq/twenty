@@ -6,7 +6,6 @@ export const ENVIRONMENT_VARIABLES_GROUP_POSITION: Record<
 > = {
   [EnvironmentVariablesGroup.ServerConfig]: 100,
   [EnvironmentVariablesGroup.Database]: 200,
-  [EnvironmentVariablesGroup.Security]: 300,
   [EnvironmentVariablesGroup.Authentication]: 400,
   [EnvironmentVariablesGroup.Cache]: 500,
   [EnvironmentVariablesGroup.QueueConfig]: 600,
@@ -19,5 +18,5 @@ export const ENVIRONMENT_VARIABLES_GROUP_POSITION: Record<
   [EnvironmentVariablesGroup.Billing]: 1300,
   [EnvironmentVariablesGroup.Support]: 1400,
   [EnvironmentVariablesGroup.LLM]: 1500,
-  [EnvironmentVariablesGroup.Serverless]: 1600,
+  [EnvironmentVariablesGroup.Other]: 1700,
 };

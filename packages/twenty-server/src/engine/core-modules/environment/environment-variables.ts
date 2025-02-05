@@ -216,10 +216,10 @@ export class EnvironmentVariables {
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
-    subGroup: EnvironmentVariablesSubGroup.Tokens,
+    group: EnvironmentVariablesGroup.Other,
     sensitive: true,
-    description: 'Access token secret',
+    description:
+      'Legacy variable that should be deprecated when all API Keys expire. Has been replaced by APP_KEY',
   })
   @IsOptional()
   @IsString()
@@ -315,14 +315,14 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
-    subGroup: EnvironmentVariablesSubGroup.SmtpConfig,
+    subGroup: EnvironmentVariablesSubGroup.EmailSettings,
     description: 'SMTP host',
   })
   EMAIL_SMTP_HOST: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
-    subGroup: EnvironmentVariablesSubGroup.SmtpConfig,
+    subGroup: EnvironmentVariablesSubGroup.EmailSettings,
     description: 'SMTP port',
   })
   @CastToPositiveNumber()
@@ -330,21 +330,22 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
-    subGroup: EnvironmentVariablesSubGroup.SmtpConfig,
+    subGroup: EnvironmentVariablesSubGroup.EmailSettings,
     description: 'SMTP user',
   })
   EMAIL_SMTP_USER: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Email,
-    subGroup: EnvironmentVariablesSubGroup.SmtpConfig,
+    subGroup: EnvironmentVariablesSubGroup.EmailSettings,
     sensitive: true,
     description: 'SMTP password',
   })
   EMAIL_SMTP_PASSWORD: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     description: 'Storage type',
   })
   @IsEnum(StorageDriverType)
@@ -352,7 +353,8 @@ export class EnvironmentVariables {
   STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     description: 'Storage local path',
   })
   @IsString()
@@ -360,8 +362,8 @@ export class EnvironmentVariables {
   STORAGE_LOCAL_PATH = '.local-storage';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
-    subGroup: EnvironmentVariablesSubGroup.S3Config,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     description: 'Storage S3 region',
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
@@ -369,8 +371,8 @@ export class EnvironmentVariables {
   STORAGE_S3_REGION: AwsRegion;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
-    subGroup: EnvironmentVariablesSubGroup.S3Config,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     description: 'Storage S3 name',
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
@@ -378,8 +380,8 @@ export class EnvironmentVariables {
   STORAGE_S3_NAME: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
-    subGroup: EnvironmentVariablesSubGroup.S3Config,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     description: 'Storage S3 endpoint',
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
@@ -388,8 +390,8 @@ export class EnvironmentVariables {
   STORAGE_S3_ENDPOINT: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
-    subGroup: EnvironmentVariablesSubGroup.S3Config,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     sensitive: true,
     description: 'Storage S3 access key ID',
   })
@@ -399,8 +401,8 @@ export class EnvironmentVariables {
   STORAGE_S3_ACCESS_KEY_ID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Storage,
-    subGroup: EnvironmentVariablesSubGroup.S3Config,
+    group: EnvironmentVariablesGroup.ServerConfig,
+    subGroup: EnvironmentVariablesSubGroup.StorageConfig,
     sensitive: true,
     description: 'Storage S3 secret access key',
   })
@@ -410,7 +412,8 @@ export class EnvironmentVariables {
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     description: 'Serverless type',
   })
   @IsEnum(ServerlessDriverType)
@@ -418,7 +421,8 @@ export class EnvironmentVariables {
   SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     description: 'Serverless function exec throttle limit',
   })
   @CastToPositiveNumber()
@@ -426,15 +430,16 @@ export class EnvironmentVariables {
 
   // milliseconds
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     description: 'Serverless function exec throttle TTL',
   })
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
-    subGroup: EnvironmentVariablesSubGroup.LambdaConfig,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     description: 'Serverless Lambda region',
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
@@ -442,8 +447,8 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_REGION: AwsRegion;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
-    subGroup: EnvironmentVariablesSubGroup.LambdaConfig,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     description: 'Serverless Lambda role',
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
@@ -452,8 +457,8 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_ROLE: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
-    subGroup: EnvironmentVariablesSubGroup.LambdaConfig,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     sensitive: true,
     description: 'Serverless Lambda access key ID',
   })
@@ -463,8 +468,8 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Serverless,
-    subGroup: EnvironmentVariablesSubGroup.LambdaConfig,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.ServerlessConfig,
     sensitive: true,
     description: 'Serverless Lambda secret access key',
   })
@@ -474,8 +479,9 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
-    description: 'Is analytics enabled',
+    group: EnvironmentVariablesGroup.Other,
+    description:
+      'Used on our cloud app for telemetry (different from self-hosted telemetry)',
   })
   @CastToBoolean()
   @IsOptional()
@@ -522,7 +528,8 @@ export class EnvironmentVariables {
   TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     description: 'Is billing enabled',
   })
   @CastToBoolean()
@@ -531,7 +538,8 @@ export class EnvironmentVariables {
   IS_BILLING_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     description: 'Billing plan required link',
   })
   @IsString()
@@ -539,7 +547,8 @@ export class EnvironmentVariables {
   BILLING_PLAN_REQUIRED_LINK: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     description: 'Billing free trial with credit card duration in days',
   })
   @IsNumber()
@@ -549,7 +558,8 @@ export class EnvironmentVariables {
   BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS = 30;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     description: 'Billing free trial without credit card duration in days',
   })
   @IsNumber()
@@ -559,7 +569,7 @@ export class EnvironmentVariables {
   BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS = 7;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     sensitive: true,
     description: 'Billing Stripe API key',
@@ -569,7 +579,7 @@ export class EnvironmentVariables {
   BILLING_STRIPE_API_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     sensitive: true,
     description: 'Billing Stripe webhook secret',
@@ -579,7 +589,7 @@ export class EnvironmentVariables {
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Billing,
+    group: EnvironmentVariablesGroup.Other,
     sensitive: true,
     subGroup: EnvironmentVariablesSubGroup.StripeConfig,
     description: 'Billing Stripe base plan product ID',
@@ -589,7 +599,7 @@ export class EnvironmentVariables {
   BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Frontend,
+    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Frontend domain',
   })
   @IsString()
@@ -597,7 +607,7 @@ export class EnvironmentVariables {
   FRONT_DOMAIN?: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Frontend,
+    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Frontend default subdomain',
   })
   @IsString()
@@ -605,7 +615,7 @@ export class EnvironmentVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Frontend,
+    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Frontend protocol',
   })
   @IsString()
@@ -613,7 +623,7 @@ export class EnvironmentVariables {
   FRONT_PROTOCOL?: 'http' | 'https' = 'http';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Frontend,
+    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Frontend port',
   })
   @CastToPositiveNumber()
@@ -622,7 +632,7 @@ export class EnvironmentVariables {
   FRONT_PORT?: number;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Frontend,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Chrome extension ID',
   })
   @IsString()
@@ -710,7 +720,8 @@ export class EnvironmentVariables {
   SENTRY_ENVIRONMENT: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Support,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
     description: 'Support driver',
   })
   @IsEnum(SupportDriver)
@@ -718,7 +729,7 @@ export class EnvironmentVariables {
   SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Support,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
     sensitive: true,
     description: 'Support front chat ID',
@@ -728,7 +739,7 @@ export class EnvironmentVariables {
   SUPPORT_FRONT_CHAT_ID: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Support,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.FrontSupportConfig,
     sensitive: true,
     description: 'Support front HMAC key',
@@ -897,7 +908,7 @@ export class EnvironmentVariables {
   SSL_CERT_PATH: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.CloudflareConfig,
     sensitive: true,
     description: 'Cloudflare API key',
@@ -907,7 +918,7 @@ export class EnvironmentVariables {
   CLOUDFLARE_API_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.CloudflareConfig,
     description: 'Cloudflare Zone ID',
   })
@@ -988,7 +999,7 @@ export class EnvironmentVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Workspace,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Workspace inactive days before deletion',
   })
   @CastToPositiveNumber()
@@ -997,7 +1008,7 @@ export class EnvironmentVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 14;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Workspace,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Maximum number of workspaces deleted per execution',
   })
   @CastToPositiveNumber()
@@ -1027,7 +1038,8 @@ export class EnvironmentVariables {
   WORKFLOW_EXEC_THROTTLE_TTL = 1000;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Security,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.CaptchaConfig,
     description: 'Captcha driver type',
   })
   @IsEnum(CaptchaDriverType)
@@ -1035,7 +1047,8 @@ export class EnvironmentVariables {
   CAPTCHA_DRIVER?: CaptchaDriverType;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Security,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.CaptchaConfig,
     sensitive: true,
     description: 'Captcha site key',
   })
@@ -1044,7 +1057,8 @@ export class EnvironmentVariables {
   CAPTCHA_SITE_KEY?: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Security,
+    group: EnvironmentVariablesGroup.Other,
+    subGroup: EnvironmentVariablesSubGroup.CaptchaConfig,
     sensitive: true,
     description: 'Captcha secret key',
   })
@@ -1053,7 +1067,7 @@ export class EnvironmentVariables {
   CAPTCHA_SECRET_KEY?: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Security,
+    group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'Enterprise key',
   })

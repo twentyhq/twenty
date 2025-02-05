@@ -10,9 +10,8 @@ export enum EnvironmentVariablesGroup {
   Analytics = 'analytics',
   Billing = 'billing',
   Frontend = 'frontend',
-  Security = 'security',
-  Serverless = 'serverless',
   Support = 'support',
   LLM = 'llm',
   Workspace = 'workspace',
+  Other = 'other',
 }
