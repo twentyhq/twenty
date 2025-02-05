@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { capitalize } from 'twenty-shared';
+import { capitalize, ObjectRecord } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';

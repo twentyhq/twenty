@@ -4,8 +4,8 @@ import {
   SelectQueryBuilder,
   WhereExpressionBuilder,
 } from 'typeorm';
+import { ObjectRecordFilter } from 'twenty-shared';
 
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';

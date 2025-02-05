@@ -6,7 +6,7 @@ import {
   WorkflowDeleteRecordActionSettings,
   WorkflowFindRecordsActionSettings,
   WorkflowUpdateRecordActionSettings,
-} from '../workflow-actions/record-crud/workflow-record-crud-action-settings.type';
+} from 'src/workflow/types/workflow-actions/record-crud';
 
 export type BaseWorkflowActionSettings = {
   input: object;

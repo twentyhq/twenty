@@ -1,4 +1,4 @@
-import { OutputSchema } from '../workflow-builder/output-schema.type';
+import { OutputSchema } from 'src/workflow/types/workflow-builder';
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',

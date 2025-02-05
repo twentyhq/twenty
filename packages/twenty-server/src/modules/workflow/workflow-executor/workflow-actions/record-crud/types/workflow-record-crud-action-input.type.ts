@@ -1,7 +1,4 @@
-import {
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordFilter, ObjectRecordOrderBy } from 'twenty-shared';
 
 type ObjectRecord = Record<string, any>;
 

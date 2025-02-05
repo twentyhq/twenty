@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import {
+  isDefined,
+  ObjectRecord,
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
+  OrderByDirection,
+} from 'twenty-shared';
 
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';

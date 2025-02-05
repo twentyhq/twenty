@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectLiteral } from 'typeorm';
-
 import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
   OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared';
+
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';

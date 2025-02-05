@@ -1,9 +1,9 @@
-import { capitalize } from 'twenty-shared';
-
 import {
+  capitalize,
   ObjectRecordOrderBy,
   OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared';
+
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

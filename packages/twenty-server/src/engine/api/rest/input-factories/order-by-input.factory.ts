@@ -1,11 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-
-import {
-  ObjectRecordOrderBy,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordOrderBy, OrderByDirection } from 'twenty-shared';
 
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
 

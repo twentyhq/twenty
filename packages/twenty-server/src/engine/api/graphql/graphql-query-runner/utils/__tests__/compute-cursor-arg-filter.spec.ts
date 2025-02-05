@@ -1,6 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
-
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { FieldMetadataType, OrderByDirection } from 'twenty-shared';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';

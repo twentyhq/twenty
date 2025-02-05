@@ -1,10 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
-
 import {
   ObjectRecord,
   ObjectRecordFilter,
   ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared';
 
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 

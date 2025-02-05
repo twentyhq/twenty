@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
 import { In } from 'typeorm';
+import {
+  ObjectRecord,
+  ObjectRecordFilter,
+  OrderByDirection,
+} from 'twenty-shared';
 
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';

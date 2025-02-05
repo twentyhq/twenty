@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
-import { FieldMetadataType } from 'twenty-shared';
-
 import {
+  FieldMetadataType,
   ObjectRecord,
   ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared';
+
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   CreateManyResolverArgs,

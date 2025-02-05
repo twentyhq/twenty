@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord } from 'twenty-shared';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';

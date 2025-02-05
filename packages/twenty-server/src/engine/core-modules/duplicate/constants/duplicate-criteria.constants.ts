@@ -1,4 +1,4 @@
-import { ObjectRecordDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecordDuplicateCriteria } from 'twenty-shared';
 
 /**
  * objectName: directly reference the name of the object from the metadata tables.

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { In, InsertResult } from 'typeorm';
+import { ObjectRecord } from 'twenty-shared';
 
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 

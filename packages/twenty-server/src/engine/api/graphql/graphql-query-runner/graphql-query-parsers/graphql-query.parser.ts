@@ -4,11 +4,8 @@ import {
   OrderByCondition,
   SelectQueryBuilder,
 } from 'typeorm';
+import { ObjectRecordFilter, ObjectRecordOrderBy } from 'twenty-shared';
 
-import {
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';

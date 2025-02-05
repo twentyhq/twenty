@@ -1,10 +1,9 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import {
+  FieldMetadataType,
   ObjectRecordFilter,
   ObjectRecordOrderBy,
   OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+} from 'twenty-shared';
 
 import {
   GraphqlQueryRunnerException,

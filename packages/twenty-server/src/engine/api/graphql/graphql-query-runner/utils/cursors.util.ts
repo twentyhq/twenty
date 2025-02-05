@@ -1,7 +1,5 @@
-import {
-  ObjectRecord,
-  ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord, ObjectRecordOrderBy } from 'twenty-shared';
+
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
