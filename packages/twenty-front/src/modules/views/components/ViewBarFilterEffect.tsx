@@ -8,7 +8,6 @@ import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/ob
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared';
@@ -21,10 +20,6 @@ export const ViewBarFilterEffect = ({
   filterDropdownId,
 }: ViewBarFilterEffectProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-  );
 
   const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
     filterDefinitionUsedInDropdownComponentState,
@@ -41,18 +36,6 @@ export const ViewBarFilterEffect = ({
       objectFilterDropdownSelectedOptionValuesComponentState,
       filterDropdownId,
     );
-
-  // TODO: verify this instance id works
-  const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
-    availableFilterDefinitionsComponentState,
-    filterDropdownId,
-  );
-
-  useEffect(() => {
-    if (isDefined(availableFilterDefinitions)) {
-      setAvailableFilterDefinitions(availableFilterDefinitions);
-    }
-  }, [availableFilterDefinitions, setAvailableFilterDefinitions]);
 
   useEffect(() => {
     if (filterDefinitionUsedInDropdown?.type === 'RELATION') {

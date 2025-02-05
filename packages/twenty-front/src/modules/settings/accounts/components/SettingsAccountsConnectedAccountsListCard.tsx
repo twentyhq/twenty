@@ -4,10 +4,7 @@ import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsListCard } from '../../components/SettingsListCard';
 
@@ -24,16 +21,10 @@ export const SettingsAccountsConnectedAccountsListCard = ({
   loading?: boolean;
 }) => {
   const navigate = useNavigateSettings();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   if (!accounts.length) {
     return <SettingsAccountsListEmptyStateCard />;
   }
-
-  const atLeastOneProviderAvailable =
-    isDefined(currentWorkspace) &&
-    (currentWorkspace?.isGoogleAuthEnabled ||
-      currentWorkspace?.isMicrosoftAuthEnabled);
 
   return (
     <SettingsListCard
@@ -44,7 +35,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       RowRightComponent={({ item: account }) => (
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}
-      hasFooter={atLeastOneProviderAvailable}
+      hasFooter={true}
       footerButtonLabel="Add account"
       onFooterButtonClick={() => navigate(SettingsPath.NewAccount)}
     />

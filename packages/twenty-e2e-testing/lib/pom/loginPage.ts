@@ -35,7 +35,7 @@ export class LoginPage {
       name: 'Continue with Google',
     });
     this.loginWithEmailButton = page.getByRole('button', {
-      name: 'Continue With Email',
+      name: 'Continue with Email',
     });
     this.termsOfServiceLink = page.getByRole('link', {
       name: 'Terms of Service',

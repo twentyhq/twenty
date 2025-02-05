@@ -53,7 +53,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const continueWithEmailButton = await canvas.findByText(
-      'Continue With Email',
+      'Continue with Email',
     );
 
     await fireEvent.click(continueWithEmailButton);

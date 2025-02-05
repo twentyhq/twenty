@@ -34,7 +34,12 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
 
 // TODO: Remove this middleware when all the rest endpoints are migrated to TwentyORM
-const MIGRATED_REST_METHODS = [RequestMethod.DELETE];
+const MIGRATED_REST_METHODS = [
+  RequestMethod.DELETE,
+  RequestMethod.POST,
+  RequestMethod.PATCH,
+  RequestMethod.PUT,
+];
 
 @Module({
   imports: [

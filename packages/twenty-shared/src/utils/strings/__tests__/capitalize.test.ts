@@ -1,4 +1,4 @@
-import { capitalize } from 'src/utils/strings/capitalize';
+import { capitalize } from '../capitalize';
 describe('capitalize', () => {
   it('should capitalize a string', () => {
     expect(capitalize('test')).toBe('Test');

@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -48,6 +49,7 @@ export class MicrosoftAPIsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async refreshMicrosoftRefreshToken(input: {
@@ -167,37 +169,42 @@ export class MicrosoftAPIsService {
           workspaceId,
         });
 
-        const newCalendarChannel = await calendarChannelRepository.save(
-          {
-            id: v4(),
-            connectedAccountId: newOrExistingConnectedAccountId,
-            handle,
-            visibility:
-              calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
-          },
-          {},
-          manager,
-        );
-
-        const calendarChannelMetadata =
-          await this.objectMetadataRepository.findOneOrFail({
-            where: { nameSingular: 'calendarChannel', workspaceId },
-          });
-
-        this.workspaceEventEmitter.emitDatabaseBatchEvent({
-          objectMetadataNameSingular: 'calendarChannel',
-          action: DatabaseEventAction.CREATED,
-          events: [
+        if (
+          this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
+        ) {
+          const newCalendarChannel = await calendarChannelRepository.save(
             {
-              recordId: newCalendarChannel.id,
-              objectMetadata: calendarChannelMetadata,
-              properties: {
-                after: newCalendarChannel,
-              },
+              id: v4(),
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              visibility:
+                calendarVisibility ||
+                CalendarChannelVisibility.SHARE_EVERYTHING,
             },
-          ],
-          workspaceId,
-        });
+            {},
+            manager,
+          );
+
+          const calendarChannelMetadata =
+            await this.objectMetadataRepository.findOneOrFail({
+              where: { nameSingular: 'calendarChannel', workspaceId },
+            });
+
+          this.workspaceEventEmitter.emitDatabaseBatchEvent({
+            objectMetadataNameSingular: 'calendarChannel',
+            action: DatabaseEventAction.CREATED,
+            events: [
+              {
+                recordId: newCalendarChannel.id,
+                objectMetadata: calendarChannelMetadata,
+                properties: {
+                  after: newCalendarChannel,
+                },
+              },
+            ],
+            workspaceId,
+          });
+        }
       } else {
         const updatedConnectedAccount = await connectedAccountRepository.update(
           {
@@ -291,36 +298,40 @@ export class MicrosoftAPIsService {
       }
     });
 
-    const messageChannels = await messageChannelRepository.find({
-      where: {
-        connectedAccountId: newOrExistingConnectedAccountId,
-      },
-    });
-
-    for (const messageChannel of messageChannels) {
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        {
-          workspaceId,
-          messageChannelId: messageChannel.id,
+    if (this.environmentService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')) {
+      const messageChannels = await messageChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const messageChannel of messageChannels) {
+        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+          MessagingMessageListFetchJob.name,
+          {
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
+        );
+      }
     }
 
-    const calendarChannels = await calendarChannelRepository.find({
-      where: {
-        connectedAccountId: newOrExistingConnectedAccountId,
-      },
-    });
-
-    for (const calendarChannel of calendarChannels) {
-      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-        CalendarEventListFetchJob.name,
-        {
-          calendarChannelId: calendarChannel.id,
-          workspaceId,
+    if (this.environmentService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')) {
+      const calendarChannels = await calendarChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+          CalendarEventListFetchJob.name,
+          {
+            calendarChannelId: calendarChannel.id,
+            workspaceId,
+          },
+        );
+      }
     }
   }
 }

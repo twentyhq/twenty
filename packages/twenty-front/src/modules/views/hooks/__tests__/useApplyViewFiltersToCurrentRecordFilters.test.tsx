@@ -1,26 +1,38 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isDefined } from 'twenty-shared';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyViewFiltersToCurrentRecordFilters } from '../useApplyViewFiltersToCurrentRecordFilters';
 
 describe('useApplyViewFiltersToCurrentRecordFilters', () => {
-  const mockAvailableFilterDefinition: RecordFilterDefinition = {
-    fieldMetadataId: 'field-1',
-    label: 'Test Field',
-    type: 'TEXT',
-    iconName: 'IconText',
-  };
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      'Missing mock object metadata item with name singular "company"',
+    );
+  }
+
+  const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
+
+  const mockAvailableFilterDefinition: RecordFilterDefinition =
+    formatFieldMetadataItemAsFilterDefinition({
+      field: mockFieldMetadataItem,
+    });
 
   const mockViewFilter: ViewFilter = {
     __typename: 'ViewFilter',
     id: 'filter-1',
-    fieldMetadataId: 'field-1',
+    fieldMetadataId: mockFieldMetadataItem.id,
     operand: ViewFilterOperand.Contains,
     value: 'test',
     displayValue: 'test',
@@ -42,16 +54,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockAvailableFilterDefinition],
-            );
-          },
-        }),
+        wrapper: getJestMetadataAndApolloMocksWrapper({}),
       },
     );
 
@@ -86,16 +89,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         return { applyViewFiltersToCurrentRecordFilters, currentFilters };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksWrapper({
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              availableFilterDefinitionsComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              [mockAvailableFilterDefinition],
-            );
-          },
-        }),
+        wrapper: getJestMetadataAndApolloMocksWrapper({}),
       },
     );
 
