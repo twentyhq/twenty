@@ -53,11 +53,11 @@ export const SettingsAdminEnvVariables = () => {
                 {group.description}
               </StyledGroupDescription>
             )}
-            <StyledGroupVariablesContainer>
-              {group.variables.length > 0 && (
+            {group.variables.length > 0 && (
+              <StyledGroupVariablesContainer>
                 <SettingsAdminEnvVariablesTable variables={group.variables} />
-              )}
-            </StyledGroupVariablesContainer>
+              </StyledGroupVariablesContainer>
+            )}
             {group.subgroups.map((subgroup) => (
               <StyledSubGroupContainer key={subgroup.name}>
                 <StyledSubGroupTitle>{subgroup.name}</StyledSubGroupTitle>
