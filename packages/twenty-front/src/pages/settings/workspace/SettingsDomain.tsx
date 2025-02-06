@@ -1,5 +1,8 @@
 import { ApolloError } from '@apollo/client';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import {
+  CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -22,6 +25,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsHostnameEffect } from '~/pages/settings/workspace/SettingsHostnameEffect';
+import { isDefined } from 'twenty-shared';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -36,6 +40,16 @@ export const SettingsDomain = () => {
         .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
           message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
         }),
+      hostname: z
+        .string()
+        .regex(
+          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+          {
+            message: t`Invalid custom hostname. Custom hostnames have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+          },
+        )
+        .max(256)
+        .nullable(),
     })
     .required();
 
@@ -53,30 +67,61 @@ export const SettingsDomain = () => {
 
   const form = useForm<{
     subdomain: string;
+    hostname: string | null;
   }>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
+      hostname: currentWorkspace?.hostname ?? null,
     },
     resolver: zodResolver(validationSchema),
   });
 
   const subdomainValue = form.watch('subdomain');
+  const hostnameValue = form.watch('hostname');
 
-  const handleSave = async () => {
-    const values = form.getValues();
-
-    if (!values || !form.formState.isValid || !currentWorkspace) {
-      return enqueueSnackBar(t`Invalid form values`, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-
-    await updateWorkspace({
+  const updateHostname = (
+    hostname: string,
+    currentWorkspace: CurrentWorkspace,
+  ) => {
+    updateWorkspace({
       variables: {
         input: {
-          subdomain: values.subdomain,
+          hostname,
+        },
+      },
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          hostname: hostname,
+        });
+      },
+      onError: (error) => {
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+        ) {
+          return form.control.setError('subdomain', {
+            type: 'manual',
+            message: t`Subdomain already taken`,
+          });
+        }
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      },
+    });
+  };
+
+  const updateSubdomain = (
+    subdomain: string,
+    currentWorkspace: CurrentWorkspace,
+  ) => {
+    updateWorkspace({
+      variables: {
+        input: {
+          subdomain,
         },
       },
       onError: (error) => {
@@ -98,16 +143,42 @@ export const SettingsDomain = () => {
 
         currentUrl.hostname = new URL(
           currentWorkspace.workspaceUrls.subdomainUrl,
-        ).hostname.replace(currentWorkspace.subdomain, values.subdomain);
+        ).hostname.replace(currentWorkspace.subdomain, subdomain);
 
         setCurrentWorkspace({
           ...currentWorkspace,
-          subdomain: values.subdomain,
+          subdomain,
         });
 
         redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
+  };
+
+  const handleSave = async () => {
+    const values = form.getValues();
+
+    if (!values || !form.formState.isValid || !currentWorkspace) {
+      return enqueueSnackBar(t`Invalid form values`, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    console.log('>>>>>>>>>>>>>>', values);
+
+    if (
+      isDefined(values.subdomain) &&
+      values.subdomain !== currentWorkspace.subdomain
+    ) {
+      return updateSubdomain(values.subdomain, currentWorkspace);
+    }
+
+    if (
+      isDefined(values.hostname) &&
+      values.hostname !== currentWorkspace.hostname
+    ) {
+      return updateHostname(values.hostname, currentWorkspace);
+    }
   };
 
   return (
@@ -128,7 +199,8 @@ export const SettingsDomain = () => {
         <SaveAndCancelButtons
           isSaveDisabled={
             !form.formState.isValid ||
-            subdomainValue === currentWorkspace?.subdomain
+            subdomainValue === currentWorkspace?.subdomain ||
+            hostnameValue === currentWorkspace?.hostname
           }
           onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
