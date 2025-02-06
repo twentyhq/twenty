@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -21,8 +21,8 @@ export const ViewBarFilterEffect = ({
 }: ViewBarFilterEffectProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
     filterDropdownId,
   );
 
@@ -38,12 +38,11 @@ export const ViewBarFilterEffect = ({
     );
 
   useEffect(() => {
-    if (filterDefinitionUsedInDropdown?.type === 'RELATION') {
+    if (fieldMetadataItemUsedInDropdown?.type === 'RELATION') {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>
-            filter.fieldMetadataId ===
-            filterDefinitionUsedInDropdown?.fieldMetadataId,
+            filter.fieldMetadataId === fieldMetadataItemUsedInDropdown?.id,
         );
 
       const { selectedRecordIds } = jsonRelationFilterValueSchema
@@ -57,14 +56,13 @@ export const ViewBarFilterEffect = ({
 
       setObjectFilterDropdownSelectedRecordIds(selectedRecordIds);
     } else if (
-      isDefined(filterDefinitionUsedInDropdown) &&
-      ['SELECT', 'MULTI_SELECT'].includes(filterDefinitionUsedInDropdown.type)
+      isDefined(fieldMetadataItemUsedInDropdown) &&
+      ['SELECT', 'MULTI_SELECT'].includes(fieldMetadataItemUsedInDropdown.type)
     ) {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>
-            filter.fieldMetadataId ===
-            filterDefinitionUsedInDropdown?.fieldMetadataId,
+            filter.fieldMetadataId === fieldMetadataItemUsedInDropdown?.id,
         );
 
       const viewFilterSelectedRecords = isNonEmptyString(
@@ -75,7 +73,7 @@ export const ViewBarFilterEffect = ({
       setObjectFilterDropdownSelectedOptionValues(viewFilterSelectedRecords);
     }
   }, [
-    filterDefinitionUsedInDropdown,
+    fieldMetadataItemUsedInDropdown,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
     currentViewWithCombinedFiltersAndSorts,

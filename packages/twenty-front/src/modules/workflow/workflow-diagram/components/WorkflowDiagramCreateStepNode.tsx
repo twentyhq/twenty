@@ -1,4 +1,4 @@
-import { StyledHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
+import { StyledHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
 import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
 import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';

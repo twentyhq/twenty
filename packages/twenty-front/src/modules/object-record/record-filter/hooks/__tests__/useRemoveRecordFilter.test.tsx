@@ -47,6 +47,8 @@ describe('useRemoveRecordFilter', () => {
         label: 'Test Field',
         iconName: 'IconText',
       },
+      label: 'Test Field',
+      type: 'TEXT',
     };
 
     // First add a filter
@@ -96,6 +98,8 @@ describe('useRemoveRecordFilter', () => {
         label: 'Test Field',
         iconName: 'IconText',
       },
+      label: 'Test Field',
+      type: 'TEXT',
     };
 
     // Add a filter

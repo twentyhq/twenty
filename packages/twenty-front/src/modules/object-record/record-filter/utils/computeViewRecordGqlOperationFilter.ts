@@ -795,7 +795,7 @@ const computeFilterRecordGqlOperationFilter = (
           );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.label} filter`,
+            `Unknown operand ${filter.operand} for ${filter.label} filter`,
           );
       }
     }
