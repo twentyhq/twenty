@@ -8,6 +8,11 @@ import { WorkflowDiagramEmptyTrigger } from '../WorkflowDiagramEmptyTrigger';
 const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTrigger',
   component: WorkflowDiagramEmptyTrigger,
+  args: {
+    data: {
+      isLeafNode: true,
+    },
+  },
 };
 
 export default meta;
