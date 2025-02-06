@@ -36,17 +36,19 @@ const StyledIconsContainer = styled.div`
   display: flex;
 `;
 
+export type CommandMenuContextChipProps = {
+  Icons: React.ReactNode[];
+  text?: string;
+  onClick?: () => void;
+  testId?: string;
+};
+
 export const CommandMenuContextChip = ({
   Icons,
   text,
   onClick,
   testId,
-}: {
-  Icons: React.ReactNode[];
-  text?: string;
-  onClick?: () => void;
-  testId?: string;
-}) => {
+}: CommandMenuContextChipProps) => {
   return (
     <StyledChip
       withText={isNonEmptyString(text)}
