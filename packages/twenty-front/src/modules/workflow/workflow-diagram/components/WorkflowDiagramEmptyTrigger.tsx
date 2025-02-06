@@ -1,4 +1,4 @@
-import { WorkflowDiagramBaseStepNode } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseStepNode';
+import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
 import styled from '@emotion/styled';
 
 const StyledStepNodeLabelIconContainer = styled.div`
@@ -12,7 +12,7 @@ const StyledStepNodeLabelIconContainer = styled.div`
 
 export const WorkflowDiagramEmptyTrigger = () => {
   return (
-    <WorkflowDiagramBaseStepNode
+    <WorkflowDiagramStepNodeBase
       name="Add a Trigger"
       nodeType="trigger"
       variant="empty"

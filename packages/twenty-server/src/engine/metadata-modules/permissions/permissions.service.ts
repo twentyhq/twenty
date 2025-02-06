@@ -21,8 +21,9 @@ export class PermissionsService {
   }: {
     userWorkspaceId: string;
   }): Promise<Record<SettingsFeatures, boolean>> {
-    const [roleOfUserWorkspace] =
-      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces([userWorkspaceId])
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
     let hasPermissionOnSettingFeature = false;
 
@@ -46,10 +47,11 @@ export class PermissionsService {
     userWorkspaceId: string;
     setting: SettingsFeatures;
   }): Promise<void> {
-    const [userWorkspaceRole] =
-      await this.userRoleService.getRolesForUserWorkspace(userWorkspaceId);
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces([userWorkspaceId])
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    if (userWorkspaceRole?.canUpdateAllSettings === true) {
+    if (roleOfUserWorkspace?.canUpdateAllSettings === true) {
       return;
     }
 

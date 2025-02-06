@@ -101,9 +101,12 @@ export class RoleResolver {
       });
     }
 
-    const roles = await this.userRoleService.getRolesForUserWorkspace(
-      userWorkspace.id,
-    );
+    const roles = await this.userRoleService
+      .getRolesByUserWorkspaces([userWorkspace.id])
+      .then(
+        (rolesByUserWorkspaces) =>
+          rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],
+      );
 
     return {
       ...workspaceMember,
