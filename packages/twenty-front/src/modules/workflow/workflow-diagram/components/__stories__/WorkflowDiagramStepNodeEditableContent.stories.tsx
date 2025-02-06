@@ -34,29 +34,44 @@ const ALL_STEPS = [
     nodeType: 'trigger',
     triggerType: 'DATABASE_EVENT',
     name: 'Record is Created',
+    isLeafNode: true,
   },
-  { nodeType: 'trigger', triggerType: 'MANUAL', name: 'Manual' },
+  {
+    nodeType: 'trigger',
+    triggerType: 'MANUAL',
+    name: 'Manual',
+    isLeafNode: true,
+  },
   {
     nodeType: 'action',
     actionType: 'CREATE_RECORD',
     name: 'Create Record',
+    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'UPDATE_RECORD',
     name: 'Update Record',
+    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'DELETE_RECORD',
     name: 'Delete Record',
+    isLeafNode: true,
   },
   {
     nodeType: 'action',
     actionType: 'SEND_EMAIL',
     name: 'Send Email',
+    isLeafNode: true,
   },
-  { nodeType: 'action', actionType: 'CODE', name: 'Code' },
+  {
+    nodeType: 'action',
+    actionType: 'CODE',
+    name: 'Code',
+    isLeafNode: true,
+  },
 ] satisfies WorkflowDiagramStepNodeData[];
 
 export const Catalog: CatalogStory<Story, typeof Wrapper> = {
