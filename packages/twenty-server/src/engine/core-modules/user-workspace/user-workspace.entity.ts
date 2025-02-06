@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -66,4 +67,7 @@ export class UserWorkspace {
     (twoFactorMethod) => twoFactorMethod.userWorkspace,
   )
   twoFactorMethods: Relation<TwoFactorMethod[]>;
+
+  @Field(() => [String], { nullable: true })
+  settingsPermissions?: SettingsFeatures[];
 }
