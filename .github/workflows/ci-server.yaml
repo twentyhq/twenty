@@ -78,7 +78,15 @@ jobs:
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
-        run: npx nx run twenty-server:worker:ci
+        run: |
+          timeout 30s npx nx run twenty-server:worker || exit_code=$?
+          if [ $exit_code -eq 124 ]; then
+            # If timeout was reached (exit code 124), consider it a success
+            exit 0
+          elif [ $exit_code -ne 0 ]; then
+            # If worker failed for other reasons, fail the build
+            exit $exit_code
+          fi
       - name: Server / Check for Pending Migrations
         run: |
           METADATA_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate metadata-migration-check -d src/database/typeorm/metadata/metadata.datasource.ts || true)
