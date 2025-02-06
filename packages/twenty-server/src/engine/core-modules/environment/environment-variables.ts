@@ -38,7 +38,7 @@ import { assert } from 'src/utils/assert';
 
 export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Enable or disable password authentication for users',
   })
   @CastToBoolean()
@@ -58,7 +58,7 @@ export class EnvironmentVariables {
   SIGN_IN_PREFILLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Require email verification for user accounts',
   })
   @CastToBoolean()
@@ -67,7 +67,7 @@ export class EnvironmentVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the email verification token is valid',
   })
@@ -76,7 +76,7 @@ export class EnvironmentVariables {
   EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the password reset token is valid',
   })
@@ -224,7 +224,7 @@ export class EnvironmentVariables {
   ACCESS_TOKEN_SECRET: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the access token is valid',
   })
@@ -233,7 +233,7 @@ export class EnvironmentVariables {
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the refresh token is valid',
   })
@@ -259,7 +259,7 @@ export class EnvironmentVariables {
   LOGIN_TOKEN_EXPIRES_IN = '15m';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the file token is valid',
   })
@@ -268,7 +268,7 @@ export class EnvironmentVariables {
   FILE_TOKEN_EXPIRES_IN = '1d';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the invitation token is valid',
   })
@@ -277,7 +277,7 @@ export class EnvironmentVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Authentication,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Duration for which the short-term token is valid',
   })
@@ -651,7 +651,7 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
-    description: 'Driver used for handling exceptions (console, sentry, etc.)',
+    description: 'Driver used for handling exceptions (Console or Sentry)',
   })
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
@@ -669,7 +669,7 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
     subGroup: EnvironmentVariablesSubGroup.ExceptionHandler,
-    description: 'Driver used for logging (console, etc.)',
+    description: 'Driver used for logging (only console for now)',
   })
   @IsEnum(LoggerDriverType)
   @IsOptional()
@@ -775,7 +775,7 @@ export class EnvironmentVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
+    group: EnvironmentVariablesGroup.Other,
     subGroup: EnvironmentVariablesSubGroup.TokensDuration,
     description: 'Time-to-live for cache storage in seconds',
   })
@@ -958,8 +958,9 @@ export class EnvironmentVariables {
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Workspace,
-    description: 'Enable or disable permissions for workspaces',
+    group: EnvironmentVariablesGroup.Other,
+    description:
+      'Use as a feature flag for the new permission feature we are working on.',
   })
   @CastToBoolean()
   @IsOptional()
@@ -967,9 +968,9 @@ export class EnvironmentVariables {
   PERMISSIONS_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Workspace,
+    group: EnvironmentVariablesGroup.Other,
     description:
-      'Number of inactive days before sending a deletion warning for workspaces',
+      'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
   })
   @CastToPositiveNumber()
   @IsNumber()
