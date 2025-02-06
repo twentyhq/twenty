@@ -12,12 +12,16 @@ export const useActivateWorkflowSingleRecordAction: ActionHookWithoutObjectMetad
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
+    if (!isDefined(workflowWithCurrentVersion)) {
+      throw new Error('Cannot activate workflow. No workflow version found.');
+    }
+
     const shouldBeRegistered =
-      isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-      isDefined(workflowWithCurrentVersion?.currentVersion?.steps) &&
-      workflowWithCurrentVersion?.currentVersion.steps.length > 0 &&
-      (workflowWithCurrentVersion?.currentVersion.status === 'DRAFT' ||
-        !workflowWithCurrentVersion?.versions?.some(
+      isDefined(workflowWithCurrentVersion.currentVersion?.trigger) &&
+      isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
+      workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
+      (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
+        !workflowWithCurrentVersion.versions?.some(
           (version) => version.status === 'ACTIVE',
         ));
 
@@ -27,8 +31,8 @@ export const useActivateWorkflowSingleRecordAction: ActionHookWithoutObjectMetad
       }
 
       activateWorkflowVersion({
-        workflowVersionId: workflowWithCurrentVersion?.currentVersion.id,
-        workflowId: workflowWithCurrentVersion?.id,
+        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+        workflowId: workflowWithCurrentVersion.id,
       });
     };
 
