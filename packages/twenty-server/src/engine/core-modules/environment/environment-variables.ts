@@ -22,7 +22,6 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
 
-import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
@@ -758,12 +757,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   @IsOptional()
   PG_SSL_ALLOW_SELF_SIGNED = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Cache,
-    description: 'Cache storage type',
-  })
-  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Redis;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Cache,

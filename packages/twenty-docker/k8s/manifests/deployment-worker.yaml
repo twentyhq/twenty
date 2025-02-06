@@ -34,8 +34,6 @@ spec:
               value: "false" # it already runs on the server
             - name: STORAGE_TYPE
               value: "local"
-            - name: "CACHE_STORAGE_TYPE"
-              value: "redis"
             - name: "REDIS_URL"
               value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
             - name: APP_SECRET
