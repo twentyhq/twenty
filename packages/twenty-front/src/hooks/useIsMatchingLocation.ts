@@ -1,21 +1,25 @@
-import { useCallback } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 
 import { AppBasePath } from '@/types/AppBasePath';
 
 export const useIsMatchingLocation = () => {
   const location = useLocation();
-  return useCallback(
-    (path: string, basePath?: AppBasePath) => {
-      const constructedPath = basePath
-        ? (new URL(
-            (basePath.endsWith('/') ? basePath : basePath + '/') + path,
-            document.location.origin,
-          ).pathname ?? '')
-        : path;
 
-      return !!matchPath(constructedPath, location.pathname);
-    },
-    [location.pathname],
-  );
+  const addTrailingSlash = (path: string) =>
+    path.endsWith('/') ? path : path + '/';
+
+  const getConstructedPath = (path: string, basePath?: AppBasePath) => {
+    if (!basePath) return path;
+
+    return addTrailingSlash(basePath) + path;
+  };
+
+  return (path: string, basePath?: AppBasePath) => {
+    console.log(
+      '>>>>>>>>>>>>>>',
+      getConstructedPath(path, basePath),
+      location.pathname,
+    );
+    return !!matchPath(getConstructedPath(path, basePath), location.pathname);
+  };
 };
