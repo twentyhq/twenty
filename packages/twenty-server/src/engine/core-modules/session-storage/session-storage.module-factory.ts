@@ -1,16 +1,14 @@
-import { Logger } from '@nestjs/common';
-
-import { createClient } from 'redis';
 import RedisStore from 'connect-redis';
 import session from 'express-session';
+import { createClient } from 'redis';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 export const getSessionStorageOptions = (
   environmentService: EnvironmentService,
 ): session.SessionOptions => {
-  const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
+  const cacheStorageType = CacheStorageType.Redis;
 
   const SERVER_URL = environmentService.get('SERVER_URL');
 
@@ -26,13 +24,13 @@ export const getSessionStorageOptions = (
   };
 
   switch (cacheStorageType) {
-    case CacheStorageType.Memory: {
+    /* case CacheStorageType.Memory: {
       Logger.warn(
         'Memory session storage is not recommended for production. Prefer Redis.',
       );
 
       return sessionStorage;
-    }
+    }*/
     case CacheStorageType.Redis: {
       const connectionString = environmentService.get('REDIS_URL');
 

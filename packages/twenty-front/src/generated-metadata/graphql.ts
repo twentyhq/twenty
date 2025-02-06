@@ -478,12 +478,10 @@ export enum EnvironmentVariablesGroup {
   Database = 'Database',
   Email = 'Email',
   Frontend = 'Frontend',
-  LLM = 'LLM',
   Logging = 'Logging',
+  Other = 'Other',
   QueueConfig = 'QueueConfig',
-  Security = 'Security',
   ServerConfig = 'ServerConfig',
-  Serverless = 'Serverless',
   Storage = 'Storage',
   Support = 'Support',
   Workspace = 'Workspace'
@@ -491,7 +489,9 @@ export enum EnvironmentVariablesGroup {
 
 export type EnvironmentVariablesGroupData = {
   __typename?: 'EnvironmentVariablesGroupData';
-  groupName: EnvironmentVariablesGroup;
+  description: Scalars['String']['output'];
+  isHiddenOnLoad: Scalars['Boolean']['output'];
+  name: EnvironmentVariablesGroup;
   subgroups: Array<EnvironmentVariablesSubgroupData>;
   variables: Array<EnvironmentVariable>;
 };
@@ -502,26 +502,28 @@ export type EnvironmentVariablesOutput = {
 };
 
 export enum EnvironmentVariablesSubGroup {
+  BillingConfig = 'BillingConfig',
+  CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
   EmailSettings = 'EmailSettings',
-  FrontSupportConfig = 'FrontSupportConfig',
+  ExceptionHandler = 'ExceptionHandler',
   GoogleAuth = 'GoogleAuth',
-  LambdaConfig = 'LambdaConfig',
+  LLM = 'LLM',
   MicrosoftAuth = 'MicrosoftAuth',
   PasswordAuth = 'PasswordAuth',
   RateLimiting = 'RateLimiting',
-  S3Config = 'S3Config',
   SSL = 'SSL',
-  SentryConfig = 'SentryConfig',
-  SmtpConfig = 'SmtpConfig',
-  StripeConfig = 'StripeConfig',
+  ServerlessConfig = 'ServerlessConfig',
+  StorageConfig = 'StorageConfig',
+  SupportChatConfig = 'SupportChatConfig',
   TinybirdConfig = 'TinybirdConfig',
-  Tokens = 'Tokens'
+  TokensDuration = 'TokensDuration'
 }
 
 export type EnvironmentVariablesSubgroupData = {
   __typename?: 'EnvironmentVariablesSubgroupData';
-  subgroupName: EnvironmentVariablesSubGroup;
+  description: Scalars['String']['output'];
+  name: EnvironmentVariablesSubGroup;
   variables: Array<EnvironmentVariable>;
 };
 
