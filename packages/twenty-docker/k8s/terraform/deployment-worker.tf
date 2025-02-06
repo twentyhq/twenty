@@ -49,11 +49,6 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "CACHE_STORAGE_TYPE"
-            value = "redis"
-          }
-
-          env {
             name  = "REDIS_URL"
             value = "redis://${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local:6379"
           }
@@ -66,10 +61,6 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           env {
             name  = "STORAGE_TYPE"
             value = "local"
-          }
-          env {
-            name  = "MESSAGE_QUEUE_TYPE"
-            value = "bull-mq"
           }
 
           env {

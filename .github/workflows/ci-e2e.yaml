@@ -103,7 +103,7 @@ jobs:
         
     - name: Start worker
       run: |
-        npx nx run twenty-server:worker:ci &
+        npx nx run twenty-server:worker &
         echo "Worker started"
 
     - name: Run Playwright tests
