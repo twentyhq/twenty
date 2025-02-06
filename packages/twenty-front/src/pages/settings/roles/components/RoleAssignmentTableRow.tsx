@@ -1,0 +1,96 @@
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import styled from '@emotion/styled';
+import {
+  AppTooltip,
+  Avatar,
+  IconButton,
+  IconTrash,
+  TooltipDelay,
+} from 'twenty-ui';
+import { WorkspaceMember } from '~/generated-metadata/graphql';
+
+const StyledTable = styled(Table)`
+  margin-top: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTextContainerWithEllipsis = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-left: ${({ theme }) => theme.spacing(3)};
+`;
+
+type RoleAssignmentTableRowProps = {
+  workspaceMember: WorkspaceMember;
+  onRemove: (workspaceMemberId: string) => void;
+};
+
+export const RoleAssignmentTableRow = ({
+  workspaceMember,
+  onRemove,
+}: RoleAssignmentTableRowProps) => {
+  const handleRemoveClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onRemove(workspaceMember.id);
+  };
+
+  return (
+    <StyledTable>
+      <TableRow gridAutoColumns="150px 1fr 1fr">
+        <TableCell>
+          <StyledIconWrapper>
+            <Avatar
+              avatarUrl={workspaceMember.avatarUrl}
+              placeholderColorSeed={workspaceMember.id}
+              placeholder={workspaceMember.name.firstName ?? ''}
+              type="rounded"
+              size="sm"
+            />
+          </StyledIconWrapper>
+          <StyledTextContainerWithEllipsis
+            id={`hover-text-${workspaceMember.id}`}
+          >
+            {`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+          </StyledTextContainerWithEllipsis>
+          <AppTooltip
+            anchorSelect={`#hover-text-${workspaceMember.id}`}
+            content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+            noArrow
+            place="top"
+            positionStrategy="fixed"
+            delay={TooltipDelay.shortDelay}
+          />
+        </TableCell>
+        <TableCell>
+          <StyledTextContainerWithEllipsis>
+            {workspaceMember.userEmail}
+          </StyledTextContainerWithEllipsis>
+        </TableCell>
+        <TableCell align={'right'}>
+          <StyledButtonContainer>
+            <IconButton
+              onClick={handleRemoveClick}
+              variant="tertiary"
+              size="medium"
+              Icon={IconTrash}
+            />
+          </StyledButtonContainer>
+        </TableCell>
+      </TableRow>
+    </StyledTable>
+  );
+};

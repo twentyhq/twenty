@@ -69,50 +69,54 @@ export class RoleResolver {
     @Args('roleId', { type: () => String, nullable: true })
     roleId: string | null,
   ): Promise<WorkspaceMember> {
-    await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
-      {
-        userWorkspaceId: currentUserWorkspaceId,
-        setting: SettingsFeatures.ROLES,
-      },
-    );
-
-    const workspaceMember =
-      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
-        workspaceMemberId,
-        workspaceId: workspace.id,
-      });
-
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-        userId: workspaceMember.userId,
-        workspaceId: workspace.id,
-      });
-
-    if (!isDefined(roleId)) {
-      await this.userRoleService.unassignAllRolesFromUserWorkspace({
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: workspace.id,
-      });
-    } else {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: workspace.id,
-        roleId,
-      });
-    }
-
-    const roles = await this.userRoleService
-      .getRolesByUserWorkspaces([userWorkspace.id])
-      .then(
-        (rolesByUserWorkspaces) =>
-          rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],
+    try {
+      await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
+        {
+          userWorkspaceId: currentUserWorkspaceId,
+          setting: SettingsFeatures.ROLES,
+        },
       );
 
-    return {
-      ...workspaceMember,
-      userWorkspaceId: userWorkspace.id,
-      roles,
-    } as WorkspaceMember;
+      const workspaceMember =
+        await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+          workspaceMemberId,
+          workspaceId: workspace.id,
+        });
+
+      const userWorkspace =
+        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+          userId: workspaceMember.userId,
+          workspaceId: workspace.id,
+        });
+
+      if (!isDefined(roleId)) {
+        await this.userRoleService.unassignAllRolesFromUserWorkspace({
+          userWorkspaceId: userWorkspace.id,
+          workspaceId: workspace.id,
+        });
+      } else {
+        await this.userRoleService.assignRoleToUserWorkspace({
+          userWorkspaceId: userWorkspace.id,
+          workspaceId: workspace.id,
+          roleId,
+        });
+      }
+
+      const roles = await this.userRoleService
+        .getRolesByUserWorkspaces([userWorkspace.id])
+        .then(
+          (rolesByUserWorkspaces) =>
+            rolesByUserWorkspaces?.get(userWorkspace.id) ?? [],
+        );
+
+      return {
+        ...workspaceMember,
+        userWorkspaceId: userWorkspace.id,
+        roles,
+      } as WorkspaceMember;
+    } catch (error) {
+      return permissionsGraphqlApiExceptionHandler(error);
+    }
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMember])

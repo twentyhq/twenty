@@ -1,6 +1,7 @@
 import {
   ForbiddenError,
   InternalServerError,
+  NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   PermissionsException,
@@ -13,6 +14,9 @@ export const permissionsGraphqlApiExceptionHandler = (error: Error) => {
       case PermissionsExceptionCode.PERMISSION_DENIED:
       case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
         throw new ForbiddenError(error.message);
+      case PermissionsExceptionCode.ROLE_NOT_FOUND:
+      case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
+        throw new NotFoundError(error.message);
       default:
         throw new InternalServerError(error.message);
     }

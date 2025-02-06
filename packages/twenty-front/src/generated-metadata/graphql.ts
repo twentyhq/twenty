@@ -895,6 +895,7 @@ export type Mutation = {
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
+  updateWorkspaceMemberRole: WorkspaceMember;
   uploadFile: Scalars['String']['output'];
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
@@ -1189,6 +1190,12 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
   workspaceId: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateWorkspaceMemberRoleArgs = {
+  roleId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberId: Scalars['String']['input'];
 };
 
 
@@ -2166,8 +2173,11 @@ export type WorkspaceMember = {
   id: Scalars['UUID']['output'];
   locale?: Maybe<Scalars['String']['output']>;
   name: FullName;
+  roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
+  userEmail: Scalars['String']['output'];
+  userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */

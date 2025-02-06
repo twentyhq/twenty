@@ -41,20 +41,22 @@ export const SETTINGS_ROLE_DETAIL_TABS = {
 
 export const SettingsRoleEdit = () => {
   const { roleId = '' } = useParams();
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
   const navigateSettings = useNavigateSettings();
+  const { data, loading } = useGetRolesQuery({
+    fetchPolicy: 'network-only',
+  });
 
-  const role = rolesData?.getRoles.find((r) => r.id === roleId);
+  const role = data?.getRoles.find((r) => r.id === roleId);
 
   const { activeTabId } = useTabList(
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
   useEffect(() => {
-    if (!rolesLoading && !role) {
+    if (!loading && !role) {
       navigateSettings(SettingsPath.Roles);
     }
-  }, [role, navigateSettings, rolesLoading]);
+  }, [role, navigateSettings, loading]);
 
   if (!role) return null;
 
