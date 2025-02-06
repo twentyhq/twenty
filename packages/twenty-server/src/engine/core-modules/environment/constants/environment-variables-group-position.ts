@@ -56,10 +56,6 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
     position: 1400,
     description: '',
   },
-  [EnvironmentVariablesGroup.LLM]: {
-    position: 1500,
-    description: '',
-  },
   [EnvironmentVariablesGroup.Other]: {
     position: 1700,
     description: '',
