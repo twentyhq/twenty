@@ -46,5 +46,14 @@ export const getSettingsIntegrationAll = ({
       text: 'Stripe',
       link: '/settings/integrations/stripe',
     },
+    {
+      from: {
+        key: 'whatsapp',
+        image: '/images/integrations/whatsapp-logo.svg',
+      },
+      type: 'Add',
+      text: 'Whatsapp',
+      link: '/settings/integrations/whatsapp',
+    },
   ].filter(Boolean) as SettingsIntegration[],
 });
