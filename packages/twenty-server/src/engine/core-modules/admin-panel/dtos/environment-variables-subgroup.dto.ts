@@ -14,5 +14,8 @@ export class EnvironmentVariablesSubgroupData {
   variables: EnvironmentVariable[];
 
   @Field(() => EnvironmentVariablesSubGroup)
-  subgroupName: EnvironmentVariablesSubGroup;
+  name: EnvironmentVariablesSubGroup;
+
+  @Field(() => String, { defaultValue: '' })
+  description: string;
 }

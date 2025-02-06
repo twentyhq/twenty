@@ -8,7 +8,7 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const usePageChangeEffectNavigateLocation = () => {
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusSuspended();
