@@ -1,10 +1,12 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
-  UpdateSubscriptionQuantityJob,
-  UpdateSubscriptionQuantityJobData,
+    UpdateSubscriptionQuantityJob,
+    UpdateSubscriptionQuantityJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';

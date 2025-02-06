@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { registerEnumType } from '@nestjs/graphql';
 
 import Stripe from 'stripe';
