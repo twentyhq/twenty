@@ -1,8 +1,8 @@
 import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  Type,
+    CanActivate,
+    ExecutionContext,
+    Injectable,
+    Type,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -10,10 +10,6 @@ import { SettingsFeatures } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionsGuard = (
@@ -56,23 +52,9 @@ class SettingsPermissions implements CanActivate {
 
     const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
 
-    try {
-      await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
-        {
-          userWorkspaceId,
-          setting: this.requiredPermission,
-        },
-      );
-
-      return true;
-    } catch (error) {
-      if (
-        error instanceof PermissionsException &&
-        error.code === PermissionsExceptionCode.PERMISSION_DENIED
-      ) {
-        return false;
-      }
-      throw error;
-    }
+    return await this.permissionsService.userHasWorkspaceSettingPermission({
+      userWorkspaceId,
+      _setting: this.requiredPermission,
+    });
   }
 }

@@ -65,13 +65,6 @@ export class RoleResolver {
     @Args('roleId', { type: () => String, nullable: true })
     roleId: string | null,
   ): Promise<WorkspaceMember> {
-    await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
-      {
-        userWorkspaceId: currentUserWorkspaceId,
-        setting: SettingsFeatures.ROLES,
-      },
-    );
-
     const workspaceMember =
       await this.userWorkspaceService.getWorkspaceMemberOrThrow({
         workspaceMemberId,
