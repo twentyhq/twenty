@@ -32,7 +32,6 @@ export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
 
   return (
     <SortOrFilterChip
-      key={recordFilter.fieldMetadataId}
       testId={recordFilter.fieldMetadataId}
       labelValue={recordFilter.label ?? ''}
       Icon={ChipIcon}
