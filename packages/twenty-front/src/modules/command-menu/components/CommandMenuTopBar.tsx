@@ -1,6 +1,6 @@
 import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -122,22 +122,24 @@ export const CommandMenuTopBar = () => {
     <StyledInputContainer>
       <StyledContentContainer>
         {isCommandMenuV2Enabled && (
-          <CommandMenuContextChip
-            Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-            onClick={() => {
-              goBackFromCommandMenu();
-            }}
-            testId="command-menu-go-back-button"
-          />
-        )}
-        {commandMenuPage !== CommandMenuPages.SearchRecords &&
-          isDefined(contextStoreCurrentObjectMetadataId) && (
-            <CommandMenuContextRecordChip
-              objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+          <>
+            <CommandMenuContextChip
+              Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+              onClick={() => {
+                goBackFromCommandMenu();
+              }}
+              testId="command-menu-go-back-button"
             />
-          )}
-        {contextChips.length > 0 && (
-          <CommandMenuContextChipGroups contextChips={contextChips} />
+            {isDefined(contextStoreCurrentObjectMetadataId) &&
+            commandMenuPage !== CommandMenuPages.SearchRecords ? (
+              <CommandMenuContextChipGroupsWithRecordSelection
+                contextChips={contextChips}
+                objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+              />
+            ) : (
+              <CommandMenuContextChipGroups contextChips={contextChips} />
+            )}
+          </>
         )}
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (

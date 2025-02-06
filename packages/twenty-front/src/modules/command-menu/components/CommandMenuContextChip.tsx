@@ -33,6 +33,7 @@ const StyledChip = styled.button<{
 `;
 
 const StyledIconsContainer = styled.div`
+  align-items: center;
   display: flex;
 `;
 
