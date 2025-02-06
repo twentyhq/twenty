@@ -163,7 +163,7 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
-  if (fieldType === FieldMetadataType.RichTextV2) {
+  if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
     return `${field.name}
 {
   blocknote

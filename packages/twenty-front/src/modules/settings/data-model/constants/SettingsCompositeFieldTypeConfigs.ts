@@ -187,7 +187,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       context: { provider: ConnectedAccountProvider.GOOGLE },
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
-  [FieldMetadataType.RichTextV2]: {
+  [FieldMetadataType.RICH_TEXT_V2]: {
     label: 'Rich Text',
     Icon: IllustrationIconText,
     subFields: ['blocknote', 'markdown'],

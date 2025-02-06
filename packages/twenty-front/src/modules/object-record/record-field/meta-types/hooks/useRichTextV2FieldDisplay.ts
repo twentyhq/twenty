@@ -12,7 +12,7 @@ export const useRichTextV2FieldDisplay = () => {
   const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.RichTextV2,
+    FieldMetadataType.RICH_TEXT_V2,
     isFieldRichTextV2,
     fieldDefinition,
   );
