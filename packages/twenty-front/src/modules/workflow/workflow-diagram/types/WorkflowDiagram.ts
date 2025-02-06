@@ -30,10 +30,11 @@ export type WorkflowDiagramStepNodeData =
 export type WorkflowDiagramCreateStepNodeData = {
   nodeType: 'create-step';
   parentNodeId: string;
-  isLeafNode: never;
+  isLeafNode?: never;
 };
 
 export type WorkflowDiagramEmptyTriggerNodeData = {
+  nodeType: 'empty-trigger';
   isLeafNode: boolean;
 };
 

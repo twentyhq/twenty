@@ -10,6 +10,7 @@ const meta: Meta<typeof WorkflowDiagramEmptyTrigger> = {
   component: WorkflowDiagramEmptyTrigger,
   args: {
     data: {
+      nodeType: 'empty-trigger',
       isLeafNode: true,
     },
   },
@@ -54,6 +55,7 @@ export const IsNotLeafNode: Story = {
   ],
   args: {
     data: {
+      nodeType: 'empty-trigger',
       isLeafNode: false,
     },
   },

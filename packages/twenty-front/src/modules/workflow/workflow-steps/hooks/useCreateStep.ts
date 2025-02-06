@@ -59,6 +59,7 @@ export const useCreateStep = ({
       nodeType: 'action',
       actionType: createdStep.type as WorkflowStepType,
       name: createdStep.name,
+      isLeafNode: false,
     });
 
     openRightDrawer(RightDrawerPages.WorkflowStepEdit, {

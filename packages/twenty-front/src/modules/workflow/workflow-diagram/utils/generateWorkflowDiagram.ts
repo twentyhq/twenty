@@ -117,6 +117,7 @@ export const generateWorkflowDiagram = ({
       id: triggerNodeId,
       type: 'empty-trigger',
       data: {
+        nodeType: 'empty-trigger',
         isLeafNode: false,
       } satisfies WorkflowDiagramEmptyTriggerNodeData,
       position: {
