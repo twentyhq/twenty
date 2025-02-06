@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -14,6 +15,7 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { permissionsGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception-handler';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -22,6 +24,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
+@UseGuards(SettingsPermissionsGuard(SettingsFeatures.ROLES))
 export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
@@ -36,13 +39,6 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<RoleDTO[]> {
     try {
-      await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
-        {
-          userWorkspaceId,
-          setting: SettingsFeatures.ROLES,
-        },
-      );
-
       const roles = await this.roleService.getWorkspaceRoles(workspace.id);
 
       return roles.map((role) => ({
