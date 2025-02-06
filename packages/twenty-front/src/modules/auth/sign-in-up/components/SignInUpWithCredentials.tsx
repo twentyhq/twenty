@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { Loader, MainButton } from 'twenty-ui';
 
@@ -29,7 +29,7 @@ export const SignInUpWithCredentials = () => {
   const { t } = useLingui();
   const form = useFormContext<Form>();
 
-  const signInUpStep = useRecoilValue(signInUpStepState);
+  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
   const captcha = useRecoilValue(captchaState);
   const isRequestingCaptchaToken = useRecoilValue(
@@ -61,6 +61,12 @@ export const SignInUpWithCredentials = () => {
         setShowErrors(true);
         form.handleSubmit(submitCredentials)();
       }
+    }
+  };
+
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
     }
   };
 
@@ -114,7 +120,10 @@ export const SignInUpWithCredentials = () => {
         signInUpStep === SignInUpStep.Init) && (
         <StyledForm onSubmit={handleSubmit}>
           {signInUpStep !== SignInUpStep.Init && (
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
           )}
           {signInUpStep === SignInUpStep.Password && (
             <SignInUpPasswordField
