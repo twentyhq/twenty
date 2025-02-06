@@ -106,7 +106,7 @@ export class BillingSubscriptionService {
     return billingSubscriptionItem;
   }
 
-  async deleteSubscription(workspaceId: string) {
+  async deleteSubscriptions(workspaceId: string) {
     const subscriptionToCancel =
       await this.getCurrentBillingSubscriptionOrThrow({
         workspaceId,
@@ -116,8 +116,8 @@ export class BillingSubscriptionService {
       await this.stripeSubscriptionService.cancelSubscription(
         subscriptionToCancel.stripeSubscriptionId,
       );
-      await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
     }
+    await this.billingSubscriptionRepository.delete({ workspaceId });
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {

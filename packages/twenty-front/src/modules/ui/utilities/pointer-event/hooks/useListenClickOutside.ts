@@ -157,26 +157,26 @@ export const useListenClickOutside = <T extends Element>({
           .getLoadable(getClickOutsideListenerMouseDownHappenedState)
           .getValue();
 
-        if (mode === ClickOutsideMode.compareHTMLRef) {
-          const clickedElement = event.target as HTMLElement;
-          let isClickedOnExcluded = false;
-          let currentElement: HTMLElement | null = clickedElement;
+        const clickedElement = event.target as HTMLElement;
+        let isClickedOnExcluded = false;
+        let currentElement: HTMLElement | null = clickedElement;
 
-          while (currentElement) {
-            const currentClassList = currentElement.classList;
+        while (currentElement) {
+          const currentClassList = currentElement.classList;
 
-            isClickedOnExcluded =
-              excludeClassNames?.some((className) =>
-                currentClassList.contains(className),
-              ) ?? false;
+          isClickedOnExcluded =
+            excludeClassNames?.some((className) =>
+              currentClassList.contains(className),
+            ) ?? false;
 
-            if (isClickedOnExcluded) {
-              break;
-            }
-
-            currentElement = currentElement.parentElement;
+          if (isClickedOnExcluded) {
+            break;
           }
 
+          currentElement = currentElement.parentElement;
+        }
+
+        if (mode === ClickOutsideMode.compareHTMLRef) {
           const clickedOnAtLeastOneRef = refs
             .filter((ref) => !!ref.current)
             .some((ref) => ref.current?.contains(event.target as Node));
@@ -244,7 +244,8 @@ export const useListenClickOutside = <T extends Element>({
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
             isListening &&
-            hasMouseDownHappened;
+            hasMouseDownHappened &&
+            !isClickedOnExcluded;
 
           if (CLICK_OUTSIDE_DEBUG_MODE) {
             // eslint-disable-next-line no-console
@@ -255,6 +256,7 @@ export const useListenClickOutside = <T extends Element>({
               isMouseDownInside,
               isListening,
               hasMouseDownHappened,
+              isClickedOnExcluded,
               hotkeyScope,
               enabled,
               event,

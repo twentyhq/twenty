@@ -13,7 +13,7 @@ msgstr "Aceptar invitación"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr "Todos los datos de este espacio de trabajo se han eliminado permanentemente."
+msgstr "Todos los datos de este espacio de trabajo han sido eliminados permanentemente."
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
@@ -21,7 +21,7 @@ msgstr "Confirma tu dirección de correo electrónico"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr "Conectarse a Twenty"
+msgstr "Conéctate a Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
@@ -33,19 +33,19 @@ msgstr "Hola"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Si usted no ha iniciado este cambio, póngase en contacto inmediatamente con el propietario de su espacio de trabajo."
+msgstr "Si no iniciaste este cambio, contacta inmediatamente al propietario de tu espacio de trabajo."
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Si desea seguir utilizando Twenty, actualice su suscripción en los próximos {remainingDays} {dayOrDays}."
+msgstr "Si deseas seguir usando Twenty, actualiza tu suscripción en los próximos {remainingDays} {dayOrDays}."
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Si deseas volver a utilizar Twenty, puedes crear un nuevo espacio de trabajo."
+msgstr "Si deseas usar Twenty nuevamente, puedes crear un nuevo espacio de trabajo."
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Parece que su espacio de trabajo <0>{workspaceDisplayName}</0> ha sido suspendido durante {daysSinceInactive} días."
+msgstr "Parece que tu espacio de trabajo <0>{workspaceDisplayName}</0> ha estado suspendido durante {daysSinceInactive} días."
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
@@ -69,19 +69,19 @@ msgstr "¡Gracias por registrarte en Twenty! Antes de comenzar, solo necesitamos
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "El espacio de trabajo se desactivará en {remainingDays} {dayOrDays} y se borrarán todos sus datos."
+msgstr "El espacio de trabajo se desactivará en {remainingDays} {dayOrDays} y se eliminarán todos sus datos."
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Esto es una confirmación de que la contraseña de su cuenta ({email}) se ha cambiado correctamente en {formattedDate}."
+msgstr "Esta es una confirmación de que la contraseña de tu cuenta ({email}) se cambió correctamente el {formattedDate}."
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Este enlace sólo es válido para el próximo {duration}. Si el enlace no funciona, puede utilizar directamente el enlace de verificación de inicio de sesión:"
+msgstr "Este enlace solo es válido por los próximos {duration}. Si el enlace no funciona, puedes usar directamente el enlace de verificación de inicio de sesión:"
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr "Actualice su suscripción"
+msgstr "Actualiza tu suscripción"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
@@ -89,7 +89,7 @@ msgstr "Verificar correo electrónico"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Su espacio de trabajo <0>{workspaceDisplayName}</0> se ha eliminado porque su suscripción caducó hace {inactiveDaysBeforeDelete} días."
+msgstr "Tu espacio de trabajo <0>{workspaceDisplayName}</0> ha sido eliminado porque tu suscripción caducó hace {inactiveDaysBeforeDelete} días."
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "

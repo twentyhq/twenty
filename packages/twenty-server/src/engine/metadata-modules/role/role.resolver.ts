@@ -1,7 +1,15 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
-import { SettingsFeatures } from 'twenty-shared';
+import { isDefined, SettingsFeatures } from 'twenty-shared';
 
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -10,7 +18,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { permissionsGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception-handler';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/userRole.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -19,6 +27,7 @@ export class RoleResolver {
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
     private readonly roleService: RoleService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -50,6 +59,57 @@ export class RoleResolver {
     } catch (error) {
       return permissionsGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @Mutation(() => WorkspaceMember)
+  async updateWorkspaceMemberRole(
+    @AuthUserWorkspaceId() currentUserWorkspaceId: string,
+    @AuthWorkspace() workspace: Workspace,
+    @Args('workspaceMemberId') workspaceMemberId: string,
+    @Args('roleId', { type: () => String, nullable: true })
+    roleId: string | null,
+  ): Promise<WorkspaceMember> {
+    await this.permissionsService.validateUserHasWorkspaceSettingPermissionOrThrow(
+      {
+        userWorkspaceId: currentUserWorkspaceId,
+        setting: SettingsFeatures.ROLES,
+      },
+    );
+
+    const workspaceMember =
+      await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+        workspaceMemberId,
+        workspaceId: workspace.id,
+      });
+
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: workspaceMember.userId,
+        workspaceId: workspace.id,
+      });
+
+    if (!isDefined(roleId)) {
+      await this.userRoleService.unassignAllRolesFromUserWorkspace({
+        userWorkspaceId: userWorkspace.id,
+        workspaceId: workspace.id,
+      });
+    } else {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        userWorkspaceId: userWorkspace.id,
+        workspaceId: workspace.id,
+        roleId,
+      });
+    }
+
+    const roles = await this.userRoleService.getRolesForUserWorkspace(
+      userWorkspace.id,
+    );
+
+    return {
+      ...workspaceMember,
+      userWorkspaceId: userWorkspace.id,
+      roles,
+    } as WorkspaceMember;
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMember])

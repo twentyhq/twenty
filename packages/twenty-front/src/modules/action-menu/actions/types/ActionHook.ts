@@ -7,8 +7,9 @@ export type ActionHook =
 
 export type ActionHookWithoutObjectMetadataItem = () => ActionHookResult;
 
-export type ActionHookWithObjectMetadataItem = ({
-  objectMetadataItem,
-}: {
+type ActionHookWithObjectMetadataItemParams = {
   objectMetadataItem: ObjectMetadataItem;
-}) => ActionHookResult;
+};
+export type ActionHookWithObjectMetadataItem = (
+  params: ActionHookWithObjectMetadataItemParams,
+) => ActionHookResult;

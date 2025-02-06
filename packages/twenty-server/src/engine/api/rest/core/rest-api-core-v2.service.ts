@@ -15,39 +15,16 @@ export class RestApiCoreServiceV2 {
   ) {}
 
   async delete(request: Request) {
-    const { workspace } = request;
-    const { object: parsedObject, id: recordId } = parseCorePath(request);
-
-    const objectMetadata = await this.coreQueryBuilderFactory.getObjectMetadata(
-      request,
-      parsedObject,
-    );
-
-    if (!objectMetadata) {
-      throw new BadRequestException('Object metadata not found');
-    }
+    const { id: recordId } = parseCorePath(request);
 
     if (!recordId) {
       throw new BadRequestException('Record ID not found');
     }
 
-    const objectMetadataNameSingular =
-      objectMetadata.objectMetadataItem.nameSingular;
-
-    if (!workspace?.id) {
-      throw new BadRequestException('Workspace not found');
-    }
-
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspace.id,
-        objectMetadataNameSingular,
-      );
-
+    const { objectMetadataNameSingular, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
     const recordToDelete = await repository.findOneOrFail({
-      where: {
-        id: recordId,
-      },
+      where: { id: recordId },
     });
 
     await repository.delete(recordId);
@@ -55,6 +32,46 @@ export class RestApiCoreServiceV2 {
     return this.formatResult('delete', objectMetadataNameSingular, {
       id: recordToDelete.id,
     });
+  }
+
+  async createOne(request: Request) {
+    const { body } = request;
+
+    const { objectMetadataNameSingular, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
+    const createdRecord = await repository.save(body);
+
+    return this.formatResult(
+      'create',
+      objectMetadataNameSingular,
+      createdRecord,
+    );
+  }
+
+  async update(request: Request) {
+    const { id: recordId } = parseCorePath(request);
+
+    if (!recordId) {
+      throw new BadRequestException('Record ID not found');
+    }
+
+    const { objectMetadataNameSingular, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
+
+    const recordToUpdate = await repository.findOneOrFail({
+      where: { id: recordId },
+    });
+
+    const updatedRecord = await repository.save({
+      ...recordToUpdate,
+      ...request.body,
+    });
+
+    return this.formatResult(
+      'update',
+      objectMetadataNameSingular,
+      updatedRecord,
+    );
   }
 
   private formatResult<T>(
@@ -69,5 +86,33 @@ export class RestApiCoreServiceV2 {
     };
 
     return result;
+  }
+
+  private async getRepositoryAndMetadataOrFail(request: Request) {
+    const { workspace } = request;
+    const { object: parsedObject } = parseCorePath(request);
+
+    const objectMetadata = await this.coreQueryBuilderFactory.getObjectMetadata(
+      request,
+      parsedObject,
+    );
+
+    if (!objectMetadata) {
+      throw new BadRequestException('Object metadata not found');
+    }
+
+    if (!workspace?.id) {
+      throw new BadRequestException('Workspace not found');
+    }
+
+    const objectMetadataNameSingular =
+      objectMetadata.objectMetadataItem.nameSingular;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspace.id,
+        objectMetadataNameSingular,
+      );
+
+    return { objectMetadataNameSingular, repository };
   }
 }

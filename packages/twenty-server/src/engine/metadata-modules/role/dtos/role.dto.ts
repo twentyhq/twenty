@@ -5,7 +5,7 @@ import { Relation } from 'typeorm';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 
-@ObjectType()
+@ObjectType('Role')
 export class RoleDTO {
   @Field({ nullable: false })
   id: string;

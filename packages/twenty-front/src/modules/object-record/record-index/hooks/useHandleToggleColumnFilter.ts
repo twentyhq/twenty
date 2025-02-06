@@ -11,7 +11,9 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -38,16 +40,30 @@ export const useHandleToggleColumnFilter = ({
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
-  const openDropdown = useRecoilCallback(({ set }) => {
-    return (dropdownId: string) => {
-      const dropdownOpenState = extractComponentState(
-        isDropdownOpenComponentState,
-        dropdownId,
-      );
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-      set(dropdownOpenState, true);
-    };
-  }, []);
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+
+  const openDropdown = useRecoilCallback(
+    ({ set }) => {
+      return (dropdownId: string) => {
+        const dropdownOpenState = extractComponentState(
+          isDropdownOpenComponentState,
+          dropdownId,
+        );
+
+        setActiveDropdownFocusIdAndMemorizePrevious(dropdownId);
+        setHotkeyScopeAndMemorizePreviousScope(dropdownId);
+
+        set(dropdownOpenState, true);
+      };
+    },
+    [
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      setHotkeyScopeAndMemorizePreviousScope,
+    ],
+  );
 
   const availableFieldMetadataItemsForFilter = useRecoilValue(
     availableFieldMetadataItemsForFilterFamilySelector({

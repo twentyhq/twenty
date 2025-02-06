@@ -1,23 +1,22 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import {
+  JestContextStoreSetter,
+  JestContextStoreSetterMocks,
+} from '~/testing/jest/JestContextStoreSetter';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
-  contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
-  contextStoreNumberOfSelectedRecords?: number;
-  contextStoreCurrentObjectMetadataNameSingular?: string;
   componentInstanceId: string;
-};
+} & JestContextStoreSetterMocks;
 
 export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
@@ -25,6 +24,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   contextStoreTargetedRecordsRule,
   contextStoreNumberOfSelectedRecords,
   contextStoreCurrentObjectMetadataNameSingular,
+  contextStoreFilters,
   componentInstanceId,
 }: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -48,6 +48,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
             }}
           >
             <JestContextStoreSetter
+              contextStoreFilters={contextStoreFilters}
               contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
               contextStoreNumberOfSelectedRecords={
                 contextStoreNumberOfSelectedRecords

@@ -37,13 +37,13 @@ export class SeederService {
       throw new Error("Object metadata couldn't be created");
     }
 
-    for (const fieldMetadataSeed of objectMetadataSeed.fields) {
-      await this.fieldMetadataService.createOne({
+    await this.fieldMetadataService.createMany(
+      objectMetadataSeed.fields.map((fieldMetadataSeed) => ({
         ...fieldMetadataSeed,
         objectMetadataId: createdObjectMetadata.id,
         workspaceId,
-      });
-    }
+      })),
+    );
 
     const objectMetadataAfterFieldCreation =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {

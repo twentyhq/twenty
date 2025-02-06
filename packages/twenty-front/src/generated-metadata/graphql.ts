@@ -113,7 +113,7 @@ export type AvailableWorkspaceOutput = {
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  workspaceUrls: WorkspaceUrls;
+  subdomain: Scalars['String']['output'];
 };
 
 export type Billing = {
@@ -258,6 +258,10 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
+  isGoogleCalendarEnabled: Scalars['Boolean']['output'];
+  isGoogleMessagingEnabled: Scalars['Boolean']['output'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
@@ -385,17 +389,21 @@ export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  records: Array<CustomHostnameVerification>;
-  sslStatus?: Maybe<Scalars['String']['output']>;
+  ownershipVerifications: Array<OwnershipVerification>;
   status?: Maybe<Scalars['String']['output']>;
-  verificationErrors: Array<Scalars['String']['output']>;
 };
 
-export type CustomHostnameVerification = {
-  __typename?: 'CustomHostnameVerification';
-  key: Scalars['String']['output'];
+export type CustomHostnameOwnershipVerificationHttp = {
+  __typename?: 'CustomHostnameOwnershipVerificationHttp';
+  body: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  validationType: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type CustomHostnameOwnershipVerificationTxt = {
+  __typename?: 'CustomHostnameOwnershipVerificationTxt';
+  name: Scalars['String']['output'];
+  type: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -670,7 +678,6 @@ export type FullName = {
 };
 
 export type GetAuthorizationUrlInput = {
-  forceSubdomainUrl: Scalars['Boolean']['input'];
   identityProviderId: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
 };
@@ -697,7 +704,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceUrlsAndId;
+  workspace: WorkspaceSubdomainAndId;
 };
 
 export type Index = {
@@ -1305,6 +1312,8 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
+export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -1342,9 +1351,10 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
+  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  workspaceUrls: WorkspaceUrls;
+  subdomain: Scalars['String']['output'];
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1375,8 +1385,8 @@ export type Query = {
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
-  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
-  getRoles: Array<RoleDto>;
+  getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1643,8 +1653,8 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean']['output'];
 };
 
-export type RoleDto = {
-  __typename?: 'RoleDTO';
+export type Role = {
+  __typename?: 'Role';
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -1773,7 +1783,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceUrlsAndId;
+  workspace: WorkspaceSubdomainAndId;
 };
 
 export enum SubscriptionInterval {
@@ -1975,7 +1985,7 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
-  currentWorkspace: Workspace;
+  currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -2107,7 +2117,6 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
-  workspaceUrls: WorkspaceUrls;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2182,16 +2191,10 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
-export type WorkspaceUrls = {
-  __typename?: 'workspaceUrls';
-  customUrl?: Maybe<Scalars['String']['output']>;
-  subdomainUrl: Scalars['String']['output'];
-};
-
-export type WorkspaceUrlsAndId = {
-  __typename?: 'workspaceUrlsAndId';
+export type WorkspaceSubdomainAndId = {
+  __typename?: 'WorkspaceSubdomainAndId';
   id: Scalars['String']['output'];
-  workspaceUrls: WorkspaceUrls;
+  subdomain: Scalars['String']['output'];
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

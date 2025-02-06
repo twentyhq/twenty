@@ -1,5 +1,7 @@
 export * from './constants/AccentDark';
 export * from './constants/AccentLight';
+export * from './constants/AdaptiveColorsDark';
+export * from './constants/AdaptiveColorsLight';
 export * from './constants/Animation';
 export * from './constants/BackgroundDark';
 export * from './constants/BackgroundLight';

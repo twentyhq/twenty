@@ -1,14 +1,24 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { useActivateWorkflowSingleRecordAction } from '../useActivateWorkflowSingleRecordAction';
 
 const workflowMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'workflow',
 )!;
+
+const mockedWorkflowEnabledFeatureFlag = {
+  id: '1',
+  key: FeatureFlagKey.IsWorkflowEnabled,
+  value: true,
+  workspaceId: '1',
+};
 
 const baseWorkflowMock = {
   __typename: 'Workflow',
@@ -116,6 +126,10 @@ const createWrapper = (workflow: {
     },
     onInitializeRecoilSnapshot: (snapshot) => {
       snapshot.set(recordStoreFamilyState(workflow.id), workflow);
+      snapshot.set(currentWorkspaceState, {
+        ...mockCurrentWorkspace,
+        featureFlags: [mockedWorkflowEnabledFeatureFlag],
+      });
     },
   });
 

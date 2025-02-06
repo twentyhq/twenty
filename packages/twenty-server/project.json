@@ -10,7 +10,8 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
-      }
+      },
+      "dependsOn": ["^build"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
