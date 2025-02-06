@@ -482,7 +482,6 @@ export enum EnvironmentVariablesGroup {
   Database = 'Database',
   Email = 'Email',
   Frontend = 'Frontend',
-  LLM = 'LLM',
   Logging = 'Logging',
   Other = 'Other',
   QueueConfig = 'QueueConfig',
@@ -513,6 +512,7 @@ export enum EnvironmentVariablesSubGroup {
   EmailSettings = 'EmailSettings',
   ExceptionHandler = 'ExceptionHandler',
   GoogleAuth = 'GoogleAuth',
+  LLM = 'LLM',
   MicrosoftAuth = 'MicrosoftAuth',
   PasswordAuth = 'PasswordAuth',
   RateLimiting = 'RateLimiting',
@@ -2178,7 +2178,7 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
-  userWorkspaceId: Scalars['String']['output'];
+  userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
