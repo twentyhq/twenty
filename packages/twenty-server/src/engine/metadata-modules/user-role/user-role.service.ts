@@ -60,7 +60,9 @@ export class UserRoleService {
       );
     }
 
-    const [currentRole] = await this.getRolesForUserWorkspace(userWorkspace.id);
+    const roles = await this.getRolesByUserWorkspaces([userWorkspace.id]);
+
+    const currentRole = roles.get(userWorkspace.id)?.[0];
 
     if (currentRole?.id === roleId) {
       return;
@@ -96,33 +98,42 @@ export class UserRoleService {
     });
   }
 
-  public async getRolesForUserWorkspace(
-    userWorkspaceId: string,
-  ): Promise<RoleDTO[] | []> {
-    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
-      where: {
-        userWorkspaceId,
-      },
-    });
-
-    if (!isDefined(userWorkspaceRole)) {
-      return [];
+  public async getRolesByUserWorkspaces(
+    userWorkspaceIds: string[],
+  ): Promise<Map<string, RoleDTO[]>> {
+    if (!userWorkspaceIds.length) {
+      return new Map();
     }
 
-    const role = await this.roleRepository.findOne({
+    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
       where: {
-        id: userWorkspaceRole.roleId,
+        userWorkspaceId: In(userWorkspaceIds),
+      },
+      relations: {
+        role: true,
       },
     });
 
-    if (!isDefined(role)) {
-      throw new PermissionsException(
-        'Role not found',
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
+    if (!allUserWorkspaceRoles.length) {
+      return new Map();
+    }
+
+    const rolesMap = new Map<string, RoleDTO[]>();
+
+    for (const userWorkspaceId of userWorkspaceIds) {
+      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
+        (userWorkspaceRole) =>
+          userWorkspaceRole.userWorkspaceId === userWorkspaceId,
       );
+
+      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
+        .map((userWorkspaceRole) => userWorkspaceRole.role)
+        .filter(isDefined);
+
+      rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);
     }
 
-    return [role];
+    return rolesMap;
   }
 
   public async getWorkspaceMembersAssignedToRole(
@@ -169,9 +180,13 @@ export class UserRoleService {
     userWorkspaceId: string,
     workspaceId: string,
   ): Promise<void> {
-    const roles = await this.getRolesForUserWorkspace(userWorkspaceId);
+    const roles = await this.getRolesByUserWorkspaces([userWorkspaceId]);
 
-    const adminRole = roles.find((role: RoleDTO) => role.isEditable === false);
+    const currentRoles = roles.get(userWorkspaceId);
+
+    const adminRole = currentRoles?.find(
+      (role: RoleDTO) => role.isEditable === false,
+    );
 
     if (isDefined(adminRole)) {
       const workspaceMembersWithAdminRole =
