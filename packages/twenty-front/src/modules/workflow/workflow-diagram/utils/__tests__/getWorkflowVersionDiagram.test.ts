@@ -37,6 +37,7 @@ describe('getWorkflowVersionDiagram', () => {
     {
       "data": {
         "isLeafNode": false,
+        "nodeType": "empty-trigger",
       },
       "id": "trigger",
       "position": {
