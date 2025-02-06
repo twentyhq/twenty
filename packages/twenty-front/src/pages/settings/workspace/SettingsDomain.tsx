@@ -89,7 +89,8 @@ export const SettingsDomain = () => {
     updateWorkspace({
       variables: {
         input: {
-          hostname: hostname.length > 0 ? hostname : null,
+          hostname:
+            isDefined(hostname) && hostname.length > 0 ? hostname : null,
         },
       },
       onCompleted: () => {
@@ -195,8 +196,8 @@ export const SettingsDomain = () => {
         <SaveAndCancelButtons
           isSaveDisabled={
             !form.formState.isValid ||
-            subdomainValue === currentWorkspace?.subdomain ||
-            hostnameValue === currentWorkspace?.hostname
+            (subdomainValue === currentWorkspace?.subdomain &&
+              hostnameValue === currentWorkspace?.hostname)
           }
           onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
@@ -206,14 +207,14 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
+          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
+            <SettingsSubdomain />
+          )}
           {isCustomDomainEnabled && (
             <>
               <SettingsHostnameEffect />
               <SettingsHostname />
             </>
-          )}
-          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
-            <SettingsSubdomain />
           )}
         </FormProvider>
       </SettingsPageContainer>
