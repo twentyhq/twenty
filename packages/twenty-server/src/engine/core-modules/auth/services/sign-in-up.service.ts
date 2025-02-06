@@ -213,7 +213,7 @@ export class SignInUpService {
     return await this.userRepository.save(userToCreate);
   }
 
-  private async isWorkspaceReadyForSignInUpOrThrow(
+  private async throwIfWorkspaceIsNotReadyForSignInUp(
     workspace: Workspace,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
@@ -234,7 +234,7 @@ export class SignInUpService {
 
     if (!userWorkspaceExists) {
       throw new AuthException(
-        'Workspace is not ready to welcome new members',
+        'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -245,7 +245,7 @@ export class SignInUpService {
       workspace: Workspace;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
-    await this.isWorkspaceReadyForSignInUpOrThrow(params.workspace, params);
+    await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
     const currentUser =
       params.userData.type === 'newUserWithPicture'
