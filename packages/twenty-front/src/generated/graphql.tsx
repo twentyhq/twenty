@@ -1956,7 +1956,7 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
-  userWorkspaceId: Scalars['String'];
+  userWorkspaceId?: Maybe<Scalars['String']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
