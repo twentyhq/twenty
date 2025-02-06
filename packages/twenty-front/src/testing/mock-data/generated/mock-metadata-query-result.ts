@@ -165,7 +165,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
             },
             fields: {
-              __typename: 'ObjectFieldsConnection',
+              __typename: 'FieldConnection',
               pageInfo: {
                 __typename: 'PageInfo',
                 hasNextPage: false,
@@ -19549,7 +19549,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
             },
             fields: {
-              __typename: 'ObjectFieldsConnection',
+              __typename: 'FieldConnection',
               pageInfo: {
                 __typename: 'PageInfo',
                 hasNextPage: false,
