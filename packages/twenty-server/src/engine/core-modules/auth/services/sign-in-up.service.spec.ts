@@ -255,7 +255,7 @@ describe('SignInUpService', () => {
     expect(fileUploadService.uploadImage).toHaveBeenCalled();
   });
 
-  it('should handle signIn on new workspace in pending state', async () => {
+  it('should handle signIn on workspace in pending state', async () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
@@ -285,7 +285,7 @@ describe('SignInUpService', () => {
     expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
   });
 
-  it('should throw - handle signUp on new workspace in pending state', async () => {
+  it('should throw - handle signUp on workspace in pending state', async () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
