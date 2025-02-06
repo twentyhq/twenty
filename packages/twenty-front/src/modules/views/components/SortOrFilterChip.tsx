@@ -89,7 +89,7 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type SortOrFitlerChipVariant = 'default' | 'danger';
+export type SortOrFitlerChipVariant = 'default' | 'danger';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
