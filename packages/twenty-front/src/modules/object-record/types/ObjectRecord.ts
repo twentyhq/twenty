@@ -1,4 +1,3 @@
-export type ObjectRecord = Record<string, any> & {
-  id: string;
-  __typename: string;
-};
+import { BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
+
+export type ObjectRecord = Record<string, any> & BaseObjectRecord;

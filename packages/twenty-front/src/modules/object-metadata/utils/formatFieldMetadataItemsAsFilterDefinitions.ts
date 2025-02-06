@@ -4,6 +4,7 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
+import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
@@ -79,7 +80,9 @@ export const getRelationObjectMetadataNamePlural = ({
   return field.relationDefinition?.targetObjectMetadata.namePlural;
 };
 
-export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
+export const getFilterTypeFromFieldType = (
+  fieldType: FieldMetadataType,
+): FilterableFieldType => {
   switch (fieldType) {
     case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';

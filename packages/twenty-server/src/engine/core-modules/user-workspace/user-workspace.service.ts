@@ -201,7 +201,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     }));
   }
 
-  async getUserWorkspaceForUser({
+  async getUserWorkspaceForUserOrThrow({
     userId,
     workspaceId,
   }: {

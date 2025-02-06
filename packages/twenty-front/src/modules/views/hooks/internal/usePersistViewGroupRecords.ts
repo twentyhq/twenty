@@ -4,10 +4,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { useApolloClient } from '@apollo/client';
 
+type CreateViewGroupRecordsArgs = {
+  viewGroupsToCreate: ViewGroup[];
+  viewId: string;
+};
 export const usePersistViewGroupRecords = () => {
   const apolloClient = useApolloClient();
 
@@ -25,15 +28,13 @@ export const usePersistViewGroupRecords = () => {
   });
 
   const createViewGroupRecords = useCallback(
-    (viewGroupsToCreate: ViewGroup[], view: GraphQLView) => {
-      if (!viewGroupsToCreate.length) return;
+    ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
+      if (viewGroupsToCreate.length === 0) return;
 
       return createManyRecords(
         viewGroupsToCreate.map((viewGroup) => ({
           ...viewGroup,
-          view: {
-            id: view.id,
-          },
+          viewId,
         })),
       );
     },
@@ -87,9 +88,12 @@ export const usePersistViewGroupRecords = () => {
     async (viewGroupsToDelete: ViewGroup[]) => {
       if (!viewGroupsToDelete.length) return;
 
-      return destroyManyRecords(
-        viewGroupsToDelete.map((viewGroup) => viewGroup.id),
+      const recordIdsToDestroy = viewGroupsToDelete.map(
+        (viewGroup) => viewGroup.id,
       );
+      return destroyManyRecords({
+        recordIdsToDestroy,
+      });
     },
     [destroyManyRecords],
   );

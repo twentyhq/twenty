@@ -1,2 +1,2 @@
-export * from './types/WorkspaceActivationStatus';
-export * from './utils/isWorkspaceActiveOrSuspended';
+export * from './types';
+export * from './utils';

@@ -1,32 +1,71 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { fn } from '@storybook/test';
-import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { ComponentProps } from 'react';
 import { CatalogDecorator, CatalogStory } from 'twenty-ui';
+import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
 
-const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
+type ComponentState = 'default' | 'hover' | 'selected';
+
+type WrapperProps = ComponentProps<
+  typeof WorkflowDiagramStepNodeEditableContent
+> & { state: ComponentState };
+
+const Wrapper = (_props: WrapperProps) => {
+  return <div></div>;
+};
+
+const meta: Meta<WrapperProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowDiagramStepNodeEditableContent>;
+type Story = StoryObj<typeof Wrapper>;
 
-export const All: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
+const ALL_STEPS = [
+  {
+    nodeType: 'trigger',
+    triggerType: 'DATABASE_EVENT',
+    name: 'Record is Created',
+  },
+  { nodeType: 'trigger', triggerType: 'MANUAL', name: 'Manual' },
+  {
+    nodeType: 'action',
+    actionType: 'CREATE_RECORD',
+    name: 'Create Record',
+  },
+  {
+    nodeType: 'action',
+    actionType: 'UPDATE_RECORD',
+    name: 'Update Record',
+  },
+  {
+    nodeType: 'action',
+    actionType: 'DELETE_RECORD',
+    name: 'Delete Record',
+  },
+  {
+    nodeType: 'action',
+    actionType: 'SEND_EMAIL',
+    name: 'Send Email',
+  },
+  { nodeType: 'action', actionType: 'CODE', name: 'Code' },
+] satisfies WorkflowDiagramStepNodeData[];
+
+export const Catalog: CatalogStory<Story, typeof Wrapper> = {
   args: {
     onDelete: fn(),
-    selected: false,
   },
   parameters: {
     msw: graphqlMocks,
+    pseudo: { hover: ['.hover'] },
     catalog: {
       options: {
         elementContainer: {
@@ -37,114 +76,39 @@ export const All: CatalogStory<
       dimensions: [
         {
           name: 'step type',
-          values: [
-            {
-              nodeType: 'trigger',
-              triggerType: 'DATABASE_EVENT',
-              name: 'Record is Created',
-            },
-            { nodeType: 'trigger', triggerType: 'MANUAL', name: 'Manual' },
-            {
-              nodeType: 'action',
-              actionType: 'CREATE_RECORD',
-              name: 'Create Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'UPDATE_RECORD',
-              name: 'Update Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'DELETE_RECORD',
-              name: 'Delete Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'SEND_EMAIL',
-              name: 'Send Email',
-            },
-            { nodeType: 'action', actionType: 'CODE', name: 'Code' },
-          ] satisfies WorkflowDiagramStepNodeData[],
+          values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
         },
-      ],
-    },
-  },
-  decorators: [
-    CatalogDecorator,
-    (Story) => {
-      return (
-        <ReactFlowProvider>
-          <Story />
-        </ReactFlowProvider>
-      );
-    },
-  ],
-};
-export const AllSelected: CatalogStory<
-  Story,
-  typeof WorkflowDiagramStepNodeEditableContent
-> = {
-  args: {
-    onDelete: fn(),
-    selected: true,
-  },
-  parameters: {
-    msw: graphqlMocks,
-    catalog: {
-      options: {
-        elementContainer: {
-          width: 250,
-          style: { position: 'relative' },
-          className: 'selectable selected',
-        },
-      },
-      dimensions: [
         {
-          name: 'step type',
+          name: 'variant',
           values: [
-            {
-              nodeType: 'trigger',
-              triggerType: 'DATABASE_EVENT',
-              name: 'Record is Created',
-            },
-            { nodeType: 'trigger', triggerType: 'MANUAL', name: 'Manual' },
-            {
-              nodeType: 'action',
-              actionType: 'CREATE_RECORD',
-              name: 'Create Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'UPDATE_RECORD',
-              name: 'Update Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'DELETE_RECORD',
-              name: 'Delete Record',
-            },
-            {
-              nodeType: 'action',
-              actionType: 'SEND_EMAIL',
-              name: 'Send Email',
-            },
-            { nodeType: 'action', actionType: 'CODE', name: 'Code' },
-          ] satisfies WorkflowDiagramStepNodeData[],
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+            'empty',
+            'default',
+            'success',
+            'failure',
+            'not-executed',
+          ] satisfies WorkflowDiagramNodeVariant[],
+          props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
+        },
+        {
+          name: 'state',
+          values: ['default', 'hover', 'selected'] satisfies ComponentState[],
+          props: (state: ComponentState) => ({ state }),
         },
       ],
     },
   },
   decorators: [
-    CatalogDecorator,
-    (Story) => {
+    (Story, { args }) => {
       return (
-        <ReactFlowProvider>
+        <div
+          className={`selectable ${args.state === 'selected' ? 'selected' : args.state === 'hover' ? 'workflow-node-container hover' : ''}`}
+        >
           <Story />
-        </ReactFlowProvider>
+        </div>
       );
     },
+    CatalogDecorator,
+    ReactflowDecorator,
   ],
 };

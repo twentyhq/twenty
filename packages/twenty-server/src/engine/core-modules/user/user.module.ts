@@ -9,6 +9,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -20,7 +21,7 @@ import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UserRoleModule } from 'src/engine/metadata-modules/userRole/user-role.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -46,6 +47,7 @@ import { UserService } from './services/user.service';
     AnalyticsModule,
     DomainManagerModule,
     UserRoleModule,
+    FeatureFlagModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],

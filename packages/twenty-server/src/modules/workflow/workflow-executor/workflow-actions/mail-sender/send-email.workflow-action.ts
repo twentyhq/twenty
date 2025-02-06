@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { isDefined, isValidUuid } from 'twenty-shared';
 import { z } from 'zod';
-import { isDefined } from 'twenty-shared';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -36,6 +36,13 @@ export class SendEmailWorkflowAction implements WorkflowAction {
   ) {}
 
   private async getEmailClient(connectedAccountId: string) {
+    if (!isValidUuid(connectedAccountId)) {
+      throw new SendEmailActionException(
+        `Connected Account ID is not a valid UUID`,
+        SendEmailActionExceptionCode.INVALID_CONNECTED_ACCOUNT_ID,
+      );
+    }
+
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {

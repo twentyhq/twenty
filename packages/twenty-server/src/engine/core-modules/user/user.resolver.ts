@@ -27,6 +27,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -47,7 +49,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/user-role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -76,6 +78,7 @@ export class UserResolver {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
@@ -170,7 +173,7 @@ export class UserResolver {
 
     const workspaceMembers: WorkspaceMember[] = [];
 
-    const uwerWorkspaces = await this.userWorkspaceRepository.find({
+    const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
         workspaceId: workspace.id,
@@ -178,7 +181,7 @@ export class UserResolver {
     });
 
     const userWorkspacesByUserId = new Map(
-      uwerWorkspaces.map((userWorkspace) => [
+      userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
@@ -202,12 +205,24 @@ export class UserResolver {
         throw new Error('User workspace not found');
       }
 
-      const roles = await this.userRoleService
-        .getRolesForUserWorkspace(userWorkspace.id)
-        .then(([roleEntity]) => {
-          if (!isDefined(roleEntity)) {
-            return [];
-          } else {
+      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsEnabled,
+        workspace.id,
+      );
+
+      const workspaceMember: WorkspaceMember = {
+        ...workspaceMemberEntity,
+        userWorkspaceId: userWorkspace.id,
+      } as WorkspaceMember;
+
+      if (permissionsEnabled === true) {
+        const roles = await this.userRoleService
+          .getRolesForUserWorkspace(userWorkspace.id)
+          .then(([roleEntity]) => {
+            if (!isDefined(roleEntity)) {
+              return [];
+            }
+
             return [
               {
                 id: roleEntity.id,
@@ -218,14 +233,10 @@ export class UserResolver {
                 userWorkspaceRoles: roleEntity.userWorkspaceRoles,
               },
             ];
-          }
-        });
+          });
 
-      const workspaceMember = {
-        ...workspaceMemberEntity,
-        roles,
-        userWorkspaceId: userWorkspace.id,
-      } as WorkspaceMember;
+        workspaceMember.roles = roles;
+      }
 
       workspaceMembers.push(workspaceMember);
     }

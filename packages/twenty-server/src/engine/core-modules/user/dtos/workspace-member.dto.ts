@@ -44,8 +44,8 @@ export class WorkspaceMember {
   @Field(() => WorkspaceMemberTimeFormatEnum, { nullable: true })
   timeFormat: WorkspaceMemberTimeFormatEnum;
 
-  @Field(() => [RoleDTO])
-  roles: RoleDTO[];
+  @Field(() => [RoleDTO], { nullable: true })
+  roles?: RoleDTO[];
 
   @Field(() => String)
   userWorkspaceId: string;

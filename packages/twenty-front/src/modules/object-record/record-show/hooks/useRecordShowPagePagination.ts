@@ -67,11 +67,11 @@ export const useRecordShowPagePagination = (
         id: { neq: objectRecordId },
       },
       orderBy,
+      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
       cursorFilter: isNonEmptyString(currentRecordCursorFromRequest)
         ? {
             cursorDirection: 'before',
             cursor: currentRecordCursorFromRequest,
-            limit: 1,
           }
         : undefined,
       objectNameSingular,
@@ -90,11 +90,11 @@ export const useRecordShowPagePagination = (
       },
       fetchPolicy: 'network-only',
       orderBy,
+      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
       cursorFilter: currentRecordCursorFromRequest
         ? {
             cursorDirection: 'after',
             cursor: currentRecordCursorFromRequest,
-            limit: 1,
           }
         : undefined,
       objectNameSingular,

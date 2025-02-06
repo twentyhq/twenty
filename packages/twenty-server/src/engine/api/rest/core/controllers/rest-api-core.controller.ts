@@ -15,10 +15,10 @@ import { Request, Response } from 'express';
 
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 
 @Controller('rest/*')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
@@ -53,26 +53,29 @@ export class RestApiCoreController {
   }
 
   @Post()
+  @UseFilters(RestApiExceptionFilter)
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.createOne(request);
+    const result = await this.restApiCoreServiceV2.createOne(request);
 
-    res.status(201).send(cleanGraphQLResponse(result.data.data));
+    res.status(201).send(result);
   }
 
   @Patch()
+  @UseFilters(RestApiExceptionFilter)
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.update(request);
+    const result = await this.restApiCoreServiceV2.update(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    res.status(200).send(result);
   }
 
   // This endpoint is not documented in the OpenAPI schema.
   // We keep it to avoid a breaking change since it initially used PUT instead of PATCH,
   // and because the PUT verb is often used as a PATCH.
   @Put()
+  @UseFilters(RestApiExceptionFilter)
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.update(request);
+    const result = await this.restApiCoreServiceV2.update(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    res.status(200).send(result);
   }
 }

@@ -13,9 +13,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
-  WorkflowEventTriggerJob,
-  WorkflowEventTriggerJobData,
-} from 'src/modules/workflow/workflow-trigger/jobs/workflow-event-trigger.job';
+  WorkflowTriggerJob,
+  WorkflowTriggerJobData,
+} from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -103,8 +103,8 @@ export class DatabaseEventTriggerListener {
 
     for (const eventListener of eventListeners) {
       for (const eventPayload of payload.events) {
-        this.messageQueueService.add<WorkflowEventTriggerJobData>(
-          WorkflowEventTriggerJob.name,
+        this.messageQueueService.add<WorkflowTriggerJobData>(
+          WorkflowTriggerJob.name,
           {
             workspaceId,
             workflowId: eventListener.workflowId,

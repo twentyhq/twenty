@@ -7,7 +7,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/userRole/user-role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class PermissionsService {
@@ -54,7 +54,7 @@ export class PermissionsService {
     }
 
     throw new PermissionsException(
-      `User does not have permission to update this setting: ${setting}`,
+      `User does not have permission to access this setting: ${setting}`,
       PermissionsExceptionCode.PERMISSION_DENIED,
     );
   }

@@ -1,7 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import {
+  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
+} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterDefinition } from '@/object-record/record-filter/types/RecordFilterDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -35,7 +39,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
     fieldMetadataId: mockFieldMetadataItem.id,
     operand: ViewFilterOperand.Contains,
     value: 'test',
-    displayValue: 'test',
+    displayValue: mockFieldMetadataItem.label,
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
     definition: mockAvailableFilterDefinition,
@@ -72,7 +76,9 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         viewFilterGroupId: mockViewFilter.viewFilterGroupId,
         positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
         definition: mockAvailableFilterDefinition,
-      },
+        label: mockViewFilter.displayValue,
+        type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
+      } satisfies RecordFilter,
     ]);
   });
 
