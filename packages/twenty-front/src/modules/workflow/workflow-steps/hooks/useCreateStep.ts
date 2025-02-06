@@ -1,4 +1,3 @@
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
@@ -10,14 +9,12 @@ import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
 
 export const useCreateStep = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { getIcon } = useIcons();
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setWorkflowLastCreatedStepId = useSetRecoilState(
@@ -29,8 +26,6 @@ export const useCreateStep = ({
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
-
-  const { openRightDrawer } = useRightDrawer();
 
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowCreateStepFromParentStepId)) {
