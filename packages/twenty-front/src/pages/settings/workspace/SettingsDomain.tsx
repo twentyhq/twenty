@@ -49,7 +49,8 @@ export const SettingsDomain = () => {
           },
         )
         .max(256)
-        .nullable(),
+        .optional()
+        .or(z.literal('')),
     })
     .required();
 
@@ -82,13 +83,13 @@ export const SettingsDomain = () => {
   const hostnameValue = form.watch('hostname');
 
   const updateHostname = (
-    hostname: string,
+    hostname: string | null | undefined,
     currentWorkspace: CurrentWorkspace,
   ) => {
     updateWorkspace({
       variables: {
         input: {
-          hostname,
+          hostname: hostname.length > 0 ? hostname : null,
         },
       },
       onCompleted: () => {
@@ -164,8 +165,6 @@ export const SettingsDomain = () => {
       });
     }
 
-    console.log('>>>>>>>>>>>>>>', values);
-
     if (
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
@@ -173,10 +172,7 @@ export const SettingsDomain = () => {
       return updateSubdomain(values.subdomain, currentWorkspace);
     }
 
-    if (
-      isDefined(values.hostname) &&
-      values.hostname !== currentWorkspace.hostname
-    ) {
+    if (values.hostname !== currentWorkspace.hostname) {
       return updateHostname(values.hostname, currentWorkspace);
     }
   };

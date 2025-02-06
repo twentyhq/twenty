@@ -2171,7 +2171,7 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
-  userWorkspaceId: Scalars['String']['output'];
+  userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
