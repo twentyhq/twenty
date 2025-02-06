@@ -69,10 +69,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
             value = "local"
           }
           env {
-            name  = "MESSAGE_QUEUE_TYPE"
-            value = "bull-mq"
-          }
-          env {
             name  = "ACCESS_TOKEN_EXPIRES_IN"
             value = "7d"
           }

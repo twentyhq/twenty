@@ -158,7 +158,6 @@ yarn command:prod cron:calendar:ongoing-stale
     ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
     ['FRONT_PORT', '3001', 'Port of the frontend server.'],
     ['PORT', '3000', 'Port of the backend server'],
-    ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
 
@@ -275,12 +274,6 @@ yarn command:prod cron:calendar:ongoing-stale
   ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
   ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
-
-### Message Queue
-
-<ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'bull-mq'"],
-    ]}></ArticleTable>
 
 ### Logging
 
