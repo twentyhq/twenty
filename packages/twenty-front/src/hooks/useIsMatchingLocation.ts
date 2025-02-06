@@ -1,6 +1,8 @@
 import { matchPath, useLocation } from 'react-router-dom';
 
 import { AppBasePath } from '@/types/AppBasePath';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared';
 
 export const useIsMatchingLocation = () => {
   const location = useLocation();
@@ -9,17 +11,22 @@ export const useIsMatchingLocation = () => {
     path.endsWith('/') ? path : path + '/';
 
   const getConstructedPath = (path: string, basePath?: AppBasePath) => {
-    if (!basePath) return path;
+    if (!isNonEmptyString(basePath)) return path;
 
     return addTrailingSlash(basePath) + path;
   };
 
-  return (path: string, basePath?: AppBasePath) => {
-    console.log(
-      '>>>>>>>>>>>>>>',
+  const isMatchingLocation = (path: string, basePath?: AppBasePath) => {
+    const match = matchPath(
       getConstructedPath(path, basePath),
       location.pathname,
     );
-    return !!matchPath(getConstructedPath(path, basePath), location.pathname);
+    const isMatching = isDefined(match);
+
+    return isMatching;
+  };
+
+  return {
+    isMatchingLocation,
   };
 };
