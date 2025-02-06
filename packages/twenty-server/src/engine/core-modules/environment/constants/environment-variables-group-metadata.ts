@@ -15,28 +15,8 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
     description: '',
     isHiddenOnLoad: false,
   },
-  [EnvironmentVariablesGroup.Database]: {
-    position: 200,
-    description: '',
-    isHiddenOnLoad: false,
-  },
   [EnvironmentVariablesGroup.Authentication]: {
     position: 400,
-    description: '',
-    isHiddenOnLoad: false,
-  },
-  [EnvironmentVariablesGroup.Cache]: {
-    position: 500,
-    description: '',
-    isHiddenOnLoad: false,
-  },
-  [EnvironmentVariablesGroup.QueueConfig]: {
-    position: 600,
-    description: '',
-    isHiddenOnLoad: false,
-  },
-  [EnvironmentVariablesGroup.Storage]: {
-    position: 700,
     description: '',
     isHiddenOnLoad: false,
   },
@@ -45,33 +25,13 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
     description: '',
     isHiddenOnLoad: false,
   },
-  [EnvironmentVariablesGroup.Frontend]: {
-    position: 900,
-    description: '',
-    isHiddenOnLoad: false,
-  },
   [EnvironmentVariablesGroup.Workspace]: {
     position: 1000,
     description: '',
     isHiddenOnLoad: false,
   },
-  [EnvironmentVariablesGroup.Analytics]: {
-    position: 1100,
-    description: '',
-    isHiddenOnLoad: false,
-  },
   [EnvironmentVariablesGroup.Logging]: {
     position: 1200,
-    description: '',
-    isHiddenOnLoad: false,
-  },
-  [EnvironmentVariablesGroup.Billing]: {
-    position: 1300,
-    description: '',
-    isHiddenOnLoad: false,
-  },
-  [EnvironmentVariablesGroup.Support]: {
-    position: 1400,
     description: '',
     isHiddenOnLoad: false,
   },
