@@ -101,41 +101,36 @@ export class UserRoleService {
   public async getRolesByUserWorkspaces(
     userWorkspaceIds: string[],
   ): Promise<Map<string, RoleDTO[]>> {
-    const userWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
-      where: {
-        userWorkspaceId: In(userWorkspaceIds),
-      },
-    });
-
-    if (!userWorkspaceRoles.length) {
+    if (!userWorkspaceIds.length) {
       return new Map();
     }
 
-    const roles = await this.roleRepository.find({
+    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
       where: {
-        id: In(
-          userWorkspaceRoles.map(
-            (userWorkspaceRole) => userWorkspaceRole.roleId,
-          ),
-        ),
+        userWorkspaceId: In(userWorkspaceIds),
+      },
+      relations: {
+        role: true,
       },
     });
+
+    if (!allUserWorkspaceRoles.length) {
+      return new Map();
+    }
 
     const rolesMap = new Map<string, RoleDTO[]>();
 
     for (const userWorkspaceId of userWorkspaceIds) {
-      const userWorkspaceRolesForId = userWorkspaceRoles.filter(
+      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
         (userWorkspaceRole) =>
           userWorkspaceRole.userWorkspaceId === userWorkspaceId,
       );
 
-      const rolesForId = userWorkspaceRolesForId
-        .map((userWorkspaceRole) =>
-          roles.find((role) => role.id === userWorkspaceRole.roleId),
-        )
+      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
+        .map((userWorkspaceRole) => userWorkspaceRole.role)
         .filter(isDefined);
 
-      rolesMap.set(userWorkspaceId, rolesForId);
+      rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);
     }
 
     return rolesMap;
