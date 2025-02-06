@@ -1,4 +1,9 @@
+import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { getWorkflowVersionDiagram } from '../getWorkflowVersionDiagram';
+
+jest.mock('uuid', () => ({
+  v4: getUuidV4Mock(),
+}));
 
 describe('getWorkflowVersionDiagram', () => {
   it('returns an empty diagram if the provided workflow version', () => {
@@ -126,7 +131,7 @@ describe('getWorkflowVersionDiagram', () => {
   "edges": [
     {
       "deletable": false,
-      "id": "42770c9a-0233-4a42-bad0-41f0aefb4588",
+      "id": "8f3b2121-f194-4ba4-9fbf-0",
       "markerEnd": "arrow-rounded",
       "selectable": false,
       "source": "trigger",
