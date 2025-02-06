@@ -2,7 +2,11 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconLayoutSidebarRightExpand, getOsControlSymbol } from 'twenty-ui';
+import {
+  IconDotsVertical,
+  IconLayoutSidebarRightExpand,
+  getOsControlSymbol,
+} from 'twenty-ui';
 
 const StyledButton = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -47,6 +51,8 @@ export const RecordIndexActionMenuBarAllActionsButton = () => {
         onClick={() =>
           navigateCommandMenu({
             page: CommandMenuPages.Root,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
           })
         }
       >

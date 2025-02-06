@@ -1,10 +1,11 @@
 import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
+import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
@@ -98,13 +99,24 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const { title, Icon } = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuNavigationStack = useRecoilValue(
+    commandMenuNavigationStackState,
+  );
 
   const theme = useTheme();
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
+
+  const contextChips = commandMenuNavigationStack
+    .filter((page) => page.page !== CommandMenuPages.Root)
+    .map((page) => {
+      return {
+        Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+        text: page.pageTitle,
+      };
+    });
 
   return (
     <StyledInputContainer>
@@ -124,13 +136,9 @@ export const CommandMenuTopBar = () => {
               objectMetadataItemId={contextStoreCurrentObjectMetadataId}
             />
           )}
-        {isDefined(Icon) && (
-          <CommandMenuContextChip
-            Icons={[<Icon size={theme.icon.size.sm} />]}
-            text={title}
-          />
+        {contextChips.length > 0 && (
+          <CommandMenuContextChipGroups contextChips={contextChips} />
         )}
-
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <StyledInput

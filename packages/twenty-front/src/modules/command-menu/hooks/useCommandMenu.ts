@@ -24,7 +24,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDefined } from 'twenty-shared';
-import { IconSearch } from 'twenty-ui';
+import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -137,6 +137,8 @@ export const useCommandMenu = () => {
         } else {
           navigateCommandMenu({
             page: CommandMenuPages.Root,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
           });
         }
       },
@@ -204,6 +206,8 @@ export const useCommandMenu = () => {
         set(viewableRecordIdState, recordId);
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
+          pageTitle: objectNameSingular,
+          pageIcon: IconList,
         });
       };
     },

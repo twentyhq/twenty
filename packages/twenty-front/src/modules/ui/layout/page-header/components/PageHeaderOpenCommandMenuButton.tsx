@@ -34,6 +34,8 @@ export const PageHeaderOpenCommandMenuButton = () => {
           onClick={() => {
             navigateCommandMenu({
               page: CommandMenuPages.Root,
+              pageTitle: 'Command Menu',
+              pageIcon: IconDotsVertical,
             });
           }}
         />
@@ -47,6 +49,8 @@ export const PageHeaderOpenCommandMenuButton = () => {
           onClick={() => {
             navigateCommandMenu({
               page: CommandMenuPages.Root,
+              pageTitle: 'Command Menu',
+              pageIcon: IconDotsVertical,
             });
           }}
         />

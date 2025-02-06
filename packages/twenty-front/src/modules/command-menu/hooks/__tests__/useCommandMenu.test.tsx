@@ -9,7 +9,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconSearch } from 'twenty-ui';
+import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -55,6 +55,8 @@ describe('useCommandMenu', () => {
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
         page: CommandMenuPages.Root,
+        pageTitle: 'Command Menu',
+        pageIcon: IconDotsVertical,
       });
     });
 
@@ -119,7 +121,8 @@ describe('useCommandMenu', () => {
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
         page: CommandMenuPages.ViewRecord,
-        pageTitle: 'View Record',
+        pageTitle: 'Company',
+        pageIcon: IconList,
       });
     });
 
@@ -131,13 +134,14 @@ describe('useCommandMenu', () => {
       },
       {
         page: CommandMenuPages.ViewRecord,
-        pageTitle: 'View Record',
+        pageTitle: 'Company',
+        pageIcon: IconList,
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
     expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'View Record',
-      Icon: undefined,
+      title: 'Company',
+      Icon: IconList,
     });
   });
 
@@ -155,7 +159,8 @@ describe('useCommandMenu', () => {
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
         page: CommandMenuPages.ViewRecord,
-        pageTitle: 'View Record',
+        pageTitle: 'Company',
+        pageIcon: IconList,
       });
     });
 
@@ -167,7 +172,8 @@ describe('useCommandMenu', () => {
       },
       {
         page: CommandMenuPages.ViewRecord,
-        pageTitle: 'View Record',
+        pageTitle: 'Company',
+        pageIcon: IconList,
       },
     ]);
 
@@ -195,8 +201,8 @@ describe('useCommandMenu', () => {
     expect(result.current.commandMenuNavigationStack).toEqual([]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
     expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
+      title: 'Command Menu',
+      Icon: IconDotsVertical,
     });
     expect(result.current.isCommandMenuOpened).toBe(false);
   });
