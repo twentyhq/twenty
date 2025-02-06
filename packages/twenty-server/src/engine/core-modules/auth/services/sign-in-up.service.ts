@@ -213,11 +213,40 @@ export class SignInUpService {
     return await this.userRepository.save(userToCreate);
   }
 
+  private async isWorkspaceReadyForSignInUpOrThrow(
+    workspace: Workspace,
+    user: ExistingUserOrPartialUserWithPicture,
+  ) {
+    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+
+    if (user.userData.type !== 'existingUser') {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const userWorkspaceExists =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.userData.existingUser.id,
+        workspace.id,
+      );
+
+    if (!userWorkspaceExists) {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+  }
+
   async signInUpOnExistingWorkspace(
     params: {
       workspace: Workspace;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
+    await this.isWorkspaceReadyForSignInUpOrThrow(params.workspace, params);
+
     const currentUser =
       params.userData.type === 'newUserWithPicture'
         ? await this.persistNewUser(
