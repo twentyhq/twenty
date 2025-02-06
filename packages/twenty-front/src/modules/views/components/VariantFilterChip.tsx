@@ -1,5 +1,6 @@
 import { useIcons } from 'twenty-ui';
 
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -9,12 +10,12 @@ import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedVie
 import { useParams } from 'react-router-dom';
 
 type VariantFilterChipProps = {
-  viewFilter: RecordFilter;
+  recordFilter: RecordFilter;
   viewBarId: string;
 };
 
 export const VariantFilterChip = ({
-  viewFilter,
+  recordFilter,
   viewBarId,
 }: VariantFilterChipProps) => {
   const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
@@ -30,17 +31,23 @@ export const VariantFilterChip = ({
     viewBarId,
   });
 
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    recordFilter.fieldMetadataId,
+  );
+
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const { getIcon } = useIcons();
 
+  const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
+
   const handleRemoveClick = () => {
-    deleteCombinedViewFilter(viewFilter.id);
-    removeRecordFilter(viewFilter.fieldMetadataId);
+    deleteCombinedViewFilter(recordFilter.id);
+    removeRecordFilter(recordFilter.fieldMetadataId);
 
     if (
-      viewFilter.definition.label === 'Deleted' &&
-      viewFilter.operand === 'isNotEmpty'
+      recordFilter.label === 'Deleted' &&
+      recordFilter.operand === 'isNotEmpty'
     ) {
       toggleSoftDeleteFilterState(false);
     }
@@ -48,11 +55,11 @@ export const VariantFilterChip = ({
 
   return (
     <SortOrFilterChip
-      key={viewFilter.fieldMetadataId}
-      testId={viewFilter.fieldMetadataId}
-      variant={viewFilter.variant}
-      labelValue={viewFilter.definition.label}
-      Icon={getIcon(viewFilter.definition.iconName)}
+      key={recordFilter.fieldMetadataId}
+      testId={recordFilter.fieldMetadataId}
+      variant={recordFilter.variant}
+      labelValue={recordFilter.label ?? ''}
+      Icon={FieldMetadataItemIcon}
       onRemove={handleRemoveClick}
     />
   );

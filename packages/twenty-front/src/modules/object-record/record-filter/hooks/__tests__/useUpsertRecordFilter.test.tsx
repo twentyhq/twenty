@@ -41,6 +41,8 @@ describe('useUpsertRecordFilter', () => {
         label: 'Test Field',
         iconName: 'IconText',
       },
+      label: 'Test Field',
+      type: 'TEXT',
     };
 
     act(() => {
@@ -79,6 +81,8 @@ describe('useUpsertRecordFilter', () => {
         label: 'Test Field',
         iconName: 'IconText',
       },
+      label: 'Test Field',
+      type: 'TEXT',
     };
 
     const updatedFilter: RecordFilter = {
@@ -93,6 +97,8 @@ describe('useUpsertRecordFilter', () => {
         label: 'Test Field',
         iconName: 'IconText',
       },
+      label: 'Test Field',
+      type: 'TEXT',
     };
 
     act(() => {
