@@ -8,9 +8,12 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { SettingsFeatures } from 'twenty-shared';
+
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -66,6 +69,7 @@ export class ObjectMetadataResolver {
     );
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -81,6 +85,7 @@ export class ObjectMetadataResolver {
     }
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
