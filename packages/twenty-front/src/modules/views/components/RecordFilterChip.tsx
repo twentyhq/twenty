@@ -3,10 +3,7 @@ import { useIcons } from 'twenty-ui';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import {
-  SortOrFilterChip,
-  SortOrFitlerChipVariant,
-} from '@/views/components/SortOrFilterChip';
+import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 
 type RecordFilterChipProps = {
@@ -31,15 +28,12 @@ export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
     removeRecordFilter(recordFilter.fieldMetadataId);
   };
 
-  const variant: SortOrFitlerChipVariant = 'default';
-
   const ChipIcon = FieldMetadataItemIcon;
 
   return (
     <SortOrFilterChip
       key={recordFilter.fieldMetadataId}
       testId={recordFilter.fieldMetadataId}
-      variant={variant}
       labelValue={recordFilter.label ?? ''}
       Icon={ChipIcon}
       onRemove={handleRemoveClick}

@@ -25,7 +25,7 @@ export const useCheckIsSoftDeleteFilter = () => {
     }
 
     return (
-      foundFieldMetadataItem?.name === 'deletedAt' &&
+      foundFieldMetadataItem.name === 'deletedAt' &&
       isSoftDeleteFilterActive &&
       recordFilter.operand === RecordFilterOperand.IsNotEmpty
     );

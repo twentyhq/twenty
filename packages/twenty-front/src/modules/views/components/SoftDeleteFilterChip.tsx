@@ -6,7 +6,7 @@ import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-t
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import {
   SortOrFilterChip,
-  SortOrFitlerChipVariant,
+  SortOrFilterChipVariant,
 } from '@/views/components/SortOrFilterChip';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 
@@ -37,13 +37,12 @@ export const SoftDeleteFilterChip = ({
     setIsSoftDeleteFilterActive(false);
   };
 
-  const variant: SortOrFitlerChipVariant = 'danger';
+  const variant: SortOrFilterChipVariant = 'danger';
 
   const ChipIcon = getIcon('IconTrash');
 
   return (
     <SortOrFilterChip
-      key={recordFilter.fieldMetadataId}
       testId={recordFilter.fieldMetadataId}
       variant={variant}
       labelValue={recordFilter.label ?? ''}
