@@ -25,7 +25,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      // Centralized and sync with package.json
+      // TODO Centralize and sync with package.json programmatically
       entry: ['src/index.ts', 'src/workflow.ts'],
       name: 'twenty-shared',
       formats: ['es', 'cjs'],
