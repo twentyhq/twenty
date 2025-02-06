@@ -20,7 +20,7 @@ describe('useIsMatchingLocation', () => {
       wrapper: Wrapper(),
     });
 
-    expect(result.current('/example')).toBe(true);
+    expect(result.current.isMatchingLocation('/example')).toBe(true);
   });
 
   it('returns false when paths do not match with no basePath', () => {
@@ -28,7 +28,7 @@ describe('useIsMatchingLocation', () => {
       wrapper: Wrapper(),
     });
 
-    expect(result.current('/non-match')).toBe(false);
+    expect(result.current.isMatchingLocation('/non-match')).toBe(false);
   });
 
   it('returns true when paths match with basePath', () => {
@@ -36,7 +36,9 @@ describe('useIsMatchingLocation', () => {
       wrapper: Wrapper(2),
     });
 
-    expect(result.current('example', AppBasePath.Settings)).toBe(true);
+    expect(
+      result.current.isMatchingLocation('example', AppBasePath.Settings),
+    ).toBe(true);
   });
 
   it('returns false when paths do not match with basePath', () => {
@@ -44,7 +46,9 @@ describe('useIsMatchingLocation', () => {
       wrapper: Wrapper(),
     });
 
-    expect(result.current('non-match', AppBasePath.Settings)).toBe(false);
+    expect(
+      result.current.isMatchingLocation('non-match', AppBasePath.Settings),
+    ).toBe(false);
   });
 
   it('handles trailing slashes in basePath correctly', () => {
@@ -53,7 +57,10 @@ describe('useIsMatchingLocation', () => {
     });
 
     expect(
-      result.current('example', (AppBasePath.Settings + '/') as AppBasePath),
+      result.current.isMatchingLocation(
+        'example',
+        (AppBasePath.Settings + '/') as AppBasePath,
+      ),
     ).toBe(true);
   });
 
@@ -62,6 +69,6 @@ describe('useIsMatchingLocation', () => {
       wrapper: Wrapper(),
     });
 
-    expect(result.current('example')).toBe(true);
+    expect(result.current.isMatchingLocation('example')).toBe(true);
   });
 });
