@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { H3Title, IconLockOpen, IconUser, IconUserPlus } from 'twenty-ui';
 
@@ -9,6 +10,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useGetRolesQuery } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RolePermissions } from '~/pages/settings/roles/components/RolePermissions';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RoleAssignment } from './components/RoleAssignment';
@@ -39,13 +41,20 @@ export const SETTINGS_ROLE_DETAIL_TABS = {
 
 export const SettingsRoleEdit = () => {
   const { roleId = '' } = useParams();
-  const { data: rolesData } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const navigateSettings = useNavigateSettings();
 
   const role = rolesData?.getRoles.find((r) => r.id === roleId);
 
   const { activeTabId } = useTabList(
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
+
+  useEffect(() => {
+    if (!rolesLoading && !role) {
+      navigateSettings(SettingsPath.Roles);
+    }
+  }, [role, navigateSettings, rolesLoading]);
 
   if (!role) return null;
 
