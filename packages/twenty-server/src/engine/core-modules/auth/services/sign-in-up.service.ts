@@ -38,7 +38,6 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -219,14 +218,6 @@ export class SignInUpService {
       workspace: Workspace;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
-    workspaceValidator.assertIsActive(
-      params.workspace,
-      new AuthException(
-        'Workspace is not ready to welcome new members',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      ),
-    );
-
     const currentUser =
       params.userData.type === 'newUserWithPicture'
         ? await this.persistNewUser(
