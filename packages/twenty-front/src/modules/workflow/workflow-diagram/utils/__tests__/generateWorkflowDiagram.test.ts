@@ -1,5 +1,4 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '../generateWorkflowDiagram';
 
 describe('generateWorkflowDiagram', () => {
@@ -80,9 +79,7 @@ describe('generateWorkflowDiagram', () => {
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
     expect(result.edges).toHaveLength(steps.length - 1 + 1); // Edges are one less than nodes + the edge from the trigger to the first node
 
-    expect((result.nodes[0].data as WorkflowDiagramStepNodeData).nodeType).toBe(
-      'trigger',
-    );
+    expect(result.nodes[0].data.nodeType).toBe('trigger');
 
     const stepNodes = result.nodes.slice(1);
 
