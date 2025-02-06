@@ -17,16 +17,25 @@ export const useUpsertRecordFilter = () => {
           currentRecordFiltersCallbackState,
         );
 
+        // TODO: This is a temporary solution to ensure that the record filter is compatible with filter definitions
+        // Label and type will be set without definition
+        const recordFilterToSet: RecordFilter = {
+          ...filter,
+          label: filter.definition.label,
+          type: filter.definition.type,
+        };
+
         const foundRecordFilterInCurrentRecordFilters =
           currentRecordFilters.some(
             (existingFilter) =>
-              existingFilter.fieldMetadataId === filter.fieldMetadataId,
+              existingFilter.fieldMetadataId ===
+              recordFilterToSet.fieldMetadataId,
           );
 
         if (!foundRecordFilterInCurrentRecordFilters) {
           set(currentRecordFiltersCallbackState, [
             ...currentRecordFilters,
-            filter,
+            recordFilterToSet,
           ]);
         } else {
           set(currentRecordFiltersCallbackState, (currentRecordFilters) => {
@@ -34,11 +43,12 @@ export const useUpsertRecordFilter = () => {
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
               (existingFilter) =>
-                existingFilter.fieldMetadataId === filter.fieldMetadataId,
+                existingFilter.fieldMetadataId ===
+                recordFilterToSet.fieldMetadataId,
             );
 
             newCurrentRecordFilters[indexOfFilterToUpdate] = {
-              ...filter,
+              ...recordFilterToSet,
             };
 
             return newCurrentRecordFilters;

@@ -193,7 +193,7 @@ export const ViewBarDetails = ({
           {otherViewFilters.map((viewFilter) => (
             <VariantFilterChip
               key={viewFilter.fieldMetadataId}
-              viewFilter={viewFilter}
+              recordFilter={viewFilter}
               viewBarId={viewBarId}
             />
           ))}

@@ -30,9 +30,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
 
   const handleButtonClick = async () => {
     const deletedFilter = tableFilters.find(
-      (filter) =>
-        filter.definition.label === 'Deleted' &&
-        filter.operand === 'isNotEmpty',
+      (filter) => filter.label === 'Deleted' && filter.operand === 'isNotEmpty',
     );
 
     if (!deletedFilter) {

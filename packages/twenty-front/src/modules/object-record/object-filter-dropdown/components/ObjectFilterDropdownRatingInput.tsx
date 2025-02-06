@@ -1,6 +1,5 @@
 import { v4 } from 'uuid';
 
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -9,6 +8,8 @@ import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
@@ -37,8 +38,8 @@ export const ObjectFilterDropdownRatingInput = () => {
     selectedOperandInDropdownComponentState,
   );
 
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const selectedFilter = useRecoilComponentValueV2(
@@ -48,7 +49,7 @@ export const ObjectFilterDropdownRatingInput = () => {
   const { applyRecordFilter } = useApplyRecordFilter();
 
   return (
-    filterDefinitionUsedInDropdown &&
+    fieldMetadataItemUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuItemsContainer>
         <RatingInput
@@ -58,13 +59,17 @@ export const ObjectFilterDropdownRatingInput = () => {
               return;
             }
 
+            const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+              field: fieldMetadataItemUsedInDropdown,
+            });
+
             applyRecordFilter?.({
               id: selectedFilter?.id ? selectedFilter.id : v4(),
-              fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+              fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
               value: convertFieldRatingValueToNumber(newValue),
               operand: selectedOperandInDropdown,
               displayValue: convertFieldRatingValueToNumber(newValue),
-              definition: filterDefinitionUsedInDropdown,
+              definition: filterDefinition,
               viewFilterGroupId: selectedFilter?.viewFilterGroupId,
             });
           }}
