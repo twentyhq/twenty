@@ -5,11 +5,13 @@ import { AppBasePath } from '@/types/AppBasePath';
 
 export const useIsMatchingLocation = () => {
   const location = useLocation();
-
   return useCallback(
     (path: string, basePath?: AppBasePath) => {
       const constructedPath = basePath
-        ? (new URL(basePath + path, document.location.origin).pathname ?? '')
+        ? (new URL(
+            (basePath.endsWith('/') ? basePath : basePath + '/') + path,
+            document.location.origin,
+          ).pathname ?? '')
         : path;
 
       return !!matchPath(constructedPath, location.pathname);

@@ -140,6 +140,13 @@ export const PageChangeEffect = () => {
         });
         break;
       }
+      case isMatchingLocation(SettingsPath.Domain, AppBasePath.Settings): {
+        setHotkeyScope(PageHotkeyScope.Settings, {
+          goto: false,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
       case isMatchingLocation(
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
