@@ -9,14 +9,34 @@ export const CommandMenuContextChipGroups = ({
 }: {
   contextChips: CommandMenuContextChipProps[];
 }) => {
+  if (contextChips.length === 0) {
+    return null;
+  }
+
+  if (contextChips.length < 3) {
+    return (
+      <>
+        {contextChips.map((chip) => (
+          <CommandMenuContextChip
+            key={chip.text}
+            Icons={chip.Icons}
+            text={chip.text}
+          />
+        ))}
+      </>
+    );
+  }
+
   const firstChips = contextChips.slice(0, -1);
   const lastChip = contextChips.at(-1);
 
   return (
     <>
-      <CommandMenuContextChip
-        Icons={firstChips.map((chip) => chip.Icons?.[0])}
-      />
+      {firstChips.length > 0 && (
+        <CommandMenuContextChip
+          Icons={firstChips.map((chip) => chip.Icons?.[0])}
+        />
+      )}
 
       {isDefined(lastChip) && (
         <CommandMenuContextChip
