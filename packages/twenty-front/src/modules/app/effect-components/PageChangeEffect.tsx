@@ -29,7 +29,7 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -136,6 +136,13 @@ export const PageChangeEffect = () => {
       case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
         setHotkeyScope(PageHotkeyScope.ProfilePage, {
           goto: true,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
+      case isMatchingLocation(SettingsPath.Domain, AppBasePath.Settings): {
+        setHotkeyScope(PageHotkeyScope.Settings, {
+          goto: false,
           keyboardShortcutMenu: true,
         });
         break;

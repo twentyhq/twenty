@@ -22,7 +22,6 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
 
-import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
@@ -37,7 +36,6 @@ import { EnvironmentVariablesSubGroup } from 'src/engine/core-modules/environmen
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
-import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
 
@@ -762,12 +760,6 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Cache,
-    description: 'Cache storage type',
-  })
-  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Redis;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Cache,
     description: 'Cache storage TTL',
   })
   @CastToPositiveNumber()
@@ -779,11 +771,6 @@ export class EnvironmentVariables {
     description: 'Cache storage URL',
   })
   @IsOptional()
-  @ValidateIf(
-    (env) =>
-      env.CACHE_STORAGE_TYPE === CacheStorageType.Redis ||
-      env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.BullMQ,
-  )
   @IsUrl({
     protocols: ['redis'],
     require_tld: false,
@@ -1004,12 +991,6 @@ export class EnvironmentVariables {
   @IsNumber()
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.QueueConfig,
-    description: 'Queue driver type',
-  })
-  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.BullMQ;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.QueueConfig,
