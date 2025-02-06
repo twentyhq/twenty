@@ -302,15 +302,12 @@ describe('SignInUpService', () => {
 
     jest.spyOn(environmentService, 'get').mockReturnValue(false);
     jest
-      .spyOn(userWorkspaceService, 'addUserToWorkspace')
-      .mockResolvedValue({} as User);
-    jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockResolvedValue(null);
 
     await expect(() => service.signInUp(params)).rejects.toThrow(
       new AuthException(
-        'Workspace is not ready to welcome new members',
+        'User is not part of the workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
