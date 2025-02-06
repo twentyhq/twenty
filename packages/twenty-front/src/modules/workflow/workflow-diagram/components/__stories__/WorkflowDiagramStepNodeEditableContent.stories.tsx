@@ -23,6 +23,9 @@ const Wrapper = (_props: WrapperProps) => {
 const meta: Meta<WrapperProps> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
   component: WorkflowDiagramStepNodeEditableContent,
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
@@ -79,7 +82,6 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
     onDelete: fn(),
   },
   parameters: {
-    msw: graphqlMocks,
     pseudo: { hover: ['.hover'] },
     catalog: {
       options: {
@@ -124,6 +126,25 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
       );
     },
     CatalogDecorator,
+    ReactflowDecorator,
+  ],
+};
+
+export const IsNotLeafNode: Story = {
+  args: {
+    data: {
+      ...ALL_STEPS[0],
+      isLeafNode: false,
+    },
+    state: 'default',
+    variant: 'default',
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ position: 'relative' }}>
+        <Story />
+      </div>
+    ),
     ReactflowDecorator,
   ],
 };
