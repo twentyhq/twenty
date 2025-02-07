@@ -797,20 +797,11 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Enable or disable debug mode for the application',
-  })
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  DEBUG_MODE = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
   })
   @IsEnum(NodeEnvironment)
   @IsString()
-  NODE_ENV: NodeEnvironment = NodeEnvironment.development;
+  NODE_ENV: NodeEnvironment = NodeEnvironment.production;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
