@@ -174,7 +174,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number greater that 1"
+              placeholder="Enter number greater than 1"
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
@@ -257,7 +257,7 @@ export const WorkflowEditTriggerCronForm = ({
                 },
               });
             }}
-            placeholder="Enter number greater that 1"
+            placeholder="Enter number greater than 1"
             readonly={triggerOptions.readonly}
           />
         )}
@@ -295,7 +295,7 @@ export const WorkflowEditTriggerCronForm = ({
                 },
               });
             }}
-            placeholder="Enter number greater that 10"
+            placeholder="Enter number greater than 10"
             readonly={triggerOptions.readonly}
           />
         )}

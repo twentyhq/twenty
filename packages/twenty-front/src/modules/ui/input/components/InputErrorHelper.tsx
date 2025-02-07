@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
 const StyledInputErrorHelper = styled.div`
@@ -5,4 +6,10 @@ const StyledInputErrorHelper = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
-export { StyledInputErrorHelper as InputErrorHelper };
+export const InputErrorHelper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <StyledInputErrorHelper aria-live="polite">{children}</StyledInputErrorHelper>
+);

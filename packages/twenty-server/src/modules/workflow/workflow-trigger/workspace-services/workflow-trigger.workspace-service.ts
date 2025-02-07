@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
-import cron from 'cron-validate';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
@@ -342,20 +341,6 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.MANUAL:
         return;
       case WorkflowTriggerType.CRON: {
-        if (workflowVersion.trigger.settings.type === 'CUSTOM') {
-          const cronValidator = cron(workflowVersion.trigger.settings.pattern, {
-            override: {
-              useSeconds: true,
-            },
-          });
-
-          if (cronValidator.isError()) {
-            throw new WorkflowTriggerException(
-              `Cron pattern '${workflowVersion.trigger.settings.pattern}' is invalid`,
-              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
-            );
-          }
-        }
         const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
 
         await this.messageQueueService.addCron<WorkflowTriggerJobData>({

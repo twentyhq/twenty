@@ -20,6 +20,25 @@ describe('computeCronPatternFromSchedule', () => {
     expect(computeCronPatternFromSchedule(trigger)).toBe('0 12 * * * *');
   });
 
+  it('should throw an exception for unsupported pattern for CUSTOM type', () => {
+    const trigger: WorkflowCronTrigger = {
+      name: '',
+      type: WorkflowTriggerType.CRON,
+      settings: {
+        type: 'CUSTOM',
+        pattern: 'a 12 * * * *',
+        outputSchema: {},
+      },
+    };
+
+    expect(() => computeCronPatternFromSchedule(trigger)).toThrow(
+      WorkflowTriggerException,
+    );
+    expect(() => computeCronPatternFromSchedule(trigger)).toThrow(
+      "Cron pattern 'a 12 * * * *' is invalid",
+    );
+  });
+
   it('should return the correct cron pattern for HOURS type', () => {
     const trigger: WorkflowCronTrigger = {
       name: '',
