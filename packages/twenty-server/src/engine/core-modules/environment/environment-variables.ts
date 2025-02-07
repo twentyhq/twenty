@@ -830,15 +830,6 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    sensitive: true,
-    description: 'Secret for session store',
-  })
-  @IsString()
-  @IsOptional()
-  SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
     subGroup: EnvironmentVariablesSubGroup.RateLimiting,
     description: 'Maximum number of records affected by mutations',
   })
