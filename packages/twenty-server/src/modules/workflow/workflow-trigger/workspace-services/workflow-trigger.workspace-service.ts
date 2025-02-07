@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
+import cron from 'cron-validate';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
@@ -36,6 +37,7 @@ import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -339,7 +341,23 @@ export class WorkflowTriggerWorkspaceService {
         return;
       case WorkflowTriggerType.MANUAL:
         return;
-      case WorkflowTriggerType.CRON:
+      case WorkflowTriggerType.CRON: {
+        if (workflowVersion.trigger.settings.type === 'CUSTOM') {
+          const cronValidator = cron(workflowVersion.trigger.settings.pattern, {
+            override: {
+              useSeconds: true,
+            },
+          });
+
+          if (cronValidator.isError()) {
+            throw new WorkflowTriggerException(
+              `Cron pattern '${workflowVersion.trigger.settings.pattern}' is invalid`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+            );
+          }
+        }
+        const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
+
         await this.messageQueueService.addCron<WorkflowTriggerJobData>({
           jobName: WorkflowTriggerJob.name,
           jobId: workflowVersion.workflowId,
@@ -350,12 +368,13 @@ export class WorkflowTriggerWorkspaceService {
           },
           options: {
             repeat: {
-              pattern: workflowVersion.trigger.settings.pattern,
+              pattern,
             },
           },
         });
 
         return;
+      }
       default: {
         assertNever(workflowVersion.trigger);
       }

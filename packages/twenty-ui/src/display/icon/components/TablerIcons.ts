@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-imports */
 export {
   Icon123,
+  Icon24Hours,
   IconAlertCircle,
   IconAlertTriangle,
   IconApi,
@@ -48,6 +49,7 @@ export {
   IconCircleX,
   IconClick,
   IconClockHour8,
+  IconClockPlay,
   IconClockShare,
   IconCode,
   IconCodeCircle,
@@ -247,6 +249,8 @@ export {
   IconTestPipe,
   IconTextSize,
   IconTextWrap,
+  IconTimeDuration30,
+  IconTimeDuration60,
   IconTimelineEvent,
   IconTrash,
   IconTrashX,

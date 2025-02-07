@@ -15,12 +15,18 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
+const StyledErrorHelper = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.xs};
+`;
+
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
 `;
 
 type FormNumberFieldInputProps = {
   label?: string;
+  error?: string;
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
@@ -31,6 +37,7 @@ type FormNumberFieldInputProps = {
 
 export const FormNumberFieldInput = ({
   label,
+  error,
   placeholder,
   defaultValue,
   onPersist,
@@ -133,6 +140,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <FormFieldHint>{hint}</FormFieldHint> : null}
+      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </FormFieldInputContainer>
   );
 };

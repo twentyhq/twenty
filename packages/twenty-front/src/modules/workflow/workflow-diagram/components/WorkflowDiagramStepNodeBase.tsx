@@ -188,32 +188,30 @@ export const WorkflowDiagramStepNodeBase = ({
   variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
-}) => {
-  return (
-    <StyledStepNodeContainer className="workflow-node-container">
-      {nodeType !== 'trigger' ? (
-        <StyledTargetHandle type="target" position={Position.Top} />
+}) => (
+  <StyledStepNodeContainer className="workflow-node-container">
+    {nodeType !== 'trigger' ? (
+      <StyledTargetHandle type="target" position={Position.Top} />
+    ) : null}
+
+    <StyledStepNodeType variant="small" nodeVariant={variant}>
+      {capitalize(nodeType)}
+    </StyledStepNodeType>
+
+    <StyledStepNodeInnerContainer variant={variant}>
+      <StyledStepNodeLabel variant={variant}>
+        {Icon}
+
+        <OverflowingTextWithTooltip text={name} />
+      </StyledStepNodeLabel>
+
+      {isDefined(RightFloatingElement) ? (
+        <StyledRightFloatingElementContainer>
+          {RightFloatingElement}
+        </StyledRightFloatingElementContainer>
       ) : null}
+    </StyledStepNodeInnerContainer>
 
-      <StyledStepNodeType variant="small" nodeVariant={variant}>
-        {capitalize(nodeType)}
-      </StyledStepNodeType>
-
-      <StyledStepNodeInnerContainer variant={variant}>
-        <StyledStepNodeLabel variant={variant}>
-          {Icon}
-
-          <OverflowingTextWithTooltip text={name} />
-        </StyledStepNodeLabel>
-
-        {isDefined(RightFloatingElement) ? (
-          <StyledRightFloatingElementContainer>
-            {RightFloatingElement}
-          </StyledRightFloatingElementContainer>
-        ) : null}
-      </StyledStepNodeInnerContainer>
-
-      <StyledSourceHandle type="source" position={Position.Bottom} />
-    </StyledStepNodeContainer>
-  );
-};
+    <StyledSourceHandle type="source" position={Position.Bottom} />
+  </StyledStepNodeContainer>
+);
