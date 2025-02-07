@@ -15,6 +15,11 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
+export enum MessageFolderName {
+  INBOX = 'inbox',
+  SENT_ITEMS = 'sentItems',
+}
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageFolder,
   namePlural: 'messageFolders',

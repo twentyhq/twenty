@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { MicrosoftGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service';
 import {
@@ -13,11 +14,22 @@ export type GetFullMessageListResponse = {
   nextSyncCursor: string;
 };
 
+export type GetFullMessageListForFoldersResponse =
+  GetFullMessageListResponse & {
+    folderId: string | undefined;
+  };
+
 export type GetPartialMessageListResponse = {
   messageExternalIds: string[];
   messageExternalIdsToDelete: string[];
+  previousSyncCursor: string;
   nextSyncCursor: string;
 };
+
+export type GetPartialMessageListForFoldersResponse =
+  GetPartialMessageListResponse & {
+    folderId: string | undefined;
+  };
 
 @Injectable()
 export class MessagingGetMessageListService {
@@ -26,20 +38,27 @@ export class MessagingGetMessageListService {
     private readonly microsoftGetMessageListService: MicrosoftGetMessageListService,
   ) {}
 
-  public async getFullMessageList(
+  public async getFullMessageLists(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-  ): Promise<GetFullMessageListResponse> {
+  ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (connectedAccount.provider) {
       case 'google':
-        return this.gmailGetMessageListService.getFullMessageList(
-          connectedAccount,
-        );
+        return [
+          {
+            ...(await this.gmailGetMessageListService.getFullMessageList(
+              connectedAccount,
+            )),
+            folderId: undefined,
+          },
+        ];
       case 'microsoft':
-        return this.microsoftGetMessageListService.getFullMessageList(
+        // TODO: update the folder list, currently empty []
+        return this.microsoftGetMessageListService.getFullMessageListForFolders(
           connectedAccount,
+          [],
         );
       default:
         throw new MessageImportException(
@@ -49,23 +68,28 @@ export class MessagingGetMessageListService {
     }
   }
 
-  public async getPartialMessageList(
+  public async getPartialMessageLists(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
-    syncCursor: string,
-  ): Promise<GetPartialMessageListResponse> {
+    messageChannel: MessageChannelWorkspaceEntity,
+  ): Promise<GetPartialMessageListForFoldersResponse[]> {
     switch (connectedAccount.provider) {
       case 'google':
-        return this.gmailGetMessageListService.getPartialMessageList(
-          connectedAccount,
-          syncCursor,
-        );
+        return [
+          {
+            ...(await this.gmailGetMessageListService.getPartialMessageList(
+              connectedAccount,
+              messageChannel.syncCursor,
+            )),
+            folderId: undefined,
+          },
+        ];
       case 'microsoft':
-        return this.microsoftGetMessageListService.getPartialMessageList(
+        return this.microsoftGetMessageListService.getPartialMessageListForFolders(
           connectedAccount,
-          syncCursor,
+          messageChannel,
         );
       default:
         throw new MessageImportException(
