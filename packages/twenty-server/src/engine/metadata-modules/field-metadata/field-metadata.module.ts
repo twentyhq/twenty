@@ -15,6 +15,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
@@ -83,6 +84,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
+          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),
