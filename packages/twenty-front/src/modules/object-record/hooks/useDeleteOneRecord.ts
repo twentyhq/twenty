@@ -125,7 +125,7 @@ export const useDeleteOneRecord = ({
               objectMetadataItem,
               record: cachedRecord,
             }),
-            deletedAt: true, // or undefined ? not necessary here
+            deletedAt: true,
           };
           updateRecordFromCache({
             objectMetadataItems,
