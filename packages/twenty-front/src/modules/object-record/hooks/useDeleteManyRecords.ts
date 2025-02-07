@@ -171,7 +171,7 @@ export const useDeleteManyRecords = ({
               objectMetadataItems,
               objectMetadataItem,
               cache: apolloClient.cache,
-              record: cachedRecord,
+              record: { ...cachedRecord, deletedAt: null },
               recordGqlFields,
             });
 
