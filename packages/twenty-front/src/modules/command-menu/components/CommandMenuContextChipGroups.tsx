@@ -21,6 +21,7 @@ export const CommandMenuContextChipGroups = ({
             key={chip.text}
             Icons={chip.Icons}
             text={chip.text}
+            onClick={chip.onClick}
           />
         ))}
       </>
