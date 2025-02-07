@@ -33,14 +33,11 @@ export class GuardRedirectService {
   }
 
   getSubdomainAndHostnameFromWorkspace(
-    forceSubdomain: boolean,
     workspace?: Pick<Workspace, 'subdomain' | 'hostname'> | null,
   ) {
-    if (forceSubdomain || !workspace) {
+    if (!workspace) {
       return {
-        subdomain:
-          workspace?.subdomain ??
-          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       };
     }
 

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';

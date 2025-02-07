@@ -12,6 +12,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
+import { IconList } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const RecordBoardColumnNewOpportunity = ({
@@ -52,7 +53,10 @@ export const RecordBoardColumnNewOpportunity = ({
 
     setViewableRecordId(newRecordId);
     setViewableRecordNameSingular(CoreObjectNameSingular.Company);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    openRightDrawer(RightDrawerPages.ViewRecord, {
+      title: 'Company',
+      Icon: IconList,
+    });
 
     if (isDefined(createdCompany)) {
       handleEntitySelect(position, createdCompany);

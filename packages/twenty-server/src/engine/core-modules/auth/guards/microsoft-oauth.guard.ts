@@ -22,7 +22,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     let workspace: Workspace | null = null;
-    const forceSubdomainUrl = false;
 
     try {
       if (
@@ -41,7 +40,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          forceSubdomainUrl,
           workspace,
         ),
       );

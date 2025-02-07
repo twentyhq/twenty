@@ -45,7 +45,6 @@ describe('computeContextStoreFilters', () => {
     const contextStoreFilters: RecordFilter[] = [
       {
         id: 'name-filter',
-        variant: 'default',
         fieldMetadataId: personObjectMetadataItem.fields.find(
           (field) => field.name === 'name',
         )!.id,

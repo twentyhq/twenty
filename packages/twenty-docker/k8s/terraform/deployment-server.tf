@@ -41,10 +41,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name  = "PORT"
             value = "3000"
           }
-          # env {
-          #   name  = "DEBUG_MODE"
-          #   value = false
-          # }
 
           env {
             name  = "SERVER_URL"

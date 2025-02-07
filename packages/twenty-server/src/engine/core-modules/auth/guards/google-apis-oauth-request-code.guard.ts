@@ -72,7 +72,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          false,
           workspace,
         ),
       );

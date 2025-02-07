@@ -21,9 +21,7 @@ export const useIsMatchingLocation = () => {
       getConstructedPath(path, basePath),
       location.pathname,
     );
-    const isMatching = isDefined(match);
-
-    return isMatching;
+    return isDefined(match);
   };
 
   return {

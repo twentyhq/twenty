@@ -62,8 +62,7 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useSearchParams } from 'react-router-dom';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
-import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -88,8 +87,6 @@ export const useAuth = () => {
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
-  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
@@ -318,7 +315,6 @@ export const useAuth = () => {
     };
   }, [
     getCurrentUser,
-    getWorkspaceUrl,
     isOnAWorkspace,
     setCurrentUser,
     setCurrentWorkspace,
@@ -443,7 +439,6 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
-      getWorkspaceUrl,
     ],
   );
 
@@ -454,7 +449,6 @@ export const useAuth = () => {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
         billingCheckoutSession?: BillingCheckoutSession;
-        forceSubdomainUrl: boolean;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -478,10 +472,6 @@ export const useAuth = () => {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
-      if (isDefined(params.forceSubdomainUrl) && params.forceSubdomainUrl) {
-        url.searchParams.set('forceSubdomainUrl', 'true');
-      }
-
       return url.toString();
     },
     [workspacePublicData],
@@ -493,14 +483,9 @@ export const useAuth = () => {
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
-      redirect(
-        buildRedirectUrl('/auth/google', {
-          ...params,
-          forceSubdomainUrl: isForceSubdomainUrlEnable,
-        }),
-      );
+      redirect(buildRedirectUrl('/auth/google', params));
     },
-    [buildRedirectUrl, isForceSubdomainUrlEnable, redirect],
+    [buildRedirectUrl, redirect],
   );
 
   const handleMicrosoftLogin = useCallback(
@@ -509,14 +494,9 @@ export const useAuth = () => {
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
-      redirect(
-        buildRedirectUrl('/auth/microsoft', {
-          ...params,
-          forceSubdomainUrl: isForceSubdomainUrlEnable,
-        }),
-      );
+      redirect(buildRedirectUrl('/auth/microsoft', params));
     },
-    [buildRedirectUrl, isForceSubdomainUrlEnable, redirect],
+    [buildRedirectUrl, redirect],
   );
 
   return {

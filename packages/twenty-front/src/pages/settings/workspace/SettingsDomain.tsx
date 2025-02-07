@@ -1,8 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import {
-  CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilState } from 'recoil';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';

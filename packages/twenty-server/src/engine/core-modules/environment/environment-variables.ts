@@ -797,20 +797,11 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
-    description: 'Enable or disable debug mode for the application',
-  })
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  DEBUG_MODE = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Node environment (development, production, etc.)',
   })
   @IsEnum(NodeEnvironment)
   @IsString()
-  NODE_ENV: NodeEnvironment = NodeEnvironment.development;
+  NODE_ENV: NodeEnvironment = NodeEnvironment.production;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
@@ -836,15 +827,6 @@ export class EnvironmentVariables {
   })
   @IsString()
   APP_SECRET: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.ServerConfig,
-    sensitive: true,
-    description: 'Secret for session store',
-  })
-  @IsString()
-  @IsOptional()
-  SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,

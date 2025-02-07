@@ -27,8 +27,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared';
-import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
-import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -49,8 +48,6 @@ export const SignInUpGlobalScopeForm = () => {
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
-  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
@@ -101,9 +98,6 @@ export const SignInUpGlobalScopeForm = () => {
               pathname,
               {
                 email: form.getValues('email'),
-                ...(isForceSubdomainUrlEnable
-                  ? { 'force-subdomain-url': true }
-                  : {}),
               },
             );
           }
@@ -114,6 +108,12 @@ export const SignInUpGlobalScopeForm = () => {
         }
       },
     });
+  };
+
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
   };
 
   return (
@@ -127,7 +127,10 @@ export const SignInUpGlobalScopeForm = () => {
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField
                 showErrors={showErrors}

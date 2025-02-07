@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';

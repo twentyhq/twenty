@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 export const transformStripeProductEventToDatabaseProduct = (

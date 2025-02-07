@@ -9,16 +9,14 @@ import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/u
 
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
-import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
 import { WorkspaceUrls } from '~/generated/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
   );
-
-  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -55,7 +53,6 @@ export const WorkspaceProviderEffect = () => {
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
     currentLocationHostname,
-    getWorkspaceUrl,
   ]);
 
   useEffect(() => {

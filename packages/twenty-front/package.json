@@ -46,7 +46,7 @@
     "@tiptap/extension-text": "^2.10.4",
     "@tiptap/extension-text-style": "^2.10.4",
     "@tiptap/react": "^2.10.4",
-    "@xyflow/react": "^12.0.4",
+    "@xyflow/react": "^12.4.2",
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",

@@ -403,19 +403,11 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Analytics = 'Analytics',
   Authentication = 'Authentication',
-  Billing = 'Billing',
-  Cache = 'Cache',
-  Database = 'Database',
   Email = 'Email',
-  Frontend = 'Frontend',
   Logging = 'Logging',
   Other = 'Other',
-  QueueConfig = 'QueueConfig',
   ServerConfig = 'ServerConfig',
-  Storage = 'Storage',
-  Support = 'Support',
   Workspace = 'Workspace'
 }
 
