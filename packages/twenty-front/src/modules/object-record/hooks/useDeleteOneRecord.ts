@@ -7,6 +7,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -73,11 +74,16 @@ export const useDeleteOneRecord = ({
         return null;
       }
 
+      // debugger;
+      const recordGqlFields = {
+        deletedAt: true,
+      };
       updateRecordFromCache({
         objectMetadataItems,
         objectMetadataItem,
         cache: apolloClient.cache,
         record: computedOptimisticRecord,
+        recordGqlFields,
       });
 
       triggerUpdateRecordOptimisticEffect({
@@ -113,11 +119,23 @@ export const useDeleteOneRecord = ({
           if (!cachedRecord) {
             throw error;
           }
+
+          const recordGqlFields = {
+            ...generateDepthOneRecordGqlFields({
+              objectMetadataItem,
+              record: cachedRecord,
+            }),
+            deletedAt: true, // or undefined ? not necessary here
+          };
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
-            record: cachedRecord,
+            record: {
+              ...cachedRecord,
+              deletedAt: null,
+            },
+            recordGqlFields,
           });
 
           triggerUpdateRecordOptimisticEffect({

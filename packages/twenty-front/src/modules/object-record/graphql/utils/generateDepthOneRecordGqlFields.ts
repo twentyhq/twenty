@@ -8,7 +8,7 @@ export const generateDepthOneRecordGqlFields = ({
   objectMetadataItem: ObjectMetadataItem;
   record?: Record<string, any>;
 }) => {
-  const gqlFieldsFromObjectMetadataItem = objectMetadataItem.fields.reduce(
+  const gqlFieldsFromObjectMetadataItem = objectMetadataItem.fields.reduce<Record<string, boolean>>(
     (acc, field) => {
       return {
         ...acc,
