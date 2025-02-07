@@ -113,7 +113,7 @@ export class QueryRunnerArgsFactory {
                 fieldMetadataMapByNameByName,
                 {
                   argIndex: index,
-                  shouldBackfillPosition,
+                  shouldBackfillPosition: false,
                 },
               ),
             ) ?? [],
