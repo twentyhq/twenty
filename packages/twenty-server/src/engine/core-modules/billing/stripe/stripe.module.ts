@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Module } from '@nestjs/common';
 
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';

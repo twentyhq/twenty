@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Logger, Scope } from '@nestjs/common';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
