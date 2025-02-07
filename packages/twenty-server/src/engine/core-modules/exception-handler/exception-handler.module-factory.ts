@@ -30,7 +30,7 @@ export const exceptionHandlerModuleFactory = async (
           release: environmentService.get('SENTRY_RELEASE'),
           dsn: environmentService.get('SENTRY_DSN') ?? '',
           serverInstance: adapterHost.httpAdapter?.getInstance(),
-          debug: environmentService.get('DEBUG_MODE'),
+          debug: environmentService.get('NODE_ENV') === 'development',
         },
       };
     }

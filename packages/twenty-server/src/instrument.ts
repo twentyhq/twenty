@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -24,6 +26,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
-    debug: process.env.DEBUG_MODE === 'true',
+    debug: process.env.NODE_ENV === NodeEnvironment.development,
   });
 }

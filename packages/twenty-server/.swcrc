@@ -10,7 +10,9 @@
     "baseUrl": "./../../",
     "experimental": {
       "plugins": [
-        ["@lingui/swc-plugin", {}]
+        ["@lingui/swc-plugin", {
+          "stripNonEssentialFields": false
+        }]
       ]
     }
   },
