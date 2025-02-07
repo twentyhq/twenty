@@ -1,4 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -106,8 +107,14 @@ export const generateEmptyFieldValue = (
         additionalPhones: null,
       };
     }
+    case FieldMetadataType.RICH_TEXT_V2: {
+      return null;
+    }
+    case FieldMetadataType.TS_VECTOR: {
+      return null;
+    }
     default: {
-      throw new Error('Unhandled FieldMetadataType');
+      return assertUnreachable(fieldMetadataItem.type);
     }
   }
 };
