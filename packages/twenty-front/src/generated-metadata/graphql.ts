@@ -390,14 +390,12 @@ export type CustomHostnameDetails = {
   hostname: Scalars['String']['output'];
   id: Scalars['String']['output'];
   records: Array<CustomHostnameVerification>;
-  sslStatus?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-  verificationErrors: Array<Scalars['String']['output']>;
 };
 
 export type CustomHostnameVerification = {
   __typename?: 'CustomHostnameVerification';
   key: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   type: Scalars['String']['output'];
   validationType: Scalars['String']['output'];
   value: Scalars['String']['output'];

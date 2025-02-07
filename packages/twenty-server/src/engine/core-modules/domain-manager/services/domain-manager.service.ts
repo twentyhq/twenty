@@ -285,35 +285,21 @@ export class DomainManagerService {
         JSON.stringify(response.result[0], null, 4),
       );
 
+      console.log(
+        '>>>>>>>>>>>>>>',
+        response.result[0].verification_errors?.[0],
+      );
+
       return {
         id: response.result[0].id,
         hostname: response.result[0].hostname,
-        status: response.result[0].status,
-        verificationErrors: response.result[0].verification_errors ?? [],
-        sslStatus: response.result[0].ssl.status,
         records: [
           response.result[0].ownership_verification,
           ...(response.result[0].ssl?.validation_records ?? []),
-          // @ts-expect-error trust me it exists
-          ...(response.result[0].ssl?.dcv_delegation_records ?? []),
         ]
           .map<CustomHostnameDetails['records'][0] | undefined>(
             (record: Record<string, string>) => {
               if (!record) return;
-
-              if (
-                'cname' in record &&
-                'cname_target' in record &&
-                record.cname &&
-                record.cname_target
-              ) {
-                return {
-                  validationType: 'ssl' as const,
-                  type: 'cname' as const,
-                  key: record.cname,
-                  value: record.cname_target,
-                };
-              }
 
               if (
                 'txt_name' in record &&
@@ -324,6 +310,7 @@ export class DomainManagerService {
                 return {
                   validationType: 'ssl' as const,
                   type: 'txt' as const,
+                  status: response.result[0].ssl.status ?? 'pending',
                   key: record.txt_name,
                   value: record.txt_value,
                 };
@@ -338,13 +325,27 @@ export class DomainManagerService {
                 return {
                   validationType: 'ownership' as const,
                   type: 'txt' as const,
+                  status: response.result[0].status ?? 'pending',
                   key: record.name,
                   value: record.value,
                 };
               }
             },
           )
-          .filter(isDefined),
+          .filter(isDefined)
+          .concat([
+            {
+              validationType: 'redirection' as const,
+              type: 'cname' as const,
+              status:
+                response.result[0].verification_errors?.[0] ===
+                'custom hostname does not CNAME to this zone.'
+                  ? 'error'
+                  : 'success',
+              key: response.result[0].hostname,
+              value: this.getFrontUrl().hostname,
+            },
+          ]),
       };
     }
 

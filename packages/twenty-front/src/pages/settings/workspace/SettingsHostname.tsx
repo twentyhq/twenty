@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
-import { useGetHostnameDetailsQuery } from '~/generated/graphql';
+import { useGetCustomHostnameDetailsQuery } from '~/generated/graphql';
 import { SettingsHostnameRecords } from '~/pages/settings/workspace/SettingsHostnameRecords';
 
 const StyledDomainFromWrapper = styled.div`
@@ -12,7 +12,7 @@ const StyledDomainFromWrapper = styled.div`
 `;
 
 export const SettingsHostname = () => {
-  const { data: getHostnameDetailsData } = useGetHostnameDetailsQuery();
+  const { data: getHostnameDetailsData } = useGetCustomHostnameDetailsQuery();
 
   const { t } = useLingui();
 
@@ -38,29 +38,12 @@ export const SettingsHostname = () => {
           )}
         />
       </StyledDomainFromWrapper>
-      {getHostnameDetailsData?.getHostnameDetails &&
+      {getHostnameDetailsData?.getCustomHostnameDetails &&
         getValues('hostname') ===
-          getHostnameDetailsData?.getHostnameDetails?.hostname && (
+          getHostnameDetailsData?.getCustomHostnameDetails?.hostname && (
           <SettingsHostnameRecords
-            records={getHostnameDetailsData.getHostnameDetails.records}
-            hostname={getHostnameDetailsData.getHostnameDetails.hostname}
-            status={{
-              ssl:
-                getHostnameDetailsData.getHostnameDetails.sslStatus ??
-                'unknown',
-              ownership:
-                getHostnameDetailsData.getHostnameDetails.status ?? 'unknown',
-            }}
+            records={getHostnameDetailsData.getCustomHostnameDetails.records}
           />
-        )}
-
-      {getHostnameDetailsData?.getHostnameDetails?.verificationErrors &&
-        getHostnameDetailsData.getHostnameDetails.verificationErrors.length !==
-          0 && (
-          <pre>
-            Errors:{' '}
-            {getHostnameDetailsData?.getHostnameDetails?.verificationErrors}
-          </pre>
         )}
     </Section>
   );

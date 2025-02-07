@@ -3,13 +3,16 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 class CustomHostnameVerification {
   @Field(() => String)
-  validationType: 'ownership' | 'ssl';
+  validationType: 'ownership' | 'ssl' | 'redirection';
 
   @Field(() => String)
   type: 'txt' | 'cname';
 
   @Field(() => String)
   key: string;
+
+  @Field(() => String)
+  status: string;
 
   @Field(() => String)
   value: string;
@@ -25,29 +28,4 @@ export class CustomHostnameDetails {
 
   @Field(() => [CustomHostnameVerification])
   records: Array<CustomHostnameVerification>;
-
-  @Field(() => [String])
-  verificationErrors: Array<string>;
-
-  @Field(() => String, { nullable: true })
-  sslStatus?: string;
-
-  @Field(() => String, { nullable: true })
-  status?:
-    | 'active'
-    | 'pending'
-    | 'active_redeploying'
-    | 'moved'
-    | 'pending_deletion'
-    | 'deleted'
-    | 'pending_blocked'
-    | 'pending_migration'
-    | 'pending_provisioned'
-    | 'test_pending'
-    | 'test_active'
-    | 'test_active_apex'
-    | 'test_blocked'
-    | 'test_failed'
-    | 'provisioned'
-    | 'blocked';
 }
