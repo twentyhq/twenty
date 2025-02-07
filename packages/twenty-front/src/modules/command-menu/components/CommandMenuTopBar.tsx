@@ -126,13 +126,15 @@ export const CommandMenuTopBar = () => {
       <StyledContentContainer>
         {isCommandMenuV2Enabled && (
           <>
-            <CommandMenuContextChip
-              Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-              onClick={() => {
-                goBackFromCommandMenu();
-              }}
-              testId="command-menu-go-back-button"
-            />
+            {commandMenuPage !== CommandMenuPages.Root && (
+              <CommandMenuContextChip
+                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                onClick={() => {
+                  goBackFromCommandMenu();
+                }}
+                testId="command-menu-go-back-button"
+              />
+            )}
             {isDefined(contextStoreCurrentObjectMetadataId) &&
             commandMenuPage !== CommandMenuPages.SearchRecords ? (
               <CommandMenuContextChipGroupsWithRecordSelection
