@@ -145,6 +145,9 @@ export const queries = {
       workspaceMembers {
         ...WorkspaceMemberQueryFragment
       }
+      currentUserWorkspace {
+        settingsPermissions
+      }
       currentWorkspace {
         id
         displayName
@@ -304,6 +307,9 @@ export const responseData = {
         timeFormat: '24',
       },
       workspaceMembers: [],
+      currentUserWorkspace: {
+        settingsPermissions: ['DATA_MODEL']
+      },
       currentWorkspace: {
         id: 'test-workspace-id',
         displayName: 'Test Workspace',
