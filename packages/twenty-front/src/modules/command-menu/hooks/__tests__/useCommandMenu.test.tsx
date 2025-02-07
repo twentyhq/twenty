@@ -9,7 +9,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
+import { IconList, IconSearch } from 'twenty-ui';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -197,8 +197,8 @@ describe('useCommandMenu', () => {
     expect(result.current.commandMenuNavigationStack).toEqual([]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
     expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Command Menu',
-      Icon: IconDotsVertical,
+      title: undefined,
+      Icon: undefined,
     });
     expect(result.current.isCommandMenuOpened).toBe(false);
   });
