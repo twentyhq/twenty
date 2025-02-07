@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent, IconX } from 'twenty-ui';
 
-const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
+const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
   background-color: ${({ theme, variant }) => {
     switch (variant) {
@@ -55,7 +55,7 @@ const StyledIcon = styled.div`
   display: flex;
 `;
 
-const StyledDelete = styled.button<{ variant: SortOrFitlerChipVariant }>`
+const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   box-sizing: border-box;
   height: 20px;
   width: 20px;
@@ -89,12 +89,12 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type SortOrFitlerChipVariant = 'default' | 'danger';
+export type SortOrFilterChipVariant = 'default' | 'danger';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
   labelValue: string;
-  variant?: SortOrFitlerChipVariant;
+  variant?: SortOrFilterChipVariant;
   Icon?: IconComponent;
   onRemove: () => void;
   onClick?: () => void;
