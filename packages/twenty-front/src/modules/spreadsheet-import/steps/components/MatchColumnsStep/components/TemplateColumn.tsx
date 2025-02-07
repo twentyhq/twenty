@@ -5,9 +5,9 @@ import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSe
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FieldMetadataType } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { Columns, ColumnType } from '../MatchColumnsStep';
-import { FieldMetadataType } from 'twenty-shared';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -65,8 +65,6 @@ export const TemplateColumn = <T extends string>({
     },
     ...fieldOptions,
   ];
-
-  console.log('fields', fields);
 
   const selectValue = fieldOptions.find(
     ({ value }) => 'value' in column && column.value === value,
