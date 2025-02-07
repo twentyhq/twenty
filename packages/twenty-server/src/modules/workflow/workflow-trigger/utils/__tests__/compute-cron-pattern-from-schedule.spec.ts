@@ -12,12 +12,12 @@ describe('computeCronPatternFromSchedule', () => {
       type: WorkflowTriggerType.CRON,
       settings: {
         type: 'CUSTOM',
-        pattern: '0 12 * * * *',
+        pattern: '12 * * * *',
         outputSchema: {},
       },
     };
 
-    expect(computeCronPatternFromSchedule(trigger)).toBe('0 12 * * * *');
+    expect(computeCronPatternFromSchedule(trigger)).toBe('12 * * * *');
   });
 
   it('should throw an exception for unsupported pattern for CUSTOM type', () => {
@@ -26,7 +26,7 @@ describe('computeCronPatternFromSchedule', () => {
       type: WorkflowTriggerType.CRON,
       settings: {
         type: 'CUSTOM',
-        pattern: 'a 12 * * * *',
+        pattern: '0 12 * * * *',
         outputSchema: {},
       },
     };
@@ -35,7 +35,7 @@ describe('computeCronPatternFromSchedule', () => {
       WorkflowTriggerException,
     );
     expect(() => computeCronPatternFromSchedule(trigger)).toThrow(
-      "Cron pattern 'a 12 * * * *' is invalid",
+      "Cron pattern '0 12 * * * *' is invalid",
     );
   });
 
@@ -50,7 +50,7 @@ describe('computeCronPatternFromSchedule', () => {
       },
     };
 
-    expect(computeCronPatternFromSchedule(trigger)).toBe('0 30 */10 * * *');
+    expect(computeCronPatternFromSchedule(trigger)).toBe('30 */10 * * *');
   });
 
   it('should return the correct cron pattern for MINUTES type', () => {
@@ -64,22 +64,9 @@ describe('computeCronPatternFromSchedule', () => {
       },
     };
 
-    expect(computeCronPatternFromSchedule(trigger)).toBe('0 */15 * * * *');
+    expect(computeCronPatternFromSchedule(trigger)).toBe('*/15 * * * *');
   });
 
-  it('should return the correct cron pattern for SECONDS type', () => {
-    const trigger: WorkflowCronTrigger = {
-      name: '',
-      type: WorkflowTriggerType.CRON,
-      settings: {
-        type: 'SECONDS',
-        schedule: { second: 45 },
-        outputSchema: {},
-      },
-    };
-
-    expect(computeCronPatternFromSchedule(trigger)).toBe('*/45 * * * * *');
-  });
   it('should throw an exception for unsupported schedule type', () => {
     const trigger: WorkflowCronTrigger = {
       name: '',

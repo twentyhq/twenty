@@ -2,11 +2,10 @@ import {
   IconComponent,
   Icon24Hours,
   IconTimeDuration60,
-  IconTimeDuration30,
   IconClockPlay,
 } from 'twenty-ui';
 
-export type CronTriggerInterval = 'HOURS' | 'MINUTES' | 'SECONDS' | 'CUSTOM';
+export type CronTriggerInterval = 'HOURS' | 'MINUTES' | 'CUSTOM';
 
 export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{
   label: string;
@@ -22,11 +21,6 @@ export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{
     label: 'Minutes',
     value: 'MINUTES',
     Icon: IconTimeDuration60,
-  },
-  {
-    label: 'Seconds',
-    value: 'SECONDS',
-    Icon: IconTimeDuration30,
   },
   {
     label: 'Cron (Custom)',

@@ -33,7 +33,6 @@ type FormErrorMessages = {
   HOURS_hour?: string | undefined;
   HOURS_minute?: string | undefined;
   MINUTES?: string | undefined;
-  SECONDS?: string | undefined;
 };
 
 export const WorkflowEditTriggerCronForm = ({
@@ -108,7 +107,7 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'CUSTOM' && (
           <FormTextFieldInput
             label="Expression"
-            placeholder="0 0 */1 * * *"
+            placeholder="0 */1 * * *"
             error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
             onBlur={onBlur}
             hint="Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
@@ -119,11 +118,7 @@ export const WorkflowEditTriggerCronForm = ({
                 return;
               }
 
-              const cronValidator = cron(newPattern, {
-                override: {
-                  useSeconds: true,
-                },
-              });
+              const cronValidator = cron(newPattern);
 
               if (cronValidator.isError()) {
                 setErrorMessages({
@@ -287,48 +282,6 @@ export const WorkflowEditTriggerCronForm = ({
               });
             }}
             placeholder="Enter number greater than 1"
-            readonly={triggerOptions.readonly}
-          />
-        )}
-        {trigger.settings.type === 'SECONDS' && (
-          <FormNumberFieldInput
-            label="Seconds Between Triggers"
-            error={errorMessagesVisible ? errorMessages.SECONDS : undefined}
-            onBlur={onBlur}
-            defaultValue={trigger.settings.schedule.second}
-            onPersist={(newSecond) => {
-              if (triggerOptions.readonly === true) {
-                return;
-              }
-
-              if (!isDefined(newSecond)) {
-                return;
-              }
-
-              if (!isNumber(newSecond) || newSecond <= 9) {
-                setErrorMessages({
-                  SECONDS: `Invalid second value '${newSecond}'. Should be integer greater than 10`,
-                });
-                return;
-              }
-
-              setErrorMessages((prev) => ({
-                ...prev,
-                SECONDS: undefined,
-              }));
-
-              triggerOptions.onTriggerUpdate({
-                ...trigger,
-                settings: {
-                  ...trigger.settings,
-                  type: 'SECONDS',
-                  schedule: {
-                    second: newSecond,
-                  },
-                },
-              });
-            }}
-            placeholder="Enter number greater than 10"
             readonly={triggerOptions.readonly}
           />
         )}

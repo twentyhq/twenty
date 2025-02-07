@@ -134,10 +134,6 @@ export type WorkflowCronTrigger = BaseTrigger & {
         schedule: { minute: number };
       }
     | {
-        type: 'SECONDS';
-        schedule: { second: number };
-      }
-    | {
         type: 'CUSTOM';
         pattern: string;
       }

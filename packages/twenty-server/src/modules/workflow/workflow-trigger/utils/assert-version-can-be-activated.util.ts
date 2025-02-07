@@ -123,13 +123,6 @@ function assertCronTriggerSettingsAreValid(settings: any) {
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
     );
   }
-
-  if (settings.type === 'SECONDS' && settings.schedule.second <= 9) {
-    throw new WorkflowTriggerException(
-      'Invalid second value. Should be integer greater than 10',
-      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
-    );
-  }
 }
 
 function assertDatabaseEventTriggerSettingsAreValid(settings: any) {

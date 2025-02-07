@@ -19,17 +19,8 @@ describe('getCronTriggerDefaultSettings', () => {
     });
   });
 
-  it('returns correct settings for SECONDS interval', () => {
-    const result = getCronTriggerDefaultSettings('SECONDS');
-    expect(result).toEqual({
-      schedule: { second: 30 },
-      type: 'SECONDS',
-      outputSchema: {},
-    });
-  });
-
   it('returns correct settings for CUSTOM interval', () => {
-    const DEFAULT_CRON_PATTERN = '0 0 */1 * * *';
+    const DEFAULT_CRON_PATTERN = '0 */1 * * *';
     const result = getCronTriggerDefaultSettings('CUSTOM');
     expect(result).toEqual({
       pattern: DEFAULT_CRON_PATTERN,

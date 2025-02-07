@@ -7,11 +7,7 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 const validatePattern = (pattern: string) => {
-  const cronValidator = cron(pattern, {
-    override: {
-      useSeconds: true,
-    },
-  });
+  const cronValidator = cron(pattern);
 
   if (cronValidator.isError()) {
     throw new WorkflowTriggerException(
@@ -31,21 +27,14 @@ export const computeCronPatternFromSchedule = (
       return trigger.settings.pattern;
     }
     case 'HOURS': {
-      const pattern = `0 ${trigger.settings.schedule.minute} */${trigger.settings.schedule.hour} * * *`;
+      const pattern = `${trigger.settings.schedule.minute} */${trigger.settings.schedule.hour} * * *`;
 
       validatePattern(pattern);
 
       return pattern;
     }
     case 'MINUTES': {
-      const pattern = `0 */${trigger.settings.schedule.minute} * * * *`;
-
-      validatePattern(pattern);
-
-      return pattern;
-    }
-    case 'SECONDS': {
-      const pattern = `*/${trigger.settings.schedule.second} * * * * *`;
+      const pattern = `*/${trigger.settings.schedule.minute} * * * *`;
 
       validatePattern(pattern);
 

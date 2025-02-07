@@ -1,7 +1,7 @@
 import { CronTriggerInterval } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 
-const DEFAULT_CRON_PATTERN = '0 0 */1 * * *'; // Every hour
+const DEFAULT_CRON_PATTERN = '0 */1 * * *'; // Every hour
 
 export const getCronTriggerDefaultSettings = (
   cronTriggerInterval: CronTriggerInterval,
@@ -20,14 +20,6 @@ export const getCronTriggerDefaultSettings = (
       return {
         schedule: {
           minute: 1,
-        },
-        type: cronTriggerInterval,
-        outputSchema: {},
-      };
-    case 'SECONDS':
-      return {
-        schedule: {
-          second: 30,
         },
         type: cronTriggerInterval,
         outputSchema: {},
