@@ -53,11 +53,7 @@ describe('useCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.Root,
-        pageTitle: 'Command Menu',
-        pageIcon: IconDotsVertical,
-      });
+      result.current.commandMenu.openRootCommandMenu();
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);

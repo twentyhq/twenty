@@ -1,12 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconDotsVertical,
-  IconLayoutSidebarRightExpand,
-  getOsControlSymbol,
-} from 'twenty-ui';
+import { IconLayoutSidebarRightExpand, getOsControlSymbol } from 'twenty-ui';
 
 const StyledButton = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -43,19 +38,11 @@ const StyledSeparator = styled.div<{ size: 'sm' | 'md' }>`
 
 export const RecordIndexActionMenuBarAllActionsButton = () => {
   const theme = useTheme();
-  const { navigateCommandMenu } = useCommandMenu();
+  const { openRootCommandMenu } = useCommandMenu();
   return (
     <>
       <StyledSeparator size="md" />
-      <StyledButton
-        onClick={() =>
-          navigateCommandMenu({
-            page: CommandMenuPages.Root,
-            pageTitle: 'Command Menu',
-            pageIcon: IconDotsVertical,
-          })
-        }
-      >
+      <StyledButton onClick={openRootCommandMenu}>
         <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
         <StyledButtonLabel>All Actions</StyledButtonLabel>
         <StyledSeparator size="sm" />

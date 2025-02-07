@@ -23,6 +23,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconDotsVertical, IconList, IconSearch } from 'twenty-ui';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -123,6 +124,14 @@ export const useCommandMenu = () => {
     [openCommandMenu],
   );
 
+  const openRootCommandMenu = useCallback(() => {
+    navigateCommandMenu({
+      page: CommandMenuPages.Root,
+      pageTitle: 'Command Menu',
+      pageIcon: IconDotsVertical,
+    });
+  }, [navigateCommandMenu]);
+
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
@@ -135,14 +144,10 @@ export const useCommandMenu = () => {
         if (isCommandMenuOpened) {
           closeCommandMenu();
         } else {
-          navigateCommandMenu({
-            page: CommandMenuPages.Root,
-            pageTitle: 'Command Menu',
-            pageIcon: IconDotsVertical,
-          });
+          openRootCommandMenu();
         }
       },
-    [closeCommandMenu, navigateCommandMenu],
+    [closeCommandMenu, openRootCommandMenu],
   );
 
   const goBackFromCommandMenu = useRecoilCallback(
@@ -271,6 +276,7 @@ export const useCommandMenu = () => {
   );
 
   return {
+    openRootCommandMenu,
     closeCommandMenu,
     navigateCommandMenu,
     navigateCommandMenuHistory,
