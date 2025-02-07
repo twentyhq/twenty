@@ -479,6 +479,8 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   position: '20202020-7802-4c40-ae89-1f506fe3365c',
   createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
   output: '20202020-7be4-4db2-8ac6-3ff0d740843d',
+  stepIndex: 'b70992c9-e155-4d93-81dd-0ff6a0d5bee0',
+  context: 'ab957d05-189c-478a-b867-d72feaf5926a',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
 };

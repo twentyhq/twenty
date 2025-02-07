@@ -141,6 +141,26 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   output: WorkflowRunOutput | null;
 
   @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.stepIndex,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Step index`,
+    description: msg`Step index`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsNullable()
+  stepIndex: number | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.context,
+    type: FieldMetadataType.RAW_JSON,
+    label: msg`Context`,
+    description: msg`Context`,
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsNullable()
+  context: Record<string, any> | null;
+
+  @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
