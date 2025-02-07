@@ -1,5 +1,6 @@
 import { CronTriggerInterval } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { WorkflowCronTrigger } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 
 const DEFAULT_CRON_PATTERN = '0 */1 * * *'; // Every hour
 
@@ -30,7 +31,6 @@ export const getCronTriggerDefaultSettings = (
         type: cronTriggerInterval,
         outputSchema: {},
       };
-    default:
-      throw new Error('Invalid cron trigger interval');
   }
+  return assertUnreachable(cronTriggerInterval);
 };
