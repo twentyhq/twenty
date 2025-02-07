@@ -898,4 +898,19 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await workspaceQueryRunner.release();
     }
   }
+
+  async getFieldMetadataItemsByBatch(
+    objectMetadataIds: string[],
+    workspaceId: string,
+  ) {
+    const fieldMetadataItems = await this.fieldMetadataRepository.find({
+      where: { objectMetadataId: In(objectMetadataIds), workspaceId },
+    });
+
+    return objectMetadataIds.map((objectMetadataId) => fieldMetadataItems.filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.objectMetadataId === objectMetadataId,
+      ),
+    );
+  }
 }

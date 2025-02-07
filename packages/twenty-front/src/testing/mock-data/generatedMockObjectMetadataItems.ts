@@ -1,5 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 
 export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
@@ -11,7 +12,10 @@ export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
 
     return {
       ...edge.node,
-      fields: edge.node.fields.edges.map((edge) => edge.node),
+      fields: edge.node.fieldsList.map((field) => ({
+        ...field,
+        objectMetadataId: edge.node.id,
+      })),
       labelIdentifierFieldMetadataId,
       indexMetadatas: edge.node.indexMetadatas.edges.map((index) => ({
         ...index.node,

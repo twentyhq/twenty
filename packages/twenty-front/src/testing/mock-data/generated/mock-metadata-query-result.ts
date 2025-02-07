@@ -1,4 +1,6 @@
-import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
+import {
+  ObjectMetadataItemsQuery,
+} from '~/generated-metadata/graphql';
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
@@ -175,8 +177,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               },
               edges: [
                 {
-                  __typename: 'FieldEdge',
-                  node: {
                     __typename: 'Field',
                     id: '42a2a5cd-c36b-4dd5-8f13-8f022a4e9470',
                     type: 'RELATION',
@@ -222,7 +222,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                         name: 'noteTargets',
                       },
                     },
-                  },
+       
                 },
                 {
                   __typename: 'FieldEdge',
@@ -19548,16 +19548,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 },
               ],
             },
-            fields: {
-              __typename: 'FieldConnection',
-              pageInfo: {
-                __typename: 'PageInfo',
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-                endCursor: 'YXJyYXljb25uZWN0aW9uOjI4',
-              },
-              edges: [
+            fieldsList: [
                 {
                   __typename: 'FieldEdge',
                   node: {
@@ -20580,7 +20571,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   },
                 },
               ],
-            },
+
           },
         },
         {
@@ -20653,16 +20644,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 },
               ],
             },
-            fields: {
-              __typename: 'ObjectFieldsConnection',
-              pageInfo: {
-                __typename: 'PageInfo',
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-                endCursor: 'YXJyYXljb25uZWN0aW9uOjIw',
-              },
-              edges: [
+            fieldsList: [
                 {
                   __typename: 'FieldEdge',
                   node: {
@@ -21370,7 +21352,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   },
                 },
               ],
-            },
+
           },
         },
         {
@@ -21473,16 +21455,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 },
               ],
             },
-            fields: {
-              __typename: 'ObjectFieldsConnection',
-              pageInfo: {
-                __typename: 'PageInfo',
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-                endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
-              },
-              edges: [
+            fieldsList: [
                 {
                   __typename: 'FieldEdge',
                   node: {
@@ -21782,7 +21755,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   },
                 },
               ],
-            },
           },
         },
       ],
