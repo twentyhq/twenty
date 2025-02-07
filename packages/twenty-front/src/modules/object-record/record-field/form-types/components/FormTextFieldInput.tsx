@@ -8,18 +8,8 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared';
-import styled from '@emotion/styled';
-
-const StyledErrorHelper = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
-`;
-
-const StyledHintContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  padding-top: ${({ theme }) => theme.spacing(0.5)};
-`;
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 type FormTextFieldInputProps = {
   label?: string;
@@ -97,8 +87,8 @@ export const FormTextFieldInput = ({
           />
         ) : null}
       </FormFieldInputRowContainer>
-      {hint && <StyledHintContainer>{hint}</StyledHintContainer>}
-      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
+      {hint && <InputHint>{hint}</InputHint>}
+      {error && <InputErrorHelper>{error}</InputErrorHelper>}
     </FormFieldInputContainer>
   );
 };

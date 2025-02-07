@@ -1,4 +1,3 @@
-import { FormFieldHint } from '@/object-record/record-field/form-types/components/FormFieldHint';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
@@ -14,11 +13,8 @@ import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
-
-const StyledErrorHelper = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
-`;
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -139,8 +135,8 @@ export const FormNumberFieldInput = ({
         ) : null}
       </FormFieldInputRowContainer>
 
-      {hint ? <FormFieldHint>{hint}</FormFieldHint> : null}
-      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
+      {hint ? <InputHint>{hint}</InputHint> : null}
+      {error && <InputErrorHelper>{error}</InputErrorHelper>}
     </FormFieldInputContainer>
   );
 };

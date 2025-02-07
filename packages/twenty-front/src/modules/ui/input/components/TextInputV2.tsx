@@ -19,6 +19,7 @@ import {
 } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -83,9 +84,7 @@ const StyledInput = styled.input<
   }
 `;
 
-const StyledErrorHelper = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.xs};
+const StyledErrorHelper = styled(InputErrorHelper)`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
