@@ -61,12 +61,14 @@ export const useUpdateOneRecord = <
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
     optimisticRecord?: Partial<ObjectRecord>;
   }) => {
-    const optimisticRecordInput = optimisticRecord ?? computeOptimisticRecordFromInput({
-      objectMetadataItem,
-      recordInput: updateOneRecordInput,
-      cache: apolloClient.cache,
-      objectMetadataItems,
-    });
+    const optimisticRecordInput =
+      optimisticRecord ??
+      computeOptimisticRecordFromInput({
+        objectMetadataItem,
+        recordInput: updateOneRecordInput,
+        cache: apolloClient.cache,
+        objectMetadataItems,
+      });
 
     const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 

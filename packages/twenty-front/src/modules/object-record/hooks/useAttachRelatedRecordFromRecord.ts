@@ -85,8 +85,6 @@ export const useAttachRelatedRecordFromRecord = ({
         ...cachedRelatedRecord,
         [fieldOnRelatedObject]: previousRecord,
       };
-      // Could be improved ?
-      // Could be replaced by updateOneRecord ?
       const gqlFields = generateDepthOneRecordGqlFields({
         objectMetadataItem: relatedObjectMetadataItem,
         record: previousRecordWithRelation,

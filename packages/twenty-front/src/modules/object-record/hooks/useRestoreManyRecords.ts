@@ -106,14 +106,14 @@ export const useRestoreManyRecords = ({
           }
 
           const recordGqlFields = {
-            deletedAt: true
-          }
+            deletedAt: true,
+          };
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
             record: computedOptimisticRecord,
-            recordGqlFields
+            recordGqlFields,
           });
 
           triggerUpdateRecordOptimisticEffect({
@@ -140,14 +140,14 @@ export const useRestoreManyRecords = ({
             }
 
             const recordGqlFields = {
-              deletedAt: true
-            }
+              deletedAt: true,
+            };
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,
               cache: apolloClient.cache,
               record: cachedRecord,
-              recordGqlFields
+              recordGqlFields,
             });
 
             const cachedRecordWithConnection =
