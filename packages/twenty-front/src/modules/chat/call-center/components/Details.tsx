@@ -170,7 +170,8 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
   };
 
   const handleOpenSupportTicket = async () => {
-    console.log('Next feature: Create support ticket');
+    // TO DO: Implement functionality to open support ticket
+    console.log('Open support ticket');
     // createOneSupport({
     //   id: v4(),
     //   name: ticketData.name,

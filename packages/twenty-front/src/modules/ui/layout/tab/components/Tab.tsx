@@ -17,6 +17,7 @@ type TabProps = {
   pill?: string | ReactElement;
   to?: string;
   logo?: string;
+  incomingMessages?: number;
 };
 
 const StyledTab = styled('button', {
@@ -68,6 +69,20 @@ const StyledIconContainer = styled.div`
   flex-shrink: 0;
 `;
 
+const StyledIncomingCircle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.font.color.inverted};
+  background: #1961ed;
+  border-radius: 50%;
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const Tab = ({
   id,
   title,
@@ -79,6 +94,7 @@ export const Tab = ({
   pill,
   to,
   logo,
+  incomingMessages = 0,
 }: TabProps) => {
   const theme = useTheme();
   const iconColor = active
@@ -116,6 +132,9 @@ export const Tab = ({
         </StyledIconContainer>
         <EllipsisDisplay>{title}</EllipsisDisplay>
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
+        {incomingMessages > 0 && (
+          <StyledIncomingCircle>{incomingMessages}</StyledIncomingCircle>
+        )}
       </StyledHover>
     </StyledTab>
   );

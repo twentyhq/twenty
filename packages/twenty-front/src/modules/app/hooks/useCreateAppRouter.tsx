@@ -3,6 +3,7 @@ import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
+import { CallCenterProvider } from '@/chat/call-center/context/CallCenterContext';
 import ChatProvider from '@/chat/internal/context/chatContext';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
@@ -16,6 +17,7 @@ import {
 import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
+import { CallCenter } from '~/pages/chat/call-center/ExternalChat';
 import { Chat } from '~/pages/chat/internal/InternalChat';
 import { Chatbot } from '~/pages/chatbot/Chatbot';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -77,6 +79,14 @@ export const useCreateAppRouter = (
               <ChatProvider>
                 <Chat />
               </ChatProvider>
+            }
+          />
+          <Route
+            path={AppPath.ExternalChat}
+            element={
+              <CallCenterProvider>
+                <CallCenter />
+              </CallCenterProvider>
             }
           />
           <Route path={AppPath.Chatbot} element={<Chatbot />} />

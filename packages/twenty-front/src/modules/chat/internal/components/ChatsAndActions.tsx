@@ -100,8 +100,8 @@ const StyledUnreadMessages = styled.div`
 const StyledIconButton = styled(IconButton)`
   border-radius: 50%;
   cursor: pointer;
-  height: 26px;
-  min-width: 26px;
+  height: 24px;
+  min-width: 24px;
 `;
 
 const StyledClickableAvatar = styled.div<StatusPillProps>`

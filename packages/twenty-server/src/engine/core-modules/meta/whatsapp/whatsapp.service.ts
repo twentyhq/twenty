@@ -1,6 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
 import {
@@ -16,7 +16,9 @@ import {
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { firestoreDB } from 'src/engine/core-modules/meta/FirebaseConfig';
 import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
@@ -27,7 +29,7 @@ import {
 import { WhatsappIntegration } from 'src/engine/core-modules/meta/whatsapp/integration/whatsapp-integration.entity';
 import { WhatsappDocument } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappDocument';
 import { WhatsappTemplatesResponse } from 'src/engine/core-modules/meta/whatsapp/types/WhatsappTemplate';
-import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
@@ -37,6 +39,10 @@ export class WhatsappService {
     private whatsappIntegrationRepository: Repository<WhatsappIntegration>,
     private readonly environmentService: EnvironmentService,
     private readonly googleStorageService: GoogleStorageService,
+    @InjectRepository(Sector, 'core')
+    private sectorRepository: Repository<Sector>,
+    @InjectRepository(Agent, 'core')
+    private agentRepository: Repository<Agent>,
   ) {}
 
   async sendTemplate(sendTemplateInput: SendTemplateInput) {
@@ -184,7 +190,7 @@ export class WhatsappService {
       return { templates: allTemplates };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Failed to get Business ID ${integration?.businessAccountId} templates: `,
+        `Failed to get Business ID ${integration?.businessAccountId} templates`,
         error.message,
       );
     }
@@ -254,35 +260,35 @@ export class WhatsappService {
         isVisible: true,
       });
 
-      // if (isReceiving) {
-      //   const whatsappIntegrationWithWorkspace =
-      //     await this.whatsappIntegrationRepository.findOne({
-      //       relations: ['workspace'],
-      //       where: {
-      //         id: whatsappDoc.integrationId,
-      //       },
-      //     });
+      if (isReceiving) {
+        const whatsappIntegrationWithWorkspace =
+          await this.whatsappIntegrationRepository.findOne({
+            relations: ['workspace'],
+            where: {
+              id: whatsappDoc.integrationId,
+            },
+          });
 
-      //   const sectorsFromWorkspace = await this.sectorRepository.find({
-      //     relations: ['agents'],
-      //     where: {
-      //       workspace: {
-      //         id: whatsappIntegrationWithWorkspace?.workspace.id,
-      //       },
-      //     },
-      //   });
+        const sectorsFromWorkspace = await this.sectorRepository.find({
+          relations: ['agents'],
+          where: {
+            workspace: {
+              id: whatsappIntegrationWithWorkspace?.workspace.id,
+            },
+          },
+        });
 
-      //   if (!sectorsFromWorkspace) {
-      //     return true;
-      //   }
+        if (!sectorsFromWorkspace) {
+          return true;
+        }
 
-      //   await this.sendNotification(
-      //     sectorsFromWorkspace.flatMap((sector) =>
-      //       sector.agents.map((agent) => agent.memberId),
-      //     ),
-      //     `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
-      //   );
-      // }
+        //   await this.sendNotification(
+        //     sectorsFromWorkspace.flatMap((sector) =>
+        //       sector.agents.map((agent) => agent.memberId),
+        //     ),
+        //     `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
+        //   );
+      }
 
       return true;
     }
@@ -305,40 +311,40 @@ export class WhatsappService {
 
       await setDoc(docRef, whatsappIntegration);
 
-      // if (isReceiving) {
-      //   if (whatsappIntegration.agent != 'empty') {
-      //     const agent = await this.agentRepository.findOne({
-      //       where: { id: whatsappIntegration.agent },
-      //     });
+      if (isReceiving) {
+        if (whatsappIntegration.agent != 'empty') {
+          const agent = await this.agentRepository.findOne({
+            where: { id: whatsappIntegration.agent },
+          });
 
-      //     if (!agent) {
-      //       return true;
-      //     }
+          if (!agent) {
+            return true;
+          }
 
-      //     await this.sendNotification(
-      //       [agent.memberId],
-      //       `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-      //     );
-      //   }
+          await this.sendNotification(
+            [agent.memberId],
+            `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+          );
+        }
 
-      //   if (whatsappIntegration.sector != 'empty') {
-      //     const sector = await this.sectorRepository.findOne({
-      //       relations: ['workspace', 'agents'],
-      //       where: {
-      //         id: whatsappIntegration.sector,
-      //       },
-      //     });
+        if (whatsappIntegration.sector != 'empty') {
+          const sector = await this.sectorRepository.findOne({
+            relations: ['workspace', 'agents'],
+            where: {
+              id: whatsappIntegration.sector,
+            },
+          });
 
-      //     if (!sector) {
-      //       return true;
-      //     }
+          if (!sector) {
+            return true;
+          }
 
-      //     await this.sendNotification(
-      //       sector.agents.map((agent) => agent.memberId),
-      //       `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-      //     );
-      //   }
-      // }
+          //     await this.sendNotification(
+          //       sector.agents.map((agent) => agent.memberId),
+          //       `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+          //     );
+        }
+      }
 
       return true;
     }

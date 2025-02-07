@@ -7,6 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { GoogleStorageService } from 'src/engine/core-modules/google-cloud/google-storage.service';
 import { Inbox } from 'src/engine/core-modules/inbox/inbox.entity';
 import { InboxService } from 'src/engine/core-modules/inbox/inbox.service';
@@ -17,6 +18,7 @@ import { WhatsappIntegrationService } from 'src/engine/core-modules/meta/whatsap
 import { WhatsappController } from 'src/engine/core-modules/meta/whatsapp/whatsapp.controller';
 import { WhatsappResolver } from 'src/engine/core-modules/meta/whatsapp/whatsapp.resolver';
 import { WhatsappService } from 'src/engine/core-modules/meta/whatsapp/whatsapp.service';
+import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -26,7 +28,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [WhatsappIntegration, Workspace, Inbox],
+          [WhatsappIntegration, Workspace, Inbox, Sector, Agent],
           'core',
         ),
         TypeORMModule,
