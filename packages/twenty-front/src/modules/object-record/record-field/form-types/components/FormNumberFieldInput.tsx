@@ -26,6 +26,7 @@ type FormNumberFieldInputProps = {
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
+  onBlur?: () => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
   readonly?: boolean;
@@ -37,6 +38,7 @@ export const FormNumberFieldInput = ({
   placeholder,
   defaultValue,
   onPersist,
+  onBlur,
   VariablePicker,
   hint,
   readonly,
@@ -108,6 +110,7 @@ export const FormNumberFieldInput = ({
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
             <StyledInput

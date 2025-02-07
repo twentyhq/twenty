@@ -18,6 +18,7 @@ type FormTextFieldInputProps = {
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: string) => void;
+  onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
@@ -30,6 +31,7 @@ export const FormTextFieldInput = ({
   defaultValue,
   placeholder,
   onPersist,
+  onBlur,
   multiline,
   readonly,
   VariablePicker,
@@ -71,6 +73,7 @@ export const FormTextFieldInput = ({
         <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
+          onBlur={onBlur}
         >
           <TextVariableEditor
             editor={editor}

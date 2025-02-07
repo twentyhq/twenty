@@ -42,6 +42,7 @@ export const WorkflowEditTriggerCronForm = ({
 }: WorkflowEditTriggerCronFormProps) => {
   const theme = useTheme();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
+  const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
 
   const { getIcon } = useIcons();
 
@@ -57,6 +58,10 @@ export const WorkflowEditTriggerCronForm = ({
   const headerTitle = isDefined(trigger.name) ? trigger.name : defaultLabel;
 
   const headerType = 'Trigger';
+
+  const onBlur = () => {
+    setErrorMessagesVisible(true);
+  };
 
   return (
     <>
@@ -91,6 +96,8 @@ export const WorkflowEditTriggerCronForm = ({
 
             setErrorMessages({});
 
+            setErrorMessagesVisible(false);
+
             triggerOptions.onTriggerUpdate({
               ...trigger,
               settings: getCronTriggerDefaultSettings(newTriggerType),
@@ -102,7 +109,8 @@ export const WorkflowEditTriggerCronForm = ({
           <FormTextFieldInput
             label="Expression"
             placeholder="0 0 */1 * * *"
-            error={errorMessages.CUSTOM}
+            error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
+            onBlur={onBlur}
             hint="Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
             readonly={triggerOptions.readonly}
             defaultValue={trigger.settings.pattern}
@@ -146,7 +154,10 @@ export const WorkflowEditTriggerCronForm = ({
           <>
             <FormNumberFieldInput
               label="Hours Between Triggers"
-              error={errorMessages.HOURS_hour}
+              error={
+                errorMessagesVisible ? errorMessages.HOURS_hour : undefined
+              }
+              onBlur={onBlur}
               defaultValue={trigger.settings.schedule.hour}
               onPersist={(newHour) => {
                 if (triggerOptions.readonly === true) {
@@ -190,7 +201,10 @@ export const WorkflowEditTriggerCronForm = ({
             />
             <FormNumberFieldInput
               label="Trigger at Minute"
-              error={errorMessages.HOURS_minute}
+              error={
+                errorMessagesVisible ? errorMessages.HOURS_minute : undefined
+              }
+              onBlur={onBlur}
               defaultValue={trigger.settings.schedule.minute}
               onPersist={(newMinute) => {
                 if (triggerOptions.readonly === true) {
@@ -237,7 +251,8 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'MINUTES' && (
           <FormNumberFieldInput
             label="Minutes Between Triggers"
-            error={errorMessages.MINUTES}
+            error={errorMessagesVisible ? errorMessages.MINUTES : undefined}
+            onBlur={onBlur}
             defaultValue={trigger.settings.schedule.minute}
             onPersist={(newMinute) => {
               if (triggerOptions.readonly === true) {
@@ -278,7 +293,8 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'SECONDS' && (
           <FormNumberFieldInput
             label="Seconds Between Triggers"
-            error={errorMessages.SECONDS}
+            error={errorMessagesVisible ? errorMessages.SECONDS : undefined}
+            onBlur={onBlur}
             defaultValue={trigger.settings.schedule.second}
             onPersist={(newSecond) => {
               if (triggerOptions.readonly === true) {
