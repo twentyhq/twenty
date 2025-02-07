@@ -11,6 +11,7 @@ import { viewableRecordNameSingularState } from '@/object-record/record-right-dr
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { isDefined } from 'twenty-shared';
+import { IconEye } from 'twenty-ui';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -109,7 +110,10 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       setViewableRecordId(newRecordId);
       setViewableRecordNameSingular(relationObjectMetadataNameSingular);
-      openRightDrawer(RightDrawerPages.ViewRecord);
+      openRightDrawer(RightDrawerPages.ViewRecord, {
+        title: 'View Record',
+        Icon: IconEye,
+      });
     },
   };
 };

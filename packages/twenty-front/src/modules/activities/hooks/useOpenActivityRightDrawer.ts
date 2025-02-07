@@ -9,6 +9,7 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconList } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useOpenActivityRightDrawer = ({
@@ -49,6 +50,9 @@ export const useOpenActivityRightDrawer = ({
 
     setViewableRecordId(activityId);
     setViewableRecordNameSingular(objectNameSingular);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    openRightDrawer(RightDrawerPages.ViewRecord, {
+      title: objectNameSingular,
+      Icon: IconList,
+    });
   };
 };

@@ -30,9 +30,9 @@ export const useRightDrawer = () => {
     ({ set }) =>
       (
         rightDrawerPage: RightDrawerPages,
-        commandMenuPageInfo?: {
-          title?: string;
-          Icon?: IconComponent;
+        commandMenuPageInfo: {
+          title: string;
+          Icon: IconComponent;
         },
       ) => {
         if (isCommandMenuV2Enabled) {
@@ -41,8 +41,8 @@ export const useRightDrawer = () => {
 
           navigateCommandMenu({
             page: commandMenuPage,
-            pageTitle: commandMenuPageInfo?.title,
-            pageIcon: commandMenuPageInfo?.Icon,
+            pageTitle: commandMenuPageInfo.title,
+            pageIcon: commandMenuPageInfo.Icon,
           });
 
           return;

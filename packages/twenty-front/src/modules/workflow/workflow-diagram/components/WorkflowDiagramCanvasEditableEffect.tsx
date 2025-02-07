@@ -1,4 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -32,10 +33,16 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
+
+      setCommandMenuNavigationStack([]);
 
       if (isClosingStep) {
         closeRightDrawer();
@@ -69,14 +76,15 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       });
     },
     [
+      setCommandMenuNavigationStack,
       setWorkflowSelectedNode,
       setHotkeyScope,
       openRightDrawer,
+      getIcon,
       closeRightDrawer,
       closeCommandMenu,
-      startNodeCreation,
-      getIcon,
       t,
+      startNodeCreation,
     ],
   );
 
