@@ -14,6 +14,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
@@ -109,14 +110,16 @@ export const CommandMenuTopBar = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  const contextChips = commandMenuNavigationStack
-    .filter((page) => page.page !== CommandMenuPages.Root)
-    .map((page) => {
-      return {
-        Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-        text: page.pageTitle,
-      };
-    });
+  const contextChips = useMemo(() => {
+    return commandMenuNavigationStack
+      .filter((page) => page.page !== CommandMenuPages.Root)
+      .map((page) => {
+        return {
+          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+          text: page.pageTitle,
+        };
+      });
+  }, [commandMenuNavigationStack, theme.icon.size.sm]);
 
   return (
     <StyledInputContainer>
