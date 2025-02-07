@@ -15,6 +15,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/relation-metadata/interceptors/relation-metadata-graphql-api-exception.interceptor';
 import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -62,6 +63,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
           interceptors: [RelationMetadataGraphqlApiExceptionInterceptor],
+          filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],
     }),

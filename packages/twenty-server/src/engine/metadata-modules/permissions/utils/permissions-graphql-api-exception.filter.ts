@@ -1,3 +1,5 @@
+import { Catch, ExceptionFilter } from '@nestjs/common';
+
 import {
   ForbiddenError,
   InternalServerError,
@@ -7,16 +9,15 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-export const permissionsGraphqlApiExceptionHandler = (error: Error) => {
-  if (error instanceof PermissionsException) {
-    switch (error.code) {
+@Catch(PermissionsException)
+export class PermissionsGraphqlApiExceptionFilter implements ExceptionFilter {
+  catch(exception: PermissionsException) {
+    switch (exception.code) {
       case PermissionsExceptionCode.PERMISSION_DENIED:
       case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
-        throw new ForbiddenError(error.message);
+        throw new ForbiddenError(exception.message);
       default:
-        throw new InternalServerError(error.message);
+        throw new InternalServerError(exception.message);
     }
   }
-
-  throw error;
-};
+}

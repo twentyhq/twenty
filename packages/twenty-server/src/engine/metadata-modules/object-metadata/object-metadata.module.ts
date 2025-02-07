@@ -24,6 +24,7 @@ import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/obje
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
@@ -83,6 +84,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
           interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
+          filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],
     }),

@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -13,11 +13,9 @@ import { isDefined, SettingsFeatures } from 'twenty-shared';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { permissionsGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception-handler';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -25,41 +23,33 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Resolver(() => RoleDTO)
 @UseGuards(SettingsPermissionsGuard(SettingsFeatures.ROLES))
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Query(() => [RoleDTO])
-  async getRoles(
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<RoleDTO[]> {
-    try {
-      const roles = await this.roleService.getWorkspaceRoles(workspace.id);
+  async getRoles(@AuthWorkspace() workspace: Workspace): Promise<RoleDTO[]> {
+    const roles = await this.roleService.getWorkspaceRoles(workspace.id);
 
-      return roles.map((role) => ({
-        id: role.id,
-        label: role.label,
-        canUpdateAllSettings: role.canUpdateAllSettings,
-        description: role.description,
-        workspaceId: role.workspaceId,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt,
-        isEditable: role.isEditable,
-        userWorkspaceRoles: role.userWorkspaceRoles,
-      }));
-    } catch (error) {
-      return permissionsGraphqlApiExceptionHandler(error);
-    }
+    return roles.map((role) => ({
+      id: role.id,
+      label: role.label,
+      canUpdateAllSettings: role.canUpdateAllSettings,
+      description: role.description,
+      workspaceId: role.workspaceId,
+      createdAt: role.createdAt,
+      updatedAt: role.updatedAt,
+      isEditable: role.isEditable,
+      userWorkspaceRoles: role.userWorkspaceRoles,
+    }));
   }
 
   @Mutation(() => WorkspaceMember)
   async updateWorkspaceMemberRole(
-    @AuthUserWorkspaceId() currentUserWorkspaceId: string,
     @AuthWorkspace() workspace: Workspace,
     @Args('workspaceMemberId') workspaceMemberId: string,
     @Args('roleId', { type: () => String, nullable: true })

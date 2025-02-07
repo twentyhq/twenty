@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   UnauthorizedException,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -35,10 +36,12 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
@@ -101,8 +104,8 @@ export class FieldMetadataResolver {
     }
   }
 
-  @Mutation(() => FieldMetadataDTO)
   @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

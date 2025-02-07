@@ -6,18 +6,15 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { SettingsFeatures } from 'twenty-shared';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
-import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
@@ -56,7 +53,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         ActorModule,
         ViewModule,
         PermissionsModule,
-        FeatureFlagModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,
@@ -79,17 +75,14 @@ import { UpdateFieldInput } from './dtos/update-field.input';
             // Manually created because of the async validation
             one: { disabled: true },
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
           },
           update: {
             // Manually created because of the async validation
             one: { disabled: true },
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),
