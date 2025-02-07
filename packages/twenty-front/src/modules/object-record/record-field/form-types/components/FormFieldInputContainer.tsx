@@ -11,8 +11,10 @@ const StyledFormFieldInputContainer = styled.div`
 
 export const FormFieldInputContainer = ({
   children,
+  testId,
 }: {
   children: ReactNode;
+  testId?: string;
 }) => {
   const {
     goBackToPreviousHotkeyScope,
@@ -30,7 +32,11 @@ export const FormFieldInputContainer = ({
   };
 
   return (
-    <StyledFormFieldInputContainer onFocus={onFocus} onBlur={onBlur}>
+    <StyledFormFieldInputContainer
+      data-testid={testId}
+      onFocus={onFocus}
+      onBlur={onBlur}
+    >
       {children}
     </StyledFormFieldInputContainer>
   );
