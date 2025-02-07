@@ -11,6 +11,7 @@ import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-steps/workf
 import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
+import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { Suspense, lazy } from 'react';
 import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
@@ -66,6 +67,14 @@ export const WorkflowStepDetail = ({
         case 'MANUAL': {
           return (
             <WorkflowEditTriggerManualForm
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
+        case 'CRON': {
+          return (
+            <WorkflowEditTriggerCronForm
               trigger={stepDefinition.definition}
               triggerOptions={props}
             />

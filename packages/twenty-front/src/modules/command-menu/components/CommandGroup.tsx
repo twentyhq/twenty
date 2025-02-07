@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-const StyledGroup = styled.div`
+const StyledGroupHeading = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -11,6 +11,12 @@ const StyledGroup = styled.div`
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+`;
+
+const StyledGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 type CommandGroupProps = {
@@ -23,9 +29,9 @@ export const CommandGroup = ({ heading, children }: CommandGroupProps) => {
     return null;
   }
   return (
-    <div>
-      <StyledGroup>{heading}</StyledGroup>
-      {children}
-    </div>
+    <>
+      <StyledGroupHeading>{heading}</StyledGroupHeading>
+      <StyledGroup>{children}</StyledGroup>
+    </>
   );
 };

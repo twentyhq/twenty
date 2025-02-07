@@ -7,6 +7,9 @@ export const getTriggerDefaultLabel = (
         type: 'MANUAL';
       }
     | {
+        type: 'CRON';
+      }
+    | {
         type: 'DATABASE_EVENT';
         eventName: string;
       },
