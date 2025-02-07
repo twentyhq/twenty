@@ -28,13 +28,11 @@ export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
     removeRecordFilter(recordFilter.fieldMetadataId);
   };
 
-  const ChipIcon = FieldMetadataItemIcon;
-
   return (
     <SortOrFilterChip
       testId={recordFilter.fieldMetadataId}
       labelValue={recordFilter.label ?? ''}
-      Icon={ChipIcon}
+      Icon={FieldMetadataItemIcon}
       onRemove={handleRemoveClick}
     />
   );
