@@ -28,14 +28,20 @@ type WorkflowEditTriggerCronFormProps = {
       };
 };
 
+type FormErrorMessages = {
+  CUSTOM?: string | undefined;
+  HOURS_hour?: string | undefined;
+  HOURS_minute?: string | undefined;
+  MINUTES?: string | undefined;
+  SECONDS?: string | undefined;
+};
+
 export const WorkflowEditTriggerCronForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerCronFormProps) => {
   const theme = useTheme();
-  const [errorMessages, setErrorMessages] = useState<{
-    [key: number]: string | undefined;
-  }>({});
+  const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
 
   const { getIcon } = useIcons();
 
@@ -83,6 +89,8 @@ export const WorkflowEditTriggerCronForm = ({
               return;
             }
 
+            setErrorMessages({});
+
             triggerOptions.onTriggerUpdate({
               ...trigger,
               settings: getCronTriggerDefaultSettings(newTriggerType),
@@ -94,7 +102,7 @@ export const WorkflowEditTriggerCronForm = ({
           <FormTextFieldInput
             label="Expression"
             placeholder="0 0 */1 * * *"
-            error={errorMessages[0]}
+            error={errorMessages.CUSTOM}
             hint="Format: [Second] [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
             readonly={triggerOptions.readonly}
             defaultValue={trigger.settings.pattern}
@@ -111,14 +119,17 @@ export const WorkflowEditTriggerCronForm = ({
 
               if (cronValidator.isError()) {
                 setErrorMessages({
-                  0: `Invalid cron pattern, ${cronValidator
+                  CUSTOM: `Invalid cron pattern, ${cronValidator
                     .getError()[0]
                     .replace(/\. \(Input cron:.*$/, '')}`,
                 });
                 return;
               }
 
-              setErrorMessages({});
+              setErrorMessages((prev) => ({
+                ...prev,
+                CUSTOM: undefined,
+              }));
 
               triggerOptions.onTriggerUpdate({
                 ...trigger,
@@ -135,29 +146,29 @@ export const WorkflowEditTriggerCronForm = ({
           <>
             <FormNumberFieldInput
               label="Hours Between Triggers"
-              error={errorMessages[0]}
+              error={errorMessages.HOURS_hour}
               defaultValue={trigger.settings.schedule.hour}
               onPersist={(newHour) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
 
-                if (!isNumber(newHour)) {
+                if (!isDefined(newHour)) {
                   return;
                 }
 
-                if (newHour <= 0) {
+                if (!isNumber(newHour) || newHour <= 0) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    0: `Invalid hour value '${newHour}'. Should be integer greater than 1`,
+                    HOURS_hour: `Invalid hour value '${newHour}'. Should be integer greater than 1`,
                   }));
                   return;
                 }
 
-                setErrorMessages((prev) => {
-                  delete prev[0];
-                  return prev;
-                });
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  HOURS_hour: undefined,
+                }));
 
                 triggerOptions.onTriggerUpdate({
                   ...trigger,
@@ -179,29 +190,29 @@ export const WorkflowEditTriggerCronForm = ({
             />
             <FormNumberFieldInput
               label="Trigger at Minute"
-              error={errorMessages[1]}
+              error={errorMessages.HOURS_minute}
               defaultValue={trigger.settings.schedule.minute}
               onPersist={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
 
-                if (!isNumber(newMinute)) {
+                if (!isDefined(newMinute)) {
                   return;
                 }
 
-                if (newMinute < 0 || newMinute > 59) {
+                if (!isNumber(newMinute) || newMinute < 0 || newMinute > 59) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    1: `Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
+                    HOURS_minute: `Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
                   }));
                   return;
                 }
 
-                setErrorMessages((prev) => {
-                  delete prev[1];
-                  return prev;
-                });
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  HOURS_minute: undefined,
+                }));
 
                 triggerOptions.onTriggerUpdate({
                   ...trigger,
@@ -226,25 +237,28 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'MINUTES' && (
           <FormNumberFieldInput
             label="Minutes Between Triggers"
-            error={errorMessages[0]}
+            error={errorMessages.MINUTES}
             defaultValue={trigger.settings.schedule.minute}
             onPersist={(newMinute) => {
               if (triggerOptions.readonly === true) {
                 return;
               }
 
-              if (!isNumber(newMinute)) {
+              if (!isDefined(newMinute)) {
                 return;
               }
 
-              if (newMinute <= 0) {
+              if (!isNumber(newMinute) || newMinute <= 0) {
                 setErrorMessages({
-                  0: `Invalid minute value '${newMinute}'. Should be integer greater than 1`,
+                  MINUTES: `Invalid minute value '${newMinute}'. Should be integer greater than 1`,
                 });
                 return;
               }
 
-              setErrorMessages({});
+              setErrorMessages((prev) => ({
+                ...prev,
+                MINUTES: undefined,
+              }));
 
               triggerOptions.onTriggerUpdate({
                 ...trigger,
@@ -264,25 +278,28 @@ export const WorkflowEditTriggerCronForm = ({
         {trigger.settings.type === 'SECONDS' && (
           <FormNumberFieldInput
             label="Seconds Between Triggers"
-            error={errorMessages[0]}
+            error={errorMessages.SECONDS}
             defaultValue={trigger.settings.schedule.second}
             onPersist={(newSecond) => {
               if (triggerOptions.readonly === true) {
                 return;
               }
 
-              if (!isNumber(newSecond)) {
+              if (!isDefined(newSecond)) {
                 return;
               }
 
-              if (newSecond <= 9) {
+              if (!isNumber(newSecond) || newSecond <= 9) {
                 setErrorMessages({
-                  0: `Invalid second value '${newSecond}'. Should be integer greater than 10`,
+                  SECONDS: `Invalid second value '${newSecond}'. Should be integer greater than 10`,
                 });
                 return;
               }
 
-              setErrorMessages({});
+              setErrorMessages((prev) => ({
+                ...prev,
+                SECONDS: undefined,
+              }));
 
               triggerOptions.onTriggerUpdate({
                 ...trigger,
