@@ -1,4 +1,6 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -74,16 +76,22 @@ describe('computeOptimisticRecordFromInput', () => {
       __typename: 'Company',
     };
 
+    const objectMetadataItem: ObjectMetadataItem = {
+      ...companyObjectMetadataItem,
+      fields: companyObjectMetadataItem.fields.filter(
+        (field) => field.name === 'id',
+      ),
+    };
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record: companyRecord,
+    });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      objectMetadataItem: {
-        ...companyObjectMetadataItem,
-        fields: companyObjectMetadataItem.fields.filter(
-          (field) => field.name === 'id',
-        ),
-      },
+      objectMetadataItem,
       cache,
       record: companyRecord,
+      recordGqlFields,
     });
 
     const result = computeOptimisticRecordFromInput({
@@ -112,16 +120,22 @@ describe('computeOptimisticRecordFromInput', () => {
       __typename: 'Company',
     };
 
+    const objectMetadataItem: ObjectMetadataItem = {
+      ...companyObjectMetadataItem,
+      fields: companyObjectMetadataItem.fields.filter(
+        (field) => field.name === 'id',
+      ),
+    };
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record: companyRecord,
+    });
     updateRecordFromCache({
       objectMetadataItems: generatedMockObjectMetadataItems,
-      objectMetadataItem: {
-        ...companyObjectMetadataItem,
-        fields: companyObjectMetadataItem.fields.filter(
-          (field) => field.name === 'id',
-        ),
-      },
+      objectMetadataItem,
       cache,
       record: companyRecord,
+      recordGqlFields,
     });
 
     const result = computeOptimisticRecordFromInput({
