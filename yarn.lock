@@ -18919,7 +18919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xyflow/react@npm:^12.3.5, @xyflow/react@npm:^12.4.2":
+"@xyflow/react@npm:^12.4.2":
   version: 12.4.2
   resolution: "@xyflow/react@npm:12.4.2"
   dependencies:
@@ -46146,7 +46146,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     "@vitest/ui": "npm:1.4.0"
     "@wyw-in-js/vite": "npm:^0.5.3"
-    "@xyflow/react": "npm:^12.3.5"
+    "@xyflow/react": "npm:^12.4.2"
     add: "npm:^2.0.6"
     addressparser: "npm:^1.0.1"
     afterframe: "npm:^1.0.2"
