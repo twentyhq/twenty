@@ -154,14 +154,14 @@ export const useDeleteManyRecords = ({
           const cachedRecordsNode: RecordGqlNode[] = [];
           const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
+          const recordGqlFields = {
+            deletedAt: true,
+          };
           cachedRecords.forEach((cachedRecord) => {
             if (isUndefinedOrNull(cachedRecord?.id)) {
               return;
             }
 
-            const recordGqlFields = {
-              deletedAt: true,
-            };
             updateRecordFromCache({
               objectMetadataItems,
               objectMetadataItem,

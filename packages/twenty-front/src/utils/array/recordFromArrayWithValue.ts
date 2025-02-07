@@ -7,10 +7,4 @@ export const recordFromArrayWithValue = <T, U extends string>(
   array: string[] | readonly U[],
   value: T,
 ): Record<U, T> =>
-  array.reduce(
-    (acc, diffKey) => ({
-      ...acc,
-      [diffKey]: value,
-    }),
-    {},
-  ) as Record<U, T>;
+  Object.fromEntries(array.map((key) => [key, value])) as Record<U, T>;

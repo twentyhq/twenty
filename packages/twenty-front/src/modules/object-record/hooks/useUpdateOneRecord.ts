@@ -154,9 +154,9 @@ export const useUpdateOneRecord = <
         if (isUndefinedOrNull(cachedRecord?.id)) {
           throw error;
         }
-        const cachedRecordKeys = Object.keys(cachedRecord);
+        const cachedRecordKeys = new Set(Object.keys(cachedRecord));
         const diffKeys = Object.keys(optimisticRecordInput).filter(
-          (diffKey) => !cachedRecordKeys.includes(diffKey),
+          (diffKey) => !cachedRecordKeys.has(diffKey),
         );
 
         const recordGqlFields = {
