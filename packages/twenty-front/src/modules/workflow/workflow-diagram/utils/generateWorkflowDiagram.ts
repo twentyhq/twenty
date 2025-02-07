@@ -73,6 +73,14 @@ export const generateWorkflowDiagram = ({
 
         break;
       }
+      case 'CRON': {
+        triggerDefaultLabel = 'On a Schedule';
+        triggerIcon = getTriggerIcon({
+          type: 'CRON',
+        });
+
+        break;
+      }
       case 'DATABASE_EVENT': {
         const triggerEvent = splitWorkflowTriggerEventName(
           trigger.settings.eventName,
