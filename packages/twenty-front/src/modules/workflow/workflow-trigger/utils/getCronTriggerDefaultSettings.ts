@@ -32,5 +32,8 @@ export const getCronTriggerDefaultSettings = (
         outputSchema: {},
       };
   }
-  return assertUnreachable(cronTriggerInterval);
+  return assertUnreachable(
+    cronTriggerInterval,
+    'Invalid cron trigger interval',
+  );
 };
