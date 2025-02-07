@@ -593,7 +593,6 @@ export type FullName = {
 };
 
 export type GetAuthorizationUrlInput = {
-  forceSubdomainUrl: Scalars['Boolean'];
   identityProviderId: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };

@@ -668,7 +668,6 @@ export type FullName = {
 };
 
 export type GetAuthorizationUrlInput = {
-  forceSubdomainUrl: Scalars['Boolean']['input'];
   identityProviderId: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
 };
@@ -1750,6 +1749,16 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
+export enum SettingsFeatures {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  ROLES = 'ROLES',
+  SECURITY_SETTINGS = 'SECURITY_SETTINGS',
+  WORKSPACE_SETTINGS = 'WORKSPACE_SETTINGS',
+  WORKSPACE_USERS = 'WORKSPACE_USERS'
+}
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String']['input'];
   clientSecret: Scalars['String']['input'];
@@ -1980,7 +1989,8 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
-  currentWorkspace: Workspace;
+  currentUserWorkspace?: Maybe<UserWorkspace>;
+  currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -2055,6 +2065,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];

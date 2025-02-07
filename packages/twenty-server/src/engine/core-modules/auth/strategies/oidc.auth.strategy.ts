@@ -17,7 +17,6 @@ export type OIDCRequest = Omit<
 > & {
   user: {
     identityProviderId: string;
-    forceSubdomainUrl: boolean;
     email: string;
     firstName?: string | null;
     lastName?: string | null;
@@ -61,7 +60,6 @@ export class OIDCAuthStrategy extends PassportStrategy(
   private extractState(req: Request): {
     identityProviderId: string;
     workspaceInviteHash?: string;
-    forceSubdomainUrl: boolean;
   } {
     try {
       const state = JSON.parse(
@@ -77,7 +75,6 @@ export class OIDCAuthStrategy extends PassportStrategy(
       return {
         identityProviderId: state.identityProviderId,
         workspaceInviteHash: state.workspaceInviteHash,
-        forceSubdomainUrl: !!state.forceSubdomainUrl,
       };
     } catch (err) {
       throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
@@ -108,7 +105,6 @@ export class OIDCAuthStrategy extends PassportStrategy(
       done(null, {
         email,
         workspaceInviteHash: state.workspaceInviteHash,
-        forceSubdomainUrl: state.forceSubdomainUrl,
         identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
