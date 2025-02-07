@@ -150,7 +150,7 @@ export class WorkflowRunWorkspaceService {
 
     if (!workflowRunToUpdate) {
       throw new WorkflowRunException(
-        'No workflow run to end',
+        'No workflow run to save',
         WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
       );
     }

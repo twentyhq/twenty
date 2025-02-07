@@ -125,7 +125,6 @@ export class WorkflowExecutorWorkspaceService {
         currentStepIndex: currentStepIndex + 1,
         steps,
         context: updatedContext,
-        ...context,
         workflowExecutorOutput: updatedWorkflowExecutorOutput,
       });
     }
