@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field } from '@nestjs/graphql';
 
 import Stripe from 'stripe';

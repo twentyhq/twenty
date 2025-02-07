@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,7 +40,6 @@ export const SettingsHostname = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { data: getHostnameDetailsData } = useGetHostnameDetailsQuery();
 
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { t } = useLingui();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -75,8 +73,6 @@ export const SettingsHostname = () => {
           },
         },
       });
-
-      redirectToWorkspaceDomain(currentWorkspace.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
@@ -106,8 +102,6 @@ export const SettingsHostname = () => {
         ...currentWorkspace,
         hostname: values.hostname,
       });
-
-      // redirectToWorkspaceDomain(values.subdomain);
     } catch (error) {
       control.setError('hostname', {
         type: 'manual',
@@ -139,12 +133,36 @@ export const SettingsHostname = () => {
       {isDefined(getHostnameDetailsData?.getHostnameDetails?.hostname) && (
         <pre>
           {getHostnameDetailsData.getHostnameDetails.hostname} CNAME
-          app.twenty-main.com
+          twenty-main.com
         </pre>
       )}
-      {getHostnameDetailsData && (
-        <pre>{JSON.stringify(getHostnameDetailsData, null, 4)}</pre>
-      )}
+      {getHostnameDetailsData?.getHostnameDetails &&
+        getHostnameDetailsData.getHostnameDetails.ownershipVerifications.map(
+          (ownershipVerification) => {
+            if (
+              ownershipVerification.__typename ===
+              'CustomHostnameOwnershipVerificationTxt'
+            ) {
+              return (
+                <pre>
+                  {ownershipVerification.name} TXT {ownershipVerification.value}
+                </pre>
+              );
+            }
+
+            if (
+              ownershipVerification.__typename ===
+              'CustomHostnameOwnershipVerificationHttp'
+            ) {
+              return (
+                <pre>
+                  {ownershipVerification.url} HTTP {ownershipVerification.body}
+                </pre>
+              );
+            }
+            return <></>;
+          },
+        )}
     </Section>
   );
 };

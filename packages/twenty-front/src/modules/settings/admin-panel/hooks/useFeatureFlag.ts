@@ -1,45 +1,20 @@
-import { UserLookup } from '@/settings/admin-panel/types/UserLookup';
-import { useState } from 'react';
+import { adminPanelErrorState } from '@/settings/admin-panel/states/adminPanelErrorState';
+import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
   FeatureFlagKey,
   useUpdateWorkspaceFeatureFlagMutation,
-  useUserLookupAdminPanelMutation,
 } from '~/generated/graphql';
 
-export const useFeatureFlagsManagement = () => {
-  const [userLookupResult, setUserLookupResult] = useState<UserLookup | null>(
-    null,
+export const useFeatureFlag = () => {
+  const [userLookupResult, setUserLookupResult] = useRecoilState(
+    userLookupResultState,
   );
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const [userLookup] = useUserLookupAdminPanelMutation({
-    onCompleted: (data) => {
-      setIsLoading(false);
-      if (isDefined(data?.userLookupAdminPanel)) {
-        setUserLookupResult(data.userLookupAdminPanel);
-      }
-    },
-    onError: (error) => {
-      setIsLoading(false);
-      setError(error.message);
-    },
-  });
+  const setError = useSetRecoilState(adminPanelErrorState);
 
   const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
-
-  const handleUserLookup = async (userIdentifier: string) => {
-    setError(null);
-    setIsLoading(true);
-    setUserLookupResult(null);
-
-    const response = await userLookup({
-      variables: { userIdentifier },
-    });
-
-    return response.data?.userLookupAdminPanel;
-  };
 
   const handleFeatureFlagUpdate = async (
     workspaceId: string,
@@ -83,10 +58,6 @@ export const useFeatureFlagsManagement = () => {
   };
 
   return {
-    userLookupResult,
-    handleUserLookup,
     handleFeatureFlagUpdate,
-    isLoading,
-    error,
   };
 };

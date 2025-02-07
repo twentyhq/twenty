@@ -10,7 +10,7 @@ import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader'
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const isCurrentUserLoaded = useRecoilValue(isCurrentUserLoadedState);
-  const isMatchingLocation = useIsMatchingLocation();
+  const { isMatchingLocation } = useIsMatchingLocation();
 
   const dateTimeFormat = useRecoilValue(dateTimeFormatState);
 

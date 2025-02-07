@@ -7,12 +7,11 @@ import {
 } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PageHeaderOpenCommandMenuButton = () => {
-  const { navigateCommandMenu } = useCommandMenu();
+  const { openRootCommandMenu } = useCommandMenu();
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -31,11 +30,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
           accent="default"
           hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel="Open command menu"
-          onClick={() => {
-            navigateCommandMenu({
-              page: CommandMenuPages.Root,
-            });
-          }}
+          onClick={openRootCommandMenu}
         />
       ) : (
         <IconButton
@@ -44,11 +39,7 @@ export const PageHeaderOpenCommandMenuButton = () => {
           dataTestId="more-showpage-button"
           accent="default"
           variant="secondary"
-          onClick={() => {
-            navigateCommandMenu({
-              page: CommandMenuPages.Root,
-            });
-          }}
+          onClick={openRootCommandMenu}
         />
       )}
     </>

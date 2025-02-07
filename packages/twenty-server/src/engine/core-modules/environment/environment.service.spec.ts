@@ -86,26 +86,5 @@ describe('EnvironmentService', () => {
       expect(result.APP_SECRET.value).not.toBe('super-secret-value');
       expect(result.APP_SECRET.value).toMatch(/^\*+[a-zA-Z0-9]{5}$/);
     });
-
-    it('should use default value when environment variable is not set', () => {
-      const mockMetadata = {
-        DEBUG_PORT: {
-          title: 'Debug Port',
-          description: 'Debug port number',
-        },
-      };
-
-      Reflect.defineMetadata(
-        'environment-variables',
-        mockMetadata,
-        EnvironmentVariables,
-      );
-
-      jest.spyOn(configService, 'get').mockReturnValue(undefined);
-
-      const result = service.getAll();
-
-      expect(result.DEBUG_PORT.value).toBe(9000);
-    });
   });
 });

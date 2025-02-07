@@ -279,7 +279,7 @@ export class WorkspaceInvitationService {
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
         const link = this.domainManagerService.buildWorkspaceURL({
-          subdomain: workspace.subdomain,
+          workspace,
           pathname: `invite/${workspace?.inviteHash}`,
           searchParams: invitation.value.isPersonalInvitation
             ? {

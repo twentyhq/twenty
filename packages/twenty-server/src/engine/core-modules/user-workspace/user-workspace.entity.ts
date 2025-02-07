@@ -1,6 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { SettingsFeatures } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -18,6 +19,10 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+registerEnumType(SettingsFeatures, {
+  name: 'SettingsFeatures',
+});
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
@@ -66,4 +71,7 @@ export class UserWorkspace {
     (twoFactorMethod) => twoFactorMethod.userWorkspace,
   )
   twoFactorMethods: Relation<TwoFactorMethod[]>;
+
+  @Field(() => [SettingsFeatures], { nullable: true })
+  settingsPermissions?: SettingsFeatures[];
 }

@@ -12,6 +12,8 @@ import GraphQLJSON from 'graphql-type-json';
 import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -41,7 +43,8 @@ export class GraphQLConfigService
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
-    const isDebugMode = this.environmentService.get('DEBUG_MODE');
+    const isDebugMode =
+      this.environmentService.get('NODE_ENV') === NodeEnvironment.development;
     const plugins = [
       useThrottler({
         ttl: this.environmentService.get('API_RATE_LIMITING_TTL'),

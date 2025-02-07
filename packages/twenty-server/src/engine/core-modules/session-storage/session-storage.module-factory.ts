@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import RedisStore from 'connect-redis';
 import session from 'express-session';
 import { createClient } from 'redis';
@@ -12,8 +14,18 @@ export const getSessionStorageOptions = (
 
   const SERVER_URL = environmentService.get('SERVER_URL');
 
+  const appSecret = environmentService.get('APP_SECRET');
+
+  if (!appSecret) {
+    throw new Error('APP_SECRET is not set');
+  }
+
+  const sessionSecret = createHash('sha256')
+    .update(`${appSecret}SESSION_STORE_SECRET`)
+    .digest('hex');
+
   const sessionStorage: session.SessionOptions = {
-    secret: environmentService.get('SESSION_STORE_SECRET'),
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     proxy: true,

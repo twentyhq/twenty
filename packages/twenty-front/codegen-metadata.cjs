@@ -18,7 +18,7 @@ module.exports = {
       },
       config: {
         namingConvention: { enumValues: 'keep' },
-      }
+      },
     },
   },
 };

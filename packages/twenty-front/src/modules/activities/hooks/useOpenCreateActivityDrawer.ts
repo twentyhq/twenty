@@ -19,6 +19,7 @@ import { isNewViewableRecordLoadingState } from '@/object-record/record-right-dr
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { IconList } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -75,7 +76,10 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     setIsNewViewableRecordLoading(true);
-    openRightDrawer(RightDrawerPages.ViewRecord);
+    openRightDrawer(RightDrawerPages.ViewRecord, {
+      title: activityObjectNameSingular,
+      Icon: IconList,
+    });
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 

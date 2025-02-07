@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -14,11 +16,11 @@ import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stri
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { assert } from 'src/utils/assert';
 
 @Injectable()
@@ -45,7 +47,7 @@ export class BillingPortalWorkspaceService {
     requirePaymentMethod,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
-      subdomain: workspace.subdomain,
+      workspace,
     });
     const cancelUrl = frontBaseUrl.toString();
 
@@ -116,7 +118,7 @@ export class BillingPortalWorkspaceService {
     }
 
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
-      subdomain: workspace.subdomain,
+      workspace,
     });
 
     if (returnUrlPath) {

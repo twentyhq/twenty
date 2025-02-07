@@ -60,7 +60,7 @@ export class CoreQueryBuilderFactory {
       throw new BadRequestException(
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
-            subdomain: workspace.subdomain,
+            workspace,
             pathname: '/settings/developers',
           })
           .toString()}`,

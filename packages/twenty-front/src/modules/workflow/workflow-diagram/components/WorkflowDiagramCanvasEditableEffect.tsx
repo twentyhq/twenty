@@ -1,9 +1,9 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { CREATE_STEP_STEP_ID } from '@/workflow/workflow-diagram/constants/CreateStepStepId';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
@@ -13,6 +13,7 @@ import {
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { useLingui } from '@lingui/react/macro';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
@@ -32,10 +33,16 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
+  const setCommandMenuNavigationStack = useSetRecoilState(
+    commandMenuNavigationStackState,
+  );
+
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
+
+      setCommandMenuNavigationStack([]);
 
       if (isClosingStep) {
         closeRightDrawer();
@@ -53,12 +60,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      const isCreateStepNode = selectedNode.type === CREATE_STEP_STEP_ID;
-      if (isCreateStepNode) {
-        if (selectedNode.data.nodeType !== 'create-step') {
-          throw new Error(t`Expected selected node to be a create step node.`);
-        }
-
+      if (isCreateStepNode(selectedNode)) {
         startNodeCreation(selectedNode.data.parentNodeId);
 
         return;
@@ -74,14 +76,15 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       });
     },
     [
+      setCommandMenuNavigationStack,
       setWorkflowSelectedNode,
       setHotkeyScope,
       openRightDrawer,
+      getIcon,
       closeRightDrawer,
       closeCommandMenu,
-      startNodeCreation,
-      getIcon,
       t,
+      startNodeCreation,
     ],
   );
 
