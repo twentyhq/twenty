@@ -165,7 +165,6 @@ export const useUpdateOneRecord = <
           ...recordFromArrayWithValue(diffKeys, true),
         };
 
-        debugger;
         updateRecordFromCache({
           objectMetadataItems,
           objectMetadataItem,

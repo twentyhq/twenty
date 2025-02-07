@@ -9,7 +9,6 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -161,10 +160,6 @@ export const useDeleteManyRecords = ({
             }
 
             const recordGqlFields = {
-              ...generateDepthOneRecordGqlFields({
-                objectMetadataItem,
-                record: cachedRecord,
-              }),
               deletedAt: true,
             };
             updateRecordFromCache({

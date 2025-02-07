@@ -7,7 +7,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -74,7 +73,6 @@ export const useDeleteOneRecord = ({
         return null;
       }
 
-      // debugger;
       const recordGqlFields = {
         deletedAt: true,
       };
@@ -121,10 +119,6 @@ export const useDeleteOneRecord = ({
           }
 
           const recordGqlFields = {
-            ...generateDepthOneRecordGqlFields({
-              objectMetadataItem,
-              record: cachedRecord,
-            }),
             deletedAt: true,
           };
           updateRecordFromCache({
