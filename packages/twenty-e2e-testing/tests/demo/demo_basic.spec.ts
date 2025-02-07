@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.fail(
+test.fixme(
   'Check if demo account is working properly @demo-only',
   async ({ page }) => {
     await page.goto('https://app.twenty-next.com/');
