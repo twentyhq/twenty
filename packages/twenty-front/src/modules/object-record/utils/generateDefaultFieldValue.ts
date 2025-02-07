@@ -14,7 +14,6 @@ export const generateDefaultFieldValue = (
     ? generateEmptyFieldValue(fieldMetadataItem)
     : stripSimpleQuotesFromString(fieldMetadataItem.defaultValue);
 
-  // I don't understand this
   switch (defaultValue) {
     case 'uuid':
       return v4();
@@ -23,5 +22,4 @@ export const generateDefaultFieldValue = (
     default:
       return defaultValue;
   }
-  ///
 };
