@@ -21,7 +21,14 @@ const jestConfig = {
             decoratorMetadata: true,
           },
           experimental: {
-            plugins: [['@lingui/swc-plugin', {}]],
+            plugins: [
+              [
+                '@lingui/swc-plugin',
+                {
+                  stripNonEssentialFields: false,
+                },
+              ],
+            ],
           },
         },
       },

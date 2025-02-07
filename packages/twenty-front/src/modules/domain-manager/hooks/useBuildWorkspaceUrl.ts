@@ -1,20 +1,12 @@
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const useBuildWorkspaceUrl = () => {
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
-
   const buildWorkspaceUrl = (
-    subdomain: string,
+    endpoint: string,
     pathname?: string,
-    searchParams?: Record<string, string>,
+    searchParams?: Record<string, string | boolean>,
   ) => {
-    const url = new URL(window.location.href);
-
-    if (subdomain.length !== 0) {
-      url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
-    }
+    const url = new URL(endpoint);
 
     if (isDefined(pathname)) {
       url.pathname = pathname;
@@ -22,7 +14,7 @@ export const useBuildWorkspaceUrl = () => {
 
     if (isDefined(searchParams)) {
       Object.entries(searchParams).forEach(([key, value]) =>
-        url.searchParams.set(key, value),
+        url.searchParams.set(key, value.toString()),
       );
     }
     return url.toString();

@@ -19,7 +19,6 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/google')
@@ -28,7 +27,6 @@ export class GoogleAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly environmentService: EnvironmentService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -110,7 +108,7 @@ export class GoogleAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
+          workspace,
           billingCheckoutSessionState,
         }),
       );
@@ -118,9 +116,9 @@ export class GoogleAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          currentWorkspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
-          },
+          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+            currentWorkspace,
+          ),
         ),
       );
     }

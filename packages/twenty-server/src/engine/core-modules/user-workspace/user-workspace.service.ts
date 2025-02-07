@@ -24,6 +24,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -37,6 +38,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly typeORMService: TypeORMService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(userWorkspaceRepository);
@@ -179,7 +181,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
-      subdomain: userWorkspace.workspace.subdomain,
+      workspaceUrls: this.domainManagerService.getworkspaceUrls(
+        userWorkspace.workspace,
+      ),
       logo: userWorkspace.workspace.logo,
       sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
         (acc, identityProvider) =>

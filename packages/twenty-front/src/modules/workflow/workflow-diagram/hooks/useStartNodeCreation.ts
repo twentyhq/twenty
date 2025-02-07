@@ -28,7 +28,7 @@ export const useStartNodeCreation = () => {
         Icon: IconSettingsAutomation,
       });
     },
-    [openRightDrawer, setWorkflowCreateStepFromParentStepId, setHotkeyScope],
+    [setWorkflowCreateStepFromParentStepId, setHotkeyScope, openRightDrawer],
   );
 
   return {

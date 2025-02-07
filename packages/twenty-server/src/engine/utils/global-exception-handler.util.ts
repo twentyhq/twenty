@@ -2,6 +2,7 @@ import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 
+import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
@@ -114,7 +115,7 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
   }
 
   // Only show the stack trace in development mode
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === NodeEnvironment.development) {
     error.stack = exception.stack;
     error.extensions['response'] = exception.getResponse();
   }

@@ -21,6 +21,7 @@ export type CurrentWorkspace = Pick<
   | 'hasValidEnterpriseKey'
   | 'subdomain'
   | 'hostname'
+  | 'workspaceUrls'
   | 'metadataVersion'
 >;
 

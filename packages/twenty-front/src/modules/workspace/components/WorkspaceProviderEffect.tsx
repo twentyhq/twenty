@@ -1,17 +1,18 @@
 import { useRecoilValue } from 'recoil';
 
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
+import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 
-import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { WorkspaceUrls } from '~/generated/graphql';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const WorkspaceProviderEffect = () => {
-  const { data: getPublicWorkspaceData } =
-    useGetPublicWorkspaceDataBySubdomain();
+  const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
@@ -20,23 +21,38 @@ export const WorkspaceProviderEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
 
-  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+  const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
+  const getHostnamesFromWorkspaceUrls = (workspaceUrls: WorkspaceUrls) => {
+    return {
+      customUrlHostname: workspaceUrls.customUrl
+        ? new URL(workspaceUrls.customUrl).hostname
+        : undefined,
+      subdomainUrlHostname: new URL(workspaceUrls.subdomainUrl).hostname,
+    };
+  };
+
   useEffect(() => {
+    const hostnames = getPublicWorkspaceData
+      ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
+      : null;
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(getPublicWorkspaceData?.subdomain) &&
-      getPublicWorkspaceData.subdomain !== workspaceSubdomain
+      isDefined(getPublicWorkspaceData) &&
+      currentLocationHostname !== hostnames?.customUrlHostname &&
+      currentLocationHostname !== hostnames?.subdomainUrlHostname
     ) {
-      redirectToWorkspaceDomain(getPublicWorkspaceData.subdomain);
+      redirectToWorkspaceDomain(
+        getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
+      );
     }
   }, [
-    workspaceSubdomain,
     isMultiWorkspaceEnabled,
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
+    currentLocationHostname,
   ]);
 
   useEffect(() => {
@@ -44,10 +60,10 @@ export const WorkspaceProviderEffect = () => {
       isMultiWorkspaceEnabled &&
       isDefaultDomain &&
       isDefined(lastAuthenticatedWorkspaceDomain) &&
-      'subdomain' in lastAuthenticatedWorkspaceDomain &&
-      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain)
+      'workspaceUrl' in lastAuthenticatedWorkspaceDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)
     ) {
-      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.subdomain);
+      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.workspaceUrl);
     }
   }, [
     isMultiWorkspaceEnabled,

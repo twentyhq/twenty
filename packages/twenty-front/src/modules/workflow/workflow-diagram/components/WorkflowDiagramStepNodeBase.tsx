@@ -182,12 +182,14 @@ export const WorkflowDiagramStepNodeBase = ({
   variant,
   Icon,
   RightFloatingElement,
+  isLeafNode,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
+  isLeafNode: boolean;
 }) => {
   return (
     <StyledStepNodeContainer className="workflow-node-container">
@@ -213,7 +215,9 @@ export const WorkflowDiagramStepNodeBase = ({
         ) : null}
       </StyledStepNodeInnerContainer>
 
-      <StyledSourceHandle type="source" position={Position.Bottom} />
+      {!isLeafNode && (
+        <StyledSourceHandle type="source" position={Position.Bottom} />
+      )}
     </StyledStepNodeContainer>
   );
 };

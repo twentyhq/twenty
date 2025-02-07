@@ -1,13 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN = gql`
-  query GetPublicWorkspaceDataBySubdomain {
-    getPublicWorkspaceDataBySubdomain {
+export const GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN = gql`
+  query GetPublicWorkspaceDataByDomain {
+    getPublicWorkspaceDataByDomain {
       id
       logo
       displayName
-      subdomain
-      hostname
+      workspaceUrls {
+        subdomainUrl
+        customUrl
+      }
       authProviders {
         sso {
           id

@@ -23,7 +23,6 @@ import {
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
-  getNodesBounds,
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -176,7 +175,7 @@ export const WorkflowDiagramCanvasBase = ({
 
     const currentViewport = reactflow.getViewport();
 
-    const flowBounds = getNodesBounds(reactflow.getNodes());
+    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
     let visibleRightDrawerWidth = 0;
     if (rightDrawerState === 'normal') {
@@ -213,7 +212,7 @@ export const WorkflowDiagramCanvasBase = ({
             throw new Error('Expect the container ref to be defined');
           }
 
-          const flowBounds = getNodesBounds(reactflow.getNodes());
+          const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
 
           reactflow.setViewport({
             x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,

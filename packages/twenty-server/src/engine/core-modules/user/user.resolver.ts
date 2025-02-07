@@ -47,7 +47,6 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -87,20 +86,8 @@ export class UserResolver {
   @Query(() => User)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<User> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    await this.userService.hasUserAccessToWorkspaceOrThrow(
-      userId,
-      workspace.id,
-    );
-
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -327,7 +314,6 @@ export class UserResolver {
     return `${paths[0]}?token=${fileToken}`;
   }
 
-  @UseGuards(DemoEnvGuard)
   @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
@@ -347,5 +333,10 @@ export class UserResolver {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return this.onboardingService.getOnboardingStatus(user, workspace);
+  }
+
+  @ResolveField(() => Workspace)
+  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+    return workspace;
   }
 }
