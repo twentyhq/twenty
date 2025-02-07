@@ -8,6 +8,12 @@ import { useCallback } from 'react';
 export const useIsMatchingLocation = () => {
   const location = useLocation();
 
+  // Infinite loop issue caused by `checkUserExistsQuery` in `useSignInUp`.
+  // Without executing this query, there is no infinite loop.
+  // I also noticed that in `isMatchingLocation` inside `continueWithEmail`, no loop occurs.
+  // Both functions are called within the `useEffect` of `SignInUpWorkspaceScopeFormEffect`.
+  // This led me to conclude that the issue comes from `useIsMatchingLocation`.
+  // Using `useCallback` prevent the loop.
   const isMatchingLocation = useCallback(
     (path: string, basePath?: AppBasePath) => {
       const addTrailingSlash = (path: string) =>
