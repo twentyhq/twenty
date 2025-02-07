@@ -35,6 +35,7 @@ import {
   IconHeartOff,
   IconHistory,
   IconHistoryToggle,
+  IconNoteOff,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlus,
@@ -97,7 +98,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`Discard Draft`,
     isPinned: true,
     position: 3,
-    Icon: IconTrash,
+    Icon: IconNoteOff,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
