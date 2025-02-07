@@ -29,14 +29,9 @@ export class DataSeedDemoWorkspaceService {
   async seedDemo(): Promise<void> {
     try {
       await rawDataSource.initialize();
-      const demoWorkspaceIds =
-        this.environmentService.get('DEMO_WORKSPACE_IDS');
 
-      if (demoWorkspaceIds.length === 0) {
-        throw new Error(
-          'Could not get DEMO_WORKSPACE_IDS. Please specify in .env',
-        );
-      }
+      // TODO: migrate demo seeds to dev seeds
+      const demoWorkspaceIds = ['', ''];
 
       await this.workspaceSchemaCache.flush();
 

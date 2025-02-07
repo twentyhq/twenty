@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { createUnionType } from '@nestjs/graphql';
 
 import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';

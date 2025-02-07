@@ -26,6 +26,8 @@ export const mapViewFiltersToFilters = (
         viewFilterGroupId: viewFilter.viewFilterGroupId,
         positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
         definition: viewFilter.definition ?? availableFilterDefinition,
+        label: viewFilter.definition?.label ?? availableFilterDefinition.label,
+        type: viewFilter.definition?.type ?? availableFilterDefinition.type,
       };
     })
     .filter(isDefined);

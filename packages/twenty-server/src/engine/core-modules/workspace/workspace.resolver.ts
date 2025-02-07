@@ -10,8 +10,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -39,7 +39,6 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
@@ -151,7 +150,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }

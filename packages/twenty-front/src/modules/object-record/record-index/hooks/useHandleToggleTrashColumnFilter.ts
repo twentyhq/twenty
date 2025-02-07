@@ -59,10 +59,11 @@ export const useHandleToggleTrashColumnFilter = ({
 
     const newFilter: RecordFilter = {
       id: v4(),
-      variant: 'danger',
       fieldMetadataId: trashFieldMetadata.id,
       operand: ViewFilterOperand.IsNotEmpty,
       displayValue: '',
+      type: filterType,
+      label: `Deleted`,
       definition: {
         label: `Deleted`,
         iconName: 'IconTrash',

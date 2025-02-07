@@ -30,9 +30,9 @@ jest.mock('~/hooks/useIsMatchingLocation');
 const mockUseIsMatchingLocation = jest.mocked(useIsMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
-  mockUseIsMatchingLocation.mockReturnValueOnce(
-    (path: string) => path === pathname,
-  );
+  mockUseIsMatchingLocation.mockReturnValueOnce({
+    isMatchingLocation: (path: string) => path === pathname,
+  });
 };
 
 jest.mock('@/auth/hooks/useIsLogged');

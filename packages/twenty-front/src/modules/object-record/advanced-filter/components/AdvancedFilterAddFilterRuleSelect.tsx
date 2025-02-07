@@ -1,8 +1,11 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import {
+  formatFieldMetadataItemAsFilterDefinition,
+  getFilterTypeFromFieldType,
+} from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
-import { getRecordFilterOperandsForRecordFilterDefinition } from '@/object-record/record-filter/utils/getRecordFilterOperandsForRecordFilterDefinition';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -86,12 +89,17 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       field: defaultFieldMetadataItem,
     });
 
+    const filterType = getFilterTypeFromFieldType(
+      defaultFieldMetadataItem.type,
+    );
+
     upsertCombinedViewFilter({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItem.id,
-      operand: getRecordFilterOperandsForRecordFilterDefinition(
-        defaultFilterDefinition,
-      )[0],
+      type: filterType,
+      operand: getRecordFilterOperands({
+        filterType,
+      })[0],
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
@@ -123,12 +131,17 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       field: defaultFieldMetadataItem,
     });
 
+    const filterType = getFilterTypeFromFieldType(
+      defaultFieldMetadataItem.type,
+    );
+
     upsertCombinedViewFilter({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItem.id,
-      operand: getRecordFilterOperandsForRecordFilterDefinition(
-        defaultFilterDefinition,
-      )[0],
+      type: filterType,
+      operand: getRecordFilterOperands({
+        filterType,
+      })[0],
       definition: defaultFilterDefinition,
       value: '',
       displayValue: '',
