@@ -10,4 +10,9 @@ export const OTHER_TRIGGER_TYPES: Array<{
     type: 'MANUAL',
     icon: 'IconHandMove',
   },
+  {
+    defaultLabel: 'On a Schedule',
+    type: 'CRON',
+    icon: 'IconClock',
+  },
 ];
