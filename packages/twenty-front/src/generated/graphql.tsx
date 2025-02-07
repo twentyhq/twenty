@@ -407,19 +407,11 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Analytics = 'Analytics',
   Authentication = 'Authentication',
-  Billing = 'Billing',
-  Cache = 'Cache',
-  Database = 'Database',
   Email = 'Email',
-  Frontend = 'Frontend',
   Logging = 'Logging',
   Other = 'Other',
-  QueueConfig = 'QueueConfig',
   ServerConfig = 'ServerConfig',
-  Storage = 'Storage',
-  Support = 'Support',
   Workspace = 'Workspace'
 }
 
@@ -605,7 +597,6 @@ export type FullName = {
 };
 
 export type GetAuthorizationUrlInput = {
-  forceSubdomainUrl: Scalars['Boolean'];
   identityProviderId: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };

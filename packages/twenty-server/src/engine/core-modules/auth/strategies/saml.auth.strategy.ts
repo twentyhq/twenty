@@ -26,7 +26,6 @@ export type SAMLRequest = Omit<
 > & {
   user: {
     identityProviderId: string;
-    forceSubdomainUrl: boolean;
     workspaceInviteHash?: string;
     email: string;
   };
@@ -80,7 +79,6 @@ export class SamlAuthStrategy extends PassportStrategy(
       additionalParams: {
         RelayState: JSON.stringify({
           identityProviderId: req.params.identityProviderId,
-          ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
           ...(req.query.workspaceInviteHash
             ? { workspaceInviteHash: req.query.workspaceInviteHash }
             : {}),
@@ -92,7 +90,6 @@ export class SamlAuthStrategy extends PassportStrategy(
   private extractState(req: Request): {
     identityProviderId: string;
     workspaceInviteHash?: string;
-    forceSubdomainUrl: boolean;
   } {
     try {
       if ('RelayState' in req.body && typeof req.body.RelayState === 'string') {
@@ -101,7 +98,6 @@ export class SamlAuthStrategy extends PassportStrategy(
         return {
           identityProviderId: RelayState.identityProviderId,
           workspaceInviteHash: RelayState.workspaceInviteHash,
-          forceSubdomainUrl: !!RelayState.forceSubdomainUrl,
         };
       }
 

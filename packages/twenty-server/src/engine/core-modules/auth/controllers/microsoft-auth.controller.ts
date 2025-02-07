@@ -52,7 +52,6 @@ export class MicrosoftAuthController {
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
-      forceSubdomainUrl,
     } = req.user;
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -110,9 +109,7 @@ export class MicrosoftAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          workspace: forceSubdomainUrl
-            ? { subdomain: workspace.subdomain }
-            : workspace,
+          workspace,
           billingCheckoutSessionState,
         }),
       );
@@ -121,7 +118,6 @@ export class MicrosoftAuthController {
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-            forceSubdomainUrl,
             currentWorkspace,
           ),
         ),

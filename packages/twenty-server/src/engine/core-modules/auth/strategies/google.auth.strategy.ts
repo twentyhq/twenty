@@ -19,7 +19,6 @@ export type GoogleRequest = Omit<
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
-    forceSubdomainUrl: boolean;
   };
 };
 
@@ -41,7 +40,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        forceSubdomainUrl: req.query.forceSubdomainUrl,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
@@ -72,7 +70,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
-      forceSubdomainUrl: !!state.forceSubdomainUrl,
     };
 
     done(null, user);

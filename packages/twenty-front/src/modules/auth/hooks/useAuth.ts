@@ -63,7 +63,6 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useSearchParams } from 'react-router-dom';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
-import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -89,7 +88,6 @@ export const useAuth = () => {
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
-  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
@@ -454,7 +452,6 @@ export const useAuth = () => {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
         billingCheckoutSession?: BillingCheckoutSession;
-        forceSubdomainUrl: boolean;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -478,10 +475,6 @@ export const useAuth = () => {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
-      if (isDefined(params.forceSubdomainUrl) && params.forceSubdomainUrl) {
-        url.searchParams.set('forceSubdomainUrl', 'true');
-      }
-
       return url.toString();
     },
     [workspacePublicData],
@@ -494,13 +487,10 @@ export const useAuth = () => {
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(
-        buildRedirectUrl('/auth/google', {
-          ...params,
-          forceSubdomainUrl: isForceSubdomainUrlEnable,
-        }),
+        buildRedirectUrl('/auth/google', params),
       );
     },
-    [buildRedirectUrl, isForceSubdomainUrlEnable, redirect],
+    [buildRedirectUrl, redirect],
   );
 
   const handleMicrosoftLogin = useCallback(
@@ -510,13 +500,10 @@ export const useAuth = () => {
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
       redirect(
-        buildRedirectUrl('/auth/microsoft', {
-          ...params,
-          forceSubdomainUrl: isForceSubdomainUrlEnable,
-        }),
+        buildRedirectUrl('/auth/microsoft', params),
       );
     },
-    [buildRedirectUrl, isForceSubdomainUrlEnable, redirect],
+    [buildRedirectUrl, redirect],
   );
 
   return {

@@ -5,7 +5,6 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useApolloClient } from '@apollo/client';
-import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
 import { useParams } from 'react-router-dom';
 
 export const useSSO = () => {
@@ -13,7 +12,6 @@ export const useSSO = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
   const { enqueueSnackBar } = useSnackBar();
-  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
   const { redirect } = useRedirect();
   const redirectToSSOLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSSOResult;
@@ -23,7 +21,6 @@ export const useSSO = () => {
         variables: {
           input: {
             identityProviderId,
-            forceSubdomainUrl: isForceSubdomainUrlEnable,
             workspaceInviteHash,
           },
         },

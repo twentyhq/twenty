@@ -26,7 +26,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
 
   private getStateByRequest(request: any): {
     identityProviderId: string;
-    forceSubdomainUrl: boolean;
   } {
     if (request.params.identityProviderId) {
       return request.params.identityProviderId;
@@ -42,8 +41,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
 
       return {
         identityProviderId: state.identityProviderId,
-        forceSubdomainUrl:
-          state.forceSubdomainUrl && state.forceSubdomainUrl === 'true',
       };
     }
 
@@ -56,12 +53,9 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
     let identityProvider:
       | (SSOConfiguration & WorkspaceSSOIdentityProvider)
       | null = null;
-    let forceSubdomainUrl = false;
 
     try {
       const state = this.getStateByRequest(request);
-
-      forceSubdomainUrl = state.forceSubdomainUrl;
 
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
         state.identityProviderId,
@@ -87,7 +81,6 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          forceSubdomainUrl,
           identityProvider?.workspace,
         ),
       );

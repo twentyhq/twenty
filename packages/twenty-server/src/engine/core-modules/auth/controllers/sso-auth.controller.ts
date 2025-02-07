@@ -150,9 +150,7 @@ export class SSOAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          workspace: req.user.forceSubdomainUrl
-            ? { subdomain: currentWorkspace.subdomain }
-            : currentWorkspace,
+          workspace: currentWorkspace,
         }),
       );
     } catch (err) {
@@ -160,7 +158,6 @@ export class SSOAuthController {
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
           this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-            req.user.forceSubdomainUrl,
             workspaceIdentityProvider?.workspace,
           ),
         ),

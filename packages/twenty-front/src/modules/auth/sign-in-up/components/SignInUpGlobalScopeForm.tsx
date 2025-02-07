@@ -28,7 +28,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
-import { useIsForceSubdomainUrlEnable } from '@/domain-manager/hooks/useIsForceSubdomainUrlEnable';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -50,7 +49,6 @@ export const SignInUpGlobalScopeForm = () => {
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
-  const { isForceSubdomainUrlEnable } = useIsForceSubdomainUrlEnable();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
@@ -101,9 +99,6 @@ export const SignInUpGlobalScopeForm = () => {
               pathname,
               {
                 email: form.getValues('email'),
-                ...(isForceSubdomainUrlEnable
-                  ? { 'force-subdomain-url': true }
-                  : {}),
               },
             );
           }

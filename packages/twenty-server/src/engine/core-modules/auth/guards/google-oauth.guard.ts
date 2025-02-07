@@ -27,7 +27,6 @@ export class GoogleOauthGuard extends AuthGuard('google') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
     let workspace: Workspace | null = null;
-    const forceSubdomainUrl = false;
 
     try {
       if (
@@ -53,7 +52,6 @@ export class GoogleOauthGuard extends AuthGuard('google') {
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          forceSubdomainUrl,
           workspace,
         ),
       );

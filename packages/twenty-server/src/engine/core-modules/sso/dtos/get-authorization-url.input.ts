@@ -10,10 +10,6 @@ export class GetAuthorizationUrlInput {
   @IsString()
   identityProviderId: string;
 
-  @Field(() => Boolean)
-  @IsBoolean()
-  forceSubdomainUrl: boolean;
-
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

@@ -27,7 +27,6 @@ const apolloMocks = [
       variables: {
         input: {
           identityProviderId: 'success-id',
-          forceSubdomainUrl: false,
         },
       },
     },
@@ -43,7 +42,6 @@ const apolloMocks = [
       variables: {
         input: {
           identityProviderId: 'error-id',
-          forceSubdomainUrl: false,
         },
       },
     },

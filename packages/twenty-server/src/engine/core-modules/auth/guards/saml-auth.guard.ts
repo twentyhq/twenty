@@ -26,27 +26,15 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
     super();
   }
 
-  private getRelayStateByRequest(request: Request): {
-    forceSubdomainUrl: boolean;
-  } {
+  private getRelayStateByRequest(request: Request) {
     try {
       const relayStateRaw = request.body.RelayState || request.query.RelayState;
 
       if (relayStateRaw) {
-        const relayStateParsed = JSON.parse(relayStateRaw);
-
-        return {
-          forceSubdomainUrl:
-            relayStateParsed.forceSubdomainUrl &&
-            relayStateParsed.forceSubdomainUrl === 'true',
-        };
+        return JSON.parse(relayStateRaw);
       }
-
-      return { forceSubdomainUrl: false };
     } catch (error) {
       this.exceptionHandlerService.captureExceptions(error);
-
-      return { forceSubdomainUrl: false };
     }
   }
 
@@ -56,8 +44,6 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
     let identityProvider:
       | (SSOConfiguration & WorkspaceSSOIdentityProvider)
       | null = null;
-
-    const { forceSubdomainUrl } = this.getRelayStateByRequest(request);
 
     try {
       identityProvider = await this.sSOService.findSSOIdentityProviderById(
@@ -78,7 +64,6 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
         context,
         err,
         this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
-          forceSubdomainUrl,
           identityProvider?.workspace,
         ),
       );
