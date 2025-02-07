@@ -6,7 +6,7 @@ import {
 } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export type SingleRecordSelectProps = {
   width?: number;

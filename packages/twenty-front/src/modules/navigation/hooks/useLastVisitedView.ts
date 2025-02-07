@@ -4,7 +4,7 @@ import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useLastVisitedView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

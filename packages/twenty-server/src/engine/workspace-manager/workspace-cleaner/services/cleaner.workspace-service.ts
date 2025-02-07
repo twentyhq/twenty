@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { render } from '@react-email/components';
+import { render } from '@react-email/render';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
@@ -176,12 +176,8 @@ export class CleanerWorkspaceService {
       workspaceDisplayName,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    const html = render(emailTemplate, { pretty: true });
+    const text = render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,

@@ -94,7 +94,7 @@ export const useHandleRecordGroupField = ({
         );
 
         if (viewGroupsToCreate.length > 0) {
-          await createViewGroupRecords(viewGroupsToCreate, view);
+          await createViewGroupRecords({ viewGroupsToCreate, viewId: view.id });
         }
 
         if (viewGroupsToDelete.length > 0) {

@@ -4,8 +4,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const prefillRecord = <T extends ObjectRecord>({
   objectMetadataItem,

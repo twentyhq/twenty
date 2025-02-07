@@ -1,14 +1,15 @@
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const ViewBarRecordFilterEffect = () => {
   const { records: views, isDataPrefetched } = usePrefetchedData<View>(
@@ -21,29 +22,31 @@ export const ViewBarRecordFilterEffect = () => {
     currentRecordFiltersComponentState,
   );
 
-  const availableFilterDefinitions = useRecoilComponentValueV2(
-    availableFilterDefinitionsComponentState,
-  );
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
 
   useEffect(() => {
     if (isDataPrefetched) {
       const currentView = views.find((view) => view.id === currentViewId);
 
+      const filterDefinitions = filterableFieldMetadataItems.map(
+        (fieldMetadataItem) =>
+          formatFieldMetadataItemAsFilterDefinition({
+            field: fieldMetadataItem,
+          }),
+      );
+
       if (isDefined(currentView)) {
         setCurrentRecordFilters(
-          mapViewFiltersToFilters(
-            currentView.viewFilters,
-            availableFilterDefinitions,
-          ),
+          mapViewFiltersToFilters(currentView.viewFilters, filterDefinitions),
         );
       }
     }
   }, [
     isDataPrefetched,
     views,
-    availableFilterDefinitions,
     currentViewId,
     setCurrentRecordFilters,
+    filterableFieldMetadataItems,
   ]);
 
   return null;

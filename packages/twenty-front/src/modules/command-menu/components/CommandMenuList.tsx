@@ -12,7 +12,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -110,9 +111,6 @@ export const CommandMenuList = ({
               }}
             >
               {children}
-              {noResults && !loading && (
-                <StyledEmpty>No result found</StyledEmpty>
-              )}
               {commandGroups.map(({ heading, items }) =>
                 items?.length ? (
                   <CommandGroup heading={heading} key={heading}>
@@ -124,6 +122,7 @@ export const CommandMenuList = ({
                             id={item.id}
                             Icon={item.Icon}
                             label={item.label}
+                            description={item.description}
                             to={item.to}
                             onClick={item.onCommandClick}
                             hotKeys={item.hotKeys}
@@ -136,6 +135,9 @@ export const CommandMenuList = ({
                     })}
                   </CommandGroup>
                 ) : null,
+              )}
+              {noResults && !loading && (
+                <StyledEmpty>No results found</StyledEmpty>
               )}
             </SelectableList>
           </StyledInnerList>

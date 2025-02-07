@@ -2,14 +2,10 @@ import styled from '@emotion/styled';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-import {
-  ComponentDecorator,
-  isDefined,
-  MAIN_COLOR_NAMES,
-  Tag,
-} from 'twenty-ui';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { isDefined } from 'twenty-shared';
+import { ComponentDecorator, MAIN_COLOR_NAMES, Tag } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};

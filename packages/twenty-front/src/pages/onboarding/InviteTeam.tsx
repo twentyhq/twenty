@@ -30,8 +30,8 @@ import {
 } from 'twenty-ui';
 import { z } from 'zod';
 
+import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`

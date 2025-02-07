@@ -24,16 +24,9 @@
 
 <br>
 
-# Demo 
+# Installation 
 
-Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
-
-```
-email: tim@apple.dev
-password: Applecar2025
-```
-
-See also:  
+See:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
 🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
 

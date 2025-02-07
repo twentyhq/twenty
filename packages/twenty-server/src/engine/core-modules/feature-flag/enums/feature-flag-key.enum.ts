@@ -16,4 +16,5 @@ export enum FeatureFlagKey {
   IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
   IsRichTextV2Enabled = 'IS_RICH_TEXT_V2_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
+  IsPermissionsEnabled = 'IS_PERMISSIONS_ENABLED',
 }

@@ -27,6 +27,10 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
+      workspaceUrls: {
+        subdomainUrl: 'https://twenty.twenty.com',
+        customUrl: 'https://my-custom-domain.com',
+      },
       currentBillingSubscription: {
         id: '1',
         interval: SubscriptionInterval.Month,
@@ -54,10 +58,8 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
     );
 
     expect(Array.isArray(result.current.columnDefinitions)).toBe(true);
-    expect(Array.isArray(result.current.filterDefinitions)).toBe(true);
     expect(Array.isArray(result.current.sortDefinitions)).toBe(true);
     expect(result.current.columnDefinitions.length).toBe(0);
-    expect(result.current.filterDefinitions.length).toBe(0);
     expect(result.current.sortDefinitions.length).toBe(0);
   });
 
@@ -76,11 +78,9 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       },
     );
 
-    const { columnDefinitions, filterDefinitions, sortDefinitions } =
-      result.current;
+    const { columnDefinitions, sortDefinitions } = result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(filterDefinitions.length).toBe(17);
     expect(sortDefinitions.length).toBe(14);
   });
 });

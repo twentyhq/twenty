@@ -7,12 +7,16 @@ import { Repository } from 'typeorm';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
@@ -34,8 +38,14 @@ export class WorkspaceManagerService {
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly permissionsService: PermissionsService,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly roleService: RoleService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   /**
@@ -180,6 +190,13 @@ export class WorkspaceManagerService {
    */
   public async delete(workspaceId: string): Promise<void> {
     // Delete data from metadata tables
+    await this.relationMetadataRepository.delete({
+      workspaceId,
+    });
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+    });
+
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
@@ -188,7 +205,7 @@ export class WorkspaceManagerService {
   }
 
   private async initPermissions(workspaceId: string) {
-    const adminRole = await this.permissionsService.createAdminRole({
+    const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
 
@@ -212,7 +229,7 @@ export class WorkspaceManagerService {
       );
     }
 
-    await this.permissionsService.assignRoleToUserWorkspace({
+    await this.userRoleService.assignRoleToUserWorkspace({
       workspaceId,
       userWorkspaceId: userWorkspace[0].id,
       roleId: adminRole.id,

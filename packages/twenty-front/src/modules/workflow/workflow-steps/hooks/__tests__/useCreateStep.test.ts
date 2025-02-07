@@ -2,7 +2,6 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { renderHook } from '@testing-library/react';
 import { useCreateStep } from '../useCreateStep';
 
-const mockOpenRightDrawer = jest.fn();
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: { createWorkflowVersionStep: { id: '1', type: 'CODE' } },
@@ -12,12 +11,6 @@ jest.mock('recoil', () => ({
   useRecoilValue: () => 'parent-step-id',
   useSetRecoilState: () => jest.fn(),
   atom: (params: any) => params,
-}));
-
-jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
-  useRightDrawer: () => ({
-    openRightDrawer: mockOpenRightDrawer,
-  }),
 }));
 
 jest.mock(
@@ -56,6 +49,5 @@ describe('useCreateStep', () => {
     await result.current.createStep('CODE');
 
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
-    expect(mockOpenRightDrawer).toHaveBeenCalled();
   });
 });

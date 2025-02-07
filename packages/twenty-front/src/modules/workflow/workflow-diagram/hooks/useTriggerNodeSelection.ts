@@ -6,7 +6,7 @@ import {
 import { useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useTriggerNodeSelection = () => {
   const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();

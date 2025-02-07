@@ -8,7 +8,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 export const cacheStorageModuleFactory = (
   environmentService: EnvironmentService,
 ): CacheModuleOptions => {
-  const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
+  const cacheStorageType = CacheStorageType.Redis;
   const cacheStorageTtl = environmentService.get('CACHE_STORAGE_TTL');
   const cacheModuleOptions: CacheModuleOptions = {
     isGlobal: true,
@@ -16,9 +16,9 @@ export const cacheStorageModuleFactory = (
   };
 
   switch (cacheStorageType) {
-    case CacheStorageType.Memory: {
+    /* case CacheStorageType.Memory: {
       return cacheModuleOptions;
-    }
+    }*/
     case CacheStorageType.Redis: {
       const redisUrl = environmentService.get('REDIS_URL');
 

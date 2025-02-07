@@ -1,12 +1,12 @@
-import { H2Title, Section } from 'twenty-ui';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { Controller, useFormContext } from 'react-hook-form';
+import { H2Title, Section } from 'twenty-ui';
 
-import { isDefined } from '~/utils/isDefined';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;

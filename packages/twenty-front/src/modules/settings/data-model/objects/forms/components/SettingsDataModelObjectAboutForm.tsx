@@ -10,6 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
+import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   Card,
@@ -19,7 +20,6 @@ import {
 } from 'twenty-ui';
 import { z } from 'zod';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
   .pick({

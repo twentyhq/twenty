@@ -18,9 +18,9 @@ import {
   SelectFilter,
   StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { isDefined } from 'twenty-shared';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
-import { isDefined } from '~/utils/isDefined';
 
 import {
   convertGreaterThanRatingToArrayOfRatingValues,
@@ -795,7 +795,7 @@ const computeFilterRecordGqlOperationFilter = (
           );
         default:
           throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.label} filter`,
+            `Unknown operand ${filter.operand} for ${filter.label} filter`,
           );
       }
     }

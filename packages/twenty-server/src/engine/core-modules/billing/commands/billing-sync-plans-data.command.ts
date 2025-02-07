@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';

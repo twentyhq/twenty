@@ -1,18 +1,9 @@
 import { defineConfig } from '@lingui/cli';
+import { APP_LOCALES } from 'twenty-shared';
 
 export default defineConfig({
   sourceLocale: 'en',
-  locales: [
-    'en',
-    'fr',
-    'pt',
-    'de',
-    'it',
-    'es',
-    'zh-Hans',
-    'zh-Hant',
-    'pseudo-en',
-  ],
+  locales: Object.values(APP_LOCALES),
   pseudoLocale: 'pseudo-en',
   fallbackLocales: {
     'pseudo-en': 'en',

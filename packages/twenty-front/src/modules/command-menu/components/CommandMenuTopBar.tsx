@@ -1,19 +1,31 @@
 import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
+import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconX, isDefined, LightIconButton, useIsMobile } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import {
+  Button,
+  IconChevronLeft,
+  IconX,
+  LightIconButton,
+  getOsControlSymbol,
+  useIsMobile,
+} from 'twenty-ui';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -80,7 +92,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
@@ -88,26 +100,50 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const { title, Icon } = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuNavigationStack = useRecoilValue(
+    commandMenuNavigationStackState,
+  );
 
   const theme = useTheme();
+
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
+
+  const contextChips = useMemo(() => {
+    return commandMenuNavigationStack
+      .filter((page) => page.page !== CommandMenuPages.Root)
+      .map((page) => {
+        return {
+          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+          text: page.pageTitle,
+        };
+      });
+  }, [commandMenuNavigationStack, theme.icon.size.sm]);
 
   return (
     <StyledInputContainer>
       <StyledContentContainer>
-        {commandMenuPage !== CommandMenuPages.SearchRecords &&
-          isDefined(contextStoreCurrentObjectMetadataId) && (
-            <CommandMenuContextRecordChip
-              objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+        {isCommandMenuV2Enabled && (
+          <>
+            <CommandMenuContextChip
+              Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+              onClick={() => {
+                goBackFromCommandMenu();
+              }}
+              testId="command-menu-go-back-button"
             />
-          )}
-        {isDefined(Icon) && (
-          <CommandMenuContextChip
-            Icons={[<Icon size={theme.icon.size.sm} />]}
-            text={title}
-          />
+            {isDefined(contextStoreCurrentObjectMetadataId) &&
+            commandMenuPage !== CommandMenuPages.SearchRecords ? (
+              <CommandMenuContextChipGroupsWithRecordSelection
+                contextChips={contextChips}
+                objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+              />
+            ) : (
+              <CommandMenuContextChipGroups contextChips={contextChips} />
+            )}
+          </>
         )}
-
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <StyledInput
@@ -119,14 +155,29 @@ export const CommandMenuTopBar = () => {
         )}
       </StyledContentContainer>
       {!isMobile && (
-        <StyledCloseButtonContainer>
-          <LightIconButton
-            accent={'tertiary'}
-            size={'medium'}
-            Icon={IconX}
-            onClick={closeCommandMenu}
-          />
-        </StyledCloseButtonContainer>
+        <>
+          {isCommandMenuV2Enabled ? (
+            <Button
+              Icon={IconX}
+              dataTestId="page-header-close-command-menu-button"
+              size={'small'}
+              variant="secondary"
+              accent="default"
+              hotkeys={[getOsControlSymbol(), 'K']}
+              ariaLabel="Close command menu"
+              onClick={closeCommandMenu}
+            />
+          ) : (
+            <StyledCloseButtonContainer>
+              <LightIconButton
+                accent={'tertiary'}
+                size={'medium'}
+                Icon={IconX}
+                onClick={closeCommandMenu}
+              />
+            </StyledCloseButtonContainer>
+          )}
+        </>
       )}
     </StyledInputContainer>
   );

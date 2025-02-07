@@ -2,7 +2,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 export const useSelectableList = (selectableListId?: string) => {
   const {

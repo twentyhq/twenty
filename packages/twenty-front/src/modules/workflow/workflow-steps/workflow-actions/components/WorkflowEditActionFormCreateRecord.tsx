@@ -11,7 +11,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { HorizontalSeparator, isDefined, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -177,6 +178,7 @@ export const WorkflowEditActionFormCreateRecord = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
+        disabled={isFormDisabled}
       />
       <WorkflowStepBody>
         <Select

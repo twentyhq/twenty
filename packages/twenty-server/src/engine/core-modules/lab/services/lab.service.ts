@@ -31,7 +31,7 @@ export class LabService {
   async updateLabPublicFeatureFlag(
     workspaceId: string,
     payload: UpdateLabPublicFeatureFlagInput,
-  ): Promise<void> {
+  ): Promise<FeatureFlag> {
     featureFlagValidator.assertIsFeatureFlagKey(
       payload.publicFeatureFlag,
       new FeatureFlagException(
@@ -50,7 +50,6 @@ export class LabService {
 
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
-      relations: ['featureFlags'],
     });
 
     workspaceValidator.assertIsDefinedOrThrow(
@@ -58,19 +57,25 @@ export class LabService {
       new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
     );
 
-    const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === FeatureFlagKey[payload.publicFeatureFlag],
-    );
+    const existingFlag = await this.featureFlagRepository.findOne({
+      where: {
+        workspaceId,
+        key: FeatureFlagKey[payload.publicFeatureFlag],
+      },
+    });
 
-    if (!existingFlag) {
-      throw new FeatureFlagException(
-        'Public feature flag not found',
-        FeatureFlagExceptionCode.FEATURE_FLAG_NOT_FOUND,
-      );
+    if (existingFlag) {
+      await this.featureFlagRepository.update(existingFlag.id, {
+        value: payload.value,
+      });
+
+      return { ...existingFlag, value: payload.value };
     }
 
-    await this.featureFlagRepository.update(existingFlag.id, {
+    return this.featureFlagRepository.save({
+      key: FeatureFlagKey[payload.publicFeatureFlag],
       value: payload.value,
+      workspaceId,
     });
   }
 }

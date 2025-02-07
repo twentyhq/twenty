@@ -11,7 +11,6 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { BuildServerlessFunctionJob } from 'src/engine/metadata-modules/serverless-function/jobs/build-serverless-function.job';
 
 @Module({
   imports: [
@@ -22,11 +21,7 @@ import { BuildServerlessFunctionJob } from 'src/engine/metadata-modules/serverle
     ThrottlerModule,
     AnalyticsModule,
   ],
-  providers: [
-    ServerlessFunctionService,
-    ServerlessFunctionResolver,
-    BuildServerlessFunctionJob,
-  ],
+  providers: [ServerlessFunctionService, ServerlessFunctionResolver],
   exports: [ServerlessFunctionService],
 })
 export class ServerlessFunctionModule {}

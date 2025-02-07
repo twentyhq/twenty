@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useInputFocusWithoutScrollOnMount = () => {
   const inputRef = useRef<HTMLInputElement>(null);

@@ -1,6 +1,6 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const lastVisitedViewPerObjectMetadataItemStateSelector =
   createComponentSelector<Record<string, string> | null>({

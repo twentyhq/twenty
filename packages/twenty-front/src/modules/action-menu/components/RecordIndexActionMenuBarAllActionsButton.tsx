@@ -38,11 +38,11 @@ const StyledSeparator = styled.div<{ size: 'sm' | 'md' }>`
 
 export const RecordIndexActionMenuBarAllActionsButton = () => {
   const theme = useTheme();
-  const { openCommandMenu } = useCommandMenu();
+  const { openRootCommandMenu } = useCommandMenu();
   return (
     <>
       <StyledSeparator size="md" />
-      <StyledButton onClick={() => openCommandMenu()}>
+      <StyledButton onClick={openRootCommandMenu}>
         <IconLayoutSidebarRightExpand size={theme.icon.size.md} />
         <StyledButtonLabel>All Actions</StyledButtonLabel>
         <StyledSeparator size="sm" />

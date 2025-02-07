@@ -1,7 +1,7 @@
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const CommandMenuDefaultSelectionEffect = ({
   selectableItemIds,

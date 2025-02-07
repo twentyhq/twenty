@@ -37,7 +37,7 @@ export const useActivateWorkflowVersion = () => {
         {
           query: findManyWorkflowVersionsQuery,
           variables: {
-            id: workflowId,
+            workflowId,
           },
         },
       ],

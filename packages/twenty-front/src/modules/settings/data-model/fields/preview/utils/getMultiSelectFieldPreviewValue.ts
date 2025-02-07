@@ -4,8 +4,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const getMultiSelectFieldPreviewValue = ({

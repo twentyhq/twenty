@@ -16,8 +16,8 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared';
 import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -27,6 +27,7 @@ type FormMultiSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
+  testId?: string;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -68,6 +69,7 @@ export const FormMultiSelectFieldInput = ({
   VariablePicker,
   readonly,
   placeholder,
+  testId,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
   const theme = useTheme();
@@ -176,7 +178,7 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>

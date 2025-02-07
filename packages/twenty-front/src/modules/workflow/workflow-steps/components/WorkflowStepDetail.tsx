@@ -12,7 +12,7 @@ import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-steps/wo
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { Suspense, lazy } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
 const WorkflowEditActionFormServerlessFunction = lazy(() =>

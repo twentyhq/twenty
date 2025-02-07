@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 import { Response } from 'express';

@@ -1,21 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import Cloudflare from 'cloudflare';
+import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isDefined } from 'src/utils/is-defined';
-import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import {
   DomainManagerException,
   DomainManagerExceptionCode,
 } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
-import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
-import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
+import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
+import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
+import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
+import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class DomainManagerService {
@@ -74,33 +74,31 @@ export class DomainManagerService {
   buildEmailVerificationURL({
     emailVerificationToken,
     email,
-    subdomain,
+    workspace,
   }: {
     emailVerificationToken: string;
     email: string;
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
   }) {
     return this.buildWorkspaceURL({
-      subdomain,
+      workspace,
       pathname: 'verify-email',
       searchParams: { emailVerificationToken, email },
     });
   }
 
   buildWorkspaceURL({
-    subdomain,
+    workspace,
     pathname,
     searchParams,
   }: {
-    subdomain: string;
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const url = this.getFrontUrl();
+    const workspaceUrls = this.getworkspaceUrls(workspace);
 
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      url.hostname = `${subdomain}.${url.hostname}`;
-    }
+    const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
     if (pathname) {
       url.pathname = pathname;
@@ -116,21 +114,6 @@ export class DomainManagerService {
 
     return url;
   }
-
-  // @Deprecated
-  getWorkspaceSubdomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    if (!originHostname.endsWith(this.getFrontUrl().hostname)) {
-      return null;
-    }
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-    return this.isDefaultSubdomain(subdomain) ? null : subdomain;
-  };
 
   getSubdomainAndHostnameFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
@@ -162,9 +145,12 @@ export class DomainManagerService {
     return subdomain === this.environmentService.get('DEFAULT_SUBDOMAIN');
   }
 
-  computeRedirectErrorUrl(errorMessage: string, subdomain: string) {
+  computeRedirectErrorUrl(
+    errorMessage: string,
+    workspace: Pick<Workspace, 'subdomain' | 'hostname'>,
+  ) {
     const url = this.buildWorkspaceURL({
-      subdomain: subdomain,
+      workspace,
       pathname: '/verify',
       searchParams: { errorMessage },
     });
@@ -352,7 +338,7 @@ export class DomainManagerService {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return await this.registerCustomHostname(toHostname);
+    return this.registerCustomHostname(toHostname);
   }
 
   async deleteCustomHostnameByHostnameSilently(hostname: string) {
@@ -377,5 +363,33 @@ export class DomainManagerService {
     return this.cloudflareClient.customHostnames.delete(customHostnameId, {
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
     });
+  }
+
+  private getCustomWorkspaceEndpoint(hostname: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = hostname;
+
+    return url.toString();
+  }
+
+  private getTwentyWorkspaceEndpoint(subdomain: string) {
+    const url = this.getFrontUrl();
+
+    url.hostname = `${subdomain}.${url.hostname}`;
+
+    return url.toString();
+  }
+
+  getworkspaceUrls({
+    subdomain,
+    hostname,
+  }: Pick<Workspace, 'subdomain' | 'hostname'>) {
+    return {
+      customUrl: hostname
+        ? this.getCustomWorkspaceEndpoint(hostname)
+        : undefined,
+      subdomainUrl: this.getTwentyWorkspaceEndpoint(subdomain),
+    };
   }
 }

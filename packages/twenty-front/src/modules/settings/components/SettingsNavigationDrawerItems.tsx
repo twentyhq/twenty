@@ -12,6 +12,7 @@ import {
   IconFunction,
   IconHierarchy2,
   IconKey,
+  IconLock,
   IconMail,
   IconRocket,
   IconServer,
@@ -35,8 +36,10 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationItem = {
@@ -53,6 +56,9 @@ export const SettingsNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const billing = useRecoilValue(billingState);
+  const isPermissionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsEnabled,
+  );
 
   // We want to disable this serverless function setting menu but keep the code
   // for now
@@ -148,6 +154,13 @@ export const SettingsNavigationDrawerItems = () => {
             label={t`Billing`}
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
+          />
+        )}
+        {isPermissionsEnabled && (
+          <SettingsNavigationDrawerItem
+            label={t`Roles`}
+            path={SettingsPath.Roles}
+            Icon={IconLock}
           />
         )}
         <SettingsNavigationDrawerItem

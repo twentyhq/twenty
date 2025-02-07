@@ -10,7 +10,7 @@ import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 const searchParams = new URLSearchParams(window.location.search);
 const email = searchParams.get('email');
@@ -47,14 +47,14 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return;
     }
 
-    if (workspaceAuthProviders.sso.length > 1) {
-      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
-    }
-
     const hasOnlySSOProvidersEnabled =
       !workspaceAuthProviders.google &&
       !workspaceAuthProviders.microsoft &&
       !workspaceAuthProviders.password;
+
+    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length > 1) {
+      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
+    }
 
     if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length === 1) {
       redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);

@@ -13,9 +13,9 @@ import { Key } from 'ts-key-enum';
 
 export const useCommandMenuHotKeys = () => {
   const {
-    closeCommandMenu,
     openRecordsSearchPage,
     toggleCommandMenu,
+    goBackFromCommandMenu,
     setGlobalCommandMenuContext,
   } = useCommandMenu();
 
@@ -37,7 +37,7 @@ export const useCommandMenuHotKeys = () => {
       toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu],
+    [closeKeyboardShortcutMenu, toggleCommandMenu],
   );
 
   useScopedHotkeys(
@@ -55,18 +55,21 @@ export const useCommandMenuHotKeys = () => {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeCommandMenu();
+      goBackFromCommandMenu();
     },
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
+    [goBackFromCommandMenu],
   );
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
+      if (isNonEmptyString(commandMenuSearch)) {
+        return;
+      }
+
       if (
         commandMenuPage === CommandMenuPages.Root &&
-        !isNonEmptyString(commandMenuSearch) &&
         !(
           contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
           contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length ===
@@ -75,9 +78,18 @@ export const useCommandMenuHotKeys = () => {
       ) {
         setGlobalCommandMenuContext();
       }
+      if (commandMenuPage !== CommandMenuPages.Root) {
+        goBackFromCommandMenu();
+      }
     },
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu],
+    [
+      commandMenuPage,
+      commandMenuSearch,
+      contextStoreTargetedRecordsRuleComponent,
+      goBackFromCommandMenu,
+      setGlobalCommandMenuContext,
+    ],
     {
       preventDefault: false,
     },

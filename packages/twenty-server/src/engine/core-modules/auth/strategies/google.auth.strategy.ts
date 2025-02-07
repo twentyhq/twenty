@@ -34,24 +34,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  authenticate(req: any, options: any) {
+  authenticate(req: Request, options: any) {
     options = {
       ...options,
       state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
+        workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        ...(req.params.billingCheckoutSessionState
-          ? {
-              billingCheckoutSessionState:
-                req.params.billingCheckoutSessionState,
-            }
-          : {}),
-        ...(req.params.workspacePersonalInviteToken
-          ? {
-              workspacePersonalInviteToken:
-                req.params.workspacePersonalInviteToken,
-            }
-          : {}),
+        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
+        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
       }),
     };
 

@@ -4,11 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -23,12 +24,14 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import { isDefined } from 'src/utils/is-defined';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+  private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -43,8 +46,24 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {
     super(workspaceRepository);
+  }
+
+  private async isCustomDomainEnabled(workspaceId: string) {
+    const isCustomDomainBillingEnabled =
+      await this.billingService.hasEntitlement(
+        workspaceId,
+        this.featureLookUpKey,
+      );
+
+    if (!isCustomDomainBillingEnabled) {
+      throw new WorkspaceException(
+        `No entitlement found for this workspace`,
+        WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED,
+      );
+    }
   }
 
   private async validateSubdomainUpdate(newSubdomain: string) {
@@ -62,6 +81,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   private async setCustomDomain(workspace: Workspace, hostname: string) {
+    await this.isCustomDomainEnabled(workspace.id);
+
     const existingWorkspace = await this.workspaceRepository.findOne({
       where: { hostname },
     });
@@ -127,10 +148,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       if (payload.hostname && customDomainRegistered) {
         this.domainManagerService
           .deleteCustomHostnameByHostnameSilently(payload.hostname)
-          .catch(() => {
-            // send to sentry
+          .catch((err) => {
+            this.exceptionHandlerService.captureExceptions([err]);
           });
       }
+      throw error;
     }
   }
 
@@ -185,7 +207,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.userWorkspaceRepository.delete({ workspaceId: id });
 
     if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscription(workspace.id);
+      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
     }
 
     await this.workspaceManagerService.delete(id);

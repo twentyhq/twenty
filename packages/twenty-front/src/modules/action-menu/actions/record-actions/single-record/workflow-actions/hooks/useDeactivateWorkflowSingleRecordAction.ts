@@ -2,7 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -21,7 +21,10 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
         return;
       }
 
-      deactivateWorkflowVersion(workflowWithCurrentVersion.currentVersion.id);
+      deactivateWorkflowVersion({
+        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+        workflowId: workflowWithCurrentVersion.id,
+      });
     };
 
     return {
