@@ -62,7 +62,7 @@
     "@types/nodemailer": "^6.4.14",
     "@types/passport-microsoft": "^1.0.3",
     "@wyw-in-js/vite": "^0.5.3",
-    "@xyflow/react": "^12.3.5",
+    "@xyflow/react": "^12.4.2",
     "add": "^2.0.6",
     "addressparser": "^1.0.1",
     "afterframe": "^1.0.2",

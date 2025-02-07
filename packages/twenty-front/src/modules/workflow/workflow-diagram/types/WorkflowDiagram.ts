@@ -18,21 +18,30 @@ export type WorkflowDiagramStepNodeData =
       triggerType: WorkflowTriggerType;
       name: string;
       icon?: string;
+      isLeafNode: boolean;
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
       name: string;
+      isLeafNode: boolean;
     };
 
 export type WorkflowDiagramCreateStepNodeData = {
   nodeType: 'create-step';
   parentNodeId: string;
+  isLeafNode?: never;
+};
+
+export type WorkflowDiagramEmptyTriggerNodeData = {
+  nodeType: 'empty-trigger';
+  isLeafNode: boolean;
 };
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramCreateStepNodeData;
+  | WorkflowDiagramCreateStepNodeData
+  | WorkflowDiagramEmptyTriggerNodeData;
 
 export type WorkflowDiagramNodeType =
   | 'default'
