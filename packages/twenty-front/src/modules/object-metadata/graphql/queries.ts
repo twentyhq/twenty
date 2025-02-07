@@ -65,6 +65,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             options
             settings
             isLabelSyncedWithName
+            objectMetadataId
             relationDefinition {
               relationId
               direction
