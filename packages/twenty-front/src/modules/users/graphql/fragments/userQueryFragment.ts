@@ -38,6 +38,10 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       hasValidEnterpriseKey
       hostname
+      workspaceUrls {
+        subdomainUrl
+        customUrl
+      }
       featureFlags {
         id
         key
@@ -62,6 +66,11 @@ export const USER_QUERY_FRAGMENT = gql`
         logo
         displayName
         subdomain
+        hostname
+        workspaceUrls {
+          subdomainUrl
+          customUrl
+        }
       }
     }
     userVars

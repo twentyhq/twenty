@@ -29,7 +29,7 @@ export class EmailVerificationResolver {
 
     return await this.emailVerificationService.resendEmailVerificationToken(
       resendEmailVerificationTokenInput.email,
-      workspace.subdomain,
+      workspace,
     );
   }
 }

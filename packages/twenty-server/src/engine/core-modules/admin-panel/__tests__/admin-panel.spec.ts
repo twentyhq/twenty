@@ -13,6 +13,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 const UserFindOneMock = jest.fn();
 const WorkspaceFindOneMock = jest.fn();
@@ -93,6 +94,15 @@ describe('AdminPanelService', () => {
           provide: LoginTokenService,
           useValue: {
             generateLoginToken: LoginTokenServiceGenerateLoginTokenMock,
+          },
+        },
+        {
+          provide: DomainManagerService,
+          useValue: {
+            getworkspaceUrls: jest.fn().mockReturnValue({
+              customUrl: undefined,
+              subdomainUrl: 'https://twenty.twenty.com',
+            }),
           },
         },
         {
@@ -230,7 +240,10 @@ describe('AdminPanelService', () => {
       expect.objectContaining({
         workspace: {
           id: 'workspace-id',
-          subdomain: 'example-subdomain',
+          workspaceUrls: {
+            customUrl: undefined,
+            subdomainUrl: 'https://twenty.twenty.com',
+          },
         },
         loginToken: expect.objectContaining({
           token: 'mock-login-token',

@@ -81,22 +81,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => User)
-  async currentUser(
-    @AuthUser() { id: userId }: User,
-    @OriginHeader() origin: string,
-  ): Promise<User> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    await this.userService.hasUserAccessToWorkspaceOrThrow(
-      userId,
-      workspace.id,
-    );
-
+  async currentUser(@AuthUser() { id: userId }: User): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -109,7 +94,7 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    return { ...user, currentWorkspace: workspace };
+    return user;
   }
 
   @ResolveField(() => GraphQLJSONObject)
@@ -313,5 +298,10 @@ export class UserResolver {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return this.onboardingService.getOnboardingStatus(user, workspace);
+  }
+
+  @ResolveField(() => Workspace)
+  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+    return workspace;
   }
 }

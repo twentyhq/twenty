@@ -17,7 +17,6 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -44,6 +43,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -214,6 +215,11 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
+  @ResolveField(() => workspaceUrls)
+  workspaceUrls(@Parent() workspace: Workspace) {
+    return this.domainManagerService.getworkspaceUrls(workspace);
+  }
+
   @Query(() => CustomHostnameDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
   async getHostnameDetails(
@@ -225,7 +231,7 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(
+  async getPublicWorkspaceDataByDomain(
     @OriginHeader() origin: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
@@ -262,8 +268,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        subdomain: workspace.subdomain,
-        hostname: workspace.hostname,
+        workspaceUrls: this.domainManagerService.getworkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

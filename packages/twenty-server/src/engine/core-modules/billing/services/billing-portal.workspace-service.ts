@@ -47,7 +47,7 @@ export class BillingPortalWorkspaceService {
     requirePaymentMethod,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
-      subdomain: workspace.subdomain,
+      workspace,
     });
     const cancelUrl = frontBaseUrl.toString();
 
@@ -118,7 +118,7 @@ export class BillingPortalWorkspaceService {
     }
 
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
-      subdomain: workspace.subdomain,
+      workspace,
     });
 
     if (returnUrlPath) {

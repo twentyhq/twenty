@@ -50,7 +50,6 @@ export class OIDCAuthStrategy extends PassportStrategy(
       ...options,
       state: JSON.stringify({
         identityProviderId: req.params.identityProviderId,
-        ...(req.query.forceSubdomainUrl ? { forceSubdomainUrl: true } : {}),
         ...(req.query.workspaceInviteHash
           ? { workspaceInviteHash: req.query.workspaceInviteHash }
           : {}),

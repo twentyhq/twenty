@@ -113,7 +113,7 @@ export type AvailableWorkspaceOutput = {
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type Billing = {
@@ -475,19 +475,11 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
-  Analytics = 'Analytics',
   Authentication = 'Authentication',
-  Billing = 'Billing',
-  Cache = 'Cache',
-  Database = 'Database',
   Email = 'Email',
-  Frontend = 'Frontend',
   Logging = 'Logging',
   Other = 'Other',
-  QueueConfig = 'QueueConfig',
   ServerConfig = 'ServerConfig',
-  Storage = 'Storage',
-  Support = 'Support',
   Workspace = 'Workspace'
 }
 
@@ -706,7 +698,7 @@ export enum IdentityProviderType {
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export type Index = {
@@ -1360,10 +1352,9 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
-  hostname?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   logo?: Maybe<Scalars['String']['output']>;
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type PublishServerlessFunctionInput = {
@@ -1394,7 +1385,7 @@ export type Query = {
   getHostnameDetails?: Maybe<CustomHostnameDetails>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: BillingProductPricesOutput;
-  getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
+  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -1792,7 +1783,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspace: WorkspaceSubdomainAndId;
+  workspace: WorkspaceUrlsAndId;
 };
 
 export enum SubscriptionInterval {
@@ -1994,7 +1985,7 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
-  currentWorkspace?: Maybe<Workspace>;
+  currentWorkspace: Workspace;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -2126,6 +2117,7 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export enum WorkspaceActivationStatus {
@@ -2202,10 +2194,16 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
-export type WorkspaceSubdomainAndId = {
-  __typename?: 'WorkspaceSubdomainAndId';
+export type WorkspaceUrls = {
+  __typename?: 'workspaceUrls';
+  customUrl?: Maybe<Scalars['String']['output']>;
+  subdomainUrl: Scalars['String']['output'];
+};
+
+export type WorkspaceUrlsAndId = {
+  __typename?: 'workspaceUrlsAndId';
   id: Scalars['String']['output'];
-  subdomain: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
