@@ -1,4 +1,4 @@
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
@@ -6,14 +6,18 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { isDefined } from 'twenty-shared';
 
 export const useCheckIsSoftDeleteFilter = () => {
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const isSoftDeleteFilterActive = useRecoilComponentValueV2(
     isSoftDeleteFilterActiveComponentState,
   );
 
   const checkIsSoftDeleteFilter = (recordFilter: RecordFilter) => {
-    const foundFieldMetadataItem = filterableFieldMetadataItems.find(
+    const allFieldMetadataItems = objectMetadataItems.flatMap(
+      (objectMetadataItem) => objectMetadataItem.fields,
+    );
+
+    const foundFieldMetadataItem = allFieldMetadataItems.find(
       (fieldMetadataItem) =>
         fieldMetadataItem.id === recordFilter.fieldMetadataId,
     );

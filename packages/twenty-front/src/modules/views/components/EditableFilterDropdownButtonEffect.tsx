@@ -5,7 +5,7 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared';
@@ -38,7 +38,8 @@ export const EditableFilterDropdownButtonEffect = ({
     viewFilterDropdownId,
   );
 
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   useEffect(() => {
     const fieldMetadataItem = filterableFieldMetadataItems.find(

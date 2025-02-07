@@ -2,7 +2,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilValue } from 'recoil';
 
-export const useFilterableFieldMetadataItems = () => {
+export const useFilterableFieldMetadataItemsInRecordIndexContext = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const filterableFieldMetadataItems = useRecoilValue(
