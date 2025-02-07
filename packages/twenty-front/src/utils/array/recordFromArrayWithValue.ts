@@ -1,7 +1,7 @@
 // const tmp =  ['foo', 'bar'] as const;
 // const result = recordFromArrayWithValue(tmp, true);
 // returns { foo: true, bar: true }
-// result has strictly typed keys foo and bars
+// result has strictly typed keys foo and bar
 
 export const recordFromArrayWithValue = <T, U extends string>(
   array: string[] | readonly U[],
