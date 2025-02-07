@@ -1047,7 +1047,7 @@ export class EnvironmentVariables {
   ENTERPRISE_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Analytics,
+    group: EnvironmentVariablesGroup.Other,
     description: 'Health monitoring time window in minutes',
   })
   @IsNumber()
