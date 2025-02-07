@@ -208,7 +208,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
-    isPinned: false,
+    isPinned: true,
     position: 11,
     Icon: IconHeartOff,
     availableOn: [
