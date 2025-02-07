@@ -62,7 +62,7 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useSearchParams } from 'react-router-dom';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { useGetWorkspaceUrlFromWorkspaceUrls } from '@/domain-manager/hooks/useGetWorkspaceUrlFromWorkspaceUrls';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -87,7 +87,6 @@ export const useAuth = () => {
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { getWorkspaceUrl } = useGetWorkspaceUrlFromWorkspaceUrls();
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
@@ -316,7 +315,6 @@ export const useAuth = () => {
     };
   }, [
     getCurrentUser,
-    getWorkspaceUrl,
     isOnAWorkspace,
     setCurrentUser,
     setCurrentWorkspace,
@@ -441,7 +439,6 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
-      getWorkspaceUrl,
     ],
   );
 
@@ -486,9 +483,7 @@ export const useAuth = () => {
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
-      redirect(
-        buildRedirectUrl('/auth/google', params),
-      );
+      redirect(buildRedirectUrl('/auth/google', params));
     },
     [buildRedirectUrl, redirect],
   );
@@ -499,9 +494,7 @@ export const useAuth = () => {
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
     }) => {
-      redirect(
-        buildRedirectUrl('/auth/microsoft', params),
-      );
+      redirect(buildRedirectUrl('/auth/microsoft', params));
     },
     [buildRedirectUrl, redirect],
   );
