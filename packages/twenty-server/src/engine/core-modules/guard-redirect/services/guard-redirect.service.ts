@@ -37,8 +37,7 @@ export class GuardRedirectService {
   ) {
     if (!workspace) {
       return {
-        subdomain:
-          this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
       };
     }
 
