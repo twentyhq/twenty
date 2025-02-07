@@ -4,6 +4,7 @@ import {
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field } from '@/spreadsheet-import/types';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
+import { FieldMetadataType } from 'twenty-shared';
 
 describe('getMatchedColumns', () => {
   const columns: Column<string>[] = [
@@ -27,15 +28,23 @@ describe('getMatchedColumns', () => {
       key: 'Name',
       label: 'Name',
       fieldType: { type: 'input' },
+      fieldMetadataType: FieldMetadataType.TEXT,
       icon: null,
     },
     {
       key: 'Location',
       label: 'Location',
       fieldType: { type: 'select', options: [] },
+      fieldMetadataType: FieldMetadataType.POSITION,
       icon: null,
     },
-    { key: 'Age', label: 'Age', fieldType: { type: 'input' }, icon: null },
+    {
+      key: 'Age',
+      label: 'Age',
+      fieldType: { type: 'input' },
+      fieldMetadataType: FieldMetadataType.NUMBER,
+      icon: null,
+    },
   ];
 
   const data = [
@@ -110,12 +119,14 @@ describe('getMatchedColumns', () => {
         key: 'Hobby',
         label: 'Hobby',
         fieldType: { type: 'input' },
+        fieldMetadataType: FieldMetadataType.TEXT,
         icon: null,
       },
       {
         key: 'Interest',
         label: 'Interest',
         fieldType: { type: 'input' },
+        fieldMetadataType: FieldMetadataType.TEXT,
         icon: null,
       },
     ];

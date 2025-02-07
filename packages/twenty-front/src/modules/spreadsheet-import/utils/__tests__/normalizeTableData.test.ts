@@ -4,6 +4,7 @@ import {
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field } from '@/spreadsheet-import/types';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
+import { FieldMetadataType } from 'twenty-shared';
 
 describe('normalizeTableData', () => {
   const columns: Column<string>[] = [
@@ -18,14 +19,27 @@ describe('normalizeTableData', () => {
   ];
 
   const fields: Field<string>[] = [
-    { key: 'name', label: 'Name', fieldType: { type: 'input' }, icon: null },
-    { key: 'age', label: 'Age', fieldType: { type: 'input' }, icon: null },
+    {
+      key: 'name',
+      label: 'Name',
+      fieldType: { type: 'input' },
+      fieldMetadataType: FieldMetadataType.TEXT,
+      icon: null,
+    },
+    {
+      key: 'age',
+      label: 'Age',
+      fieldType: { type: 'input' },
+      fieldMetadataType: FieldMetadataType.NUMBER,
+      icon: null,
+    },
     {
       key: 'active',
       label: 'Active',
       fieldType: {
         type: 'checkbox',
       },
+      fieldMetadataType: FieldMetadataType.BOOLEAN,
       icon: null,
     },
   ];
@@ -64,6 +78,7 @@ describe('normalizeTableData', () => {
           type: 'checkbox',
           booleanMatches: { yes: true, no: false },
         },
+        fieldMetadataType: FieldMetadataType.BOOLEAN,
         icon: null,
       },
     ];
@@ -100,6 +115,7 @@ describe('normalizeTableData', () => {
             { label: 'Two', value: '2' },
           ],
         },
+        fieldMetadataType: FieldMetadataType.SELECT,
         icon: null,
       },
     ];
