@@ -7,7 +7,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { UserRoleModule } from 'src/engine/metadata-modules/userRole/userRole.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
   imports: [

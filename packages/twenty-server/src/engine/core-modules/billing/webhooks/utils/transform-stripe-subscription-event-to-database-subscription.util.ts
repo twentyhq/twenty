@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';

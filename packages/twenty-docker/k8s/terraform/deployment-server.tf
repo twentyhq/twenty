@@ -41,10 +41,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name  = "PORT"
             value = "3000"
           }
-          # env {
-          #   name  = "DEBUG_MODE"
-          #   value = false
-          # }
 
           env {
             name  = "SERVER_URL"
@@ -67,10 +63,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
           env {
             name  = "STORAGE_TYPE"
             value = "local"
-          }
-          env {
-            name  = "MESSAGE_QUEUE_TYPE"
-            value = "bull-mq"
           }
           env {
             name  = "ACCESS_TOKEN_EXPIRES_IN"

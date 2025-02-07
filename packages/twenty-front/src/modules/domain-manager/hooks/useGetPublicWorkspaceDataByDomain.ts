@@ -5,9 +5,9 @@ import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectTo
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
+import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated/graphql';
 
-export const useGetPublicWorkspaceDataBySubdomain = () => {
+export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const setWorkspaceAuthProviders = useSetRecoilState(
@@ -19,15 +19,15 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
     workspacePublicDataState,
   );
 
-  const { loading, data, error } = useGetPublicWorkspaceDataBySubdomainQuery({
+  const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
     skip:
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
     onCompleted: (data) => {
       setWorkspaceAuthProviders(
-        data.getPublicWorkspaceDataBySubdomain.authProviders,
+        data.getPublicWorkspaceDataByDomain.authProviders,
       );
-      setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
+      setWorkspacePublicDataState(data.getPublicWorkspaceDataByDomain);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
@@ -38,7 +38,7 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
 
   return {
     loading,
-    data: data?.getPublicWorkspaceDataBySubdomain,
+    data: data?.getPublicWorkspaceDataByDomain,
     error,
   };
 };

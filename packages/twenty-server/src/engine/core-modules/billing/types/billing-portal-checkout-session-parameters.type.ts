@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { User } from 'src/engine/core-modules/user/user.entity';

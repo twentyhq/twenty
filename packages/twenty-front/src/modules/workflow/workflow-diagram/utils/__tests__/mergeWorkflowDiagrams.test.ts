@@ -5,7 +5,12 @@ it('Preserves the properties defined in the previous version but not in the next
   const previousDiagram: WorkflowDiagram = {
     nodes: [
       {
-        data: { nodeType: 'action', name: '', actionType: 'CODE' },
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          isLeafNode: true,
+        },
         id: '1',
         position: { x: 0, y: 0 },
         selected: true,
@@ -16,7 +21,12 @@ it('Preserves the properties defined in the previous version but not in the next
   const nextDiagram: WorkflowDiagram = {
     nodes: [
       {
-        data: { nodeType: 'action', name: '', actionType: 'CODE' },
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          isLeafNode: true,
+        },
         id: '1',
         position: { x: 0, y: 0 },
       },
@@ -24,24 +34,40 @@ it('Preserves the properties defined in the previous version but not in the next
     edges: [],
   };
 
-  expect(mergeWorkflowDiagrams(previousDiagram, nextDiagram)).toEqual({
-    nodes: [
-      {
-        data: { nodeType: 'action', name: '', actionType: 'CODE' },
-        id: '1',
-        position: { x: 0, y: 0 },
-        selected: true,
+  expect(mergeWorkflowDiagrams(previousDiagram, nextDiagram))
+    .toMatchInlineSnapshot(`
+{
+  "edges": [],
+  "nodes": [
+    {
+      "data": {
+        "actionType": "CODE",
+        "isLeafNode": true,
+        "name": "",
+        "nodeType": "action",
       },
-    ],
-    edges: [],
-  });
+      "id": "1",
+      "position": {
+        "x": 0,
+        "y": 0,
+      },
+      "selected": true,
+    },
+  ],
+}
+`);
 });
 
 it('Replaces duplicated properties with the next value', () => {
   const previousDiagram: WorkflowDiagram = {
     nodes: [
       {
-        data: { nodeType: 'action', name: '', actionType: 'CODE' },
+        data: {
+          nodeType: 'action',
+          name: '',
+          actionType: 'CODE',
+          isLeafNode: true,
+        },
         id: '1',
         position: { x: 0, y: 0 },
       },
@@ -51,7 +77,12 @@ it('Replaces duplicated properties with the next value', () => {
   const nextDiagram: WorkflowDiagram = {
     nodes: [
       {
-        data: { nodeType: 'action', name: '2', actionType: 'CODE' },
+        data: {
+          nodeType: 'action',
+          name: '2',
+          actionType: 'CODE',
+          isLeafNode: false,
+        },
         id: '1',
         position: { x: 0, y: 0 },
       },
@@ -59,14 +90,26 @@ it('Replaces duplicated properties with the next value', () => {
     edges: [],
   };
 
-  expect(mergeWorkflowDiagrams(previousDiagram, nextDiagram)).toEqual({
-    nodes: [
-      {
-        data: { nodeType: 'action', name: '2', actionType: 'CODE' },
-        id: '1',
-        position: { x: 0, y: 0 },
+  expect(mergeWorkflowDiagrams(previousDiagram, nextDiagram))
+    .toMatchInlineSnapshot(`
+{
+  "edges": [],
+  "nodes": [
+    {
+      "data": {
+        "actionType": "CODE",
+        "isLeafNode": false,
+        "name": "2",
+        "nodeType": "action",
       },
-    ],
-    edges: [],
-  });
+      "id": "1",
+      "position": {
+        "x": 0,
+        "y": 0,
+      },
+      "selected": undefined,
+    },
+  ],
+}
+`);
 });

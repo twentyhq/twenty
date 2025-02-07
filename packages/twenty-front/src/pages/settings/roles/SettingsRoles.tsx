@@ -23,6 +23,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { FeatureFlagKey, useGetRolesQuery } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTable = styled(Table)`
@@ -89,12 +90,17 @@ export const SettingsRoles = () => {
     FeatureFlagKey.IsPermissionsEnabled,
   );
   const theme = useTheme();
+  const navigateSettings = useNavigateSettings();
 
   const { data: rolesData, loading: isRolesLoading } = useGetRolesQuery();
 
   if (!isPermissionsEnabled) {
     return null;
   }
+
+  const handleRoleClick = (roleId: string) => {
+    navigateSettings(SettingsPath.RoleDetail, { roleId });
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -127,7 +133,10 @@ export const SettingsRoles = () => {
             </StyledTableHeaderRow>
             {!isRolesLoading &&
               rolesData?.getRoles.map((role) => (
-                <StyledTableRow key={role.id}>
+                <StyledTableRow
+                  key={role.id}
+                  onClick={() => handleRoleClick(role.id)}
+                >
                   <TableCell>
                     <StyledNameCell>
                       <IconUser size={theme.icon.size.md} />

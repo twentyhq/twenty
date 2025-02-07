@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -50,8 +51,8 @@ export const ObjectFilterDropdownSourceSelect = ({
     selectedOperandInDropdownComponentState,
   );
 
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
@@ -87,13 +88,15 @@ export const ObjectFilterDropdownSourceSelect = ({
           (id) => id !== itemToSelect.id,
         );
 
-    if (!filterDefinitionUsedInDropdown) {
-      throw new Error('Filter definition used in dropdown should be defined');
+    if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
+      throw new Error(
+        'Field metadata item used in filter dropdown should be defined',
+      );
     }
 
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
-      removeRecordFilter(filterDefinitionUsedInDropdown.fieldMetadataId);
+      removeRecordFilter(fieldMetadataItemUsedInFilterDropdown.id);
       deleteCombinedViewFilter(fieldId);
       return;
     }
@@ -110,7 +113,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         : selectedItemNames.join(', ');
 
     if (
-      isDefined(filterDefinitionUsedInDropdown) &&
+      isDefined(fieldMetadataItemUsedInFilterDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
       const newFilterValue =
@@ -122,17 +125,21 @@ export const ObjectFilterDropdownSourceSelect = ({
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (viewFilter) =>
             viewFilter.fieldMetadataId ===
-            filterDefinitionUsedInDropdown.fieldMetadataId,
+            fieldMetadataItemUsedInFilterDropdown.id,
         );
 
       const filterId = viewFilter?.id ?? fieldId;
 
+      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+        field: fieldMetadataItemUsedInFilterDropdown,
+      });
+
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
-        definition: filterDefinitionUsedInDropdown,
+        definition: filterDefinition,
         operand: selectedOperandInDropdown || ViewFilterOperand.Is,
         displayValue: filterDisplayValue,
-        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
         viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -39,6 +41,12 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
         value: true,
         stripeCustomerId: 'cus_123',
       },
+      {
+        key: BillingEntitlementKey.CUSTOM_DOMAIN,
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
+      },
     ]);
   });
 
@@ -76,6 +84,12 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
         key: BillingEntitlementKey.SSO,
         value: false,
         stripeCustomerId: 'cus_123',
+      },
+      {
+        key: 'CUSTOM_DOMAIN',
+        stripeCustomerId: 'cus_123',
+        value: false,
+        workspaceId: 'workspaceId',
       },
     ]);
   });

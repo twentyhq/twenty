@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
@@ -9,6 +8,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -24,29 +24,6 @@ export class UserRoleService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
-
-  public async unassignRolesFromUserWorkspace({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const userWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
-      where: {
-        userWorkspaceId,
-        workspaceId,
-      },
-    });
-
-    if (!isEmpty(userWorkspaceRoles)) {
-      userWorkspaceRoles.forEach(async (userWorkspaceRole) => {
-        await this.userWorkspaceRoleRepository.delete({
-          id: userWorkspaceRole.id,
-        });
-      });
-    }
-  }
 
   public async assignRoleToUserWorkspace({
     workspaceId,
@@ -70,7 +47,28 @@ export class UserRoleService {
       );
     }
 
-    await this.unassignRolesFromUserWorkspace({
+    const role = await this.roleRepository.findOne({
+      where: {
+        id: roleId,
+      },
+    });
+
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        'Role not found',
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    const roles = await this.getRolesByUserWorkspaces([userWorkspace.id]);
+
+    const currentRole = roles.get(userWorkspace.id)?.[0];
+
+    if (currentRole?.id === roleId) {
+      return;
+    }
+
+    await this.unassignAllRolesFromUserWorkspace({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
     });
@@ -82,28 +80,60 @@ export class UserRoleService {
     });
   }
 
-  public async getRoleForUserWorkspace(
-    userWorkspaceId: string,
-  ): Promise<RoleEntity | null> {
-    if (!isDefined(userWorkspaceId)) {
-      return null;
+  public async unassignAllRolesFromUserWorkspace({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
+      userWorkspaceId,
+      workspaceId,
+    );
+
+    await this.userWorkspaceRoleRepository.delete({
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  public async getRolesByUserWorkspaces(
+    userWorkspaceIds: string[],
+  ): Promise<Map<string, RoleDTO[]>> {
+    if (!userWorkspaceIds.length) {
+      return new Map();
     }
 
-    const userWorkspaceRole = await this.userWorkspaceRoleRepository.findOne({
+    const allUserWorkspaceRoles = await this.userWorkspaceRoleRepository.find({
       where: {
-        userWorkspaceId,
+        userWorkspaceId: In(userWorkspaceIds),
+      },
+      relations: {
+        role: true,
       },
     });
 
-    if (!isDefined(userWorkspaceRole)) {
-      return null;
+    if (!allUserWorkspaceRoles.length) {
+      return new Map();
     }
 
-    return await this.roleRepository.findOne({
-      where: {
-        id: userWorkspaceRole.roleId,
-      },
-    });
+    const rolesMap = new Map<string, RoleDTO[]>();
+
+    for (const userWorkspaceId of userWorkspaceIds) {
+      const userWorkspaceRolesOfUserWorkspace = allUserWorkspaceRoles.filter(
+        (userWorkspaceRole) =>
+          userWorkspaceRole.userWorkspaceId === userWorkspaceId,
+      );
+
+      const rolesOfUserWorkspace = userWorkspaceRolesOfUserWorkspace
+        .map((userWorkspaceRole) => userWorkspaceRole.role)
+        .filter(isDefined);
+
+      rolesMap.set(userWorkspaceId, rolesOfUserWorkspace);
+    }
+
+    return rolesMap;
   }
 
   public async getWorkspaceMembersAssignedToRole(
@@ -144,5 +174,30 @@ export class UserRoleService {
     });
 
     return workspaceMembers;
+  }
+
+  private async validatesUserWorkspaceIsNotLastAdminIfUnassigningAdminRoleOrThrow(
+    userWorkspaceId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const roles = await this.getRolesByUserWorkspaces([userWorkspaceId]);
+
+    const currentRoles = roles.get(userWorkspaceId);
+
+    const adminRole = currentRoles?.find(
+      (role: RoleDTO) => role.isEditable === false,
+    );
+
+    if (isDefined(adminRole)) {
+      const workspaceMembersWithAdminRole =
+        await this.getWorkspaceMembersAssignedToRole(adminRole.id, workspaceId);
+
+      if (workspaceMembersWithAdminRole.length === 1) {
+        throw new PermissionsException(
+          `Cannot unassign admin role as there is only one admin in the workspace`,
+          PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
+        );
+      }
+    }
   }
 }

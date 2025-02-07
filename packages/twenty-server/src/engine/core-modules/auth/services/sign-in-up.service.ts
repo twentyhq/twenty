@@ -38,7 +38,6 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -214,18 +213,39 @@ export class SignInUpService {
     return await this.userRepository.save(userToCreate);
   }
 
+  private async throwIfWorkspaceIsNotReadyForSignInUp(
+    workspace: Workspace,
+    user: ExistingUserOrPartialUserWithPicture,
+  ) {
+    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+
+    if (user.userData.type !== 'existingUser') {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const userWorkspaceExists =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.userData.existingUser.id,
+        workspace.id,
+      );
+
+    if (!userWorkspaceExists) {
+      throw new AuthException(
+        'User is not part of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+  }
+
   async signInUpOnExistingWorkspace(
     params: {
       workspace: Workspace;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
-    workspaceValidator.assertIsActive(
-      params.workspace,
-      new AuthException(
-        'Workspace is not ready to welcome new members',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      ),
-    );
+    await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
     const currentUser =
       params.userData.type === 'newUserWithPicture'

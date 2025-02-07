@@ -7,6 +7,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/utils/mapRightDrawerPageToCommandMenuPage';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared';
 import { IconComponent } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -29,9 +30,9 @@ export const useRightDrawer = () => {
     ({ set }) =>
       (
         rightDrawerPage: RightDrawerPages,
-        commandMenuPageInfo?: {
-          title?: string;
-          Icon?: IconComponent;
+        commandMenuPageInfo: {
+          title: string;
+          Icon: IconComponent;
         },
       ) => {
         if (isCommandMenuV2Enabled) {
@@ -40,8 +41,8 @@ export const useRightDrawer = () => {
 
           navigateCommandMenu({
             page: commandMenuPage,
-            pageTitle: commandMenuPageInfo?.title,
-            pageIcon: commandMenuPageInfo?.Icon,
+            pageTitle: commandMenuPageInfo.title,
+            pageIcon: commandMenuPageInfo.Icon,
           });
 
           return;
@@ -56,10 +57,12 @@ export const useRightDrawer = () => {
 
   const closeRightDrawer = useRecoilCallback(
     ({ set }) =>
-      () => {
+      (args?: { emitCloseEvent?: boolean }) => {
         set(isRightDrawerOpenState, false);
         set(isRightDrawerMinimizedState, false);
-        emitRightDrawerCloseEvent();
+        if (isDefined(args?.emitCloseEvent) && args?.emitCloseEvent) {
+          emitRightDrawerCloseEvent();
+        }
       },
     [],
   );

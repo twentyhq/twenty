@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 describe('transformStripeSubscriptionEventToDatabaseCustomer', () => {
   const mockWorkspaceId = 'workspace_123';

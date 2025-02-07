@@ -20,7 +20,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
-import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
+import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
@@ -49,15 +49,18 @@ export const graphqlMocks = {
       });
     }),
     graphql.query(
-      getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
+      getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN) ?? '',
       () => {
         return HttpResponse.json({
           data: {
-            getPublicWorkspaceDataBySubdomain: {
+            getPublicWorkspaceDataByDomain: {
               id: 'id',
               logo: 'logo',
               displayName: 'displayName',
-              subdomain: 'subdomain',
+              workspaceUrls: {
+                customUrl: undefined,
+                subdomainUrl: 'https://twenty.com',
+              },
               authProviders: {
                 google: true,
                 microsoft: false,

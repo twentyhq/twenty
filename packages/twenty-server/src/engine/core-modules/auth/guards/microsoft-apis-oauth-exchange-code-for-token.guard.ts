@@ -57,9 +57,7 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
               AuthExceptionCode.INSUFFICIENT_SCOPES,
             )
           : error,
-        {
-          subdomain: this.guardRedirectService.getSubdomainFromContext(context),
-        },
+        this.guardRedirectService.getSubdomainAndHostnameFromContext(context),
       );
 
       return false;

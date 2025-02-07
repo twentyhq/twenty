@@ -53,7 +53,7 @@ import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -62,6 +62,7 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useSearchParams } from 'react-router-dom';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -96,8 +97,7 @@ export const useAuth = () => {
     useGetLoginTokenFromEmailVerificationTokenMutation();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
-  const { isOnAWorkspaceSubdomain } =
-    useIsCurrentLocationOnAWorkspaceSubdomain();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
@@ -289,10 +289,10 @@ export const useAuth = () => {
 
     setCurrentWorkspace(workspace);
 
-    if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
+    if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
-        subdomain: workspace.subdomain,
+        workspaceUrl: getWorkspaceUrl(workspace.workspaceUrls),
       });
     }
 
@@ -315,7 +315,7 @@ export const useAuth = () => {
     };
   }, [
     getCurrentUser,
-    isOnAWorkspaceSubdomain,
+    isOnAWorkspace,
     setCurrentUser,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
@@ -413,7 +413,8 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return redirectToWorkspaceDomain(
-          signUpResult.data.signUp.workspace.subdomain,
+          getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
+
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {

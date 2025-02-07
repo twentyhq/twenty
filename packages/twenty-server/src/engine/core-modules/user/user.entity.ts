@@ -103,4 +103,7 @@ export class User {
 
   @Field(() => Workspace, { nullable: true })
   currentWorkspace: Relation<Workspace>;
+
+  @Field(() => UserWorkspace, { nullable: true })
+  currentUserWorkspace?: Relation<UserWorkspace>;
 }

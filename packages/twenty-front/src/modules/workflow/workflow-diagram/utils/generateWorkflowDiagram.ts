@@ -5,7 +5,9 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
+  WorkflowDiagramEmptyTriggerNodeData,
   WorkflowDiagramNode,
+  WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 
@@ -38,7 +40,8 @@ export const generateWorkflowDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-      },
+        isLeafNode: false,
+      } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: xPos,
         y: yPos,
@@ -102,7 +105,8 @@ export const generateWorkflowDiagram = ({
         triggerType: trigger.type,
         name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
         icon: triggerIcon,
-      },
+        isLeafNode: false,
+      } satisfies WorkflowDiagramStepNodeData,
       position: {
         x: 0,
         y: 0,
@@ -112,7 +116,10 @@ export const generateWorkflowDiagram = ({
     nodes.push({
       id: triggerNodeId,
       type: 'empty-trigger',
-      data: {} as any,
+      data: {
+        nodeType: 'empty-trigger',
+        isLeafNode: false,
+      } satisfies WorkflowDiagramEmptyTriggerNodeData,
       position: {
         x: 0,
         y: 0,
