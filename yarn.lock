@@ -7142,9 +7142,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/swc-plugin@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "@lingui/swc-plugin@npm:5.0.2"
+"@lingui/swc-plugin@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@lingui/swc-plugin@npm:5.1.0"
   peerDependencies:
     "@lingui/core": 5
   peerDependenciesMeta:
@@ -7152,7 +7152,7 @@ __metadata:
       optional: true
     next:
       optional: true
-  checksum: 10c0/5f7ca68349b642f7034800f6080c4f28f33d97059a8611144b9d78878cf14727b9293e4f5aec5c82a4930617f4bcacd2c25618e6d39ded7ceac15465f3b5aed2
+  checksum: 10c0/ca514c4fcc2d6d1ca62e7063fe4dc8ef2b29d328bbe22184b4773149a86448335c39f72faccfe41f10ca2081df379cfcb7f9e70337a27aec2568571c0118c0d6
   languageName: node
   linkType: hard
 
@@ -46056,7 +46056,7 @@ __metadata:
     "@lingui/cli": "npm:^5.1.2"
     "@lingui/core": "npm:^5.1.2"
     "@lingui/react": "npm:^5.1.2"
-    "@lingui/swc-plugin": "npm:^5.0.2"
+    "@lingui/swc-plugin": "npm:^5.1.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
     "@mdx-js/react": "npm:^3.0.0"
     "@microsoft/microsoft-graph-client": "npm:^3.0.7"

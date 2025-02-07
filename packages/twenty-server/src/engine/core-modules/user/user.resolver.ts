@@ -46,7 +46,6 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -295,7 +294,6 @@ export class UserResolver {
     return `${paths[0]}?token=${fileToken}`;
   }
 
-  @UseGuards(DemoEnvGuard)
   @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion

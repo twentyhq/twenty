@@ -4,7 +4,9 @@ export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
   query GetEnvironmentVariablesGrouped {
     getEnvironmentVariablesGrouped {
       groups {
-        groupName
+        name
+        description
+        isHiddenOnLoad
         variables {
           name
           description
@@ -12,7 +14,8 @@ export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
           sensitive
         }
         subgroups {
-          subgroupName
+          name
+          description
           variables {
             name
             description

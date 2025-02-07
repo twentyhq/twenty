@@ -206,7 +206,7 @@
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@lingui/cli": "^5.1.2",
-    "@lingui/swc-plugin": "^5.0.2",
+    "@lingui/swc-plugin": "^5.1.0",
     "@lingui/vite-plugin": "^5.1.2",
     "@microsoft/microsoft-graph-types": "^2.40.0",
     "@nestjs/cli": "^9.0.0",

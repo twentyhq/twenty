@@ -105,6 +105,12 @@ export const SignInUpGlobalScopeForm = () => {
     });
   };
 
+  const onEmailChange = (email: string) => {
+    if (email !== form.getValues('email')) {
+      setSignInUpStep(SignInUpStep.Email);
+    }
+  };
+
   return (
     <>
       <StyledContentContainer>
@@ -116,7 +122,10 @@ export const SignInUpGlobalScopeForm = () => {
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
-            <SignInUpEmailField showErrors={showErrors} />
+            <SignInUpEmailField
+              showErrors={showErrors}
+              onInputChange={onEmailChange}
+            />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField
                 showErrors={showErrors}

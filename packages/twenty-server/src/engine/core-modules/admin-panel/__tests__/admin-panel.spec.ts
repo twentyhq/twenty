@@ -33,9 +33,33 @@ jest.mock(
 );
 
 jest.mock(
-  'src/engine/core-modules/environment/constants/environment-variables-hidden-groups',
+  'src/engine/core-modules/environment/constants/environment-variables-group-metadata',
   () => ({
-    ENVIRONMENT_VARIABLES_HIDDEN_GROUPS: new Set(['HIDDEN_GROUP']),
+    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
+      GROUP_1: {
+        position: 100,
+        description: '',
+      },
+      GROUP_2: {
+        position: 200,
+        description: '',
+      },
+      VISIBLE_GROUP: {
+        position: 300,
+        description: '',
+      },
+    },
+  }),
+);
+
+jest.mock(
+  'src/engine/core-modules/environment/constants/environment-variables-sub-group-metadata',
+  () => ({
+    ENVIRONMENT_VARIABLES_SUB_GROUP_METADATA: {
+      SUBGROUP_1: {
+        description: '',
+      },
+    },
   }),
 );
 
@@ -262,9 +286,10 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       expect(result).toEqual({
-        groups: expect.arrayContaining([
-          expect.objectContaining({
-            groupName: 'GROUP_1',
+        groups: [
+          {
+            name: 'GROUP_1',
+            description: '',
             variables: [
               {
                 name: 'VAR_1',
@@ -275,7 +300,8 @@ describe('AdminPanelService', () => {
             ],
             subgroups: [
               {
-                subgroupName: 'SUBGROUP_1',
+                name: 'SUBGROUP_1',
+                description: '',
                 variables: [
                   {
                     name: 'VAR_2',
@@ -286,9 +312,10 @@ describe('AdminPanelService', () => {
                 ],
               },
             ],
-          }),
-          expect.objectContaining({
-            groupName: 'GROUP_2',
+          },
+          {
+            name: 'GROUP_2',
+            description: '',
             variables: [
               {
                 name: 'VAR_3',
@@ -298,8 +325,8 @@ describe('AdminPanelService', () => {
               },
             ],
             subgroups: [],
-          }),
-        ]),
+          },
+        ],
       });
     });
 
@@ -324,7 +351,7 @@ describe('AdminPanelService', () => {
       const result = service.getEnvironmentVariablesGrouped();
 
       const group = result.groups.find(
-        (g) => g.groupName === ('GROUP_1' as EnvironmentVariablesGroup),
+        (g) => g.name === ('GROUP_1' as EnvironmentVariablesGroup),
       );
 
       expect(group?.variables[0].name).toBe('A_VAR');
@@ -339,35 +366,6 @@ describe('AdminPanelService', () => {
       expect(result).toEqual({
         groups: [],
       });
-    });
-
-    it('should exclude hidden groups from the output', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
-        VAR_1: {
-          value: 'value1',
-          metadata: {
-            group: 'HIDDEN_GROUP',
-            description: 'Description 1',
-          },
-        },
-        VAR_2: {
-          value: 'value2',
-          metadata: {
-            group: 'VISIBLE_GROUP',
-            description: 'Description 2',
-          },
-        },
-      });
-
-      const result = service.getEnvironmentVariablesGrouped();
-
-      expect(result.groups).toHaveLength(1);
-      expect(result.groups[0].groupName).toBe('VISIBLE_GROUP');
-      expect(result.groups).not.toContainEqual(
-        expect.objectContaining({
-          groupName: 'HIDDEN_GROUP',
-        }),
-      );
     });
   });
 });
