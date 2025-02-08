@@ -28,7 +28,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { isDefined } from 'src/utils/is-defined';
 
 @Command({
   name: 'upgrade-0.41:migrate-rich-text-field',
@@ -101,7 +100,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           where: { id: richTextField.objectMetadataId },
         });
 
-        if (!isDefined(objectMetadata)) {
+        if (objectMetadata === null) {
           this.logger.log(
             `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
           );
@@ -153,7 +152,7 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           where: { id: richTextField.objectMetadataId },
         });
 
-        if (!isDefined(objectMetadata)) {
+        if (objectMetadata === null) {
           this.logger.log(
             `Object metadata not found for rich text field ${richTextField.name} in workspace ${workspaceId}`,
           );
