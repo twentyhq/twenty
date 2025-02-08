@@ -5,15 +5,15 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
-import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-41/0-41-fix-body-v2-view-field-position.command';
-import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-41/0-41-migrate-rich-text-field.command';
+import { FixBodyV2ViewFieldPositionCommand } from 'src/database/commands/upgrade-version/0-42/0-42-fix-body-v2-view-field-position.command';
+import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-version/0-42/0-42-migrate-rich-text-field.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Command({
   name: 'upgrade-0.41',
   description: 'Upgrade to 0.41',
 })
-export class UpgradeTo0_41Command extends ActiveWorkspacesCommandRunner {
+export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
