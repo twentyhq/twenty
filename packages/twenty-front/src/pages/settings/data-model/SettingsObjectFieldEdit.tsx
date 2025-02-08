@@ -137,6 +137,16 @@ export const SettingsObjectFieldEdit = () => {
           objectNamePlural,
         });
 
+        // Update only the label if name unchanged.
+        if (formattedInput.name === fieldMetadataItem.name) {
+          await updateOneFieldMetadataItem({
+            objectMetadataId: objectMetadataItem.id,
+            fieldMetadataIdToUpdate: fieldMetadataItem.id,
+            updatePayload: { label: formattedInput.label },
+          });
+          return;
+        }
+
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
