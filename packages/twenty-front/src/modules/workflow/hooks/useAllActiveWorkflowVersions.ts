@@ -8,7 +8,7 @@ import {
   WorkflowTriggerType,
   WorkflowVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const useAllActiveWorkflowVersions = ({
   objectMetadataItem,
@@ -62,7 +62,9 @@ export const useAllActiveWorkflowVersions = ({
   if (!isDefined(objectMetadataItem)) {
     return {
       records: records.filter(
-        (record) => !isDefined(record.trigger?.settings.objectType),
+        (record) =>
+          record.trigger?.type !== 'CRON' &&
+          !isDefined(record.trigger?.settings.objectType),
       ),
     };
   }

@@ -22,7 +22,7 @@ export class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
     super({
       clientID: environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
-      tenant: environmentService.get('AUTH_MICROSOFT_TENANT_ID'),
+      tenant: 'common',
       callbackURL: environmentService.get('AUTH_MICROSOFT_APIS_CALLBACK_URL'),
       scope: scopes,
       passReqToCallback: true,

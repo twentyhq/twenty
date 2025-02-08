@@ -14,8 +14,10 @@ export const handleException = (
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
   workspace?: ExceptionHandlerWorkspace,
-): void => {
+): CustomException => {
   exceptionHandlerService.captureExceptions([exception], { user, workspace });
+
+  return exception;
 };
 
 interface RequestAndParams {
@@ -45,7 +47,12 @@ export class HttpExceptionHandlerService {
     if (params?.userId) user = { ...user, id: params.userId };
 
     handleException(exception, this.exceptionHandlerService, user, workspace);
+    const statusCode = errorCode || 500;
 
-    return response.status(errorCode || 500).send(exception.message);
+    return response.status(statusCode).send({
+      statusCode,
+      error: exception.name || 'Bad Request',
+      messages: [exception?.message],
+    });
   };
 }

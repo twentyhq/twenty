@@ -10,6 +10,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+
 import { FieldMetadataType } from '~/generated/graphql';
 
 const baseDefinition = {
@@ -65,6 +66,10 @@ describe('mapViewFiltersToFilters', () => {
           ...baseDefinition,
           type: 'FULL_NAME',
         },
+        label: baseDefinition.label,
+        type: 'FULL_NAME',
+        positionInViewFilterGroup: undefined,
+        viewFilterGroupId: undefined,
       },
     ];
     expect(
@@ -94,7 +99,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           metadata: { fieldName: 'fieldName 1' },
           infoTooltipContent: 'infoTooltipContent 1',
           iconName: 'iconName 1',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           position: 1,
           size: 1,
           isVisible: false,
@@ -114,7 +119,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           metadata: { fieldName: 'fieldName 2' },
           infoTooltipContent: 'infoTooltipContent 2',
           iconName: 'iconName 2',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           position: 2,
           size: 1,
           isVisible: false,
@@ -134,7 +139,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           metadata: { fieldName: 'fieldName 3' },
           infoTooltipContent: 'infoTooltipContent 3',
           iconName: 'iconName 3',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.TEXT,
           position: 3,
           size: 1,
           isVisible: false,
@@ -151,7 +156,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         metadata: { fieldName: 'fieldName 1' },
         infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
         size: 1,
       },
       {
@@ -161,7 +166,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         metadata: { fieldName: 'fieldName 3' },
         infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
         size: 3,
       },
     ];
@@ -173,7 +178,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         metadata: { fieldName: 'fieldName 1' },
         infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
         size: 1,
         position: 1,
         isVisible: false,
@@ -185,7 +190,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         metadata: { fieldName: 'fieldName 3' },
         infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
-        type: FieldMetadataType.Text,
+        type: FieldMetadataType.TEXT,
         size: 3,
         position: 3,
         isVisible: true,

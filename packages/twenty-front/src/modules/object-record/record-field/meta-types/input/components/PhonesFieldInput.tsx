@@ -102,7 +102,7 @@ export const PhonesFieldInput = ({
       onClickOutside={onClickOutside}
       onCancel={onCancel}
       placeholder="Phone"
-      fieldMetadataType={FieldMetadataType.Phones}
+      fieldMetadataType={FieldMetadataType.PHONES}
       formatInput={(input) => {
         const phone = parsePhoneNumber(input);
         if (phone !== undefined) {

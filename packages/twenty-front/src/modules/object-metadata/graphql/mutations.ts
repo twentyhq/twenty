@@ -43,8 +43,10 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
 `;
 
 export const CREATE_ONE_RELATION_METADATA_ITEM = gql`
-  mutation CreateOneRelationMetadata($input: CreateOneRelationInput!) {
-    createOneRelation(input: $input) {
+  mutation CreateOneRelationMetadataItem(
+    $input: CreateOneRelationMetadataInput!
+  ) {
+    createOneRelationMetadata(input: $input) {
       id
       relationType
       fromObjectMetadataId

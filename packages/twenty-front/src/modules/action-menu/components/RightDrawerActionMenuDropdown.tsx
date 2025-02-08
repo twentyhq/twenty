@@ -13,6 +13,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
+import { i18n } from '@lingui/core';
 import { Key } from 'ts-key-enum';
 import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -72,9 +73,7 @@ export const RightDrawerActionMenuDropdown = () => {
         <Button title="Actions" hotkeys={[getOsControlSymbol(), 'O']} />
       }
       dropdownPlacement="top-end"
-      dropdownOffset={{
-        y: parseInt(theme.spacing(2), 10),
-      }}
+      dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {actionMenuEntries
@@ -94,7 +93,7 @@ export const RightDrawerActionMenuDropdown = () => {
                   );
                   actionMenuEntry.onClick?.();
                 }}
-                text={actionMenuEntry.label}
+                text={i18n._(actionMenuEntry.label)}
               />
             ))}
         </DropdownMenuItemsContainer>

@@ -11,10 +11,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -22,8 +18,8 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -31,7 +27,7 @@ export class GoogleAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -53,7 +49,6 @@ export class GoogleAuthController {
       email,
       picture,
       workspaceInviteHash,
-      workspacePersonalInviteToken,
       workspaceId,
       billingCheckoutSessionState,
     } = req.user;
@@ -66,11 +61,13 @@ export class GoogleAuthController {
     });
 
     try {
-      const invitation = await this.authService.findInvitationForSignInUp({
-        currentWorkspace,
-        workspacePersonalInviteToken,
-        email,
-      });
+      const invitation =
+        currentWorkspace && email
+          ? await this.authService.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
 
       const existingUser = await this.userRepository.findOne({
         where: { email },
@@ -111,19 +108,19 @@ export class GoogleAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          subdomain: workspace.subdomain,
+          workspace,
           billingCheckoutSessionState,
         }),
       );
     } catch (err) {
-      if (err instanceof AuthException) {
-        return res.redirect(
-          this.domainManagerService.computeRedirectErrorUrl(err.message, {
-            subdomain: currentWorkspace?.subdomain,
-          }),
-        );
-      }
-      throw new AuthException(err, AuthExceptionCode.INTERNAL_SERVER_ERROR);
+      return res.redirect(
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+          err,
+          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+            currentWorkspace,
+          ),
+        ),
+      );
     }
   }
 }

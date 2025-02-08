@@ -4,9 +4,9 @@ import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipSize, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
 import { MouseEvent, useContext } from 'react';
+import { isDefined } from 'twenty-shared';
 
 // Import Link from react-router-dom instead of UndecoratedLink
 import { Link } from 'react-router-dom';

@@ -70,7 +70,7 @@ describe('useDefaultHomePagePath', () => {
     setupMockPrefetchedData('viewId');
     const { result } = renderHooks(true);
     expect(result.current.defaultHomePagePath).toEqual(
-      '/objects/companies?view=viewId',
+      '/objects/companies?viewId=viewId',
     );
   });
 });

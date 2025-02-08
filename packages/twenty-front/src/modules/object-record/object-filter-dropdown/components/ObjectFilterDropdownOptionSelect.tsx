@@ -13,7 +13,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
-import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -21,8 +22,8 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
@@ -32,8 +33,8 @@ type SelectOptionForFilter = FieldMetadataItemOption & {
 };
 
 export const ObjectFilterDropdownOptionSelect = () => {
-  const filterDefinitionUsedInDropdown = useRecoilComponentValueV2(
-    filterDefinitionUsedInDropdownComponentState,
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const objectFilterDropdownSelectedOptionValues = useRecoilComponentValueV2(
@@ -66,7 +67,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
 
   const selectedItemId = useRecoilValue(selectedItemIdState);
 
-  const fieldMetaDataId = filterDefinitionUsedInDropdown?.fieldMetadataId ?? '';
+  const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
 
   const { selectOptions } = useOptionsForSelect(fieldMetaDataId);
 
@@ -125,7 +126,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         : selectedOptions.map((option) => option.label).join(', ');
 
     if (
-      isDefined(filterDefinitionUsedInDropdown) &&
+      isDefined(fieldMetadataItemUsedInDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
       const newFilterValue =
@@ -133,12 +134,16 @@ export const ObjectFilterDropdownOptionSelect = () => {
           ? JSON.stringify(selectedOptions.map((option) => option.value))
           : EMPTY_FILTER_VALUE;
 
+      const filterDefinition = formatFieldMetadataItemAsFilterDefinition({
+        field: fieldMetadataItemUsedInDropdown,
+      });
+
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : v4(),
-        definition: filterDefinitionUsedInDropdown,
+        definition: filterDefinition,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,
-        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+        fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         value: newFilterValue,
         viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });
@@ -182,7 +187,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
           />
         ))}
       </DropdownMenuItemsContainer>
-      {showNoResult && <MenuItem text="No result" />}
+      {showNoResult && <MenuItem text="No results" />}
     </SelectableList>
   );
 };

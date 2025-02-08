@@ -1,4 +1,4 @@
-import { isDefined } from '@ui/utilities';
+import { isDefined } from 'twenty-shared';
 
 export const getCanvasElementForDropdownTesting = () => {
   const canvasElement = document.getElementsByClassName(

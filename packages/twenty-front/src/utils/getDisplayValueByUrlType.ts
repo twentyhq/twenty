@@ -1,5 +1,5 @@
+import { isDefined } from 'twenty-shared';
 import { LinkType } from 'twenty-ui';
-import { isDefined } from './isDefined';
 
 type getUrlDisplayValueByUrlTypeProps = {
   type: LinkType;

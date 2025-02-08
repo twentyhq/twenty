@@ -1,8 +1,7 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
 import {
   DeactivateWorkflowVersionMutation,
@@ -18,26 +17,30 @@ export const useDeactivateWorkflowVersion = () => {
     client: apolloClient,
   });
 
-  const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
-    useObjectMetadataItem({
+  const { findManyRecordsQuery: findManyWorkflowVersionsQuery } =
+    useFindManyRecordsQuery({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const deactivateWorkflowVersion = async (workflowVersionId: string) => {
+  const deactivateWorkflowVersion = async ({
+    workflowVersionId,
+    workflowId,
+  }: {
+    workflowVersionId: string;
+    workflowId: string;
+  }) => {
     await mutate({
       variables: {
         workflowVersionId,
       },
-      update: () => {
-        modifyRecordFromCache({
-          cache: apolloClient.cache,
-          recordId: workflowVersionId,
-          objectMetadataItem: objectMetadataItemWorkflowVersion,
-          fieldModifiers: {
-            status: () => 'DEACTIVATED',
+      refetchQueries: [
+        {
+          query: findManyWorkflowVersionsQuery,
+          variables: {
+            workflowId,
           },
-        });
-      },
+        },
+      ],
     });
   };
 

@@ -8,10 +8,11 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 
 import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { markLeafNodes } from '@/workflow/workflow-diagram/utils/markLeafNodes';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,
@@ -28,8 +29,8 @@ export const WorkflowDiagramEffect = ({
           workflowDiagramState,
         );
 
-        const nextWorkflowDiagram = addCreateStepNodes(
-          getWorkflowVersionDiagram(currentVersion),
+        const nextWorkflowDiagram = markLeafNodes(
+          addCreateStepNodes(getWorkflowVersionDiagram(currentVersion)),
         );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
@@ -47,13 +48,10 @@ export const WorkflowDiagramEffect = ({
         if (isDefined(lastCreatedStepId)) {
           mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
             (node) => {
-              if (node.id === lastCreatedStepId) {
-                return {
-                  ...node,
-                  selected: true,
-                };
-              }
-              return node;
+              return {
+                ...node,
+                selected: node.id === lastCreatedStepId,
+              };
             },
           );
 

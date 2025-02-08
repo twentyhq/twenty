@@ -1,3 +1,4 @@
+import { DeleteManyRecordsProps } from '@/object-record/hooks/useDeleteManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
@@ -75,13 +76,12 @@ describe('useDeleteMultipleRecordsAction', () => {
       result.current.ConfirmationModal?.props?.onConfirmClick();
     });
 
+    const expectedParams: DeleteManyRecordsProps = {
+      recordIdsToDelete: [peopleMock[0].id, peopleMock[1].id],
+    };
     await waitFor(() => {
       expect(resetTableRowSelectionMock).toHaveBeenCalled();
-
-      expect(deleteManyRecordsMock).toHaveBeenCalledWith([
-        peopleMock[0].id,
-        peopleMock[1].id,
-      ]);
+      expect(deleteManyRecordsMock).toHaveBeenCalledWith(expectedParams);
     });
   });
 });

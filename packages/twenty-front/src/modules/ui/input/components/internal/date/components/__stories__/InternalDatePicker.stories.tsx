@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 import { DateTimePicker } from '../InternalDatePicker';
 
 const meta: Meta<typeof DateTimePicker> = {

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -12,8 +14,10 @@ export function isStripeValidProductMetadata(
   }
   const hasBillingPlanKey = isValidBillingPlanKey(metadata.planKey);
   const hasPriceUsageBased = isValidPriceUsageBased(metadata.priceUsageBased);
+  const hasIsBaseProduct =
+    metadata.isBaseProduct === 'true' || metadata.isBaseProduct === 'false';
 
-  return hasBillingPlanKey && hasPriceUsageBased;
+  return hasBillingPlanKey && hasPriceUsageBased && hasIsBaseProduct;
 }
 
 const isValidBillingPlanKey = (planKey?: string) => {

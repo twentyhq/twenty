@@ -1,5 +1,3 @@
-import { WorkspaceActivationStatus } from 'twenty-shared';
-
 import {
   AuthException,
   AuthExceptionCode,
@@ -24,16 +22,6 @@ const assertIsDefinedOrThrow = (
   }
 };
 
-const assertIsActive = (
-  workspace: Workspace,
-  exceptionToThrow: CustomException,
-): asserts workspace is Workspace & {
-  activationStatus: WorkspaceActivationStatus.ACTIVE;
-} => {
-  if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
-  throw exceptionToThrow;
-};
-
 const isAuthEnabledOrThrow = (
   provider: WorkspaceAuthProvider,
   workspace: Workspace,
@@ -52,10 +40,8 @@ const isAuthEnabledOrThrow = (
 
 export const workspaceValidator: {
   assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
-  assertIsActive: typeof assertIsActive;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
 } = {
   assertIsDefinedOrThrow: assertIsDefinedOrThrow,
-  assertIsActive: assertIsActive,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
 };

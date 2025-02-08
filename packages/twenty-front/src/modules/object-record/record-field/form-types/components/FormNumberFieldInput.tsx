@@ -1,19 +1,20 @@
-import { FormFieldHint } from '@/object-record/record-field/form-types/components/FormFieldHint';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -21,9 +22,11 @@ const StyledInput = styled(TextInput)`
 
 type FormNumberFieldInputProps = {
   label?: string;
+  error?: string;
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
+  onBlur?: () => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
   readonly?: boolean;
@@ -31,9 +34,11 @@ type FormNumberFieldInputProps = {
 
 export const FormNumberFieldInput = ({
   label,
+  error,
   placeholder,
   defaultValue,
   onPersist,
+  onBlur,
   VariablePicker,
   hint,
   readonly,
@@ -105,6 +110,7 @@ export const FormNumberFieldInput = ({
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
@@ -117,7 +123,7 @@ export const FormNumberFieldInput = ({
               disabled={readonly}
             />
           ) : (
-            <VariableChip
+            <VariableChipStandalone
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
@@ -132,7 +138,8 @@ export const FormNumberFieldInput = ({
         ) : null}
       </FormFieldInputRowContainer>
 
-      {hint ? <FormFieldHint>{hint}</FormFieldHint> : null}
+      {hint ? <InputHint>{hint}</InputHint> : null}
+      {error && <InputErrorHelper>{error}</InputErrorHelper>}
     </FormFieldInputContainer>
   );
 };

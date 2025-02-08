@@ -10,7 +10,6 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -35,6 +34,7 @@ import {
 } from 'twenty-ui';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -104,19 +104,14 @@ export const SettingsObjects = () => {
     [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
 
-  const tableMetadata = useMemo(
-    () => GET_SETTINGS_OBJECT_TABLE_METADATA(t),
-    [t],
-  );
-
   const sortedActiveObjectSettingsItems = useSortedArray(
     activeObjectSettingsArray,
-    tableMetadata,
+    GET_SETTINGS_OBJECT_TABLE_METADATA,
   );
 
   const sortedInactiveObjectSettingsItems = useSortedArray(
     inactiveObjectSettingsArray,
-    tableMetadata,
+    GET_SETTINGS_OBJECT_TABLE_METADATA,
   );
 
   const filteredActiveObjectSettingsItems = useMemo(
@@ -143,7 +138,7 @@ export const SettingsObjects = () => {
     <SubMenuTopBarContainer
       title={t`Data model`}
       actionButton={
-        <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+        <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
           <Button
             Icon={IconPlus}
             title={t`Add object`}
@@ -155,7 +150,7 @@ export const SettingsObjects = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPagePath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>Objects</Trans> },
       ]}
@@ -175,15 +170,17 @@ export const SettingsObjects = () => {
 
             <Table>
               <StyledObjectTableRow>
-                {tableMetadata.fields.map(
+                {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
                   (settingsObjectsTableMetadataField) => (
                     <SortableTableHeader
                       key={settingsObjectsTableMetadataField.fieldName}
                       fieldName={settingsObjectsTableMetadataField.fieldName}
-                      label={settingsObjectsTableMetadataField.fieldLabel}
-                      tableId={tableMetadata.tableId}
+                      label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                      tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
-                      initialSort={tableMetadata.initialSort}
+                      initialSort={
+                        GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
+                      }
                     />
                   ),
                 )}
@@ -205,9 +202,10 @@ export const SettingsObjects = () => {
                             stroke={theme.icon.stroke.sm}
                           />
                         }
-                        link={`/settings/objects/${
-                          objectSettingsItem.objectMetadataItem.namePlural
-                        }`}
+                        link={getSettingsPath(SettingsPath.ObjectDetail, {
+                          objectNamePlural:
+                            objectSettingsItem.objectMetadataItem.namePlural,
+                        })}
                       />
                     ),
                   )}

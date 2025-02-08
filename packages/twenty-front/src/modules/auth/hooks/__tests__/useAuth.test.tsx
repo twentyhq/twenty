@@ -42,13 +42,13 @@ describe('useAuth', () => {
     jest.clearAllMocks();
   });
 
-  it('should return challenge object', async () => {
+  it('should return login token object', async () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      expect(await result.current.challenge(email, password)).toStrictEqual(
-        results.challenge,
-      );
+      expect(
+        await result.current.getLoginTokenFromCredentials(email, password),
+      ).toStrictEqual(results.getLoginTokenFromCredentials);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.verify(token);
+      await result.current.getAuthTokensFromLoginToken(token);
     });
 
     expect(mocks[1].result).toHaveBeenCalled();
@@ -124,13 +124,7 @@ describe('useAuth', () => {
     const { state } = result.current;
 
     expect(state.icons).toEqual({});
-    expect(state.workspaceAuthProviders).toEqual({
-      google: true,
-      microsoft: false,
-      magicLink: false,
-      password: true,
-      sso: [],
-    });
+    expect(state.workspaceAuthProviders).toEqual(null);
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({

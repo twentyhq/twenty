@@ -11,8 +11,10 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconFolderPlus, LightIconButton, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconFolderPlus, LightIconButton } from 'twenty-ui';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -23,6 +25,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     useRecoilState(isFavoriteFolderCreatingState);
 
   const loading = useIsPrefetchLoading();
+
+  const { t } = useLingui();
 
   const {
     toggleNavigationSection,
@@ -52,7 +56,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     <NavigationDrawerSection>
       <NavigationDrawerAnimatedCollapseWrapper>
         <NavigationDrawerSectionTitle
-          label="Favorites"
+          label={t`Favorites`}
           onClick={toggleNavigationSection}
           rightIcon={
             <LightIconButton

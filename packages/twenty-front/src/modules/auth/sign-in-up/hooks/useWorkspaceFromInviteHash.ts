@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -9,12 +9,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 
 import { AppPath } from '@/types/AppPath';
+import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
+  const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
@@ -23,6 +24,7 @@ export const useWorkspaceFromInviteHash = () => {
   );
   const { data: workspaceFromInviteHash, loading } =
     useGetWorkspaceFromInviteHashQuery({
+      skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {
         enqueueSnackBar(error.message, {

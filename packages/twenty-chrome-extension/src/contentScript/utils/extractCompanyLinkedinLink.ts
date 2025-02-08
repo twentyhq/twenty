@@ -1,6 +1,6 @@
 // Extract "https://www.linkedin.com/company/twenty/" from any of the following urls, which the user can visit while on the company page.
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 // "https://www.linkedin.com/company/twenty/" "https://www.linkedin.com/company/twenty/about/" "https://www.linkedin.com/company/twenty/people/".
 const extractCompanyLinkedinLink = (activeTabUrl: string) => {

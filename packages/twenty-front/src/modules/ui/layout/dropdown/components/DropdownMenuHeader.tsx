@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ComponentProps, MouseEvent } from 'react';
-import { IconComponent, isDefined, LightIconButton } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { IconComponent, LightIconButton } from 'twenty-ui';
 
 const StyledHeader = styled.li`
   align-items: center;

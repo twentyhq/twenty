@@ -12,9 +12,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { capitalize } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const useRecordShowPage = (
   propsObjectNameSingular: string,
@@ -81,7 +80,7 @@ export const useRecordShowPage = (
   const labelIdentifierFieldValue =
     record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
   const pageName =
-    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FULL_NAME
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,

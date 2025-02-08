@@ -17,7 +17,7 @@ export const useSettingsIntegrationCategories =
     )?.isActive;
 
     const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IsPostgreSqlIntegrationEnabled,
+      FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
     );
     const isPostgresqlIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'postgresql',

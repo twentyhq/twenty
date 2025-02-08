@@ -8,6 +8,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       emails {
@@ -114,6 +115,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           source
           workspaceMemberId
           name
+          context
         }
         deletedAt
         domainName {
@@ -152,6 +154,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         source
         workspaceMemberId
         name
+        context
       }
       deletedAt
       emails {
@@ -249,6 +252,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
               source
               workspaceMemberId
               name
+              context
             }
             deletedAt
             id

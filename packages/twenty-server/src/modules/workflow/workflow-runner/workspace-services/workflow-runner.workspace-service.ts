@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -12,10 +13,12 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   async run(
@@ -24,6 +27,14 @@ export class WorkflowRunnerWorkspaceService {
     payload: object,
     source: ActorMetadata,
   ) {
+    const canFeatureBeUsed =
+      await this.billingUsageService.canFeatureBeUsed(workspaceId);
+
+    if (!canFeatureBeUsed) {
+      this.logger.log(
+        'Cannot execute billed function, there is no subscription for this workspace',
+      );
+    }
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun(
         workflowVersionId,

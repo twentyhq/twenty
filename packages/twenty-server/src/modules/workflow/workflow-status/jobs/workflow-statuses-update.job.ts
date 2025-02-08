@@ -1,24 +1,25 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
-import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
-import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { isDefined } from 'src/utils/is-defined';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
+import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
+import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -161,26 +162,30 @@ export class WorkflowStatusesUpdateJob {
         const newStep = { ...step };
 
         if (step.type === WorkflowActionType.CODE) {
-          let serverlessFunction;
-
           try {
-            serverlessFunction =
-              await this.serverlessFunctionService.publishOneServerlessFunction(
-                step.settings.input.serverlessFunctionId,
-                workspaceId,
-              );
+            await this.serverlessFunctionService.publishOneServerlessFunction(
+              step.settings.input.serverlessFunctionId,
+              workspaceId,
+            );
           } catch (e) {
-            serverlessFunction = null;
+            // publishOneServerlessFunction throws if no change have been
+            // applied between draft and lastPublished version.
+            // If no change have been applied, we just use the same
+            // serverless function version
           }
 
-          if (serverlessFunction) {
-            const newStepSettings = { ...step.settings };
+          const serverlessFunction =
+            await this.serverlessFunctionService.findOneOrFail({
+              id: step.settings.input.serverlessFunctionId,
+              workspaceId,
+            });
 
-            newStepSettings.input.serverlessFunctionVersion =
-              serverlessFunction.latestVersion;
+          const newStepSettings = { ...step.settings };
 
-            newStep.settings = newStepSettings;
-          }
+          newStepSettings.input.serverlessFunctionVersion =
+            serverlessFunction.latestVersion;
+
+          newStep.settings = newStepSettings;
         }
         newSteps.push(newStep);
       }

@@ -7,13 +7,18 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-shared';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 type FormTextFieldInputProps = {
   label?: string;
+  error?: string;
+  hint?: string;
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: string) => void;
+  onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
@@ -21,9 +26,12 @@ type FormTextFieldInputProps = {
 
 export const FormTextFieldInput = ({
   label,
+  error,
+  hint,
   defaultValue,
   placeholder,
   onPersist,
+  onBlur,
   multiline,
   readonly,
   VariablePicker,
@@ -65,6 +73,7 @@ export const FormTextFieldInput = ({
         <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
           multiline={multiline}
+          onBlur={onBlur}
         >
           <TextVariableEditor
             editor={editor}
@@ -81,6 +90,8 @@ export const FormTextFieldInput = ({
           />
         ) : null}
       </FormFieldInputRowContainer>
+      {hint && <InputHint>{hint}</InputHint>}
+      {error && <InputErrorHelper>{error}</InputErrorHelper>}
     </FormFieldInputContainer>
   );
 };

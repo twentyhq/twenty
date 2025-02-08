@@ -10,17 +10,17 @@ import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-sc
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
-import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
   RelationDirection,
   deduceRelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
-import { RelationTypeFactory } from './relation-type.factory';
 import { ArgsFactory } from './args.factory';
+import { RelationTypeFactory } from './relation-type.factory';
 
 export enum ObjectTypeDefinitionKind {
   Connection = 'Connection',

@@ -21,14 +21,14 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      MessagingMessagesImportCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: MessagingMessagesImportCronJob.name,
+      data: undefined,
+      options: {
         repeat: {
           pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
         },
       },
-    );
+    });
   }
 }

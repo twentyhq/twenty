@@ -1,16 +1,15 @@
 /* @license Enterprise */
 
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useNavigate } from 'react-router-dom';
+import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useRecoilValue } from 'recoil';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
 
@@ -28,9 +27,7 @@ export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
       )}
       hasFooter
       footerButtonLabel="Add SSO Identity Provider"
-      onFooterButtonClick={() =>
-        navigate(getSettingsPagePath(SettingsPath.NewSSOIdentityProvider))
-      }
+      onFooterButtonClick={() => navigate(SettingsPath.NewSSOIdentityProvider)}
     />
   );
 };

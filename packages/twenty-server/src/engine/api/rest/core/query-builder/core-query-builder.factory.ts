@@ -21,7 +21,7 @@ import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -60,7 +60,7 @@ export class CoreQueryBuilderFactory {
       throw new BadRequestException(
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
-            subdomain: workspace.subdomain,
+            workspace,
             pathname: '/settings/developers',
           })
           .toString()}`,

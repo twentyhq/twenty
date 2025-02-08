@@ -4,7 +4,11 @@ import { Nullable } from 'twenty-ui';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import {
+  SubscriptionInterval,
+  SubscriptionStatus,
+  WorkspaceActivationStatus,
+} from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -17,12 +21,27 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      hasValidEntrepriseKey: false,
+      hasValidEnterpriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
+      workspaceUrls: {
+        subdomainUrl: 'https://twenty.twenty.com',
+        customUrl: 'https://my-custom-domain.com',
+      },
+      currentBillingSubscription: {
+        id: '1',
+        interval: SubscriptionInterval.Month,
+        status: SubscriptionStatus.Active,
+      },
+      billingSubscriptions: [
+        {
+          id: '1',
+          status: SubscriptionStatus.Active,
+        },
+      ],
     });
   },
 });
@@ -39,10 +58,8 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
     );
 
     expect(Array.isArray(result.current.columnDefinitions)).toBe(true);
-    expect(Array.isArray(result.current.filterDefinitions)).toBe(true);
     expect(Array.isArray(result.current.sortDefinitions)).toBe(true);
     expect(result.current.columnDefinitions.length).toBe(0);
-    expect(result.current.filterDefinitions.length).toBe(0);
     expect(result.current.sortDefinitions.length).toBe(0);
   });
 
@@ -61,11 +78,9 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       },
     );
 
-    const { columnDefinitions, filterDefinitions, sortDefinitions } =
-      result.current;
+    const { columnDefinitions, sortDefinitions } = result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(filterDefinitions.length).toBe(17);
     expect(sortDefinitions.length).toBe(14);
   });
 });

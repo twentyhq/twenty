@@ -42,7 +42,7 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text="No result" />
+          <MenuItem text="No results" />
         ) : (
           <>
             {selectedCurrency && (

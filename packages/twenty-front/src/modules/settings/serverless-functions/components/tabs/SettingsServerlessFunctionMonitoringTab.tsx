@@ -2,19 +2,18 @@ import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivity
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
 import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsServerlessFunctionMonitoringTab = ({
   serverlessFunctionId,
 }: {
   serverlessFunctionId: string;
 }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigateSettings();
 
   useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
@@ -23,7 +22,7 @@ export const SettingsServerlessFunctionMonitoringTab = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+      navigate(SettingsPath.ServerlessFunctions);
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionSettingsTab,
   );

@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-02 20:44+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pt-BR\n"
+
+#: src/emails/send-invite-link.email.tsx:57
+msgid "Accept invite"
+msgstr "Aceitar convite"
+
+#: src/emails/clean-suspended-workspace.email.tsx:33
+msgid "All data in this workspace has been permanently deleted."
+msgstr "Todos os dados deste workspace foram excluídos permanentemente."
+
+#: src/emails/send-email-verification-link.email.tsx:22
+msgid "Confirm your email address"
+msgstr "Confirme seu endereço de e-mail"
+
+#: src/emails/password-update-notify.email.tsx:46
+msgid "Connect to Twenty"
+msgstr "Conecte-se ao Twenty"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Dear {userName}"
+msgstr "Caro {userName}"
+
+#: src/emails/password-update-notify.email.tsx:24
+msgid "Hello"
+msgstr "Olá"
+
+#: src/emails/password-update-notify.email.tsx:40
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Se você não iniciou essa alteração, entre em contato com o proprietário do workspace imediatamente."
+
+#: src/emails/warn-suspended-workspace.email.tsx:46
+msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "Se quiser continuar usando o Twenty, atualize sua assinatura nos próximos {remainingDays} {dayOrDays}."
+
+#: src/emails/clean-suspended-workspace.email.tsx:36
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Se quiser usar o Twenty novamente, você pode criar um novo workspace."
+
+#: src/emails/warn-suspended-workspace.email.tsx:34
+msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+msgstr "Parece que seu workspace <0>{workspaceDisplayName}</0> foi suspenso por {daysSinceInactive} dias."
+
+#: src/emails/send-invite-link.email.tsx:42
+msgid "Join your team on Twenty"
+msgstr "Junte-se à sua equipe no Twenty"
+
+#: src/emails/password-update-notify.email.tsx:29
+msgid "Password updated"
+msgstr "Senha atualizada"
+
+#: src/emails/password-reset-link.email.tsx:24
+msgid "Reset"
+msgstr "Redefinir"
+
+#: src/emails/password-reset-link.email.tsx:23
+msgid "Reset your password 🗝"
+msgstr "Redefina sua senha 🗝"
+
+#: src/emails/send-email-verification-link.email.tsx:27
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
+msgstr "Obrigado por se registrar no Twenty! Antes de começarmos, precisamos confirmar que é você. Clique acima para verificar seu endereço de e-mail."
+
+#: src/emails/warn-suspended-workspace.email.tsx:40
+msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+msgstr "O workspace será desativado em {remainingDays} {dayOrDays}, e todos os seus dados serão excluídos."
+
+#: src/emails/password-update-notify.email.tsx:34
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Esta é uma confirmação de que a senha da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
+
+#: src/emails/password-reset-link.email.tsx:26
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Este link é válido apenas para os próximos {duration}. Se o link não funcionar, você pode usar o link de verificação de login diretamente:"
+
+#: src/emails/warn-suspended-workspace.email.tsx:53
+msgid "Update your subscription"
+msgstr "Atualize sua assinatura"
+
+#: src/emails/send-email-verification-link.email.tsx:23
+msgid "Verify Email"
+msgstr "Verificar e-mail"
+
+#: src/emails/clean-suspended-workspace.email.tsx:27
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+msgstr "Seu workspace <0>{workspaceDisplayName}</0> foi excluído porque sua assinatura expirou há {inactiveDaysBeforeDelete} dias."
+
+#: src/emails/send-invite-link.email.tsx:50
+msgid "has invited you to join a workspace called "
+msgstr "convidou você para participar de um workspace chamado "

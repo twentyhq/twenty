@@ -36,6 +36,6 @@ export const Default: Story = {
     await canvas.findByText('Search');
     await canvas.findByText('Settings');
     await canvas.findByText('Linkedin');
-    await canvas.findByText('All');
+    await canvas.findByText('All companies');
   },
 };

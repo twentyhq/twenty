@@ -1,13 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -175,7 +174,7 @@ export const ImageInput = ({
           />
         </StyledButtonContainer>
         <StyledText>
-          We support your square PNGs, JPEGs and GIFs under 10MB
+          <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>
         </StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>

@@ -25,7 +25,7 @@ export const formatRelationMetadataInput = (
   // => Transform into ONE_TO_MANY and invert "from" and "to" data.
   const isManyToOne = input.relationType === 'MANY_TO_ONE';
   const relationType = isManyToOne
-    ? RelationDefinitionType.OneToMany
+    ? RelationDefinitionType.ONE_TO_MANY
     : (input.relationType as RelationDefinitionType);
   const { field: fromField, objectMetadataId: fromObjectMetadataId } =
     isManyToOne ? input.connect : input;

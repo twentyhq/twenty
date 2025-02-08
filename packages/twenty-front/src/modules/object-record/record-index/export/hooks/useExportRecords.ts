@@ -11,9 +11,9 @@ import {
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { saveAs } from 'file-saver';
+import { isDefined } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type GenerateExportOptions = {
@@ -36,12 +36,12 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationDefinitionType.ManyToOne,
+      col.metadata.relationType === RelationDefinitionType.MANY_TO_ONE,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {
     fieldMetadataId: '',
-    type: FieldMetadataType.Uuid,
+    type: FieldMetadataType.UUID,
     iconName: '',
     label: `Id`,
     metadata: {

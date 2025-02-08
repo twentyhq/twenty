@@ -3,16 +3,26 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
-import {
-  Strategy,
-  StrategyOptions,
-  StrategyVerifyCallbackReq,
-} from 'openid-client';
+import { Request } from 'express';
+import { Strategy, StrategyOptions, TokenSet } from 'openid-client';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+
+export type OIDCRequest = Omit<
+  Request,
+  'user' | 'workspace' | 'workspaceMetadataVersion'
+> & {
+  user: {
+    identityProviderId: string;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    workspaceInviteHash?: string;
+  };
+};
 
 @Injectable()
 export class OIDCAuthStrategy extends PassportStrategy(
@@ -35,52 +45,72 @@ export class OIDCAuthStrategy extends PassportStrategy(
     });
   }
 
-  async authenticate(req: any, options: any) {
+  async authenticate(req: Request, options: any) {
     return super.authenticate(req, {
       ...options,
       state: JSON.stringify({
         identityProviderId: req.params.identityProviderId,
+        ...(req.query.workspaceInviteHash
+          ? { workspaceInviteHash: req.query.workspaceInviteHash }
+          : {}),
       }),
     });
   }
 
-  validate: StrategyVerifyCallbackReq<{
+  private extractState(req: Request): {
     identityProviderId: string;
-    user: {
-      email: string;
-      firstName?: string | null;
-      lastName?: string | null;
-    };
-  }> = async (req, tokenset, done) => {
+    workspaceInviteHash?: string;
+  } {
     try {
       const state = JSON.parse(
-        'query' in req &&
-          req.query &&
-          typeof req.query === 'object' &&
-          'state' in req.query &&
-          req.query.state &&
-          typeof req.query.state === 'string'
+        req.query.state && typeof req.query.state === 'string'
           ? req.query.state
           : '{}',
       );
 
+      if (!state.identityProviderId) {
+        throw new Error();
+      }
+
+      return {
+        identityProviderId: state.identityProviderId,
+        workspaceInviteHash: state.workspaceInviteHash,
+      };
+    } catch (err) {
+      throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
+    }
+  }
+
+  async validate(
+    req: Request,
+    tokenset: TokenSet,
+    done: (err: any, user?: OIDCRequest['user']) => void,
+  ) {
+    try {
+      const state = this.extractState(req);
+
       const userinfo = await this.client.userinfo(tokenset);
 
-      if (!userinfo || !userinfo.email) {
+      const email = userinfo.email ?? userinfo.upn;
+
+      if (!email || typeof email !== 'string') {
         return done(
-          new AuthException('Email not found', AuthExceptionCode.INVALID_DATA),
+          new AuthException(
+            'Email not found in identity provider payload',
+            AuthExceptionCode.INVALID_DATA,
+          ),
         );
       }
 
-      const user = {
-        email: userinfo.email,
+      done(null, {
+        email,
+        workspaceInviteHash: state.workspaceInviteHash,
+        identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
-      };
-
-      done(null, { user, identityProviderId: state.identityProviderId });
+      });
     } catch (err) {
       done(err);
     }
-  };
+  }
 }

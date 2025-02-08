@@ -4,7 +4,7 @@ import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-interna
 
 import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-shared';
 
 type CreateComponentStateV2Type<ValueType> = {
   key: string;

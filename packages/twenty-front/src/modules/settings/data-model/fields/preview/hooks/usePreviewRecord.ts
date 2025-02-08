@@ -4,8 +4,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
+import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { pascalCase } from '~/utils/string/pascalCase';
 
 type UsePreviewRecordParams = {
@@ -48,7 +48,7 @@ export const usePreviewRecord = ({
   }
 
   const fieldPreviewValue =
-    labelIdentifierFieldMetadataItem.type === FieldMetadataType.Text
+    labelIdentifierFieldMetadataItem.type === FieldMetadataType.TEXT
       ? objectMetadataItem.labelSingular
       : getFieldPreviewValue({
           fieldMetadataItem: labelIdentifierFieldMetadataItem,

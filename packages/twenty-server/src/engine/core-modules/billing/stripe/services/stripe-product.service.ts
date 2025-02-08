@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
@@ -23,7 +25,10 @@ export class StripeProductService {
   }
 
   async getAllProducts() {
-    const products = await this.stripe.products.list();
+    const products = await this.stripe.products.list({
+      active: true,
+      limit: 100,
+    });
 
     return products.data;
   }

@@ -21,12 +21,12 @@ export class CalendarEventsImportCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
-      CalendarEventsImportCronJob.name,
-      undefined,
-      {
+    await this.messageQueueService.addCron<undefined>({
+      jobName: CalendarEventsImportCronJob.name,
+      data: undefined,
+      options: {
         repeat: { pattern: CALENDAR_EVENTS_IMPORT_CRON_PATTERN },
       },
-    );
+    });
   }
 }

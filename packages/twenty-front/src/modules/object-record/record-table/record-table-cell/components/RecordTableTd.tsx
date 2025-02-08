@@ -3,12 +3,9 @@ import { styled } from '@linaria/react';
 import { ReactNode, useContext } from 'react';
 import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 
-import { isDefined } from '~/utils/isDefined';
-
 export const RECORD_TABLE_TD_WIDTH = '32px';
 
 const StyledTd = styled.td<{
-  zIndex?: number;
   backgroundColor: string;
   borderColor: string;
   isDragging?: boolean;
@@ -33,7 +30,6 @@ const StyledTd = styled.td<{
   text-align: left;
 
   background: ${({ backgroundColor }) => backgroundColor};
-  z-index: ${({ zIndex }) => (isDefined(zIndex) ? zIndex : 'auto')};
   ${({ isDragging }) =>
     isDragging
       ? `
@@ -53,7 +49,6 @@ const StyledTd = styled.td<{
 
 export const RecordTableTd = ({
   children,
-  zIndex,
   isSelected,
   isDragging,
   sticky,
@@ -67,7 +62,6 @@ export const RecordTableTd = ({
 }: {
   className?: string;
   children?: ReactNode;
-  zIndex?: number;
   isSelected?: boolean;
   isDragging?: boolean;
   sticky?: boolean;
@@ -90,7 +84,6 @@ export const RecordTableTd = ({
   return (
     <StyledTd
       isDragging={isDragging}
-      zIndex={zIndex}
       backgroundColor={tdBackgroundColor}
       borderColor={borderColor}
       fontColor={fontColor}

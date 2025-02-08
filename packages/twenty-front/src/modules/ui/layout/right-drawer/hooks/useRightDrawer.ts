@@ -4,10 +4,11 @@ import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isR
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/utils/mapRightDrawerPageToCommandMenuPage';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared';
+import { IconComponent } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -23,17 +24,27 @@ export const useRightDrawer = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  const { openCommandMenu } = useCommandMenu();
+  const { navigateCommandMenu } = useCommandMenu();
 
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
-      (rightDrawerPage: RightDrawerPages) => {
+      (
+        rightDrawerPage: RightDrawerPages,
+        commandMenuPageInfo: {
+          title: string;
+          Icon: IconComponent;
+        },
+      ) => {
         if (isCommandMenuV2Enabled) {
           const commandMenuPage =
             mapRightDrawerPageToCommandMenuPage(rightDrawerPage);
 
-          set(commandMenuPageState, commandMenuPage);
-          openCommandMenu();
+          navigateCommandMenu({
+            page: commandMenuPage,
+            pageTitle: commandMenuPageInfo.title,
+            pageIcon: commandMenuPageInfo.Icon,
+          });
+
           return;
         }
 
@@ -41,15 +52,17 @@ export const useRightDrawer = () => {
         set(isRightDrawerOpenState, true);
         set(isRightDrawerMinimizedState, false);
       },
-    [isCommandMenuV2Enabled, openCommandMenu],
+    [isCommandMenuV2Enabled, navigateCommandMenu],
   );
 
   const closeRightDrawer = useRecoilCallback(
     ({ set }) =>
-      () => {
+      (args?: { emitCloseEvent?: boolean }) => {
         set(isRightDrawerOpenState, false);
         set(isRightDrawerMinimizedState, false);
-        emitRightDrawerCloseEvent();
+        if (isDefined(args?.emitCloseEvent) && args?.emitCloseEvent) {
+          emitRightDrawerCloseEvent();
+        }
       },
     [],
   );

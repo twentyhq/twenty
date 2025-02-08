@@ -104,9 +104,9 @@ export const SelectEmptyCountryCode: Story = {
   },
 };
 
-export const WithVariables: Story = {
+export const WithVariablesAsDefaultValues: Story = {
   args: {
-    label: 'Enter phone...',
+    label: 'Phone',
     defaultValue: {
       primaryPhoneCountryCode: '{{a.countryCode}}',
       primaryPhoneNumber: '{{a.phoneNumber}}',
@@ -124,7 +124,7 @@ export const WithVariables: Story = {
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
-    expect(variablePickers).toHaveLength(2);
+    expect(variablePickers).toHaveLength(1);
 
     for (const variablePicker of variablePickers) {
       expect(variablePicker).toBeVisible();
@@ -132,9 +132,52 @@ export const WithVariables: Story = {
   },
 };
 
+export const SelectingVariables: Story = {
+  args: {
+    label: 'Phone',
+    VariablePicker: ({ onVariableSelect }) => {
+      return (
+        <button
+          onClick={() => {
+            onVariableSelect('{{test}}');
+          }}
+        >
+          Add variable
+        </button>
+      );
+    },
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const countryCodeDefaultValue = await canvas.findByText('No country');
+    expect(countryCodeDefaultValue).toBeVisible();
+
+    const phoneNumberDefaultValue =
+      await canvas.findByPlaceholderText('Enter phone number');
+    expect(phoneNumberDefaultValue).toHaveDisplayValue('');
+
+    const phoneNumberVariablePicker = await canvas.findByText('Add variable');
+
+    await userEvent.click(phoneNumberVariablePicker);
+
+    const phoneNumberVariable = await canvas.findByText('test');
+    expect(phoneNumberVariable).toBeVisible();
+
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith({
+        primaryPhoneNumber: '{{test}}',
+        primaryPhoneCountryCode: '',
+        primaryPhoneCallingCode: '',
+      });
+    });
+  },
+};
+
 export const Disabled: Story = {
   args: {
-    label: 'Enter phone...',
+    label: 'Phone',
     readonly: true,
     VariablePicker: () => <div>VariablePicker</div>,
   },

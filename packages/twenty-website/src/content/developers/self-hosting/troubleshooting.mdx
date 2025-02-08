@@ -72,7 +72,9 @@ npx nx worker twenty-server
 
 #### Cannot connect my Microsoft 365 account
 
-Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).  
+
+If you have an error code `AADSTS50020`, it probably means that you are using a personal Microsoft account. This is not supported yet. More info [here](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist) 
 
 #### While running `yarn` warnings appear in console
 

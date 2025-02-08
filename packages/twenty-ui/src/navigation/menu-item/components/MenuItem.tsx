@@ -79,6 +79,7 @@ export const MenuItem = ({
           LeftIcon={LeftIcon ?? undefined}
           text={text}
           contextualText={contextualText}
+          disabled={disabled}
         />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
@@ -89,7 +90,7 @@ export const MenuItem = ({
       {RightIcon && (
         <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
-      {hasSubMenu && (
+      {hasSubMenu && !disabled && (
         <IconChevronRight
           size={theme.icon.size.sm}
           color={theme.font.color.tertiary}

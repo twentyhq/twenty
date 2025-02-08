@@ -47,7 +47,7 @@ export const metadataModuleFactory = async (
     }),
   };
 
-  if (environmentService.get('DEBUG_MODE')) {
+  if (environmentService.get('NODE_ENV') === 'development') {
     config.renderGraphiQL = () => {
       return renderApolloPlayground({ path: 'metadata' });
     };

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -8,7 +8,6 @@ import { ObjectIndexes } from '@/settings/data-model/object-details/components/t
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -17,7 +16,10 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { isDefined } from 'twenty-shared';
 import {
   Button,
   H3Title,
@@ -28,11 +30,12 @@ import {
   IconSettings,
   MAIN_COLORS,
   UndecoratedLink,
-  isDefined,
 } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -51,7 +54,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 export const SettingsObjectDetailPage = () => {
-  const navigate = useNavigate();
+  const navigateApp = useNavigateApp();
 
   const { objectNamePlural = '' } = useParams();
   const { findActiveObjectMetadataItemByNamePlural } =
@@ -76,10 +79,10 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDefined(objectMetadataItem)) navigate(AppPath.NotFound);
+    if (!isDefined(objectMetadataItem)) navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
-    navigate,
+    navigateApp,
     objectNamePlural,
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
@@ -90,19 +93,19 @@ export const SettingsObjectDetailPage = () => {
   const tabs = [
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
-      title: 'Fields',
+      title: t`Fields`,
       Icon: IconListDetails,
       hide: false,
     },
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
-      title: 'Settings',
+      title: t`Settings`,
       Icon: IconSettings,
       hide: false,
     },
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
-      title: 'Indexes',
+      title: t`Indexes`,
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
       pill: (
@@ -142,9 +145,9 @@ export const SettingsObjectDetailPage = () => {
         links={[
           {
             children: 'Workspace',
-            href: getSettingsPagePath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: 'Objects', href: '/settings/objects' },
+          { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
           {
             children: objectMetadataItem.labelPlural,
           },
