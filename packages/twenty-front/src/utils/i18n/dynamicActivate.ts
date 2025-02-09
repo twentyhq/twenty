@@ -3,6 +3,7 @@ import { APP_LOCALES } from 'twenty-shared';
 
 export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
   if (!Object.values(APP_LOCALES).includes(locale)) {
+    // eslint-disable-next-line no-console
     console.warn(`Invalid locale "${locale}", defaulting to "en"`);
     locale = 'en';
   }

@@ -7,6 +7,7 @@ import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { OnboardingStatus } from '~/generated/graphql';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -17,7 +18,7 @@ import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/CreateProfile',
   component: CreateProfile,
-  decorators: [PageDecorator],
+  decorators: [I18nFrontDecorator, PageDecorator],
   args: { routePath: AppPath.CreateProfile },
   parameters: {
     msw: {
