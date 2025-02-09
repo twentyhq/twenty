@@ -1,11 +1,35 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-02-03 20:59+0100\n"
+"POT-Creation-Date: 2025-01-30 18:16+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: it-IT\n"
+"Language: it\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-02-09 12:39\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
+"X-Crowdin-File-ID: 29\n"
+
+#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
+msgid "{aggregateLabel} of {fieldLabel}"
+msgstr "{aggregateLabel} di {fieldLabel}"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
+msgid "{apiKeyName} API Key"
+msgstr "Chiave API {apiKeyName}"
+
+#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
+#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
+msgid "{name}"
+msgstr "{name}"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -23,23 +47,9 @@ msgstr "2. Configura il campo"
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
-#: src/pages/onboarding/ChooseYourPlan.tsx:91
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
-msgid "API & Webhooks"
-msgstr "API e Webhook"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
-msgid "API Key"
-msgstr "Chiave API"
-
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
-msgid "API Name"
-msgstr "Nome API"
-
-#: src/pages/settings/developers/SettingsDevelopers.tsx:49
-msgid "API keys"
-msgstr "Chiavi API"
+#: src/pages/onboarding/CreateWorkspace.tsx:116
+msgid "A shared environment where you will be able to manage your customer relations with your team."
+msgstr ""
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
@@ -66,11 +76,11 @@ msgstr "Account"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:66
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
 msgid "Activate"
 msgstr "Attiva"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:65
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
 msgid "Activate Workflow"
 msgstr "Attiva workflow"
 
@@ -91,13 +101,13 @@ msgstr "Aggiungi"
 msgid "Add Field"
 msgstr "Aggiungi campo"
 
-#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
-msgid "Add SSO Identity Provider"
-msgstr "Aggiungi provider di identità SSO"
-
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
 msgstr "Aggiungi oggetto"
+
+#: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
+msgid "Add SSO Identity Provider"
+msgstr "Aggiungi provider di identità SSO"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
@@ -109,10 +119,10 @@ msgstr "Aggiungi alla lista di blocco"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:106
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:35
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:36
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:192
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:193
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:68
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:194
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:195
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:69
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
 msgid "Add to favorites"
 msgstr "Aggiungi ai preferiti"
@@ -133,7 +143,7 @@ msgstr "Tutti"
 msgid "All ({relationRecordsCount})"
 msgstr "Tutti ({relationRecordsCount})"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:68
+#: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "All roles"
 msgstr "Tutti i ruoli"
 
@@ -161,6 +171,28 @@ msgstr "Si è verificato un errore durante l'aggiornamento della password"
 msgid "An optional description"
 msgstr "Descrizione opzionale"
 
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
+msgid "and"
+msgstr "e"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:91
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
+msgid "API & Webhooks"
+msgstr "API e Webhook"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
+msgid "API Key"
+msgstr "Chiave API"
+
+#: src/pages/settings/developers/SettingsDevelopers.tsx:49
+msgid "API keys"
+msgstr "Chiavi API"
+
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
+msgid "API Name"
+msgstr "Nome API"
+
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
 msgstr "Aspetto"
@@ -174,13 +206,21 @@ msgstr "Sei sicuro di voler cambiare l'intervallo di fatturazione?"
 msgid "Ascending"
 msgstr "Ascendente"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:69
+#: src/pages/settings/roles/SettingsRoles.tsx:120
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni membro"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:36
+#: src/pages/settings/roles/components/RoleAssignment.tsx:14
+msgid "Assigned members"
+msgstr ""
+
+#: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
 msgstr "Assegnato a"
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:64
+msgid "Assignment"
+msgstr ""
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
@@ -240,33 +280,33 @@ msgid "Calendars"
 msgstr "Calendari"
 
 #: src/pages/auth/Authorize.tsx:124
-#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:151
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/pages/settings/SettingsBilling.tsx:176
-msgid "Cancel Plan"
-msgstr "Annulla piano"
-
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
 msgstr "Annulla in qualsiasi momento"
 
+#: src/pages/settings/SettingsBilling.tsx:176
+msgid "Cancel Plan"
+msgstr "Annulla piano"
+
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
 msgstr "Annulla l'abbonamento"
+
+#: src/pages/settings/SettingsBilling.tsx:193
+msgid "Change {to}"
+msgstr "Cambia {to}"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
 #: src/modules/settings/profile/components/ChangePassword.tsx:58
 msgid "Change Password"
 msgstr "Cambia password"
-
-#: src/pages/settings/SettingsBilling.tsx:193
-msgid "Change {to}"
-msgstr "Cambia {to}"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
@@ -280,13 +320,13 @@ msgstr "Cinese tradizionale"
 msgid "Choose an object"
 msgstr "Scegli un oggetto"
 
-#: src/pages/onboarding/ChooseYourPlan.tsx:147
-msgid "Choose your Trial"
-msgstr "Scegli la tua prova"
-
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
 msgstr "Scegli il tuo fornitore"
+
+#: src/pages/onboarding/ChooseYourPlan.tsx:147
+msgid "Choose your Trial"
+msgstr "Scegli la tua prova"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
@@ -312,11 +352,11 @@ msgstr "Configura le impostazioni di e-mail e calendario."
 msgid "Connect a new account to your workspace"
 msgstr "Collega un nuovo account al tuo workspace"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:42
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
 msgid "Connect with Google"
 msgstr "Connettiti con Google"
 
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:49
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
 msgid "Connect with Microsoft"
 msgstr "Connettiti con Microsoft"
 
@@ -329,12 +369,14 @@ msgid "Context"
 msgstr "Contesto"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
+#: src/pages/onboarding/CreateWorkspace.tsx:154
+#: src/pages/onboarding/CreateProfile.tsx:221
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:86
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
 msgid "Continue"
 msgstr "Continua"
 
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:69
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
 msgid "Continue with Email"
 msgstr "Continua con l'e-mail"
 
@@ -379,22 +421,34 @@ msgstr "Conta non vuoti"
 msgid "Count unique values"
 msgstr "Conta valori unici"
 
+#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
+msgid "Create a workflow and return here to view its versions"
+msgstr "Crea un workflow e torna qui per visualizzarne le versioni"
+
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
 msgstr "Crea chiave API"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
+msgid "Create new record"
+msgstr "Crea nuovo record"
+
+#: src/pages/onboarding/CreateProfile.tsx:154
+msgid "Create profile"
+msgstr ""
+
+#: src/pages/settings/roles/SettingsRoles.tsx:193
+msgid "Create Role"
+msgstr ""
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
 msgstr "Crea webhook"
 
-#: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
-msgid "Create a workflow and return here to view its versions"
-msgstr "Crea un workflow e torna qui per visualizzarne le versioni"
-
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:55
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:44
-msgid "Create new record"
-msgstr "Crea nuovo record"
+#: src/pages/onboarding/CreateWorkspace.tsx:113
+msgid "Create your workspace"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
@@ -443,7 +497,7 @@ msgstr "Data e ora"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:81
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
 msgstr "Disattiva"
 
@@ -451,13 +505,13 @@ msgstr "Disattiva"
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Disattiva \"Sincronizza etichette oggetti e nomi API\" per impostare un nome API personalizzato"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:80
-msgid "Deactivate Workflow"
-msgstr "Disattiva workflow"
-
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
 msgstr "Disattiva questo campo"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
+msgid "Deactivate Workflow"
+msgstr "Disattiva workflow"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
@@ -470,18 +524,14 @@ msgstr "Definisci il nome e la descrizione dell'oggetto"
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:31
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx:45
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx:61
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:223
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:239
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:225
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:241
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:100
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:116
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
 msgid "Delete"
 msgstr "Elimina"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
-msgid "Delete API key"
-msgstr "Elimina chiave API"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
@@ -493,13 +543,15 @@ msgstr "Elimina account"
 msgid "Delete account and all the associated data"
 msgstr "Elimina l'account e tutti i dati associati"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:222
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:98
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
+msgid "Delete API key"
+msgstr "Elimina chiave API"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
 msgid "Delete record"
 msgstr "Elimina record"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:238
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:114
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
 msgid "Delete records"
 msgstr "Elimina record"
@@ -513,6 +565,14 @@ msgstr "Elimina questa integrazione"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
 msgid "Delete webhook"
 msgstr "Elimina webhook"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
+msgid "Delete workflow"
+msgstr ""
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
+msgid "Delete workflows"
+msgstr ""
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
@@ -534,8 +594,10 @@ msgstr "Discendente"
 msgid "Description"
 msgstr "Descrizione"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:252
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
 msgid "Destroy"
 msgstr "Distruggi"
 
@@ -549,8 +611,8 @@ msgid "Developers"
 msgstr "Sviluppatori"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:95
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:96
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
 msgid "Discard Draft"
 msgstr "Scarta bozza"
 
@@ -559,9 +621,9 @@ msgid "Display as relative date"
 msgstr "Visualizza come data relativa"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
-#: src/pages/settings/workspace/SettingsHostname.tsx:121
-#: src/pages/settings/workspace/SettingsDomain.tsx:109
-#: src/pages/settings/workspace/SettingsDomain.tsx:119
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:115
+#: src/pages/settings/workspace/SettingsDomain.tsx:125
 msgid "Domain"
 msgstr "Dominio"
 
@@ -610,9 +672,14 @@ msgstr "L'e-mail o il dominio è già presente nella lista di blocco"
 msgid "Emails"
 msgstr "Email"
 
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
+msgid "employees"
+msgstr "dipendenti"
+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
 msgstr "Dipendenti"
+
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
@@ -665,8 +732,8 @@ msgid "Exit Settings"
 msgstr "Esci dalle impostazioni"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:59
-msgid "Expected selected node to be a create step node."
-msgstr "Il nodo selezionato deve essere un nodo di creazione di passi."
+#~ msgid "Expected selected node to be a create step node."
+#~ msgstr "Expected selected node to be a create step node."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:26
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:32
@@ -691,11 +758,11 @@ msgstr "Scade tra"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:149
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:88
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:101
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:268
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:281
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:270
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:283
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:129
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:142
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:89
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:102
 msgid "Export"
@@ -703,23 +770,26 @@ msgstr "Esporta"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:135
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:87
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:267
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:128
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:88
 msgid "Export records"
 msgstr "Esporta record"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:56
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:57
 msgid "Export to PDF"
 msgstr "Esporta in PDF"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:148
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:100
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:280
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:140
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:282
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:141
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:101
 msgid "Export view"
 msgstr "Esporta vista"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:269
+msgid "Export Workflows"
+msgstr ""
 
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx:59
 msgid "Favorites"
@@ -750,6 +820,10 @@ msgstr "Filtro"
 msgid "Filters"
 msgstr "Filtri"
 
+#: src/pages/onboarding/CreateProfile.tsx:180
+msgid "First Name"
+msgstr ""
+
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx:58
 msgid "Forgot your password?"
 msgstr "Hai dimenticato la password?"
@@ -757,6 +831,14 @@ msgstr "Hai dimenticato la password?"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:73
 msgid "French"
 msgstr "Francese"
+
+#: src/pages/settings/SettingsBilling.tsx:47
+msgid "from monthly to yearly"
+msgstr "da mensile ad annuale"
+
+#: src/pages/settings/SettingsBilling.tsx:54
+msgid "from yearly to monthly"
+msgstr "da annuale a mensile"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:87
 msgid "Full access"
@@ -768,7 +850,7 @@ msgstr "Funzioni"
 
 #: src/pages/settings/SettingsWorkspace.tsx:29
 #: src/pages/settings/SettingsWorkspace.tsx:35
-#: src/pages/settings/workspace/SettingsDomain.tsx:116
+#: src/pages/settings/workspace/SettingsDomain.tsx:122
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:143
 msgid "General"
 msgstr "Generale"
@@ -796,6 +878,10 @@ msgstr "Concedi al supporto Twenty l'accesso temporaneo al tuo spazio di lavoro 
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx:131
 msgid "Hide"
 msgstr "Nascondi"
+
+#: src/pages/onboarding/CreateProfile.tsx:157
+msgid "How you'll be identified on the app."
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:208
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:239
@@ -850,16 +936,16 @@ msgstr "Email o dominio non valido"
 msgid "Invalid form values"
 msgstr "Valori del modulo non validi"
 
-#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
-msgid "Invite by Link"
-msgstr "Invita tramite link"
-
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:244
 msgid "Invite by email"
 msgstr "Invita via e-mail"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:157
 msgid "Invite by link"
+msgstr "Invita tramite link"
+
+#: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:167
+msgid "Invite by Link"
 msgstr "Invita tramite link"
 
 #: src/pages/onboarding/InviteTeam.tsx:152
@@ -889,6 +975,10 @@ msgstr "Lab"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:51
 msgid "Language"
 msgstr "Lingua"
+
+#: src/pages/onboarding/CreateProfile.tsx:202
+msgid "Last Name"
+msgstr ""
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:31
 msgid "Latest"
@@ -964,15 +1054,20 @@ msgstr "Sposta a destra"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:177
 #: src/pages/settings/SettingsWorkspace.tsx:44
 #: src/pages/settings/SettingsProfile.tsx:35
-#: src/pages/settings/roles/SettingsRoles.tsx:31
+#: src/pages/settings/roles/SettingsRoles.tsx:126
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:29
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:58
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts:10
+#: src/pages/onboarding/CreateProfile.tsx:166
 #: src/modules/settings/workspace/components/NameField.tsx:91
 msgid "Name"
 msgstr "Nome"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:49
+msgid "Name can not be empty"
+msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:106
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:209
@@ -984,7 +1079,7 @@ msgid "Name of your workspace"
 msgstr "Nome del tuo spazio di lavoro"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:76
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:180
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:181
 msgid "Navigate to next record"
 msgstr "Vai al record successivo"
 
@@ -992,12 +1087,12 @@ msgstr "Vai al record successivo"
 msgid "Navigate to next version"
 msgstr "Vai alla versione successiva"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:182
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:184
 msgid "Navigate to next workflow"
 msgstr "Vai al workflow successivo"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:65
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:169
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:170
 msgid "Navigate to previous record"
 msgstr "Vai al record precedente"
 
@@ -1005,13 +1100,21 @@ msgstr "Vai al record precedente"
 msgid "Navigate to previous version"
 msgstr "Vai alla versione precedente"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:172
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:174
 msgid "Navigate to previous workflow"
 msgstr "Vai al workflow precedente"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:76
 msgid "New"
 msgstr "Nuovo"
+
+#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
+msgid "New account"
+msgstr "Nuovo account"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
+msgid "New key"
+msgstr "Nuova chiave"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:92
 msgid "New Key"
@@ -1025,30 +1128,22 @@ msgstr "Nuovo oggetto"
 msgid "New Password"
 msgstr "Nuova password"
 
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
+#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:58
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:46
+msgid "New record"
+msgstr "Nuovo record"
+
 #: src/pages/settings/roles/SettingsRoles.tsx:52
-msgid "New Role"
-msgstr "Nuovo ruolo"
+#~ msgid "New Role"
+#~ msgstr "New Role"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:82
 msgid "New Webhook"
 msgstr "Nuovo Webhook"
 
-#: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:10
-msgid "New account"
-msgstr "Nuovo account"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:82
-msgid "New key"
-msgstr "Nuova chiave"
-
-#: src/modules/ui/layout/page/components/PageAddButton.tsx:27
-#: src/modules/ui/layout/page/components/PageAddButton.tsx:29
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:56
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
-msgid "New record"
-msgstr "Nuovo record"
-
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:38
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:56
 msgid "No connected account"
 msgstr "Nessun account collegato"
 
@@ -1087,6 +1182,10 @@ msgstr "Aperto"
 msgid "Options"
 msgstr "Opzioni"
 
+#: src/pages/onboarding/InviteTeam.tsx:213
+msgid "or"
+msgstr "o"
+
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:207
 msgid "Other"
 msgstr "Altro"
@@ -1120,10 +1219,23 @@ msgstr "Percentuale vuoto"
 msgid "Percent not empty"
 msgstr "Percentuale non vuoto"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:251
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:153
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:253
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:154
 msgid "Permanently destroy record"
 msgstr "Distruggi definitivamente il record"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:192
+msgid "Permanently destroy records"
+msgstr ""
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:295
+msgid "Permanently destroy workflows"
+msgstr ""
+
+#: src/pages/settings/roles/SettingsRoleEdit.tsx:70
+#: src/pages/settings/roles/components/RolePermissions.tsx:14
+msgid "Permissions"
+msgstr ""
 
 #: src/pages/settings/SettingsWorkspace.tsx:40
 #: src/pages/settings/SettingsProfile.tsx:30
@@ -1142,6 +1254,10 @@ msgstr "Digita \"{confirmationValue}\" per confermare che vuoi eliminare questa 
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Digita {confirmationText} per confermare che vuoi eliminare questo webhook."
 
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:66
+#~ msgid "Portuguese"
+#~ msgstr "Portuguese"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:101
 msgid "Portuguese — Brazil"
 msgstr "Portoghese - Brasile"
@@ -1149,6 +1265,14 @@ msgstr "Portoghese - Brasile"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:97
 msgid "Portuguese — Portugal"
 msgstr "Portoghese - Portogallo"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:94
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portuguese (Brazil)"
+
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx:90
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portuguese (Portugal)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx:52
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx:30
@@ -1181,10 +1305,6 @@ msgstr "Ricevi un'e-mail contenente il link per l'aggiornamento della password"
 msgid "Record Selection"
 msgstr "Selezione record"
 
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
-msgid "Regenerate Key"
-msgstr "Rigenera chiave"
-
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:189
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:271
 msgid "Regenerate an API key"
@@ -1192,6 +1312,10 @@ msgstr "Rigenera una chiave API"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:280
 msgid "Regenerate key"
+msgstr "Rigenera chiave"
+
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:193
+msgid "Regenerate Key"
 msgstr "Rigenera chiave"
 
 #: src/pages/settings/Releases.tsx:111
@@ -1208,10 +1332,10 @@ msgstr "Rimuovi"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:121
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:50
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts:51
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:207
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:208
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:83
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:209
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:210
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:84
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:85
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:47
 msgid "Remove from favorites"
 msgstr "Rimuovi dai preferiti"
@@ -1228,8 +1352,8 @@ msgstr "Reimposta a"
 msgid "Results"
 msgstr "Risultati"
 
-#: src/pages/settings/roles/SettingsRoles.tsx:48
-#: src/pages/settings/roles/SettingsRoles.tsx:62
+#: src/pages/settings/roles/SettingsRoles.tsx:107
+#: src/pages/settings/roles/SettingsRoles.tsx:113
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:161
 msgid "Roles"
 msgstr "Ruoli"
@@ -1237,10 +1361,6 @@ msgstr "Ruoli"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:13
 msgid "Run a workflow and return here to view its executions"
 msgstr "Esegui un workflow e torna qui per visualizzare le esecuzioni"
-
-#: src/pages/settings/security/SettingsSecurity.tsx:47
-msgid "SSO"
-msgstr "SSO"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx:44
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx:51
@@ -1261,7 +1381,7 @@ msgid "Search an index..."
 msgstr "Cerca un indice..."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:219
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:185
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx:184
 msgid "Search fields"
 msgstr "Cerca campi"
 
@@ -1279,25 +1399,25 @@ msgstr "Cerca record"
 msgid "Security"
 msgstr "Sicurezza"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:110
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:111
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:112
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:113
 msgid "See active version"
 msgstr "Vedi versione attiva"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:55
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:56
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:125
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:126
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:127
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:128
 msgid "See runs"
 msgstr "Vedi esecuzioni"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:70
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:141
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:143
 msgid "See versions"
 msgstr "Vedi versioni"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:69
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:140
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:142
 msgid "See versions history"
 msgstr "Vedi cronologia versioni"
 
@@ -1321,7 +1441,7 @@ msgstr "Pannello di amministrazione del server"
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Imposta la visibilità dell'email, gestisci la tua blocklist e altro."
 
-#: src/pages/settings/workspace/SettingsHostname.tsx:121
+#: src/pages/settings/workspace/SettingsHostname.tsx:115
 msgid "Set the name of your domain"
 msgstr "Imposta il nome del dominio"
 
@@ -1344,11 +1464,11 @@ msgstr "Condividi questo link per invitare gli utenti a unirsi al tuo workspace"
 msgid "Should changing a field's label also change the API name?"
 msgstr "Cambiare l'etichetta di un campo deve cambiare anche il nome dell'API?"
 
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:76
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:82
 msgid "Sign in"
 msgstr "Accedi"
 
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:83
+#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:89
 msgid "Sign up"
 msgstr "Registrati"
 
@@ -1368,6 +1488,10 @@ msgstr "Ordina"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:77
 msgid "Spanish"
 msgstr "Spagnolo"
+
+#: src/pages/settings/security/SettingsSecurity.tsx:47
+msgid "SSO"
+msgstr "SSO"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx:36
 msgid "Subdomain"
@@ -1398,10 +1522,6 @@ msgstr "Somma"
 msgid "Support"
 msgstr "Supporto"
 
-#: src/pages/settings/SettingsBilling.tsx:187
-msgid "Switch billing {to}"
-msgstr "Cambia fatturazione {to}"
-
 #: src/pages/settings/SettingsBilling.tsx:159
 msgid "Switch {from}"
 msgstr "Cambia {from}"
@@ -1410,28 +1530,32 @@ msgstr "Cambia {from}"
 msgid "Switch {to}"
 msgstr "Cambia {to}"
 
+#: src/pages/settings/SettingsBilling.tsx:187
+msgid "Switch billing {to}"
+msgstr "Cambia fatturazione {to}"
+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:211
 msgid "Synchronize Field Label and API Name"
 msgstr "Sincronizza etichetta campo e nome API"
 
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
-msgid "System Settings - {systemTimeFormatLabel}"
-msgstr "Impostazioni di sistema - {systemTimeFormatLabel}"
-
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx:42
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Impostazioni di sistema - {systemDateFormatLabel}"
+
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:55
+msgid "System Settings - {systemTimeFormatLabel}"
+msgstr "Impostazioni di sistema - {systemTimeFormatLabel}"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:29
 msgid "Terms of Service"
 msgstr "Termini di servizio"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:50
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:156
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:158
 msgid "Test"
 msgstr "Test"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:155
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:157
 msgid "Test Workflow"
 msgstr "Test Workflow"
 
@@ -1448,6 +1572,10 @@ msgstr "L'email associata al tuo account"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:240
 msgid "The name and icon of this field"
 msgstr "Nome e icona di questo campo"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:129
+msgid "The name of your organization"
+msgstr ""
 
 #: src/pages/not-found/NotFound.tsx:50
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -1478,11 +1606,27 @@ msgstr "Questa azione non può essere annullata. Questo eliminerà definitivamen
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Questa azione non può essere annullata. Questo eliminerà definitivamente l'intero workspace. <0/> Digita la tua email per confermare."
 
+#: src/pages/settings/roles/components/RolePermissions.tsx:15
+msgid "This Role has the following permissions."
+msgstr ""
+
+#: src/pages/settings/roles/components/RoleAssignment.tsx:15
+msgid "This Role is assigned to these workspace member."
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:49
 msgid "Time format"
 msgstr "Formato ora"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:49
+#: src/pages/settings/SettingsBilling.tsx:53
+msgid "to monthly"
+msgstr "a mensile"
+
+#: src/pages/settings/SettingsBilling.tsx:46
+msgid "to yearly"
+msgstr "a annuale"
+
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx:56
 msgid "Trigger Type"
 msgstr "Tipo di trigger"
 
@@ -1495,19 +1639,18 @@ msgstr "Il tipo di trigger deve essere Manuale - quando non sono selezionati rec
 msgid "Type"
 msgstr "Tipo"
 
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx:117
+#: src/modules/command-menu/components/CommandMenuTopBar.tsx:154
 msgid "Type anything"
 msgstr "Digita qualsiasi cosa"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
-msgid "URL"
-msgstr "URL"
 
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx:49
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:27
 msgid "Unique"
 msgstr "Unico"
+
+#: src/pages/onboarding/CreateWorkspace.tsx:80
+msgid "Unknown error"
+msgstr ""
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:88
 msgid "Unlimited contacts"
@@ -1516,6 +1659,11 @@ msgstr "Contatti illimitati"
 #: src/modules/ui/input/components/ImageInput.tsx:164
 msgid "Upload"
 msgstr "Carica"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:101
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:242
+msgid "URL"
+msgstr "URL"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:40
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts:41
@@ -1574,6 +1722,10 @@ msgstr "Webhook"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/pages/auth/SignInUp.tsx:43
+#~ msgid "Welcome to"
+#~ msgstr "Welcome to"
+
 #: src/pages/auth/SignInUp.tsx:76
 msgid "Welcome to {workspaceName}"
 msgstr "Benvenuto in {workspaceName}"
@@ -1594,9 +1746,9 @@ msgstr "Il workflow non può essere testato"
 #: src/pages/settings/SettingsWorkspace.tsx:32
 #: src/pages/settings/SettingsBilling.tsx:135
 #: src/pages/settings/Releases.tsx:114
-#: src/pages/settings/workspace/SettingsDomain.tsx:112
+#: src/pages/settings/workspace/SettingsDomain.tsx:118
 #: src/pages/settings/security/SettingsSecurity.tsx:37
-#: src/pages/settings/roles/SettingsRoles.tsx:59
+#: src/pages/settings/roles/SettingsRoles.tsx:110
 #: src/pages/settings/integrations/SettingsIntegrations.tsx:18
 #: src/pages/settings/developers/SettingsDevelopers.tsx:39
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:75
@@ -1617,9 +1769,22 @@ msgstr "Workspace"
 msgid "Workspace Deletion"
 msgstr "Eliminazione Workspace"
 
+#: src/pages/onboarding/CreateWorkspace.tsx:123
+msgid "Workspace logo"
+msgstr ""
+
+#: src/pages/onboarding/CreateWorkspace.tsx:128
+msgid "Workspace name"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:254
 msgid "Write a description"
 msgstr "Scrivi una descrizione"
+
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
+msgid "yes"
+msgstr "sì"
 
 #: src/pages/settings/SettingsBilling.tsx:48
 msgid "You will be charged immediately for the full year."
@@ -1633,52 +1798,15 @@ msgstr "Il tuo saldo di credito verrà utilizzato per pagare le fatture mensili.
 msgid "Your name as it will be displayed"
 msgstr "Il tuo nome come verrà visualizzato"
 
+#: src/pages/onboarding/CreateProfile.tsx:167
+msgid "Your name as it will be displayed on the app"
+msgstr ""
+
+#: src/pages/auth/SignInUp.tsx:73
+msgid "Your Workspace"
+msgstr ""
+
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "Il tuo workspace sarà disabilitato"
 
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
-msgid "and"
-msgstr "e"
-
-#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
-msgid "employees"
-msgstr "dipendenti"
-
-#: src/pages/settings/SettingsBilling.tsx:47
-msgid "from monthly to yearly"
-msgstr "da mensile ad annuale"
-
-#: src/pages/settings/SettingsBilling.tsx:54
-msgid "from yearly to monthly"
-msgstr "da annuale a mensile"
-
-#: src/pages/onboarding/InviteTeam.tsx:213
-msgid "or"
-msgstr "o"
-
-#: src/pages/settings/SettingsBilling.tsx:53
-msgid "to monthly"
-msgstr "a mensile"
-
-#: src/pages/settings/SettingsBilling.tsx:46
-msgid "to yearly"
-msgstr "a annuale"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:209
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:156
-msgid "yes"
-msgstr "sì"
-
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
-msgid "{aggregateLabel} of {fieldLabel}"
-msgstr "{aggregateLabel} di {fieldLabel}"
-
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
-msgid "{apiKeyName} API Key"
-msgstr "Chiave API {apiKeyName}"
-
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
-#: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
-msgid "{name}"
-msgstr "{name}"
