@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
 
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
       - name: Extract translations
         run: |
           npx nx run twenty-server:lingui:extract
