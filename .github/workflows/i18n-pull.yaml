@@ -28,7 +28,10 @@ jobs:
 
       - name: Compile translations
         id: compile_translations
-        run: npm run translate:compile -- -- --strict
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
         continue-on-error: true
 
       - name: Pull translations from Crowdin
