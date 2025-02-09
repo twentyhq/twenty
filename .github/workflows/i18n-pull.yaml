@@ -7,6 +7,7 @@ on:
     - cron: '0 */2 * * *' # Every two hours.
   workflow_dispatch:
   workflow_call:
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -26,6 +27,9 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
 
       - name: Compile translations
         id: compile_translations

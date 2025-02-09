@@ -5,6 +5,8 @@ on:
   workflow_call:
   push:
     branches: ['main']
+  pull_request:
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
