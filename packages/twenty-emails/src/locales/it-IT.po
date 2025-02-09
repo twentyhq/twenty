@@ -5,92 +5,92 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: ja\n"
+"Language: it-IT\n"
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
-msgstr "招待を承諾"
+msgstr "Accetta l'invito"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr "このワークスペースのすべてのデータは永久に削除されました。"
+msgstr "Tutti i dati in questo spazio di lavoro sono stati eliminati definitivamente."
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
-msgstr "メールアドレスを確認"
+msgstr "Conferma il tuo indirizzo e-mail"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr "Twentyに接続"
+msgstr "Accedi a Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
-msgstr "{userName}様"
+msgstr "Gentile {userName}"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
-msgstr "こんにちは"
+msgstr "Salve"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "この変更を行っていない場合は、すぐにワークスペースの所有者に連絡してください。"
+msgstr "Se non hai avviato questa modifica, contatta immediatamente il proprietario dello spazio di lavoro."
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Twentyを引き続きご利用になる場合は、{remainingDays} {dayOrDays}以内にサブスクリプションを更新してください。"
+msgstr "Se desideri continuare a utilizzare Twenty, aggiorna il tuo abbonamento entro i prossimi {remainingDays} {dayOrDays}."
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Twentyを再度使用するには、新しいワークスペースを作成してください。"
+msgstr "Se desideri utilizzare nuovamente Twenty, puoi creare un nuovo spazio di lavoro."
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "ワークスペース<0>{workspaceDisplayName}</0>は{daysSinceInactive}日間停止されているようです。"
+msgstr "Sembra che il tuo spazio di lavoro <0>{workspaceDisplayName}</0> sia stato sospeso per {daysSinceInactive} giorni."
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr "Twentyでチームに参加"
+msgstr "Unisciti al tuo team su Twenty"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
-msgstr "パスワードが更新されました"
+msgstr "Password aggiornata"
 
 #: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
-msgstr "リセット"
+msgstr "Reimposta"
 
 #: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
-msgstr "パスワードをリセット"
+msgstr "Reimposta la tua password 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "Twentyにご登録いただきありがとうございます！開始する前に、ご本人確認のために上記をクリックしてメールアドレスを確認してください。"
+msgstr "Grazie per esserti registrato su Twenty! Prima di iniziare, dobbiamo solo confermare che sei tu. Clicca sopra per verificare il tuo indirizzo e-mail."
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "ワークスペースは{remainingDays} {dayOrDays}後に無効化され、すべてのデータが削除されます。"
+msgstr "L'area di lavoro sarà disattivata in {remainingDays} {dayOrDays} e tutti i suoi dati saranno cancellati."
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "アカウント（{email}）のパスワードが{formattedDate}に正常に変更されたことを確認しました。"
+msgstr "Questa è la conferma che la password del tuo account ({email}) è stata modificata con successo in data {formattedDate}."
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "このリンクは{duration}のみ有効です。リンクが機能しない場合は、ログイン認証リンクを直接ご利用ください："
+msgstr "Questo link è valido solo per i prossimi {duration}. Se il link non funziona, puoi utilizzare direttamente il link di verifica del login:"
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr "サブスクリプションを更新"
+msgstr "Aggiorna il tuo abbonamento"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
-msgstr "メールを確認"
+msgstr "Verifica e-mail"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "サブスクリプションが{inactiveDaysBeforeDelete}日前に期限切れとなったため、ワークスペース<0>{workspaceDisplayName}</0>が削除されました。"
+msgstr "Il tuo spazio di lavoro <0>{workspaceDisplayName}</0> è stato cancellato poiché il tuo abbonamento è scaduto {inactiveDaysBeforeDelete} giorni fa."
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "
-msgstr "というワークスペースに招待されました。"
+msgstr "ti ha invitato a unirti a uno spazio di lavoro chiamato "

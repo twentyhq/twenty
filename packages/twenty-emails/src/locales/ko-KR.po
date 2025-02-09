@@ -5,92 +5,92 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: fr\n"
+"Language: ko-KR\n"
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
-msgstr "Accepter l'invitation"
+msgstr "초대 수락"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr "Toutes les données de cet espace de travail ont été supprimées définitivement."
+msgstr "이 워크스페이스의 모든 데이터가 영구적으로 삭제되었습니다."
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
-msgstr "Confirmez votre adresse e-mail"
+msgstr "이메일 주소를 확인하세요"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr "Connectez-vous à Twenty"
+msgstr "Twenty에 연결하세요"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
-msgstr "Cher {userName}"
+msgstr "{userName}님께"
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
-msgstr "Bonjour"
+msgstr "안녕하세요"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Si vous n'avez pas initié ce changement, veuillez contacter immédiatement le propriétaire de votre espace de travail."
+msgstr "이 변경을 시작하지 않으셨다면 즉시 워크스페이스 소유자에게 문의하세요."
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Pour continuer à utiliser Twenty, veuillez mettre à jour votre abonnement dans les {remainingDays} {dayOrDays}."
+msgstr "Twenty를 계속 사용하려면 다음 {remainingDays} {dayOrDays} 내에 구독을 업데이트하세요."
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Pour réutiliser Twenty, vous pouvez créer un nouvel espace de travail."
+msgstr "Twenty를 다시 사용하려면 새 워크스페이스를 생성하세요."
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Il semble que votre espace de travail <0>{workspaceDisplayName}</0> soit suspendu depuis {daysSinceInactive} jours."
+msgstr "워크스페이스 <0>{workspaceDisplayName}</0>이(가) {daysSinceInactive}일 동안 일시 중단된 것 같습니다."
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr "Rejoignez votre équipe sur Twenty"
+msgstr "Twenty에서 팀에 합류하세요"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
-msgstr "Mot de passe mis à jour"
+msgstr "비밀번호가 업데이트되었습니다"
 
 #: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
-msgstr "Réinitialiser"
+msgstr "초기화"
 
 #: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
-msgstr "Réinitialisez votre mot de passe 🗝"
+msgstr "비밀번호를 재설정하세요 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr "Merci de vous être inscrit sur Twenty ! Avant de commencer, nous devons confirmer votre identité. Cliquez ci-dessus pour vérifier votre adresse e-mail."
+msgstr "Twenty에 계정을 등록해 주셔서 감사합니다! 시작하기 전에 본인 확인이 필요합니다. 위를 클릭하여 이메일 주소를 인증하세요."
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "L'espace de travail sera désactivé dans {remainingDays} {dayOrDays} et toutes ses données seront supprimées."
+msgstr "워크스페이스는 {remainingDays} {dayOrDays} 후에 비활성화되며 모든 데이터가 삭제됩니다."
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}."
+msgstr "계정({email})의 비밀번호가 {formattedDate}에 성공적으로 변경되었음을 확인합니다."
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
+msgstr "이 링크는 다음 {duration} 동안만 유효합니다. 링크가 작동하지 않으면 로그인 인증 링크를 직접 사용할 수 있습니다:"
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr "Mettez à jour votre abonnement"
+msgstr "구독을 업데이트하세요"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
-msgstr "Vérifiez l'e-mail"
+msgstr "이메일 인증"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr "Votre espace de travail <0>{workspaceDisplayName}</0> a été supprimé car votre abonnement a expiré il y a {inactiveDaysBeforeDelete} jours."
+msgstr "구독이 {inactiveDaysBeforeDelete}일 전에 만료되어 워크스페이스 <0>{workspaceDisplayName}</0>이(가) 삭제되었습니다."
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "
-msgstr "vous a invité à rejoindre un espace de travail appelé "
+msgstr "라는 워크스페이스에 초대되었습니다 "

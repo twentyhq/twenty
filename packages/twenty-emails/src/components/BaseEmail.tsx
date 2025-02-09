@@ -6,13 +6,13 @@ import { PropsWithChildren } from 'react';
 import { BaseHead } from 'src/components/BaseHead';
 import { Logo } from 'src/components/Logo';
 import { APP_LOCALES } from 'twenty-shared';
-import { messages as deMessages } from '../locales/generated/de';
+import { messages as deMessages } from '../locales/generated/de-DE';
 import { messages as enMessages } from '../locales/generated/en';
-import { messages as esMessages } from '../locales/generated/es';
-import { messages as frMessages } from '../locales/generated/fr';
-import { messages as itMessages } from '../locales/generated/it';
-import { messages as jaMessages } from '../locales/generated/ja';
-import { messages as koMessages } from '../locales/generated/ko';
+import { messages as esMessages } from '../locales/generated/es-ES';
+import { messages as frMessages } from '../locales/generated/fr-FR';
+import { messages as itMessages } from '../locales/generated/it-IT';
+import { messages as jaMessages } from '../locales/generated/ja-JP';
+import { messages as koMessages } from '../locales/generated/ko-KR';
 import { messages as pseudoEnMessages } from '../locales/generated/pseudo-en';
 import { messages as ptBRMessages } from '../locales/generated/pt-BR';
 import { messages as ptPTMessages } from '../locales/generated/pt-PT';
@@ -23,19 +23,26 @@ type BaseEmailProps = PropsWithChildren<{
   width?: number;
   locale: keyof typeof APP_LOCALES;
 }>;
+const messages: Record<keyof typeof APP_LOCALES, any> = {
+  en: enMessages,
+  'pseudo-en': pseudoEnMessages,
+  'fr-FR': frMessages,
+  'ko-KR': koMessages,
+  'de-DE': deMessages,
+  'it-IT': itMessages,
+  'es-ES': esMessages,
+  'ja-JP': jaMessages,
+  'pt-PT': ptPTMessages,
+  'pt-BR': ptBRMessages,
+  'zh-Hans': zhHansMessages,
+  'zh-Hant': zhHantMessages,
+};
 
-i18n.load('en', enMessages);
-i18n.load('fr', frMessages);
-i18n.load('pseudo-en', pseudoEnMessages);
-i18n.load('ko', koMessages);
-i18n.load('de', deMessages);
-i18n.load('it', itMessages);
-i18n.load('es', esMessages);
-i18n.load('ja', jaMessages);
-i18n.load('pt-PT', ptPTMessages);
-i18n.load('pt-BR', ptBRMessages);
-i18n.load('zh-Hans', zhHansMessages);
-i18n.load('zh-Hant', zhHantMessages);
+(Object.entries(messages) as [keyof typeof APP_LOCALES, any][]).forEach(
+  ([locale, message]) => {
+    i18n.load(locale, message);
+  },
+);
 
 i18n.activate('en');
 

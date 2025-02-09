@@ -1,1 +1,0 @@
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/metadata/migrations/addLocaleToUser -d src/database/typeorm/core/core.datasource.ts 

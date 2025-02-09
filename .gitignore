@@ -41,3 +41,5 @@ dump.rdb
 /devenv.nix
 /flake.lock
 /flake.nix
+
+.crowdin.yml

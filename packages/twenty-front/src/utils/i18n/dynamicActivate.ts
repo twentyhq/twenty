@@ -2,6 +2,10 @@ import { i18n } from '@lingui/core';
 import { APP_LOCALES } from 'twenty-shared';
 
 export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
+  if (!Object.values(APP_LOCALES).includes(locale)) {
+    console.warn(`Invalid locale "${locale}", defaulting to "en"`);
+    locale = 'en';
+  }
   const { messages } = await import(`../../locales/generated/${locale}.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
