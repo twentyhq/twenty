@@ -24,7 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: ./.github/actions/node-install
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
 
       - name: Compile translations
         id: compile_translations
