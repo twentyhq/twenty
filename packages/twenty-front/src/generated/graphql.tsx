@@ -998,6 +998,7 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
@@ -2163,6 +2164,7 @@ export type SignUpMutationVariables = Exact<{
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
   captchaToken?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3298,7 +3300,7 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $locale: String) {
   signUp(
     email: $email
     password: $password
@@ -3306,6 +3308,7 @@ export const SignUpDocument = gql`
     workspacePersonalInviteToken: $workspacePersonalInviteToken
     captchaToken: $captchaToken
     workspaceId: $workspaceId
+    locale: $locale
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3341,6 +3344,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      workspacePersonalInviteToken: // value for 'workspacePersonalInviteToken'
  *      captchaToken: // value for 'captchaToken'
  *      workspaceId: // value for 'workspaceId'
+ *      locale: // value for 'locale'
  *   },
  * });
  */

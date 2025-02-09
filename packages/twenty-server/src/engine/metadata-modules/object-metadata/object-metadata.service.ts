@@ -549,8 +549,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return objectMetadata[labelKey];
     }
 
-    i18n.activate(locale);
-
     const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
     const translatedMessage = i18n._(messageId);
 

@@ -1,0 +1,57 @@
+# Pull down translations from Crowdin every two hours or when triggered manually.
+
+name: 'Pull translations'
+
+on:
+  schedule:
+    - cron: '0 */2 * * *' # Every two hours.
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pull_translations:
+    name: Pull translations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/node-install
+
+      - name: Compile translations
+        id: compile_translations
+        run: |
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
+        continue-on-error: true
+
+      - name: Pull translations from Crowdin
+        if: steps.compile_translations.outcome == 'failure'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          export_only_approved: false
+          localization_branch_name: chore/translations
+          commit_message: 'chore: add translations'
+          pull_request_title: 'chore: add translations'
+
+        env:
+          # A classic GitHub Personal Access Token with the 'repo' scope selected (the user should have write access to the repository).
+          GITHUB_TOKEN: ${{ github.token }}
+
+          # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
+          CROWDIN_PROJECT_ID: 1
+
+          # Visit https://crowdin.com/settings#api-key to create this token
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
