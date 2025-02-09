@@ -81,7 +81,7 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
-  @Field(() => String, { nullable: false, defaultValue: 'en' })
+  @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: 'en' })
   locale: string;
 

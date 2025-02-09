@@ -34,7 +34,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add packages/lib/translations
+          git add .
           git diff --staged --quiet --exit-code || (git commit -m "chore: extract translations" && git push)
 
       - name: Compile translations
