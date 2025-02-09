@@ -1809,4 +1809,3 @@ msgstr ""
 #: src/pages/settings/SettingsBilling.tsx:172
 msgid "Your workspace will be disabled"
 msgstr "워크스페이스가 비활성화됩니다"
-
