@@ -43,7 +43,7 @@ jobs:
           localization_branch_name: chore/translations
           commit_message: 'chore: add translations'
           pull_request_title: 'chore: add translations'
-          base_url: 'https://{organization-name}.api.crowdin.com'
+          base_url: 'https://twenty.api.crowdin.com'
 
         env:
           # A classic GitHub Personal Access Token with the 'repo' scope selected (the user should have write access to the repository).
