@@ -18,7 +18,6 @@ export enum FieldMetadataType {
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
   RAW_JSON = 'RAW_JSON',
-  RICH_TEXT_V2 = 'RICH_TEXT_V2',
   RICH_TEXT = 'RICH_TEXT',
   RICH_TEXT_V2 = 'RICH_TEXT_V2',
   ACTOR = 'ACTOR',

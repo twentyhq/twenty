@@ -10,8 +10,8 @@ import { MigrateRichTextFieldCommand } from 'src/database/commands/upgrade-versi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Command({
-  name: 'upgrade-0.41',
-  description: 'Upgrade to 0.41',
+  name: 'upgrade-0.42',
+  description: 'Upgrade to 0.42',
 })
 export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
   constructor(
@@ -28,7 +28,7 @@ export class UpgradeTo0_42Command extends ActiveWorkspacesCommandRunner {
     options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    this.logger.log('Running command to upgrade to 0.41');
+    this.logger.log('Running command to upgrade to 0.42');
 
     await this.migrateRichTextFieldCommand.executeActiveWorkspacesCommand(
       passedParam,
