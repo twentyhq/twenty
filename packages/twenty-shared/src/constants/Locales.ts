@@ -8,7 +8,7 @@ export const APP_LOCALES = {
   'ja-JP': 'ja-JP',
   'pt-PT': 'pt-PT',
   'pt-BR': 'pt-BR',
-  'zh-Hans': 'zh-Hans',
-  'zh-Hant': 'zh-Hant',
+  'zh-CN': 'zh-CN',
+  'zh-TW': 'zh-TW',
   'pseudo-en': 'pseudo-en',
 } as const;

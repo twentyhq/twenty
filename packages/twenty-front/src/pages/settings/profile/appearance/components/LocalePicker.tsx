@@ -103,11 +103,11 @@ export const LocalePicker = () => {
     },
     {
       label: t`Chinese — Simplified`,
-      value: APP_LOCALES['zh-Hans'],
+      value: APP_LOCALES['zh-CN'],
     },
     {
       label: t`Chinese — Traditional`,
-      value: APP_LOCALES['zh-Hant'],
+      value: APP_LOCALES['zh-TW'],
     },
   ];
   if (isDebugMode) {

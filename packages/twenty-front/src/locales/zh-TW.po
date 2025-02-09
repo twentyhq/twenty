@@ -5,7 +5,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: zh-Hant\n"
+"Language: zh-TW\n"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
@@ -866,7 +866,6 @@ msgstr "通過鏈接邀請"
 #: src/pages/onboarding/InviteTeam.tsx:152
 msgid "Invite link sent to email addresses"
 msgstr "邀請鏈接已發送到電子郵件地址"
-msgstr "向电子邮件地址发送邀请链接"
 
 #: src/pages/onboarding/InviteTeam.tsx:181
 msgid "Invite your team"

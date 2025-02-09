@@ -16,8 +16,8 @@ import { messages as koMessages } from '../locales/generated/ko-KR';
 import { messages as pseudoEnMessages } from '../locales/generated/pseudo-en';
 import { messages as ptBRMessages } from '../locales/generated/pt-BR';
 import { messages as ptPTMessages } from '../locales/generated/pt-PT';
-import { messages as zhHansMessages } from '../locales/generated/zh-Hans';
-import { messages as zhHantMessages } from '../locales/generated/zh-Hant';
+import { messages as zhHansMessages } from '../locales/generated/zh-CN';
+import { messages as zhHantMessages } from '../locales/generated/zh-TW';
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;
@@ -34,8 +34,8 @@ const messages: Record<keyof typeof APP_LOCALES, any> = {
   'ja-JP': jaMessages,
   'pt-PT': ptPTMessages,
   'pt-BR': ptBRMessages,
-  'zh-Hans': zhHansMessages,
-  'zh-Hant': zhHantMessages,
+  'zh-CN': zhHansMessages,
+  'zh-TW': zhHantMessages,
 };
 
 (Object.entries(messages) as [keyof typeof APP_LOCALES, any][]).forEach(

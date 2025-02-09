@@ -13,8 +13,8 @@ import { messages as koMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as pseudoEnMessages } from 'src/engine/core-modules/i18n/locales/generated/pseudo-en';
 import { messages as ptBRMessages } from 'src/engine/core-modules/i18n/locales/generated/pt-BR';
 import { messages as ptPTMessages } from 'src/engine/core-modules/i18n/locales/generated/pt-PT';
-import { messages as zhHansMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-Hans';
-import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-Hant';
+import { messages as zhHansMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-CN';
+import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-TW';
 
 @Injectable()
 export class I18nService implements OnModuleInit {
@@ -30,8 +30,8 @@ export class I18nService implements OnModuleInit {
       'ja-JP': jaMessages,
       'pt-PT': ptPTMessages,
       'pt-BR': ptBRMessages,
-      'zh-Hans': zhHansMessages,
-      'zh-Hant': zhHantMessages,
+      'zh-CN': zhHansMessages,
+      'zh-TW': zhHantMessages,
     };
 
     (Object.entries(messages) as [keyof typeof APP_LOCALES, any][]).forEach(
