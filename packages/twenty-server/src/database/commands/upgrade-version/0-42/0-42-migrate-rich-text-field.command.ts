@@ -11,6 +11,8 @@ import {
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
 import { isCommandLogger } from 'src/database/commands/logger';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -41,6 +43,8 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FeatureFlag, 'core')
+    protected readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -187,6 +191,18 @@ export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
           );
         }
       }
+
+      await this.featureFlagRepository.upsert(
+        {
+          workspaceId,
+          key: FeatureFlagKey.IsRichTextV2Enabled,
+          value: true,
+        },
+        {
+          conflictPaths: ['workspaceId', 'key'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
 
       workspaceIterator++;
       this.logger.log(
