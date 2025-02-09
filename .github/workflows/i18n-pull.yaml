@@ -31,12 +31,13 @@ jobs:
       - name: Build twenty-shared
         run: npx nx build twenty-shared
 
+      # Strict mode fails if there are missing translations.
       - name: Compile translations
         id: compile_translations
         run: |
-          npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile
-          npx nx run twenty-front:lingui:compile
+          npx nx run twenty-server:lingui:compile --strict
+          npx nx run twenty-emails:lingui:compile --strict
+          npx nx run twenty-front:lingui:compile --strict
         continue-on-error: true
 
       - name: Pull translations from Crowdin
@@ -56,7 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
           # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
-          CROWDIN_PROJECT_ID: 1
+          CROWDIN_PROJECT_ID: '1'
 
           # Visit https://crowdin.com/settings#api-key to create this token
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

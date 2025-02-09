@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
           # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
-          CROWDIN_PROJECT_ID: 1
+          CROWDIN_PROJECT_ID: '1'
 
           # Visit https://crowdin.com/settings#api-key to create this token
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

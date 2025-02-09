@@ -2245,4 +2245,3 @@ msgstr "X"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:177
 msgid "Your team member responsible for managing the company account"
 msgstr "회사 계정을 관리하는 팀원"
-
