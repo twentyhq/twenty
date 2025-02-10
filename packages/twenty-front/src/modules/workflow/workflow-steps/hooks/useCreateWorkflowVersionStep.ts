@@ -42,7 +42,7 @@ export const useCreateWorkflowVersionStep = () => {
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
-    if (!cachedRecord) {
+    if (!isDefined(cachedRecord)) {
       return;
     }
 

@@ -4,7 +4,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -12,7 +12,7 @@ import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreM
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 type useRestoreManyRecordProps = {
@@ -39,9 +39,10 @@ export const useRestoreManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular,
+    });
 
   const { restoreManyRecordsMutation } = useRestoreManyRecordsMutation({
     objectNameSingular,
@@ -67,18 +68,12 @@ export const useRestoreManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const cachedRecords = batchedIdsToRestore
-        .map((idToRestore) =>
-          getRecordFromCache(idToRestore, apolloClient.cache),
-        )
-        .filter(isDefined);
+      const cachedRecords = batchedIdsToRestore.map((idToRestore) =>
+        getRecordFromCacheOrMinimalRecord(idToRestore, apolloClient.cache),
+      );
 
       if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
-          if (!cachedRecord || !cachedRecord.id) {
-            return;
-          }
-
           const cachedRecordWithConnection =
             getRecordNodeFromRecord<ObjectRecord>({
               record: cachedRecord,
@@ -89,8 +84,7 @@ export const useRestoreManyRecords = ({
 
           const computedOptimisticRecord = {
             ...cachedRecord,
-            ...{ id: cachedRecord.id, deletedAt: null },
-            ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+            deletedAt: null,
           };
 
           const optimisticRecordWithConnection =
@@ -101,8 +95,13 @@ export const useRestoreManyRecords = ({
               computeReferences: true,
             });
 
-          if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
-            return null;
+          if (
+            !isDefined(optimisticRecordWithConnection) ||
+            !isDefined(cachedRecordWithConnection)
+          ) {
+            throw new Error(
+              'Should never occurs, encountered empty cache should fallbacked',
+            );
           }
 
           const recordGqlFields = {
@@ -135,10 +134,6 @@ export const useRestoreManyRecords = ({
         })
         .catch((error: Error) => {
           cachedRecords.forEach((cachedRecord) => {
-            if (!cachedRecord) {
-              return;
-            }
-
             const recordGqlFields = {
               deletedAt: true,
             };
@@ -160,10 +155,8 @@ export const useRestoreManyRecords = ({
 
             const computedOptimisticRecord = {
               ...cachedRecord,
-              ...{ id: cachedRecord.id, deletedAt: null },
-              ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+              eletedAt: null,
             };
-
             const optimisticRecordWithConnection =
               getRecordNodeFromRecord<ObjectRecord>({
                 record: computedOptimisticRecord,
@@ -173,10 +166,12 @@ export const useRestoreManyRecords = ({
               });
 
             if (
-              !optimisticRecordWithConnection ||
-              !cachedRecordWithConnection
+              !isDefined(optimisticRecordWithConnection) ||
+              !isDefined(cachedRecordWithConnection)
             ) {
-              return null;
+              throw new Error(
+                'Should never occurs, encountered empty cache should fallbacked',
+              );
             }
 
             triggerUpdateRecordOptimisticEffect({

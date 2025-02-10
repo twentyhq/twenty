@@ -7,18 +7,19 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewField } from '@/views/types/ViewField';
+import { isDefined } from 'twenty-shared';
 
 export const usePersistViewFieldRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
+  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
 
@@ -93,11 +94,9 @@ export const usePersistViewFieldRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewField'];
-              if (!record) return;
-              const cachedRecord = getRecordFromCache<ViewField>(record.id);
+              if (!isDefined(record)) return;
 
-              if (!cachedRecord) return;
-
+              const cachedRecord = getRecordFromCacheOrMinimalRecord(record.id, cache);
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -112,7 +111,7 @@ export const usePersistViewFieldRecords = () => {
     },
     [
       apolloClient,
-      getRecordFromCache,
+      getRecordFromCacheOrMinimalRecord,
       objectMetadataItem,
       objectMetadataItems,
       updateOneRecordMutation,

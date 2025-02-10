@@ -4,14 +4,14 @@ import { useCallback } from 'react';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
@@ -26,9 +26,10 @@ export const useDeleteOneRecord = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular,
+    });
 
   const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
     objectNameSingular,
@@ -45,12 +46,8 @@ export const useDeleteOneRecord = ({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      const minimalRecord: ObjectRecord = {
-        __typename: capitalize(objectMetadataItem.nameSingular),
-        id: idToDelete,
-      };
       const cachedRecord: ObjectRecord =
-        getRecordFromCache(idToDelete, apolloClient.cache) ?? minimalRecord;
+        getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache);
       const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
         objectMetadataItem,
@@ -147,7 +144,7 @@ export const useDeleteOneRecord = ({
     [
       apolloClient,
       deleteOneRecordMutation,
-      getRecordFromCache,
+      getRecordFromCacheOrMinimalRecord,
       mutationResponseField,
       objectMetadataItem,
       objectMetadataItems,

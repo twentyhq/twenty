@@ -4,7 +4,7 @@ import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -14,7 +14,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 type useDeleteManyRecordProps = {
@@ -42,9 +42,9 @@ export const useDeleteManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
+  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
+    objectNameSingular
+  })
 
   const { deleteManyRecordsMutation } = useDeleteManyRecordsMutation({
     objectNameSingular,
@@ -76,18 +76,8 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const __typename = capitalize(objectMetadataItem.nameSingular);
-      const cachedRecords = batchedIdsToDelete.map<ObjectRecord>(
-        (idToDelete) => {
-          const minimalRecord = {
-            id: idToDelete,
-            __typename,
-          };
-
-          return (
-            getRecordFromCache(idToDelete, apolloClient.cache) ?? minimalRecord
-          );
-        },
+      const cachedRecords = batchedIdsToDelete.map(
+        (idToDelete) => getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache)
       );
 
       const currentTimestamp = new Date().toISOString();

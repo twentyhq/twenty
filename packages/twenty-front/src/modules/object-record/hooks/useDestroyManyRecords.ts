@@ -5,7 +5,7 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
@@ -39,9 +39,7 @@ export const useDestroyManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
+  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({objectNameSingular})
 
   const { destroyManyRecordsMutation } = useDestroyManyRecordsMutation({
     objectNameSingular,
@@ -75,8 +73,7 @@ export const useDestroyManyRecords = ({
       );
 
       const originalRecords = batchedIdToDestroy
-        .map((recordId) => getRecordFromCache(recordId, apolloClient.cache))
-        .filter(isDefined);
+        .map((recordId) => getRecordFromCacheOrMinimalRecord(recordId, apolloClient.cache))
 
       const destroyedRecordsResponse = await apolloClient
         .mutate({
@@ -99,11 +96,10 @@ export const useDestroyManyRecords = ({
             : (cache, { data }) => {
                 const records = data?.[mutationResponseField];
 
-                if (!records?.length) return;
+                if (!isDefined(records) || records.length === 0) return;
 
                 const cachedRecords = records
-                  .map((record) => getRecordFromCache(record.id, cache))
-                  .filter(isDefined);
+                  .map((record) => getRecordFromCacheOrMinimalRecord(record.id, cache))
 
                 triggerDestroyRecordsOptimisticEffect({
                   cache,

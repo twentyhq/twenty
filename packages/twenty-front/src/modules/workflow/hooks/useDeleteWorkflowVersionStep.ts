@@ -41,7 +41,7 @@ export const useDeleteWorkflowVersionStep = () => {
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
-    if (!cachedRecord) {
+    if (!isDefined(cachedRecord)) {
       return;
     }
 
