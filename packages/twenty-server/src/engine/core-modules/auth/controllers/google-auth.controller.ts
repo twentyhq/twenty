@@ -118,7 +118,7 @@ export class GoogleAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+          this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
             currentWorkspace,
           ),
         ),

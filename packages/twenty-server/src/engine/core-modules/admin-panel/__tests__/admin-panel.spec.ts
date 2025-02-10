@@ -99,7 +99,7 @@ describe('AdminPanelService', () => {
         {
           provide: DomainManagerService,
           useValue: {
-            getworkspaceUrls: jest.fn().mockReturnValue({
+            getWorkspaceUrls: jest.fn().mockReturnValue({
               customUrl: undefined,
               subdomainUrl: 'https://twenty.twenty.com',
             }),
