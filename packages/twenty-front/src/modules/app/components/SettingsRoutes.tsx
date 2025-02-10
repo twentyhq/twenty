@@ -62,14 +62,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksNew = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew'
-  ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksNew,
-  })),
-);
-
 const Releases = lazy(() =>
   import('~/pages/settings/Releases').then((module) => ({
     default: module.Releases,
@@ -326,10 +318,6 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.DevelopersApiKeyDetail}
         element={<SettingsDevelopersApiKeyDetail />}
-      />
-      <Route
-        path={SettingsPath.DevelopersNewWebhook}
-        element={<SettingsDevelopersWebhooksNew />}
       />
       <Route
         path={SettingsPath.DevelopersNewWebhookDetail}
