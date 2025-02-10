@@ -15,7 +15,6 @@ import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { capitalize, isDefined } from 'twenty-shared';
 import { recordFromArrayWithValue } from '~/utils/array/recordFromArrayWithValue';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
@@ -61,6 +60,10 @@ export const useUpdateOneRecord = <
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
     optimisticRecord?: Partial<ObjectRecord>;
   }) => {
+    const minimalRecord: ObjectRecord = {
+      __typename: capitalize(objectMetadataItem.nameSingular),
+      id: idToUpdate,
+    };
     const optimisticRecordInput =
       optimisticRecord ??
       computeOptimisticRecordFromInput({
@@ -70,7 +73,8 @@ export const useUpdateOneRecord = <
         objectMetadataItems,
       });
 
-    const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
+    const cachedRecord =
+      getRecordFromCache<ObjectRecord>(idToUpdate) ?? minimalRecord;
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
       record: cachedRecord,
@@ -83,8 +87,6 @@ export const useUpdateOneRecord = <
     const computedOptimisticRecord = {
       ...cachedRecord,
       ...optimisticRecordInput,
-      ...{ id: idToUpdate },
-      ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
     };
 
     const optimisticRecordWithConnection =
@@ -95,8 +97,11 @@ export const useUpdateOneRecord = <
         recordGqlFields: computedRecordGqlFields,
         computeReferences: false,
       });
+
     if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
-      return null;
+      throw new Error(
+        'Should never occurs, encountered empty cache should fallbacked',
+      );
     }
 
     const recordGqlFields = generateDepthOneRecordGqlFields({
@@ -151,9 +156,6 @@ export const useUpdateOneRecord = <
         },
       })
       .catch((error: Error) => {
-        if (isUndefinedOrNull(cachedRecord?.id)) {
-          throw error;
-        }
         const cachedRecordKeys = new Set(Object.keys(cachedRecord));
         const diffKeys = Object.keys(optimisticRecordInput).filter(
           (diffKey) => !cachedRecordKeys.has(diffKey),
