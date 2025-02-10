@@ -7,7 +7,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
+import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { msg } from '@lingui/core/macro';
 
@@ -38,10 +38,10 @@ export const useWorkflowRunRecordActions = ({
     recordStoreFamilyState(selectedRecordId),
   );
 
-  const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
-    objectMetadataItem,
-    triggerType: 'MANUAL',
-  });
+  const { records: activeWorkflowVersions } =
+    useActiveWorkflowVersionsWithManualTrigger({
+      objectMetadataItem,
+    });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 

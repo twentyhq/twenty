@@ -2,7 +2,7 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
+import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
@@ -16,9 +16,8 @@ export const useRunWorkflowActions = () => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
-  const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
-    triggerType: 'MANUAL',
-  });
+  const { records: activeWorkflowVersions } =
+    useActiveWorkflowVersionsWithManualTrigger({});
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 

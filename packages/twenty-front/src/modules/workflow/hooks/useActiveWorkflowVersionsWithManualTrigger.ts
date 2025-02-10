@@ -3,19 +3,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import {
-  Workflow,
-  WorkflowTriggerType,
-  WorkflowVersion,
-} from '@/workflow/types/Workflow';
+import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared';
 
-export const useAllActiveWorkflowVersions = ({
+export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
-  triggerType,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
-  triggerType: WorkflowTriggerType;
 }) => {
   const filters = [
     {
@@ -25,7 +19,7 @@ export const useAllActiveWorkflowVersions = ({
     },
     {
       trigger: {
-        like: `%"type": "${triggerType}"%`,
+        like: `%"type": "MANUAL"%`,
       },
     },
   ];
@@ -63,7 +57,8 @@ export const useAllActiveWorkflowVersions = ({
     return {
       records: records.filter(
         (record) =>
-          record.trigger?.type !== 'CRON' &&
+          record.status === 'ACTIVE' &&
+          record.trigger?.type === 'MANUAL' &&
           !isDefined(record.trigger?.settings.objectType),
       ),
     };

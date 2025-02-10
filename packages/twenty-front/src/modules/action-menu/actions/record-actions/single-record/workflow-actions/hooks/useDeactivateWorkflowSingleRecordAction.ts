@@ -23,7 +23,6 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
 
       deactivateWorkflowVersion({
         workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-        workflowId: workflowWithCurrentVersion.id,
       });
     };
 
