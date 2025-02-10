@@ -277,9 +277,10 @@ const TextInputV2Component = (
   );
 };
 
-const TextInputV2WithAutoGrowWrapper = (
-  props: TextInputV2WithAutoGrowWrapperProps,
-) => (
+const TextInputV2WithAutoGrowWrapper = forwardRef<
+  HTMLInputElement,
+  TextInputV2WithAutoGrowWrapperProps
+>((props, _) => (
   <>
     {props.autoGrow ? (
       <ComputeNodeDimensions node={props.value || props.placeholder}>
@@ -293,6 +294,6 @@ const TextInputV2WithAutoGrowWrapper = (
       <TextInputV2Component {...props} />
     )}
   </>
-);
+));
 
-export const TextInputV2 = forwardRef(TextInputV2WithAutoGrowWrapper);
+export const TextInputV2 = TextInputV2WithAutoGrowWrapper;
