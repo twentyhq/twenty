@@ -98,16 +98,16 @@ export class StripeIntegrationService {
     return updatedIntegration;
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(accountId: string): Promise<boolean> {
     const stripeIntegration = await this.stripeIntegrationRepository.findOne({
-      where: { id },
+      where: { accountId: accountId.toString() },
     });
 
     if (!stripeIntegration) {
       throw new Error('Integration not found');
     }
 
-    await this.stripeIntegrationRepository.delete(id);
+    await this.stripeIntegrationRepository.delete(stripeIntegration.id);
 
     return true;
   }

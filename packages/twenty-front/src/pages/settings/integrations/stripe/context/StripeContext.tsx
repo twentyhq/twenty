@@ -2,7 +2,7 @@ import { createContext, FC, ReactNode, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { stripePublishableKey } from '../key/stripekeys';
+import { stripePublishableKey } from '~/pages/settings/integrations/stripe/key/stripeKeys';
 
 const stripePromise = loadStripe(stripePublishableKey());
 

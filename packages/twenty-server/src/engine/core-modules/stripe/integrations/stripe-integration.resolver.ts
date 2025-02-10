@@ -49,7 +49,7 @@ export class StripeIntegrationResolver {
   }
 
   @Mutation(() => Boolean)
-  removeStripeIntegration(@Args('id') id: string) {
-    return this.stripeIntegrationService.remove(id);
+  removeStripeIntegration(@Args('accountId') accountId: string) {
+    return this.stripeIntegrationService.remove(accountId);
   }
 }

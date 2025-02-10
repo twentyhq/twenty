@@ -15,6 +15,8 @@ import { IconButton } from '@ui/input/button/components/IconButton';
 import { IconTrash } from '@ui/display/icon/components/TablerIcons';
 import { useFindAllStripeIntegrations } from '~/pages/settings/integrations/stripe/hooks/useFindAllStripeIntegrations';
 import { useRemoveStripeIntegration } from '~/pages/settings/integrations/stripe/hooks/useRemoveStripeIntegrations';
+import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsIntegrationGroup } from '../../components/SettingsIntegrationGroup';
 
 type SettigsIntegrationStripeConnectionsListCardProps = {
   integration: SettingsIntegration;
@@ -57,10 +59,7 @@ const IsActiveContent = styled.div`
   gap: 13px;
 `;
 
-export const SettigsIntegrationStripeConnectionsListCard = ({
-  integration,
-  connections,
-}: SettigsIntegrationStripeConnectionsListCardProps) => {
+export const SettigsIntegrationStripeConnectionsListCard = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { createCheckoutSession } = useContext(
@@ -72,9 +71,6 @@ export const SettigsIntegrationStripeConnectionsListCard = ({
   const { t } = useTranslation();
 
   const [refresh, setRefresh] = useState<boolean>(false);
-
-  // const account = localStorage.getItem('accountId');
-  // const accountData = localStorage.getItem('accountData');
 
   const { stripeIntegrations = [], refetchStripe } =
     useFindAllStripeIntegrations();
@@ -114,6 +110,9 @@ export const SettigsIntegrationStripeConnectionsListCard = ({
   console.log('stripe', stripeIntegrations);
   console.log('ref', { refetchStripe });
 
+  const integrationCategories = useSettingsIntegrationCategories();
+  const stripeCategory = integrationCategories[3];
+
   return (
     <>
       {stripeIntegrations.length > 0 ? (
@@ -149,29 +148,7 @@ export const SettigsIntegrationStripeConnectionsListCard = ({
           {/* <button onClick={() => handleCheckoutSession()}>checkout</button> */}
         </StripeAccountConnectedContainer>
       ) : (
-        <SettingsListCard
-          items={connections}
-          RowIcon={() => (
-            <StyledDatabaseLogoContainer>
-              <StyledDatabaseLogo alt="" src={integration.from.image} />
-            </StyledDatabaseLogoContainer>
-          )}
-          RowRightComponent={({ item: connection }) => (
-            <StyledRowRightContainer>
-              <IconButton
-                onClick={() => handleEditIntegration(connection.id)}
-                variant="tertiary"
-                size="medium"
-                Icon={IconTrash}
-              />
-            </StyledRowRightContainer>
-          )}
-          onRowClick={() => {}}
-          getItemLabel={(connection) => connection.label}
-          hasFooter
-          footerButtonLabel={t('addConnection')}
-          onFooterButtonClick={() => navigate('./new')}
-        />
+        <SettingsIntegrationGroup key={stripeCategory.key} integrationGroup={stripeCategory} />
       )}
     </>
   );
