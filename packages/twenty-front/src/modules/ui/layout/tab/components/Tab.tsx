@@ -11,6 +11,7 @@ type TabProps = {
   title: string;
   Icon?: IconComponent;
   active?: boolean;
+  inDropdown?: boolean;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -21,7 +22,7 @@ type TabProps = {
 
 const StyledTab = styled('button', {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
-})<{ active?: boolean; disabled?: boolean; to?: string }>`
+})<{ active?: boolean; disabled?: boolean; to?: string; inDropdown?: boolean }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
@@ -45,6 +46,12 @@ const StyledTab = styled('button', {
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
+
+  &:hover {
+    background: ${({ theme, inDropdown }) =>
+      inDropdown ? theme.background.tertiary : 'transparent'};
+  }
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 const StyledHover = styled.span`
@@ -73,6 +80,7 @@ export const Tab = ({
   title,
   Icon,
   active = false,
+  inDropdown = false,
   onClick,
   className,
   disabled,
@@ -91,6 +99,7 @@ export const Tab = ({
       active={active}
       className={className}
       disabled={disabled}
+      inDropdown={inDropdown}
       data-testid={'tab-' + id}
       as={to ? Link : 'button'}
       to={to}
