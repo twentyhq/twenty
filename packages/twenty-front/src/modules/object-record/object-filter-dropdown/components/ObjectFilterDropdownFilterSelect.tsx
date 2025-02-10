@@ -27,7 +27,7 @@ import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/uti
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
@@ -81,7 +81,8 @@ export const ObjectFilterDropdownFilterSelect = ({
     advancedFilterViewFilterId,
   );
 
-  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems();
+  const { filterableFieldMetadataItems } =
+    useFilterableFieldMetadataItemsInRecordIndexContext();
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,

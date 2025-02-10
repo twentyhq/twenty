@@ -145,7 +145,7 @@ Below are a few features we have implemented to date:
 - [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
 - [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/) and [Emotion](https://emotion.sh/)
 - [Greptile](https://greptile.com) for code reviews.
-- [Lingui](https://lingui.dev/) and [TranslationIO](https://translation.io/) for translations.
+- [Lingui](https://lingui.dev/) and [Crowdin](https://crowdin.com/) for translations.
 
 
 # Join the Community

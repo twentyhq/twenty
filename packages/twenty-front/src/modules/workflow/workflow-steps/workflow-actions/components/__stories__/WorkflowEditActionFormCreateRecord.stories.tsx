@@ -9,6 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormCreateRecord } from '../WorkflowEditActionFormCreateRecord';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
   title: 'Modules/Workflow/WorkflowEditActionFormCreateRecord',
@@ -45,6 +46,7 @@ const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
+    WorkspaceDecorator,
   ],
 };
 

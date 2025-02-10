@@ -1,0 +1,58 @@
+# This is similar to the "Pull Translations" workflow, but without the conditional check to allow us to
+# forcefully pull down translations from Crowdin and create a PR regardless if all the translations are fulfilled.
+#
+# Intended to be used when we manually update translations in Crowdin UI and want to pull those down when
+# they already exist.
+
+name: 'Force pull translations'
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pull_translations:
+    name: Force pull translations
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Pull translations from Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          export_only_approved: false
+          localization_branch_name: chore/translations
+          commit_message: 'chore: add translations'
+          pull_request_title: 'chore: add translations'
+          base_url: 'https://twenty.api.crowdin.com'
+
+        env:
+          # A classic GitHub Personal Access Token with the 'repo' scope selected (the user should have write access to the repository).
+          GITHUB_TOKEN: ${{ github.token }}
+
+          # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
+          CROWDIN_PROJECT_ID: '1'
+
+          # Visit https://crowdin.com/settings#api-key to create this token
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
