@@ -42,9 +42,10 @@ export const useDeleteManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
-    objectNameSingular
-  })
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular,
+    });
 
   const { deleteManyRecordsMutation } = useDeleteManyRecordsMutation({
     objectNameSingular,
@@ -76,8 +77,8 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const cachedRecords = batchedIdsToDelete.map(
-        (idToDelete) => getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache)
+      const cachedRecords = batchedIdsToDelete.map((idToDelete) =>
+        getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache),
       );
 
       const currentTimestamp = new Date().toISOString();

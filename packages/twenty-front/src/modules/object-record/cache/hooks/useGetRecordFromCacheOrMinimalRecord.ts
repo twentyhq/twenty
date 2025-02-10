@@ -6,7 +6,7 @@ import { ApolloCache, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import { capitalize } from 'twenty-shared';
 
-type MinimalRecord = Pick<ObjectRecord, 'id' | '__typename'>
+type MinimalRecord = Pick<ObjectRecord, 'id' | '__typename'>;
 
 export const useGetRecordFromCacheOrMinimalRecord = ({
   objectNameSingular,
@@ -29,7 +29,7 @@ export const useGetRecordFromCacheOrMinimalRecord = ({
     <T extends ObjectRecord = ObjectRecord>(
       recordId: string,
       cache = apolloClient.cache,
-    ): T | MinimalRecord=> {
+    ): T | MinimalRecord => {
       const minialRecord = {
         __typename: capitalize(objectMetadataItem.nameSingular),
         id: recordId,

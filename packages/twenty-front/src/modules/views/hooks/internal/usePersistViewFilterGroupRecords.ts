@@ -142,7 +142,7 @@ export const usePersistViewFilterGroupRecords = () => {
             update: (cache, { data }) => {
               const record = data?.updateViewFilterGroup;
               if (!isDefined(record)) return;
-           
+
               const cachedRecord =
                 getRecordFromCacheOrMinimalRecord<ViewFilterGroup>(
                   record.id,

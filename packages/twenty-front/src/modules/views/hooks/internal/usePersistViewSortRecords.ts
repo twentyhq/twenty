@@ -20,9 +20,10 @@ export const usePersistViewSortRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
-  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
-    objectNameSingular: CoreObjectNameSingular.ViewSort,
-  });
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular: CoreObjectNameSingular.ViewSort,
+    });
 
   const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewSort,
@@ -94,7 +95,10 @@ export const usePersistViewSortRecords = () => {
               const record = data?.['updateViewSort'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewSort>(record.id, cache);
+              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewSort>(
+                record.id,
+                cache,
+              );
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -130,7 +134,10 @@ export const usePersistViewSortRecords = () => {
               const record = data?.['destroyViewSort'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(record.id, cache);
+              const cachedRecord = getRecordFromCacheOrMinimalRecord(
+                record.id,
+                cache,
+              );
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,

@@ -21,9 +21,10 @@ export const usePersistViewFilterRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewFilter,
   });
 
-  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
-    objectNameSingular: CoreObjectNameSingular.ViewFilter,
-  })
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular: CoreObjectNameSingular.ViewFilter,
+    });
 
   const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewFilter,
@@ -103,7 +104,7 @@ export const usePersistViewFilterRecords = () => {
               if (!isDefined(record)) return;
 
               const cachedRecord =
-              getRecordFromCacheOrMinimalRecord<ViewFilter>(record.id, cache);
+                getRecordFromCacheOrMinimalRecord<ViewFilter>(record.id, cache);
 
               triggerUpdateRecordOptimisticEffect({
                 cache,
@@ -140,7 +141,10 @@ export const usePersistViewFilterRecords = () => {
               const record = data?.['destroyViewFilter'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(record.id, cache);
+              const cachedRecord = getRecordFromCacheOrMinimalRecord(
+                record.id,
+                cache,
+              );
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,

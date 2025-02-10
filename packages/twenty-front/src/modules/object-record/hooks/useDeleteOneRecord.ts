@@ -46,8 +46,10 @@ export const useDeleteOneRecord = ({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      const cachedRecord: ObjectRecord =
-        getRecordFromCacheOrMinimalRecord(idToDelete, apolloClient.cache);
+      const cachedRecord: ObjectRecord = getRecordFromCacheOrMinimalRecord(
+        idToDelete,
+        apolloClient.cache,
+      );
       const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
         objectMetadataItem,

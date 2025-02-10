@@ -19,9 +19,10 @@ export const usePersistViewFieldRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
 
-  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({
-    objectNameSingular: CoreObjectNameSingular.ViewField,
-  });
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({
+      objectNameSingular: CoreObjectNameSingular.ViewField,
+    });
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewField,
@@ -96,7 +97,10 @@ export const usePersistViewFieldRecords = () => {
               const record = data?.['updateViewField'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(record.id, cache);
+              const cachedRecord = getRecordFromCacheOrMinimalRecord(
+                record.id,
+                cache,
+              );
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,

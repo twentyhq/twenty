@@ -39,7 +39,8 @@ export const useDestroyManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCacheOrMinimalRecord = useGetRecordFromCacheOrMinimalRecord({objectNameSingular})
+  const getRecordFromCacheOrMinimalRecord =
+    useGetRecordFromCacheOrMinimalRecord({ objectNameSingular });
 
   const { destroyManyRecordsMutation } = useDestroyManyRecordsMutation({
     objectNameSingular,
@@ -72,8 +73,9 @@ export const useDestroyManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const originalRecords = batchedIdToDestroy
-        .map((recordId) => getRecordFromCacheOrMinimalRecord(recordId, apolloClient.cache))
+      const originalRecords = batchedIdToDestroy.map((recordId) =>
+        getRecordFromCacheOrMinimalRecord(recordId, apolloClient.cache),
+      );
 
       const destroyedRecordsResponse = await apolloClient
         .mutate({
@@ -98,8 +100,9 @@ export const useDestroyManyRecords = ({
 
                 if (!isDefined(records) || records.length === 0) return;
 
-                const cachedRecords = records
-                  .map((record) => getRecordFromCacheOrMinimalRecord(record.id, cache))
+                const cachedRecords = records.map((record) =>
+                  getRecordFromCacheOrMinimalRecord(record.id, cache),
+                );
 
                 triggerDestroyRecordsOptimisticEffect({
                   cache,
