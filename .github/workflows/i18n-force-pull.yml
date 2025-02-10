@@ -56,3 +56,16 @@ jobs:
 
           # Visit https://crowdin.com/settings#api-key to create this token
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Compile and commit updated translations
+        run: |
+          git fetch origin chore/translations
+          git checkout chore/translations
+          npx nx run twenty-server:lingui:compile
+          npx nx run twenty-emails:lingui:compile
+          npx nx run twenty-front:lingui:compile
+          git config --global user.name 'Crowdin Bot'
+          git config --global user.email 'support+bot@crowdin.com'
+          git add .
+          git commit -m "chore: compile translations"
+          git push origin chore/translations

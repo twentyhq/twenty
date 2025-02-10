@@ -8,7 +8,7 @@ msgstr ""
 "Language: fi\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:24\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,98 +20,98 @@ msgstr ""
 
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts:131
 msgid "{aggregateLabel} of {fieldLabel}"
-msgstr ""
+msgstr "{aggregateLabel} {fieldLabel} määrä"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:172
 msgid "{apiKeyName} API Key"
-msgstr ""
+msgstr "{apiKeyName} API-avain"
 
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx:41
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx:65
 msgid "{name}"
-msgstr ""
+msgstr "{name}"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:92
 msgid "1 000 workflow node executions"
-msgstr ""
+msgstr "1 000 työnkulun solmun suoritusta"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:63
 msgid "12h ({hour12Label})"
-msgstr ""
+msgstr "12h ({hour12Label})"
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:198
 msgid "2. Configure field"
-msgstr ""
+msgstr "2. Määritä kenttä"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx:59
 msgid "24h ({hour24Label})"
-msgstr ""
+msgstr "24h ({hour24Label})"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:116
 msgid "A shared environment where you will be able to manage your customer relations with your team."
-msgstr ""
+msgstr "Jaettu ympäristö, jossa voit hallita asiakassuhteita tiimisi kanssa."
 
 #: src/modules/ui/input/components/ImageInput.tsx:156
 msgid "Abort"
-msgstr ""
+msgstr "Keskeytä"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:90
 msgid "About"
-msgstr ""
+msgstr "Tietoja"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:40
 #: src/pages/settings/accounts/SettingsAccounts.tsx:46
 msgid "Account"
-msgstr ""
+msgstr "Tili"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:321
 #: src/modules/settings/profile/components/DeleteAccount.tsx:45
 msgid "Account Deletion"
-msgstr ""
+msgstr "Tilin poistaminen"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:21
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:119
 msgid "Accounts"
-msgstr ""
+msgstr "Tilit"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:99
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:68
 msgid "Activate"
-msgstr ""
+msgstr "Aktivoi"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:67
 msgid "Activate Workflow"
-msgstr ""
+msgstr "Aktivoi työnkulku"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:190
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:200
 msgid "Active"
-msgstr ""
+msgstr "Aktiivinen"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:50
 msgid "Active API keys created by you or your team."
-msgstr ""
+msgstr "Sinun tai tiimisi luomat aktiiviset API-avaimet."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx:38
 msgid "Add"
-msgstr ""
+msgstr "Lisää"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:39
 msgid "Add Field"
-msgstr ""
+msgstr "Lisää kenttä"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:144
 msgid "Add object"
-msgstr ""
+msgstr "Lisää objekti"
 
 #: src/modules/settings/security/components/SettingsSSOIdentitiesProvidersListCard.tsx:60
 msgid "Add SSO Identity Provider"
-msgstr ""
+msgstr "Lisää SSO-identiteetintarjoaja"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:105
 msgid "Add to blocklist"
-msgstr ""
+msgstr "Lisää estolistalle"
 
 #: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx:68
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx:79
@@ -125,248 +125,248 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:70
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:34
 msgid "Add to favorites"
-msgstr ""
+msgstr "Lisää suosikkeihin"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts:16
 msgid "Add your first {objectLabel}"
-msgstr ""
+msgstr "Lisää ensimmäinen {objectLabel}"
 
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx:157
 msgid "Added {beautifiedCreatedAt}"
-msgstr ""
+msgstr "Lisätty {beautifiedCreatedAt}"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:19
 msgid "All"
-msgstr ""
+msgstr "Kaikki"
 
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx:185
 msgid "All ({relationRecordsCount})"
-msgstr ""
+msgstr "Kaikki ({relationRecordsCount})"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:119
 msgid "All roles"
-msgstr ""
+msgstr "Kaikki roolit"
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:135
 msgid "Allow logins through Google's single sign-on functionality."
-msgstr ""
+msgstr "Salli kirjautumiset Googlen yksittäisen kirjautumisen toiminnolla."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:146
 msgid "Allow logins through Microsoft's single sign-on functionality."
-msgstr ""
+msgstr "Salli kirjautumiset Microsoftin yksittäisen kirjautumisen toiminnolla."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:168
 msgid "Allow the invitation of new users by sharing an invite link."
-msgstr ""
+msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:157
 msgid "Allow users to sign in with an email and password."
-msgstr ""
+msgstr "Salli käyttäjien kirjautua sisään sähköpostilla ja salasanalla."
 
 #: src/pages/auth/PasswordReset.tsx:162
 msgid "An error occurred while updating password"
-msgstr ""
+msgstr "Salasanan päivitysyrityksessä tapahtui virhe"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:251
 msgid "An optional description"
-msgstr ""
+msgstr "Valinnainen kuvaus"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:31
 msgid "and"
-msgstr ""
+msgstr "ja"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:91
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:191
 msgid "API & Webhooks"
-msgstr ""
+msgstr "API & Webhooks"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:180
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:188
 msgid "API Key"
-msgstr ""
+msgstr "API-avain"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:49
 msgid "API keys"
-msgstr ""
+msgstr "API-avaimet"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:166
 msgid "API Name"
-msgstr ""
+msgstr "API-nimi"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:37
 msgid "Appearance"
-msgstr ""
+msgstr "Ulkoasu"
 
 #: src/pages/settings/SettingsBilling.tsx:189
 msgid "Are you sure that you want to change your billing interval?"
-msgstr ""
+msgstr "Oletko varma, että haluat muuttaa laskutusväliäsi?"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Ascending"
-msgstr ""
+msgstr "Nouseva"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:120
 msgid "Assign roles to specify each member's access permissions"
-msgstr ""
+msgstr "Määritä roolit määrittääksesi jokaisen jäsenen pääsyoikeudet"
 
 #: src/pages/settings/roles/components/RoleAssignment.tsx:14
 msgid "Assigned members"
-msgstr ""
+msgstr "Määrätyt jäsenet"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:129
 msgid "Assigned to"
-msgstr ""
+msgstr "Määrätty henkilölle"
 
 #: src/pages/settings/roles/SettingsRoleEdit.tsx:64
 msgid "Assignment"
-msgstr ""
+msgstr "Tehtävänanto"
 
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx:60
 msgid "At least 8 characters long."
-msgstr ""
+msgstr "Vähintään 8 merkkiä pitkä."
 
 #: src/modules/settings/security/components/SettingsSecurityOptionsList.tsx:73
 msgid "At least one authentication method must be enabled"
-msgstr ""
+msgstr "Ainakin yksi todennusmenetelmä on oltava käytössä"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:63
 msgid "Authentication"
-msgstr ""
+msgstr "Todennus"
 
 #: src/pages/auth/Authorize.tsx:127
 msgid "Authorize"
-msgstr ""
+msgstr "Valtuuta"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:15
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:15
 msgid "Average"
-msgstr ""
+msgstr "Keskiarvo"
 
 #: src/pages/not-found/NotFound.tsx:58
 msgid "Back to content"
-msgstr ""
+msgstr "Takaisin sisältöön"
 
 #: src/pages/settings/SettingsBilling.tsx:132
 #: src/pages/settings/SettingsBilling.tsx:138
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:154
 msgid "Billing"
-msgstr ""
+msgstr "Laskutus"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:46
 msgid "Blocklist"
-msgstr ""
+msgstr "Estoluettelo"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:210
 msgid "Book a Call"
-msgstr ""
+msgstr "Varaa puheluaika"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx:23
 msgid "By using Twenty, you agree to the"
-msgstr ""
+msgstr "Twenty:tä käyttäessäsi hyväksyt"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx:73
 msgid "Calculate"
-msgstr ""
+msgstr "Laske"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:57
 msgid "Calendar"
-msgstr ""
+msgstr "Kalenteri"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:14
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx:24
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:83
 msgid "Calendars"
-msgstr ""
+msgstr "Kalenterit"
 
 #: src/pages/auth/Authorize.tsx:124
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx:152
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:218
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx:16
 msgid "Cancel"
-msgstr ""
+msgstr "Peruuta"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:152
 msgid "Cancel anytime"
-msgstr ""
+msgstr "Peruuta milloin tahansa"
 
 #: src/pages/settings/SettingsBilling.tsx:176
 msgid "Cancel Plan"
-msgstr ""
+msgstr "Peruuta suunnitelma"
 
 #: src/pages/settings/SettingsBilling.tsx:171
 msgid "Cancel your subscription"
-msgstr ""
+msgstr "Peruuta tilauksesi"
 
 #: src/pages/settings/SettingsBilling.tsx:193
 msgid "Change {to}"
-msgstr ""
+msgstr "Muuta {to}"
 
 #: src/pages/auth/PasswordReset.tsx:246
 #: src/modules/settings/profile/components/ChangePassword.tsx:52
 #: src/modules/settings/profile/components/ChangePassword.tsx:58
 msgid "Change Password"
-msgstr ""
+msgstr "Vaihda salasana"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:105
 msgid "Chinese — Simplified"
-msgstr ""
+msgstr "Kiina — Yksinkertaistettu"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:109
 msgid "Chinese — Traditional"
-msgstr ""
+msgstr "Kiina — Perinteinen"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:281
 msgid "Choose an object"
-msgstr ""
+msgstr "Valitse objekti"
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:13
 msgid "Choose your provider"
-msgstr ""
+msgstr "Valitse palveluntarjoajasi"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:147
 msgid "Choose your Trial"
-msgstr ""
+msgstr "Valitse kokeilusi"
 
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx:221
 msgid "Close"
-msgstr ""
+msgstr "Sulje"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:48
 msgid "Configure an SSO connection"
-msgstr ""
+msgstr "Määritä SSO-yhteys"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:58
 msgid "Configure and customize your calendar preferences."
-msgstr ""
+msgstr "Määritä ja muokkaa kalenteriasetuksiasi."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:43
 msgid "Configure how dates are displayed across the app"
-msgstr ""
+msgstr "Määritä, miten päivämäärät näytetään sovelluksessa"
 
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:34
 msgid "Configure your emails and calendar settings."
-msgstr ""
+msgstr "Määritä sähköpostisi ja kalenterin asetukset."
 
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx:11
 msgid "Connect a new account to your workspace"
-msgstr ""
+msgstr "Yhdistä uusi tili työtilaasi"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:61
 msgid "Connect with Google"
-msgstr ""
+msgstr "Yhdistä Googleen"
 
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx:70
 msgid "Connect with Microsoft"
-msgstr ""
+msgstr "Yhdistä Microsoftiin"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx:56
 msgid "Connected accounts"
-msgstr ""
+msgstr "Yhdistetyt tilit"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:97
 msgid "Context"
-msgstr ""
+msgstr "Yhteys"
 
 #: src/pages/onboarding/InviteTeam.tsx:228
 #: src/pages/onboarding/CreateWorkspace.tsx:154
@@ -374,97 +374,97 @@ msgstr ""
 #: src/pages/onboarding/ChooseYourPlan.tsx:198
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:92
 msgid "Continue"
-msgstr ""
+msgstr "Jatka"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx:75
 msgid "Continue with Email"
-msgstr ""
+msgstr "Jatka sähköpostilla"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx:26
 msgid "Continue with Google"
-msgstr ""
+msgstr "Jatka Googlella"
 
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx:22
 msgid "Continue with Microsoft"
-msgstr ""
+msgstr "Jatka Microsoftin avulla"
 
 #: src/modules/command-menu/components/CommandMenu.tsx:65
 msgid "Copilot"
-msgstr ""
+msgstr "Avustaja"
 
 #: src/pages/onboarding/InviteTeam.tsx:217
 msgid "Copy invitation link"
-msgstr ""
+msgstr "Kopioi kutsulinkki"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:181
 msgid "Copy this key as it will not be visible again"
-msgstr ""
+msgstr "Kopioi tämä avain, sillä se ei ole enää nähtävissä"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:38
 msgid "Count"
-msgstr ""
+msgstr "Määrä"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:19
 msgid "Count all"
-msgstr ""
+msgstr "Laske kaikki"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:21
 msgid "Count empty"
-msgstr ""
+msgstr "Laske tyhjät"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:23
 msgid "Count not empty"
-msgstr ""
+msgstr "Laske ei-tyhjät"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:25
 msgid "Count unique values"
-msgstr ""
+msgstr "Laske yksilölliset arvot"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts:9
 msgid "Create a workflow and return here to view its versions"
-msgstr ""
+msgstr "Luo työnkulku ja palaa tänne nähdäksesi sen versiot"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:56
 msgid "Create API key"
-msgstr ""
+msgstr "Luo API-avain"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:57
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:45
 msgid "Create new record"
-msgstr ""
+msgstr "Luo uusi tietue"
 
 #: src/pages/onboarding/CreateProfile.tsx:154
 msgid "Create profile"
-msgstr ""
+msgstr "Luo profiili"
 
 #: src/pages/settings/roles/SettingsRoles.tsx:193
 msgid "Create Role"
-msgstr ""
+msgstr "Luo rooli"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:72
 msgid "Create Webhook"
-msgstr ""
+msgstr "Luo Webhook"
 
 #: src/pages/onboarding/CreateWorkspace.tsx:113
 msgid "Create your workspace"
-msgstr ""
+msgstr "Luo työtilasi"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:90
 msgid "Custom objects"
-msgstr ""
+msgstr "Mukautetut objektit"
 
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx:28
 msgid "Customise the fields available in the {objectLabelSingular} views."
-msgstr ""
+msgstr "Mukauta {objectLabelSingular} näkymiin saatavilla olevia kenttiä."
 
 #: src/pages/settings/SettingsWorkspace.tsx:56
 msgid "Customize Domain"
-msgstr ""
+msgstr "Mukauta toimialuetta"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:64
 msgid "Customize your workspace security"
-msgstr ""
+msgstr "Mukauta työtilasi turvallisuutta"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:341
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:235
@@ -472,50 +472,50 @@ msgstr ""
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:30
 #: src/modules/settings/profile/components/DeleteAccount.tsx:29
 msgid "Danger zone"
-msgstr ""
+msgstr "Vaaravyöhyke"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:139
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:167
 msgid "Data model"
-msgstr ""
+msgstr "Tietomalli"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:41
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx:70
 msgid "Data type"
-msgstr ""
+msgstr "Tietotyyppi"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx:89
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx:80
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx:52
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx:58
 msgid "Date"
-msgstr ""
+msgstr "Päivämäärä"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx:42
 msgid "Date and time"
-msgstr ""
+msgstr "Päivämäärä ja kellonaika"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:259
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:116
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:83
 msgid "Deactivate"
-msgstr ""
+msgstr "Poista käytöstä"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:105
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr ""
+msgstr "Poista käytöstä \"Synkronoi objektien tunnisteet ja API-nimet\" asettaaksesi mukautetun API-nimen"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:251
 msgid "Deactivate this field"
-msgstr ""
+msgstr "Poista käytöstä tämä kenttä"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:82
 msgid "Deactivate Workflow"
-msgstr ""
+msgstr "Poista työnkulku käytöstä"
 
 #: src/pages/settings/data-model/SettingsNewObject.tsx:91
 msgid "Define the name and description of your object"
-msgstr ""
+msgstr "Määritä objektisi nimi ja kuvaus"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:347
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:241
@@ -531,75 +531,75 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:60
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:76
 msgid "Delete"
-msgstr ""
+msgstr "Poista"
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:332
 #: src/modules/settings/profile/components/DeleteAccount.tsx:37
 #: src/modules/settings/profile/components/DeleteAccount.tsx:53
 msgid "Delete account"
-msgstr ""
+msgstr "Poista tili"
 
 #: src/modules/settings/profile/components/DeleteAccount.tsx:30
 msgid "Delete account and all the associated data"
-msgstr ""
+msgstr "Poista tili ja kaikki siihen liittyvät tiedot"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:254
 msgid "Delete API key"
-msgstr ""
+msgstr "Poista API-avain"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:99
 msgid "Delete record"
-msgstr ""
+msgstr "Poista tietue"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:115
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts:75
 msgid "Delete records"
-msgstr ""
+msgstr "Poista tietueet"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:342
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:236
 msgid "Delete this integration"
-msgstr ""
+msgstr "Poista t\\u00e4m\\u00e4 integraatio"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:356
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:364
 msgid "Delete webhook"
-msgstr ""
+msgstr "Poista Webhooks"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:224
 msgid "Delete workflow"
-msgstr ""
+msgstr "Poista ty\\u00f6nkuva"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:240
 msgid "Delete workflows"
-msgstr ""
+msgstr "Poista ty\\u00f6nkulut"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:36
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:54
 msgid "Delete workspace"
-msgstr ""
+msgstr "Poista ty\\u00f6tila"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx:31
 msgid "Delete your whole workspace"
-msgstr ""
+msgstr "Poista koko ty\\u00f6tilasi"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:201
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx:214
 msgid "Descending"
-msgstr ""
+msgstr "Laskeva"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:250
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx:239
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx:266
 msgid "Description"
-msgstr ""
+msgstr "Kuvaus"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:254
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:296
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:155
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts:193
 msgid "Destroy"
-msgstr ""
+msgstr "Tuhota"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:35
 #: src/pages/settings/developers/SettingsDevelopers.tsx:42
@@ -608,120 +608,120 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:89
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:169
 msgid "Developers"
-msgstr ""
+msgstr "Kehitt\\u00e4j\\u00e4t"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx:80
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:97
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts:98
 msgid "Discard Draft"
-msgstr ""
+msgstr "Hylk\\u00e4\\u00e4 luonnos"
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx:48
 msgid "Display as relative date"
-msgstr ""
+msgstr "N\\u00e4yt\\u00e4 suhteellisena p\\u00e4iv\\u00e4m\\u00e4\\u00e4r\\u00e4n\\u00e4"
 
 #: src/pages/settings/SettingsWorkspace.tsx:51
 #: src/pages/settings/workspace/SettingsHostname.tsx:115
 #: src/pages/settings/workspace/SettingsDomain.tsx:115
 #: src/pages/settings/workspace/SettingsDomain.tsx:125
 msgid "Domain"
-msgstr ""
+msgstr "Verkkotunnus"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx:108
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:223
 msgid "E.g. backoffice integration"
-msgstr ""
+msgstr "Esimerkiksi backoffice-integraatio"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:29
 msgid "Earliest"
-msgstr ""
+msgstr "Aikaisin"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts:31
 msgid "Earliest date"
-msgstr ""
+msgstr "Aikaisin p\\u00e4iv\\u00e4m\\u00e4\\u00e4r\\u00e4"
 
 #: src/pages/settings/SettingsBilling.tsx:158
 msgid "Edit billing interval"
-msgstr ""
+msgstr "Muokkaa laskutusv\\u00e4li\\u00e4"
 
 #: src/pages/settings/SettingsBilling.tsx:146
 msgid "Edit payment method, see your invoices and more"
-msgstr ""
+msgstr "Muokkaa maksutapaa, n\\u00e4e laskusi ja paljon muuta"
 
 #: src/pages/settings/SettingsWorkspace.tsx:52
 msgid "Edit your subdomain name or set a custom domain."
-msgstr ""
+msgstr "Muokkaa alasivustosi nime\\u00e4 tai aseta mukautettu verkkotunnus."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:180
 #: src/pages/settings/SettingsWorkspaceMembers.tsx:256
 #: src/pages/settings/SettingsProfile.tsx:42
 #: src/pages/auth/PasswordReset.tsx:206
 msgid "Email"
-msgstr ""
+msgstr "S\\u00e4hk\\u00f6posti"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:89
 msgid "Email integration"
-msgstr ""
+msgstr "S\\u00e4hk\\u00f6posti-integraatio"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx:55
 msgid "Email or domain is already in blocklist"
-msgstr ""
+msgstr "S\\u00e4hk\\u00f6posti tai verkkotunnus on jo estolistalla"
 
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx:77
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx:45
 msgid "Emails"
-msgstr ""
+msgstr "S\\u00e4hk\\u00f6postit"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:167
 msgid "employees"
-msgstr ""
+msgstr "ty\\u00f6ntekij\\u00e4t"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx:137
 msgid "Employees"
-msgstr ""
+msgstr "Ty\\u00f6ntekij\\u00e4t"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx:86
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts:22
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx:62
 msgid "Empty"
-msgstr ""
+msgstr "Tyhj\\u00e4"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx:97
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx:238
 msgid "Endpoint URL"
-msgstr ""
+msgstr "P\\u00e4\\u00e4tetunnisteen URL"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx:69
 msgid "English"
-msgstr ""
+msgstr "Englanti"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx:157
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
-msgstr ""
+msgstr "Nauti {withCreditCardTrialPeriodDuration}-p\\u00e4iv\\u00e4isen ilmaisen kokeilun"
 
 #: src/pages/settings/security/SettingsSecurity.tsx:51
 msgid "Enterprise"
-msgstr ""
+msgstr "Yritys"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:96
 msgid "Error deleting api key: {err}"
-msgstr ""
+msgstr "Virhe API-avaimen poistamisessa: {err}"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx:148
 msgid "Error regenerating api key: {err}"
-msgstr ""
+msgstr "Virhe API-avaimen uudelleengeneroinnissa: {err}"
 
 #: src/pages/settings/SettingsBilling.tsx:124
 msgid "Error while switching subscription {to}."
-msgstr ""
+msgstr "Virhe tilauksen vaihdossa {to}."
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx:66
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
-msgstr ""
+msgstr "M\\u00e4\\u00e4rit\\u00e4 Webhooks-p\\u00e4\\u00e4tepisteet asynkronisten tapahtumien ilmoituksille."
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx:47
 msgid "Exclude the following people and domains from my email sync"
-msgstr ""
+msgstr "Sulje seuraavat henkil\\u00f6t ja verkkotunnukset pois s\\u00e4hk\\u00f6posti-synkronointistani"
 
 #: src/pages/settings/data-model/SettingsObjects.tsx:162
 msgid "Existing objects"

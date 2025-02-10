@@ -5,201 +5,201 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: hu\n"
+"Language: pt\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
-"Language-Team: Hungarian\n"
+"Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
 "X-Crowdin-Project-ID: 1\n"
-"X-Crowdin-Language: hu\n"
+"X-Crowdin-Language: pt-BR\n"
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:32
 msgid "(System) View Fields"
-msgstr "(Rendszer) Nézet mezők"
+msgstr "(Sistema) Campos de Visualização"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:29
 msgid "(System) View Filter Groups"
-msgstr "(Rendszer) Nézet szűrőcsoportok"
+msgstr "(Sistema) Grupos de Filtros de Visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:25
 msgid "(System) View Filters"
-msgstr "(Rendszer) Nézet szűrők"
+msgstr "(Sistema) Filtros de Visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:23
 msgid "(System) View Groups"
-msgstr "(Rendszer) Nézet csoportok"
+msgstr "(Sistema) Grupos de Visualização"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:26
 msgid "(System) View Sorts"
-msgstr "(Rendszer) Nézet rendezések"
+msgstr "(Sistema) Ordenações de Visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:33
 msgid "(System) Views"
-msgstr "(Rendszer) Nézetek"
+msgstr "(Sistema) Visualizações"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:55
 msgid "A company"
-msgstr "Egy cég"
+msgstr "Uma Empresa"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:30
 msgid "A connected account"
-msgstr "Egy összekapcsolt fiók"
+msgstr "Uma Conta Conectada"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:37
 msgid "A favorite that can be accessed from the left menu"
-msgstr "Egy kedvenc, amely elérhető a bal oldali menüből"
+msgstr "Um Favorito que pode ser Acessado no Menu à Esquerda"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:24
 msgid "A Folder of favorites"
-msgstr "Egy kedvencek mappája"
+msgstr "Uma Pasta de Favoritos"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:25
 msgid "A group of related messages (e.g. email thread, chat thread)"
-msgstr "Egy kapcsolódó üzenetcsoport (pl. e-mail lánc, csevegőszál)"
+msgstr "Um Grupo de Mensagens Relacionadas (ex.: thread de e-mail, thread de chat)"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:30
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
-msgstr "Egy üzenetcsatornán keresztül küldött vagy fogadott üzenet (e-mail, csevegés stb.)"
+msgstr "Uma Mensagem Enviada ou Recebida por um Canal de Mensagens (e-mail, chat, etc.)"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:46
 msgid "A note"
-msgstr "Egy jegyzet"
+msgstr "Uma Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:27
 msgid "A note target"
-msgstr "Egy jegyzet célja"
+msgstr "Um Alvo de Nota"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:59
 msgid "A person"
-msgstr "Egy személy"
+msgstr "Uma Pessoa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:48
 msgid "A task"
-msgstr "Egy feladat"
+msgstr "Uma Tarefa"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:27
 msgid "A task target"
-msgstr "Egy feladat célja"
+msgstr "Um Alvo de Tarefa"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:20
 msgid "A webhook"
-msgstr "Egy webhook"
+msgstr "Um Webhook"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:59
 msgid "A workflow"
-msgstr "Egy munkafolyamat"
+msgstr "Um Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:24
 msgid "A workflow event listener"
-msgstr "Egy munkafolyamat eseményhallgatója"
+msgstr "Um Ouvinte de Eventos de Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:54
 msgid "A workflow run"
-msgstr "Egy munkafolyamat futása"
+msgstr "Uma Execução de Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:67
 msgid "A workflow version"
-msgstr "Egy munkafolyamat verziója"
+msgstr "Uma Versão de Workflow"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:78
 msgid "A workspace member"
-msgstr "Egy munkaterület tagja"
+msgstr "Um Membro do Espaço de Trabalho"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:58
 msgid "Access Token"
-msgstr "Hozzáférési token"
+msgstr "Token de Acesso"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:114
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:115
 #: src/modules/company/standard-objects/company.workspace-entity.ts:176
 msgid "Account Owner"
-msgstr "Fióktulajdonos"
+msgstr "Proprietário da Conta"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:169
 msgid "Account owner for companies"
-msgstr "Fióktulajdonos cégek esetén"
+msgstr "Proprietário da Conta para Empresas"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:168
 msgid "Account Owner For Companies"
-msgstr "Fióktulajdonos cégek esetén"
+msgstr "Proprietário da Conta para Empresas"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:123
 msgid "Address"
-msgstr "Cím"
+msgstr "Endereço"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:264
 msgid "Address (deprecated) "
-msgstr "Cím (elavult) "
+msgstr "Endereço (obsoleto) "
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:124
 msgid "Address of the company"
-msgstr "A cég címe"
+msgstr "Endereço da Empresa"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:265
 msgid "Address of the company - deprecated in favor of new address field"
-msgstr "A cég címe - elavult, az új címeztési mező javára"
+msgstr "Endereço da Empresa - obsoleto em favor do novo campo de endereço"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:189
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:96
 msgid "Aggregate operation"
-msgstr "Összegző művelet"
+msgstr "Operação Agregada"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:35
 msgid "Aggregated / filtered event to be displayed on the timeline"
-msgstr "Összesített/szűrt események, amelyek a cronológiaon jelennek meg"
+msgstr "Evento Agregado/Filtrado a ser Exibido na Linha do Tempo"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:69
 msgid "Amount"
-msgstr "Összeg"
+msgstr "Valor"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:19
 msgid "An API key"
-msgstr "Egy API kulcs"
+msgstr "Uma Chave API"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:32
 msgid "An attachment"
-msgstr "Egy csatolmány"
+msgstr "Um Anexo"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:24
 msgid "An audit log of actions performed in the system"
-msgstr "Az akciókról készült naplózás a rendszerben"
+msgstr "Um Registro de Auditoria das Ações Executadas no Sistema"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:20
 msgid "An event related to user behavior"
-msgstr "A felhasználói magatartással kapcsolatos esemény"
+msgstr "Um Evento Relacionado ao Comportamento do Usuário"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:50
 msgid "An opportunity"
-msgstr "Egy lehetőség"
+msgstr "Uma Oportunidade"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:114
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
-msgstr "Éves ismétlődő bevétel: A cég tényleges vagy becsült éves bevétel"
+msgstr "Receita Recorrente Anual: A Receita Anual Real ou Estimada da Empresa"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:17
 msgid "API Key"
-msgstr "API Kulcs"
+msgstr "Chave API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:18
 msgid "API Keys"
-msgstr "API Kulcsok"
+msgstr "Chaves API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:39
 msgid "ApiKey expiration date"
-msgstr "Api kulcs lejárati dátuma"
+msgstr "Data de Expiração da Chave API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:30
 msgid "ApiKey name"
-msgstr "Api kulcs neve"
+msgstr "Nome da Chave API"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:48
 msgid "ApiKey revocation date"
-msgstr "Api kulcs visszavonásának dátuma"
+msgstr "Data de Revogação da Chave API"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:113
 msgid "ARR"
@@ -207,55 +207,55 @@ msgstr "ARR"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:145
 msgid "Assigned tasks"
-msgstr "Kijelölt feladatok"
+msgstr "Tarefas Atribuídas"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:168
 msgid "Assignee"
-msgstr "Felelős"
+msgstr "Responsável"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:136
 msgid "Associated User Id"
-msgstr "Kapcsolódó Felhasználó Azonosítója"
+msgstr "ID de Usuário Associado"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:30
 msgid "Attachment"
-msgstr "Csatolmány"
+msgstr "Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:70
 msgid "Attachment author"
-msgstr "Csatolmány szerzője"
+msgstr "Autor do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:129
 msgid "Attachment company"
-msgstr "Csatolmány cég"
+msgstr "Empresa do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:52
 msgid "Attachment full path"
-msgstr "Csatolmány teljes elérési útja"
+msgstr "Caminho Completo do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:43
 msgid "Attachment name"
-msgstr "Csatolmány neve"
+msgstr "Nome do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:99
 msgid "Attachment note"
-msgstr "Csatolmány megjegyzése"
+msgstr "Nota do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:144
 msgid "Attachment opportunity"
-msgstr "Csatolmány lehetősége"
+msgstr "Oportunidade do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:114
 msgid "Attachment person"
-msgstr "Csatolmány személy"
+msgstr "Pessoa do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:84
 msgid "Attachment task"
-msgstr "Csatolmány feladat"
+msgstr "Tarefa do Anexo"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:61
 msgid "Attachment type"
-msgstr "Csatolmány típusa"
+msgstr "Tipo de Anexo"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:156
 #: src/modules/person/standard-objects/person.workspace-entity.ts:238
@@ -265,110 +265,110 @@ msgstr "Csatolmány típusa"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:31
 #: src/engine/twenty-orm/custom.workspace-entity.ts:118
 msgid "Attachments"
-msgstr "Csatolmányok"
+msgstr "Anexos"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:181
 msgid "Attachments created by the workspace member"
-msgstr "A munkaterület tag által létrehozott csatolmányok"
+msgstr "Anexos Criados pelo Membro do Espaço de Trabalho"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:240
 msgid "Attachments linked to the company"
-msgstr "A céghez kapcsolódó csatolmányok"
+msgstr "Anexos Vinculados à Empresa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:239
 msgid "Attachments linked to the contact."
-msgstr "A kapcsolattartóhoz kapcsolódó csatolmányok."
+msgstr "Anexos Vinculados ao Contato."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:200
 msgid "Attachments linked to the opportunity"
-msgstr "A lehetőséghez kapcsolódó csatolmányok"
+msgstr "Anexos Vinculados à Oportunidade"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:123
 msgid "Attachments tied to the {label}"
-msgstr "Csatolmányok, amelyek a(z) {label}-hez kapcsolódnak"
+msgstr "Anexos Vinculados ao {label}"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:22
 msgid "Audit Log"
-msgstr "Audit Napló"
+msgstr "Registro de Auditoria"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:255
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:23
 msgid "Audit Logs"
-msgstr "Audit Naplók"
+msgstr "Registros de Auditoria"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:256
 msgid "Audit Logs linked to the workspace member"
-msgstr "A munkaterület taghoz kapcsolódó Audit Naplók"
+msgstr "Registros de Auditoria Vinculados ao Membro do Espaço de Trabalho"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:85
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:86
 msgid "Auth failed at"
-msgstr "Sikertelen hitelesítés időpontja"
+msgstr "Autenticação Falhou em"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:69
 msgid "Author"
-msgstr "Szerző"
+msgstr "Autor"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:180
 msgid "Authored attachments"
-msgstr "Szerző által létrehozott csatolmányok"
+msgstr "Anexos de Autoria"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:171
 msgid "Automatically create People records when receiving or sending emails"
-msgstr "Automatikusan hozzon létre Személy rekordokat email fogadásakor vagy küldésekor"
+msgstr "Criar Automaticamente Registros de Pessoas ao Receber ou Enviar E-mails"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:222
 msgid "Automatically create records for people you participated with in an event."
-msgstr "Automatikusan hozzon létre rekordokat azokról a személyekről, akikkel egy eseményen részt vett."
+msgstr "Criar Automaticamente Registros para as Pessoas com quem Você Participou de um Evento."
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:146
 msgid "Avatar"
-msgstr "Avatár"
+msgstr "Avatar"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:117
 msgid "Avatar Url"
-msgstr "Avatár URL"
+msgstr "URL do Avatar"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:18
 msgid "Behavioral Event"
-msgstr "Viselkedésbeli Esemény"
+msgstr "Evento Comportamental"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:19
 msgid "Behavioral Events"
-msgstr "Viselkedésbeli Események"
+msgstr "Eventos Comportamentais"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:216
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:22
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:24
 msgid "Blocklist"
-msgstr "Tiltólista"
+msgstr "Lista de Bloqueio"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:217
 msgid "Blocklisted handles"
-msgstr "Tiltólistára tett kezelők"
+msgstr "Identificadores na Lista de Bloqueio"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:23
 msgid "Blocklists"
-msgstr "Tiltólisták"
+msgstr "Listas de Bloqueio"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:77
 #: src/modules/task/standard-objects/task.workspace-entity.ts:87
 #: src/modules/note/standard-objects/note.workspace-entity.ts:75
 #: src/modules/note/standard-objects/note.workspace-entity.ts:85
 msgid "Body"
-msgstr "Szövegtörzs"
+msgstr "Corpo"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:75
 msgid "Cached record name"
-msgstr "Gyorsítótárban lévő rekord neve"
+msgstr "Nome do Registro em Cache"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:74
 msgid "Calendar Channel"
-msgstr "Naptár Csatorna"
+msgstr "Canal de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:23
 msgid "Calendar Channel Event Association"
-msgstr "Naptár Csatorna Esemény Társítás"
+msgstr "Associação de Eventos do Canal de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:155
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:156
@@ -377,68 +377,68 @@ msgstr "Naptár Csatorna Esemény Társítás"
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:24
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:25
 msgid "Calendar Channel Event Associations"
-msgstr "Naptár Csatorna Esemény Társítások"
+msgstr "Associações de Eventos do Canal de Calendário"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:139
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:140
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:75
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:76
 msgid "Calendar Channels"
-msgstr "Naptár csatornák"
+msgstr "Canais de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:27
 msgid "Calendar event"
-msgstr "Naptári esemény"
+msgstr "Evento de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:32
 msgid "Calendar event participant"
-msgstr "Naptári esemény résztvevője"
+msgstr "Participante do Evento de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:33
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:34
 msgid "Calendar event participants"
-msgstr "Naptári esemény résztvevők"
+msgstr "Participantes do Evento de Calendário"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:228
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:229
 #: src/modules/person/standard-objects/person.workspace-entity.ts:262
 #: src/modules/person/standard-objects/person.workspace-entity.ts:263
 msgid "Calendar Event Participants"
-msgstr "Naptári Események Résztvevői"
+msgstr "Participantes do Evento de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:28
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:29
 msgid "Calendar events"
-msgstr "Naptári események"
+msgstr "Eventos de Calendário"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:55
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:56
 msgid "Channel ID"
-msgstr "Csatornaazonosító"
+msgstr "ID do Canal"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:136
 msgid "Channel Type"
-msgstr "Csatornatípus"
+msgstr "Tipo de Canal"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:137
 msgid "City"
-msgstr "Város"
+msgstr "Cidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:79
 msgid "Close date"
-msgstr "Lezárás dátuma"
+msgstr "Data de Fechamento"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:97
 msgid "Color Scheme"
-msgstr "Színséma"
+msgstr "Esquema de Cores"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:108
 msgid "Compact View"
-msgstr "Kompakt nézet"
+msgstr "Visualização Compacta"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:54
 msgid "Companies"
-msgstr "Cégek"
+msgstr "Empresas"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:134
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:65
@@ -449,16 +449,16 @@ msgstr "Cégek"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:53
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:128
 msgid "Company"
-msgstr "Cég"
+msgstr "Empresa"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:144
 msgid "Company record position"
-msgstr "Cégrekord pozíciója"
+msgstr "Posição do Registro da Empresa"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:135
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:136
 msgid "Conference Solution"
-msgstr "Konferencia megoldás"
+msgstr "Solução de Conferência"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:359
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:360
@@ -466,61 +466,61 @@ msgstr "Konferencia megoldás"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:307
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:308
 msgid "Connected Account"
-msgstr "Csatlakoztatott fiók"
+msgstr "Conta Conectada"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:192
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:193
 msgid "Connected accounts"
-msgstr "Csatlakoztatott fiókok"
+msgstr "Contas Conectadas"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:29
 msgid "Connected Accounts"
-msgstr "Csatlakoztatott Fiókok"
+msgstr "Contas Conectadas"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:170
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:221
 msgid "Contact auto creation policy"
-msgstr "Kapcsolattartó automatikus létrehozásának politikája"
+msgstr "Política de Criação Automática de Contatos"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:147
 msgid "Contact’s avatar"
-msgstr "Kapcsolattartó avatárja"
+msgstr "Avatar do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:138
 msgid "Contact’s city"
-msgstr "Kapcsolattartó városa"
+msgstr "Cidade do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:178
 msgid "Contact’s company"
-msgstr "Kapcsolattartó cége"
+msgstr "Empresa do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:80
 msgid "Contact’s Emails"
-msgstr "Kapcsolattartó Email címei"
+msgstr "E-mails do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:110
 msgid "Contact’s job title"
-msgstr "Kapcsolattartó munkaköre"
+msgstr "Cargo do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:90
 msgid "Contact’s Linkedin account"
-msgstr "Kapcsolattartó Linkedin fiókja"
+msgstr "Conta do Contato no Linkedin"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:70
 msgid "Contact’s name"
-msgstr "Kapcsolattartó neve"
+msgstr "Nome do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:119
 msgid "Contact’s phone number"
-msgstr "Kapcsolattartó telefonszáma"
+msgstr "Número de Telefone do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:129
 msgid "Contact’s phone numbers"
-msgstr "Kapcsolattartó telefonszámai"
+msgstr "Números de Telefone do Contato"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:100
 msgid "Contact’s X/Twitter account"
-msgstr "Kapcsolattartó X/Twitter fiókja"
+msgstr "Conta X/Twitter do Contato"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:166
 #: src/modules/task/standard-objects/task.workspace-entity.ts:136
@@ -530,109 +530,109 @@ msgstr "Kapcsolattartó X/Twitter fiókja"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:154
 #: src/engine/twenty-orm/custom.workspace-entity.ts:61
 msgid "Created by"
-msgstr "Létrehozta"
+msgstr "Criado por"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:44
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:45
 #: src/engine/twenty-orm/base.workspace-entity.ts:26
 #: src/engine/twenty-orm/base.workspace-entity.ts:27
 msgid "Creation date"
-msgstr "Létrehozás dátuma"
+msgstr "Data de Criação"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:88
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:89
 msgid "Creation DateTime"
-msgstr "Létrehozás DateTime-ja"
+msgstr "Data e Hora da Criação"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:278
 msgid "Date format"
-msgstr "Dátumformátum"
+msgstr "Formato da Data"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:53
 msgid "Date when the record was deleted"
-msgstr "Rekord törlésének dátuma"
+msgstr "Data em que o Registro foi Excluído"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:52
 msgid "Deleted at"
-msgstr "Törölve"
+msgstr "Excluído em"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:109
 msgid "Describes if the view is in compact mode"
-msgstr "Leírja, hogy a nézet kompakt módban van-e"
+msgstr "Descreve se a Visualização está no Modo Compacto"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:59
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:108
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:109
 msgid "Description"
-msgstr "Leírás"
+msgstr "Descrição"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:48
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:66
 msgid "Direction"
-msgstr "Irány"
+msgstr "Direção"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:62
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:54
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:55
 msgid "Display Name"
-msgstr "Megjelenítendő név"
+msgstr "Nome de Exibição"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:59
 msgid "Display Value"
-msgstr "Megjelenítési érték"
+msgstr "Valor de Exibição"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:73
 msgid "Domain Name"
-msgstr "Domain név"
+msgstr "Nome de Domínio"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:100
 msgid "Due Date"
-msgstr "Esedékesség dátuma"
+msgstr "Data de Vencimento"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:79
 msgid "Emails"
-msgstr "Email címek"
+msgstr "E-mails"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:83
 msgid "Employees"
-msgstr "Alkalmazottak"
+msgstr "Funcionários"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:78
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:79
 msgid "End Date"
-msgstr "Befejezés dátuma"
+msgstr "Data Final"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:135
 msgid "Event company"
-msgstr "Esemény cég"
+msgstr "Empresa do Evento"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:67
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:52
 msgid "Event context"
-msgstr "Esemény kontextus"
+msgstr "Contexto do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:63
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:57
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:42
 msgid "Event details"
-msgstr "Esemény részletei"
+msgstr "Detalhes do Evento"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:35
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:36
 msgid "Event external ID"
-msgstr "Esemény külső azonosítója"
+msgstr "ID Externo do Evento"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:109
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:110
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:70
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:71
 msgid "Event ID"
-msgstr "Esemény azonosító"
+msgstr "ID do Evento"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:132
 msgid "Event Listeners"
-msgstr "Eseményfigyelők"
+msgstr "Ouvintes de Eventos"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:54
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:55
@@ -640,142 +640,142 @@ msgstr "Eseményfigyelők"
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:49
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:33
 msgid "Event name"
-msgstr "Esemény neve"
+msgstr "Nome do Evento"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:87
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:34
 msgid "Event name/type"
-msgstr "Esemény megnevezése/típusa"
+msgstr "Nome/Tipo do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:165
 msgid "Event note"
-msgstr "Esemény jegyzet"
+msgstr "Nota do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:150
 msgid "Event opportunity"
-msgstr "Esemény lehetőség"
+msgstr "Oportunidade do Evento"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:168
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:169
 msgid "Event Participants"
-msgstr "Esemény résztvevői"
+msgstr "Participantes do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:120
 msgid "Event person"
-msgstr "Esemény személy"
+msgstr "Pessoa do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:180
 msgid "Event task"
-msgstr "Esemény feladat"
+msgstr "Tarefa do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:195
 msgid "Event workflow"
-msgstr "Esemény munkafolyamat"
+msgstr "Workflow do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:225
 msgid "Event workflow run"
-msgstr "Esemény munkafolyamat futtatása"
+msgstr "Execução do Workflow do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:210
 msgid "Event workflow version"
-msgstr "Esemény munkafolyamat verziója"
+msgstr "Versão do Workflow do Evento"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:105
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:91
 msgid "Event workspace member"
-msgstr "Esemény munkaterület tag"
+msgstr "Membro do Espaço de Trabalho do Evento"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:242
 #: src/modules/person/standard-objects/person.workspace-entity.ts:276
 msgid "Events"
-msgstr "Események"
+msgstr "Eventos"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:277
 msgid "Events linked to the person"
-msgstr "Személyhez kötődő események"
+msgstr "Eventos Vinculados à Pessoa"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:243
 msgid "Events linked to the workspace member"
-msgstr "Munkaterületi taghoz kötődő események"
+msgstr "Eventos Vinculados ao Membro do Espaço de Trabalho"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:210
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:211
 msgid "Exclude group emails"
-msgstr "Csoportos email címek kizárása"
+msgstr "Excluir E-mails de Grupo"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:200
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:201
 msgid "Exclude non professional emails"
-msgstr "Nem professzionális email címek kizárása"
+msgstr "Excluir E-mails Não Profissionais"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:127
 msgid "Executed by"
-msgstr "Végrehajtotta"
+msgstr "Executado por"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:38
 msgid "Expiration date"
-msgstr "Lejárat dátuma"
+msgstr "Data de Expiração"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:35
 msgid "Favorite"
-msgstr "Kedvenc"
+msgstr "Favorito"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:89
 msgid "Favorite company"
-msgstr "Kedvenc cég"
+msgstr "Empresa Favorita"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:22
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:103
 msgid "Favorite Folder"
-msgstr "Kedvenc Mappa"
+msgstr "Pasta de Favoritos"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:33
 msgid "Favorite folder position"
-msgstr "Kedvenc mappa pozíció"
+msgstr "Posição da Pasta de Favoritos"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:23
 msgid "Favorite Folders"
-msgstr "Kedvenc mappák"
+msgstr "Pastas de Favoritos"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:194
 msgid "Favorite note"
-msgstr "Kedvenc jegyzet"
+msgstr "Nota Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:119
 msgid "Favorite opportunity"
-msgstr "Kedvenc lehetőség"
+msgstr "Oportunidade Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:74
 msgid "Favorite person"
-msgstr "Kedvenc személy"
+msgstr "Pessoa Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:47
 msgid "Favorite position"
-msgstr "Kedvenc pozíció"
+msgstr "Posição Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:179
 msgid "Favorite task"
-msgstr "Kedvenc feladat"
+msgstr "Tarefa Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:209
 msgid "Favorite view"
-msgstr "Kedvelt nézet"
+msgstr "Visualização Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:134
 msgid "Favorite workflow"
-msgstr "Kedvenc folyamat"
+msgstr "Workflow Favorito"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:164
 msgid "Favorite workflow run"
-msgstr "Kedvenc folyamat futás"
+msgstr "Execução de Workflow Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:149
 msgid "Favorite workflow version"
-msgstr "Kedvenc folyamat változat"
+msgstr "Versão de Workflow Favorita"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:59
 msgid "Favorite workspace member"
-msgstr "Kedvenc munkaterület tag"
+msgstr "Membro Favorito do Espaço de Trabalho"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:157
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:143
@@ -791,95 +791,95 @@ msgstr "Kedvenc munkaterület tag"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:226
 #: src/engine/twenty-orm/custom.workspace-entity.ts:101
 msgid "Favorites"
-msgstr "Kedvencek"
+msgstr "Favoritos"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:53
 msgid "Favorites in this folder"
-msgstr "Kedvencek ebben a mappában"
+msgstr "Favoritos nesta Pasta"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:227
 msgid "Favorites linked to the company"
-msgstr "A társasághoz kötődő kedvencek"
+msgstr "Favoritos Vinculados à Empresa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:227
 msgid "Favorites linked to the contact"
-msgstr "A kapcsolattartóhoz kötődő kedvencek"
+msgstr "Favoritos Vinculados ao Contato"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:144
 msgid "Favorites linked to the note"
-msgstr "Jegyzethez kötődő kedvencek"
+msgstr "Favoritos Vinculados à Nota"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:165
 msgid "Favorites linked to the opportunity"
-msgstr "Lehetőséghez kötődő kedvencek"
+msgstr "Favoritos Vinculados à Oportunidade"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:198
 msgid "Favorites linked to the task"
-msgstr "Feladathoz kötődő kedvencek"
+msgstr "Favoritos Vinculados à Tarefa"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:178
 msgid "Favorites linked to the view"
-msgstr "Nézethez kötődő kedvencek"
+msgstr "Favoritos Vinculados à Visualização"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:144
 msgid "Favorites linked to the workflow"
-msgstr "Folyamathoz kötődő kedvencek"
+msgstr "Favoritos Vinculados ao Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:187
 msgid "Favorites linked to the workflow run"
-msgstr "Folyamat futáshoz kötődő kedvencek"
+msgstr "Favoritos Vinculados à Execução de Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:155
 msgid "Favorites linked to the workflow version"
-msgstr "Folyamat változathoz kötődő kedvencek"
+msgstr "Favoritos Vinculados à Versão de Workflow"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:158
 msgid "Favorites linked to the workspace member"
-msgstr "Munkaterület tagjához kötődő kedvencek"
+msgstr "Favoritos Vinculados ao Membro do Espaço de Trabalho"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:106
 msgid "Favorites tied to the {label}"
-msgstr "A {label} kapcsolódó kedvencek"
+msgstr "Favoritos Vinculados ao {label}"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:39
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:32
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:34
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:45
 msgid "Field Metadata Id"
-msgstr "Mező Metadatázonosítója"
+msgstr "ID de Metadados do Campo"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:262
 #: src/modules/view/standard-objects/view.workspace-entity.ts:263
 msgid "Field metadata used for aggregate operation"
-msgstr "Összegző műveletre használt mező metadaták"
+msgstr "Metadados do campo usados para operação de agregação"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:6
 msgid "Field used for full-text search"
-msgstr "Teljes szöveges keresésre felhasznált mező"
+msgstr "Campo usado para busca de texto completo"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:51
 msgid "Field Value"
-msgstr "Mezőérték"
+msgstr "Valor do Campo"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:23
 msgid "Folder for Message Channel"
-msgstr "Üzenetcsatorna mappa"
+msgstr "Pasta para Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:33
 msgid "Folder name"
-msgstr "Mappanév"
+msgstr "Nome da Pasta"
 
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:51
 msgid "Full path"
-msgstr "Teljes útvonal"
+msgstr "Caminho Completo"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:52
 msgid "Group by this field value"
-msgstr "Csoportosítsa a mezőérték alapján"
+msgstr "Agrupar por este valor de campo"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:40
 msgid "handle"
-msgstr "kezelő"
+msgstr "identificador"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:53
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:54
@@ -892,256 +892,256 @@ msgstr "kezelő"
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:34
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:35
 msgid "Handle"
-msgstr "Kezelő"
+msgstr "Identificador"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:95
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:96
 msgid "Handle Aliases"
-msgstr "Kezelőnevek"
+msgstr "Apelidos do Identificador"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:40
 msgid "Header message Id"
-msgstr "Fejléc üzenetazonosítója"
+msgstr "ID da Mensagem de Cabeçalho"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:126
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:127
 msgid "iCal UID"
-msgstr "iCal azonosító"
+msgstr "UID do iCal"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:79
 msgid "Icon"
-msgstr "Ikon"
+msgstr "Ícone"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:133
 msgid "ICP"
-msgstr ""
+msgstr "ICP"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:14
 #: src/engine/twenty-orm/base.workspace-entity.ts:15
 msgid "Id"
-msgstr "Azonosító"
+msgstr "ID"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:134
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
-msgstr "Ideális vevőprofil: Jelzi, hogy a cég a legmegfelelőbb és legértékesebb ügyfél-e számotokra"
+msgstr "Perfil de Cliente Ideal: Indica se a empresa é o cliente mais adequado e valioso para você"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:78
 msgid "If the event is related to a particular object"
-msgstr "Ha az esemény egy adott objektumhoz kapcsolódik"
+msgstr "Se o evento está relacionado a um objeto específico"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:48
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:49
 msgid "Is canceled"
-msgstr "Törölve van"
+msgstr "Está Cancelado"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:160
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:161
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:211
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:212
 msgid "Is Contact Auto Creation Enabled"
-msgstr "Kapcsolat Automatikus Létrehozása Aktiválva"
+msgstr "Criação Automática de Contatos Ativada"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:58
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:59
 msgid "Is Full Day"
-msgstr "Egész napos"
+msgstr "É Dia Inteiro"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:63
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:64
 msgid "Is Organizer"
-msgstr "Szervező"
+msgstr "É Organizador"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:220
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:221
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:258
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:259
 msgid "Is Sync Enabled"
-msgstr "Szinkronizálás Aktiválva"
+msgstr "Sincronização Ativada"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:109
 msgid "Job Title"
-msgstr "Munkakör megnevezése"
+msgstr "Cargo"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:68
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:53
 msgid "Json object to provide context (user, device, workspace, etc.)"
-msgstr "Json objektum a kontextus megadásához (felhasználó, eszköz, munkaterület stb.)"
+msgstr "Objeto JSON para fornecer contexto (usuário, dispositivo, espaço de trabalho, etc.)"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:137
 msgid "Json object to provide output of the workflow run"
-msgstr "Json objektum a munkafolyamat futásának eredményeinek megadásához"
+msgstr "Objeto JSON para fornecer a saída da execução do workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:95
 msgid "Json object to provide steps"
-msgstr "Json objektum a lépések megadásához"
+msgstr "Objeto JSON para fornecer etapas"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:85
 msgid "Json object to provide trigger"
-msgstr "Json objektum a trigger megadásához"
+msgstr "Objeto JSON para fornecer o gatilho"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:64
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:58
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:43
 msgid "Json value for event details"
-msgstr "Json érték az esemény részleteihez"
+msgstr "Valor JSON para detalhes do evento"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:87
 msgid "kanbanfieldMetadataId"
-msgstr "kanbanfieldMetadatId"
+msgstr "kanbanfieldMetadataId"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:68
 msgid "Key"
-msgstr "Kulcs"
+msgstr "Chave"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:107
 msgid "Language"
-msgstr "Nyelv"
+msgstr "Idioma"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:77
 msgid "Last published Version Id"
-msgstr "Utolsó közzétett verzió azonosítója"
+msgstr "ID da Última Versão Publicada"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:230
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:231
 msgid "Last sync cursor"
-msgstr "Utolsó szinkronizációs kurzor"
+msgstr "Último Cursor de Sincronização"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:239
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:240
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:277
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:278
 msgid "Last sync date"
-msgstr "Utolsó szinkronizációs dátum"
+msgstr "Data da Última Sincronização"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:76
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:77
 msgid "Last sync history ID"
-msgstr "Utolsó szinkronizációs történet azonosító"
+msgstr "ID do Histórico da Última Sincronização"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:40
 msgid "Last time the record was changed"
-msgstr "Utolsó módosítás időpontja"
+msgstr "Última vez que o registro foi alterado"
 
 #: src/engine/twenty-orm/base.workspace-entity.ts:39
 msgid "Last update"
-msgstr "Utolsó frissítés"
+msgstr "Última Atualização"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:93
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:94
 msgid "Linked Object Metadata Id"
-msgstr "Kapcsolódó Objektum Metadat Azonosító"
+msgstr "ID de Metadados do Objeto Vinculado"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:192
 msgid "Linked Opportunities"
-msgstr "Kapcsolódó Lehetőségek"
+msgstr "Oportunidades Vinculadas"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:74
 msgid "Linked Record cached name"
-msgstr "Kapcsolódó Rekord gyorsítótárban tárolt neve"
+msgstr "Nome em Cache do Registro Vinculado"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:83
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:84
 msgid "Linked Record id"
-msgstr "Kapcsolódó Rekord azonosító"
+msgstr "ID do Registro Vinculado"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:89
 #: src/modules/company/standard-objects/company.workspace-entity.ts:93
 msgid "Linkedin"
-msgstr "LinkedIn"
+msgstr "Linkedin"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:193
 msgid "List of opportunities for which that person is the point of contact"
-msgstr "A lehetőségek listája, amelyekért az adott személy a kapcsolattartó"
+msgstr "Lista de oportunidades para as quais essa pessoa é o ponto de contato"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:117
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:118
 msgid "Location"
-msgstr "Helyszín"
+msgstr "Localização"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:60
 msgid "Logical Operator"
-msgstr "Logikai Operátor"
+msgstr "Operador Lógico"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:61
 msgid "Logical operator for the filter group"
-msgstr "A szűrőcsoport logikai operátora"
+msgstr "Operador lógico para o grupo de filtros"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:144
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:145
 msgid "Meet Link"
-msgstr "Meet hivatkozás"
+msgstr "Link de Reunião"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:28
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:71
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:72
 msgid "Message"
-msgstr "\\"
+msgstr "Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:41
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:42
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:84
 msgid "Message Channel"
-msgstr "Üzenetcsatorna"
+msgstr "Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:105
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:374
 msgid "Message Channel Association"
-msgstr "Üzenetcsatorna-társítás"
+msgstr "Associação de Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:91
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:92
 msgid "Message Channel Id"
-msgstr "Üzenetcsatorna-azonosító"
+msgstr "ID do Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:29
 msgid "Message Channel Message Association"
-msgstr "Üzenetcsatorna üzenet-társítás"
+msgstr "Associação de Mensagem do Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:30
 msgid "Message Channel Message Associations"
-msgstr "Üzenetcsatorna üzenet-társítások"
+msgstr "Associações de Mensagem do Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:85
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:86
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:128
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:129
 msgid "Message Channels"
-msgstr "Üzenetcsatornák"
+msgstr "Canais de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:67
 msgid "Message Direction"
-msgstr "Üzenet irány"
+msgstr "Direção da Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:45
 msgid "Message External Id"
-msgstr "Üzenet külső azonosítója"
+msgstr "ID Externo da Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:21
 msgid "Message Folder"
-msgstr "Üzenetmappa"
+msgstr "Pasta de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:22
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:388
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:389
 msgid "Message Folders"
-msgstr "Üzenetmappák"
+msgstr "Pastas de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:107
 msgid "Message Id"
-msgstr "Üzenet-azonosító"
+msgstr "ID da Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:41
 msgid "Message id from the message header"
-msgstr "Az üzenet fejlécből származó üzenet-azonosító"
+msgstr "ID da Mensagem do Cabeçalho da Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:46
 msgid "Message id from the messaging provider"
-msgstr "Az üzenetküldő szolgáltatótól származó üzenet-azonosító"
+msgstr "ID da Mensagem do Provedor de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:25
 msgid "Message Participant"
-msgstr "Üzenet résztvevő"
+msgstr "Participante da Mensagem"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:204
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:205
@@ -1152,46 +1152,46 @@ msgstr "Üzenet résztvevő"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:26
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:27
 msgid "Message Participants"
-msgstr "Üzenet résztvevők"
+msgstr "Participantes da Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:31
 msgid "Message Synced with a Message Channel"
-msgstr "Üzenet szinkronizálva egy üzenetcsatornával"
+msgstr "Mensagem Sincronizada com um Canal de Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:23
 msgid "Message Thread"
-msgstr "Üzenetszál"
+msgstr "Tópico de Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:77
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:78
 msgid "Message Thread Id"
-msgstr "Üzenetszál-azonosító"
+msgstr "ID do Tópico de Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:24
 msgid "Message Threads"
-msgstr "Üzenetszálak"
+msgstr "Tópicos de Mensagem"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:29
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:34
 msgid "Messages"
-msgstr "Üzenetek"
+msgstr "Mensagens"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:106
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:375
 msgid "Messages from the channel."
-msgstr "A csatornából származó üzenetek."
+msgstr "Mensagens do Canal."
 
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts:35
 msgid "Messages from the thread."
-msgstr "A szálból származó üzenetek."
+msgstr "Mensagens do Tópico."
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:59
 msgid "Messaging provider access token"
-msgstr "Üzenetküldő szolgáltató hozzáférési tokene"
+msgstr "Token de Acesso do Provedor de Mensagens"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:68
 msgid "Messaging provider refresh token"
-msgstr "Üzenetküldő szolgáltató frissítési tokene"
+msgstr "Token de Atualização do Provedor de Mensagens"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:88
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:68
@@ -1209,15 +1209,15 @@ msgstr "Üzenetküldő szolgáltató frissítési tokene"
 #: src/engine/twenty-orm/custom.workspace-entity.ts:40
 #: src/engine/twenty-orm/custom.workspace-entity.ts:41
 msgid "Name"
-msgstr "Név"
+msgstr "Nome"
 
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts:44
 msgid "Name of the favorite folder"
-msgstr "A kedvenc mappa neve"
+msgstr "Nome da Pasta Favorita"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:63
 msgid "Name of the workflow run"
-msgstr "A munkafolyamat-futtatás neve"
+msgstr "Nome da Execução do Workflow"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:164
 #: src/modules/note/standard-objects/note.workspace-entity.ts:44
@@ -1225,36 +1225,36 @@ msgstr "A munkafolyamat-futtatás neve"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:193
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:98
 msgid "Note"
-msgstr "Megjegyzés"
+msgstr "Nota"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:119
 msgid "Note attachments"
-msgstr "A jegyzet csatolmányai"
+msgstr "Anexos da Nota"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:76
 #: src/modules/note/standard-objects/note.workspace-entity.ts:86
 msgid "Note body"
-msgstr "Jegyzet törzse"
+msgstr "Corpo da Nota"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:56
 msgid "Note record position"
-msgstr "Jegyzet rögzítési pozíció"
+msgstr "Posição do Registro da Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:25
 msgid "Note Target"
-msgstr "Jegyzet Célja"
+msgstr "Alvo da Nota"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:107
 msgid "Note targets"
-msgstr "Jegyzet célpontjai"
+msgstr "Alvos da Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:26
 msgid "Note Targets"
-msgstr "Jegyzet Célpontjai"
+msgstr "Alvos da Nota"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:67
 msgid "Note title"
-msgstr "Jegyzet címe"
+msgstr "Título da Nota"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:215
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:188
@@ -1262,83 +1262,83 @@ msgstr "Jegyzet címe"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:203
 #: src/engine/twenty-orm/custom.workspace-entity.ts:69
 msgid "Notes"
-msgstr "Jegyzetek"
+msgstr "Notas"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:74
 msgid "Notes tied to the {label}"
-msgstr "A {label} jegyzetei"
+msgstr "Notas Vinculadas ao {label}"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:204
 msgid "Notes tied to the company"
-msgstr "A társasághoz kapcsolódó jegyzetek"
+msgstr "Notas Vinculadas à Empresa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:216
 msgid "Notes tied to the contact"
-msgstr "A kapcsolattartóhoz kapcsolódó jegyzetek"
+msgstr "Notas Vinculadas ao Contato"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:189
 msgid "Notes tied to the opportunity"
-msgstr "Az lehetőséghez kapcsolódó jegyzetek"
+msgstr "Notas Vinculadas à Oportunidade"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:66
 msgid "NoteTarget company"
-msgstr "JegyzetCél társaság"
+msgstr "Empresa Alvo da Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:36
 msgid "NoteTarget note"
-msgstr "JegyzetCél jegyzet"
+msgstr "Nota Alvo da Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:81
 msgid "NoteTarget opportunity"
-msgstr "JegyzetCél lehetőség"
+msgstr "Oportunidade Alvo da Nota"
 
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts:51
 msgid "NoteTarget person"
-msgstr "JegyzetCél személy"
+msgstr "Pessoa Alvo da Nota"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:84
 msgid "Number of employees in the company"
-msgstr "A társaság alkalmazottainak száma"
+msgstr "Número de Funcionários na Empresa"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:86
 msgid "Object id"
-msgstr "Objektum azonosító"
+msgstr "ID do Objeto"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:71
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:72
 msgid "Object metadata id"
-msgstr "Objektum metaadat azonosító"
+msgstr "ID de Metadados do Objeto"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:51
 msgid "Object Metadata Id"
-msgstr "Objektum Metaadat Azonosító"
+msgstr "ID de Metadados do Objeto"
 
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts:77
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:62
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:63
 msgid "Object name"
-msgstr "Objektum neve"
+msgstr "Nome do Objeto"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:42
 msgid "Operand"
-msgstr "Operándus"
+msgstr "Operando"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:39
 msgid "Operation"
-msgstr "Művelet"
+msgstr "Operação"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:49
 msgid "Operations"
-msgstr "Műveletek"
+msgstr "Operações"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:49
 #: src/modules/company/standard-objects/company.workspace-entity.ts:214
 msgid "Opportunities"
-msgstr "Lehetőségek"
+msgstr "Oportunidades"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:215
 msgid "Opportunities linked to the company."
-msgstr "A társasághoz kapcsolódó lehetőségek."
+msgstr "Oportunidades Ligadas à Empresa."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:149
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:80
@@ -1347,65 +1347,65 @@ msgstr "A társasághoz kapcsolódó lehetőségek."
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:118
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:143
 msgid "Opportunity"
-msgstr "Lehetőség"
+msgstr "Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:70
 msgid "Opportunity amount"
-msgstr "Lehetőség összege"
+msgstr "Valor da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:80
 msgid "Opportunity close date"
-msgstr "Lehetőség lezárásának dátuma"
+msgstr "Data de Fechamento da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:149
 msgid "Opportunity company"
-msgstr "Lehetőség társasága"
+msgstr "Empresa da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:133
 msgid "Opportunity point of contact"
-msgstr "Lehetőség elsődleges kapcsolattartója"
+msgstr "Ponto de Contato da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:224
 msgid "Opportunity probability"
-msgstr "Lehetőség valószínűsége"
+msgstr "Probabilidade da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:113
 msgid "Opportunity record position"
-msgstr "Lehetőség rögzítési pozíciója"
+msgstr "Posição do Registro da Oportunidade"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:90
 msgid "Opportunity stage"
-msgstr "Lehetőség szakasza"
+msgstr "Estágio da Oportunidade"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:190
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:97
 msgid "Optional aggregate operation"
-msgstr "Opcionális aggregációs művelet"
+msgstr "Operação Agregada Opcional"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:70
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Opcionális titok, amelyet a webhook terhek HMAC aláírásának kiszámításához használnak. Ez a titok Twenty és a webhook fogyasztó között megosztásra kerül a webhook kérések hitelesítésére."
+msgstr "Segredo opcional usado para calcular a assinatura HMAC para cargas de webhook. Esse segredo é compartilhado entre o Twenty e o consumidor do webhook para autenticar solicitações de webhook."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:136
 msgid "Output"
-msgstr "Kimenet"
+msgstr "Saída"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:52
 msgid "Parent View Filter Group"
-msgstr "Szülő Nézet Szűrő Csoport"
+msgstr "Grupo de Filtros da Visualização Principal"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:51
 msgid "Parent View Filter Group Id"
-msgstr "Szülő Nézet Szűrő Csoport Azonosítója"
+msgstr "ID do Grupo de Filtros da Visualização Principal"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:58
 #: src/modules/company/standard-objects/company.workspace-entity.ts:164
 msgid "People"
-msgstr "Emberek"
+msgstr "Pessoas"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:165
 msgid "People linked to the company."
-msgstr "A társasághoz kapcsolódó emberek."
+msgstr "Pessoas Ligadas à Empresa."
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:119
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:50
@@ -1418,23 +1418,23 @@ msgstr "A társasághoz kapcsolódó emberek."
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:124
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:113
 msgid "Person"
-msgstr "Személy"
+msgstr "Pessoa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:157
 msgid "Person record Position"
-msgstr "Személy nyilvántartási beosztása"
+msgstr "Posição do Registro da Pessoa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:118
 msgid "Phone"
-msgstr "Telefon"
+msgstr "Telefone"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:128
 msgid "Phones"
-msgstr "Telefonok"
+msgstr "Telefones"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:132
 msgid "Point of Contact"
-msgstr "Kapcsolattartó"
+msgstr "Ponto de Contato"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:98
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:115
@@ -1452,156 +1452,156 @@ msgstr "Kapcsolattartó"
 #: src/engine/twenty-orm/custom.workspace-entity.ts:49
 #: src/engine/twenty-orm/custom.workspace-entity.ts:50
 msgid "Position"
-msgstr "Pozíció"
+msgstr "Posição"
 
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:90
 msgid "Position in the parent view filter group"
-msgstr "Pozíció a szülő nézet szűrőcsoportban"
+msgstr "Posição no grupo de filtros pai"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:92
 msgid "Position in the view filter group"
-msgstr "Pozíció a nézet szűrőcsoportban"
+msgstr "Posição no grupo de filtros de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:91
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:89
 msgid "Position in view filter group"
-msgstr "Pozíció a nézet szűrőcsoportban"
+msgstr "Posição no grupo de filtros de visualização"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:98
 msgid "Preferred color scheme"
-msgstr "Preferált színséma"
+msgstr "Esquema de cores preferido"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:108
 msgid "Preferred language"
-msgstr "Preferált nyelv"
+msgstr "Idioma preferido"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:223
 msgid "Probability"
-msgstr "Valószínűség"
+msgstr "Probabilidade"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:49
 msgid "provider"
-msgstr "szolgáltató"
+msgstr "provedor"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:67
 msgid "Received At"
-msgstr "Fogadás ideje"
+msgstr "Recebido em"
 
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:80
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts:81
 msgid "Record id"
-msgstr "Rekord azonosító"
+msgstr "ID do registro"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:45
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts:46
 msgid "Recurring Event ID"
-msgstr "Ismétlődő Esemény Azonosító"
+msgstr "ID do evento recorrente"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:67
 msgid "Refresh Token"
-msgstr "Frissítési Token"
+msgstr "Token de atualização"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:127
 msgid "Related user email address"
-msgstr "Kapcsolódó felhasználó e-mail címe"
+msgstr "Endereço de e-mail do usuário relacionado"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:144
 #: src/modules/note/standard-objects/note.workspace-entity.ts:106
 msgid "Relations"
-msgstr "Kapcsolatok"
+msgstr "Relações"
 
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:73
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:74
 msgid "Response Status"
-msgstr "Válasz státusza"
+msgstr "Status da resposta"
 
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts:47
 msgid "Revocation date"
-msgstr "Visszavonás dátuma"
+msgstr "Data de revogação"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:37
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:38
 msgid "Role"
-msgstr "Szerepkör"
+msgstr "Função"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:121
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:142
 msgid "Runs"
-msgstr "Futások"
+msgstr "Execuções"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:104
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:105
 msgid "Scopes"
-msgstr "Hatáskörök"
+msgstr "Escopos"
 
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts:5
 msgid "Search vector"
-msgstr "Kereső vektor"
+msgstr "Vetor de busca"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:69
 msgid "Secret"
-msgstr "Titok"
+msgstr "Segredo"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:64
 msgid "Size"
-msgstr "Méret"
+msgstr "Tamanho"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:89
 msgid "Stage"
-msgstr "Szakasz"
+msgstr "Fase"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:68
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:69
 msgid "Start Date"
-msgstr "Kezdés dátuma"
+msgstr "Data de início"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:110
 msgid "Status"
-msgstr "Állapot"
+msgstr "Status"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:87
 msgid "Statuses"
-msgstr "Állapotok"
+msgstr "Status"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:49
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:50
 msgid "Subject"
-msgstr "Tárgy"
+msgstr "Assunto"
 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:51
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts:52
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:268
 msgid "Sync Cursor"
-msgstr "Szinkronizációs kurzor"
+msgstr "Cursor de sincronização"
 
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:269
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr "Szinkronizációs kurzor. Használatos az események naptárszolgáltatótól való szinkronizálásához"
+msgstr "Cursor de sincronização. Usado para sincronizar eventos do provedor de calendário"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:291
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:292
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:137
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:138
 msgid "Sync stage"
-msgstr "Szinkronizálási szakasz"
+msgstr "Fase de sincronização"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:339
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:340
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:287
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:288
 msgid "Sync stage started at"
-msgstr "Szinkronizálási szakasz kezdete"
+msgstr "Fase de sincronização iniciada em"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:249
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:250
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:95
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:96
 msgid "Sync status"
-msgstr "Szinkron állapot"
+msgstr "Status de sincronização"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:30
 msgid "Target Url"
-msgstr "Cél URL"
+msgstr "URL de destino"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:179
 #: src/modules/task/standard-objects/task.workspace-entity.ts:46
@@ -1609,48 +1609,48 @@ msgstr "Cél URL"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:178
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:83
 msgid "Task"
-msgstr "Feladat"
+msgstr "Tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:169
 msgid "Task assignee"
-msgstr "Feladat felelőse"
+msgstr "Responsável pela tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:157
 msgid "Task attachments"
-msgstr "Feladat mellékletei"
+msgstr "Anexos da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:78
 #: src/modules/task/standard-objects/task.workspace-entity.ts:88
 msgid "Task body"
-msgstr "Feladat szövege"
+msgstr "Corpo da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:101
 msgid "Task due date"
-msgstr "Feladat határideje"
+msgstr "Data de vencimento da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:58
 msgid "Task record position"
-msgstr "Feladat rekord pozíciója"
+msgstr "Posição do registro da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:111
 msgid "Task status"
-msgstr "Feladat állapota"
+msgstr "Status da tarefa"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:25
 msgid "Task Target"
-msgstr "Feladat célja"
+msgstr "Meta da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:145
 msgid "Task targets"
-msgstr "Feladat célok"
+msgstr "Metas da tarefa"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:26
 msgid "Task Targets"
-msgstr "Feladat célok"
+msgstr "Metas da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:69
 msgid "Task title"
-msgstr "Feladat címe"
+msgstr "Título da tarefa"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:47
 #: src/modules/person/standard-objects/person.workspace-entity.ts:204
@@ -1658,72 +1658,72 @@ msgstr "Feladat címe"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:192
 #: src/engine/twenty-orm/custom.workspace-entity.ts:85
 msgid "Tasks"
-msgstr "Feladatok"
+msgstr "Tarefas"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:146
 msgid "Tasks assigned to the workspace member"
-msgstr "A munkaterület tagjához rendelt feladatok"
+msgstr "Tarefas atribuídas ao membro do espaço de trabalho"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:90
 msgid "Tasks tied to the {label}"
-msgstr "A {label}-hoz/-hez kapcsolódó feladatok"
+msgstr "Tarefas vinculadas ao {label}"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:193
 msgid "Tasks tied to the company"
-msgstr "A céghoz kapcsolódó feladatok"
+msgstr "Tarefas vinculadas à empresa"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:205
 msgid "Tasks tied to the contact"
-msgstr "A kapcsolathoz kötődő feladatok"
+msgstr "Tarefas vinculadas ao contato"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:178
 msgid "Tasks tied to the opportunity"
-msgstr "A lehetőséghez kapcsolódó feladatok"
+msgstr "Tarefas vinculadas à oportunidade"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:66
 msgid "TaskTarget company"
-msgstr "Feladat célpontjának a cége"
+msgstr "Empresa TaskTarget"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:81
 msgid "TaskTarget opportunity"
-msgstr "Feladat célpontjának a lehetősége"
+msgstr "Oportunidade TaskTarget"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:51
 msgid "TaskTarget person"
-msgstr "Feladat célpontjának a személy"
+msgstr "Pessoa TaskTarget"
 
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts:36
 msgid "TaskTarget task"
-msgstr "Feladat célpontjának a feladat"
+msgstr "Tarefa TaskTarget"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:58
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:59
 msgid "Text"
-msgstr "Szöveg"
+msgstr "Texto"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:41
 msgid "The account handle (email, username, phone number, etc.)"
-msgstr "A felhasználói fiók azonosítója (email, felhasználónév, telefonszám, stb.)"
+msgstr "O identificador da conta (e-mail, nome de usuário, número de telefone, etc.)"
 
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts:50
 msgid "The account provider"
-msgstr "A fiókszolgáltató"
+msgstr "O provedor da conta"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:94
 msgid "The company Linkedin account"
-msgstr "A cég Linkedin fiókja"
+msgstr "A conta da empresa no Linkedin"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:65
 msgid "The company name"
-msgstr "A cég neve"
+msgstr "O nome da empresa"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:104
 msgid "The company Twitter/X account"
-msgstr "A cég Twitter/X-fiókja"
+msgstr "A conta da empresa no Twitter/X"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:74
 msgid "The company website URL. We use this url to fetch the company icon"
-msgstr "A cég weboldalának URL-je. Ezt az URL-t használjuk a cég ikonjának lekérésekor"
+msgstr "O URL do site da empresa. Usamos esse URL para buscar o ícone da empresa"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:168
 #: src/modules/task/standard-objects/task.workspace-entity.ts:138
@@ -1733,70 +1733,70 @@ msgstr "A cég weboldalának URL-je. Ezt az URL-t használjuk a cég ikonjának 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:156
 #: src/engine/twenty-orm/custom.workspace-entity.ts:63
 msgid "The creator of the record"
-msgstr "A rekord létrehozója"
+msgstr "O criador do registro"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:88
 msgid "The current statuses of the workflow versions"
-msgstr "A munkafolyamat-verziók jelenlegi állapotai"
+msgstr "Os status atuais das versões do fluxo de trabalho"
 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts:68
 msgid "The date the message was received"
-msgstr "Az üzenet fogadásának dátuma"
+msgstr "A data em que a mensagem foi recebida"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:129
 msgid "The executor of the workflow"
-msgstr "A munkafolyamat végrehajtója"
+msgstr "O executor do fluxo de trabalho"
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:104
 msgid "The folder this favorite belongs to"
-msgstr "A kedvenc mappája"
+msgstr "A pasta à qual esse favorito pertence"
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:61
 msgid "The opportunity name"
-msgstr "Az lehetőség neve"
+msgstr "O nome da oportunidade"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:35
 msgid "The workflow event listener name"
-msgstr "A munkafolyamat eseményfigyelőjének neve"
+msgstr "O nome do ouvinte do evento de fluxo de trabalho"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:78
 msgid "The workflow last published version id"
-msgstr "A munkafolyamat utolsó publikált verziójának azonosítója"
+msgstr "O ID da última versão publicada do fluxo de trabalho"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:69
 msgid "The workflow name"
-msgstr "A munkafolyamat neve"
+msgstr "O nome do fluxo de trabalho"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:76
 msgid "The workflow version name"
-msgstr "A munkafolyamat verzió neve"
+msgstr "O nome da versão do fluxo de trabalho"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:105
 msgid "The workflow version status"
-msgstr "A munkafolyamat verzió státusza"
+msgstr "O status da versão do fluxo de trabalho"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:56
 msgid "Thread External Id"
-msgstr "Külső szál azonosító"
+msgstr "ID externo da thread"
 
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts:57
 msgid "Thread id from the messaging provider"
-msgstr "Szál azonosítója az üzenetküldő szolgáltatótól"
+msgstr "ID da thread do provedor de mensagens"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:349
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:350
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:297
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:298
 msgid "Throttle Failure Count"
-msgstr "Drosszelszelep hiba szám"
+msgstr "Contagem de falhas de limitação"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:314
 msgid "Time format"
-msgstr "Idő formátum"
+msgstr "Formato de hora"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:268
 msgid "Time zone"
-msgstr "Időzóna"
+msgstr "Fuso horário"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:155
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:166
@@ -1808,101 +1808,101 @@ msgstr "Időzóna"
 #: src/modules/company/standard-objects/company.workspace-entity.ts:251
 #: src/engine/twenty-orm/custom.workspace-entity.ts:134
 msgid "Timeline Activities"
-msgstr "Idővonal tevékenységek"
+msgstr "Atividades da linha do tempo"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:252
 msgid "Timeline Activities linked to the company"
-msgstr "Idővonal tevékenységek kapcsolódva a céghez"
+msgstr "Atividades da linha do tempo vinculadas à empresa"
 
 #: src/modules/note/standard-objects/note.workspace-entity.ts:132
 msgid "Timeline Activities linked to the note."
-msgstr "Idővonal tevékenységek kapcsolódva a jegyzethez."
+msgstr "Atividades da linha do tempo vinculadas à nota."
 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts:212
 msgid "Timeline Activities linked to the opportunity."
-msgstr "Idővonal tevékenységek kapcsolódva a lehetőséghez."
+msgstr "Atividades da linha do tempo vinculadas à oportunidade."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:199
 msgid "Timeline activities linked to the run"
-msgstr "Idővonal tevékenységek kapcsolódva a futáshoz"
+msgstr "Atividades da linha do tempo vinculadas à execução"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:186
 msgid "Timeline Activities linked to the task."
-msgstr "Idővonal tevékenységek kapcsolódva a feladathoz."
+msgstr "Atividades da linha do tempo vinculadas à tarefa."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:167
 msgid "Timeline activities linked to the version"
-msgstr "Idővonal tevékenységek kapcsolódva a verzióhoz"
+msgstr "Atividades da linha do tempo vinculadas à versão"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:156
 msgid "Timeline activities linked to the workflow"
-msgstr "Idővonal tevékenységek kapcsolódva a munkafolyamathoz"
+msgstr "Atividades da linha do tempo vinculadas ao fluxo de trabalho"
 
 #: src/engine/twenty-orm/custom.workspace-entity.ts:139
 msgid "Timeline Activities tied to the {label}"
-msgstr "Idővonal tevékenységek kapcsolódva a(z) {label}-hez"
+msgstr "Atividades da linha do tempo vinculadas ao {label}"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:33
 msgid "Timeline Activity"
-msgstr "Idővonal tevékenység"
+msgstr "Atividade da linha do tempo"
 
 #: src/modules/task/standard-objects/task.workspace-entity.ts:68
 #: src/modules/note/standard-objects/note.workspace-entity.ts:66
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:39
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:40
 msgid "Title"
-msgstr "Cím"
+msgstr "Título"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:59
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:135
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts:60
 msgid "Type"
-msgstr "Típus"
+msgstr "Tipo"
 
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:98
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts:99
 msgid "Update DateTime"
-msgstr "Frissítési dátum és idő"
+msgstr "Atualizar DataHora"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:126
 msgid "User Email"
-msgstr "Felhasználó E-mail címe"
+msgstr "E-mail do usuário"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:135
 msgid "User Id"
-msgstr "Felhasználói azonosító"
+msgstr "ID do usuário"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:270
 msgid "User time zone"
-msgstr "Felhasználói időzóna"
+msgstr "Fuso horário do usuário"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:279
 msgid "User's preferred date format"
-msgstr "Felhasználó preferált dátum formátuma"
+msgstr "Formato de data preferido do usuário"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:315
 msgid "User's preferred time format"
-msgstr "Felhasználó preferált idő formátuma"
+msgstr "Formato de hora preferido do usuário"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:51
 msgid "Value"
-msgstr "Érték"
+msgstr "Valor"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:104
 msgid "Version status"
-msgstr "Verzió státusza"
+msgstr "Status da versão"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:94
 msgid "Version steps"
-msgstr "Verzió lépések"
+msgstr "Etapas da versão"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:84
 msgid "Version trigger"
-msgstr "Verzió kiváltó"
+msgstr "Gatilho da versão"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:110
 msgid "Versions"
-msgstr "Verziók"
+msgstr "Versões"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:31
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:57
@@ -1913,191 +1913,191 @@ msgstr "Verziók"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:85
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:208
 msgid "View"
-msgstr "Nézet"
+msgstr "Visualização"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:30
 msgid "View Field"
-msgstr "Nézet mező"
+msgstr "Campo de visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:60
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:75
 msgid "View Field position"
-msgstr "Nézet mező pozíció"
+msgstr "Posição do campo de visualização"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:86
 msgid "View Field related view"
-msgstr "Kapcsolódó nézetre vonatkozó mező megtekintése"
+msgstr "Visualização relacionada ao campo de visualização"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:65
 msgid "View Field size"
-msgstr "Mező méretének megtekintése"
+msgstr "Tamanho do campo de visualização"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:46
 msgid "View Field target field"
-msgstr "Mező célmezőjének megtekintése"
+msgstr "Campo de destino do campo de visualização"
 
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:55
 msgid "View Field visibility"
-msgstr "Mező láthatóságának megtekintése"
+msgstr "Visibilidade do campo de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:117
 #: src/modules/view/standard-objects/view.workspace-entity.ts:118
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:31
 msgid "View Fields"
-msgstr "Mezők megtekintése"
+msgstr "Campos de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:23
 msgid "View Filter"
-msgstr "Szűrő megtekintése"
+msgstr "Filtro de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:60
 msgid "View Filter Display Value"
-msgstr "Szűrő megjelenítési értékének megtekintése"
+msgstr "Valor de exibição do filtro de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:83
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:27
 msgid "View Filter Group"
-msgstr "Szűrőcsoport megtekintése"
+msgstr "Grupo de filtros de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:82
 msgid "View Filter Group Id"
-msgstr "Szűrőcsoport azonosítójának megtekintése"
+msgstr "ID do grupo de filtros de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:153
 #: src/modules/view/standard-objects/view.workspace-entity.ts:154
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts:28
 msgid "View Filter Groups"
-msgstr "Szűrőcsoportok megtekintése"
+msgstr "Grupos de filtros de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:43
 msgid "View Filter operand"
-msgstr "Szűrő operandusának megtekintése"
+msgstr "Operando do filtro de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:68
 msgid "View Filter related view"
-msgstr "Kapcsolódó nézet szűrőjének megtekintése"
+msgstr "Visualização relacionada ao filtro de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:35
 msgid "View Filter target field"
-msgstr "Szűrő célmezőjének megtekintése"
+msgstr "Campo de destino do filtro de visualização"
 
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:52
 msgid "View Filter value"
-msgstr "Szűrő értékének megtekintése"
+msgstr "Valor do filtro de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:141
 #: src/modules/view/standard-objects/view.workspace-entity.ts:142
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts:24
 msgid "View Filters"
-msgstr "Szűrők megtekintése"
+msgstr "Filtros de visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:21
 msgid "View Group"
-msgstr "Nézetcsoport megtekintése"
+msgstr "Grupo de visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:71
 msgid "View Group related view"
-msgstr "Kapcsolódó nézet nézetcsoportjának megtekintése"
+msgstr "Visualização relacionada ao grupo de visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:33
 msgid "View Group target field"
-msgstr "Nézetcsoport célmezőjének megtekintése"
+msgstr "Campo de destino do grupo de visualização"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:42
 msgid "View Group visibility"
-msgstr "Nézetcsoport láthatóságának megtekintése"
+msgstr "Visibilidade do grupo de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:129
 #: src/modules/view/standard-objects/view.workspace-entity.ts:130
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:22
 msgid "View Groups"
-msgstr "Nézetcsoportok megtekintése"
+msgstr "Grupos de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:80
 msgid "View icon"
-msgstr "Ikon megtekintése"
+msgstr "Ícone de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:88
 msgid "View Kanban column field"
-msgstr "Kanban oszlopmező megtekintése"
+msgstr "Campo de coluna Kanban de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:69
 msgid "View key"
-msgstr "Kulcs megtekintése"
+msgstr "Chave de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:44
 msgid "View name"
-msgstr "Név megtekintése"
+msgstr "Nome da visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:99
 msgid "View position"
-msgstr "Pozíció megtekintése"
+msgstr "Posição da visualização"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:24
 msgid "View Sort"
-msgstr "Rendezés megtekintése"
+msgstr "Ordenação de visualização"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:49
 msgid "View Sort direction"
-msgstr "Rendezés irányának megtekintése"
+msgstr "Direção de ordenação de visualização"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:58
 msgid "View Sort related view"
-msgstr "Kapcsolódó nézet rendezésének megtekintése"
+msgstr "Visualização relacionada à ordenação de visualização"
 
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:40
 msgid "View Sort target field"
-msgstr "Rendezés célmezőjének megtekintése"
+msgstr "Campo de destino da ordenação de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:165
 #: src/modules/view/standard-objects/view.workspace-entity.ts:166
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts:25
 msgid "View Sorts"
-msgstr "Rendezések megtekintése"
+msgstr "Ordenações de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:52
 msgid "View target object"
-msgstr "Cél objektum megtekintése"
+msgstr "Objeto de destino da visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:60
 msgid "View type"
-msgstr "Típus megtekintése"
+msgstr "Tipo de visualização"
 
 #: src/modules/view/standard-objects/view.workspace-entity.ts:32
 msgid "Views"
-msgstr "Nézetek"
+msgstr "Visualizações"
 
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:96
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts:97
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:186
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts:187
 msgid "Visibility"
-msgstr "Láthatóság"
+msgstr "Visibilidade"
 
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts:41
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts:54
 msgid "Visible"
-msgstr "Látható"
+msgstr "Visível"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:18
 msgid "Webhook"
-msgstr "Webhorgok"
+msgstr "Webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:40
 msgid "Webhook operation"
-msgstr "Webhook művelet"
+msgstr "Operação de webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:50
 msgid "Webhook operations"
-msgstr "Webhook műveletek"
+msgstr "Operações de webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:31
 msgid "Webhook target url"
-msgstr "Webhorgok c&eacute;l URL-je"
+msgstr "URL de destino do webhook"
 
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts:19
 msgid "Webhooks"
-msgstr "Webhorgok"
+msgstr "Webhooks"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:57
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:127
@@ -2108,107 +2108,107 @@ msgstr "Webhorgok"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:148
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts:163
 msgid "Workflow"
-msgstr "Munkafolyamatok"
+msgstr "Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:133
 msgid "Workflow event listeners linked to the workflow."
-msgstr "A munkafolyamat eseményfigyelői hozzá vannak kötve a munkafolyamathoz."
+msgstr "Ouvintes de eventos do Workflow vinculados ao Workflow."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:173
 msgid "Workflow linked to the run."
-msgstr "A munkafolyamat össze van kötve a futtatással."
+msgstr "Workflow vinculado à execução."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:99
 msgid "Workflow record position"
-msgstr "Munkafolyamat rekord állása"
+msgstr "Posição do registro do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:52
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:224
 msgid "Workflow Run"
-msgstr "Munkafolyamat futtatása"
+msgstr "Execução do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:81
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:82
 msgid "Workflow run ended at"
-msgstr "Munkafolyamat futtatása befejeződött"
+msgstr "Execução do Workflow terminou em"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:147
 msgid "Workflow run position"
-msgstr "Munkafolyamat futtatásának állása"
+msgstr "Posição da execução do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:71
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:72
 msgid "Workflow run started at"
-msgstr "Munkafolyamat futtatása elindult"
+msgstr "Execução do Workflow começou em"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:91
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:92
 msgid "Workflow run status"
-msgstr "Munkafolyamat futtatásának állapota"
+msgstr "Status da execução do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:53
 msgid "Workflow Runs"
-msgstr "Munkafolyamat futtatások"
+msgstr "Execuções do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:143
 msgid "Workflow runs linked to the version."
-msgstr "A munkafolyamat futtatásai össze vannak kötve a verzióval."
+msgstr "Execuções do Workflow vinculadas à versão."
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:122
 msgid "Workflow runs linked to the workflow."
-msgstr "A munkafolyamat futtatásai össze vannak kötve a munkafolyamattal."
+msgstr "Execuções do Workflow vinculadas ao Workflow."
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:158
 msgid "Workflow version"
-msgstr "Munkafolyamat verziója"
+msgstr "Versão do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:65
 msgid "Workflow Version"
-msgstr "Munkafolyamat Verziója"
+msgstr "Versão do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts:159
 msgid "Workflow version linked to the run."
-msgstr "A munkafolyamat verziója össze van kötve a futtatással."
+msgstr "Versão do Workflow vinculada à execução."
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:116
 msgid "Workflow version position"
-msgstr "Munkafolyamat verziójának állása"
+msgstr "Posição da versão do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:66
 msgid "Workflow Versions"
-msgstr "Munkafolyamat Verziói"
+msgstr "Versões do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:111
 msgid "Workflow versions linked to the workflow."
-msgstr "A munkafolyamat verziói össze vannak kötve a munkafolyamattal."
+msgstr "Versões do Workflow vinculadas ao Workflow."
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:22
 msgid "WorkflowEventListener"
-msgstr "WorkflowEseményFigyelő"
+msgstr "Listener de eventos do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:44
 msgid "WorkflowEventListener workflow"
-msgstr "WorkflowEseményFigyelő munkafolyamat"
+msgstr "Workflow do WorkflowEventListener"
 
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts:23
 msgid "WorkflowEventListeners"
-msgstr "WorkflowEseményFigyelők"
+msgstr "Listeners de eventos do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts:58
 msgid "Workflows"
-msgstr "Munkafolyamatok"
+msgstr "Workflows"
 
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:209
 msgid "WorkflowVersion"
-msgstr "MunkafolyamatVerzió"
+msgstr "Versão do Workflow"
 
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts:128
 msgid "WorkflowVersion workflow"
-msgstr "MunkafolyamatVerzió munkafolyamat"
+msgstr "Workflow da Versão do Workflow"
 
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts:101
 msgid "Workspace member"
-msgstr "Munkaterület tag"
+msgstr "Membro do Workspace"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:76
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts:104
@@ -2218,31 +2218,31 @@ msgstr "Munkaterület tag"
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:138
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts:139
 msgid "Workspace Member"
-msgstr "Munkaterület tagja"
+msgstr "Membro do Workspace"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:118
 msgid "Workspace member avatar"
-msgstr "Munkaterület tag avatárja"
+msgstr "Avatar do membro do Workspace"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:89
 msgid "Workspace member name"
-msgstr "Munkaterület tag neve"
+msgstr "Nome do membro do Workspace"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts:77
 msgid "Workspace Members"
-msgstr "Munkaterület Tagjai"
+msgstr "Membros do Workspace"
 
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:43
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts:44
 msgid "WorkspaceMember"
-msgstr "MunkaterületTag"
+msgstr "Membro do Workspace"
 
 #: src/modules/person/standard-objects/person.workspace-entity.ts:99
 #: src/modules/company/standard-objects/company.workspace-entity.ts:103
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts:177
 msgid "Your team member responsible for managing the company account"
-msgstr "Az Ön csapatának megbízott tagja, aki a cégfiókot kezeli"
+msgstr "Seu membro da equipe responsável por gerenciar a conta da empresa"
 
