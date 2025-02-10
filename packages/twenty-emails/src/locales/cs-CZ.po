@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-02-09 12:24\n"
+"PO-Revision-Date: 2025-02-09 22:19\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -20,19 +20,19 @@ msgstr ""
 
 #: src/emails/send-invite-link.email.tsx:57
 msgid "Accept invite"
-msgstr ""
+msgstr "Přijměte pozvánku"
 
 #: src/emails/clean-suspended-workspace.email.tsx:33
 msgid "All data in this workspace has been permanently deleted."
-msgstr ""
+msgstr "Všechna data v tomto pracovním prostoru byla trvale odstraněna."
 
 #: src/emails/send-email-verification-link.email.tsx:22
 msgid "Confirm your email address"
-msgstr ""
+msgstr "Potvrďte svou e-mailovou adresu"
 
 #: src/emails/password-update-notify.email.tsx:46
 msgid "Connect to Twenty"
-msgstr ""
+msgstr "Připojte se k Twenty"
 
 #: src/emails/password-update-notify.email.tsx:24
 #~ msgid "Dear"
@@ -40,59 +40,59 @@ msgstr ""
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Dear {userName}"
-msgstr ""
+msgstr "Vážený {userName}"
 
 #: src/emails/send-invite-link.email.tsx:50
 msgid "has invited you to join a workspace called "
-msgstr ""
+msgstr "vás pozval do pracovního prostoru s názvem "
 
 #: src/emails/password-update-notify.email.tsx:24
 msgid "Hello"
-msgstr ""
+msgstr "Dobrý den"
 
 #: src/emails/password-update-notify.email.tsx:40
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr ""
+msgstr "Pokud jste tuto změnu neiniciovali, prosím, okamžitě kontaktujte majitele vašeho pracovního prostoru."
 
 #: src/emails/warn-suspended-workspace.email.tsx:46
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr ""
+msgstr "Pokud si přejete dále používat Twenty, prosím, aktualizujte své předplatné během příštích {remainingDays} {dayOrDays}."
 
 #: src/emails/clean-suspended-workspace.email.tsx:36
 msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr ""
+msgstr "Pokud si přejete znovu použít Twenty, můžete vytvořit nový pracovní prostor."
 
 #: src/emails/warn-suspended-workspace.email.tsx:34
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr ""
+msgstr "Zdá se, že váš pracovní prostor <0>{workspaceDisplayName}</0> byl pozastaven na dobu {daysSinceInactive} dní."
 
 #: src/emails/send-invite-link.email.tsx:42
 msgid "Join your team on Twenty"
-msgstr ""
+msgstr "Připojte se k svému týmu na Twenty"
 
 #: src/emails/password-update-notify.email.tsx:29
 msgid "Password updated"
-msgstr ""
+msgstr "Heslo bylo aktualizováno"
 
 #: src/emails/password-reset-link.email.tsx:24
 msgid "Reset"
-msgstr ""
+msgstr "Obnovit"
 
 #: src/emails/password-reset-link.email.tsx:23
 msgid "Reset your password 🗝"
-msgstr ""
+msgstr "Obnovte své heslo 🗝"
 
 #: src/emails/send-email-verification-link.email.tsx:27
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
-msgstr ""
+msgstr "Děkujeme za registraci účtu na Twenty! Než začneme, musíme potvrdit, že jste to vy. Klikněte výše k ověření vaší e-mailové adresy."
 
 #: src/emails/warn-suspended-workspace.email.tsx:40
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr ""
+msgstr "Pracovní prostor bude deaktivován za {remainingDays} {dayOrDays} a všechna jeho data budou smazána."
 
 #: src/emails/password-update-notify.email.tsx:34
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr ""
+msgstr "Toto je potvrzení, že heslo k vašemu účtu ({email}) bylo úspěšně změněno {formattedDate}."
 
 #: src/emails/password-update-notify.email.tsx:36
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
@@ -100,7 +100,7 @@ msgstr ""
 
 #: src/emails/password-reset-link.email.tsx:26
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr ""
+msgstr "Tento odkaz je platný pouze následující {duration}. Pokud odkaz nefunguje, můžete přímo použít odkaz pro ověření přihlášení:"
 
 #: src/emails/password-reset-link.email.tsx:28
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
@@ -108,13 +108,13 @@ msgstr ""
 
 #: src/emails/warn-suspended-workspace.email.tsx:53
 msgid "Update your subscription"
-msgstr ""
+msgstr "Aktualizujte své předplatné"
 
 #: src/emails/send-email-verification-link.email.tsx:23
 msgid "Verify Email"
-msgstr ""
+msgstr "Ověřit e-mail"
 
 #: src/emails/clean-suspended-workspace.email.tsx:27
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-msgstr ""
+msgstr "Váš pracovní prostor <0>{workspaceDisplayName}</0> byl odstraněn, protože vaše předplatné vypršelo před {inactiveDaysBeforeDelete} dny."
 
