@@ -6,6 +6,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isEmptyObject } from '@tiptap/core';
 import { capitalize } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -53,7 +54,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(record)) {
+  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;
   }
 
