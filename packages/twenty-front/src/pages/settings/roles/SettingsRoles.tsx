@@ -55,8 +55,7 @@ const StyledAvatarGroup = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 
   > * {
-    border: 2px solid ${({ theme }) => theme.background.primary};
-    margin-left: -8px;
+    margin-left: -5px;
 
     &:first-of-type {
       margin-left: 0;
@@ -82,6 +81,11 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 const StyledAvatarContainer = styled.div`
   border: 0px;
+`;
+
+const StyledAssignedText = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
 `;
 
 export const SettingsRoles = () => {
@@ -165,7 +169,7 @@ export const SettingsRoles = () => {
                                     workspaceMember.name.firstName ?? ''
                                   }
                                   type="rounded"
-                                  size="sm"
+                                  size="md"
                                 />
                               </StyledAvatarContainer>
                               <AppTooltip
@@ -179,7 +183,9 @@ export const SettingsRoles = () => {
                             </>
                           ))}
                       </StyledAvatarGroup>
-                      {role.workspaceMembers.length}
+                      <StyledAssignedText>
+                        {role.workspaceMembers.length}
+                      </StyledAssignedText>
                     </StyledAssignedCell>
                   </TableCell>
                   <TableCell align={'right'}>

@@ -17,24 +17,29 @@ const StyledEmptyState = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: flex-start;
-  padding: ${({ theme }) => theme.spacing(1.5, 2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledWorkspaceMemberItem = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(2)};
-  min-width: ${({ theme }) => theme.spacing(40)};
-  padding: ${({ theme }) => theme.spacing(1.5, 2)};
+  min-width: ${({ theme }) => theme.spacing(45)};
+  padding: ${({ theme }) => theme.spacing(2)};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.tertiary};
   }
+`;
+
+const StyledWorkspaceMemberName = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 const StyledSearchInput = styled(DropdownMenuSearchInput)`
@@ -72,10 +77,10 @@ export const RoleWorkspaceMemberPickerDropdown = ({
       : undefined,
   });
 
-  const filteredWorkspaceMembers = workspaceMembers?.filter(
+  const filteredWorkspaceMembers = (workspaceMembers?.filter(
     (workspaceMember) =>
       !excludedWorkspaceMemberIds.includes(workspaceMember.id),
-  ) as WorkspaceMember[];
+  ) ?? []) as WorkspaceMember[];
 
   const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchFilter(event.target.value);
@@ -90,8 +95,8 @@ export const RoleWorkspaceMemberPickerDropdown = ({
       return (
         <StyledEmptyState>
           {searchFilter
-            ? t`No workspace member matching this search...`
-            : t`No more workspace members to add...`}
+            ? t`No members matching this search`
+            : t`No more members to add`}
         </StyledEmptyState>
       );
     }
@@ -100,14 +105,17 @@ export const RoleWorkspaceMemberPickerDropdown = ({
       <StyledWorkspaceMemberItem
         key={workspaceMember.id}
         onClick={() => onSelect(workspaceMember)}
+        aria-label={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
       >
         <Avatar
           type="rounded"
-          size="sm"
+          size="md"
           placeholderColorSeed={workspaceMember.id}
           placeholder={workspaceMember.name.firstName ?? ''}
         />
-        {workspaceMember.name.firstName} {workspaceMember.name.lastName}
+        <StyledWorkspaceMemberName>
+          {workspaceMember.name.firstName} {workspaceMember.name.lastName}
+        </StyledWorkspaceMemberName>
       </StyledWorkspaceMemberItem>
     ));
   };

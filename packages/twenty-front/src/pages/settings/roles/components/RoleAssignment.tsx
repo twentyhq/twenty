@@ -1,11 +1,12 @@
 import { SettingsPath } from '@/types/SettingsPath';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
+import { Button, H2Title, IconPlus, IconSearch, Section } from 'twenty-ui';
 import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
 import {
   GetRolesDocument,
@@ -45,6 +46,21 @@ const StyledEmptyText = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledSearchContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(2)} 0;
+`;
+
+const StyledSearchInput = styled(TextInput)`
+  input {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
+
+    &:hover {
+      border: 1px solid ${({ theme }) => theme.border.color.medium};
+    }
+  }
+`;
+
 type RoleAssignmentProps = {
   role: Pick<Role, 'id' | 'label' | 'canUpdateAllSettings'> & {
     workspaceMembers: Array<WorkspaceMember>;
@@ -62,6 +78,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     useState<SelectedWorkspaceMember | null>(null);
   const { data: rolesData } = useGetRolesQuery();
   const { closeDropdown } = useDropdown('role-member-select');
+  const [searchFilter, setSearchFilter] = useState('');
 
   const workspaceMemberRoleMap = useMemo(() => {
     if (!rolesData?.getRoles) return new Map();
@@ -74,6 +91,23 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     });
     return roleMap;
   }, [rolesData?.getRoles]);
+
+  const filteredWorkspaceMembers = useMemo(() => {
+    if (!searchFilter) return role.workspaceMembers;
+
+    const searchTerm = searchFilter.toLowerCase();
+    return role.workspaceMembers.filter((member) => {
+      const firstName = member.name.firstName?.toLowerCase() || '';
+      const lastName = member.name.lastName?.toLowerCase() || '';
+      const email = member.userEmail?.toLowerCase() || '';
+
+      return (
+        firstName.includes(searchTerm) ||
+        lastName.includes(searchTerm) ||
+        email.includes(searchTerm)
+      );
+    });
+  }, [role.workspaceMembers, searchFilter]);
 
   const handleModalClose = () => {
     setModalMode(null);
@@ -119,28 +153,46 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     handleModalClose();
   };
 
+  const handleSearchChange = (text: string) => {
+    setSearchFilter(text);
+  };
+
   return (
     <>
       <Section>
         <H2Title
           title={t`Assigned members`}
-          description={t`This Role is assigned to these workspace members.`}
+          description={t`This role is assigned to these workspace members.`}
         />
+        <StyledSearchContainer>
+          <StyledSearchInput
+            value={searchFilter}
+            onChange={handleSearchChange}
+            placeholder={t`Search a member`}
+            fullWidth
+            LeftIcon={IconSearch}
+            sizeVariant="lg"
+          />
+        </StyledSearchContainer>
         <Table>
           <RoleAssignmentTableHeader />
-          {role.workspaceMembers?.map((workspaceMember) => (
+          {filteredWorkspaceMembers.map((workspaceMember) => (
             <RoleAssignmentTableRow
               key={workspaceMember.id}
               workspaceMember={workspaceMember}
               onRemove={() => handleRemoveClick(workspaceMember)}
             />
           ))}
-          {role.workspaceMembers.length === 0 && (
-            <StyledEmptyText>{t`No members assigned to this role yet`}</StyledEmptyText>
+          {filteredWorkspaceMembers.length === 0 && (
+            <StyledEmptyText>
+              {searchFilter
+                ? t`No members matching your search`
+                : t`No members assigned to this role yet`}
+            </StyledEmptyText>
           )}
         </Table>
       </Section>
-      <StyledBottomSection hasRows={role.workspaceMembers.length > 0}>
+      <StyledBottomSection hasRows={filteredWorkspaceMembers.length > 0}>
         <Dropdown
           dropdownId="role-member-select"
           dropdownHotkeyScope={{ scope: 'roleAssignment' }}

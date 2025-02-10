@@ -60,7 +60,7 @@ export const RoleAssignmentModal = ({
   onRoleClick,
 }: RoleAssignmentModalProps) => {
   const isAssignMode = mode === 'assign';
-  const hasExistingRole = Boolean(selectedWorkspaceMember.role);
+  const hasExistingRole = !!selectedWorkspaceMember.role;
 
   const selectedWorkspaceMemberName = selectedWorkspaceMember.name;
 
@@ -70,7 +70,10 @@ export const RoleAssignmentModal = ({
         <>
           {t`${selectedWorkspaceMemberName} will be unassigned from the following role:`}
           <StyledRoleButton
-            onClick={() => onRoleClick(selectedWorkspaceMember.role?.id ?? '')}
+            onClick={() =>
+              selectedWorkspaceMember.role &&
+              onRoleClick(selectedWorkspaceMember.role.id)
+            }
           >
             <StyledLeftContent>
               <IconUser size={14} />
@@ -99,7 +102,7 @@ export const RoleAssignmentModal = ({
       subtitle={renderSubtitle()}
       onConfirmClick={onConfirm}
       deleteButtonText={isAssignMode ? t`Confirm` : t`Remove`}
-      confirmButtonAccent={'danger'}
+      confirmButtonAccent={isAssignMode && !hasExistingRole ? 'blue' : 'danger'}
     />
   );
 };

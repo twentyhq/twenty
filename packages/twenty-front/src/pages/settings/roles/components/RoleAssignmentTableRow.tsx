@@ -2,6 +2,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import {
   AppTooltip,
   Avatar,
@@ -58,7 +59,7 @@ export const RoleAssignmentTableRow = ({
               placeholderColorSeed={workspaceMember.id}
               placeholder={workspaceMember.name.firstName ?? ''}
               type="rounded"
-              size="sm"
+              size="md"
             />
           </StyledIconWrapper>
           <StyledTextContainerWithEllipsis
@@ -87,6 +88,7 @@ export const RoleAssignmentTableRow = ({
               variant="tertiary"
               size="medium"
               Icon={IconTrash}
+              aria-label={t`Remove`}
             />
           </StyledButtonContainer>
         </TableCell>

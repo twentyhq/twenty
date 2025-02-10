@@ -19,7 +19,7 @@ export const RoleAssignmentTableHeader = ({
     <TableRow gridAutoColumns="150px 1fr 1fr">
       <TableHeader>{t`Name`}</TableHeader>
       <TableHeader>{t`Email`}</TableHeader>
-      <TableHeader align={'right'}></TableHeader>
+      <TableHeader align={'right'} aria-label={t`Actions`}></TableHeader>
     </TableRow>
   </StyledTableHeaderRow>
 );
