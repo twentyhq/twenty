@@ -114,7 +114,7 @@ export const SettingsDataModelOverviewObject = ({
   const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
 
   const countNonRelation = fields.filter(
-    (x) => x.type !== FieldMetadataType.RELATION,
+    (x) => x.type !== FieldMetadataType.RELATION && x.isActive,
   ).length;
 
   const Icon = getIcon(objectMetadataItem.icon);
