@@ -1,5 +1,17 @@
+import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidth';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
+import styled from '@emotion/styled';
+import {
+  BaseEdge,
+  EdgeLabelRenderer,
+  EdgeProps,
+  getStraightPath,
+} from '@xyflow/react';
+import { Label } from 'twenty-ui';
+
+const StyledLabel = styled(Label)`
+  color: ${({ theme }) => theme.tag.text.turquoise};
+`;
 
 type WorkflowDiagramSuccessEdgeProps = EdgeProps;
 
@@ -8,11 +20,13 @@ export const WorkflowDiagramSuccessEdge = ({
   sourceY,
   targetX,
   targetY,
-  ...props
+  markerStart,
+  markerEnd,
+  label,
 }: WorkflowDiagramSuccessEdgeProps) => {
   const theme = useTheme();
 
-  const [edgePath] = getStraightPath({
+  const [edgePath, labelX, labelY] = getStraightPath({
     sourceX,
     sourceY,
     targetX,
@@ -22,11 +36,25 @@ export const WorkflowDiagramSuccessEdge = ({
   return (
     <>
       <BaseEdge
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
+        markerStart={markerStart}
+        markerEnd={markerEnd}
         path={edgePath}
-        style={{ ...props.style, stroke: theme.tag.text.turquoise }}
+        style={{ stroke: theme.tag.text.turquoise }}
       />
+
+      <EdgeLabelRenderer>
+        <StyledLabel
+          variant="small"
+          style={{
+            position: 'absolute',
+            transform: `translate(0, -50%) translate(${labelX}px, ${labelY}px) translateX(${EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH / 2 + 3}px)`,
+            pointerEvents: 'all',
+          }}
+          className="nodrag nopan"
+        >
+          {label}
+        </StyledLabel>
+      </EdgeLabelRenderer>
     </>
   );
 };

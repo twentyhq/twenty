@@ -163,6 +163,7 @@ export const SuccessEdge: Story = {
                 source: 'trigger-1',
                 target: 'action-1',
                 type: 'success',
+                label: '1 item',
               },
             ],
           });
