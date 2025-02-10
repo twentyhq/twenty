@@ -111,10 +111,12 @@ export const SettingsDataModelOverviewObject = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const fields = objectMetadataItem.fields.filter((x) => !x.isSystem);
+  const fields = objectMetadataItem.fields.filter(
+    (x) => !x.isSystem && x.isActive,
+  );
 
   const countNonRelation = fields.filter(
-    (x) => x.type !== FieldMetadataType.RELATION && x.isActive,
+    (x) => x.type !== FieldMetadataType.RELATION,
   ).length;
 
   const Icon = getIcon(objectMetadataItem.icon);
@@ -140,7 +142,7 @@ export const SettingsDataModelOverviewObject = ({
 
       <StyledInnerCard>
         {fields
-          .filter((x) => x.type === FieldMetadataType.RELATION && x.isActive)
+          .filter((x) => x.type === FieldMetadataType.RELATION)
           .map((field) => (
             <StyledCardRow key={field.id}>
               <ObjectFieldRow field={field} />
@@ -160,9 +162,7 @@ export const SettingsDataModelOverviewObject = ({
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields
-                .filter(
-                  (x) => x.type !== FieldMetadataType.RELATION && x.isActive,
-                )
+                .filter((x) => x.type !== FieldMetadataType.RELATION)
                 .map((field) => (
                   <StyledCardRow key={field.id}>
                     <ObjectFieldRowWithoutRelation field={field} />
