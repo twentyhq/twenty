@@ -140,7 +140,7 @@ export const SettingsDataModelOverviewObject = ({
 
       <StyledInnerCard>
         {fields
-          .filter((x) => x.type === FieldMetadataType.RELATION)
+          .filter((x) => x.type === FieldMetadataType.RELATION && x.isActive)
           .map((field) => (
             <StyledCardRow key={field.id}>
               <ObjectFieldRow field={field} />
