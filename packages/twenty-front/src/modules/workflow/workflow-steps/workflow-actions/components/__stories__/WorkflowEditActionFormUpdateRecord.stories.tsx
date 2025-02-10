@@ -10,6 +10,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormUpdateRecord } from '../WorkflowEditActionFormUpdateRecord';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -62,6 +63,7 @@ const meta: Meta<typeof WorkflowEditActionFormUpdateRecord> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     RouterDecorator,
+    WorkspaceDecorator,
   ],
 };
 

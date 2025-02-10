@@ -7,9 +7,12 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { SettingsFeatures } from 'twenty-shared';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -20,6 +23,8 @@ import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metad
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
@@ -51,6 +56,8 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         RemoteTableRelationsModule,
         SearchModule,
         IndexMetadataModule,
+        FeatureFlagModule,
+        PermissionsModule,
       ],
       services: [
         ObjectMetadataService,
@@ -71,11 +78,13 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           },
           create: {
             many: { disabled: true },
+            guards: [SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
           interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
+          filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],
     }),

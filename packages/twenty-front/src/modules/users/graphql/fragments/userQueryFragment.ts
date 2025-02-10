@@ -24,6 +24,9 @@ export const USER_QUERY_FRAGMENT = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
+    currentUserWorkspace {
+      settingsPermissions
+    }
     currentWorkspace {
       id
       displayName

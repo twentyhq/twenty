@@ -197,17 +197,6 @@ export const NoResultsSearchFallback: Story = {
   },
 };
 
-export const GoBack: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const goBackButton = await canvas.findByTestId(
-      'command-menu-go-back-button',
-    );
-    await userEvent.click(goBackButton);
-    await expect(goBackButton).not.toBeVisible();
-  },
-};
-
 export const ClickOnSearchRecordsAndGoBack: Story = {
   play: async () => {
     const canvas = within(document.body);

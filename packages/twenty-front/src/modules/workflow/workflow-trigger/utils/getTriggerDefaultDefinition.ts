@@ -45,6 +45,16 @@ export const getTriggerDefaultDefinition = ({
         }),
       };
     }
+    case 'CRON': {
+      return {
+        type,
+        settings: {
+          type: 'HOURS',
+          schedule: { hour: 1, minute: 0 },
+          outputSchema: {},
+        },
+      };
+    }
     default: {
       return assertUnreachable(type, `Unknown type: ${type}`);
     }
