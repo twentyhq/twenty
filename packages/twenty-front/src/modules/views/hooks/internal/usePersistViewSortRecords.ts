@@ -20,10 +20,9 @@ export const usePersistViewSortRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
-  const getRecordFromCache =
-    useGetRecordFromCache({
-      objectNameSingular: CoreObjectNameSingular.ViewSort,
-    });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
 
   const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewSort,

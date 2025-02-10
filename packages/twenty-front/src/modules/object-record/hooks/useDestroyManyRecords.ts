@@ -91,9 +91,9 @@ export const useDestroyManyRecords = ({
 
             if (!isDefined(records) || records.length === 0) return;
 
-            const cachedRecords = records.map((record) =>
-              getRecordFromCache(record.id, cache),
-            ).filter(isDefined);
+            const cachedRecords = records
+              .map((record) => getRecordFromCache(record.id, cache))
+              .filter(isDefined);
 
             triggerDestroyRecordsOptimisticEffect({
               cache,

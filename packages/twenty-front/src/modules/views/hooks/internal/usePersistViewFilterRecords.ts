@@ -107,7 +107,7 @@ export const usePersistViewFilterRecords = () => {
                 cache,
               );
               if (!isDefined(cachedRecord)) return;
-              
+
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,

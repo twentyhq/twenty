@@ -30,7 +30,7 @@ export const InformationBannerDeletedRecord = ({
         message={`This record has been deleted`}
         buttonTitle="Restore"
         buttonIcon={IconRefresh}
-        buttonOnClick={() => restoreManyRecords({idsToRestore: [recordId]})}
+        buttonOnClick={() => restoreManyRecords({ idsToRestore: [recordId] })}
       />
     </StyledInformationBannerDeletedRecord>
   );

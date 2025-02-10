@@ -130,7 +130,7 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
-          assertCachedRecordIsNull()
+          assertCachedRecordIsNull();
         });
       });
 
@@ -162,7 +162,7 @@ describe('useDeleteOneRecord', () => {
             'Should never occur expected function to throw',
           );
         } catch (e) {
-          assertCachedRecordIsNull()
+          assertCachedRecordIsNull();
         }
       });
     });
