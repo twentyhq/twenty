@@ -63,7 +63,8 @@ export const useAllActiveWorkflowVersions = ({
     return {
       records: records.filter(
         (record) =>
-          record.trigger?.type !== 'CRON' &&
+          record.status === 'ACTIVE' &&
+          record.trigger?.type === 'MANUAL' &&
           !isDefined(record.trigger?.settings.objectType),
       ),
     };
