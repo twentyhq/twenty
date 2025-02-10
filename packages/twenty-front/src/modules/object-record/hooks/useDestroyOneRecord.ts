@@ -46,6 +46,7 @@ export const useDestroyOneRecord = ({
         .mutate({
           mutation: destroyOneRecordMutation,
           variables: { idToDestroy },
+          // TODO refactor to be handled as siblings hooks and dispatch trigger optimsitic cache to relations
           optimisticResponse: {
             [mutationResponseField]: {
               __typename: capitalize(objectNameSingular),
