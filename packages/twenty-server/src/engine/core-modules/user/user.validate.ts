@@ -6,6 +6,7 @@ import {
   UserExceptionCode,
 } from 'src/engine/core-modules/user/user.exception';
 import { CustomException } from 'src/utils/custom-exception';
+import { genericValidator } from 'src/engine/utils/assert-is-defined-or-throw';
 
 const assertIsDefinedOrThrow = (
   user: User | undefined | null,
@@ -15,7 +16,7 @@ const assertIsDefinedOrThrow = (
   ),
 ): asserts user is User => {
   if (!isDefined(user)) {
-    throw exceptionToThrow;
+    genericValidator.assertIsDefinedOrThrow(user, exceptionToThrow);
   }
 };
 

@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
 
 import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { genericValidator } from 'src/engine/utils/assert-is-defined-or-throw';
 
 const workspaces = new Map<string, ContextId>();
 
@@ -25,7 +26,10 @@ export class AggregateByWorkspaceContextIdStrategy
     }
 
     if (workspaces.has(jwtPayload.workspaceId)) {
-      workspaceSubTreeId = workspaces.get(jwtPayload.workspaceId)!;
+      const subTreeId = workspaces.get(jwtPayload.workspaceId);
+
+      genericValidator.assertIsDefinedOrThrow(subTreeId);
+      workspaceSubTreeId = subTreeId;
     } else {
       workspaceSubTreeId = ContextIdFactory.create();
       workspaces.set(jwtPayload.workspaceId, workspaceSubTreeId);

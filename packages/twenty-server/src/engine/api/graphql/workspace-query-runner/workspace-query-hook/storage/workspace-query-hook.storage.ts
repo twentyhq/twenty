@@ -6,6 +6,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { genericValidator } from 'src/engine/utils/assert-is-defined-or-throw';
 
 interface WorkspaceQueryHookData<T> {
   instance: T;
@@ -48,9 +49,14 @@ export class WorkspaceQueryHookStorage {
       throw new Error(`Can't split workspace query hook key: ${key}`);
     }
 
-    // Retrive wildcard pre-hook instances
+    // Retrieve wildcard pre-hook instances
     if (this.preHookInstances.has(`*.${methodName}`)) {
-      wildcardInstances = this.preHookInstances.get(`*.${methodName}`)!;
+      const wildcardPrehooksInstance = this.preHookInstances.get(
+        `*.${methodName}`,
+      );
+
+      genericValidator.assertIsDefinedOrThrow(wildcardPrehooksInstance);
+      wildcardInstances = wildcardPrehooksInstance;
     }
 
     return [...wildcardInstances, ...(this.preHookInstances.get(key) ?? [])];
@@ -80,9 +86,14 @@ export class WorkspaceQueryHookStorage {
       throw new Error(`Can't split workspace query hook key: ${key}`);
     }
 
-    // Retrive wildcard post-hook instances
+    // Retrieve wildcard post-hook instances
     if (this.postHookInstances.has(`*.${methodName}`)) {
-      wildcardInstances = this.postHookInstances.get(`*.${methodName}`)!;
+      const wildcardPosthooksInstance = this.postHookInstances.get(
+        `*.${methodName}`,
+      );
+
+      genericValidator.assertIsDefinedOrThrow(wildcardPosthooksInstance);
+      wildcardInstances = wildcardPosthooksInstance;
     }
 
     return [...wildcardInstances, ...(this.postHookInstances.get(key) ?? [])];
