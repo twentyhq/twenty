@@ -2,11 +2,12 @@
 import { Injectable } from '@nestjs/common';
 import { Module } from '@nestjs/core/injector/module';
 
+import { isDefined } from 'twenty-shared';
+
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { genericValidator } from 'src/engine/utils/assert-is-defined-or-throw';
 
 interface WorkspaceQueryHookData<T> {
   instance: T;
@@ -50,12 +51,11 @@ export class WorkspaceQueryHookStorage {
     }
 
     // Retrieve wildcard pre-hook instances
-    if (this.preHookInstances.has(`*.${methodName}`)) {
-      const wildcardPrehooksInstance = this.preHookInstances.get(
-        `*.${methodName}`,
-      );
+    const wildcardPrehooksInstance = this.preHookInstances.get(
+      `*.${methodName}`,
+    );
 
-      genericValidator.assertIsDefinedOrThrow(wildcardPrehooksInstance);
+    if (isDefined(wildcardPrehooksInstance)) {
       wildcardInstances = wildcardPrehooksInstance;
     }
 
@@ -87,12 +87,11 @@ export class WorkspaceQueryHookStorage {
     }
 
     // Retrieve wildcard post-hook instances
-    if (this.postHookInstances.has(`*.${methodName}`)) {
-      const wildcardPosthooksInstance = this.postHookInstances.get(
-        `*.${methodName}`,
-      );
+    const wildcardPosthooksInstance = this.postHookInstances.get(
+      `*.${methodName}`,
+    );
 
-      genericValidator.assertIsDefinedOrThrow(wildcardPosthooksInstance);
+    if (isDefined(wildcardPosthooksInstance)) {
       wildcardInstances = wildcardPosthooksInstance;
     }
 
