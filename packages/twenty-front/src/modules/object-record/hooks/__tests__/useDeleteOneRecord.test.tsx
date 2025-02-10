@@ -21,14 +21,14 @@ import {
   getRandomPersonRecord,
 } from '~/testing/mock-data/people';
 
+jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = jest.fn();
+(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+  refetchAggregateQueries: mockRefetchAggregateQueries,
+});
+
 // TODO Should test relation deletion cache hydratation
 describe('useDeleteOneRecord', () => {
-  jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
-  const mockRefetchAggregateQueries = jest.fn();
-  (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
-    refetchAggregateQueries: mockRefetchAggregateQueries,
-  });
-
   let cache!: InMemoryCache;
   const getDefaultMocks = (
     overrides?: Partial<MockedResponse>,
