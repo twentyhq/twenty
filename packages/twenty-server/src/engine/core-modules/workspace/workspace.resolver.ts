@@ -217,7 +217,7 @@ export class WorkspaceResolver {
 
   @ResolveField(() => workspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
-    return this.domainManagerService.getworkspaceUrls(workspace);
+    return this.domainManagerService.getWorkspaceUrls(workspace);
   }
 
   @Query(() => CustomDomainDetails, { nullable: true })
@@ -268,7 +268,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrls: this.domainManagerService.getworkspaceUrls(workspace),
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

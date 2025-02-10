@@ -96,7 +96,7 @@ export class DomainManagerService {
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
-    const workspaceUrls = this.getworkspaceUrls(workspace);
+    const workspaceUrls = this.getWorkspaceUrls(workspace);
 
     const url = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl);
 
@@ -396,7 +396,7 @@ export class DomainManagerService {
     return url.toString();
   }
 
-  getworkspaceUrls({
+  getWorkspaceUrls({
     subdomain,
     customDomain,
   }: Pick<Workspace, 'subdomain' | 'customDomain'>) {

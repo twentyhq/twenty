@@ -9,7 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
-  describe('getworkspaceUrls', () => {
+  describe('getWorkspaceUrls', () => {
     it('should return a URL containing the correct customDomain if customDomain is provided', () => {
       jest
         .spyOn(environmentService, 'get')
@@ -22,7 +22,7 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getworkspaceUrls({
+      const result = domainManagerService.getWorkspaceUrls({
         subdomain: 'subdomain',
         customDomain: 'custom-host.com',
       });
@@ -45,7 +45,7 @@ describe('DomainManagerService', () => {
           return env[key];
         });
 
-      const result = domainManagerService.getworkspaceUrls({
+      const result = domainManagerService.getWorkspaceUrls({
         subdomain: 'subdomain',
         customDomain: undefined,
       });

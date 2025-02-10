@@ -2199,16 +2199,16 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
+export type WorkspaceUrlsAndId = {
+  __typename?: 'WorkspaceUrlsAndId';
+  id: Scalars['String']['output'];
+  workspaceUrls: WorkspaceUrls;
+};
+
 export type WorkspaceUrls = {
   __typename?: 'workspaceUrls';
   customUrl?: Maybe<Scalars['String']['output']>;
   subdomainUrl: Scalars['String']['output'];
-};
-
-export type WorkspaceUrlsAndId = {
-  __typename?: 'workspaceUrlsAndId';
-  id: Scalars['String']['output'];
-  workspaceUrls: WorkspaceUrls;
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };

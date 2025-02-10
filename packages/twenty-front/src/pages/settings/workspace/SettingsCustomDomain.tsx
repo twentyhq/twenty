@@ -6,7 +6,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 
-const StyledDomainFromWrapper = styled.div`
+const StyledDomainFormWrapper = styled.div`
   align-items: center;
   display: flex;
 `;
@@ -23,7 +23,7 @@ export const SettingsCustomDomain = () => {
   return (
     <Section>
       <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
-      <StyledDomainFromWrapper>
+      <StyledDomainFormWrapper>
         <Controller
           name="customDomain"
           control={control}
@@ -37,7 +37,7 @@ export const SettingsCustomDomain = () => {
             />
           )}
         />
-      </StyledDomainFromWrapper>
+      </StyledDomainFormWrapper>
       {getCustomDomainDetailsData?.getCustomDomainDetails &&
         getValues('customDomain') ===
           getCustomDomainDetailsData?.getCustomDomainDetails?.customDomain && (
