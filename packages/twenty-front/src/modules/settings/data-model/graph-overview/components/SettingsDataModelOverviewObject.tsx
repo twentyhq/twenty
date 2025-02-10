@@ -160,7 +160,9 @@ export const SettingsDataModelOverviewObject = ({
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields
-                .filter((x) => x.type !== FieldMetadataType.RELATION)
+                .filter(
+                  (x) => x.type !== FieldMetadataType.RELATION && x.isActive,
+                )
                 .map((field) => (
                   <StyledCardRow>
                     <ObjectFieldRowWithoutRelation field={field} />
