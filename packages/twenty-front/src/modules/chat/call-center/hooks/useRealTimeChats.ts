@@ -1,4 +1,4 @@
-import { firestoreDB } from '@/chat/internal/config/FirebaseConfig';
+import { firestoreDB } from '@/chat/config/FirebaseConfig';
 import {
   ChatStatus,
   statusEnum,

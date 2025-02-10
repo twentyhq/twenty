@@ -4,19 +4,19 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable project-structure/folder-structure */
 import {
-  CurrentWorkspaceMember,
-  currentWorkspaceMemberState,
+    CurrentWorkspaceMember,
+    currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { firestoreDB } from '@/chat/config/FirebaseConfig';
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
-import { firestoreDB } from '@/chat/internal/config/FirebaseConfig';
 import {
-  ChatContextType,
-  IChat,
-  IChatUser,
-  ISearchResult,
-  Message,
-  TDateFirestore,
+    ChatContextType,
+    IChat,
+    IChatUser,
+    ISearchResult,
+    Message,
+    TDateFirestore,
 } from '@/chat/internal/types/chat';
 import { MessageType } from '@/chat/types/MessageType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -25,16 +25,16 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  and,
-  collection,
-  doc,
-  documentId,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  where,
+    and,
+    collection,
+    doc,
+    documentId,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    query,
+    setDoc,
+    where,
 } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';

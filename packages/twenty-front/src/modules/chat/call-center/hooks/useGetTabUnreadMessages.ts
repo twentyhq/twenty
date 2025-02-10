@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-import { firestoreDB } from '@/chat/internal/config/FirebaseConfig';
+import { firestoreDB } from '@/chat/config/FirebaseConfig';
 import { UnreadMessages } from '@/chat/types/MessageType';
 import { statusEnum, WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
