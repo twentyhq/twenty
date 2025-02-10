@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ClickableAccessibilityProps } from '@ui/accessibility';
 import { IconComponent } from '@ui/display';
 import { ComponentProps, MouseEvent } from 'react';
 
@@ -17,7 +18,8 @@ export type LightIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'> &
+  Partial<ClickableAccessibilityProps>;
 
 const StyledButton = styled.button<
   Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
