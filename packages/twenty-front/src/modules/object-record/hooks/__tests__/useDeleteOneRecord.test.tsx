@@ -152,7 +152,6 @@ describe('useDeleteOneRecord', () => {
       );
 
       await act(async () => {
-        // Could not make it work with expect error
         try {
           await result.current.deleteOneRecord(personRecord.id);
           expect(false).toEqual(
@@ -210,7 +209,6 @@ describe('useDeleteOneRecord', () => {
           deletedAt: expect.any(String),
         };
         assertCachedRecordMatch(personRecordWithDeletedAt);
-        // Test relations udpate here too
       });
 
       expect(defaultMocks[0].result).toHaveBeenCalled();
