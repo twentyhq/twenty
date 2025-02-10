@@ -1,6 +1,7 @@
 import { EDGE_GRAY_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGrayCircleMarkedId';
 import { EDGE_GREEN_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenCircleMarkedId';
 import { EDGE_GREEN_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerId';
+import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidth';
 import { EDGE_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeRoundedArrowMarkerId';
 import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
 import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
@@ -28,8 +29,8 @@ export const WorkflowDiagramCustomMarkers = () => {
         <marker
           id={EDGE_GREEN_ROUNDED_ARROW_MARKER_ID}
           markerHeight={5}
-          markerWidth={6}
-          refX={3}
+          markerWidth={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH}
+          refX={EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH / 2}
           refY={2.5}
         >
           <path
@@ -42,7 +43,7 @@ export const WorkflowDiagramCustomMarkers = () => {
           markerHeight={NODE_HANDLE_HEIGHT_PX}
           markerWidth={NODE_HANDLE_WIDTH_PX}
           refX={NODE_HANDLE_WIDTH_PX / 2}
-          refY={NODE_HANDLE_HEIGHT_PX / 2}
+          refY={NODE_HANDLE_HEIGHT_PX}
           id={EDGE_GRAY_CIRCLE_MARKED_ID}
         >
           <rect
@@ -54,17 +55,21 @@ export const WorkflowDiagramCustomMarkers = () => {
         </marker>
 
         <marker
-          markerHeight={NODE_HANDLE_HEIGHT_PX}
-          markerWidth={NODE_HANDLE_WIDTH_PX}
-          refX={NODE_HANDLE_WIDTH_PX / 2}
-          refY={NODE_HANDLE_HEIGHT_PX / 2}
+          markerHeight={5}
+          markerWidth={5}
+          refX={2}
+          refY={2.5}
           id={EDGE_GREEN_CIRCLE_MARKED_ID}
         >
           <rect
-            height={NODE_HANDLE_HEIGHT_PX}
-            width={NODE_HANDLE_WIDTH_PX}
-            rx="2"
-            fill={theme.tag.text.turquoise}
+            x={0.5}
+            y={0.5}
+            height={3}
+            width={3}
+            rx="1.5"
+            fill="white"
+            stroke={theme.tag.text.turquoise}
+            strokeWidth={1}
           />
         </marker>
       </defs>

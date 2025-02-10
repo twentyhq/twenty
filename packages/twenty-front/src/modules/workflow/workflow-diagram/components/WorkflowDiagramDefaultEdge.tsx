@@ -8,7 +8,8 @@ export const WorkflowDiagramDefaultEdge = ({
   sourceY,
   targetX,
   targetY,
-  ...props
+  markerStart,
+  markerEnd,
 }: WorkflowDiagramDefaultEdgeProps) => {
   const theme = useTheme();
 
@@ -22,10 +23,10 @@ export const WorkflowDiagramDefaultEdge = ({
   return (
     <>
       <BaseEdge
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
+        markerStart={markerStart}
+        markerEnd={markerEnd}
         path={edgePath}
-        style={{ ...props.style, stroke: theme.border.color.strong }}
+        style={{ stroke: theme.border.color.strong }}
       />
     </>
   );
