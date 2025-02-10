@@ -7,7 +7,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
@@ -20,8 +20,8 @@ export const usePersistViewSortRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
-  const getRecordFromCacheOrMinimalRecord =
-    useGetRecordFromCacheOrMinimalRecord({
+  const getRecordFromCache =
+    useGetRecordFromCache({
       objectNameSingular: CoreObjectNameSingular.ViewSort,
     });
 
@@ -57,7 +57,7 @@ export const usePersistViewSortRecords = () => {
             },
             update: (cache, { data }) => {
               const record = data?.['createViewSort'];
-              if (!record) return;
+              if (!isDefined(record)) return;
 
               triggerCreateRecordsOptimisticEffect({
                 cache,
@@ -95,10 +95,12 @@ export const usePersistViewSortRecords = () => {
               const record = data?.['updateViewSort'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewSort>(
+              const cachedRecord = getRecordFromCache<ViewSort>(
                 record.id,
                 cache,
               );
+              if (!isDefined(cachedRecord)) return;
+
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -113,7 +115,7 @@ export const usePersistViewSortRecords = () => {
     },
     [
       apolloClient,
-      getRecordFromCacheOrMinimalRecord,
+      getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
       updateOneRecordMutation,
@@ -134,10 +136,12 @@ export const usePersistViewSortRecords = () => {
               const record = data?.['destroyViewSort'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewSort>(
+              const cachedRecord = getRecordFromCache<ViewSort>(
                 record.id,
                 cache,
               );
+              if (!isDefined(cachedRecord)) return;
+
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -152,7 +156,7 @@ export const usePersistViewSortRecords = () => {
     [
       apolloClient,
       destroyOneRecordMutation,
-      getRecordFromCacheOrMinimalRecord,
+      getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
     ],

@@ -7,11 +7,12 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewField } from '@/views/types/ViewField';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared';
 
 export const usePersistViewFieldRecords = () => {
@@ -19,10 +20,9 @@ export const usePersistViewFieldRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
 
-  const getRecordFromCacheOrMinimalRecord =
-    useGetRecordFromCacheOrMinimalRecord({
-      objectNameSingular: CoreObjectNameSingular.ViewField,
-    });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ViewField,
+  });
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewField,
@@ -97,10 +97,8 @@ export const usePersistViewFieldRecords = () => {
               const record = data?.['updateViewField'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(
-                record.id,
-                cache,
-              );
+              const cachedRecord = getRecordFromCache(record.id, cache);
+              if (isNull(cachedRecord)) return;
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -115,7 +113,7 @@ export const usePersistViewFieldRecords = () => {
     },
     [
       apolloClient,
-      getRecordFromCacheOrMinimalRecord,
+      getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
       updateOneRecordMutation,

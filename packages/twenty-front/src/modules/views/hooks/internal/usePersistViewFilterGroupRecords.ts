@@ -7,7 +7,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCacheOrMinimalRecord } from '@/object-record/cache/hooks/useGetRecordFromCacheOrMinimalRecord';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
@@ -20,10 +20,9 @@ export const usePersistViewFilterGroupRecords = () => {
     objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
   });
 
-  const getRecordFromCacheOrMinimalRecord =
-    useGetRecordFromCacheOrMinimalRecord({
-      objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
-    });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
+  });
 
   const { destroyOneRecordMutation } = useDestroyOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewFilterGroup,
@@ -59,7 +58,7 @@ export const usePersistViewFilterGroupRecords = () => {
         },
         update: (cache, { data }) => {
           const record = data?.createViewFilterGroup;
-          if (!record) return;
+          if (!isDefined(record)) return;
 
           triggerCreateRecordsOptimisticEffect({
             cache,
@@ -143,11 +142,12 @@ export const usePersistViewFilterGroupRecords = () => {
               const record = data?.updateViewFilterGroup;
               if (!isDefined(record)) return;
 
-              const cachedRecord =
-                getRecordFromCacheOrMinimalRecord<ViewFilterGroup>(
-                  record.id,
-                  cache,
-                );
+              const cachedRecord = getRecordFromCache<ViewFilterGroup>(
+                record.id,
+                cache,
+              );
+              if (!isDefined(cachedRecord)) return;
+
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -162,7 +162,7 @@ export const usePersistViewFilterGroupRecords = () => {
     },
     [
       apolloClient,
-      getRecordFromCacheOrMinimalRecord,
+      getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
       updateOneRecordMutation,
@@ -183,10 +183,9 @@ export const usePersistViewFilterGroupRecords = () => {
               const record = data?.destroyViewFilterGroup;
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord(
-                record.id,
-                cache,
-              );
+              const cachedRecord = getRecordFromCache(record.id, cache);
+              if (!isDefined(cachedRecord)) return;
+
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
@@ -201,7 +200,7 @@ export const usePersistViewFilterGroupRecords = () => {
     [
       apolloClient,
       destroyOneRecordMutation,
-      getRecordFromCacheOrMinimalRecord,
+      getRecordFromCache,
       objectMetadataItem,
       objectMetadataItems,
     ],
