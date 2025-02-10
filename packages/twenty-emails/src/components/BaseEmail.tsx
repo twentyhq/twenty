@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Logo } from 'src/components/Logo';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
 import { messages as deMessages } from '../locales/generated/de-DE';
 import { messages as enMessages } from '../locales/generated/en';
 import { messages as esMessages } from '../locales/generated/es-ES';
@@ -44,7 +44,7 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   },
 );
 
-i18n.activate('en');
+i18n.activate(SOURCE_LOCALE);
 
 export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {
   i18n.activate(locale);

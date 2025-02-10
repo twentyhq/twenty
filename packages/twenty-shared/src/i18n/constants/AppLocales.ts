@@ -1,5 +1,8 @@
+import { SOURCE_LOCALE } from 'src/i18n/constants/SourceLocale';
+
 export const APP_LOCALES = {
-  en: 'en',
+  [SOURCE_LOCALE]: SOURCE_LOCALE,
+  'pseudo-en': 'pseudo-en',
   'fr-FR': 'fr-FR',
   'de-DE': 'de-DE',
   'it-IT': 'it-IT',
@@ -10,5 +13,4 @@ export const APP_LOCALES = {
   'pt-BR': 'pt-BR',
   'zh-CN': 'zh-CN',
   'zh-TW': 'zh-TW',
-  'pseudo-en': 'pseudo-en',
 } as const;

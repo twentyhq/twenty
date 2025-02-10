@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
 
 import { messages as deMessages } from 'src/engine/core-modules/i18n/locales/generated/de-DE';
 import { messages as enMessages } from 'src/engine/core-modules/i18n/locales/generated/en';
@@ -40,7 +40,7 @@ export class I18nService implements OnModuleInit {
       },
     );
 
-    i18n.activate('en');
+    i18n.activate(SOURCE_LOCALE);
   }
 
   async onModuleInit() {
