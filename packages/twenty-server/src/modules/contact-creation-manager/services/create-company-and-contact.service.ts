@@ -112,7 +112,8 @@ export class CreateCompanyAndContactService {
     );
 
     const workDomainNamesToCreate = domainNamesToCreate.filter(
-      (domainName) => domainName && isWorkDomain(domainName.domainName || ''),
+      (domainName) =>
+        domainName?.domainName && isWorkDomain(domainName.domainName),
     );
 
     const companiesObject = await this.createCompaniesService.createCompanies(
