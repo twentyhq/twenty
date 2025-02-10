@@ -4,7 +4,7 @@ export const UPDATE_WORKSPACE = gql`
   mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
     updateWorkspace(data: $input) {
       id
-      hostname
+      customDomain
       subdomain
       displayName
       logo

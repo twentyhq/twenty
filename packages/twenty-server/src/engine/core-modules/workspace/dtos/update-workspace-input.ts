@@ -143,7 +143,7 @@ export class UpdateWorkspaceInput {
   @Matches(
     /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
   )
-  hostname?: string;
+  customDomain?: string;
 
   @Field({ nullable: true })
   @IsString()

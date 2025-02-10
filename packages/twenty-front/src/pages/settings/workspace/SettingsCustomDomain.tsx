@@ -3,29 +3,29 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, Section } from 'twenty-ui';
-import { useGetCustomHostnameDetailsQuery } from '~/generated/graphql';
-import { SettingsHostnameRecords } from '~/pages/settings/workspace/SettingsHostnameRecords';
+import { useGetCustomDomainDetailsQuery } from '~/generated/graphql';
+import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 
-const StyledDomainFromWrapper = styled.div`
+const StyledDomainFormWrapper = styled.div`
   align-items: center;
   display: flex;
 `;
 
-export const SettingsHostname = () => {
-  const { data: getHostnameDetailsData } = useGetCustomHostnameDetailsQuery();
+export const SettingsCustomDomain = () => {
+  const { data: getCustomDomainDetailsData } = useGetCustomDomainDetailsQuery();
 
   const { t } = useLingui();
 
   const { control, getValues } = useFormContext<{
-    hostname: string;
+    customDomain: string;
   }>();
 
   return (
     <Section>
       <H2Title title={t`Domain`} description={t`Set the name of your domain`} />
-      <StyledDomainFromWrapper>
+      <StyledDomainFormWrapper>
         <Controller
-          name="hostname"
+          name="customDomain"
           control={control}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <TextInputV2
@@ -37,12 +37,12 @@ export const SettingsHostname = () => {
             />
           )}
         />
-      </StyledDomainFromWrapper>
-      {getHostnameDetailsData?.getCustomHostnameDetails &&
-        getValues('hostname') ===
-          getHostnameDetailsData?.getCustomHostnameDetails?.hostname && (
-          <SettingsHostnameRecords
-            records={getHostnameDetailsData.getCustomHostnameDetails.records}
+      </StyledDomainFormWrapper>
+      {getCustomDomainDetailsData?.getCustomDomainDetails &&
+        getValues('customDomain') ===
+          getCustomDomainDetailsData?.getCustomDomainDetails?.customDomain && (
+          <SettingsCustomDomainRecords
+            records={getCustomDomainDetailsData.getCustomDomainDetails.records}
           />
         )}
     </Section>

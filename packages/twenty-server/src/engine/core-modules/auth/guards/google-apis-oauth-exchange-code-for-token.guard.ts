@@ -53,7 +53,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromContext(context),
+        this.guardRedirectService.getSubdomainAndCustomDomainFromContext(
+          context,
+        ),
       );
 
       return false;
