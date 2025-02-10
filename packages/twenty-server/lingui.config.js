@@ -20,12 +20,4 @@ export default defineConfig({
   catalogsMergePath:
     '<rootDir>/src/engine/core-modules/i18n/locales/generated/{locale}',
   compileNamespace: 'ts',
-  ...(process.env.TRANSLATION_IO_API_KEY_BACKEND
-    ? {
-        service: {
-          name: 'TranslationIO',
-          apiKey: process.env.TRANSLATION_IO_API_KEY_BACKEND,
-        },
-      }
-    : {}),
 });

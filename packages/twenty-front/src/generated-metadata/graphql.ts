@@ -389,21 +389,15 @@ export type CustomHostnameDetails = {
   __typename?: 'CustomHostnameDetails';
   hostname: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  ownershipVerifications: Array<OwnershipVerification>;
-  status?: Maybe<Scalars['String']['output']>;
+  records: Array<CustomHostnameVerification>;
 };
 
-export type CustomHostnameOwnershipVerificationHttp = {
-  __typename?: 'CustomHostnameOwnershipVerificationHttp';
-  body: Scalars['String']['output'];
+export type CustomHostnameVerification = {
+  __typename?: 'CustomHostnameVerification';
+  key: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type CustomHostnameOwnershipVerificationTxt = {
-  __typename?: 'CustomHostnameOwnershipVerificationTxt';
-  name: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  validationType: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -1313,8 +1307,6 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
-export type OwnershipVerification = CustomHostnameOwnershipVerificationHttp | CustomHostnameOwnershipVerificationTxt;
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -1755,6 +1747,16 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY'
 }
 
+export enum SettingsFeatures {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  ROLES = 'ROLES',
+  SECURITY_SETTINGS = 'SECURITY_SETTINGS',
+  WORKSPACE_SETTINGS = 'WORKSPACE_SETTINGS',
+  WORKSPACE_USERS = 'WORKSPACE_USERS'
+}
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String']['input'];
   clientSecret: Scalars['String']['input'];
@@ -1985,7 +1987,8 @@ export type User = {
   analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
-  currentWorkspace: Workspace;
+  currentUserWorkspace?: Maybe<UserWorkspace>;
+  currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -2060,6 +2063,7 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  settingsPermissions?: Maybe<Array<SettingsFeatures>>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
