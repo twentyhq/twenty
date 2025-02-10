@@ -20,7 +20,12 @@ export class GuardRedirectService {
   dispatchErrorFromGuard(
     context: ExecutionContext,
     error: Error | CustomException,
-    workspace: { id?: string; subdomain: string; customDomain?: string },
+    workspace: {
+      id?: string;
+      subdomain: string;
+      customDomain?: string;
+      isCustomDomainEnabled?: boolean;
+    },
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
@@ -82,13 +87,22 @@ export class GuardRedirectService {
 
   getRedirectErrorUrlAndCaptureExceptions(
     err: Error | CustomException,
-    workspace: { id?: string; subdomain: string; customDomain?: string },
+    workspace: {
+      id?: string;
+      subdomain: string;
+      customDomain?: string;
+      isCustomDomainEnabled?: boolean;
+    },
   ) {
     this.captureException(err, workspace.id);
 
     return this.domainManagerService.computeRedirectErrorUrl(
       err instanceof AuthException ? err.message : 'Unknown error',
-      workspace,
+      {
+        subdomain: workspace.subdomain,
+        customDomain: workspace.customDomain,
+        isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
+      },
     );
   }
 }

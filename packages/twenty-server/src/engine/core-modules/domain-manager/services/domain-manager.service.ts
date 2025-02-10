@@ -93,10 +93,7 @@ export class DomainManagerService {
     pathname,
     searchParams,
   }: {
-    workspace: Pick<
-      Workspace,
-      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
-    >;
+    workspace: WorkspaceUrlBuilderComponentsType;
     pathname?: string;
     searchParams?: Record<string, string | number>;
   }) {
@@ -151,10 +148,7 @@ export class DomainManagerService {
 
   computeRedirectErrorUrl(
     errorMessage: string,
-    workspace: Pick<
-      Workspace,
-      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
-    >,
+    workspace: WorkspaceUrlBuilderComponentsType,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
