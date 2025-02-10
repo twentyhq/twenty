@@ -45,10 +45,12 @@ export const useDeleteOneRecord = ({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      const currentTimestamp = new Date().toISOString();
-
-      const cachedRecord = getRecordFromCache(idToDelete, apolloClient.cache);
-
+      const minimalRecord = {
+        __typename: capitalize(objectMetadataItem.nameSingular),
+        id: idToDelete,
+      };
+      const cachedRecord: ObjectRecord =
+        getRecordFromCache(idToDelete, apolloClient.cache) ?? minimalRecord;
       const cachedRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: cachedRecord,
         objectMetadataItem,
@@ -56,12 +58,11 @@ export const useDeleteOneRecord = ({
         computeReferences: false,
       });
 
+      const currentTimestamp = new Date().toISOString();
       const computedOptimisticRecord = {
         ...cachedRecord,
-        ...{ id: idToDelete, deletedAt: currentTimestamp },
-        ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
+        deletedAt: currentTimestamp,
       };
-
       const optimisticRecordNode = getRecordNodeFromRecord<ObjectRecord>({
         record: computedOptimisticRecord,
         objectMetadataItem,
@@ -70,7 +71,9 @@ export const useDeleteOneRecord = ({
       });
 
       if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
-        return null;
+        throw new Error(
+          'Should never occurs, encountered empty cache should fallbacked',
+        );
       }
 
       const recordGqlFields = {
@@ -114,10 +117,6 @@ export const useDeleteOneRecord = ({
           },
         })
         .catch((error: Error) => {
-          if (!cachedRecord) {
-            throw error;
-          }
-
           const recordGqlFields = {
             deletedAt: true,
           };
