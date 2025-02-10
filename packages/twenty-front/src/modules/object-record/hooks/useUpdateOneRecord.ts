@@ -151,7 +151,7 @@ export const useUpdateOneRecord = <
       })
       .catch((error: Error) => {
         const cachedRecordKeys = new Set(Object.keys(cachedRecord));
-        const diffKeys = Object.keys(optimisticRecordInput).filter(
+        const recordKeysAddedByOptimisticCache = Object.keys(optimisticRecordInput).filter(
           (diffKey) => !cachedRecordKeys.has(diffKey),
         );
 
@@ -160,7 +160,7 @@ export const useUpdateOneRecord = <
             objectMetadataItem,
             record: cachedRecord,
           }),
-          ...recordFromArrayWithValue(diffKeys, true),
+          ...recordFromArrayWithValue(recordKeysAddedByOptimisticCache, true),
         };
 
         updateRecordFromCache({
@@ -169,7 +169,7 @@ export const useUpdateOneRecord = <
           cache: apolloClient.cache,
           record: {
             ...cachedRecord,
-            ...recordFromArrayWithValue(diffKeys, null),
+            ...recordFromArrayWithValue(recordKeysAddedByOptimisticCache, null),
           },
           recordGqlFields,
         });
