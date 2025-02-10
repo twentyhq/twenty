@@ -273,15 +273,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   timeZone: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.extensionNumber,
-    type: FieldMetadataType.TEXT,
-    label: 'Extension Number',
-    description: 'Extension number to receive calls.',
-    icon: 'IconKey',
-  })
-  extensionNumber: string | null;
-
-  @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
     label: 'Date format',
