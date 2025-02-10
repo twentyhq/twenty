@@ -24,6 +24,10 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   const apolloClient = useApolloClient();
 
   return (record: ObjectRecord) => {
+    const recordGqlFields = generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+      record
+    })
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -33,9 +37,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItems,
             objectMetadataItem,
             computeReferences: true,
-            recordGqlFields: generateDepthOneRecordGqlFields({
-              objectMetadataItem,
-            }),
+            recordGqlFields,
           })}
         `;
 
