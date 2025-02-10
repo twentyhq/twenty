@@ -68,7 +68,6 @@ export const chargesAllView = (
         position: 5,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
       {
         fieldMetadataId:
@@ -78,7 +77,6 @@ export const chargesAllView = (
         position: 6,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
       {
         fieldMetadataId:
@@ -88,7 +86,6 @@ export const chargesAllView = (
         position: 7,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
     ],
   };

@@ -33,7 +33,6 @@ export const integrationsAllView = (
         position: 1,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
     ],
   };
