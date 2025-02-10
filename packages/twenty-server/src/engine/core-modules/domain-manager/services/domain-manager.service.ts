@@ -280,16 +280,6 @@ export class DomainManagerService {
     }
 
     if (response.result.length === 1) {
-      console.log(
-        '>>>>>>>>>>>>>>',
-        JSON.stringify(response.result[0], null, 4),
-      );
-
-      console.log(
-        '>>>>>>>>>>>>>>',
-        response.result[0].verification_errors?.[0],
-      );
-
       return {
         id: response.result[0].id,
         hostname: response.result[0].hostname,
