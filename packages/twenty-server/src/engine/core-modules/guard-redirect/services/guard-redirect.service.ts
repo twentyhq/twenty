@@ -7,7 +7,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { CustomException } from 'src/utils/custom-exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceUrlBuilderComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class GuardRedirectService {
@@ -33,10 +33,7 @@ export class GuardRedirectService {
   }
 
   getSubdomainAndCustomDomainFromWorkspace(
-    workspace?: Pick<
-      Workspace,
-      'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
-    > | null,
+    workspace?: WorkspaceUrlBuilderComponentsType | null,
   ) {
     if (!workspace) {
       return {

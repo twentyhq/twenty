@@ -278,7 +278,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
-      this.workspaceRepository.save(workspace);
+      await this.workspaceRepository.save(workspace);
     }
 
     return result;

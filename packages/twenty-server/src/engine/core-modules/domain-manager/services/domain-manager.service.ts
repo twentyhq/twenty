@@ -16,7 +16,7 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceUrlComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceUrlBuilderComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class DomainManagerService {
@@ -79,7 +79,7 @@ export class DomainManagerService {
   }: {
     emailVerificationToken: string;
     email: string;
-    workspace: WorkspaceUrlComponentsType;
+    workspace: WorkspaceUrlBuilderComponentsType;
   }) {
     return this.buildWorkspaceURL({
       workspace,
@@ -407,7 +407,7 @@ export class DomainManagerService {
     subdomain,
     customDomain,
     isCustomDomainEnabled,
-  }: WorkspaceUrlComponentsType) {
+  }: WorkspaceUrlBuilderComponentsType) {
     return {
       customUrl:
         isCustomDomainEnabled && customDomain

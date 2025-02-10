@@ -55,7 +55,7 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import {
   WorkspaceAuthProvider,
-  WorkspaceUrlComponentsType,
+  WorkspaceUrlBuilderComponentsType,
 } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -462,7 +462,7 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    workspace: WorkspaceUrlComponentsType;
+    workspace: WorkspaceUrlBuilderComponentsType;
     billingCheckoutSessionState?: string;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({

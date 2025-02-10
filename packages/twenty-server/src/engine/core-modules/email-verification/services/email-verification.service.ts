@@ -21,7 +21,7 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceUrlComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceUrlBuilderComponentsType } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -39,7 +39,7 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace: WorkspaceUrlComponentsType,
+    workspace: WorkspaceUrlBuilderComponentsType,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -83,7 +83,7 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: WorkspaceUrlComponentsType,
+    workspace: WorkspaceUrlBuilderComponentsType,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
