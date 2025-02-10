@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -13,10 +11,7 @@ import {
 
 @Injectable()
 export class MessagingCursorService {
-  constructor(
-    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
-    private readonly twentyORMManager: TwentyORMManager,
-  ) {}
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async getCursor(
     messageChannel: MessageChannelWorkspaceEntity,

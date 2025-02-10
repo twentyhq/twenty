@@ -5,7 +5,9 @@ import {
   PageIterator,
   PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
+import { v4 } from 'uuid';
 
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
@@ -33,6 +35,7 @@ export class MicrosoftGetMessageListService {
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async getFullMessageListForFolders(
@@ -105,6 +108,49 @@ export class MicrosoftGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
     const result: GetPartialMessageListForFoldersResponse[] = [];
+
+    if (!messageChannel.messageFolders) {
+      // permanent solution:
+      // throw new MessageImportDriverException(
+      //   `Message channel ${messageChannel.id} has no message folders`,
+      //   MessageImportDriverExceptionCode.NOT_FOUND,
+      // );
+
+      // temporary solution: TODO: remove this once we have a permanent solution
+      // if no folders exist, most probably a first time sync for microsoft
+      // so we create the folders INBOX and SENTITEMS
+      // and fill the INBOX with the previous sync cursor
+      // and for sentitms, we do the full message list fetch
+      console.warn(
+        `Message channel ${messageChannel.id} has no message folders, most probably a first time`,
+      );
+
+      const messageFolderRepository =
+        await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+          'messageFolder',
+        );
+
+      const newFolder = await messageFolderRepository.save({
+        id: v4(),
+        messageChannelId: messageChannel.id,
+        name: MessageFolderName.INBOX,
+        syncCursor: messageChannel.syncCursor,
+      });
+
+      const response = await this.getPartialMessageList(
+        connectedAccount,
+        messageChannel.syncCursor,
+      );
+
+      result.push({
+        ...response,
+        folderId: newFolder.id,
+      });
+
+      // we are ok with not synchronizing the legacy connected microsoft accounts.
+      // so we return an empty array.
+      return result;
+    }
 
     for (const folder of messageChannel.messageFolders) {
       const response = await this.getPartialMessageList(
