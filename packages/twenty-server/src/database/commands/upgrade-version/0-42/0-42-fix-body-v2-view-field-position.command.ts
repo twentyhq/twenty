@@ -17,7 +17,7 @@ import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Command({
-  name: 'upgrade-0.41:fix-body-v2-view-field-position',
+  name: 'upgrade-0.42:fix-body-v2-view-field-position',
   description: 'Make bodyV2 field position to match body field position',
 })
 export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRunner {
@@ -63,7 +63,7 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
           false,
         );
 
-      const taskAndNoteObjectMetadata =
+      const taskAndNoteObjectMetadatas =
         await this.objectMetadataRepository.find({
           where: {
             workspaceId,
@@ -75,23 +75,17 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
       const taskAndNoteViews = await viewRepository.find({
         where: {
           objectMetadataId: In(
-            taskAndNoteObjectMetadata.map((object) => object.id),
+            taskAndNoteObjectMetadatas.map((object) => object.id),
           ),
         },
       });
 
-      for (const view of taskAndNoteViews) {
-        const viewFields = await viewFieldRepository.find({
-          where: {
-            viewId: view.id,
-          },
-        });
+      const fieldMetadatas = taskAndNoteObjectMetadatas.flatMap(
+        (objectMetadata) => objectMetadata.fields,
+      );
 
-        const fields = taskAndNoteObjectMetadata.flatMap(
-          (objectMetadata) => objectMetadata.fields,
-        );
-
-        const fieldNameByMetadataId: Record<string, string> = fields.reduce(
+      const fieldNameByMetadataId: Record<string, string> =
+        fieldMetadatas.reduce(
           (fieldNameByMetadataId, fieldMetadata) => ({
             ...fieldNameByMetadataId,
             [fieldMetadata.id]: fieldMetadata.name,
@@ -99,23 +93,69 @@ export class FixBodyV2ViewFieldPositionCommand extends ActiveWorkspacesCommandRu
           {},
         );
 
-        const bodyField = viewFields.find(
-          (field) => fieldNameByMetadataId[field.fieldMetadataId] === 'body',
+      for (const view of taskAndNoteViews) {
+        this.logger.log(
+          `Updating bodyV2 field position for view ${view.id} - ${view.name}`,
         );
-        const bodyV2Field = viewFields.find(
-          (field) => fieldNameByMetadataId[field.fieldMetadataId] === 'bodyV2',
+        const viewFields = await viewFieldRepository.find({
+          where: {
+            viewId: view.id,
+          },
+        });
+
+        const bodyViewField = viewFields.find(
+          (viewField) =>
+            fieldNameByMetadataId[viewField.fieldMetadataId] === 'body',
+        );
+        const bodyV2ViewField = viewFields.find(
+          (viewField) =>
+            fieldNameByMetadataId[viewField.fieldMetadataId] === 'bodyV2',
         );
 
-        if (bodyField && bodyV2Field) {
+        if (bodyViewField && bodyV2ViewField) {
+          this.logger.log(
+            `Setting body field position to ${bodyV2ViewField?.position} and bodyV2 field position to ${bodyViewField?.position}`,
+          );
+
           await viewFieldRepository.update(
-            { id: bodyV2Field.id },
-            { position: bodyField.position, isVisible: bodyField.isVisible },
+            { id: bodyViewField.id },
+            {
+              position: bodyV2ViewField.position,
+              isVisible: false,
+            },
           );
-          chalk.green(
-            `Updated bodyV2 field position for view ${view.id} to ${bodyField.position}`,
+          await viewFieldRepository.update(
+            { id: bodyV2ViewField.id },
+            {
+              position: bodyViewField.position,
+              isVisible: bodyViewField.isVisible,
+            },
           );
-        } else {
-          chalk.red(`No body or bodyV2 field found for view ${view.id}`);
+        } else if (bodyViewField && !bodyV2ViewField) {
+          this.logger.log(
+            `Creating bodyV2 view field for view ${view.id} with position ${viewFields.length}`,
+          );
+
+          const bodyV2FieldMetadataId = fieldMetadatas.find(
+            (field) => field.name === 'bodyV2',
+          )?.id;
+
+          await viewFieldRepository.create({
+            fieldMetadataId: bodyV2FieldMetadataId,
+            viewId: view.id,
+            position: bodyViewField.position,
+            isVisible: bodyViewField.isVisible,
+            size: bodyViewField.size,
+            aggregateOperation: bodyViewField.aggregateOperation,
+          });
+
+          await viewFieldRepository.update(
+            { id: bodyViewField.id },
+            {
+              position: viewFields.length,
+              isVisible: false,
+            },
+          );
         }
 
         await this.workspaceMetadataVersionService.incrementMetadataVersion(

@@ -32,7 +32,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Command({
-  name: 'upgrade-0.41:migrate-rich-text-field',
+  name: 'upgrade-0.42:migrate-rich-text-field',
   description: 'Migrate RICH_TEXT fields to new composite structure',
 })
 export class MigrateRichTextFieldCommand extends ActiveWorkspacesCommandRunner {
