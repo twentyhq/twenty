@@ -8,6 +8,7 @@ import {
   MessageImportException,
   MessageImportExceptionCode,
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 
 export type GetFullMessageListResponse = {
   messageExternalIds: string[];
@@ -36,6 +37,7 @@ export class MessagingGetMessageListService {
   constructor(
     private readonly gmailGetMessageListService: GmailGetMessageListService,
     private readonly microsoftGetMessageListService: MicrosoftGetMessageListService,
+    private readonly messagingCursorService: MessagingCursorService,
   ) {}
 
   public async getFullMessageLists(
@@ -54,12 +56,15 @@ export class MessagingGetMessageListService {
             folderId: undefined,
           },
         ];
-      case 'microsoft':
-        // TODO: update the folder list, currently empty []
+      case 'microsoft': {
+        const folders =
+          await this.messagingCursorService.getFolders(connectedAccount);
+
         return this.microsoftGetMessageListService.getFullMessageListForFolders(
           connectedAccount,
-          [],
+          folders,
         );
+      }
       default:
         throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,

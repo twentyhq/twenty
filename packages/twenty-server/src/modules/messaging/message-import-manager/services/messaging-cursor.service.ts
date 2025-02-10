@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { In } from 'typeorm';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -115,5 +117,40 @@ export class MessagingCursorService {
           MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
+  }
+
+  public async getFolders(
+    connectedAccount:
+      | Pick<
+          ConnectedAccountWorkspaceEntity,
+          'provider' | 'refreshToken' | 'id' | 'handle'
+        >
+      | ConnectedAccountWorkspaceEntity,
+  ) {
+    const folderRepository =
+      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+        'messageFolder',
+      );
+
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    const messageChannels = await messageChannelRepository.find({
+      where: {
+        connectedAccountId: connectedAccount.id,
+      },
+    });
+
+    const folders = await folderRepository.find({
+      where: {
+        messageChannelId: In(
+          messageChannels.map((messageChannel) => messageChannel.id),
+        ),
+      },
+    });
+
+    return folders;
   }
 }
