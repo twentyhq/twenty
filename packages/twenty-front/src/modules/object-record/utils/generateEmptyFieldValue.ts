@@ -108,10 +108,10 @@ export const generateEmptyFieldValue = (
       };
     }
     case FieldMetadataType.RICH_TEXT_V2: {
-      throw new Error("RICH_TEXT_V2 not implemented yet")
+      throw new Error('RICH_TEXT_V2 not implemented yet');
     }
     case FieldMetadataType.TS_VECTOR: {
-      throw new Error("TS_VECTOR not implemented yet")
+      throw new Error('TS_VECTOR not implemented yet');
     }
     default: {
       return assertUnreachable(

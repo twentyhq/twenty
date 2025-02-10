@@ -100,7 +100,7 @@ export const useRestoreManyRecords = ({
             !isDefined(cachedRecordWithConnection)
           ) {
             throw new Error(
-          'Empty cache encountered when a minimal record should have been used as fallback',
+              'Empty cache encountered when a minimal record should have been used as fallback',
             );
           }
 
@@ -170,7 +170,7 @@ export const useRestoreManyRecords = ({
               !isDefined(cachedRecordWithConnection)
             ) {
               throw new Error(
-            'Empty cache encountered when a minimal record should have been used as fallback',
+                'Empty cache encountered when a minimal record should have been used as fallback',
               );
             }
 

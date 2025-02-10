@@ -70,9 +70,9 @@ export const useDeleteOneRecord = ({
       });
 
       if (!isDefined(optimisticRecordNode) || !isDefined(cachedRecordNode)) {
-        throw new Error(  
-          'Empty cache encountered when a minimal record should have been used as fallback'  
-        );  
+        throw new Error(
+          'Empty cache encountered when a minimal record should have been used as fallback',
+        );
       }
 
       const recordGqlFields = {

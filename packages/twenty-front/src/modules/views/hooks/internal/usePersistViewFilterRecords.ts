@@ -141,10 +141,8 @@ export const usePersistViewFilterRecords = () => {
               const record = data?.['destroyViewFilter'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCacheOrMinimalRecord<ViewFilter>(
-                record.id,
-                cache,
-              );
+              const cachedRecord =
+                getRecordFromCacheOrMinimalRecord<ViewFilter>(record.id, cache);
               triggerDestroyRecordsOptimisticEffect({
                 cache,
                 objectMetadataItem,
