@@ -97,8 +97,12 @@ export const usePersistViewFieldRecords = () => {
               const record = data?.['updateViewField'];
               if (!isDefined(record)) return;
 
-              const cachedRecord = getRecordFromCache(record.id, cache);
+              const cachedRecord = getRecordFromCache<ViewField>(
+                record.id,
+                cache,
+              );
               if (isNull(cachedRecord)) return;
+
               triggerUpdateRecordOptimisticEffect({
                 cache,
                 objectMetadataItem,

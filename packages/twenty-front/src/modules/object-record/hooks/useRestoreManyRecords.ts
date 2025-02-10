@@ -12,7 +12,7 @@ import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreM
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 
 type useRestoreManyRecordProps = {
@@ -86,7 +86,8 @@ export const useRestoreManyRecords = ({
             });
           const computedOptimisticRecord = {
             ...cachedRecord,
-            deletedAt: null,
+            ...{ id: cachedRecord.id, deletedAt: null },
+            ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
           };
           const optimisticRecordWithConnection =
             getRecordNodeFromRecord<ObjectRecord>({
@@ -143,7 +144,8 @@ export const useRestoreManyRecords = ({
 
             const computedOptimisticRecord = {
               ...cachedRecord,
-              deletedAt: null,
+              ...{ id: cachedRecord.id, deletedAt: null },
+              ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
             };
             const optimisticRecordWithConnection =
               getRecordNodeFromRecord<ObjectRecord>({
