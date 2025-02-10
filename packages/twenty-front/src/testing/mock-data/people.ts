@@ -1,6 +1,7 @@
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const getPeopleMock = () => {
+export const getPeopleMock = (): ObjectRecord[] => {
   const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
 
   return peopleMock;
