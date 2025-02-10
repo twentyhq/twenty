@@ -91,7 +91,7 @@ export const SettingsRoles = () => {
   );
   const theme = useTheme();
   const navigateSettings = useNavigateSettings();
-  const { data } = useGetRolesQuery({
+  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     fetchPolicy: 'network-only',
   });
 
@@ -132,58 +132,61 @@ export const SettingsRoles = () => {
                 <TableHeader align={'right'}></TableHeader>
               </TableRow>
             </StyledTableHeaderRow>
-            {data?.getRoles.map((role) => (
-              <StyledTableRow
-                key={role.id}
-                onClick={() => handleRoleClick(role.id)}
-              >
-                <TableCell>
-                  <StyledNameCell>
-                    <IconUser size={theme.icon.size.md} />
-                    {role.label}
-                    {!role.isEditable && <IconLock size={theme.icon.size.sm} />}
-                  </StyledNameCell>
-                </TableCell>
-                <TableCell align={'right'}>
-                  <StyledAssignedCell>
-                    <StyledAvatarGroup>
-                      {role.workspaceMembers
-                        .slice(0, 5)
-                        .map((workspaceMember) => (
-                          <>
-                            <StyledAvatarContainer
-                              key={workspaceMember.id}
-                              id={`avatar-${workspaceMember.id}`}
-                            >
-                              <Avatar
-                                avatarUrl={workspaceMember.avatarUrl}
-                                placeholderColorSeed={workspaceMember.id}
-                                placeholder={
-                                  workspaceMember.name.firstName ?? ''
-                                }
-                                type="rounded"
-                                size="sm"
+            {!rolesLoading &&
+              rolesData?.getRoles.map((role) => (
+                <StyledTableRow
+                  key={role.id}
+                  onClick={() => handleRoleClick(role.id)}
+                >
+                  <TableCell>
+                    <StyledNameCell>
+                      <IconUser size={theme.icon.size.md} />
+                      {role.label}
+                      {!role.isEditable && (
+                        <IconLock size={theme.icon.size.sm} />
+                      )}
+                    </StyledNameCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledAssignedCell>
+                      <StyledAvatarGroup>
+                        {role.workspaceMembers
+                          .slice(0, 5)
+                          .map((workspaceMember) => (
+                            <>
+                              <StyledAvatarContainer
+                                key={workspaceMember.id}
+                                id={`avatar-${workspaceMember.id}`}
+                              >
+                                <Avatar
+                                  avatarUrl={workspaceMember.avatarUrl}
+                                  placeholderColorSeed={workspaceMember.id}
+                                  placeholder={
+                                    workspaceMember.name.firstName ?? ''
+                                  }
+                                  type="rounded"
+                                  size="sm"
+                                />
+                              </StyledAvatarContainer>
+                              <AppTooltip
+                                anchorSelect={`#avatar-${workspaceMember.id}`}
+                                content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                                noArrow
+                                place="top"
+                                positionStrategy="fixed"
+                                delay={TooltipDelay.shortDelay}
                               />
-                            </StyledAvatarContainer>
-                            <AppTooltip
-                              anchorSelect={`#avatar-${workspaceMember.id}`}
-                              content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-                              noArrow
-                              place="top"
-                              positionStrategy="fixed"
-                              delay={TooltipDelay.shortDelay}
-                            />
-                          </>
-                        ))}
-                    </StyledAvatarGroup>
-                    {role.workspaceMembers.length}
-                  </StyledAssignedCell>
-                </TableCell>
-                <TableCell align={'right'}>
-                  <StyledIconChevronRight size={theme.icon.size.md} />
-                </TableCell>
-              </StyledTableRow>
-            ))}
+                            </>
+                          ))}
+                      </StyledAvatarGroup>
+                      {role.workspaceMembers.length}
+                    </StyledAssignedCell>
+                  </TableCell>
+                  <TableCell align={'right'}>
+                    <StyledIconChevronRight size={theme.icon.size.md} />
+                  </TableCell>
+                </StyledTableRow>
+              ))}
           </StyledTable>
           <StyledBottomSection>
             <Button
