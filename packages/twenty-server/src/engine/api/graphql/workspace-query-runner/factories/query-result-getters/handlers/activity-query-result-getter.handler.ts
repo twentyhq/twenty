@@ -35,7 +35,17 @@ export class ActivityQueryResultGetterHandler
       return activity;
     }
 
-    const blocknote: RichTextBody = JSON.parse(blocknoteJson);
+    let blocknote: RichTextBody = [];
+
+    try {
+      blocknote = JSON.parse(blocknoteJson);
+    } catch (error) {
+      // TODO: Remove this once we have removed the old rich text
+      console.warn(
+        `Failed to parse body for activity ${activity.id} in workspace ${workspaceId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+      );
+      console.warn(blocknoteJson);
+    }
 
     const blocknoteWithSignedPayload = await Promise.all(
       blocknote.map(async (block: RichTextBlock) => {
