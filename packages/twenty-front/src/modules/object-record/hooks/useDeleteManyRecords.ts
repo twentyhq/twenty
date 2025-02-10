@@ -122,8 +122,9 @@ export const useDeleteManyRecords = ({
             !isDefined(optimisticRecordNode) ||
             !isDefined(cachedRecordNode)
           ) {
-            // Could warn ? I don't like throwing here
-            return;
+            throw new Error(
+              'Should never occurs, encountered empty cache should fallbacked',
+            );
           }
 
           updateRecordFromCache({
@@ -195,7 +196,9 @@ export const useDeleteManyRecords = ({
               !isDefined(optimisticRecordWithConnection) ||
               !isDefined(cachedRecordWithConnection)
             ) {
-              return;
+              throw new Error(
+                'Should never occurs, encountered empty cache should fallbacked',
+              );
             }
 
             cachedRecordsNode.push(cachedRecordWithConnection);
