@@ -157,7 +157,7 @@ export class SSOAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
           err,
-          this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+          this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
             workspaceIdentityProvider?.workspace,
           ),
         ),

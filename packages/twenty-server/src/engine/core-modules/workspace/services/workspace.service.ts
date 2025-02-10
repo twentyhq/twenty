@@ -80,11 +80,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  private async setCustomDomain(workspace: Workspace, hostname: string) {
+  private async setCustomDomain(workspace: Workspace, customDomain: string) {
     await this.isCustomDomainEnabled(workspace.id);
 
     const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { hostname },
+      where: { customDomain },
     });
 
     if (existingWorkspace && existingWorkspace.id !== workspace.id) {
@@ -95,22 +95,22 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
 
     if (
-      hostname &&
-      workspace.hostname !== hostname &&
-      isDefined(workspace.hostname)
+      customDomain &&
+      workspace.customDomain !== customDomain &&
+      isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.updateCustomHostname(
-        workspace.hostname,
-        hostname,
+      await this.domainManagerService.updateCustomDomain(
+        workspace.customDomain,
+        customDomain,
       );
     }
 
     if (
-      hostname &&
-      workspace.hostname !== hostname &&
-      !isDefined(workspace.hostname)
+      customDomain &&
+      workspace.customDomain !== customDomain &&
+      !isDefined(workspace.customDomain)
     ) {
-      await this.domainManagerService.registerCustomHostname(hostname);
+      await this.domainManagerService.registerCustomDomain(customDomain);
     }
   }
 
@@ -127,14 +127,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     let customDomainRegistered = false;
 
-    if (payload.hostname === null && isDefined(workspace.hostname)) {
+    if (payload.customDomain === null && isDefined(workspace.customDomain)) {
       await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
-        workspace.hostname,
+        workspace.customDomain,
       );
     }
 
-    if (payload.hostname && workspace.hostname !== payload.hostname) {
-      await this.setCustomDomain(workspace, payload.hostname);
+    if (
+      payload.customDomain &&
+      workspace.customDomain !== payload.customDomain
+    ) {
+      await this.setCustomDomain(workspace, payload.customDomain);
       customDomainRegistered = true;
     }
 
@@ -145,9 +148,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     } catch (error) {
       // revert custom domain registration on error
-      if (payload.hostname && customDomainRegistered) {
+      if (payload.customDomain && customDomainRegistered) {
         this.domainManagerService
-          .deleteCustomHostnameByHostnameSilently(payload.hostname)
+          .deleteCustomHostnameByHostnameSilently(payload.customDomain)
           .catch((err) => {
             this.exceptionHandlerService.captureExceptions([err]);
           });

@@ -10,7 +10,7 @@ import { DomainManagerService } from './domain-manager.service';
 
 describe('DomainManagerService', () => {
   describe('getworkspaceUrls', () => {
-    it('should return a URL containing the correct hostname if hostname is provided', () => {
+    it('should return a URL containing the correct customDomain if customDomain is provided', () => {
       jest
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
@@ -24,7 +24,7 @@ describe('DomainManagerService', () => {
 
       const result = domainManagerService.getworkspaceUrls({
         subdomain: 'subdomain',
-        hostname: 'custom-host.com',
+        customDomain: 'custom-host.com',
       });
 
       expect(result).toEqual({
@@ -33,7 +33,7 @@ describe('DomainManagerService', () => {
       });
     });
 
-    it('should return a URL containing the correct subdomain if hostname is not provided but subdomain is', () => {
+    it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
       jest
         .spyOn(environmentService, 'get')
         .mockImplementation((key: string) => {
@@ -47,7 +47,7 @@ describe('DomainManagerService', () => {
 
       const result = domainManagerService.getworkspaceUrls({
         subdomain: 'subdomain',
-        hostname: undefined,
+        customDomain: undefined,
       });
 
       expect(result).toEqual({
@@ -155,7 +155,7 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          hostname: undefined,
+          customDomain: undefined,
         },
       });
 
@@ -177,7 +177,7 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          hostname: undefined,
+          customDomain: undefined,
         },
         pathname: '/path/to/resource',
       });
@@ -200,7 +200,7 @@ describe('DomainManagerService', () => {
       const result = domainManagerService.buildWorkspaceURL({
         workspace: {
           subdomain: 'test',
-          hostname: undefined,
+          customDomain: undefined,
         },
         searchParams: {
           foo: 'bar',

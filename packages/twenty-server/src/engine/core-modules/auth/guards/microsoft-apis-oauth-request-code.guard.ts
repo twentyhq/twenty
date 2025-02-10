@@ -72,7 +72,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
       this.guardRedirectService.dispatchErrorFromGuard(
         context,
         err,
-        this.guardRedirectService.getSubdomainAndHostnameFromWorkspace(
+        this.guardRedirectService.getSubdomainAndCustomDomainFromWorkspace(
           workspace,
         ),
       );

@@ -5,12 +5,12 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Table } from '@/ui/layout/table/components/Table';
-import { CustomHostnameDetails } from '~/generated/graphql';
+import { CustomDomainDetails } from '~/generated/graphql';
 
-export const SettingsHostnameRecords = ({
+export const SettingsCustomDomainRecords = ({
   records,
 }: {
-  records: CustomHostnameDetails['records'];
+  records: CustomDomainDetails['records'];
 }) => {
   return (
     <Table>

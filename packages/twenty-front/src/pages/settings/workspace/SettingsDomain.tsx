@@ -12,7 +12,7 @@ import {
   useUpdateWorkspaceMutation,
 } from '~/generated/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { SettingsHostname } from '~/pages/settings/workspace/SettingsHostname';
+import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -24,7 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsHostnameEffect } from '~/pages/settings/workspace/SettingsHostnameEffect';
+import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { isDefined } from 'twenty-shared';
 
 export const SettingsDomain = () => {
@@ -40,12 +40,12 @@ export const SettingsDomain = () => {
         .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
           message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
         }),
-      hostname: z
+      customDomain: z
         .string()
         .regex(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
           {
-            message: t`Invalid custom hostname. Custom hostnames have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+            message: t`Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
           },
         )
         .max(256)
@@ -68,35 +68,37 @@ export const SettingsDomain = () => {
 
   const form = useForm<{
     subdomain: string;
-    hostname: string | null;
+    customDomain: string | null;
   }>({
     mode: 'onChange',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
-      hostname: currentWorkspace?.hostname ?? null,
+      customDomain: currentWorkspace?.customDomain ?? null,
     },
     resolver: zodResolver(validationSchema),
   });
 
   const subdomainValue = form.watch('subdomain');
-  const hostnameValue = form.watch('hostname');
+  const customDomainValue = form.watch('customDomain');
 
-  const updateHostname = (
-    hostname: string | null | undefined,
+  const updateCustomDomain = (
+    customDomain: string | null | undefined,
     currentWorkspace: CurrentWorkspace,
   ) => {
     updateWorkspace({
       variables: {
         input: {
-          hostname:
-            isDefined(hostname) && hostname.length > 0 ? hostname : null,
+          customDomain:
+            isDefined(customDomain) && customDomain.length > 0
+              ? customDomain
+              : null,
         },
       },
       onCompleted: () => {
         setCurrentWorkspace({
           ...currentWorkspace,
-          hostname: hostname,
+          customDomain,
         });
       },
       onError: (error) => {
@@ -173,8 +175,8 @@ export const SettingsDomain = () => {
       return updateSubdomain(values.subdomain, currentWorkspace);
     }
 
-    if (values.hostname !== currentWorkspace.hostname) {
-      return updateHostname(values.hostname, currentWorkspace);
+    if (values.customDomain !== currentWorkspace.customDomain) {
+      return updateCustomDomain(values.customDomain, currentWorkspace);
     }
   };
 
@@ -197,7 +199,7 @@ export const SettingsDomain = () => {
           isSaveDisabled={
             !form.formState.isValid ||
             (subdomainValue === currentWorkspace?.subdomain &&
-              hostnameValue === currentWorkspace?.hostname)
+              customDomainValue === currentWorkspace?.customDomain)
           }
           onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
@@ -207,13 +209,13 @@ export const SettingsDomain = () => {
       <SettingsPageContainer>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          {(!currentWorkspace?.hostname || !isCustomDomainEnabled) && (
+          {(!currentWorkspace?.customDomain || !isCustomDomainEnabled) && (
             <SettingsSubdomain />
           )}
           {isCustomDomainEnabled && (
             <>
-              <SettingsHostnameEffect />
-              <SettingsHostname />
+              <SettingsCustomDomainEffect />
+              <SettingsCustomDomain />
             </>
           )}
         </FormProvider>

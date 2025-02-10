@@ -43,8 +43,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CustomHostnameDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-hostname-details';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-endpoints.dto';
+import { CustomDomainDetails } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-details';
+import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -220,14 +220,14 @@ export class WorkspaceResolver {
     return this.domainManagerService.getworkspaceUrls(workspace);
   }
 
-  @Query(() => CustomHostnameDetails, { nullable: true })
+  @Query(() => CustomDomainDetails, { nullable: true })
   @UseGuards(WorkspaceAuthGuard)
-  async getCustomHostnameDetails(
-    @AuthWorkspace() { hostname }: Workspace,
-  ): Promise<CustomHostnameDetails | undefined> {
-    if (!hostname) return undefined;
+  async getCustomDomainDetails(
+    @AuthWorkspace() { customDomain }: Workspace,
+  ): Promise<CustomDomainDetails | undefined> {
+    if (!customDomain) return undefined;
 
-    return await this.domainManagerService.getCustomHostnameDetails(hostname);
+    return await this.domainManagerService.getCustomDomainDetails(customDomain);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
